@@ -708,7 +708,7 @@ function setOffcanvasMenu(){
     <div id="offcanvas_company_long">
       <div id="company_info_detail">
         <div class="company_info_text">상호</div>
-        <div onClick="openOuterLink('https://imjinsa.com/')"><img src="https://www.realrankus.com/image/company_CI.png" height='20'></div>
+        <div onClick="openOuterLink('https://naver.me/xDJJrRGf')"><img src="https://www.realrankus.com/image/company_CI.png" height='20'></div>
 
         <div class="company_info_text">대표이사</div>
         <div>한승훈</div>
@@ -720,14 +720,14 @@ function setOffcanvasMenu(){
         <div>제2023-서울강남-05016호</div>
 
         <div class="company_info_text">제휴문의</div>
-        <div><a href="mailto:contact@imjinsa.com" style='text-decoration:none; color: #888;'>contact@imjinsa.com</a></div>
+        <div><a href="mailto:quenam38@naver.com" style='text-decoration:none; color: #888;'>quenam38@naver.com</a></div>
 
         <div class="company_info_text">본사</div>
         <div onClick="openOuterLink('https://naver.me/FiOAp7R4')">서울특별시 강남구 테헤란로77길 11-9 7F 에이113호</div>
       </div>
       <hr>
       <div id='company_CI'>        
-        <div onClick="openOuterLink('https://ccei.creativekorea.or.kr/jeju/')"><img src="https://www.realrankus.com/image/support_01.png" height='30'><span style='font-size: 0.8em'><br> 보육기업(2023-08-30)</span></div>
+        <div onClick="openOuterLink('https://ccei.creativekorea.or.kr/')"><img src="https://www.realrankus.com/image/support_01.png" height='30'><span style='font-size: 0.8em'><br> 보육기업 (2023-08-30)</span></div>
         <hr>
         <div style='margin-bottom:5px'>ⓒ Copyright 2022. Imjinsa Inc. All Rights Reserved.</div>        
       </div>
