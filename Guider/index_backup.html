@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-KNL2VQN");
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-218993952-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-218993952-1");
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("serviceWorker_biz.js").then((reg) => {
+          console.log("Service Worker Registered!", reg);
+        });
+      }
+    </script>
+
+    <title>리얼랭커스 GUIDER</title>
+    <meta charset="utf-8">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="리얼랭커스 GUIDER" />
+    <meta property="og:description" content="리얼랭커스 GUIDER" />
+    <meta property="og:image" content="https://www.realrankus.com/priceCal/thumbnail_priceCal.png" />
+    <meta property="og:url" content="https://www.realrankus.com/priceCal/" />
+    <meta name="keyword" content="부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수" />
+    <meta name="description" content="리얼랭커스 GUIDER" />
+    <meta name="author" content="리얼랭커스 GUIDER" />
+    <meta name="robots" content="index,follow" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=yes, minimal-ui, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- 상태 바의 스타일을 지정 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+    <meta name="apple-mobile-web-app-title" content="리얼랭커스 GUIDER" />
+    <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+    <link rel="apple-touch-icon" href="https://www.realrankus.com/biz/apt-rank-biz-152x152.png" />
+    <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+    <link rel="manifest" href="manifest_biz.json" />
+    <link rel="canonical" href="https://www.realrankus.com/biz/" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    <link rel="shortcut icon" href="https://www.realrankus.com/biz/apt-rank-biz.png" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>    
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>  
+
+    <script src="../js/menu_select_box.js" type="text/javascript"></script>
+    <script src="../js/draw_chart_BIZ.js" type="text/javascript"></script>
+    <script src="../js/sort.js" type="text/javascript"></script>
+    <script src="../js/search.js" type="text/javascript"></script>
+    <script src="../js/share.js" type="text/javascript"></script>
+    <script src="../js/distance.js" type="text/javascript"></script>
+    <script src="../js/svg_region.js" type="text/javascript"></script>
+    <script src="../js/BIZ_guide.js" type="text/javascript"></script>
+    <script src="./nearby_findings.js" type="text/javascript"></script>
+    <script src="./guider_setting.js" type="text/javascript"></script>
+
+    <link href="../css/style_common.css" rel="stylesheet"/>
+    <link href="./style_guider.css" rel="stylesheet" />
+    <link href="../css/distance.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+      var UserAgent = navigator.userAgent;
+      var scr_width = screen.width;
+      var scr_height = screen.height;
+    </script>
+  </head>
+  <style></style>
+
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KNL2VQN"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- 타이틀 영역 -->
+    <div id="titleBar_theme">
+      <!--검색 버튼 표시-->
+      <!-- <div id='help' style='font-size: 1.2em' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div> -->
+      <!-- <div id="rearrange" class="position-relative" onClick='showRearrangeBar(this)'><i class="fa-solid fa-arrow-down-wide-short"></i></div> -->
+      <div></div>
+      <!--타이틀 표시-->
+      <!-- <div id="title" onClick='window.location.reload()'>리얼랭커스<span id="themeLogo">BIZ</span> X 파트너를 찾습니다!</div> -->
+      <div id="title" onClick="window.location.reload()"> 리얼랭커스<span id="themeLogo">GUIDER</span></div>
+      <div id="footer_text"></div>
+      <!--공유 버튼-->
+      <!-- <div id='tripGuide' data-bs-toggle='modal' data-bs-target='#toggleModal1' id='myModal' onClick='showDistance(routeArray)'><i class="fa-solid fa-route"></i></div> -->
+
+      <!--단지 가중치 설정 버튼 표시-->
+      <!-- <div id='help' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice()'><i class="fa-solid fa-circle-question"></i></div> -->
+      <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right" aria-controls="offcanvasRight"><i class="fa-solid fa-ellipsis"></i></div>
+    </div>
+
+    <div id="container">
+      <div></div>
+      <div id="centerBox">
+        <!-- Vertically centered scrollable modal -->
+        <!-- Button trigger modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="aptDetail"></div>
+              <div id="footer"></div>
+            </div>
+          </div>
+        </div>
+
+        <!--리스트 데이터 붙여넣는 영역-->
+        <div id="contentBox">
+          <div id="step0">
+            <div class="stepInfo">① 고객 정보</div>
+            <div class="customer_input">
+              <div class="step1Title">고객이름</div>
+              <div><input class='text_input' type="text" placeholder=""></div>
+            </div>
+
+            <div class="customer_input">
+              <div class="step1Title">고객연령</div>
+              <div>
+                <select class='gungu' id="customer_age" onChange="changeAge(this.value)">
+                  <option value=0>20~26세</option>
+                  <option value=1>27~32세</option>
+                  <option value=2 selected>33~40세</option>
+                  <option value=3>41~50세</option>
+                  <option value=4>51~60세</option>
+                  <option value=5>61~70세</option>
+                  <option value=6>71세~</option>
+                </select>
+              </div>
+              <div id="ageDescription"></div>
+            </div>
+
+            <div class="customer_input">
+              <div class="step1Title">가족구성</div>
+              <div>
+                <select class='gungu' id="customer_family" onChange="changeFamily(this.value)">
+                  <option value=1>1인</option>
+                  <option value=2>2인</option>
+                  <option value=3 selected>3인</option>
+                  <option value=4>4인</option>
+                  <option value=5>5인</option>
+                  <option value=6>6인 이상</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="customer_input">
+              <div class="step1Title">자녀구성</div>
+              <div>
+                <select class='gungu' id="customer_children" onChange="">                
+                  <option value=0>없음</option>
+                  <option value=1 selected>1자녀</option>
+                  <option value=2>2자녀</option>
+                  <option value=3>3자녀</option>
+                  <option value=4>4자녀 이상</option>                
+                </select>
+              </div>
+              <div>
+                <select class='gungu' id="customer_children_type" onChange="">
+                  <option value=0>---</option>
+                  <option value=1 selected>미성년</option>
+                  <option value=2>성년</option>
+                  <option value=3>미성년 + 성년</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="customer_input">
+              <div class="step1Title">가족연소득</div>
+              <div>
+                <select class='gungu' id="customer_income" onChange="">
+                  <option value='income_00'>2,000만원 이하</option>
+                  <option value='income_01'>2,001만원 ~ 3,000만원</option>
+                  <option value='income_02'>3,001만원 ~ 5,000만원</option>
+                  <option value='income_03'>5,001만원 ~ 8,000만원</option>
+                  <option value='income_04'>8,001만원 ~ 9,999만원</option>
+                  <option value='income_05' selected>1.00억원 ~ 1.50억원</option>
+                  <option value='income_06'>1.51억원 ~ 3.00억원</option>
+                  <option value='income_07'>3.01억원 ~ 5.00억원</option>
+                  <option value='income_08'>5.01억원 ~ 10.0억원</option>
+                  <option value='income_09'>10.1억원 ~ 30.0억원</option>
+                  <option value='income_10'>30.1억원 ~ 50.0억원</option>
+                  <option value='income_11'>50.1억원 ~</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div id="step1">
+            <div class="stepInfo">② 예산 설정</div>
+
+            <div id="step1Content">
+              <div class="budget_input">
+                <div class="step1Title">사용 가능 예산</div>
+                <div><input class='number_input' type="text" placeholder="0" oninput="changeNumberFormat(1, this)" onfocus="numInputFocusBlur(1, 'focus')" onblur="numInputFocusBlur(1, 'blur')"/></div>
+                <div class='number_input_sub' id='number_input_won1'>원</div>
+                <div id="budget_kor1">0 원</div>
+              </div>
+
+              <div class="budget_input">
+                <div class="step1Title">대출 가능 금액</div>
+                <div><input class='number_input' type="text" placeholder="0" oninput="changeNumberFormat(2, this)" onfocus="numInputFocusBlur(2, 'focus')" onblur="numInputFocusBlur(2, 'blur')"/></div>
+                <div class='number_input_sub' id='number_input_won2'>원</div>
+                <div id="budget_kor2">0 원</div>
+              </div>
+
+              <div id="CPISelection"></div>
+
+              <div></div>
+
+              <div></div>
+
+            </div>
+          </div>
+
+          <div id="step2">
+            <div class="stepInfo">③ 자주 가는 위치</div>
+            <div id="movingMethod">
+              <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="movingPublic" onchange="changeMovingMethod('public')" checked/><label class="btn btn-outline-primary" for="movingPublic">대중교통이동</label></div>
+              <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="movingDriving" onchange="changeMovingMethod('driving')"/><label class="btn btn-outline-primary" for="movingDriving">자차이동</label></div>                
+            </div>
+            <div id="map_search">
+              <div><i class="fa-solid fa-magnifying-glass"></i></div>
+              <div><input type='text' id ='input_search' onkeyup="searchFindKey(event)"></div>
+              <div id="input_del_all" onclick="$('#input_search').val('')"><i class="fa-solid fa-circle-xmark"></i></div>
+              <div><button id='run_search' onclick="searchAndMove()">지도이동</button></div>
+            </div>
+            <div id="fav_loc1"></div>
+            <div id="fav_loc2"></div>
+            <div id="fav_loc3"></div>
+            <div id="fav_loc4"></div>
+          </div>
+
+          <div id="step3">
+            <div class="stepInfo">④ 원하는 지역</div>
+            <div id="fav_regions">
+              <div class="fav_region" id="fav_region1">
+                <div><select class='sido' id="sido1" onChange="sidoChange(1)"></select></div>
+                <div><select class='gungu' id="gungu1" onChange="gunguChange(1)"></select></div>
+                <div></div>
+              </div>
+
+              <div id="add_region2"><button class='add_region' id="add_region2" onclick="regionOn(2)">+ 지역추가</button></div>
+
+              <div class="fav_region" id="fav_region2">
+                <div><select class='sido' id="sido2" onChange="sidoChange(2)"></select></div>
+                <div><select class='gungu' id="gungu2" onChange="gunguChange(2)"></select></div>
+                <div class="fav_remove" id='fav_remove2' onclick="regionOff(2)"><i class="fa-solid fa-circle-minus"></i></div>
+              </div>
+
+              <div id="add_region3"><button class='add_region' id="add_region3" onclick="regionOn(3)">+ 지역추가</button></div>
+
+              <div class="fav_region" id="fav_region3">
+                <div><select class='sido' id="sido3" onChange="sidoChange(3)"></select></div>
+                <div><select class='gungu' id="gungu3" onChange="gunguChange(3)"></select></div>
+                <div class="fav_remove" id='fav_remove3' onclick="regionOff(3)"><i class="fa-solid fa-circle-minus"></i></div>
+              </div>
+
+              <div id="add_region4"><button class='add_region' id="add_region4" onclick="regionOn(4)">+ 지역추가</button></div>
+
+              <div class="fav_region" id="fav_region4">
+                <div><select class='sido' id="sido4" onChange="sidoChange(4)"></select></div>
+                <div><select class='gungu' id="gungu4" onChange="gunguChange(4)"></select></div>
+                <div class="fav_remove" id='fav_remove4' onclick="regionOff(4)"><i class="fa-solid fa-circle-minus"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="step4">
+            <div class="stepInfo">⑤ 중요도 선정</div>
+            <div id="step4Content">
+              <div class='priority_range'>
+                <div><label for="range_living" class="form-label">주거</label></div>
+                <div><input type="range" class="form-range" min="0" max="100" step="5" id="range_living" value="100" oninput="update_range_val('Living', this)"></div>
+                <div class='range_val' id="range_living_val">100</div>
+              </div>
+
+              <div class='priority_range'>
+                <div><label for="range_trans" class="form-label">교통</label></div>
+                <div><input type="range" class="form-range" min="0" max="100" step="5" id="range_trans" value="100" oninput="update_range_val('Trans', this)"></div>
+                <div class='range_val' id="range_trans_val">100</div>
+              </div>
+
+              <div class='priority_range'>
+                <div><label for="range_infra" class="form-label">인프라</label></div>
+                <div><input type="range" class="form-range" min="0" max="100" step="5" id="range_infra" value="100" oninput="update_range_val('Infra', this)"></div>
+                <div class='range_val' id="range_infra_val">100</div>
+              </div>
+
+              <div class='priority_range'>
+                <div><label for="range_edu" class="form-label">교육</label></div>
+                <div><input type="range" class="form-range" min="0" max="100" step="5" id="range_edu" value="100" oninput="update_range_val('Edu', this)"></div>
+                <div class='range_val' id="range_edu_val">100</div>
+              </div>
+
+            </div>
+          </div>
+
+          <div id="generate"><button id="btn_generate" onclick="resultGenerate()">결과보기</button></div>
+        </div>
+
+      <div id="listArea">
+        <div id="list_filter">
+          <div id="filter_moving_time">
+            <div>이동 시간 : </div>
+            <div id="ft_moving_time_radio">
+              <input class="form-check-input" type="radio" name="moving_time" id="moving_within_30min" onchange="changeMovingFilter(this)">
+              <label class="form-check-label ft_moving_time" for="moving_within_30min">30분 이내</label>
+
+              <input class="form-check-input" type="radio" name="moving_time" id="moving_within_60min" onchange="changeMovingFilter(this)">
+              <label class="form-check-label ft_moving_time" for="moving_within_60min">60분 이내</label>
+
+              <input class="form-check-input" type="radio" name="moving_time" id="moving_within_all"  onchange="changeMovingFilter(this)" checked >
+              <label class="form-check-label ft_moving_time" for="moving_within_all">전체</label>
+            </div>
+          </div>
+
+          <div id="filter_py">
+            <div>평형 : </div>
+            <div>
+              <input class="form-check-input" type="checkbox" value="py10" id="filter_py10" onchange="changePyFilter(this)" checked>
+              <label class="form-check-label ft_py" for="filter_py10">10평형</label>
+
+              <input class="form-check-input" type="checkbox" value="py20" id="filter_py20" onchange="changePyFilter(this)" checked>
+              <label class="form-check-label ft_py" for="filter_py20">20평형</label>
+
+              <input class="form-check-input" type="checkbox" value="py30" id="filter_py30" onchange="changePyFilter(this)" checked>
+              <label class="form-check-label ft_py" for="filter_py30">30평형</label>
+
+              <input class="form-check-input" type="checkbox" value="py40" id="filter_py40" onchange="changePyFilter(this)" checked>
+              <label class="form-check-label ft_py" for="filter_py40">40평형</label>
+
+              <input class="form-check-input" type="checkbox" value="py50" id="filter_py50" onchange="changePyFilter(this)" checked>
+              <label class="form-check-label ft_py" for="filter_py50">50평 이상</label>
+            </div>
+          </div>
+        </div>
+        <div id="result_list"></div>
+      </div>
+
+      </div>
+
+      <div></div>
+      <!--리얼랭커스 연결-->
+      <div id="linkToAptrank_bottom"></div>
+    </div>
+
+    <!--
+  <div id="footer_area">
+    <div></div>
+    <div id="footer_text">Copyright 2022 | 리얼랭커스BIZ | <a href="mailto:aptranking@gmail.com" style="text-decoration:None; color: white">aptranking@gmail.com  </a></div>
+    <div></div>
+  </div>  
+    <div id="footer_area"></div>
+    -->
+
+  <!-- Offcanvas Right -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">MENU</h5>
+      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!-- Offcanvas Profile -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel"></h5><i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>  
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div>     
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>  
+
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8WjR8LIu9KRjhriMxKl018OaUzFQY1FM&callback=initMap"></script>    
+    
+    <script type="module" src="../js/con_counter.js"></script>
+    <script src="../js/apple.js" type="text/javascript"></script>
+    <script src="../js/login_240308.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd" ></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd&submodules=geocoder"></script>
+
+  </body>
+  <script>
+    var selectedRegion = "Seoul";
+    var selectedSubRegion = "1168000000_Seoul_Gangnam";
+    var selectedTheme = "under100M";
+    var currentMonth = "202409"; //수정
+
+    var pageName = "aptrank_Guider" //20231020    
+
+    var regionName = "";
+
+    var linked = "";
+    var regionValue = "";
+
+    var itemNum = 0;
+    var aptData = "";
+    var sortData = [];
+
+    var budget_cash = 0
+    var budget_loan = 0
+
+    var fav_point_x = 0
+    var fav_point_y = 0
+
+    var movingMethod = 'public'
+
+    var priority_living = 100
+    var priority_trans = 100
+    var priority_infra = 100
+    var priority_edu = 100
+
+    var apt_result = ""
+
+    var wanted_region = []
+
+    var today = new Date();
+    var today_year = today.getFullYear();
+    var today_month = dateReturn(today.getMonth() + 1);
+    var today_day = dateReturn(today.getDate());
+    var today_num = Number("" + today_year + today_month + today_day);
+    var today_str = today_year + "-" + today_month + "-" + today_day;
+
+    var date_delta = 1
+    weekday = today.getDay()
+
+    //일 0, 월 1, 화 2, 수 3, 목 4, 금 5, 토 6
+    if(weekday < 4){
+      date_delta = 4 - weekday
+    }
+    else{
+      date_delta = (4+7) - weekday
+    }
+
+    var tomorrow_num = today.setDate(today.getDate() + date_delta)
+    var tomorrow = new Date(tomorrow_num);
+    var tomorrow_year = tomorrow.getFullYear();
+    var tomorrow_month = dateReturn(tomorrow.getMonth() + 1);
+    var tomorrow_day = dateReturn(tomorrow.getDate());
+    var tomorrow_num = Number("" + tomorrow_year + tomorrow_month + tomorrow_day);
+    var tomorrow_str = tomorrow_year + "-" + tomorrow_month + "-" + tomorrow_day;
+
+    function dateReturn(n) {
+      return n < 10 ? "0" + n : n;
+    }
+
+    var todayMonthQuater = "";
+
+    todayQuaterCheck = today.getMonth() + 1;
+    if (todayQuaterCheck >= 1 && todayQuaterCheck <= 3) {
+      todayMonthQuater = "1Q";
+    } else if (todayQuaterCheck >= 4 && todayQuaterCheck <= 6) {
+      todayMonthQuater = "2Q";
+    } else if (todayQuaterCheck >= 7 && todayQuaterCheck <= 9) {
+      todayMonthQuater = "3Q";
+    } else {
+      todayMonthQuater = "4Q";
+    }
+    var todayQuater = today_year.toString() + "-" + todayMonthQuater;
+
+    var startYear = "2019";
+    var startMonth = "06";
+    var startQuater = "2Q";
+
+    var firstEnter = true
+
+    var priceResult = [];
+
+    $(document).ready(function () {
+        Kakao.init(kakaoKey);
+
+        var option = "";
+        for (i = 1; i < regions.length; i++) {
+          option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
+        }
+        $("#sido1").html(option);
+        $("#sido2").html(option);
+        $("#sido3").html(option);
+        $("#sido4").html(option);
+
+        var subOption = ""
+        for (var i = 0; i < inSeoul.length; i++) {
+          subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";        
+        }
+        $("#gungu1").html(subOption);
+        $("#gungu2").html(subOption);
+        $("#gungu3").html(subOption);
+        $("#gungu4").html(subOption);
+
+        $("#add_region3").hide()
+        $("#add_region4").hide()
+        $("#fav_region2").hide()
+        $("#fav_region3").hide()
+        $("#fav_region4").hide()
+
+        $("#fav_remove2").hide()
+        $("#fav_remove3").hide()
+        $("#fav_remove4").hide()
+
+        fav_point_x = 127.0473774
+        fav_point_y = 37.51733193
+        wanted_region = [["Seoul","1168000000_Seoul_Gangnam"]]
+
+        showMap(37.51733193, 127.0473774)
+
+        $("#list_filter").hide()
+        
+        $("div.modal").on("show.bs.modal", function () {
+          var modal = this;
+          var hash = modal.id;
+          window.location.hash = hash;
+          window.onhashchange = function () {
+            if (!location.hash) {
+              $(modal).modal("hide");
+            }
+          };
+        });
+
+      currentMenu = "aptrank_Guider"  //offcanvas
+
+      changeAge( $("#customer_age option:selected").val() )
+      
+      $("#result_list").html("<div style='display:grid; align-content: center; height: 100%; font-size:1.2em; font-weight:600; text-align:center'>따뜻한 상담 정보를 채워주시고,<br>'결과보기'를 누르시면 추천 단지를 보여드려요!</div>")
+      setOffcanvasMenu() //offcanvas
+      //login_checker() //LOGIN
+
+      setBottomMenu()
+      $("#linkToAptrank_bottom").css({"width":"100%"})      
+    });
+
+    function gunguChange(index) {
+      wanted_region[index-1] = [$("#sido" + index + " option:selected").val(), $("#gungu" + index + " option:selected").val()]
+    }
+
+    function sidoChange(index) {
+      optionChange(index);
+    }
+
+    function optionChange(index) {      
+      regionName = $("#sido" + index + " option:selected").val();
+      selectedRegion = regionName;
+      var changeItem;
+      if (regionName == "Korea") {
+        changeItem = inKorea;
+      }
+      if (regionName == "Seoul") {
+        changeItem = inSeoul;
+      }
+      if (regionName == "Busan") {
+        changeItem = inBusan;
+      }
+      if (regionName == "Incheon") {
+        changeItem = inIncheon;
+      }
+      if (regionName == "Daegu") {
+        changeItem = inDaegu;
+      }
+      if (regionName == "Gwangju") {
+        changeItem = inGwangju;
+      }
+      if (regionName == "Daejeon") {
+        changeItem = inDaejeon;
+      }
+      if (regionName == "Ulsan") {
+        changeItem = inUlsan;
+      }
+      if (regionName == "Sejong") {
+        changeItem = inSejong;
+      }
+      if (regionName == "Gyeonggi") {
+        changeItem = inGyeonggi;
+      }
+      if (regionName == "Gangwondo") {
+        changeItem = inNewGangwondo;
+      }
+      if (regionName == "Chungcheongbukdo") {
+        changeItem = inChungcheongbukdo;
+      }
+      if (regionName == "Chungcheongnamdo") {
+        changeItem = inChungcheongnamdo;
+      }
+      if (regionName == "Jeollabukdo") {
+        changeItem = inJeollabukdo;
+      }
+      if (regionName == "Jeollanamdo") {
+        changeItem = inJeollanamdo;
+      }
+      if (regionName == "Gyeongsangbukdo") {
+        changeItem = inGyeongsangbukdo;
+      }
+      if (regionName == "Gyeongsangnamdo") {
+        changeItem = inGyeongsangnamdo;
+      }
+      if (regionName == "Jejudo") {
+        changeItem = inJejudo;
+      }
+      $("#gungu" + index).empty();
+
+      for (var i = 0; i < changeItem.length; i++) {
+        var subOption = $("<option value='" + changeItem[i][1] + "'>" + changeItem[i][0] + "</option>" );
+        $("#gungu" + index).append(subOption);
+      }
+
+      wanted_region[index-1] = [$("#sido" + index + " option:selected").val(), $("#gungu" + index + " option:selected").val()]
+    }
+
+    var filter_class = "listbox"
+    var moving_class = "within_all"
+    var py_filter = {"py10":true, "py20":true, "py30":true, "py40":true, "py50":true }
+
+    function changeMovingFilter(obj){
+      selected_id = obj.id
+
+      if(selected_id == "moving_within_30min"){
+        moving_class = "within_30m"
+      }
+      if(selected_id == "moving_within_60min"){
+        moving_class = "within_60m"
+      }
+      if(selected_id == "moving_within_all"){
+        moving_class = "within_all"
+      }
+      ListUp(sortData)
+      listShowHide(py_filter)
+    }
+
+    function changePyFilter(obj){
+      selected_id = obj.id
+      selected_checked = obj.checked      
+
+      if(selected_id == "filter_py10"){
+        if(selected_checked){ py_filter["py10"] = true }
+        else{ py_filter["py10"] = false }
+      }
+
+      if(selected_id == "filter_py20"){
+        if(selected_checked){ py_filter["py20"] = true }
+        else{ py_filter["py20"] = false }
+      }
+
+      if(selected_id == "filter_py30"){
+        if(selected_checked){ py_filter["py30"] = true }
+        else{ py_filter["py30"] = false }
+      }
+
+      if(selected_id == "filter_py40"){
+        if(selected_checked){ py_filter["py40"] = true }
+        else{ py_filter["py40"] = false }
+      }
+
+      if(selected_id == "filter_py50"){
+        if(selected_checked){ py_filter["py50"] = true }
+        else{ py_filter["py50"] = false }
+      }
+
+      listShowHide(py_filter)
+    }
+
+    function listShowHide(py_filter){
+      $("." + filter_class).hide()
+      $(".possibleApt").hide()
+
+      py_class = ""
+      if(py_filter['py10'] == true){
+        py_class += ".py10,"
+      }
+      if(py_filter['py20'] == true){
+        py_class += ".py20,"
+      }
+      if(py_filter['py30'] == true){
+        py_class += ".py30,"
+      }
+      if(py_filter['py40'] == true){
+        py_class += ".py40,"
+      }
+      if(py_filter['py50'] == true){
+        py_class += ".py50,"
+      }
+      py_class = py_class.slice(0, -1)
+
+      $(py_class).show()
+    }
+
+    function update_range_val(category, obj){      
+      if(category == "Living"){
+        $("#range_living_val").html(obj.value)
+        priority_living = obj.value
+      }
+      if(category == "Trans"){
+        $("#range_trans_val").html(obj.value)
+        priority_trans = obj.value
+      }
+      if(category == "Infra"){
+        $("#range_infra_val").html(obj.value)
+        priority_infra = obj.value
+      }
+      if(category == "Edu"){
+        $("#range_edu_val").html(obj.value)
+        priority_edu = obj.value
+      }
+    }
+
+    function changeNumberFormat(index, obj){      
+      obj.value = obj.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');      
+      if(obj.value > 999999999999){
+        obj.value = 999999999999
+      }
+      pureNum = obj.value
+      formattedNum = Number(obj.value).toLocaleString('ko-KR')
+      obj.value = formattedNum
+
+      $("#budget_kor" + index).html(numberToKorean(pureNum) + "  원")
+
+      if(index == 1){
+        budget_cash = pureNum
+      }
+      if(index == 2){
+        budget_loan = pureNum
+      }
+    }
+
+    function numInputFocusBlur(num, status){
+      if(status == 'focus'){
+        $("#number_input_won" + num).css("border-bottom", "1px solid #0820a8")
+      }
+      if(status == 'blur'){
+        $("#number_input_won" + num).css("border-bottom", "1px solid #aaa")
+      }
+    }
+
+    function regionOn(index){      
+      $("#fav_remove2").hide()
+      $("#fav_remove3").hide()
+      $("#fav_remove4").hide()      
+
+      $("#add_region" + index).hide()
+      $("#fav_region" + index).show()
+      $("#fav_remove" + index).show()
+      if(index < 5){
+        $("#add_region" + (index+1)).show()
+      }
+
+      wanted_region[index-1] = [$("#sido" + index + " option:selected").val(), $("#gungu" + index + " option:selected").val()]
+    }
+    function regionOff(index){
+      $("#fav_remove2").hide()
+      $("#fav_remove3").hide()
+      $("#fav_remove4").hide() 
+
+      $("#add_region" + (index)).show()
+      $("#add_region" + (index+1)).hide()
+
+      $("#fav_remove" + (index-1)).show()
+      $("#fav_region" + (index)).hide()
+
+      wanted_region.splice(index-1, 1);
+    }
+
+    function updateRegion() {      
+      showMap(37.51733193, 127.0473774)      
+    }
+
+    function changeMovingMethod(type){
+      movingMethod = type
+    }
+
+    var dest_placeid = ""
+
+    function resultGenerate(){
+      if(budget_cash <= 0 && budget_loan <= 0){
+        alert("예산을 입력해 주세요!!")
+      }
+      else{
+        $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>추천 단지를 열심히 찾고 있어요!!</div></div>")
+
+        origin_array = []
+        moving_array = []
+        temp_index = 0
+        temp_index_dirving = 0
+        $("#result_list").html("")
+        py_filter = {"py10":true, "py20":true, "py30":true, "py40":true, "py50":true }        
+        $("#moving_within_all").prop('checked', true)
+        $("#filter_py10").prop('checked', true)
+        $("#filter_py20").prop('checked', true)
+        $("#filter_py30").prop('checked', true)
+        $("#filter_py40").prop('checked', true)
+        $("#filter_py50").prop('checked', true)
+
+        merged_apt_list = []
+        multi_getJSON(0)
+      }
+
+      //console.log("사용 가능 예산 : " + budget_cash)
+      //console.log("대출 가능 금액 : " + budget_loan)
+      //console.log("자주 가는 위치 : " + fav_point_x, ", ", fav_point_y)
+      //console.log("원하는 지역 : " + wanted_region)
+      //console.log("주거 중요도 : ", priority_living)
+      //console.log("교통 중요도 : ", priority_trans)
+      //console.log("인프라 중요도 : ", priority_infra)
+      //console.log("교육 중요도 : ", priority_edu)      
+    }
+
+    function updateTable() {
+      $("div.modal").modal("hide");
+      //$('#sort').css("visibility", "visible")
+      $("html").scrollTop(0);
+
+      //url = "https://www.realrankus.com/biz/" + region + ".json"
+      //url = "https://www.realrankus.com/biz/Location_Build_Valuated.json"      
+
+      for (var i = 0 ; i < nearby_findings.length ; i++){        
+        if(selectedSubRegion == nearby_findings[i][1]){
+          nearby_area = nearby_findings[i][3]
+          break;
+        }
+      }      
+    }
+    
+    function multi_getJSON(count){
+      //console.log(wanted_region)
+
+      if(count < wanted_region.length){
+        url = "https://www.realrankus.com/" + currentMonth + "/" + wanted_region[count][1] + ".json"
+        //console.log(url)
+        $.getJSON(url, function (json) {
+          //console.log(json);
+          aptData = json;
+          apt_list = aptData.data;
+          merged_apt_list = merged_apt_list.concat(apt_list)
+        })
+        .done(function(){
+          count++
+          if(count < wanted_region.length){
+            url = "https://www.realrankus.com/" + currentMonth + "/" + wanted_region[count][1] + ".json"
+            multi_getJSON(count)
+            //console.log(url)
+          }
+          else{
+            //sortList()
+            removeDuplicate(merged_apt_list)
+          }
+        })
+      }      
+    }
+
+    function removeDuplicate(apt_list){
+      const arrUnique = apt_list.filter((character, idx, arr)=>{
+        return arr.findIndex((item) => item['검색코드'] === character['검색코드']) === idx
+      });
+      budgetFilter(arrUnique)
+    }
+
+    function budgetFilter(apt_list){
+      total_budget = (Number(budget_cash) + Number(budget_loan)) / 10000
+      max_budget = total_budget * 1.2
+      min_budget = total_budget * 0.7
+
+      possible_complex_array = []
+
+      for(var i in apt_list){        
+        area_array = ( apt_list[i]['area_info'] ).split(",")
+        sales_info_array = ( apt_list[i]['sales_info'] ).split(",")
+        sales_history_price_array = apt_list[i]['sales_history_price']
+        sales_month_array = apt_list[i]['매매실거래날짜목록']
+        
+        possible_sales_array = []
+        for(var j in sales_history_price_array){          
+          compare_price = sales_history_price_array[j][sales_history_price_array[j].length-1]
+          if(compare_price <= max_budget && compare_price >= min_budget && compare_price != 0 && compare_price != undefined){
+          //if(compare_price <= total_budget && compare_price != 0 && compare_price != undefined){
+            target_price = getTargetPrice(sales_month_array, sales_history_price_array[j], compare_price)
+            possible_sales_array.push([area_array[j], sales_info_array[j], sales_history_price_array[j], compare_price, target_price])            
+          }
+        }
+
+        if(possible_sales_array.length > 0){
+          apt_list[i]["possible"] = possible_sales_array
+          possible_complex_array.push(apt_list[i])
+        }
+      }
+
+      if(possible_complex_array.length > 0){
+        priorityFilter(possible_complex_array)
+      }
+      else{
+        $("#result_list").html("<div style='display:grid; align-content: center; height: 100%; font-size:1.2em; font-weight:600; text-align:center'>고객님 상담 정보에 맞는<br>추천 단지가 없네요...</div>")
+        $("#pageLoadingBack").remove()
+      }      
+    }
+
+    function getTargetPrice(date_array, price_array, compare_price){
+      //목표날짜찾기
+      target_price = 0
+
+      targetDate = "202107"
+      date_index = date_array.indexOf(targetDate);
+      target_price_temp = price_array[date_index]
+
+      if(target_price_temp == 0){
+        target_price = 0
+      }
+      else if(target_price_temp >= compare_price){
+        target_price = target_price_temp
+      }
+      else{
+        target_price = compare_price
+      }
+      
+      return target_price
+    }
+
+    var origin_array = []
+    var temp_index = 0
+    var temp_index_driving = 0
+    function priorityFilter(apt_list){
+      baseSum = Number(priority_living) + Number(priority_trans) + Number(priority_infra) + Number(priority_edu)      
+
+      weight_living = Number(priority_living) / baseSum
+      weight_trans = Number(priority_trans) / baseSum
+      weight_infra = Number(priority_infra) / baseSum
+      weight_edu = Number(priority_edu) / baseSum
+
+      for(var i in apt_list){
+        custom_value_total = 
+         Number(apt_list[i]['주거총점']) * weight_living
+         + Number(apt_list[i]['교통총점']) * weight_trans
+         + Number(apt_list[i]['인프라총점']) * weight_infra
+         + Number(apt_list[i]['학군총점']) * weight_edu
+
+         apt_list[i]["custom_value"] = custom_value_total
+      }
+
+      apt_result = apt_list
+
+      origin_array_all = []
+      for(var i in apt_list){
+        origin_array_all.push(  {lat : apt_list[i]["Y"], lng : apt_list[i]["X"] }  )
+      }
+
+      origin_array = []
+      size = 25
+      for (let i = 0; i < origin_array_all.length; i += size) {
+        origin_array.push(origin_array_all.slice(i, i + size));
+      }
+
+      if(movingMethod == 'public'){
+        durationTimeFilter_public(origin_array, 0)
+      }
+      if(movingMethod == 'driving'){
+        durationTimeFilter_driving(origin_array_all, 0)
+      }      
+    }
+
+    function durationTimeFilter_driving(origin_array, origin_array_index){
+      var start_pos = origin_array[origin_array_index]['lng'] + "," + origin_array[origin_array_index]['lat']
+      var end_pos = fav_point_x + "," + fav_point_y
+      var furute_date = tomorrow_num + "0750"
+      var origin_array_length = (origin_array.length)-1
+      
+      $.ajax({
+        type : "GET",
+        headers : {
+          "Authorization" : "KakaoAK a9beb4e1299d7fac7e38fdecb8f8038e",
+        },
+        url : "https://apis-navi.kakaomobility.com/v1/future/directions?autoload=false&origin=" + start_pos + "&destination=" + end_pos + "&priority=RECOMMEND&summary=TRUE&departure_time=" + furute_date,
+        async : false,
+        success : function(response) {
+          var resultData = response['routes'][0]['summary'];
+          //console.log(resultData)          
+          moving_array.push(resultData)
+
+          if(origin_array.length-1 > temp_index_driving){
+            temp_index_driving++
+            setTimeout(function(){
+              $('#loadingInfo').html("<br>단지에서 자주가는 위치까지의 이동 시간을 계산하고 있어요!! <br> ( " + temp_index_driving + " / " + origin_array_length + " )")
+              durationTimeFilter_driving(origin_array, temp_index_driving)
+            }, 50)
+          }
+          else{
+            for(var j in apt_result){
+              apt_result[j]['moving_method'] = "driving"
+              apt_result[j]['moving'] = moving_array[j]
+            }
+            sortList()
+          }
+        },
+        error : function(res){
+          console.log("ERROR : " , res)
+          durationTimeFilter_driving(origin_array, temp_index_driving)
+        }
+      })
+    }
+    
+    function durationTimeFilter_public(origin_array, origin_array_index){
+      var date_str = tomorrow_str + "T07:50:00"
+      var departureTime = new Date(date_str)
+      var departureTimeStamp = departureTime.getTime()
+
+      var transit_mode = ""
+      transit_mode = "TRANSIT"
+
+      var destination = fav_point_y + "," + fav_point_x
+      //var destination = dest_placeid
+
+      var service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix(
+      {
+        origins: origin_array[origin_array_index],
+        destinations: [destination],
+        travelMode: transit_mode,
+        transitOptions: {
+          departureTime: departureTime,
+        },        
+        drivingOptions: {
+          departureTime: departureTime,
+          trafficModel : "bestguess"
+        },
+        unitSystem: google.maps.UnitSystem.METRIC,
+      }, callback);
+    }
+
+    var moving_array = []
+    function callback(response, status) {
+      //console.log(response)
+      for(var i in response["rows"] ){
+        moving_array.push(response["rows"][i]['elements'][0])        
+      }
+
+      if(origin_array.length-1 > temp_index){
+        temp_index++        
+        durationTimeFilter_public(origin_array, temp_index)
+      }
+      else{
+        for(var j in apt_result){
+          apt_result[j]['moving_method'] = "public"
+          apt_result[j]['moving'] = moving_array[j]
+        }
+        sortList()
+      }
+    }
+
+    function sortList(){
+      sortData = []      
+
+      key = "custom_value"
+      type = "desc"
+      data = apt_result
+      var sortJSON = function(data, key, type) {
+        if (type == undefined) {
+          type = "asc";
+        }
+        return data.sort(function(a, b) {
+          var x = a[key];
+          var y = b[key];
+          if (type == "desc") {
+            return x > y ? -1 : x < y ? 1 : 0;
+          } else if (type == "asc") {
+            return x < y ? -1 : x > y ? 1 : 0;
+          }
+        });
+      };
+      
+      sorted_apt_result = sortJSON(data, key, type)
+      sortData = sorted_apt_result
+      ListUp(sortData);
+    }
+
+    function ListUp(sortData){
+      $("#result_list").html("")
+
+      var addon_html = ""
+
+      for(var i in sortData){
+        var value_val = sortData[i]['custom_value']        
+        var aptName = sortData[i]["아파트명"];
+        var aptYears = sortData[i]["준공년차"]
+        var apt_type = sortData[i]["매매타입"];
+        var apt_m = sortData[i]["전용면적(m2)"];
+        var apt_p = sortData[i]["전용면적(평)"];
+        var aptAddress = sortData[i]["도로명주소"];
+        var aptAddress2 = sortData[i]["법정동주소"];
+        var aptValue = Math.round(sortData[i]["가치 총점"] * 100) / 100;
+        var house_num = sortData[i]["세대수"];
+        var last_sales = sortData[i]["last_sales"].split(",");
+        var last_sales_date = last_sales[0].toString();
+        var last_sales_price = last_sales[1].toString();
+        var last_sales_area = last_sales[2];
+        last_sales_date_short = last_sales_date.substr(2);
+        var searchCode = sortData[i]["검색코드"];
+        var coordX = sortData[i]["X"];
+        var coordY = sortData[i]["Y"];
+        var moving_method = sortData[i]['moving_method']
+        var moving_time_kor = ""
+        var moving_time_val = ""
+
+        var possible_area = sortData[i]['possible']
+
+        if(sortData[i]['moving_method'] == "driving"){
+          duration_sec = Number(sortData[i]['moving']['duration'])
+          duration_hour = Math.floor((duration_sec / (60 * 60)) % 24)
+          duration_min = Math.floor((duration_sec / 60) % 60)
+
+          if(duration_hour == 0){
+            moving_time_kor = duration_min + "분"            
+          }
+          else{
+            if(duration_min == 0){
+              moving_time_kor = duration_hour + "시간 "
+            }
+            else{
+              moving_time_kor = duration_hour + "시간 " + duration_min + "분"
+            }
+          }          
+          moving_time_val = sortData[i]['moving']['duration']
+        }
+
+        if(moving_method == "public"){
+          moving_time_kor = sortData[i]['moving']['duration']['text']
+          moving_time_val = sortData[i]['moving']['duration']['value']
+        }        
+
+        custom_grade = setGrade(value_val)
+        complex_grade = setGrade(aptValue)
+
+        var class_name = "listbox"
+
+        for(var j in possible_area){
+          py = Number( ( possible_area[j][0].split("평") )[0] )
+
+          if(py <= 10){
+            class_name += " py00"
+          }
+          if(10 < py && py <= 20){
+            class_name += " py10"
+          }
+          if(20 < py && py <= 30){
+            class_name += " py20"
+          }
+          if(30 < py && py <= 40){
+            class_name += " py30"
+          }
+          if(40 < py && py <= 50){
+            class_name += " py40"
+          }
+          if(50 < py){
+            class_name += " py50"
+          }
+        }
+
+        addon_html = ""
+
+        //addon_html += "<div class='" + class_name + "' onClick = showDetail(sortData[" + i + "])>"
+        addon_html += "<div class='" + class_name + "'>"
+
+          addon_html += "<div class='rank'>"
+            addon_html += "<div style = 'font-size: 0.7em'>RANK</div>"
+            addon_html += "<div style = 'font-size: 1.5em; font-weight: 600'>"+ custom_grade + "</div>"
+          addon_html += "</div>"
+
+          addon_html += "<div class='complexInfo'>"
+            addon_html += "<div class='apt_name'>" + aptName + "<span class='aptYear'> (" + aptYears + "년차)</span></div>"
+            addon_html += "<div class='apt_info'>" + house_num + "세대 / " + aptAddress2 + "</div>"
+
+            if(moving_method == "public"){
+              moving_icon = "<i class='fa-solid fa-van-shuttle'></i>"
+            }
+            if(moving_method == "driving"){
+              moving_icon = "<i class='fa-solid fa-car-side'></i>"
+            }
+            
+            addon_html += "<div class='movingTo'>" + moving_icon + " ---→ <i class='fa-solid fa-location-dot'></i> " + moving_time_kor + " 소요 예상</div>"
+          addon_html += "</div>"
+
+
+          // https://map.naver.com/?lng=126.9783882&lat=37.5666103&title=서울시청
+          
+          link_to_realrankus = sortData[i]["sURL"];
+          link_to_HGNN = "https://hogangnono.com/apt/" + searchCode;
+          link_to_NReal = "https://new.land.naver.com/complexes/" + searchCode;
+          link_to_NMap = "https://map.naver.com/?lng=" + coordX + "&lat=" + coordY + "&title=" + aptName;
+
+          addon_html += "<div class='linkTo'>"
+            addon_html += "<div id='linkToRR' onClick='openOuterLink(\"" + link_to_realrankus + "\")'>리얼랭커스 보기</div>"
+            if (apt_type == "분양(예정)"){
+              addon_html += "<div id='linkToHGNN' onClick='openOuterLink(\"" + link_to_HGNN + "\")'>호갱노노 보기</div>"
+            }
+            else{
+              addon_html += "<div id='linkToNaverReal' onClick='openOuterLink(\"" + link_to_NReal + "\")'>네이버 부동산 보기</div>"
+            }
+            addon_html += "<div id='linkToMap' onClick='openOuterLink(\"" + link_to_NMap + "\")'>지도 보기</div>"
+          addon_html += "</div>"
+
+          addon_html += "<div class='possibleAptTable'>"
+            for(var j in possible_area){
+              target_price = 0
+              if(possible_area[j][4] == 0){
+                //target_price = "예측 어려움"
+                target_price = Number(possible_area[j][3]/10000).toFixed(2) + "억"
+              }
+              else{
+                target_price = Number(possible_area[j][4]/10000).toFixed(2) + "억"
+              }
+
+              py = Number( ( possible_area[j][0].split("평") )[0] )              
+
+              if(py <= 10){
+                py_class_name = " py00"
+              }
+              if(10 < py && py <= 20){
+                py_class_name = " py10"
+              }
+              if(20 < py && py <= 30){
+                py_class_name = " py20"
+              }
+              if(30 < py && py <= 40){
+                py_class_name = " py30"
+              }
+              if(40 < py && py <= 50){
+                py_class_name = " py40"
+              }
+              if(50 < py){
+                py_class_name = " py50"
+              }
+
+              last_sales_date = possible_area[j][1].slice(-11, possible_area[j][1].length-1)
+              compare_date = new Date(last_sales_date)
+              minimum_date = new Date("2021-07-30")
+
+              minimum_time_diff = today - minimum_date
+
+              time_diff = today - compare_date
+              month_diff = Math.ceil( time_diff / (24 * 60 * 60 * 1000 * 30) )
+              target_price_kor = ""
+
+              if(month_diff > 12){
+                if(compare_date < minimum_date){
+                  target_price_kor = "<i class='fa-solid fa-triangle-exclamation'></i> 거래 정보 부족"
+                }
+                else{
+                  target_price_kor = "<i class='fa-solid fa-triangle-exclamation'></i> → 목표가격 : " + target_price
+                }                
+              }
+              else{
+                target_price_kor = "→ 목표가격 : " + target_price
+              }
+
+              addon_html += "<div class='possibleApt" + py_class_name + "'> ㆍ" + possible_area[j][0] + " / " + possible_area[j][1] + "<span style='color: #b61313'> " + target_price_kor + "</span></div>"
+            }
+          addon_html +="</div>"
+
+          addon_html +="</div>"
+        addon_html += "</div>"
+
+        if(moving_class == "within_30m"){
+          if(moving_time_val <= 1800){
+            $("#result_list").append(addon_html)
+          }
+        }
+        else if(moving_class == "within_60m"){
+          if(moving_time_val <= 3600){
+            $("#result_list").append(addon_html)
+          }
+        }
+        else{
+          $("#result_list").append(addon_html)
+        }
+      }
+
+      $("#list_filter").show()      
+      $("#pageLoadingBack").remove()
+    }
+
+    function changeRegion(sido) {
+      find_length = sido.split("_");
+
+      if (find_length.length > 1) {
+        selectedSubRegion = sido;
+        selectedRegion = sido.split("_")[1];
+        optionChange(selectedSubRegion);
+      } else {
+        selectedRegion = sido;
+        $("#sido").val(selectedRegion).prop("selected", true);
+        optionChange();
+      }
+    }
+
+    function hideMap(){
+      $('#step3MapArea').hide()
+      $('#step3Content').show()
+      //$('#step4Content').show()
+      $("#mapOn").show()
+      $("#mapOff").hide()
+    }
+
+    var detailMap = ""
+    var detailMarker = ""
+
+    function showMap(coord_y, coord_x){
+      var detailMapOptions = {
+          center: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
+          size: new naver.maps.Size(635, 300),
+          zoom: 16, //지도의 초기 줌 레벨
+          zoomControl: true, //줌 컨트롤의 표시 여부
+          draggable: true,
+          pinchZoom: true,
+          scrollWheel: true,
+          keyboardShortcuts: true,
+          disableDoubleTapZoom: false,
+          disableDoubleClickZoom: false,
+          disableTwoFingerTapZoom: false,
+          tileTransition: true,
+        };
+
+        detailMap = new naver.maps.Map("fav_loc1", detailMapOptions);
+        detailMarker = new naver.maps.Marker({
+          position: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
+          map: detailMap,
+          title: 'urlMarker',
+          //animation: naver.maps.Animation.BOUNCE
+        });
+
+        naver.maps.Event.addListener(detailMap, 'click', function(e) {
+            detailMarker.setPosition(e.coord);
+            fav_point_x = e.coord.x
+            fav_point_y = e.coord.y            
+        });
+    }
+
+    var recalculating = 0
+
+    function recalculate(){
+      searchCoordinateToAddress(fav_point_y, fav_point_x)
+      firstEnter = false
+    }
+
+    function searchCoordinateToAddress(y, x) {
+      naver.maps.Service.reverseGeocode({
+        coords: new naver.maps.LatLng(y, x),
+        }, function(status, response) {
+            if (status !== naver.maps.Service.Status.OK) {
+                return alert('네트워크 오류가 발생했어요! 다시 시도해 주세요!');
+            }
+
+            var result = response.v2, // 검색 결과의 컨테이너
+                items = result.results, // 검색 결과의 배열
+                address = result.address; // 검색 결과로 만든 주소            
+
+            var map_region = items[0]['region']['area1']['name']
+            var map_subregion = items[0]['region']['area2']['name']
+
+            map_region = map_region.replace("특별시", "시")
+            map_region = map_region.replace("특별자치시", "시")
+            map_region = map_region.replace("특별자치도", "도")
+            map_region = map_region.replace("광역시", "시")
+            
+            if(map_region == "세종시"){
+              map_subregion = "세종시"
+            }
+           
+            current_sido = $("#sido option:selected").val();
+            current_gungu = $("#gungu option:selected").val();
+
+            for (var i = 0 ; i < regions.length ; i++){
+              if(regions[i][0] == map_region){
+                region_val = regions[i][1]
+                $("#sido").val(region_val).prop("selected", true);
+                subRegionVal = "in" + region_val
+                subRegionValList = eval(subRegionVal)
+
+                for(var j = 0 ; j < subRegionValList.length ; j++){                  
+                  if(subRegionValList[j][0] == map_subregion){
+                    selectedSubRegion = subRegionValList[j][1]
+                    optionChange(selectedSubRegion)
+                    updateRegion()
+                    break;
+                  }
+                }                
+              }
+            }            
+        });      
+    }
+
+    function searchAndMove(){
+      input_text = $("#input_search").val()
+      if(input_text == ""){
+        return
+      }
+      $.ajax({
+        type : "GET",
+        headers : {
+          "Authorization" : "KakaoAK a9beb4e1299d7fac7e38fdecb8f8038e",
+        },
+        url : "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + input_text,
+        async : false,
+        success : function(response) {
+          if(response['documents'].length == 0){
+            $("#input_search").val("")
+            alert("검색 결과가 없어요!")
+            return
+          }
+          //console.log(response['documents'][0])
+          map_x = response['documents'][0]['x']
+          map_y = response['documents'][0]['y']
+          new_center = new naver.maps.LatLng(map_y, map_x)
+
+          fav_point_x = map_x
+          fav_point_y = map_y
+
+          detailMap.setCenter(new_center);
+          detailMarker.setPosition(new_center);
+          $("#input_search").val("")
+        }
+      }) 
+    }
+
+    function searchFindKey(e){
+      if(e.keyCode == 13){
+        searchAndMove()
+      }
+    }
+
+    function showDetail(complex_info){
+      link_to_realrankus = complex_info['sURL']
+      openOuterLink(link_to_realrankus)
+    }
+
+    var pcDevice = "win16|win32|win64|mac|macintel";
+  </script>
+</html>

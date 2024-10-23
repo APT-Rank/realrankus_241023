@@ -1,0 +1,27 @@
+{
+    "name": "마이리얼MBTI랭커스",
+    "short_name": "마이리얼MBTI랭커스",
+    "description": "마이리얼MBTI랭커스",
+    "dir": "ltr",
+    "start_url": "https://www.realrankus.com/mbti/index.html",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#e31939",
+    "orientation": "portrait",
+    "icons": [{
+      "src": "https://www.realrankus.com/mbti/apt-rank-mbti-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },{
+      "src": "https://www.realrankus.com/mbti/apt-rank-mbti-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }, {
+      "src": "https://www.realrankus.com/mbti/apt-rank-mbti-114x114.png",
+      "sizes": "114x114",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }]
+}

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>리얼랭커스 ADMIN</title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=yes, minimal-ui, viewport-fit=cover">
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="shortcut icon" href="https://www.realrankus.com/biz/apt-rank-biz.png"/>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  
+  <script src="./js/menu_select_box.js" type="text/javascript"></script>    
+  <script src="./js/share.js" type="text/javascript"></script>
+
+  <link href="./css/style_common.css" rel="stylesheet"/>
+  <link href="./css/style_admin.css" rel="stylesheet"/>
+
+  <script type="text/javascript">
+    var UserAgent = navigator.userAgent;
+    var scr_width = screen.width
+    var scr_height = screen.height
+  </script>  
+
+</head>
+<style>
+</style>
+
+<body ontouchstart="">
+  <!-- 타이틀 영역 -->
+  <div id="titleBar_theme">
+    <div></div>
+    <div id="title" onClick='window.location.reload()'>리얼랭커스<span id="themeLogo">ADMIN</div>
+    <div id="title_blank"></div>
+    <div id="help"></div>
+    <div></div>
+  </div>
+
+  <div id="container">
+    <div></div>
+    <div id="centerBox">
+
+      <!--지도 표시 영역-->
+      <div id="menu_area"></div>      
+
+      <!--리스트 데이터 붙여넣는 영역-->
+      <div id='contentBox'>
+        <div id='region_title'></div>
+        <div id='comment_list'></div>
+      </div>
+    </div>
+    
+    <div></div>
+  </div>
+  <div id="footer_area">
+    <div></div>
+    <div style="height: 5px; background: #162235;"></div>
+    <div></div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div> 
+  
+  <!-- Modal -->
+  <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="commentModalLabel"></div>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>    
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+
+</body>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA7s95oaj498XdArjo9cT_8watLVw4JK3M",
+    authDomain: "aptrank-cc61b.firebaseapp.com",
+    databaseURL: "https://aptrank-cc61b-default-rtdb.firebaseio.com",
+    projectId: "aptrank-cc61b",
+    storageBucket: "aptrank-cc61b.appspot.com",
+    messagingSenderId: "987401326011",
+    appId: "1:987401326011:web:8732d04a9fc69280d7489e",
+    measurementId: "G-BH5DRBH380"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const comment_db = firebase.firestore()
+  var docRef = comment_db.collection("realrankus_comment").doc("region_001")  //지역 변수로 수정
+
+  var today = new Date()
+  var today_year = today.getFullYear();
+  var today_month = dateReturn( (today.getMonth() + 1))
+  var today_day = dateReturn( today.getDate() );
+  var today_num = Number("" + today_year + today_month + today_day)
+  var today_str = today_year + "-" + today_month + "-" + today_day
+
+  var current_selection = ""
+
+  user_stat = {
+    accused: 0,
+    blocked: 'false',
+    block_days: 0,
+    block_start: '1976-1-1',
+    block_end: '1976-1-1',
+    like: "",
+    dislike: "",
+    accusing: ""
+  }
+
+  function dateReturn(n){
+    return n<10 ? "0"+n : n
+  }  
+
+  $(document).ready(function(){
+    var all_region = [
+      ["서울시", inSeoul], ["부산시", inBusan], ["대구시", inDaegu], ["인천시", inIncheon], ["광주시", inGwangju], ["대전시", inDaejeon],
+      ["울산시", inUlsan], ["세종시", inSejong], ["경기도", inGyeonggi], ["강원도", inNewGangwondo], ["충청북도", inChungcheongbukdo],
+      ["충청남도", inChungcheongnamdo], ["전라북도", inJeollabukdo], ["전라남도", inJeollanamdo], ["경상북도", inGyeongsangbukdo],
+      ["경상남도", inGyeongsangnamdo], ["제주도", inJejudo]
+    ]
+
+    var region_menu_html = "<div id='menu_wrapper'>"
+    region_menu_html += "<div class='region_menu_depth1'>신고</div>"
+    region_menu_html += "<div class='region_menu_depth2' id='menu_accused' onClick='show_accused_list(\"accused\")'>신고목록</div>"
+
+    for(var i = 0; i < all_region.length ; i++){
+      region_menu_html += "<div class='region_menu_depth1'>" + all_region[i][0] + "</div>"
+      sub_region = all_region[i][1]
+      for(var j = 0 ; j < sub_region.length ; j++){
+        region_menu_html += "<div class='region_menu_depth2' id=\'menu_" + sub_region[j][1] + "\' onClick='show_region_comment(\"" + sub_region[j][1] + "\", \"" + all_region[i][0] + " " + sub_region[j][0] + "\")'>" + sub_region[j][0] + "</div>"
+      }
+    }
+    region_menu_html += "</div>"
+    $("#menu_area").html(region_menu_html)
+
+    /*
+    show_region_comment(all_region[0][1][0][1], all_region[0][0] + " " + all_region[0][1][0][0])
+    current_selection = all_region[0][1][0][1]
+    $('#menu_' + current_selection).css({'font-weight' : '600', 'color' : '#345ad9', 'padding-left': '15px'})
+    $('#menu_' + current_selection).text("▶ " + all_region[0][1][0][0])
+    */
+    show_accused_list('accused')
+  });
+
+  var global_db_index = 0
+
+  function move_db(){
+    if(global_db_index >= 800){      
+      global_db_index = 0
+        return;
+    }
+    var random_time = 2500 + (Math.floor(Math.random() * 10) * 100 );
+    var userRef = firebase.database().ref();
+
+    userRef.child("users_moved").get()
+    .then((snapshot) => {
+      user_obj = snapshot.val()
+      user_list = Object.entries(user_obj)
+      console.log(user_list.length)
+
+      return
+      
+      user_password = (user_list[global_db_index][0]).toString()
+      user_email = user_list[global_db_index][1]['profile']['email']
+      user_profile = user_list[global_db_index][1]['profile']
+      user_status = user_list[global_db_index][1]['status']
+
+      console.log(global_db_index + " / " + user_list.length + " : " + user_password + " (" + user_email + ")")
+
+      user_profile_obj = {
+        user_name: user_profile['user_name'],
+				user_nick_name : user_profile['user_nick_name'],
+				email: user_profile['email'],
+				age: user_profile['age'],
+				birthday : user_profile['birthday'],
+				birthyear : user_profile['birthyear'],
+				gender : user_profile['gender'],
+				mobile : user_profile['mobile'],
+				provider : user_profile['provider'],
+        provider_uid : user_password,
+      }
+
+      firebase.auth().createUserWithEmailAndPassword(user_email, user_password)
+      .then((userCredential) => {
+        // Signed in 
+        var user = userCredential.user;
+        fb_uid = user.uid
+
+        firebase.database().ref('users_moved/' + fb_uid).set({
+          profile: user_profile_obj,
+          status: user_status
+        })
+        $("#update_info").html(global_db_index + " / " + user_list.length + " : " + user_password + " (" + user_email + ")")
+        global_db_index++
+        //setTimeout(function(){move_db()},random_time);
+      })
+      .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log("CREATION: " + errorMessage)
+
+        firebase.auth().signInWithEmailAndPassword(user_email, user_password)
+        .then((userCredential) => {
+          // Signed in
+          var user = userCredential.user;
+          fb_uid = user.uid
+          // ...
+          firebase.database().ref('users_moved/' + fb_uid).set({
+            profile: user_profile_obj,
+            status: user_status
+          })
+          $("#update_info").html(global_db_index + " / " + user_list.length + " : " + user_password + " (" + user_email + ")")
+          global_db_index++
+          //setTimeout(function(){move_db()},random_time);
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("LOGIN: " + errorMessage)
+          console.log("LOGIN: " + user_email + " : " + user_password)
+          global_db_index++
+          //setTimeout(function(){move_db()},random_time);
+        });
+      })
+    })      
+  }
+
+  const dbRef = firebase.database().ref();
+  function load_db(){
+    userEmail = "anitooni@kakao.com"
+    userID = "2420665072"
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log("AUTH : " + user.uid)
+        return
+      }
+      else{
+        firebase.auth().createUserWithEmailAndPassword(userEmail, userID)
+        .then((userCredential) => {
+          // Signed in 
+          var user = userCredential.user;
+          fb_uid = user.uid
+          //사용자 제한 정보 기본으로 설정
+          dbRef.child("users_moved").child(fb_uid).child("status").get().then((snapshot) => {
+            if (snapshot.exists()) {
+              stat = snapshot.val()          
+              user_stat = stat
+            }
+            else{
+              firebase.database().ref('users_moved/' + fb_uid).set({
+                profile: user_profile_obj,
+                status: user_status_obj
+              })
+            }
+            console.log(stat)
+          })	
+        })
+        .catch((error) => {
+          console.log(error.message)
+          var errorCode = error.code;
+          var errorMessage = error.message;
+
+          firebase.auth().signInWithEmailAndPassword(userEmail, userID)
+          .then((userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+            fb_uid = user.uid
+            //사용자 제한 정보 기본으로 설정
+            dbRef.child("users_moved").child(fb_uid).child("status").get().then((snapshot) => {
+              if (snapshot.exists()) {
+              stat = snapshot.val()
+              user_stat = stat
+            }
+            else{
+              firebase.database().ref('users_moved/' + fb_uid).set({
+                profile: user_profile_obj,
+                status: user_status_obj
+              })
+            }
+            console.log(user_stat)
+            })
+          })
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage)	
+          });
+        })
+      }
+    })    
+  }
+
+  function db_update(){
+    if(global_db_index >= 719){      
+      global_db_index = 0
+        return;
+    }
+    var userRef = firebase.database().ref();
+    userRef.child("users").get()
+    .then((snapshot) => {
+      user_obj = snapshot.val()
+      user_list = Object.entries(user_obj)     
+      
+      user_id = user_list[global_db_index][0]
+      user_email = user_list[global_db_index][1]['profile']['email']            
+      firebase.database().ref('users/' + user_id + '/status/').set({
+        accused: 0,
+        blocked: 'false',
+        block_days: 0,
+        block_start: '1976-1-1',
+        block_end: '1976-1-1',
+        like: "",
+        dislike: "",
+        accusing: "",
+      })      
+      $("#update_info").html(global_db_index + " / " + user_list.length + " : " + user_id + " (" + user_email + ")")
+      global_db_index++
+      db_update()
+    })
+    .catch(() => {
+    })
+  }
+
+  function show_accused_list(div_id){
+    $('#region_title').html("<div class='region_info' id='update_info'>신고 목록</div>")
+    $('#region_title').append("<div class='region_info'><button class='btn_del' onClick='load_db()'>DB업데이트</button></div>")
+
+
+    $('#menu_' + current_selection).css({'font-weight' : '400', 'color' : 'black', 'padding-left': '35px'})
+    prev_name = $('#menu_' + current_selection).text()
+    prev_name = prev_name.replace("▶ ", "")
+    $('#menu_' + current_selection).text(prev_name)
+    
+    current_selection = div_id
+
+    $('#menu_' + current_selection).css({'font-weight' : '600', 'color' : '#345ad9', 'padding-left': '15px'})
+    new_name = $('#menu_' + current_selection).text()
+    new_name = "▶ " + new_name
+    $('#menu_' + current_selection).text(new_name)
+
+    docRef = comment_db.collection("realrankus_comment").doc("accuse_list")
+
+    var comment_html = ""
+    docRef.get().then((accuse_list) => {
+      if (accuse_list.exists) {
+        doc_list = Object.entries(accuse_list.data())
+        if(doc_list.length == 0){
+          comment_html += "<div id='blank_info'>"
+            comment_html += "<div>신고 목록이 없습니다.</div>"
+          comment_html += "</div>"
+        }
+        else{
+          doc_list.sort()
+          doc_list.reverse()
+          var comment_id_list = []
+          var accused_user_list = []
+          doc_list.forEach((doc) => {
+              accused_id = doc[0]
+              comment_id = doc[1]['comment_id']
+              accuser_email = doc[1]['accuser_email']
+              accuser_uid = doc[1]['accuser_uid']
+              accused_email = doc[1]['accused_email']
+              accused_uid = doc[1]['accused_uid']
+              region_name = doc[1]['region_name']
+              region_id = doc[1]['region_id']
+              accuse_type = doc[1]['accuse_type']
+              accuse_reason = doc[1]['accuse_reason']
+              accused_date = doc[1]['accused_date']
+              accused_content_original = doc[1]['accused_content']
+              reply_id = doc[1]['reply_id']
+              in_progress = doc[1]['in_progress']
+
+              accused_content = accused_content_original.replaceAll("\n", "<br>")              
+              
+              written_timestamp = accused_date.toDate()
+              written_date = written_timestamp.getFullYear() + "년 " + (written_timestamp.getMonth()+1) + "월 " + written_timestamp.getDate() + "일"
+              written_time = written_timestamp.getHours() + ":" + (dateReturn(written_timestamp.getMinutes()))
+
+              comment_id_list.push([region_id, comment_id, reply_id])
+              accused_user_list.push(accused_uid)
+              comment_html += "<div class='accuse_list_d1'>"
+
+                comment_html += "<div class='accuse_list_d2'>"                  
+                  comment_html += "<div>" + written_date + ", " + written_time + "&nbsp;&nbsp;(" + accused_id + ")</div>"
+                  if(in_progress){
+                    comment_html += "<div style='color: red; text-align: right; padding-right: 10px'>● 신고 처리 중</div>"
+                    comment_html += "<button class='btn_normal btn btn-success' style='font-size: 0.9em; padding-top: 2px; padding-bottom:2px' onClick='accused_to_done(\"" + accused_id + "\")'>→ 처리 완료</button>"
+                  }
+                  else{
+                    comment_html += "<div style='color: green; text-align: right; padding-right: 10px'>● 처리 완료</div>"
+                    comment_html += "<button class='btn_normal btn btn-danger' style='font-size: 0.9em; padding-top: 2px; padding-bottom:2px' onClick='accused_to_inprogress(\"" + accused_id + "\")'>→ 처리 중</button>"
+                  }
+                comment_html += "</div>"
+
+                comment_html += "<div class='accuse_list_d3'>"
+                  comment_html += "<div class='accuse_list_index'>지역</div>"
+                  comment_html += "<div class='accuse_list_index'>신고사유</div>"                  
+                  comment_html += "<div class='accuse_list_index'>신고된 글</div>"
+                  //comment_html += "<div class='accuse_list_index'>신고된 글 ID</div>"
+                  //comment_html += "<div class='accuse_list_index'>신고된 사람</div>"
+                  comment_html += "<div class='accuse_list_index'>신고한 사람</div>"
+
+                  comment_html += "<div class='accuse_list_content'>" + region_name + "<br><span style='font-size:0.7em'>(" + region_id + ")</span></div>"                  
+                  if(accuse_type == "기타"){
+                    comment_html += "<div class='accuse_list_content'>"
+                      comment_html += "<div>" + accuse_type + "</div>"
+                      comment_html += "<div style='font-size: 0.85em'>" + accuse_reason + "</div>"
+                    comment_html += "</div>"
+                  }
+                  else{
+                    comment_html += "<div class='accuse_list_content'>" + accuse_type + "</div>"
+                  }
+                  comment_html += "<div class='accuse_list_content'>" + accused_content + "</div>"
+                  comment_html += "<div class='accuse_list_content'>" + accuser_email + "<br><span style='font-size:0.7em'>(" + accuser_uid + ")</span></div>"
+                comment_html += "</div>"
+
+                comment_html += "<hr>"
+
+                  comment_html += "<div class='accuse_process'>"
+                    comment_html += "<div class='accuse_table_in_00'>신고처리</div>"
+                    comment_html += "<div class='accuse_process_content'>"
+
+                      //LINE1
+                      comment_html += "<div class='accuse_table_in_01'>신고된 글 ID</div>"
+                      if(reply_id == undefined){
+                        comment_html += "<div class='accuse_table_in_02'>" + comment_id + "</div>"
+                      }
+                      else{
+                        comment_html += "<div class='accuse_table_in_02'>" + comment_id + " → " + reply_id + "</div>"
+                      }
+                      comment_html += "<div class='accuse_table_in_03' id=\'status_" + comment_id + "\'></div>"
+                      comment_html += "<div class='accuse_table_in_04' style='grid-template-columns: repeat(3, 1fr);'>"
+                        if(in_progress){
+                          comment_html += "<button class='btn_del' onClick='admin_hide_comment(\"" + comment_id + "\", \"" + reply_id + "\")'>글 숨김</button>"
+                          comment_html += "<button class='btn_del' onClick='admin_delete_comment(\"" + comment_id + "\", \"" + reply_id + "\")'>글 삭제</button>"
+                          comment_html += "<button class='btn_del' onClick='admin_rollback_comment(\"" + comment_id + "\", \"" + reply_id + "\")''>글 복구</button>"
+                        }
+                        else{
+                          comment_html += "<button class='btn_done'>글 숨김</button>"
+                          comment_html += "<button class='btn_done'>글 삭제</button>"
+                          comment_html += "<button class='btn_done'>글 복구</button>"
+                        }
+                      comment_html += "</div>"
+
+                      //LINE2
+                      comment_html += "<div class='accuse_table_in_01'>신고된 사람</div>"
+                        comment_html += "<div class='accuse_table_in_02'>" + accused_email + " (" + accused_uid + ")</div>"
+                        comment_html += "<div class='accuse_table_in_03' id=\'user_" + comment_id + "_" + accused_uid + "\'></div>"
+                        comment_html += "<div class='accuse_table_in_04' style='grid-template-columns: repeat(5, 1fr)'>"
+                          if(in_progress){
+                            comment_html += "<button class='btn_del' onClick=''>1일 제한</button>"
+                            comment_html += "<button class='btn_del' onClick=''>3일 제한</button>"
+                            comment_html += "<button class='btn_del' onClick=''>7일 제한</button>"
+                            comment_html += "<button class='btn_del' onClick=''>15일 제한</button>"
+                            comment_html += "<button class='btn_del' onClick=''>30일 제한</button>"
+                          }
+                          else{
+                            comment_html += "<button class='btn_done'>1일 제한</button>"
+                            comment_html += "<button class='btn_done'>3일 제한</button>"
+                            comment_html += "<button class='btn_done'>7일 제한</button>"
+                            comment_html += "<button class='btn_done'>15일 제한</button>"
+                            comment_html += "<button class='btn_done'>30일 제한</button>"
+                          }                          
+                      comment_html += "</div>"
+                    comment_html += "</div>"
+                  comment_html += "</div>"
+                comment_html += "</div>"
+              comment_html += "</div>"          
+          })
+          comment_html += "</div>"
+        }
+        $('#comment_list').html(comment_html)
+        addon_status(comment_id_list, accused_user_list)
+      }      
+    })
+  }
+  
+  var global_index = 0
+  function addon_status(comment_list, accused_user_list){
+    console.log(accused_user_list)
+    loop_length = comment_list.length
+    //finding_comment
+    if(global_index >= loop_length){      
+        global_index = 0
+        return;
+    }
+    region_id = comment_list[global_index][0]
+    comment_id = comment_list[global_index][1]
+    reply_id = comment_list[global_index][2]
+    //var commentRef = comment_db.collection("realrankus_comment").doc(region_id) //region_id를    
+    var commentRef = comment_db.collection("realrankus_comment").doc("region_001")
+    var found_comment = ""
+    commentRef.get()
+    .then(data => {
+      if(reply_id == undefined){
+        found_comment =  (data.data())[comment_id]
+      }
+      else{
+        found_comment = (data.data())[comment_id]['reply'][reply_id]
+      }
+
+      console.log(found_comment)
+
+      var showhide_status = ""
+      if(found_comment['show'] == 'normal'){
+        showhide_status = "정상 표시 중"
+      }
+      else if(found_comment['show'] == 'accused'){         
+        showhide_status = "신고에 의한 숨김"
+      }
+      else if(found_comment['show'] == 'restricted_word'){         
+        showhide_status = "금지어 포함으로 숨김"
+      }
+      else if(found_comment['show'] == 'deleted'){         
+        showhide_status = "글 삭제로 인한 숨김"
+      }
+      showhide_html = "<div class='status_showhide'>" + showhide_status + "</div>"
+      $("#status_" + comment_id).html(showhide_html)      
+    })
+    .catch((error) => {
+      console.log(error.message)
+    })
+    .then(() => {
+      accused_uid = accused_user_list[global_index]
+
+      var userRef = firebase.database().ref();
+        var found_user_status = ""
+        userRef.child("users").child(accused_uid).child("status").get()
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            found_user_status = (snapshot.val());
+          }
+          else {
+            firebase.database().ref('users/' + accused_uid + '/status/').set({
+              accused: 0,
+              blocked: 'false',
+              block_days: 0,
+              block_start: '1976-1-1',
+              block_end: '1976-1-1',
+              like: {},
+              dislike: {},
+              accusing: {},
+            })
+          }                    
+          accused_html = "<div class='status_accused'>"
+          accused_html += "<div>신고된 건수 : " + found_user_status['accused'] + "</div>"
+          accused_html += "<div>제한기간 : " + found_user_status['block_days'] + "일 (" + found_user_status['block_start'] + " ~ " + found_user_status['block_end'] + ")</div>"          
+          accused_html += "</div>"        
+          
+          $("#user_" + comment_id + "_" + accused_uid).html(accused_html)
+
+          global_index++
+          addon_status(comment_list, accused_user_list)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    })
+  }
+
+  function admin_hide_comment(comment_id, reply_id){
+    console.log(reply_id)
+    var hideRef = comment_db.collection("realrankus_comment").doc("region_001")
+    if(reply_id == undefined || reply_id == 'undefined' || reply_id == ""){
+      hideRef.update({
+        [comment_id + ".show"] : 'accused'
+      })
+      .then((docRef) => {
+        show_accused_list("accused")
+      })
+      .catch((error) => {        
+      });
+    }
+    else{
+      hideRef.update({
+        [comment_id + ".reply." + reply_id + ".show"] : 'accused'
+      })
+      .then((docRef) => {
+        show_accused_list("accused")
+      })
+      .catch((error) => {        
+      });
+    }
+  }
+
+  function admin_rollback_comment(comment_id, reply_id){
+    console.log(reply_id)
+    var hideRef = comment_db.collection("realrankus_comment").doc("region_001")
+    if(reply_id == undefined || reply_id == 'undefined' || reply_id == ""){
+      hideRef.update({
+        [comment_id + ".show"] : 'normal'
+      })
+      .then((docRef) => {
+        show_accused_list("accused")
+      })
+      .catch((error) => {        
+      });
+    }
+    else{
+      hideRef.update({
+        [comment_id + ".reply." + reply_id + ".show"] : 'normal'
+      })
+      .then((docRef) => {
+        show_accused_list("accused")
+      })
+      .catch((error) => {        
+      });
+    }
+  }  
+
+  function admin_delete_comment(comment_id, reply_id){
+    console.log(reply_id)
+    var hideRef = comment_db.collection("realrankus_comment").doc("region_001")
+    if(reply_id == undefined || reply_id == 'undefined' || reply_id == ""){
+      hideRef.update({
+        [comment_id + ".show"] : 'deleted'
+      })
+      .then((docRef) => {
+        show_accused_list("accused")
+      })
+      .catch((error) => {        
+      });
+    }
+    else{
+      hideRef.update({
+        [comment_id + ".reply." + reply_id + ".show"] : 'deleted'
+      })
+      .then((docRef) => {
+        show_accused_list("accused")
+      })
+      .catch((error) => {        
+      });
+    }
+  }  
+
+  function accused_to_done(accused_id){
+    var accuseRef = comment_db.collection("realrankus_comment").doc("accuse_list")
+    accuseRef.update({
+      [accused_id + ".in_progress"] : false,      
+    })
+    .then((docRef) => {
+      show_accused_list("accused")
+    })
+    .catch((error) => {        
+    });
+  }
+
+  function accused_to_inprogress(accused_id){
+    var accuseRef = comment_db.collection("realrankus_comment").doc("accuse_list")
+    accuseRef.update({
+      [accused_id + ".in_progress"] : true,      
+    })
+    .then((docRef) => {
+      show_accused_list("accused")
+    })
+    .catch((error) => {        
+    });
+  }
+
+  function finding_comment(region_id, parent_id, reply_id){
+    //var commentRef = comment_db.collection("realrankus_comment").doc(region_id) //region_id를    
+    var commentRef = comment_db.collection("realrankus_comment").doc("region_001")
+    commentRef.get()
+    .then(data => {
+      if(reply_id == undefined){
+        return (data.data())[parent_id]
+      }
+      else{
+        return (data.data())[parent_id]['reply'][reply_id]
+      }
+    })
+    .catch((error) => {
+    })
+  }
+
+  function finding_user(accused_uid){
+    var userRef = firebase.database().ref();
+    userRef.child("users").child(accused_uid).child("status").get().then((snapshot) => {
+      if (snapshot.exists()) {
+        return (snapshot.val());
+      } else {
+        firebase.database().ref('users/' + accused_uid + '/status/').set({
+          accused: 0,
+          likeit_comment: [],
+          block_status: "0 days",
+          block_start: new Date('1976-1-1'),
+          block_end: new Date('1976-1-1')
+        })
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  function show_region_comment(region_id, region_name){
+    $('#region_title').html("<div class='region_info'>" + region_name + "</div>")
+
+    $('#menu_' + current_selection).css({'font-weight' : '400', 'color' : 'black', 'padding-left': '35px'})
+    prev_name = $('#menu_' + current_selection).text()
+    prev_name = prev_name.replace("▶ ", "")
+    $('#menu_' + current_selection).text(prev_name)
+    
+    current_selection = region_id
+
+    $('#menu_' + current_selection).css({'font-weight' : '600', 'color' : '#345ad9', 'padding-left': '15px'})
+    new_name = $('#menu_' + current_selection).text()
+    new_name = "▶ " + new_name
+    $('#menu_' + current_selection).text(new_name)
+
+
+    docRef = comment_db.collection("realrankus_comment").doc(region_id)
+    //docRef = comment_db.collection("realrankus_comment").doc("region_001")    
+    var comment_html = ""
+    docRef.get().then((comment_list) => {
+          if (comment_list.exists) {
+            doc_list = Object.entries(comment_list.data())
+            if(doc_list.length == 0){
+              comment_html += "<div id='blank_info'>"
+                comment_html += "<div>" + region_name + "에 등록된 댓글이 없습니다.</div>"
+              comment_html += "</div>"
+            }
+            else{              
+              doc_list.sort()
+              doc_list.reverse()
+              console.log(doc_list)
+              var index = 0
+              doc_list.forEach((doc) => {
+                comment_id = doc[0]
+                user_email = doc[1]['email']
+                reply_list = doc[1]['reply']
+                user_id = doc[1]['uid']                
+                
+                written_timestamp = doc[1]['written'].toDate()
+                written_date = written_timestamp.getFullYear() + "년 " + (written_timestamp.getMonth()+1) + "월 " + written_timestamp.getDate() + "일"
+                written_time = written_timestamp.getHours() + ":" + (dateReturn(written_timestamp.getMinutes()))
+
+                comment_content_original = doc[1]['comment']
+                comment_content = comment_content_original.replaceAll("\n", "<br>")
+                comment_html += "<div class='comment_wapper'>"
+                  comment_html += "<div class='comment_line1'>"
+                    comment_html += "<div><i class='fa-solid fa-user-pen'></i>&nbsp;&nbsp;" + user_email + "</div>"
+                    comment_html += "<div style='text-align:right'>" + written_date + ", " + written_time + "</div>"                    
+                  comment_html += "</div>"
+
+                  comment_html += "<div class='comment_line2'>"
+                    comment_html += "<div class='comment_content' id='comment_content_" + index + "'>" + comment_content + "</div>"
+                  comment_html += "</div>"
+
+                  comment_html += "<div class='comment_line3'>"
+                    comment_html += "<div class='comment_options'><i class='fa-solid fa-heart'></i>&nbsp;&nbsp;" + doc[1]['likeit'] + "</div>"
+                      comment_html += "<div class='comment_addon_button'>"
+                        comment_html += "<div></div>"                        
+                        comment_html += "<div><button class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</button></div>"
+                      comment_html += "</div>"
+                  comment_html += "</div>"
+
+                  comment_html += "<div class='comment_reply'>"
+                    if(reply_list != undefined){
+                      reply_array = Object.entries(reply_list)
+                      reply_array.sort()
+                      for(var k = 0 ; k < reply_array.length ; k++){
+                        reply_detail = Object.entries(reply_list)                        
+                        replied_id = reply_array[k][0]
+
+                        replied_content_original = reply_array[k][1]['comment']
+                        replied_user_id = reply_array[k][1]['uid']
+                        replied_comment = replied_content_original.replaceAll("\n", "<br>")
+
+                        replied_email = reply_array[k][1]['email']
+                        replied_timestamp = reply_array[k][1]['written'].toDate()
+                        replied_date = replied_timestamp.getFullYear() + "년 " + (replied_timestamp.getMonth()+1) + "월 " + replied_timestamp.getDate() + "일"
+                        replied_time = replied_timestamp.getHours() + ":" + (dateReturn(replied_timestamp.getMinutes()))
+                        replied_likeit = reply_array[k][1]['likeit']
+
+                        comment_html += "<div class='comment_reply_list'>"
+                          comment_html += "<div></div>"
+                          comment_html += "<div>"
+
+                            comment_html += "<div class='comment_line1' style='padding-right: 0px; padding-bottom: 0px'>"
+                              comment_html += "<div>by " + user_email + "</div>"
+                              comment_html += "<div style='text-align:right'>" + replied_date + ", " + replied_time + "</div>"                              
+                            comment_html += "</div>"
+
+                            comment_html += "<div class='comment_line2' style='padding-right: 0px; margin-right:0px; padding-top: 5px; padding-bottom: 5px'>"
+                              comment_html += "<div class='comment_content' id=\'" + comment_id + "__" + replied_id + "\'>" + replied_comment + "</div>"
+                            comment_html += "</div>"
+
+                            comment_html += "<div class='comment_line3' style='padding-right: 5px; padding-top: 0px'>"
+                              comment_html += "<div class='comment_options'><i class='fa-solid fa-heart'></i>&nbsp;&nbsp;" + replied_likeit + "</div>"
+                                comment_html += "<div class='comment_addon_button'>"
+                                  comment_html += "<div></div>"                                  
+                                  comment_html += "<div><button class='btn_del' onClick='delete_reply_question(\"" + comment_id + "\", \"" + replied_id + "\")'>삭제</button></div>"
+                                comment_html += "</div>"
+                            comment_html += "</div>"
+
+                          comment_html += "</div>"                          
+                        comment_html += "</div>"                      
+                      }                      
+                    }
+                comment_html += "</div>" 
+                comment_html += "</div>"
+
+                index += 1
+              })
+            }
+          } else {
+            console.log("No comment")
+          }
+
+          $('#comment_list').html(comment_html)
+          comment_list_height = $('#comment_list').height()
+      }).catch((error) => {
+          console.log("Error getting document:", error);
+      });
+  }
+
+  function delete_reply_question(parent_id, reply_id){
+      $('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').html("삭제하면 복구할 수 없습니다. <br> 정말 삭제할까요?")      
+
+      //yesno_html = "<div class='confirm_question'>"
+        yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>아니요</button></div>"
+        yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_reply(\"" + parent_id + "\", \"" + reply_id + "\")'>예</button></div>"
+      //yesno_html += "</div>"
+
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'display':'grid', 'grid-template-columns' : '1fr 1fr', 'justify-items' :'center'})
+      $('#commentModal').modal("show");
+    }
+
+    function delete_reply(parent_id, reply_id){
+      var removeComment = docRef.update({
+        [parent_id + ".reply." + reply_id] : firebase.firestore.FieldValue.delete()
+      })
+      .then((docRef) => {
+        $('#commentModal').modal("hide");
+        //read_comment()
+        show_accused_list("accused")
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+    function delete_comment_question(comment_id){
+      $('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').html("정말 삭제할까요?")      
+
+      //yesno_html = "<div class='confirm_question'>"
+        yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>아니요</button></div>"
+        yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_comment(\"" + comment_id + "\")'>예</button></div>"
+      //yesno_html += "</div>"
+
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'display':'grid', 'grid-template-columns' : '1fr 1fr', 'justify-items' :'center'})
+      $('#commentModal').modal("show");
+    }
+
+    function delete_comment(comment_id){
+      var removeComment = docRef.update({
+        [comment_id]: firebase.firestore.FieldValue.delete()
+      })
+      .then((docRef) => {
+        $('#commentModal').modal("hide");
+        //read_comment()
+        show_accused_list("accused")
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+</script>
+</html>

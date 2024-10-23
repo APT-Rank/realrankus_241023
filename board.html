@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>
+      리얼랭커스 - 데이터로 분석된 아파트 입지 순위 | 아파트 실거래가
+    </title>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="리얼랭커스" />
+    <meta property="og:description" content="우리가 찾던 진짜 부동산 입지 분석 | 아파트 실거래가"/>
+    <meta property="og:image" content="https://www.realrankus.com/thumbnail_4.jpg"/>
+    <meta property="og:url" content="https://www.realrankus.com/" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content="https://www.realrankus.com/" />
+    <meta name="twitter:title" content="리얼랭커스" />
+    <meta name="twitter:description" content="우리가 찾던 진짜 부동산 입지 분석 | 숫자로 보는 아파트 입지 분석, 리얼랭커스 | 아파트 실거래가" />
+
+    <meta name="keyword" content="리얼랭커스, 아파트순위, 부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수, 아파트 실거래가, 아파트 시세, 재건축, 재개발, 실거래가, 시세, 호가, 매매, 전세, 월세" />
+    <meta name="description" content="우리가 찾던 진짜 부동산 입지 분석 | 숫자로 보는 아파트 입지 분석, 리얼랭커스 | 아파트 실거래가" />
+    <meta name="author" content="리얼랭커스" />
+    <meta name="robots" content="index,follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover" />
+    <meta charset="utf-8" />
+
+    <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- 상태 바의 스타일을 지정 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#fff" />
+    <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+    <meta name="apple-mobile-web-app-title" content="리얼랭커스" />
+    <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+    <link rel="apple-touch-icon" href="https://www.realrankus.com/apt-rank-152x152.png" />
+    <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+    <link rel="manifest" href="manifest.json" />    
+    
+
+    <link rel="canonical" href="https://www.realrankus.com/" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    <link rel="shortcut icon" href="https://www.realrankus.com/apr-rank.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/css/SpoqaHanSansNeo.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    
+    <script src="./js/share.js" type="text/javascript"></script>
+    <script src="./js/restrict_words.js" type="text/javascript"></script>
+
+    <link href="./css/style_common.css" rel="stylesheet" />
+    <link href="./css/style.css" rel="stylesheet" />
+    <link href="./css/style_board.css" rel="stylesheet" />
+    <link href="./css/slider.css" rel="stylesheet" />
+
+    <script src="./js/doubleSlider.js" type="text/javascript"></script>
+  </head>
+  <style></style>
+
+  <body ontouchstart="">
+    <div id="container">
+      <div id="centerBox">
+        <div id="comment_list"></div>
+      </div>
+      <hr>
+      <div id="writeBox"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title" id="commentModalLabel"></div>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="commentModifyModal" tabindex="-1" role="dialog" aria-labelledby="commentModifyModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content"> 
+          <div class="modal-header">
+            <div class="modal-title" id="commentModifyModalLabel"></div>
+          </div>         
+          <div class="modal-body"></div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>    
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+  </body>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7s95oaj498XdArjo9cT_8watLVw4JK3M",
+      authDomain: "aptrank-cc61b.firebaseapp.com",
+      databaseURL: "https://aptrank-cc61b-default-rtdb.firebaseio.com",
+      projectId: "aptrank-cc61b",
+      storageBucket: "aptrank-cc61b.appspot.com",
+      messagingSenderId: "987401326011",
+      appId: "1:987401326011:web:8732d04a9fc69280d7489e",
+      measurementId: "G-BH5DRBH380"
+    };
+    const tlgm_token = "7006157322:AAFF0FeURUed_OgSxpIbZGGTYjiB9ZifZsI"
+    const tlgm_sendto = "1572186775"
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    comment_db = firebase.firestore()
+    temp_email = 'anitooni@gmail.com' //사용자 이메일로 수정
+    temp_uid = 'q8x0W4knj4SSqh5uS4EBEdeFepX2' //사용자 uid로 수정
+    blocked = 'false' //사용자 uid로 수정
+    block_start = '2024-3-9 20:43:18' //사용자 uid로 수정
+    block_end = '2024-3-9 20:43:24' //사용자 uid로 수정
+
+    var writebox_html = ""
+    if(blocked == 'true'){
+      writebox_html += "<div id='writeWrapper_none' onclick=''>"
+        writebox_html += "<div id='writing_id'></div>"
+        writebox_html += "<div id='comment_input_wrap_none'>신고에 의해 댓글 사용이 제한되었습니다</div>"
+      writebox_html += "</div>"      
+    }
+    else{
+      writebox_html += "<div id='writeWrapper' onclick='write_comment_modal()'>"
+        writebox_html += "<div id='writing_id'></div>"
+        writebox_html += "<div id='comment_input_wrap_none'>우리 동네 이야기를 남겨보세요</div>"
+      writebox_html += "</div>"
+    }
+
+    $("#writeBox").html(writebox_html)
+    $("#writing_id").html("<div>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + temp_email + "</div>")
+
+    var docRef = comment_db.collection("realrankus_comment").doc("region_001")  //지역 변수로 수정
+
+    //dateReturn 함수는 이미 있으니까 삭제로 수정
+    function dateReturn(n) {
+      return n < 10 ? "0" + n : n;
+    }
+
+    //write_comment(docRef, docData)
+    read_comment()
+
+    function sendTelegram_message(comment){
+      var current_region = "서울시 강남구"
+      var current_region_id = "selectedSubRegion"
+
+      var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+      var tlgm_msg = "[" + current_region + "]" + "%0A"
+      tlgm_msg += "(" + current_region_id + ")" + "%0A%0A"
+
+      var comment_arr = Object.entries(comment)
+      if(comment_arr.length < 2){
+        var w_email = comment_arr[0][1]['email']
+        var w_comment = comment_arr[0][1]['comment']
+        var w_date = comment_arr[0][1]['written']
+      }
+      else{
+        var w_email = comment['email']
+        var w_comment = comment['comment']
+        var w_date = comment['written']
+      }
+      var w_date_set = new Date(w_date)
+      var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth()+1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+              + dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+      w_comment = w_comment.replaceAll("\n", "%0A")
+      w_comment = w_comment.replaceAll("<br>", "%0A")      
+
+      tlgm_msg += "ㆍ " + w_email + "%0A"
+      tlgm_msg += "ㆍ " + w_comment + "%0A"
+      tlgm_msg += "ㆍ " + w_date_str
+
+      var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+      fetch(request_tlgm_url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json())
+      .catch(error => {
+        console.log(error)
+      })
+    }
+
+    function read_comment(){
+      var comment_html = ""
+      docRef.get().then((comment_list) => {
+          if (comment_list.exists) {
+            doc_list = Object.entries(comment_list.data())
+            if(doc_list.length == 0){
+              comment_html += "<div>"
+                comment_html += "<div>첫 번째 랭커스톡의 주인공이 되어주세요!</div>"
+              comment_html += "</div>"
+            }
+            else{
+              doc_list.sort()
+              //console.log(doc_list)
+              var index = 0
+              doc_list.forEach((doc) => {
+                showhide = doc[1]['show']
+                //console.log(showhide)
+                
+                if(showhide != 'normal'){
+                  var restriction_text = ""
+                  if(showhide == 'deleted'){
+                    return
+                  }
+                  else if(showhide == 'accused'){
+                    restriction_text = "신고에 의해 가리기 처리된 글입니다."
+                  }
+                  else if(showhide == 'restricted_word'){
+                    restriction_text = "부적절한 표현으로 가리기 처리된 글입니다."
+                  }
+                  comment_html += "<div class='comment_wapper'>"
+                    comment_html += "<div class='comment_line2'>"
+                      comment_html += "<div class='comment_content' style='text-align: center; color: #aaa'>" + restriction_text + "</div>"
+                    comment_html += "</div>"
+                  comment_html += "</div>"
+                  return
+                }                
+                
+                comment_id = doc[0]
+                user_email = doc[1]['email']
+                reply_list = doc[1]['reply']
+                user_id = doc[1]['uid']                
+                
+                written_timestamp = doc[1]['written'].toDate()
+                written_date = written_timestamp.getFullYear() + "년 " + (written_timestamp.getMonth()+1) + "월 " + written_timestamp.getDate() + "일"
+                written_time = written_timestamp.getHours() + ":" + (dateReturn(written_timestamp.getMinutes()))
+
+                comment_content_original = doc[1]['comment']
+                comment_content = comment_content_original.replaceAll("\n", "<br>")
+
+                for(var p = 0 ; p < restrict_words.length; p++){
+                  comment_content = comment_content.replaceAll(restrict_words[p], "***")
+                }
+
+                comment_html += "<div class='comment_wapper'>"
+                  comment_html += "<div class='comment_line1'>"
+                    comment_html += "<div><i class='fa-solid fa-user-pen'></i>&nbsp;&nbsp;" + user_email + "</div>"
+                    comment_html += "<div style='text-align:right'>" + written_date + ", " + written_time + "</div>"
+                    comment_html += "<div style='text-align:right; color:#aaa' onClick='accuse_modal(\"" + comment_id + "\", \"" + user_email + "\", " + index + ", \"" + user_id + "\")'>[신고하기]</div>"
+                  comment_html += "</div>"
+
+                  comment_html += "<div class='comment_line2'>"
+                    comment_html += "<div class='comment_content' id='comment_content_" + index + "'>" + comment_content + "</div>"
+                  comment_html += "</div>"
+
+                  comment_html += "<div class='comment_line3'>"
+                    comment_html += "<div class='comment_options' id=\'like_" + comment_id + "\' onClick='likeit(\"" + comment_id + "\", \"" + user_id + "\", " + doc[1]['likeit'] + ")'>"
+                      comment_html += "<div><i class='fa-solid fa-heart'></i></div>"
+                      comment_html += "<div id=\'like_num_" + comment_id + "\'>" + doc[1]['likeit'] + "</div>"
+                    comment_html += "</div>"
+                    if(temp_email == doc[1]['email']){
+                      comment_html += "<div class='comment_addon_button'>"
+                        comment_html += "<div></div>"
+                        comment_html += "<div><button class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</button></div>"
+                        comment_html += "<div><button class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</button></div>"
+                      comment_html += "</div>"
+                    }
+                  comment_html += "</div>"
+
+                  comment_html += "<div class='comment_reply'>"
+                    if(reply_list != undefined){
+                      reply_array = Object.entries(reply_list)
+                      reply_array.sort()
+                      for(var k = 0 ; k < reply_array.length ; k++){
+                        reply_detail = Object.entries(reply_list)                  
+                        replied_id = reply_array[k][0]
+                        replied_showhide = reply_array[k][1]['show']                        
+
+                        replied_content_original = reply_array[k][1]['comment']
+                        replied_user_id = reply_array[k][1]['uid']
+                        replied_comment = replied_content_original.replaceAll("\n", "<br>")
+                        for(var p = 0 ; p < restrict_words.length; p++){
+                          replied_comment = replied_comment.replaceAll(restrict_words[p], "***")
+                        }
+
+                        replied_email = reply_array[k][1]['email']
+                        replied_timestamp = reply_array[k][1]['written'].toDate()
+                        replied_date = replied_timestamp.getFullYear() + "년 " + (replied_timestamp.getMonth()+1) + "월 " + replied_timestamp.getDate() + "일"
+                        replied_time = replied_timestamp.getHours() + ":" + (dateReturn(replied_timestamp.getMinutes()))
+                        replied_likeit = reply_array[k][1]['likeit']
+
+                        if(replied_showhide != 'normal'){
+                          var restriction_text = ""
+                          if(replied_showhide == 'deleted'){                            
+                          }
+                          else{
+                            if(replied_showhide == 'accused'){
+                              restriction_text = "신고에 의해 가리기 처리된 글입니다."
+                            }
+                            else if(replied_showhide == 'restricted_word'){
+                              restriction_text = "부적절한 표현으로 가리기 처리된 글입니다."
+                            }
+                            comment_html += "<div class='comment_reply_list'>"
+                              comment_html += "<div></div>"
+                              comment_html += "<div>"
+                                comment_html += "<div class='comment_line1' style='padding-right: 5px; padding-bottom: 0px; border-top: 1px solid #ddd'></div>"
+                                comment_html += "<div class='comment_line2' style='padding-right: 0px; margin-right:0px; padding-top: 5px; padding-bottom: 5px'>"
+                                  comment_html += "<div class='comment_content' style='text-align: center; color: #aaa'>" + restriction_text + "</div>"
+                                comment_html += "</div>"
+                              comment_html += "</div>"
+                            comment_html += "</div>"
+                          }
+                        }
+                        else{
+                          comment_html += "<div class='comment_reply_list'>"
+                            comment_html += "<div></div>"
+                            comment_html += "<div>"
+
+                              comment_html += "<div class='comment_line1' style='padding-right: 5px; padding-bottom: 0px; border-top: 1px solid #ddd'>"
+                                comment_html += "<div>by " + user_email + "</div>"
+                                comment_html += "<div style='text-align:right'>" + replied_date + ", " + replied_time + "</div>"
+                                comment_html += "<div style='text-align:right; color:#aaa' onClick='accuse_reply_modal(\"" + comment_id + "\", \"" + replied_id + "\", \"" + user_email + "\", \"" + replied_user_id + "\")'>[신고하기]</div>"
+                              comment_html += "</div>"
+
+                              comment_html += "<div class='comment_line2' style='padding-right: 0px; margin-right:0px; padding-top: 5px; padding-bottom: 5px'>"
+                                comment_html += "<div class='comment_content' id=\'" + comment_id + "__" + replied_id + "\'>" + replied_comment + "</div>"
+                              comment_html += "</div>"
+
+                              comment_html += "<div class='comment_line3' style='padding-right: 5px; padding-top: 0px'>"
+                                comment_html += "<div class='comment_options' id=\'like_" + replied_id + "\' onClick='reply_likeit(\"" + comment_id + "\" , \"" + replied_id + "\" , \"" + user_id + "\", " + replied_likeit + ")'>"
+                                  comment_html += "<div><i class='fa-solid fa-heart'></i></div>"
+                                  comment_html += "<div id=\'like_num_" + replied_id + "\'>" + replied_likeit + "</div>"
+                                comment_html += "</div>"
+                                if(temp_email == doc[1]['email']){
+                                  comment_html += "<div class='comment_addon_button'>"
+                                    comment_html += "<div></div>"
+                                    comment_html += "<div><button class='btn_del' onClick='modify_reply_modal(\"" + comment_id + "\", \"" + replied_id + "\")'>수정</button></div>"
+                                    comment_html += "<div><button class='btn_del' onClick='delete_reply_question(\"" + comment_id + "\", \"" + replied_id + "\")'>삭제</button></div>"
+                                  comment_html += "</div>"
+                                }
+                              comment_html += "</div>"
+
+                            comment_html += "</div>"                          
+                          comment_html += "</div>"
+                        }
+                      }
+                    }
+                    if(blocked == 'true'){
+                      comment_html += "<div class='comment_reply_box_none'>"
+                    }
+                    else{
+                      comment_html += "<div class='comment_reply_box' onClick='reply_modal(\"" + comment_id + "\")'>"
+                    }
+                      comment_html += "<div></div>"
+                      comment_html += "<div class='reply_user'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + temp_email + "</div>"
+                      comment_html += "<div class='reply_icon'><i class='fa-solid fa-turn-up'></i></div>"
+                      comment_html += "<div class='comment_input_reply'>댓글 남기기</div>"
+                    comment_html += "</div>"
+                  comment_html += "</div>"
+
+                comment_html += "</div>"
+
+                index += 1
+              })
+            }
+          } else {
+            console.log("No comment")
+          }
+
+          $('#comment_list').html(comment_html)
+          comment_list_height = $('#comment_list').height()          
+
+          comment_db.collection("realrankus_comment").doc("region_001").collection(temp_uid).where('like', '==', true).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              like_status = doc.data()
+              if(like_status['like']){
+                $("#like_" + doc.id).css({'color' : '#e31939'})
+              }              
+            })           
+          })
+
+          if(blocked == 'true'){
+            $(".comment_input_reply").html("신고에 의해 댓글 사용이 제한되었습니다")
+            $('.comment_input_reply').css('border', '1px solid #ddd')
+            $(".reply_user").css('color', '#bbb')
+            $(".reply_icon").css('color', '#bbb')            
+            $("#writing_id").css('color', '#bbb')
+            $("#comment_input_wrap_none").css('border', '1px solid #ddd')
+          }
+
+          if(comment_list_height > 500){
+            $('#comment_list').css({'height': '500px', 'overflow-y' : 'auto'})            
+          }
+          $('#comment_list').scrollTop($('#comment_list').prop('scrollHeight'))
+      }).catch((error) => {
+          console.log("Error getting document:", error);
+      });
+    }
+
+    function likeit(comment_id, user_id, like_num){
+      docRef2 = comment_db.collection("realrankus_comment").doc("region_001")
+      docRef2.collection(temp_uid).doc(comment_id).get().then((field) => {        
+        if(field.exists){
+          like = (field.data())['like']          
+          //console.log("LIKE: " + like)
+          if(like){
+            docRef2.collection(temp_uid).doc(comment_id).set({
+              like: false,
+              dislike: false
+            })
+            docRef2.update({
+              [comment_id + ".likeit"]: firebase.firestore.FieldValue.increment(-1)
+            })
+            current_like_num = $('#like_num_' + comment_id).html()                        
+            $('#like_num_' + comment_id).html(Number(current_like_num)-1)
+            $('#like_' + comment_id).css({'color' : '#666'})
+          }
+          else{
+            docRef2.collection(temp_uid).doc(comment_id).set({
+              like: true,
+              dislike: false
+            })
+            docRef2.update({
+              [comment_id + ".likeit"]: firebase.firestore.FieldValue.increment(1)
+            })
+            .then()
+            current_like_num = $('#like_num_' + comment_id).html()                        
+            $('#like_num_' + comment_id).html(Number(current_like_num)+1)
+            $('#like_' + comment_id).css({'color' : '#e31939'})
+          }
+        }
+        else{
+          docRef2.collection(temp_uid).doc(comment_id).set({
+            like: true,
+            dislike: false
+          })
+          docRef.update({
+            [comment_id + ".likeit"]: firebase.firestore.FieldValue.increment(1)
+          })
+          current_like_num = $('#like_num_' + comment_id).html()                        
+          $('#like_num_' + comment_id).html(Number(current_like_num)+1)
+          $('#like_' + comment_id).css({'color' : '#e31939'})
+        }                                    
+      })
+    }
+
+    function reply_likeit(comment_id, reply_id, user_id, like_num){
+      docRef2 = comment_db.collection("realrankus_comment").doc("region_001")
+      docRef2.collection(temp_uid).doc(reply_id).get().then((field) => {        
+        if(field.exists){
+          like = (field.data())['like']
+          //console.log("LIKE: " + like)
+          if(like){
+            docRef2.collection(temp_uid).doc(reply_id).set({
+              like: false,
+              dislike: false
+            })
+            docRef2.update({
+              [comment_id + ".reply." + reply_id + ".likeit"]: firebase.firestore.FieldValue.increment(-1)
+            })
+            current_like_num = $('#like_num_' + reply_id).html()                        
+            $('#like_num_' + reply_id).html(Number(current_like_num)-1)
+            $('#like_' + reply_id).css({'color' : '#666'})
+          }
+          else{
+            docRef2.collection(temp_uid).doc(reply_id).set({
+              like: true,
+              dislike: false
+            })
+            docRef2.update({
+              [comment_id + ".reply." + reply_id + ".likeit"]: firebase.firestore.FieldValue.increment(1)
+            })
+            .then()
+            current_like_num = $('#like_num_' + reply_id).html()                        
+            $('#like_num_' + reply_id).html(Number(current_like_num)+1)
+            $('#like_' + reply_id).css({'color' : '#e31939'})
+          }
+        }
+        else{
+          docRef2.collection(temp_uid).doc(reply_id).set({
+            like: true,
+            dislike: false
+          })
+          docRef.update({
+            [comment_id + ".reply." + reply_id + ".likeit"]: firebase.firestore.FieldValue.increment(1)
+          })
+          current_like_num = $('#like_num_' + reply_id).html()                        
+          $('#like_num_' + reply_id).html(Number(current_like_num)+1)
+          $('#like_' + reply_id).css({'color' : '#e31939'})
+        }                                    
+      })
+    }    
+
+    function write_comment_modal(){
+      title_html = "<div>우리동네 랭커스톡 작성</div>" //"우리동네"를 지역변수로 수정
+
+      comment_html = "<div>"        
+        comment_html += "<div id='comment_write_notice'>"
+          comment_html +=
+          `
+          <div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
+          <div>
+            <ul class='write_notice'>
+              <li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
+              <li>영리 목적의 게시글은 임의로 삭제됩니다.</li>
+              <li>사용자간 토론이 아닌, 리얼랭커스 서비스에 대한 비난은 임의로 삭제됩니다.</li>
+            </ul>
+          </div>
+          `
+        comment_html += "</div>"
+        comment_html += "<hr>"
+        comment_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + temp_email + "</div>"
+        comment_html += "<div><textarea id='comment_input' rows=5 warp='on' resize='none'></textarea></div>"
+        comment_html += "<div id='writing_counter'>0/1000</div>"
+      comment_html += "</div>"
+
+      yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
+      yesno_html += "<div><button class='btn_yes' onClick='write_comment()'>등록</button></div>"
+
+      $('#commentModifyModalLabel').html(title_html);
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').css({'background' : '#efefef'})
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-footer').html(yesno_html);
+      $('#comment_input').focus()
+
+      $('#commentModifyModal').modal("show")
+
+      var oldVal = ""
+      var writing_counter_html = ""
+      $("#comment_input").on("propertychange change keyup paste input", function() {
+          var currentVal = $(this).val();
+          if(currentVal == oldVal) {
+              return;
+          }      
+          oldVal = currentVal;
+          
+          if(currentVal.length > 1000){
+            writing_counter_html = "<span style=color:red>" + currentVal.length + "</span>"
+          }
+          else{
+            writing_counter_html = "<span>" + currentVal.length + "</span>"
+          }
+          $('#writing_counter').html(writing_counter_html + "/1000")
+      });
+    }
+
+    function write_comment(){
+      var docData = {}
+      now = new Date()
+      str_now = Number(now)
+      written_comment = $('#comment_input').val()
+
+      written_checker = written_comment.replaceAll(" ", "")
+      written_checker = written_checker.replaceAll("\n", "")
+
+      //console.log(written_comment)
+      if(written_checker === ''){
+        alert("동네 이야기 작성 후 등록해 주세요!")
+        $('#comment_input').val("")
+      }
+      else if(written_comment.length > 1000){
+        alert("최대 1000글자 까지 등록할 수 있어요!")        
+      }
+      else{
+        docData = {
+            ["comment_" + str_now]: {
+                email: temp_email,
+                uid: temp_uid,
+                comment: written_comment,
+                written: now,
+                likeit : 0,
+                show: "normal"
+            }
+        };
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+              addData(docData)
+            } else {
+              setData(docData)
+            }
+            $("#commentModifyModal").modal("hide")
+            read_comment()
+            $('#comment_input').val("")
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+      }
+    }
+
+    function addData(doc){
+      docRef.update(doc)
+        .then((docRef) => {
+            //console.log("Document written with ID: ", docRef);
+            sendTelegram_message(doc)
+            read_comment()
+            $('#comment_input').val("")
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+    }
+
+    function setData(doc){
+      docRef.set(doc)
+        .then((docRef) => {
+            sendTelegram_message(doc)
+            //console.log("Document written with ID: ", docRef);
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+    }
+
+    function reply_modal(comment_id){
+      title_html = "<div>댓글 작성</div>" //"우리동네"를 지역변수로 수정
+
+      comment_html = "<div>"        
+        comment_html += "<div id='comment_write_notice'>"
+          comment_html +=
+          `
+          <div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
+          <div>
+            <ul class='write_notice'>
+              <li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
+              <li>영리 목적의 게시글은 임의로 삭제됩니다.</li>
+              <li>사용자간 토론이 아닌, 리얼랭커스 서비스에 대한 비난은 임의로 삭제됩니다.</li>
+            </ul>
+          </div>
+          `
+        comment_html += "</div>"
+        comment_html += "<hr>"
+        comment_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + temp_email + "</div>"
+        comment_html += "<div><textarea id='comment_input' rows=5 warp='on' resize='none'></textarea></div>"
+        comment_html += "<div id='writing_counter'>0/500</div>"
+      comment_html += "</div>"
+
+      yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
+      yesno_html += "<div><button class='btn_yes' onClick='reply_comment(\"" + comment_id + "\")'>등록</button></div>"
+
+      $('#commentModifyModalLabel').html(title_html);
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').css({'background' : '#efefef'})
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-footer').html(yesno_html);
+      $('#comment_input').focus()
+
+      $('#commentModifyModal').modal("show")
+
+      var oldVal = ""
+      var writing_counter_html = ""
+      $("#comment_input").on("propertychange change keyup paste input", function() {
+          var currentVal = $(this).val();
+          if(currentVal == oldVal) {
+              return;
+          }      
+          oldVal = currentVal;
+          
+          if(currentVal.length > 500){
+            writing_counter_html = "<span style=color:red>" + currentVal.length + "</span>"
+          }
+          else{
+            writing_counter_html = "<span>" + currentVal.length + "</span>"
+          }
+          $('#writing_counter').html(writing_counter_html + "/500")
+      });
+    }
+
+    function reply_comment(comment_id){
+      var docData = {}
+      now = new Date()
+      str_now = Number(now)
+      written_comment = $('#comment_input').val()
+      written_checker = written_comment.replaceAll(" ", "")
+      written_checker = written_checker.replaceAll("\n", "")
+      
+      if(written_checker === ''){
+        alert("댓글 작성 후 등록해 주세요!")
+        $('#comment_input').val("")
+      }
+      else if(written_comment.length > 500){
+        alert("최대 500글자 까지 등록할 수 있어요!")        
+      }
+      else{
+        docData = {            
+            email: temp_email,
+            uid: temp_uid,
+            comment: written_comment,
+            written: now,
+            likeit : 0,
+            show: "normal"
+        };
+        comment_db.collection("realrankus_comment").doc("region_001")
+
+        docRef.update({
+          [comment_id + ".reply" + ".reply_" + str_now ] : docData,          
+        })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef);
+            sendTelegram_message(docData)          
+            $("#commentModifyModal").modal("hide")
+            read_comment()
+            $('#comment_input').val("")
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+      }
+    }
+
+    function modify_reply_modal(parent_id, reply_id){
+      comment = $("#" + parent_id + "__" + reply_id).html()
+      comment = comment.replaceAll("<br>", "\n")
+
+      title_html = "<div>우리동네 랭커스톡 댓글 수정</div>" //"우리동네"를 지역변수로 수정
+
+      modify_html = "<div>"
+        modify_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + temp_email + "</div>"
+        modify_html += "<div><textarea id='comment_modify_input' rows=5 warp='on' resize='none'></textarea></div>"
+      modify_html += "</div>"
+
+      yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
+      yesno_html += "<div><button class='btn_yes' onClick='modify_reply_comment(\"" + parent_id + "\", \"" + reply_id + "\")'>수정</button></div>"
+
+      $('#commentModifyModalLabel').html(title_html);
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(modify_html)
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').css({'background' : '#efefef'})
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-footer').html(yesno_html);
+
+      $('#comment_modify_input').val(comment)
+      $('#comment_modify_input').focus()
+
+      $('#commentModifyModal').modal("show")       
+    }
+
+    function modify_reply_comment(parent_id, reply_id){
+      updated_comment = $("#comment_modify_input").val()
+      now = new Date()
+      str_now = Number(now)
+
+      docRef.update({
+        [parent_id + ".reply." + reply_id + ".comment" ] : updated_comment,
+        [parent_id + ".reply." + reply_id + ".written" ] : now
+      })
+      .then((docRef) => {
+          console.log("Document written with ID: ", docRef);          
+          $("#commentModifyModal").modal("hide")
+          read_comment()
+          $('#comment_input').val("")
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+    function delete_reply_question(parent_id, reply_id){
+      $('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').html("정말 삭제할까요?")      
+
+      //yesno_html = "<div class='confirm_question'>"
+        yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>아니요</button></div>"
+        yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_reply(\"" + parent_id + "\", \"" + reply_id + "\")'>예</button></div>"
+      //yesno_html += "</div>"
+
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'display':'grid', 'grid-template-columns' : '1fr 1fr', 'justify-items' :'center'})
+      $('#commentModal').modal("show");
+    }
+
+    function delete_reply(parent_id, reply_id){
+      var removeComment = docRef.update({
+        [parent_id + ".reply." + reply_id] : firebase.firestore.FieldValue.delete()
+      })
+      .then((docRef) => {
+        $('#commentModal').modal("hide");
+        read_comment()
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+    function modify_comment_modal(comment_id, comment){
+      comment = comment.replaceAll("<br>", "\n")
+
+      title_html = "<div>우리동네 랭커스톡 수정</div>" //"우리동네"를 지역변수로 수정
+
+      modify_html = "<div>"
+        modify_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + temp_email + "</div>"
+        modify_html += "<div><textarea id='comment_modify_input' rows=5 warp='on' resize='none'></textarea></div>"
+      modify_html += "</div>"
+
+      yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
+      yesno_html += "<div><button class='btn_yes' onClick='modify_comment(\"" + comment_id + "\")'>수정</button></div>"
+
+      $('#commentModifyModalLabel').html(title_html);
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(modify_html)
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').css({'background' : '#efefef'})
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-footer').html(yesno_html);
+
+      $('#comment_modify_input').val(comment)
+      $('#comment_modify_input').focus()
+
+      $('#commentModifyModal').modal("show")      
+    }
+
+    function modify_comment(comment_id){
+      updated_comment = $("#comment_modify_input").val()
+      now = new Date()
+      str_now = Number(now)
+
+      docRef.update({
+        [comment_id + ".comment"] : updated_comment,
+        [comment_id + ".written"] : now
+      })
+      .then((docRef) => {
+          console.log("Document written with ID: ", docRef);          
+          $("#commentModifyModal").modal("hide")
+          read_comment()
+          $('#comment_input').val("")
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+    function delete_comment_question(comment_id){
+      $('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
+      $('#commentModal > .modal-dialog > .modal-content> .modal-body').html("정말 삭제할까요?")      
+
+      //yesno_html = "<div class='confirm_question'>"
+        yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>아니요</button></div>"
+        yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_comment(\"" + comment_id + "\")'>예</button></div>"
+      //yesno_html += "</div>"
+
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
+      $('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'display':'grid', 'grid-template-columns' : '1fr 1fr', 'justify-items' :'center'})
+      $('#commentModal').modal("show");
+    }
+
+    function delete_comment(comment_id){
+      var removeComment = docRef.update({
+        [comment_id]: firebase.firestore.FieldValue.delete()
+      })
+      .then((docRef) => {
+        $('#commentModal').modal("hide");
+        read_comment()
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+    function accuse_modal(comment_id, user_email, comment_index, user_id){
+      title_html = "<div>랭커스톡 신고하기</div>"
+
+      comment_html = "<div>"
+        comment_html += "<div class='writing_id'><i class='fa-solid fa-triangle-exclamation'></i>&nbsp;&nbsp;" + user_email + "님의 랭커스톡을 신고합니다.</div>"
+        comment_html += `
+        <div id='accuse_selection'>
+          <div><input type="radio" class='form-check-input' id="accuse_01" name="accuse" value="욕설 / 비방" checked><label for="accuse_01">&nbsp;&nbsp;욕설 / 비방</label></div>
+          <div><input type="radio" class='form-check-input' id="accuse_02" name="accuse" value="홍보성"><label for="accuse_02">&nbsp;&nbsp;홍보성</label></div>
+          <div><input type="radio" class='form-check-input' id="accuse_03" name="accuse" value="음란물 / 선정성"><label for="accuse_03">&nbsp;&nbsp;음란물 / 선정성</label></div>
+          <div><input type="radio" class='form-check-input' id="accuse_04" name="accuse" value="같은 내용 반복"><label for="accuse_04">&nbsp;&nbsp;같은 내용 반복</label></div>
+          <div>
+            <input type="radio" class='form-check-input' id="accuse_05" name="accuse" value="기타"><label for="accuse_05">&nbsp;&nbsp;기타</label>
+            <div><textarea id='accuse_input' rows=3 warp='on' resize='none' disabled></textarea></div>
+          </div>          
+        </div>
+       `
+      yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
+      yesno_html += "<div><button class='btn_yes' onClick='accuse_comment(\"" + comment_id + "\", \"" + user_email + "\", " + comment_index + ", \"" + user_id + "\")'>신고</button></div>"
+
+      $('#commentModifyModalLabel').html(title_html);
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').css({'background' : '#efefef'})      
+      $('#commentModifyModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
+
+      $('#commentModifyModal').modal("show")
+
+      $("input[name='accuse']").change(function(){
+        if($("input[name='accuse']:checked").val() === "기타"){
+          $('#accuse_input').prop("disabled", false)
+          $('#accuse_input').focus()
+        }
+        else{
+          $('#accuse_input').prop("disabled", true)
+        }
+      })
+    }
+
+    function accuse_comment(comment_id, user_email, comment_index, user_id){
+      var accuseRef = comment_db.collection("realrankus_comment").doc("accuse_list")
+      var current_region = "서울시 강남구" //Region id로 수정
+      var current_region_id = "1168000000_Seoul_Gangnam" //Region id로 수정
+      var accuse_type = $("input[name='accuse']:checked").val()
+      var accuse_comment = $('#accuse_input').val()
+      
+      var accused_comment = $('#comment_content_'+comment_index).text()
+      //console.log(accused_comment)
+
+      written_checker = accuse_comment.replaceAll(" ", "")
+      written_checker = written_checker.replaceAll("\n", "")
+      
+      if(accuse_type === "기타" && written_checker === ''){
+        alert("기타 신고 이유를 작성해 주세요.")
+        $('#accuse_input').val("")
+        return
+      }      
+
+      now = new Date()
+      str_now = Number(now)
+
+      accuseData = {
+          ["accuse_" + str_now]: {              
+              comment_id: comment_id,
+              accuser_email : temp_email,
+              accuser_uid : temp_uid,
+              accused_email: user_email,
+              accused_uid: user_id,
+              region_name : current_region,
+              region_id : current_region_id,              
+              accuse_type : accuse_type,              
+              accuse_reason : accuse_comment,
+              accused_date: now,
+              accused_content: accused_comment,
+              in_progress: true
+          }
+      };
+
+      accuseRef.update(accuseData)
+      .then((accuseRef) => {
+          console.log("Document written with ID: ", accuseRef);
+
+          firebase.database().ref('users_moved').child(user_id).child('status').child('accused')
+          .set(firebase.database.ServerValue.increment(1))
+
+          $('#commentModifyModal').modal("hide")
+
+          $('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
+          $('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
+          meg_html = "<div>" + user_email + "님의 랭커스톡이 신고되었습니다. <br> 운영정책 위배 여부 확인 후, 조치 예정입니다."
+          $('#commentModal > .modal-dialog > .modal-content> .modal-body').html(meg_html)
+
+          //yesno_html = "<div class='confirm_question'>"
+            confirm_html = "<div class='footer_button'><button class='btn_yes' onClick='$(\"#commentModal\").modal(\"hide\")'>확인</button></div>"        
+          //yesno_html += "</div>"
+
+          $('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'grid-template-columns' : '1fr', 'justify-items' :'center'})
+          $('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(confirm_html);
+          $('#commentModal').modal("show");
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+    function accuse_reply_modal(parent_id, reply_id, user_email, user_id){
+      title_html = "<div>랭커스톡 댓글 신고하기</div>"
+
+      comment_html = "<div>"
+        comment_html += "<div class='writing_id'><i class='fa-solid fa-triangle-exclamation'></i>&nbsp;&nbsp;" + user_email + "님의 랭커스톡 댓글을 신고합니다.</div>"
+        comment_html += `
+        <div id='accuse_selection'>
+          <div><input type="radio" class='form-check-input' id="accuse_01" name="accuse" value="욕설 / 비방" checked><label for="accuse_01">&nbsp;&nbsp;욕설 / 비방</label></div>
+          <div><input type="radio" class='form-check-input' id="accuse_02" name="accuse" value="홍보성"><label for="accuse_02">&nbsp;&nbsp;홍보성</label></div>
+          <div><input type="radio" class='form-check-input' id="accuse_03" name="accuse" value="음란물 / 선정성"><label for="accuse_03">&nbsp;&nbsp;음란물 / 선정성</label></div>
+          <div><input type="radio" class='form-check-input' id="accuse_04" name="accuse" value="같은 내용 반복"><label for="accuse_04">&nbsp;&nbsp;같은 내용 반복</label></div>
+          <div>
+            <input type="radio" class='form-check-input' id="accuse_05" name="accuse" value="기타"><label for="accuse_05">&nbsp;&nbsp;기타</label>
+            <div><textarea id='accuse_input' rows=3 warp='on' resize='none' disabled></textarea></div>
+          </div>          
+        </div>
+       `
+      yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
+      yesno_html += "<div><button class='btn_yes' onClick='accuse_reply(\"" + parent_id + "\", \"" + reply_id + "\", \"" + user_email + "\", \"" + user_id + "\")'>신고</button></div>"
+
+      $('#commentModifyModalLabel').html(title_html);
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
+      $('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').css({'background' : '#efefef'})      
+      $('#commentModifyModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
+
+      $('#commentModifyModal').modal("show")
+
+      $("input[name='accuse']").change(function(){
+        if($("input[name='accuse']:checked").val() === "기타"){
+          $('#accuse_input').prop("disabled", false)
+          $('#accuse_input').focus()
+        }
+        else{
+          $('#accuse_input').prop("disabled", true)
+        }
+      })
+    }
+
+    function accuse_reply(parent_id, reply_id, user_email, user_id){
+      var accuseRef = comment_db.collection("realrankus_comment").doc("accuse_list")
+      var current_region = "서울시 강남구" //Region id로 수정
+      var current_region_id = "1168000000_Seoul_Gangnam" //Region id로 수정
+      var accuse_type = $("input[name='accuse']:checked").val()
+      var accuse_comment = $('#accuse_input').val()      
+      var accused_comment = $("#" + parent_id + "__" + reply_id).text()
+
+      written_checker = accuse_comment.replaceAll(" ", "")
+      written_checker = written_checker.replaceAll("\n", "")
+      
+      if(accuse_type === "기타" && written_checker === ''){
+        alert("기타 신고 이유를 작성해 주세요.")
+        $('#accuse_input').val("")
+        return
+      }      
+
+      now = new Date()
+      str_now = Number(now)
+
+      accuseData = {
+          ["accuse_" + str_now]: {              
+              comment_id: parent_id,
+              reply_id : reply_id,
+              accuser_email : temp_email,
+              accuser_uid: temp_uid,
+              accused_email: user_email,
+              accused_uid: user_id,
+              region_name : current_region,
+              region_id : current_region_id,              
+              accuse_type : accuse_type,              
+              accuse_reason : accuse_comment,
+              accused_date: now,
+              accused_content: accused_comment,
+              in_progress: true
+          }
+      };
+
+      accuseRef.update(accuseData)
+      .then((accuseRef) => {
+          console.log("Document written with ID: ", accuseRef);
+          $('#commentModifyModal').modal("hide")
+
+          $('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
+          $('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
+          meg_html = "<div>" + user_email + "님의 랭커스톡이 신고되었습니다. <br> 운영정책 위배 여부 확인 후, 조치 예정입니다."
+          $('#commentModal > .modal-dialog > .modal-content> .modal-body').html(meg_html)
+
+          //yesno_html = "<div class='confirm_question'>"
+            confirm_html = "<div class='footer_button'><button class='btn_yes' onClick='$(\"#commentModal\").modal(\"hide\")'>확인</button></div>"        
+          //yesno_html += "</div>"
+
+          $('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'grid-template-columns' : '1fr', 'justify-items' :'center'})
+          $('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(confirm_html);
+          $('#commentModal').modal("show");
+      })
+      .catch((error) => {
+          console.error("Error adding document: ", error);
+      });
+    }
+
+  </script>
+</html>

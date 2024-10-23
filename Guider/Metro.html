@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>METRO Coordinator</title>
+    <meta charset="utf-8">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="METRO Coordinator" />
+    <meta property="og:description" content="METRO Coordinator" />
+    <meta property="og:image" content="https://www.realrankus.com/priceCal/thumbnail_priceCal.png" />
+    <meta property="og:url" content="https://www.realrankus.com/priceCal/" />
+    <meta name="keyword" content="부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수" />
+    <meta name="description" content="METRO Coordinator" />
+    <meta name="author" content="METRO Coordinator" />
+    <meta name="robots" content="index,follow" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=yes, minimal-ui, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- 상태 바의 스타일을 지정 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+    <meta name="apple-mobile-web-app-title" content="METRO Coordinator" />
+    <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+    <link rel="apple-touch-icon" href="https://www.realrankus.com/biz/apt-rank-biz-152x152.png" />
+    <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+    <link rel="canonical" href="https://www.realrankus.com/biz/" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    <link rel="shortcut icon" href="https://www.realrankus.com/biz/apt-rank-biz.png" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
+    
+    <script src="../js/menu_select_box.js" type="text/javascript"></script>
+    <script src="./metro_map.js" type="text/javascript"></script>
+    <link href="../css/style_common.css" rel="stylesheet"/>
+    <link href="./style_metro.css" rel="stylesheet" />    
+
+    <script type="text/javascript">
+      var UserAgent = navigator.userAgent;
+      var scr_width = screen.width;
+      var scr_height = screen.height;
+    </script>
+  </head>
+  <style></style>
+
+  <body>
+    <!-- 타이틀 영역 -->
+    <div id="titleBar_theme">
+      <!--검색 버튼 표시-->
+      <!-- <div id='help' style='font-size: 1.2em' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div> -->
+      <!-- <div id="rearrange" class="position-relative" onClick='showRearrangeBar(this)'><i class="fa-solid fa-arrow-down-wide-short"></i></div> -->
+      <div></div>
+      <!--타이틀 표시-->
+      <div id="title" onClick="window.location.reload()">METRO Coordinator</span></div>
+      <div id="footer_text">
+        <div></div>
+        <div id="report"></div>
+        <div id="memo"></div>
+      </div>
+      <!--공유 버튼-->
+      <!-- <div id='tripGuide' data-bs-toggle='modal' data-bs-target='#toggleModal1' id='myModal' onClick='showDistance(routeArray)'><i class="fa-solid fa-route"></i></div> -->
+
+      <!--단지 가중치 설정 버튼 표시-->
+      <div id="help"></div>
+    </div>
+
+    <div id="container">
+      <div></div>
+      <div id="centerBox">
+
+        <!--리스트 데이터 붙여넣는 영역-->
+        <div id="contentBox">
+          <div id="mapBack">            
+            <div id="fav_loc1"></div>
+          </div>
+          <div id="metro_option">
+            <div class="station_selection">
+              <input type="radio" id="option1" class='category_selection' name="station_selection" value="station" checked>
+            </div>
+            <div id="metro_region_option">
+              <select class='metro_region' onChange="loadMetro(this.value)">
+                <option value="Seoul" selected>서울/경기</option>
+                <option value="Busan">부산</option>
+                <option value="Daegu">대구</option>
+                <option value="Daejeon">대전</option>
+                <option value="Gwangju">광주</option>                
+              </select>
+            </div>
+
+            <div id="metro_station_info">
+
+              <div class="metro_info_detail">
+                <div class="metro_info_title"><span class='station_title'>역이름</span></div>
+                <div id="station_name"></div>
+              </div>
+
+              <div class="metro_info_detail">
+                <div class="metro_info_title"><span class='station_title'>좌표</span></div>
+                <div id="station_coordination">
+                  <div id="coordination_y"></div>
+                  <div id="coordination_x"></div>
+                </div>
+              </div>
+
+              <div class="metro_info_detail">
+                <div class="metro_info_title"><span class='station_title'>노선</span></div>
+                <div id="station_line"></div>
+              </div>
+
+              <div class="metro_info_detail">
+                <div class="metro_info_title"><span class='station_title'>주소</span></div>
+                <div id="station_addr"></div>                
+              </div>
+
+            </div>
+          </div>
+
+          <div id="metro_station_entrance">
+            <div class="station_selection">
+              <input type="radio" class='category_selection' id="option2" name="station_selection" value="entrance">
+            </div>
+            <div id="entrance">
+              <div>출구정보</div>
+              <div id="entrance_reset" onClick="resetEntrance()">재설정</div>
+            </div>
+            <div id="metro_station_entrance_detail">
+              <div id="entrance0"></div>
+              <div id="entrance1"></div>
+              <div id="entrance2"></div>
+              <div id="entrance3"></div>
+              <div id="entrance4"></div>
+              <div id="entrance5"></div>
+              <div id="entrance6"></div>
+              <div id="entrance7"></div>
+              <div id="entrance8"></div>
+              <div id="entrance9"></div>
+              <div id="entrance10"></div>
+              <div id="entrance11"></div>
+              <div id="entrance12"></div>
+              <div id="entrance13"></div>
+              <div id="entrance14"></div>
+              <div id="entrance15"></div>
+              <div id="entrance16"></div>
+              <div id="entrance17"></div>
+              <div id="entrance18"></div>
+              <div id="entrance19"></div>
+              <div id="entrance20"></div>
+              <div id="entrance21"></div>
+              <div id="entrance22"></div>
+              <div id="entrance23"></div>              
+            </div>
+          </div>
+
+          <div class="PrevNext">
+            <div></div>
+              <div id="PrevNext_interaction">
+                <div id="goPrev" onClick="prevNext('prev')"><i class="fa-solid fa-circle-chevron-left"></i></div>
+                <div id="itemNum">/</div>
+                <div id="goNext" onClick="prevNext('next')"><i class="fa-solid fa-circle-chevron-right"></i></div>
+              </div>
+            <div id="update_info" onClick="updateInformation()">업데이트</div>
+          </div>
+      </div>
+
+      <div></div>
+      <!--리얼랭커스 연결-->
+      <div id="linkToAptrank_bottom"></div>
+    </div>
+
+   
+  <!-- Modal -->
+  <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportModalLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="reportDetail"></div>
+        <div class="modal-footer" id="reportFooter"></div>
+      </div>
+    </div>
+  </div>    
+
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>  
+
+   
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd" ></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd&submodules=geocoder"></script>
+
+  </body>
+  <script>
+    var selectedRegion = "Seoul";
+    var selectedSubRegion = "1168000000_Seoul_Gangnam";
+    var pageName = "aptrank_Guider" //20231020
+
+    var metro_info
+    var metro_all    
+    var regionName = "";
+    var station_coordination = []
+
+    var today = new Date();
+    var today_year = today.getFullYear();
+    var today_month = dateReturn(today.getMonth() + 1);
+    var today_day = dateReturn(today.getDate());
+    var today_num = Number("" + today_year + today_month + today_day);
+    var today_str = today_year + "-" + today_month + "-" + today_day;
+    var report_today_str = today_year + "년 " + (today.getMonth() + 1) + "월 " + today.getDate() + "일";
+
+    var date_delta = 1
+    weekday = today.getDay()
+
+    //일 0, 월 1, 화 2, 수 3, 목 4, 금 5, 토 6
+    if(weekday < 4){
+      date_delta = 4 - weekday
+    }
+    else{
+      date_delta = (4+7) - weekday
+    }
+
+    var tomorrow_num = today.setDate(today.getDate() + date_delta)
+    var tomorrow = new Date(tomorrow_num);
+    var tomorrow_year = tomorrow.getFullYear();
+    var tomorrow_month = dateReturn(tomorrow.getMonth() + 1);
+    var tomorrow_day = dateReturn(tomorrow.getDate());
+    var tomorrow_num = Number("" + tomorrow_year + tomorrow_month + tomorrow_day);
+    var tomorrow_str = tomorrow_year + "-" + tomorrow_month + "-" + tomorrow_day;
+
+    function dateReturn(n) {
+      return n < 10 ? "0" + n : n;
+    }
+
+    var todayMonthQuater = "";
+
+    todayQuaterCheck = today.getMonth() + 1;
+    if (todayQuaterCheck >= 1 && todayQuaterCheck <= 3) {
+      todayMonthQuater = "1Q";
+    } else if (todayQuaterCheck >= 4 && todayQuaterCheck <= 6) {
+      todayMonthQuater = "2Q";
+    } else if (todayQuaterCheck >= 7 && todayQuaterCheck <= 9) {
+      todayMonthQuater = "3Q";
+    } else {
+      todayMonthQuater = "4Q";
+    }
+    var todayQuater = today_year.toString() + "-" + todayMonthQuater;
+
+    var current_pos = 0
+    var lastRegion = ""
+    var Seoul_pos = 0
+    var Busan_pos = 0
+    var Daegu_pos = 0
+    var Daejeon_pos = 0
+    var Gwangju_pos = 0    
+
+    $(document).ready(function () {
+      firebase.initializeApp(firebaseConfig);
+      //showMap(37.51733193, 127.0473774)
+      currentMenu = "aptrank_Metro"  //offcanvas
+
+      lastRegion = localStorage.getItem("lastRegion");
+      Seoul_pos = localStorage.getItem("Seoul");      
+      Busan_pos = localStorage.getItem("Busan");
+      Daegu_pos = localStorage.getItem("Daegu");
+      Daejeon_pos = localStorage.getItem("Daejeon");
+      Gwangju_pos = localStorage.getItem("Gwangju");
+
+      if(Seoul_pos == null){
+        Seoul_pos = 0
+      }
+      if(Busan_pos == null){
+        Busan_pos = 0
+      }
+      if(Daegu_pos == null){
+        Daegu_pos = 0
+      }
+      if(Daejeon_pos == null){
+        Daejeon_pos = 0
+      }
+      if(Gwangju_pos == null){
+        Gwangju_pos = 0
+      }
+
+      if(lastRegion != null){
+        if(lastRegion == "Seoul"){
+          current_pos = Number(Seoul_pos)
+        }
+        if(lastRegion == "Busan"){
+          current_pos = Number(Busan_pos)
+        }
+        if(lastRegion == "Daegu"){
+          current_pos = Number(Daegu_pos)
+        }
+        if(lastRegion == "Daejeon"){
+          current_pos = Number(Daejeon_pos)
+        }
+        if(lastRegion == "Gwangju"){
+          current_pos = Number(Gwangju_pos)
+        }
+        loadMetro(lastRegion)
+      }
+      else{
+        loadMetro("Seoul")
+      }
+    });
+
+    function prevNext(direction){
+      if(direction == 'prev'){
+        current_pos = Number(current_pos)-1
+        if(current_pos < 0){
+          current_pos = 0
+        }
+        else{
+          drawMetroInfo(current_pos)
+        }        
+      }
+
+      if(direction == 'next'){
+        current_pos = Number(current_pos) + 1
+        if(current_pos > metro_info.length-1){
+          current_pos = metro_info.length-1
+        }
+        else{
+          drawMetroInfo(current_pos)
+        }
+      }      
+    }
+  
+    function changeRegion(sido) {
+      find_length = sido.split("_");
+
+      if (find_length.length > 1) {
+        selectedSubRegion = sido;
+        selectedRegion = sido.split("_")[1];
+        optionChange(selectedSubRegion);
+      } else {
+        selectedRegion = sido;
+        $("#sido").val(selectedRegion).prop("selected", true);
+        optionChange();
+      }
+    }
+
+    function hideMap(){
+      $('#step3MapArea').hide()
+      $('#step3Content').show()
+      //$('#step4Content').show()
+      $("#mapOn").show()
+      $("#mapOff").hide()
+    }
+
+    map_width = $("#mapBack").innerWidth()
+    var detailMapOptions = {
+        center: new naver.maps.LatLng(37.553739, 126.9696659),
+        size: new naver.maps.Size(map_width-10, 700),
+        zoom: 16, //지도의 초기 줌 레벨
+        zoomControl: true, //줌 컨트롤의 표시 여부
+        draggable: true,
+        pinchZoom: true,
+        scrollWheel: true,
+        keyboardShortcuts: true,
+        disableDoubleTapZoom: false,
+        disableDoubleClickZoom: false,
+        disableTwoFingerTapZoom: false,
+        tileTransition: true,
+      };
+
+    var detailMap = new naver.maps.Map("fav_loc1", detailMapOptions);
+
+    naver.maps.Event.addListener(detailMap, 'click', function(e) {
+      type_val = $('input[name="station_selection"]:checked').val();          
+      if(type_val == "station"){          
+        stationMarker.setPosition(e.coord);
+        $("#coordination_y").html("Y : " + e.coord.y)
+        $("#coordination_x").html("X : " + e.coord.x)
+        station_coordination = [e.coord.y, e.coord.x]
+      }
+      else{
+        if(entReset == 1){
+          if(marker_num < 24){
+            setEntranceMarker(e.coord)                
+          }              
+        }
+        else{
+          entReset = 0
+        }            
+      }
+  });
+
+    var stationMarker = ""
+    function showMap(coord_y, coord_x){      
+      if(stationMarker){
+        stationMarker.setMap(null)
+      }
+        var station_marker_html = ""
+        move_to_center = new naver.maps.LatLng(coord_y, coord_x)
+        detailMap.setCenter(move_to_center);
+
+        var station_marker_name = metro_info['역이름']
+
+        station_marker_html = "<div class='station_marker'>" + station_marker_name + "</div>"
+        //var station_marker_html = "<div class='station_marker'></div>"        
+
+        stationMarker = new naver.maps.Marker({
+          position: new naver.maps.LatLng(Number(coord_y)+0.00005, Number(coord_x)-0.0001),
+          icon: {
+                content: station_marker_html,
+                size: new naver.maps.Size(10, 10),
+                origin: new naver.maps.Point( Number(coord_y), Number(coord_x) )
+          },
+          zIndex: 250,
+          map: detailMap,          
+        });
+    }
+
+    function loadMetro(metroRegion){
+      regionName = metroRegion
+      localStorage.setItem("lastRegion", metroRegion);
+      if(regionName == "Seoul"){
+        current_pos = Seoul_pos
+      }
+      if(regionName == "Busan"){
+        current_pos = Busan_pos
+      }
+      if(regionName == "Daegu"){
+        current_pos = Daegu_pos
+      }
+      if(regionName == "Daejeon"){
+        current_pos = Daejeon_pos
+      }
+      if(regionName == "Gwangju"){
+        current_pos = Gwangju_pos
+      }
+      $(".metro_region").val(metroRegion).prop("selected", true);
+      firebase.database().ref().child("metro_info").child(metroRegion).get()
+      .then((snapshot) => {
+        if(snapshot.exists()){
+          metro_all = snapshot.val()
+          drawMetroInfo(current_pos)          
+        }
+        else{
+          alert("불러오기 실패했어요. 다시 시도해 주세요.")
+        }
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })
+    }
+
+    function drawMetroInfo(order){
+      firebase.database().ref().child("metro_info").child(regionName).child(order).get()
+      .then((snapshot) => {
+        if(snapshot.exists()){
+          metro_info = snapshot.val()
+
+          console.log("METRO_INFO" , metro_info)
+
+          station_name = metro_info['역이름']
+          $("#station_name").html(station_name)          
+          
+          station_coordination_x = metro_info['x']
+          station_coordination_y = metro_info['y']
+          $("#coordination_y").html("Y : " + station_coordination_y)
+          $("#coordination_x").html("X : " + station_coordination_x)
+          station_coordination = [station_coordination_y, station_coordination_x]
+
+          station_address = metro_info['주소']
+          $("#station_addr").html(station_address)
+          
+          station_line = metro_info['노선']
+          str_station_line = station_line.join(', ')
+          $("#station_line").html(str_station_line)      
+
+          for(var k = 0; k < 24; k++){
+            $("#entrance" + k).html("")
+          }
+
+          station_entrance = metro_info['출구좌표']
+          for(var i = 0; i < station_entrance.length; i++){        
+            str_station_entrance = station_entrance[i].join(', ')
+            $("#entrance" + i).html("<div class='entrance_coordination'>[" + (i+1) + "] " + str_station_entrance + "</div>")
+          }
+          
+          $('#itemNum').html( (Number(current_pos) + 1 ) + " / " + metro_all.length)
+
+          showMap(station_coordination_y, station_coordination_x)
+          createEntranceMarker(station_entrance)
+
+          if(regionName == "Seoul"){
+            Seoul_pos = current_pos
+          }
+          if(regionName == "Busan"){
+            Busan_pos = current_pos
+          }
+          if(regionName == "Daegu"){
+            Daegu_pos = current_pos
+          }
+          if(regionName == "Daejeon"){
+            Daejeon_pos = current_pos
+          }
+          if(regionName == "Gwangju"){
+            Gwangju_pos = current_pos
+          }
+          localStorage.setItem(regionName, Number(current_pos));
+        }
+        else{
+          alert("불러오기 실패했어요. 다시 시도해 주세요.")
+        }
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })      
+    }
+
+    entReset = 0
+    function resetEntrance(){
+      $('#option2').prop('checked', true);      
+      entrance_marker_coordination = []
+      entReset = 1
+      marker_num = 0
+      for(var k = 0; k < 24; k++){
+        $("#entrance" + k).html("")
+      }
+      for(var i = 0; i < entrance_markers.length; i++){
+        hideMarker(detailMap, entrance_markers[i])
+      }
+      entrance_markers = []
+    }
+
+    var marker_num = 0
+    function setEntranceMarker(coordination){
+      console.log(entrance_marker_coordination)
+
+      var entrance_marker_html = `
+      <div class='entrance_marker'>${(Number(marker_num)+1)}</div>      
+      `
+      var entrance_marker_obj = new naver.maps.Marker({
+        position: new naver.maps.LatLng(Number(coordination.y), Number(coordination.x)),
+        icon: {
+            content: entrance_marker_html,
+            size: new naver.maps.Size(12, 12),
+            anchor: new naver.maps.Point(12, 40),
+            origin: new naver.maps.Point( Number(coordination.y), Number(coordination.x) )
+        },
+        zIndex: 100,
+        map: detailMap,            
+      });
+      entrance_markers.push(entrance_marker_obj)
+      entrance_marker_coordination.push([Number(coordination.y), Number(coordination.x)])
+      $("#entrance" + marker_num).html("<div class='entrance_coordination'>[" + (marker_num+1) + "] " + coordination.y + ", " + coordination.x  + "</div>")
+
+      marker_num++
+    }
+
+    var entrance_markers = []
+    var entrance_marker_coordination = []
+    function createEntranceMarker(markers){
+      for(var i = 0; i < entrance_markers.length; i++){
+        hideMarker(detailMap, entrance_markers[i])
+      }
+
+      entrance_markers = []
+      entrance_marker_coordination = []
+
+      var mapBounds = detailMap.getBounds();
+
+      for(var i in markers){
+        //if(mapBounds.hasLatLng(markers[i])){
+          var entrance_marker_html = `
+          <div class='entrance_marker'>${(Number(i)+1)}</div>      
+          `
+          var entrance_marker_obj = new naver.maps.Marker({
+            position: new naver.maps.LatLng(Number(markers[i][0]), Number(markers[i][1])),
+            icon: {
+                content: entrance_marker_html,
+                size: new naver.maps.Size(12, 12),
+                anchor: new naver.maps.Point(12, 40),
+                origin: new naver.maps.Point( Number(markers[i][0]), Number(markers[i][1]) )
+            },
+            zIndex: 100,
+            map: detailMap,            
+          });
+          entrance_markers.push(entrance_marker_obj) 
+          entrance_marker_coordination.push([Number(markers[i][0]), Number(markers[i][1])])
+        //}
+      }
+      updateMarkers(detailMap, entrance_markers);
+
+      for(var i in entrance_markers){    
+        naver.maps.Event.addListener(entrance_markers[i], 'click', ""/*level0MarkerAction(level0_markers[i])*/);
+      }
+    }
+
+    function updateMarkers(map, markers) {  
+      var mapBounds = map.getBounds();
+      var marker, position;
+
+      for (var i = 0; i < markers.length; i++) {
+          marker = markers[i]
+          position = marker.getPosition();
+
+          if (mapBounds.hasLatLng(position)) {
+              showMarker(map, marker);
+          } else {
+              hideMarker(map, marker);
+          }
+      }
+    }
+
+    function showMarker(map, marker) {
+      if (marker.getMap()) return;
+      marker.setMap(map);
+    }
+
+    function hideMarker(map, marker) {
+      if (!marker.getMap()) return;
+      marker.setMap(null);
+    }
+
+    function updateInformation(){
+      console.log("Region Name : " , regionName)
+      console.log("station_coordination : ", station_coordination)
+      console.log("entrance_marker_coordination : ", entrance_marker_coordination)      
+
+      entrance_obj = []
+      for(var i = 0 ; i < entrance_marker_coordination.length ; i++){
+        entrance_obj.push({0:entrance_marker_coordination[i][0], 1:entrance_marker_coordination[i][1]})
+      }
+
+      var updates = {}
+      updates["/" + current_pos + "/x"] = station_coordination[1]
+      updates["/" + current_pos + "/y"] = station_coordination[0]
+      updates["/" + current_pos + "/출구좌표"] = entrance_obj
+      
+      firebase.database().ref().child("metro_info").child(regionName).update(updates)
+      .then(() => {
+        toastr.options = {
+          closeButton: false,
+          progressBar: false,
+          showMethod: 'fadeIn',
+          closeMethod: 'fadeOut',
+          positionClass: "toast-bottom-center",
+          timeOut: 1000
+        };
+        output = "업데이트 되었습니다."
+        toastr.success(output);      
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })
+    }
+
+    function searchCoordinateToAddress(y, x) {
+      naver.maps.Service.reverseGeocode({
+        coords: new naver.maps.LatLng(y, x),
+        }, function(status, response) {
+            if (status !== naver.maps.Service.Status.OK) {
+                return alert('네트워크 오류가 발생했어요! 다시 시도해 주세요!');
+            }
+
+            var result = response.v2, // 검색 결과의 컨테이너
+                items = result.results, // 검색 결과의 배열
+                address = result.address; // 검색 결과로 만든 주소            
+
+            var map_region = items[0]['region']['area1']['name']
+            var map_subregion = items[0]['region']['area2']['name']
+
+            map_region = map_region.replace("특별시", "시")
+            map_region = map_region.replace("특별자치시", "시")
+            map_region = map_region.replace("특별자치도", "도")
+            map_region = map_region.replace("광역시", "시")
+            
+            if(map_region == "세종시"){
+              map_subregion = "세종시"
+            }
+           
+            current_sido = $("#sido option:selected").val();
+            current_gungu = $("#gungu option:selected").val();
+
+            for (var i = 0 ; i < regions.length ; i++){
+              if(regions[i][0] == map_region){
+                region_val = regions[i][1]
+                $("#sido").val(region_val).prop("selected", true);
+                subRegionVal = "in" + region_val
+                subRegionValList = eval(subRegionVal)
+
+                for(var j = 0 ; j < subRegionValList.length ; j++){                  
+                  if(subRegionValList[j][0] == map_subregion){
+                    selectedSubRegion = subRegionValList[j][1]
+                    optionChange(selectedSubRegion)
+                    updateRegion()
+                    break;
+                  }
+                }                
+              }
+            }            
+        });      
+    }
+    var pcDevice = "win16|win32|win64|mac|macintel";
+  </script>
+</html>

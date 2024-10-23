@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KNL2VQN');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-218993952-1">
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-218993952-1');
+
+    if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('serviceWorker_theme.js')
+      .then((reg) => {
+        console.log('Service Worker Registered!', reg);
+      });
+    }
+  </script>
+
+  <title>리얼랭커스 Theme</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="리얼랭커스:THEME">
+  <meta property="og:description" content="대한민국 아파트 테마별 분류">
+  <meta property="og:image" content="https://www.realrankus.com/theme/thumbnail_theme.png">
+  <meta property="og:url" content="https://www.realrankus.com/theme/">
+  <meta name="keyword" content="부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수">
+  <meta name="description" content="대한민국 아파트 테마별 분류">
+  <meta name="author" content="리얼랭커스">
+  <meta name="robots" content="index,follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+
+  <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- 상태 바의 스타일을 지정 -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#fff">
+  <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+  <meta name="apple-mobile-web-app-title" content="리얼랭커스:THEME">
+  <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+  <link rel="apple-touch-icon" href="https://www.realrankus.com/theme/apt-rank-theme-152x152.png">
+  <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+  <link rel="manifest" href="manifest_theme.json">  
+
+  <link rel="canonical" href="https://www.realrankus.com/theme/">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="shortcut icon" href="https://www.realrankus.com/theme/apt-rank-theme.png"/>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"  crossorigin="anonymous"></script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>  
+  <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
+
+  <script src="../js/menu_select_box.js" type="text/javascript"></script>
+  <script src="../js/draw_chart.js" type="text/javascript"></script>
+  <script src="../js/sort.js" type="text/javascript"></script>
+  <script src="../js/search_theme.js" type="text/javascript"></script>
+  <script src="../js/rearrange_theme.js" type="text/javascript"></script>
+  <script src="../js/share.js" type="text/javascript"></script>
+  <script src="../js/distance.js" type="text/javascript"></script>
+  <script src="../js/ad_aptrank_theme.js" type="text/javascript"></script>
+
+  <link href="../css/style_common.css" rel="stylesheet"/>
+  <link href="../css/style_theme.css" rel="stylesheet"/>
+  <link href="../css/slider.css" rel="stylesheet"/>
+  <link href="../css/distance.css" rel="stylesheet"/>
+
+  <script src="../js/doubleSlider.js" type="text/javascript"></script>
+</head>
+<style>
+</style>
+
+<body ontouchstart="">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KNL2VQN"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->  
+
+  <div id="container">
+    <div id="centerBox">
+      <div id="titleBar_theme">
+        <!--검색 버튼 표시-->
+        <div id='themeShare'></div>        
+        <div id="rearrange" class="position-relative" onClick='showRearrangeBar(this)'><i class="fa-solid fa-arrow-down-wide-short"></i></div>
+        <!--타이틀 표시-->
+        <div id="title" onClick='scrollUp()'><img src="./apt-rank_theme_blank.png" height="34px"/></div>
+        <!--공유 버튼-->
+        <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
+        <div id="guide_and_search">          
+        </div>
+        <!--단지 가중치 설정 버튼 표시-->
+        <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right" aria-controls="offcanvasRight"><i class="fa-solid fa-ellipsis"></i></div>
+
+      </div>
+
+      <div id="themeSelections">        
+        <div id="sido_selection"><select id="sido" onChange="sidoChange()"></select></div>
+        <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"></select></div>        
+        <div id="theme_selection">
+          <select id="theme" onChange="updateTheme()">            
+            <option value="under100M" selected>공시가격 1억 이하</option>
+            <option value="under300M">공시가격 3억 이하</option>
+            <option value="under5floor">5층 이하 단지</option>
+            <option value="over30year">30년 이상 단지</option>
+            <option value="newApt">분양권</option>
+            <option value="rebuild">재건축</option>
+            <option value="hPriceRatio">최고가 대비 변동</option>
+            <option value="ratioFrom202107">'21.7월 대비 변동</option>
+            <option value="tripGuide">동별 임장 가이드</option>
+          </select>
+        </div>
+      </div>
+
+      <!--단지 가중치 표시창-->
+      <div id="weight">업데이트: 2024-10-03, 네이버 부동산 정보 | 공시 기준일 2024-01-01</div>  <!--수정-->
+
+      <!--단지 검색창-->
+      <div id="searchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="searchGuide">
+          <div id="searchNotice"></div>
+          <div id="inputBox"><input id="inputSearch" type="text" placeholder="어느 단지를 찾아볼까요?" onkeyup="aptSearch()"></div>
+          <div id="searchExample">예) 서초동, 래미안, 힐스테이트, 주공</div>
+
+        </div>
+        <div id="closeSearch" onClick='closeSearch()' ><i class="fas fa-times"></i></div>
+      </div>
+
+      <!--시군구 검색창-->
+      <div id="regionSearchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="regionSearchGuide">
+          <div id="regionSearchNotice">전국 시군구 이름으로 검색합니다.</div>
+          <div id="regionInputBox"><input id="regionInputSearch" type="text" placeholder="어느 시군구를 찾아볼까요?" onkeyup="regionSearch()"></div>
+          <div id="regionSearchExample">예) 서울, 창원, 강남, 서구</div>
+
+        </div>
+        <div id="closeRegionSearch" onClick='closeRegionSearch()' ><i class="fas fa-times"></i></div>
+      </div>
+
+      <!--단지 정렬창-->
+      <div id="rearrangeCard">
+        <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
+        <div id="rearrangeContatiner">
+            <div id="rearrangeNotice"></div>
+            <div class='rearrangeArea'>              
+            </div>
+        </div>
+        <div id="closeRearrange" onClick='closeRearrange()' ><i class="fas fa-times"></i></div>
+      </div>
+
+      <!--시군구 정렬창-->
+      <div id="rearrangeRegionCard">
+        <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
+        <div id="rearrangeContatiner">
+            <div id="rearrangeRegionNotice"></div>
+            <div class='rearrangeArea'>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionScore' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionScore'>총점순</label></div>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionRank' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionRank'>순위변동순</label></div>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPop' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionPop'>인구순</label></div>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPopUpDown' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionPopUpDown'>인구증감순</label></div>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionJob' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionJob'>일자리순</label></div>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionIncome' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionIncome'>소득순</label></div>
+            </div>
+        </div>
+        <div id="closeRegionRearrange" onClick='closeRegionRearrange()' ><i class="fas fa-times"></i></div>
+      </div>
+
+      <!--리스트 데이터 붙여넣는 영역-->
+      <div id="themeDataList"></div>      
+
+      <!--리얼랭커스 연결-->      
+      <div id="linkToAptrank_bottom"></div>
+
+      <!--단지 검색창 닫기 플로팅 버튼-->
+      <div id="closeSearch_floating" onClick='closeSearch()'>
+        <div id='closeSearch_floting_wraper'>
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">검색닫기</div>
+        </div>
+      </div>
+      <!--시군구 검색창 닫기 플로팅 버튼-->
+      <div id="closeRegionSearch_floating" onClick='closeRegionSearch()'>
+        <div id='closeSearch_floting_wraper'>
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">검색닫기</div>
+        </div>
+      </div>
+      <!--단지 재정렬창 닫기 플로팅 버튼-->
+      <div id="closeRearrange_floating" onClick='closeRearrange()'>
+        <div id='closeSearch_floting_wraper'>
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">정렬닫기</div>
+        </div>
+      </div>
+      <!--단지 재정렬창 닫기 플로팅 버튼-->
+      <div id="closeRegionRearrange_floating" onClick='closeRegionRearrange()'>
+        <div id='closeSearch_floting_wraper'>
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">정렬닫기</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Vertically centered scrollable modal -->
+  <!-- Button trigger modal -->
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id='aptDetail'></div>
+        <div id='footer'></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggle Modal -->
+  <div class="modal fade" id="toggleModal1" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id='distanceDetail'></div>
+        <div id='toggle1footer'></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="toggleModal2" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id='distanceDetail'></div>
+        <div id='footer'></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offcanvas Right -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">MENU</h5>
+      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!-- Offcanvas Profile -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel"></h5><i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>  
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div>  
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>  
+  
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd"></script>
+
+</body>
+
+<script src="../js/login_240308.js" type="text/javascript"></script>
+<script src="../js/apple.js" type="text/javascript"></script>
+<script type="module" src="../js/con_counter.js"></script>
+
+<script>
+  var selectedRegion = "Seoul"
+  var selectedSubRegion = "1168000000_Seoul_Gangnam"
+  var selectedTheme = "under100M"
+  var updatedMonth = "202410" //수정
+
+  var updated_ver = "?v=1.0"
+  var blank_height = "3em"
+
+  var pageName = "aptrank_THEME" //20231020  
+
+  var regionName = ""
+
+  var linked = ""
+  var regionValue = ""
+
+  var itemNum = 0;
+  var aptData = "";
+  var aptData_original = "";
+  var sortData = "";
+  var prevValue = 0;
+  var regData = "";
+  var regSortData = "";
+
+  var modalState = 0;
+  var searchState = 0;
+  var popupHistory = [];
+  var routeArray = []
+
+  var currentMenu = ""
+
+  var popMsg = "클립보드에 복사되었습니다."
+
+  var today = new Date()
+  var today_year = today.getFullYear();
+  var today_month = dateReturn( (today.getMonth() + 1))
+  var today_day = dateReturn( today.getDate() );
+  var today_num = Number("" + today_year + today_month + today_day)
+  var today_str = today_year + "-" + today_month + "-" + today_day
+
+  function dateReturn(n){
+    return n<10 ? "0"+n : n
+  }
+
+  $(document).ready(function(){
+    //document.cookie = "safeCookie1=foo; SameSite=Lax";
+    //document.cookie = "safeCookie2=foo";
+    //document.cookie = "crossCookie=bar; SameSite=None; Secure";
+
+    Kakao.init(kakaoKey);
+    countUp(pageName)
+
+    // SDK 초기화 여부를 판단합니다.
+    //console.log(Kakao.isInitialized());
+    
+    var option = ""
+    for(i = 1 ; i < regions.length ; i++){
+        option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>"
+    }
+    $('#sido').html(option)
+
+    $('#themeDataList').css({'padding-top': '115px'})
+
+    var lastRegion = localStorage.getItem('lastRegion')
+    var lastSubRegion = localStorage.getItem('lastSubRegion')
+    var lastTheme = localStorage.getItem('lastTheme')
+    var lastNoticed = localStorage.getItem('lastNoticed')        
+
+    //var lastRegion = sessionStorage.getItem('lastRegion')
+    //var lastSubRegion = sessionStorage.getItem('lastSubRegion')
+    //var lastMonth = sessionStorage.getItem('lastMonth')
+
+    const url = new URL(window.location.href)
+    const urlParams = url.searchParams
+    console.log(urlParams)
+
+    if(urlParams.has('reg')){
+      console.log(urlParams.get('reg'))
+      selectedRegion = urlParams.get('reg')
+    }
+    else if(lastRegion != null){
+      selectedRegion = lastRegion
+    }
+
+    if(urlParams.has('sub')){
+      console.log(urlParams.get('sub'))
+      selectedSubRegion = urlParams.get('sub')
+    }
+    else if(lastSubRegion != null){
+      selectedSubRegion = lastSubRegion
+    }
+
+    if(selectedRegion == 'Korea'){
+      selectedRegion = 'Seoul'
+      selectedSubRegion = '1168000000_Seoul_Gangnam'
+    }    
+
+    if(urlParams.has('theme')){
+      console.log(urlParams.get('theme'))
+      selectedTheme = urlParams.get('theme')
+    }
+    else if(lastTheme != null){
+      selectedTheme = lastTheme
+    }    
+
+    $('#themeDataList').html("");
+
+    optionChange(selectedSubRegion, selectedRegion);
+    updateRegion()
+    initSorting()
+
+    //$("#theme").val(selectedTheme).prop("selected", true);    
+    //$("#sido").val(selectedRegion).prop("selected", true);
+    regionName = $("#sido option:selected").val();
+
+    $('div.modal').on('show.bs.modal', function() {
+      var modal = this;
+      var hash = modal.id;
+      window.location.hash = hash;
+      window.onhashchange = function() {
+        if (!location.hash){
+          $(modal).modal('hide');
+        }
+      }
+    });
+
+    $('div.modal').on('hidden.bs.modal', function() {
+      var hash = this.id;
+      history.replaceState('', document.title, window.location.pathname);
+    })
+
+    /*
+    if($.cookie('popThemeCookie') != "202211" && login_status == false){
+      showNotice()
+      $('#exampleModal').modal("show");
+    }
+    */
+
+    if(UserAgent.indexOf("inApp")>-1){
+      if(checkMobile() == "ios"){
+        shareHtml = "<div class='toShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+      }
+      else{
+        shareHtml = "<div class='tShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"kakao_icon.png\" height=\"28px\"/></div>"
+      }
+    }
+    else{
+      shareHtml = "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"      
+    }
+    $('#themeShare').html(shareHtml)
+
+    tripGuide_html = "<div id='tripGuide' data-bs-toggle='modal' data-bs-target='#toggleModal1' id='myModal' onClick='showDistance(routeArray)'><i class='fa-solid fa-route'></i></div>"
+    search_html = "<div id='search' onClick='showAptSearchBar()'><i class='fas fa-search'></i></div>"
+
+    if(selectedSubRegion == 'hPriceRatio' || selectedSubRegion == 'ratioFrom202107'){      
+      $('#guide_and_search').html(search_html)
+    }
+    else{
+      $('#guide_and_search').html(tripGuide_html)
+    }
+
+    if(checkMobile() == "ios"){ blank_height = "3em" }
+    else{ blank_height = "3em" }
+    $("#linkToAptrank").css('height', blank_height)
+    $("#linkToAptrank").css('line-height', blank_height)
+
+    currentMenu = "aptrank_theme"  //offcanvas  
+    setOffcanvasMenu() //offcanvas
+    //login_checker() //LOGIN
+    setBottomMenu()
+    if(!isMobile){
+      $("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
+    }
+  });
+
+  function sidoChange(){
+    optionChange()
+    updateRegion()
+  }
+
+  function saveLocalStorage(){
+    localStorage.setItem('lastRegion', selectedRegion)
+    localStorage.setItem('lastSubRegion', selectedSubRegion)
+    localStorage.setItem('lastTheme', selectedTheme)
+    //localStorage.setItem('lastMonth', selectedMonth)
+
+    //sessionStorage.setItem('lastRegion', selectedRegion)
+    //sessionStorage.setItem('lastSubRegion', selectedSubRegion)
+    //sessionStorage.setItem('lastMonth', selectedMonth)
+  }
+
+  function scrollUp(){
+    $( 'html, body' ).animate( { scrollTop : 0 }, 50 );
+  }
+
+  var dongList = []
+
+  function loadDongList(sido, gungu){
+    if(sido == 'Seoul'){
+      changeItem = inSeoul
+    }
+    if(sido == 'Busan'){
+      changeItem = inBusan
+    }
+    if(sido == 'Incheon'){
+      changeItem = inIncheon
+    }
+    if(sido == 'Daegu'){
+      changeItem = inDaegu
+    }
+    if(sido == 'Gwangju'){
+      changeItem = inGwangju
+    }
+    if(sido == 'Daejeon'){
+      changeItem = inDaejeon
+    }
+    if(sido == 'Ulsan'){
+      changeItem = inUlsan
+    }
+    if(sido == 'Sejong'){
+      changeItem = inSejong
+    }
+    if(sido == 'Gyeonggi'){
+      changeItem = inGyeonggi
+    }
+    if(sido == 'Gangwondo'){
+      changeItem = inNewGangwondo
+    }
+    if(sido == 'Chungcheongbukdo'){
+      changeItem = inChungcheongbukdo
+    }
+    if(sido == 'Chungcheongnamdo'){
+      changeItem = inChungcheongnamdo
+    }
+    if(sido == 'Jeollabukdo'){
+      changeItem = inNewJeollabukdo
+    }
+    if(sido == 'Jeollanamdo'){
+      changeItem = inJeollanamdo
+    }
+    if(sido == 'Gyeongsangbukdo'){
+      changeItem = inGyeongsangbukdo
+    }
+    if(sido == 'Gyeongsangnamdo'){
+      changeItem = inGyeongsangnamdo
+    }
+    if(sido == 'Jejudo'){
+      changeItem = inJejudo
+    }
+
+    for(var i = 0 ; i < changeItem.length; i++){
+      if(changeItem[i][1] == gungu)
+        dongList = changeItem[i][2]        
+    }    
+  }
+
+  function optionChange(subRegion, upperReion){
+    selectedSubRegion = subRegion;
+      if(upperReion == null || upperReion == "" || upperReion == undefined){
+        regionName = $("#sido option:selected").val();
+      }
+      else{
+        regionName = upperReion        
+        $("#gungu").val(selectedSubRegion).prop("selected", true);
+      }      
+      selectedRegion = regionName;
+      $("#sido").val(selectedRegion).prop("selected", true);
+    
+    var changeItem
+
+    if(regionName == 'Seoul'){
+      changeItem = inSeoul
+    }
+    if(regionName == 'Busan'){
+      changeItem = inBusan
+    }
+    if(regionName == 'Incheon'){
+      changeItem = inIncheon
+    }
+    if(regionName == 'Daegu'){
+      changeItem = inDaegu
+    }
+    if(regionName == 'Gwangju'){
+      changeItem = inGwangju
+    }
+    if(regionName == 'Daejeon'){
+      changeItem = inDaejeon
+    }
+    if(regionName == 'Ulsan'){
+      changeItem = inUlsan
+    }
+    if(regionName == 'Sejong'){
+      changeItem = inSejong
+    }
+    if(regionName == 'Gyeonggi'){
+      changeItem = inGyeonggi
+    }
+    if(regionName == 'Gangwondo'){
+      changeItem = inNewGangwondo
+    }
+    if(regionName == 'Chungcheongbukdo'){
+      changeItem = inChungcheongbukdo
+    }
+    if(regionName == 'Chungcheongnamdo'){
+      changeItem = inChungcheongnamdo
+    }
+    if(regionName == 'Jeollabukdo'){
+      changeItem = inNewJeollabukdo
+    }
+    if(regionName == 'Jeollanamdo'){
+      changeItem = inJeollanamdo
+    }
+    if(regionName == 'Gyeongsangbukdo'){
+      changeItem = inGyeongsangbukdo
+    }
+    if(regionName == 'Gyeongsangnamdo'){
+      changeItem = inGyeongsangnamdo
+    }
+    if(regionName == 'Jejudo'){
+      changeItem = inJejudo
+    }
+    $('#gungu').empty();
+
+    for(var i = 0 ; i < changeItem.length; i++){
+      var subOption = $("<option value='" + changeItem[i][1] + "'>" + changeItem[i][0] + "</option>")
+      $('#gungu').append(subOption);
+    }
+
+    if(selectedSubRegion == undefined){
+      $("#gungu").val(changeItem[0][1]).prop("selected", true);
+      selectedSubRegion = $("#gungu option:selected").val()
+    }
+    else{
+      $("#gungu").val(selectedSubRegion).prop("selected", true);
+    }
+    loadDongList(selectedRegion, selectedSubRegion)
+    //updateRegion()    
+  }
+
+  function updateTheme(){
+    selectedTheme = $("#theme option:selected").val()
+    updateRegion()
+    regionName = $("#sido option:selected").text()
+    //saveLocalStorage()
+  }
+  function updateRegion(){
+    minValue = 0;
+    maxValue = 60;
+    //var selection = document.getElementById("gungu")
+    selectedRegion = $("#sido option:selected").val()
+    selectedSubRegion = $("#gungu option:selected").val()
+    updateTable(selectedTheme, selectedSubRegion)
+    regionName = $("#sido option:selected").text()
+
+    loadDongList(selectedRegion, selectedSubRegion)
+  }
+
+  function updateTable(type, region){
+    var distance_check = []
+    routeArray = []
+    $('div.modal').modal("hide");
+    //$('#sort').css("visibility", "visible")
+    $('html').scrollTop(0)
+    initSorting()
+    //console.log("AAAAAAAAAA", region)
+    url = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + ".json" + updated_ver
+    url2 = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + "_ratio.json" + updated_ver
+    url3 = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + "_ratioFrom202107.json" + updated_ver
+    $('#themeDataList').html("");
+    $("#themeDataList").html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-theme' role='status'></div></div>")
+
+    //광고정보 로딩
+    $.ajaxSetup({ async: false }); 
+    load_parrtnership(region)
+    $.ajaxSetup({ async: true });
+
+    if(type == "hPriceRatio"){
+      $.getJSON(url2, function(json) {
+        //console.log(json);
+        aptData = json;         
+        //sortData = $.extend({}, json);
+        sortData = deepCopy(aptData)
+        itemNum = json.data.length;        
+      })
+      .done(function(){
+        RatioListUp(aptData, type)
+      })
+      .fail(function(jqXMLHttpRequest,status,error){
+        $("#gungu option:eq(0)").prop("selected", true);
+        var changeRegion = $("#gungu > option:selected").val();
+        updateTable(type, changeRegion)
+      })
+    }
+    else if(type == "ratioFrom202107"){
+      $.getJSON(url3, function(json) {
+        //console.log(json);
+        aptData = json;         
+        //sortData = $.extend({}, json);
+        sortData = deepCopy(aptData)
+        itemNum = json.data.length;
+      })
+      .done(function(){
+        Ratio2ListUp(aptData, type)
+      })
+      .fail(function(jqXMLHttpRequest,status,error){
+        $("#gungu option:eq(0)").prop("selected", true);
+        var changeRegion = $("#gungu > option:selected").val();
+        updateTable(type, changeRegion)
+      })
+    }
+    else{
+      $.getJSON(url, function(json) {          
+          aptData = json;
+          //sortData = $.extend({}, json);          
+          //aptData_original = $.extend({}, json);
+          sortData = deepCopy(aptData)
+          aptData_original = deepCopy(aptData)
+          itemNum = json.data.length;
+      })
+      .done(function(){
+        ListUp(aptData, type)
+      })
+      .fail(function(jqXMLHttpRequest,status,error){
+        $("#gungu option:eq(0)").prop("selected", true);
+        var changeRegion = $("#gungu > option:selected").val();
+        updateTable(type, changeRegion)
+      })
+  }
+}
+
+  function showDistance(arr){    
+    titleHtml = "";
+    detailHtml = "";
+    footerHtml = "";    
+
+    titleHtml += "<div class='popupTitle'>단지별 최소 직선 거리</div>";
+    titleHtml += "<div class='popupSubtitle'>600m 이상인 경우 차량을 이용해 주세요</div>";
+
+    if(arr.length == 0){
+      if(selectedTheme == "under100M"){
+        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 1억 이하 아파트 단지가 없네요. </div></div>"        
+      }
+      if(selectedTheme == "under300M"){
+        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 3억 이하 아파트 단지가 없네요. </div></div>"        
+      }
+      if(selectedTheme == "under5floor"){
+        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 5층 이하 아파트 단지가 없네요. </div></div>"        
+      }
+      if(selectedTheme == "newApt"){
+        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 분양권 아파트 단지가 없네요. </div></div>"        
+      }
+      if(selectedTheme == "rebuild"){
+        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 재건축 아파트 단지가 없네요. </div></div>"        
+      }      
+    }
+    else{      
+      detailHtml += "<div class='distanceTable'>"
+      detailHtml += "<div class='distanceName'><div>" + arr[0][0]+ "</div>"
+      detailHtml += "<div class='distanceContent'>" + arr[0][6] + "세대 / " + arr[0][7] + "</div>"
+      detailHtml += "<div class='distanceContent' style='color:gray'>" + arr[0][4] + "</div></div>"
+      detailHtml += "<div id='NLink' style='align-content: center'><button type='button' class='goThemeLink' onclick='openNaver(" + arr[0][5] + ")'>N부동산</button></div>"
+      detailHtml += "</div>"
+
+      for(var i = 1 ; i < arr.length ; i++){
+        detailHtml += "<div class='distanceTable2'>"
+        detailHtml += "<div class='verticalLine'>" + Math.round(arr[i][3]).toLocaleString() + "m</div>"
+
+        if(arr[i][3] > 600){
+          detailHtml += "<div class='meter'><i class='fa-solid fa-car-side'></i></div>"
+        }
+        else{
+          detailHtml += "<div class='meter'><i class='fa-solid fa-person-walking'></i></div>"
+        }
+        
+        detailHtml += "<div></div>"
+        detailHtml += "</div>"
+        
+        detailHtml += "<div class='distanceTable'>"
+        detailHtml += "<div class='distanceName'><div>" + arr[i][0]+ "</div>"
+        detailHtml += "<div class='distanceContent'>" + arr[i][6] + "세대 / " + arr[i][7] + "</div>"
+        detailHtml += "<div class='distanceContent' style='color:gray'>" + arr[i][4] + "</div></div>"
+        detailHtml += "<div id='NLink' style='align-content: center'><button type='button' class='goThemeLink' onclick='openNaver(" + arr[i][5] + ")'>N부동산</button></div>"        
+        detailHtml += "</div>"
+      }
+    }
+
+    $('#toggleModalLabel').html(titleHtml);
+    $('#distanceDetail').html(detailHtml);
+    $('#footer').html(footerHtml);
+    
+    $('#toggleModal1').modal("toggle");
+}
+
+  function ListUp(listData, type){
+    $('html').scrollTop(0)    
+    $('#themeDataList').html("");
+    $('#guide_and_search').html(tripGuide_html)
+    $("#rearrange").css("visibility", "visible")
+    var distance_check = []
+    routeArray = []
+    itemNum = listData.data.length;        
+
+    var count = 0
+    shareText = ""
+
+    if(type == "under100M"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 공시가 1억 이하 단지\n\n"
+    }
+    if(type == "under300M"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 공시가 3억 이하 단지\n\n"
+    }
+    if(type == "under5floor"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 5층 이하 단지\n\n"
+    }
+    if(type == "over30year"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 30년 이상 단지\n\n"
+    }
+    if(type == "newApt"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 분양권\n\n"
+    }
+    if(type == "rebuild"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 재건축\n\n"
+    }
+    if(type == "tripGuide"){
+      shareText = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' 동별 임장 가이드"
+    }
+
+    //광고정보표시
+    show_partnership()
+
+    //로그인 확인
+    if(!login_status){
+      if(type == "under5floor" || type == "over30year" || type == "newApt" || type == "rebuild" || type == "tripGuide"){
+          $("#themeShare").css("visibility", "hidden")          
+          $("#rearrange").css("visibility", "hidden")
+          $("#guide_and_search").css("visibility", "hidden")
+
+          var detailHtml = ""  
+          detailHtml += "<div class='loginBox'>"
+          detailHtml += "<div><br></div>"
+          detailHtml += "<div id='aptrankLoginGuide'>리얼랭커스의 모든 테마를 확인하세요</div>"
+          detailHtml += "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' id='loginPopup' onClick='showLogin()'>리얼랭커스 로그인</div>"
+          detailHtml += "</div>"
+          $('#themeDataList').append(detailHtml)
+
+          return
+      }
+      else{
+          $("#themeShare").css("visibility", "visible")
+          $("#rearrange").css("visibility", "visible")
+          $("#guide_and_search").css("visibility", "visible")
+      }
+    }
+    
+    for(var i = 0 ; i < itemNum ; i++){
+      var aptName = listData.data[i]["아파트명"]
+      var apt_m = listData.data[i]["전용면적(m2)"]
+      var apt_p = listData.data[i]["전용면적(평)"]
+      var apt_type = listData.data[i]["타입"]
+      var aptAddress = listData.data[i]["법정동주소"]          
+      var house_num = listData.data[i]["세대수"]
+      var max_floor = listData.data[i]["최고층"]
+      var min_floor = listData.data[i]["최저층"]
+      var aptDuration = listData.data[i]["준공년차"]
+      var buildDate = listData.data[i]["준공년월"]
+      var min_land_price = (listData.data[i]["최소공지가"] / 100000000).toFixed(2)
+      var max_land_price = (listData.data[i]["최대공지가"] / 100000000).toFixed(2)
+      var searchCode = listData.data[i]["코드"]
+      var coord_y = listData.data[i]["y"]
+      var coord_x = listData.data[i]["x"]
+      var rank_value_score = listData.data[i]["가치 총점"]
+      var sURL = listData.data[i]["sURL"]
+
+      var floor_rate = ""
+      if(listData.data[i]["용적률"] == "0"){
+        floor_rate = "--%"
+      }
+      else{
+        floor_rate = listData.data[i]["용적률"] + "%"
+      }
+
+      var cover_rate = ""
+      if(listData.data[i]["건폐율"] == "0"){
+        cover_rate = "--%"
+      }
+      else{
+        cover_rate = listData.data[i]["건폐율"] + "%"
+      }
+
+      if(apt_type == "APT"){        
+        aptYear = buildDate + " (" + aptDuration + "년차)"        
+      }
+      if(apt_type == "JGC"){        
+        aptYear = buildDate + " (" + aptDuration + "년차, 재건축)"        
+      }
+      if(apt_type == "ABYG"){
+        aptYear = "(분양권, " + buildDate.substr(0, 7) + " 예정)"        
+      }
+      if(apt_type == "EBYG"){
+        if(buildDate == null){
+          aptYear = "(분양예정)"
+        }
+        else{
+          strBuilddate = "" + buildDate
+          aptYear = "(분양예정, " + strBuilddate.substr(0, 4) + "-" + strBuilddate.substr(4, 6) + ")"
+        }        
+      }
+
+      var addon_html = ""
+      
+
+      if(type == "under100M"){            
+        if(min_land_price > 0 && min_land_price <= 1){
+          count += 1;              
+          addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+          addon_html += "<div class='content'>";
+          addon_html += "<div class='apt_name'>" + aptName;
+          addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
+          addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+          if(apt_type == "ABYG"){
+            aptAddress = listData.data[i]["법정동주소"]
+            addon_html += aptAddress + "</div>";
+          }
+          else{
+            addon_html += aptAddress + "</div>";
+          }
+
+          addon_html += "<div class='themePoint'>공시가격: " + min_land_price + "억 ~ " + max_land_price + "억 <span style='color:#555'>/ 최고 " + max_floor + "층, 최저 " + min_floor + "층</span></div>";
+          addon_html += "</div>";
+          addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
+
+          shareText += "ㆍ" + aptName + " (" + setGrade(rank_value_score) + " 랭크)\n"
+
+          distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+        }
+        $('#themeDataList').append(addon_html);            
+      }
+
+      if(type == "under300M"){            
+        if(min_land_price > 0 && min_land_price <= 3){
+          count += 1;              
+          addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+          addon_html += "<div class='content'>";
+          addon_html += "<div class='apt_name'>" + aptName;
+          addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
+          addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+          if(apt_type == "ABYG"){
+            aptAddress = listData.data[i]["법정동주소"]
+            addon_html += aptAddress + "</div>";
+          }
+          else{
+            addon_html += aptAddress + "</div>";
+          }
+
+          addon_html += "<div class='themePoint'>공시가격: " + min_land_price + "억 ~ " + max_land_price + "억 <span style='color:#555'>/ 최고 " + max_floor + "층, 최저 " + min_floor + "층</span></div>";
+          addon_html += "</div>";
+          addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
+
+          shareText += "ㆍ" + aptName + " (" + setGrade(rank_value_score) + " 랭크)\n"
+
+          distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+        }
+        $('#themeDataList').append(addon_html);            
+      } 
+
+      if(type == "under5floor"){            
+        if(max_floor <= 5){
+          count += 1;              
+          addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+          addon_html += "<div class='content'>";
+          addon_html += "<div class='apt_name'>" + aptName;
+          addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
+          addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+          if(apt_type == "ABYG"){
+            addon_html += listData.data[i]["법정동주소"] + "</div>";
+          }
+          else{
+            addon_html += aptAddress + "</div>";
+          }
+
+          addon_html += "<div class='themePoint'>최고 " + max_floor + "층, 최저 " + min_floor + "층 <span style='color:#555'>/ 공시가격: " + min_land_price + "억 ~ " + max_land_price + "억</span></div>";
+          addon_html += "</div>";
+          addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
+
+          shareText += "ㆍ" + aptName + " (" + setGrade(rank_value_score) + " 랭크)\n"
+
+          distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+        }
+        $('#themeDataList').append(addon_html);
+      }
+
+      if(type == "over30year"){            
+        if(aptDuration >= 30){
+          count += 1;              
+          addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+          addon_html += "<div class='content'>";
+          addon_html += "<div class='apt_name'>" + aptName;
+          addon_html += "<span class='themePoint' style = 'font-size: 0.9em'>    " + aptYear + "</span></div>";
+          addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+          if(apt_type == "ABYG"){
+            addon_html += listData.data[i]["법정동주소"] + "</div>";
+          }
+          else{
+            addon_html += aptAddress + "</div>";
+          }
+          
+          addon_html += "</div>";
+          addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
+
+          shareText += "ㆍ" + aptName + " (" + setGrade(rank_value_score) + " 랭크)\n"
+
+          distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+        }
+        $('#themeDataList').append(addon_html);
+      }         
+    
+      if(type == "newApt"){
+          if(apt_type == "ABYG" || apt_type == "EBYG"){
+            count += 1;              
+            addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+            addon_html += "<div class='content'>";
+            addon_html += "<div class='apt_name'>" + aptName;
+            addon_html += "<span class='aptYear'><span class='themePoint' style = 'font-size: 1.05em'>    " + aptYear + "</span></div>";
+            addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+            if(apt_type == "ABYG" || apt_type == "EBYG"){
+              addon_html += listData.data[i]["법정동주소"] + "</div>";
+            }
+            else{
+              addon_html += aptAddress + "</div>";
+            }
+            addon_html += "</div>";
+            if(apt_type == "ABYG"){
+              addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
+            }
+            else{
+              addon_html += "<div id='NLink'><button type='button' class='goHGNNLink' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노</button></div>"
+            }
+            
+
+            shareText += "ㆍ" + aptName + " (" + setGrade(rank_value_score) + " 랭크)\n"
+
+            distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+          }
+          $('#themeDataList').append(addon_html);
+        }
+
+      if(type == "rebuild"){
+          if(apt_type == "JGC"){
+            count += 1;              
+            addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+            addon_html += "<div class='content'>";
+            addon_html += "<div class='apt_name'>" + aptName;
+            addon_html += "<span class='aptYear'><span class='themePoint'  style = 'font-size: 1.05em'>    " + aptYear + "</span></div>";
+            addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+            if(apt_type == "ABYG"){
+              addon_html += listData.data[i]["법정동주소"] + "</div>";
+            }
+            else{
+              addon_html += aptAddress + "</div>";
+            }
+
+            addon_html += "<div class='apt_info'><strong>용적률 " + floor_rate + ", 건폐율 " + cover_rate + " / 최고 " + max_floor + "층</strong></div>";
+            addon_html += "</div>";
+            addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
+
+            shareText += "ㆍ" + aptName + " (" + setGrade(rank_value_score) + " 랭크)\n"
+
+            distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+          }
+          $('#themeDataList').append(addon_html);
+        }            
+    }        
+
+    if(type == "tripGuide"){
+      $('#guide_and_search').html("")
+      $("#rearrange").css("visibility", "hidden")
+      
+      addon_html = "<div class='themeDongList'>";          
+        for (var i  = 0 ; i < dongList.length ; i++){
+          complexCount = 0;              
+          for(var k = 0 ; k < listData.data.length ; k++){
+            searchName = listData.data[k]["법정동주소"]
+            if(searchName.indexOf(dongList[i]) >= 0){
+              complexCount++
+            }
+          }
+
+          if(complexCount > 0){                
+            addon_html += "<div class='dongList' onClick='showGuide(\"" + dongList[i] + "\")'>" + dongList[i] + "<span style='font-size:0.8em'> (" + complexCount + "개 단지)</span></div>"
+          }
+        }
+        addon_html += "<div style='height: 1em'></div>"
+        $('#themeDataList').append(addon_html);
+    }
+
+    routeArray = makeDistanceList(distance_check)
+
+    if(count < 1 && type != "tripGuide"){          
+      if(type == "under100M"){
+        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 1억 이하 아파트 단지가 없네요. </div></div>"
+        shareText += "공시가격 1억 이하 아파트 단지가 없네요.\n"
+      }
+      if(type == "under300M"){
+        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 3억 이하 아파트 단지가 없네요. </div></div>"
+        shareText += "공시가격 3억 이하 아파트 단지가 없네요.\n"
+      }
+      if(type == "under5floor"){
+        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 5층 이하 아파트 단지가 없네요. </div></div>"
+        shareText += "5층 이하 아파트 단지가 없네요.\n"
+      }
+      if(type == "over30year"){
+        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 30년 이상 단지가 없네요. </div></div>"
+        shareText += "30년 이상 아파트 단지가 없네요.\n"
+      }
+      if(type == "newApt"){
+        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 분양권 아파트 단지가 없네요. </div></div>"
+        shareText += "분양권 아파트 단지가 없네요.\n"
+      }
+      if(type == "rebuild"){
+        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 재건축 아파트 단지가 없네요. </div></div>"
+        shareText += "재건축 아파트 단지가 없네요.\n"
+      }          
+      $('#themeDataList').append(addon_html);         
+    }
+    if(listData.length == 0 && type == "tripGuide"){          
+      addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 아파트 단지가 없네요. </div></div>"
+      shareText = "아파트 단지가 없네요.\n"
+      $('#themeDataList').append(addon_html);        
+    }
+    $('#themeDataList').append("<div style='height:" + blank_height + "'></div>");
+    
+    saveLocalStorage()
+
+    shareTitle = "[리얼랭커스:THEME]\n"
+    shareTitle += "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' "
+    if(type == "under100M"){
+      shareTitle += "공시가격 1억 이하 아파트 단지\n\n"
+    }
+    if(type == "under300M"){
+      shareTitle += "공시가격 3억 이하 아파트 단지\n\n"
+    }
+    if(type == "under5floor"){
+      shareTitle += "5층 이하 아파트 단지\n\n"      
+    }
+    if(type == "over30year"){
+      shareTitle += "30년 이상 아파트 단지\n\n"      
+    }
+    if(type == "newApt"){
+      shareTitle += "분양권 아파트 단지\n\n"      
+    }
+    if(type == "rebuild"){
+      shareTitle += "재건축 아파트 단지\n\n"
+    }
+    shareURL = "https://www.realrankus.com/theme" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&theme=" + selectedTheme    
+  }
+
+  function RatioListUp(listData, type){
+    $('html').scrollTop(0)    
+    $('#themeDataList').html("");
+    search_html = "<div id='search' onClick='showAptSearchBar()'><i class='fas fa-search'></i></div>"
+    $('#guide_and_search').html(search_html)
+    //$("#rearrange").css("visibility", "hidden")
+    itemNum = listData.data.length;
+
+    //광고정보표시
+    show_partnership()
+
+    //로그인 확인
+    if(!login_status){      
+        $("#themeShare").css("visibility", "hidden")          
+        $("#rearrange").css("visibility", "hidden")
+        $("#guide_and_search").css("visibility", "hidden")
+
+        var detailHtml = ""  
+        detailHtml += "<div class='loginBox'>"
+        detailHtml += "<div><br></div>"
+        detailHtml += "<div id='aptrankLoginGuide'>로그인 하시면 상세 정보 확인이 가능해요</div>"
+        detailHtml += "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' id='loginPopup' onClick='showLogin()'>리얼랭커스 로그인</div>"
+        detailHtml += "</div>"
+        $('#themeDataList').append(detailHtml)
+
+        return
+    }
+    else{
+        $("#themeShare").css("visibility", "visible")
+        $("#rearrange").css("visibility", "visible")
+        $("#guide_and_search").css("visibility", "visible")
+    }
+
+    var count = 0
+    shareText = ""
+    for(var i = 0 ; i < itemNum ; i++){
+      var aptName = listData.data[i]["아파트명"]
+      var apt_m = listData.data[i]["전용면적(m2)"]
+      var apt_p = listData.data[i]["전용면적(평)"]
+      var apt_type = listData.data[i]["타입"]
+      var aptAddress = listData.data[i]["법정동주소"]          
+      var house_num = listData.data[i]["세대수"]
+      var aptDuration = listData.data[i]["준공년차"]
+      var buildDate = listData.data[i]["준공년월"]
+      var searchCode = listData.data[i]["코드"]
+      var coord_y = listData.data[i]["y"]
+      var coord_x = listData.data[i]["x"]
+      var hPrice_info = listData.data[i]["최고가정보"]
+      var cPrice_info = listData.data[i]["현재가정보"]
+      var gap_price = listData.data[i]["차액"]
+      var gap_ratio = listData.data[i]["등락률"]
+
+      if(apt_type == "APT"){        
+        aptYear = buildDate + " (" + aptDuration + "년차)"        
+      }
+      if(apt_type == "JGC"){        
+        aptYear = buildDate + " (" + aptDuration + "년차, 재건축)"        
+      }
+      if(apt_type == "ABYG"){
+        aptYear = "(분양권, " + buildDate.substr(0, 7) + " 예정)"        
+      }
+
+      var addon_html = ""
+
+      if(hPrice_info[0] != '거래 정보 없음'){
+        addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+        addon_html += "<div class='content'>";
+        addon_html += "<div>";
+          addon_html += "<div class='apt_name'>" + aptName + "</div>";
+          addon_html += "<div class='aptYear'>" + aptYear + "</div>";
+        addon_html += "</div>";
+        addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+        if(apt_type == "ABYG"){
+          aptAddress = listData.data[i]["법정동주소"]
+          addon_html += aptAddress + "</div>";
+        }
+        else{
+          addon_html += aptAddress + "</div>";
+        }
+        var hPrice = (hPrice_info[0]/10000).toFixed(2)
+        var cPrice = (cPrice_info[0]/10000).toFixed(2)
+        var hPrice_date = hPrice_info[1].substr(2, 10)
+        var cPrice_date = cPrice_info[1].substr(2, 10)        
+        
+        addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
+        addon_html += "<div class='themeInfo'>" + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")</div>";
+
+        addon_html += "</div>";
+        addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"        
+
+        if(i < 5){
+          if (i == 0){
+            shareText += "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' " + "최고가 대비 변동\n\n"
+          }
+          shareText += "#" + aptName + ", " + apt_p + "\n"
+          shareText += hPrice + " → " + cPrice + "억\n"
+          shareText += "(" + gap_ratio.toFixed(2) + "%, " + (gap_price/10000).toFixed(2) + "억) \n\n"          
+        }
+        
+        $('#themeDataList').append(addon_html);
+      }
+    }
+    $('#themeDataList').append("<div style='height:" + blank_height + "'></div>");
+   
+    saveLocalStorage()
+
+    shareTitle = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' "
+    shareTitle += "최고가 대비 변동\n\n"
+    shareURL = "https://www.realrankus.com/theme" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&theme=" + selectedTheme    
+  }
+
+  function Ratio2ListUp(listData, type){
+    $('html').scrollTop(0)    
+    $('#themeDataList').html("");
+    search_html = "<div id='search' onClick='showAptSearchBar()'><i class='fas fa-search'></i></div>"
+    $('#guide_and_search').html(search_html)
+    //$("#rearrange").css("visibility", "hidden")
+    itemNum = listData.data.length;
+
+    //광고정보표시
+    show_partnership()
+
+    //로그인 확인
+    if(!login_status){      
+        $("#themeShare").css("visibility", "hidden")          
+        $("#rearrange").css("visibility", "hidden")
+        $("#guide_and_search").css("visibility", "hidden")
+
+        var detailHtml = ""  
+        detailHtml += "<div class='loginBox'>"
+        detailHtml += "<div><br></div>"
+        detailHtml += "<div id='aptrankLoginGuide'>로그인 하시면 상세 정보 확인이 가능해요</div>"
+        detailHtml += "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' id='loginPopup' onClick='showLogin()'>리얼랭커스 로그인</div>"
+        detailHtml += "</div>"
+        $('#themeDataList').append(detailHtml)
+
+        return
+    }
+    else{
+        $("#themeShare").css("visibility", "visible")
+        $("#rearrange").css("visibility", "visible")
+        $("#guide_and_search").css("visibility", "visible")
+    }
+
+    var count = 0
+    shareText = ""
+    for(var i = 0 ; i < itemNum ; i++){
+      var aptName = listData.data[i]["아파트명"]
+      var apt_m = listData.data[i]["전용면적(m2)"]
+      var apt_p = listData.data[i]["전용면적(평)"]
+      var apt_type = listData.data[i]["타입"]
+      var aptAddress = listData.data[i]["법정동주소"]          
+      var house_num = listData.data[i]["세대수"]
+      var aptDuration = listData.data[i]["준공년차"]
+      var buildDate = listData.data[i]["준공년월"]
+      var searchCode = listData.data[i]["코드"]
+      var coord_y = listData.data[i]["y"]
+      var coord_x = listData.data[i]["x"]
+      var hPrice_info = listData.data[i]["2021년7월가격"]
+      var cPrice_info = listData.data[i]["현재가정보"]
+      var gap_price = listData.data[i]["차액"]
+      var gap_ratio = listData.data[i]["등락률"]
+
+      if(apt_type == "APT"){        
+        aptYear = buildDate + " (" + aptDuration + "년차)"        
+      }
+      if(apt_type == "JGC"){        
+        aptYear = buildDate + " (" + aptDuration + "년차, 재건축)"        
+      }
+      if(apt_type == "ABYG"){
+        aptYear = "(분양권, " + buildDate.substr(0, 7) + " 예정)"        
+      }
+
+      var addon_html = ""
+
+      if(hPrice_info[0] != '거래 정보 없음'){
+        addon_html += "<div class='themeListBox'  data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
+        addon_html += "<div class='content'>";
+
+        addon_html += "<div>";
+          addon_html += "<div class='apt_name'>" + aptName + "</div>";
+          addon_html += "<div class='aptYear'>" + aptYear + "</div>";
+        addon_html += "</div>";
+        addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+
+        if(apt_type == "ABYG"){
+          aptAddress = listData.data[i]["법정동주소"]
+          addon_html += aptAddress + "</div>";
+        }
+        else{
+          addon_html += aptAddress + "</div>";
+        }
+        var hPrice = (hPrice_info[0]/10000).toFixed(2)
+        var cPrice = (cPrice_info[0]/10000).toFixed(2)
+        var hPrice_date = hPrice_info[1].substr(2, 10)
+        var cPrice_date = cPrice_info[1].substr(2, 10)
+
+        if(gap_ratio < 0){        
+          addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
+        }
+        else{
+          addon_html += "<div class='themePoint'>▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
+        }
+        addon_html += "<div class='themeInfo'>" + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")</div>";
+
+        addon_html += "</div>";
+        addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"        
+
+        if(i < 5){
+          if (i == 0){
+            shareText += "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' " + "2021년 7월 대비 변동\n\n"
+          }
+          shareText += "#" + aptName + ", " + apt_p + "\n"
+          shareText += hPrice + " → " + cPrice + "억\n"
+          shareText += "(" + gap_ratio.toFixed(2) + "%, " + (gap_price/10000).toFixed(2) + "억) \n\n"          
+        }
+        
+        $('#themeDataList').append(addon_html);
+      }
+    }
+    $('#themeDataList').append("<div style='height:" + blank_height + "'></div>");
+   
+    saveLocalStorage()
+
+    shareTitle = "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' "
+    shareTitle += "2021년 7월 대비 변동\n\n"
+    shareURL = "https://www.realrankus.com/theme" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&theme=" + selectedTheme    
+  }  
+
+  function selectStartPoint(distance_check){
+    titleHtml = "<div class='popupTitle'>임장 시작 단지를 선택하세요</div>";
+    detailHtml = ""
+
+    for (var i = 0 ; i < distance_check.length; i++){   
+      detailHtml += "<div class='distanceTable'>"
+      detailHtml += "<div class='startChoice' onclick='distanceRecal(" + i + ", distance_check)'><div>" + distance_check[i][0]+ "</div>"      
+      detailHtml += "<div class='distanceContent' style='color:gray'>" + distance_check[i][3] + "</div></div>"
+      detailHtml += "<div id='NLink' style='align-content: center'><button type='button' class='goThemeLink' onclick='openNaver(" + distance_check[i][5] + ")'>N부동산</button></div>"
+      detailHtml += "</div>"
+    }
+
+    footerHtml = ""
+
+    $('#exampleModalLabel').html(titleHtml);
+    $('#aptDetail').html(detailHtml);
+    $('#footer').html(footerHtml);
+
+    $('#exampleModal').modal("toggle");
+  }
+
+  function distanceRecal(start, arr){    
+    startPoint = arr[start]
+    arr.splice(start, 1)
+    arr.splice(0, 0, startPoint)    
+    routeArray = makeDistanceList(arr)
+    showDistance(routeArray)
+  }
+
+  function showGuide(dong){
+    distance_check = []
+    console.log(dong)
+    for(var i = 0 ; i < aptData.data.length ; i++){
+      var aptName = aptData.data[i]["아파트명"]
+      var apt_m = aptData.data[i]["전용면적(m2)"]
+      var apt_p = aptData.data[i]["전용면적(평)"]
+      var apt_type = aptData.data[i]["타입"]
+      var aptAddress = aptData.data[i]["법정동주소"]
+      var house_num = aptData.data[i]["세대수"]
+      var max_floor = aptData.data[i]["최고층"]
+      var min_floor = aptData.data[i]["최저층"]
+      var aptDuration = aptData.data[i]["준공년차"]
+      var buildDate = aptData.data[i]["준공년월"]
+      var min_land_price = (aptData.data[i]["최소공지가"] / 100000000).toFixed(2)
+      var max_land_price = (aptData.data[i]["최대공지가"] / 100000000).toFixed(2)
+      var searchCode = aptData.data[i]["코드"]
+      var coord_y = aptData.data[i]["y"]
+      var coord_x = aptData.data[i]["x"]
+      var searchName = aptData.data[i]["법정동주소"]
+
+      if(apt_type == "APT"){        
+        aptYear = buildDate + " (" + aptDuration + "년차)"        
+      }
+      if(apt_type == "JGC"){        
+        aptYear = buildDate + " (" + aptDuration + "년차, 재건축)"        
+      }
+      if(apt_type == "ABYG"){
+        aptYear = "(분양권, " + buildDate.substr(0, 7) + " 예정)"
+        aptAddress = aptData.data[i]["법정동주소"]
+      }    
+
+      searchName = aptData.data[i]["법정동주소"]
+      if(searchName.indexOf(dong) >= 0){        
+        distance_check.push([aptName, coord_y, coord_x, aptAddress, searchCode, house_num, aptYear])
+      }
+    }
+
+    if(distance_check.length <= 2){
+      routeArray = makeDistanceList(distance_check)
+      showDistance(routeArray)
+    }
+    else{
+      selectStartPoint(distance_check)
+    }
+  }
+
+  function show_apt(month, filename, sido){
+    $("#sido").val(sido).prop("selected", true);
+    selectedMonth = month
+    selectedSubRegion = filename
+    selectedRegion = $("#sido option:selected").val();
+
+    $("#regionSearchCard").animate({
+        opacity: 0.0,
+        top: '-150px'
+      }, 400, 'easeInQuad'
+    );
+    $("#closeRegionSearch_floating").animate({
+        opacity: 0.0,
+        right: '-200px'
+      }, 400, 'easeInQuad'
+    );
+    $('#regionInputSearch').val("")
+
+    $("#rearrangeRegionCard").animate({
+        opacity: 0.0,
+        top: '-150px'
+      }, 400, 'easeInQuad'
+    );
+    $("#closeRegionRearrange_floating").animate({
+        opacity: 0.0,
+        right: '-200px'
+      }, 400, 'easeInQuad'
+    );
+    rearrangeSelection = "rearrangeRegionScore"
+
+    optionChange(filename)
+    updateRegion()
+  }
+
+  var pcDevice = "win16|win32|win64|mac|macintel"  
+
+  function openNaver(code, y, x){    
+    if(isMobile){        
+      nURL = "https://m.land.naver.com/complex/info/" + code;
+    }
+    else{        
+      nURL = "https://new.land.naver.com/complexes/" + code;
+    }
+    if (checkMobile() == "ios") {
+      window.location.href = nURL;
+    }
+    else {
+      window.open(nURL)       
+    }   
+  }
+  function openHGNN(code) {
+    hURL = "https://hogangnono.com/apt/" + code;
+    //window.open(hURL)
+    if (checkMobile() == "ios") {
+      window.location.href = hURL;
+    } else {
+      window.open(hURL);
+    }
+  }  
+  function showNotice(){
+    $(".offcanvas").offcanvas("hide") //offcanvas
+
+    var titleHtml = "<div class='popupTitle'> 리얼랭커스 Theme </div>";
+    var footerHtml = ""    
+    var detailHtml = "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>Special Thanks</div>";
+    detailHtml += "<ul>";
+    detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/sfVjYuKe\")' style='color: #fe4040; font-weight: 600'>협찬 링크 걸어 드립니다. 클릭 시 카카오톡 1:1 요청</div></li>";
+    detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/gAeDKrEd\")'><a href='#'>[필수방] 전국 투자자랑 - 1억이하편</a></div></li>";
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/ger08lUd\")'>시간탐험대:돈대구만</div></li>";           
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/giin8FMd\")'>부산.울산.경남 부울경 재테크 모임방</div></li>";
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/g6dkMOme\")'>울.부.팩(울산.부동산.팩력배)-존대금지</div></li>";
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/g8zNoV8d\")'>[김포방] 김포 부동산 통합 커뮤니티</div></li>";
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/gHRQyGte\")'>재테크는 처음이라</div></li>";
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/ggSXchrc\")'>스마트 부동산 투자 소통방 1</div></li>";
+    //detailHtml += "<li><div class='notice' onClick='openOuterLink(\"https://open.kakao.com/o/gQupJ75e\")'>스마트 부동산 투자 소통방 2</div></li>";
+    detailHtml += "</ul>";
+    detailHtml += "<hr>";
+    detailHtml += "<div class='notice'>'리얼랭커스:THEME'은 리얼랭커스에서 많이 요청된 검색 테마를 한 번에 볼 수 있도록 정리한 서비스 입니다.</div>"
+    detailHtml +=  "<div class='notice'>각 지역의 <strong>'공시가격 1억 이하 단지', '공시가격 3억 이하 단지', '5층 이하 단지', '30년 이상 단지', '분양권 단지', '재건축 단지' </strong>목록을 제공합니다.</div>";
+    detailHtml += "<div class='notice'>업데이트 알림은 <a href='https://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>을 통해 전달됩니다.</div>";
+    detailHtml += "<hr>";    
+    detailHtml += "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>꼭 읽어주세요!</div>";
+    detailHtml += "<ul>";
+    detailHtml += "<li><div class='notice'>리얼랭커스:THEME은 <a href='https://realrankus.com' target='_blank'>리얼랭커스</a>와 동일한 데이터를 사용합니다.</li></div>";
+    detailHtml += "<li><div class='notice'>단지의 정보는 네이버 부동산 정보를 참조합니다.</div></li>";    
+    detailHtml += "<li><div class='notice'>문의사항, 오류수정, 개선제안은 카카오톡 채널 또는 카카오톡 1:1을 통해 문의해 주세요.</div></li>";
+    detailHtml += "</ul>";
+
+    footerHtml += "<div class='modal-footer'>"    
+    footerHtml += " <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>일주일 동안 보지 않기</span></label></div>"
+    if(checkMobile() == 'ios'){
+      footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://apps.apple.com/kr/app/%EC%95%84%ED%8C%8C%ED%8A%B8%EB%9E%AD%ED%81%AC/id6448044104\")'>iOS 앱 설치</button></div>"
+    }
+    else{
+      footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://play.google.com/store/apps/details?id=com.aptrank.app\")'>Android 앱 설치</button></div>"
+      //footerHtml += " <div><a href='https://open.kakao.com/o/sPYY0LZd' target='_blank'><button type='button' class='gokakao'>카카오톡 문의하기</button></a></div>"    
+      footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://apps.apple.com/kr/app/%EC%95%84%ED%8C%8C%ED%8A%B8%EB%9E%AD%ED%81%AC/id6448044104\")'>iOS 앱 설치</button></div>"
+    }  
+    footerHtml += " <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink(\"https://pf.kakao.com/_vESNb\")'>카카오톡 채널</button></div>"
+    footerHtml += " <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink(\"https://pf.kakao.com/_vESNb/chat\")'>카카오톡 1:1 문의</button></div>"
+    footerHtml += "</div>"  
+
+
+    $('#exampleModalLabel').html(titleHtml);
+    $('#aptDetail').html(detailHtml);
+    $('#footer').html(footerHtml);
+
+    $('#footerCheck').css({"grid-column" : "span 2", "height" : "2em"})
+    if(checkMobile() == 'ios'){
+      $('#footerBtn1').css({"grid-column" : "span 2"})
+    }
+    else{
+      $('#footerBtn1').css({"grid-column" : "1fr 1fr"})
+    } 
+    $('.modal-footer').css({"padding-top" : "3px"})
+
+    if($.cookie('popThemeCookie') != '202211'){
+      $('#flexCheckDefault').prop("checked", false)
+    }
+    else{
+      $('#flexCheckDefault').prop("checked", true)
+    }
+
+    $('#flexCheckDefault').change(function(){
+      if($(this).is(':checked')){        
+        $.cookie('popThemeCookie', '202211', { expires: 7, path: '/' });
+        console.log($.cookie('popThemeCookie'))
+      }
+      else{        
+        $.removeCookie('popThemeCookie', null, { path: '/' });
+      }
+    })
+
+    $("#exampleModal").modal("show"); //offcanvas
+  }
+
+  function showDetail(index){
+    titleHtml = "";
+    detailHtml = "";
+    footerHtml = "";
+
+    aptData = sortData
+
+    var aptName = aptData.data[index]["아파트명"]
+    var apt_m = aptData.data[index]["전용면적(m2)"]
+    var apt_p = aptData.data[index]["전용면적(평)"]
+    var apt_type = aptData.data[index]["타입"]
+    var aptAddress = aptData.data[index]["도로명주소"]          
+    var house_num = aptData.data[index]["세대수"]
+    var max_floor = aptData.data[index]["최고층"]
+    var min_floor = aptData.data[index]["최저층"]    
+    var aptDuration = aptData.data[index]["준공년차"]
+    var buildDate = aptData.data[index]["준공년월"]
+    var min_land_price = (aptData.data[index]["최소공지가"] / 100000000).toFixed(2)
+    var max_land_price = (aptData.data[index]["최대공지가"] / 100000000).toFixed(2)    
+    var searchCode = aptData.data[index]["코드"]
+    var coord_y = aptData.data[index]["y"]
+    var coord_x = aptData.data[index]["x"]
+    var hPrice_info = aptData.data[index]["최고가정보"]
+    var hPrice_info2 = aptData.data[index]["2021년7월가격"]
+    var cPrice_info = aptData.data[index]["현재가정보"]
+    var gap_price = aptData.data[index]["차액"]
+    var gap_ratio = aptData.data[index]["등락률"]
+    var short_name = $('#sido option:selected').text() + " " + $('#gungu option:selected').text()
+    var aptrank_value_score = aptData.data[index]["가치 총점"]
+    var sURL = aptData.data[index]["sURL"]
+    var rankAddr = $("#gungu option:selected").text()
+    
+    shareTitle = "『" + aptName + "』 " + $('#theme option:selected').text()
+    shareText = "『" + aptName + "』 " + $('#theme option:selected').text() + "\n\n"
+    shareText += "ㆍ지역 : " + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "\n"   
+
+    var aptRank = ""
+
+    if(apt_type == "APT"){        
+      aptYear = aptData.data[index]["준공년월"] + " (" + aptDuration + "년차)"        
+    }
+    if(apt_type == "JGC"){
+      aptYear = aptData.data[index]["준공년월"] + " (" + aptDuration + "년차, 재건축)"        
+    }
+    if(apt_type == "ABYG"){
+      aptYear = "(분양권, " + aptData.data[index]["준공년월"].substr(0, 7) + " 예정)"        
+    }
+    if(apt_type == "EBYG"){
+      if(buildDate == null){
+        aptYear = "(분양예정)"
+      }
+      else{
+        strBuilddate = "" + buildDate
+        aptYear = "(분양예정, " + strBuilddate.substr(0, 4) + "-" + strBuilddate.substr(4, 6) + ")"
+      }        
+    }
+
+    var floor_rate = ""
+    if(aptData.data[index]["용적률"] == "0"){
+      floor_rate = "--%"
+    }
+    else{
+      floor_rate = aptData.data[index]["용적률"] + "%"
+    }
+
+    var cover_rate = ""
+    if(aptData.data[index]["건폐율"] == "0"){
+      cover_rate = "--%"
+    }
+    else{
+      cover_rate = aptData.data[index]["건폐율"] + "%"
+    }
+
+    //타이틀
+    titleHtml += "<div class='popupTitle' style='color: #fe4040; font-size: 0.6em; text-align: center; border-bottom: 1px solid #fe4040; border-top: 1px solid #fe4040;margin-bottom: 10px'>"
+              + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + ", " + $('#theme option:selected').text() + "</div>";
+    titleHtml += "<div class='popupTitle'><h1 style='font-size: 1em; font-weight: 600'>" + aptName + "</h></div>";
+    titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>" + aptYear + "</div>";
+
+    if(apt_type == "ABYG" || apt_type == "EBYG"){
+      titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>" + aptData.data[index]["법정동주소"] + "</div>";
+    }
+    else{
+      titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>(신) " + aptAddress + "</div>";
+      titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>(구) " + aptData.data[index]["법정동주소"] + "</div>";
+    }
+
+    detailHtml += "<div class='card' style='width: 100%'>";
+    //지도        
+    detailHtml += "<div class='card-body' style='padding: 0'>";
+
+    if(apt_type == "EBYG"){
+      go_url = "https://hogangnono.com/apt/" + searchCode
+    }else{
+      go_url = "https://new.land.naver.com/complexes/" + searchCode
+    } 
+    detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>"
+    detailHtml += "<div id='detail_map' ></div>"
+    detailHtml += "</div></div></div>"
+
+    //총점,순위
+    detailHtml += "<div class='card'>";
+    detailHtml += "<div class='card-body'>";
+    detailHtml += "<div class='popTable'>"
+
+    if(selectedTheme == "under100M" || selectedTheme == "under300M"){
+      detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "공시가격" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + min_land_price + "억 ~ " + max_land_price + "억" + "</div></div>";
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }      
+      detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #555'>" + "최고/최저층" + "</div>" + "<div class='popResult'>" + "최고 " + max_floor + "층, 최저 " + min_floor + "층" + "</div></div>";
+
+      shareText += "ㆍ공시가 : " + min_land_price + "억 ~ " + max_land_price + "억" + "\n"
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
+      shareText += "ㆍ최고/최저층 : " + "최고 " + max_floor + "층 / 최저 " + min_floor + "층" + "\n"
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+    }
+
+    if(selectedTheme == "under5floor"){
+      detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "최고/최저층" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + "최고 " + max_floor + "층, 최저 " + min_floor + "층" + "</div></div>";      
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "공시가격" + "</div>" + "<div class='popResult'>" + min_land_price + "억 ~ " + max_land_price + "억" + "</div></div>";
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }
+
+      shareText += "ㆍ최고/최저층 : " + "최고 " + max_floor + "층 / 최저 " + min_floor + "층" + "\n"
+      shareText += "ㆍ공시가 : " + min_land_price + "억 ~ " + max_land_price + "억" + "\n"
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n" 
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+      shareText += shareURL + "\n"     
+    }
+
+    if(selectedTheme == "over30year"){
+      detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "준공년차" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + aptYear + "</div></div>";            
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "공시가격" + "</div>" + "<div class='popResult'>" + min_land_price + "억 ~ " + max_land_price + "억" + "</div></div>";
+
+      shareText += "ㆍ준공년차 : " + aptYear + "\n"
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
+      shareText += "ㆍ공시가 : " + min_land_price + "억 ~ " + max_land_price + "억" + "\n"
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+      shareText += shareURL + "\n"
+    }
+
+    if(selectedTheme == "newApt"){
+      if(aptData.data[index]["준공년월"] == null){
+        detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "예정일" + "</div>" + "<div class='popResult' style='color: #ff3849'>정보 없음</div></div>";
+      }
+      else{
+        if(apt_type == "ABYG"){
+          detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "예정일" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + aptData.data[index]["준공년월"].substr(0, 7) + "</div></div>";
+        }
+        else{
+          strAptData = "" + aptData.data[index]["준공년월"]
+          detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "예정일" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + strAptData.substr(0, 4) + "-" + strAptData.substr(4, 6) + "</div></div>";
+        }
+      }
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }
+
+      if(aptData.data[index]["준공년월"] == null){
+        shareText += "ㆍ분양예정 : 정보 없음" + "\n"
+      }
+      else{
+        if(apt_type == "ABYG"){
+          shareText += "ㆍ분양예정 : " + aptData.data[index]["준공년월"].substr(0, 7) + "\n"
+        }
+        else{          
+          shareText += "ㆍ분양예정 : " + strAptData.substr(0, 4) + "-" + strAptData.substr(4, 6) + "\n"
+        }
+      }
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n" 
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+      shareText += shareURL + "\n"     
+    }
+
+    if(selectedTheme == "rebuild"){
+      detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "용적률" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + floor_rate + "</div></div>";
+      detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "건폐율" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + cover_rate + "</div></div>";
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "최고층" + "</div>" + "<div class='popResult'>" + max_floor + "층</div></div>";
+
+      shareText += "ㆍ용적률 : " + floor_rate + "\n"
+      shareText += "ㆍ건폐률 : " + cover_rate + "\n"
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
+      shareText += "ㆍ최고층 : " + max_floor + "층" + "\n"
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+      shareText += shareURL + "\n"
+    }
+
+    if(selectedTheme == "hPriceRatio"){
+      var hPrice = (hPrice_info[0]/10000).toFixed(2)
+      var cPrice = (cPrice_info[0]/10000).toFixed(2)
+      var hPrice_date = hPrice_info[1].substr(2, 10)
+      var cPrice_date = cPrice_info[1].substr(2, 10)        
+
+      detailHtml += "<div class='popSubTable'><div class='popContent'; style='font-weight: 600'>" + "변동률" + "</div>"
+                 + "<div class='popResult' style='color: blue'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)</div></div>";
+
+      detailHtml += "<div class='popSubTable2'><div class='popContent' font-weight: 600'>" + "변동가격" + "</div>"
+
+                 + "<div class='popResult'>" + hPrice + "억 (" + hPrice_date + ") <br>→ " + cPrice + "억 (" + cPrice_date +")" + "</div></div>";                 
+      detailHtml += "<div class='popSubTable'><div class='popContent' font-weight: 600'>" + "평형" + "</div>"
+                 + "<div class='popResult'>" + apt_p + "(" + apt_m + "㎡)" + "</div></div>";
+      
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }
+
+      shareText += "ㆍ변동률 : " + "▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+      shareText += "ㆍ변동가격 : " + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")" + "\n"      
+      shareText += "ㆍ평형 : " + apt_p + "(" + apt_m + "㎡)" + "\n"
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+      shareText += shareURL + "\n"
+    }
+
+    if(selectedTheme == "ratioFrom202107"){
+
+      var hPrice = (hPrice_info2[0]/10000).toFixed(2)
+      var cPrice = (cPrice_info[0]/10000).toFixed(2)
+      var hPrice_date = hPrice_info2[1].substr(2, 10)
+      var cPrice_date = cPrice_info[1].substr(2, 10)
+
+      detailHtml += "<div class='popSubTable'><div class='popContent'; style='font-weight: 600'>" + "변동률" + "</div>"
+      if(gap_ratio < 0){ 
+        detailHtml += "<div class='popResult' style='color: blue'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)</div></div>";
+        shareText += "ㆍ변동률 : " + "▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+      }
+      else{
+        detailHtml += "<div class='popResult' style='color: #ff3849'>▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)</div></div>";
+        shareText += "ㆍ변동률 : " + "▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+      }                 
+
+      detailHtml += "<div class='popSubTable2'><div class='popContent' font-weight: 600'>" + "변동가격" + "</div>"
+                 + "<div class='popResult'>" + + hPrice + "억 (" + hPrice_date + ") <br>→ " + cPrice + "억 (" + cPrice_date +")" + "</div></div>"; 
+
+      detailHtml += "<div class='popSubTable'><div class='popContent' font-weight: 600'>" + "평형" + "</div>"
+                 + "<div class='popResult'>" + apt_p + "(" + apt_m + "㎡)" + "</div></div>";
+      
+      if(house_num != null){
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+      }
+      else{
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+      }
+      
+      shareText += "ㆍ변동가격 : " + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")" + "\n"      
+      shareText += "ㆍ평형 : " + apt_p + "(" + apt_m + "㎡)" + "\n"
+      shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
+      shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
+      shareText += shareURL + "\n"
+    }
+    detailHtml += "</div></div>";
+
+    footerHtml += "<div class='modal-footer'>"
+    if(UserAgent.indexOf("inApp")>-1){      
+      footerHtml += "<div><button type='button' class='goLink_aptrank' style='margin-bottom:5px' onclick='goMap(\"" + sURL + "\")'>" + rankAddr + " " + setGrade(aptrank_value_score) +" 랭크</button><br>"
+      if(apt_type == "EBYG"){        
+        footerHtml += "<button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>"
+      }
+      else{        
+        footerHtml += "<button type='button' class='goLink' onclick='openNaver(" + searchCode + ")'>네이버 부동산 보기</button></div>"        
+      }
+
+      if(checkMobile() == "ios"){
+        footerHtml += "<div class='toShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+      }
+      else{
+        footerHtml += "<div class='bShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"kakao_icon.png\" height=\"30px\"/></div>"        
+      }      
+      footerHtml += "<div class='toShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+    }
+    else{
+      footerHtml += "<div><button type='button' class='goLink_aptrank' style='margin-bottom:5px'  onclick='goMap(\"" + sURL + "\")'>" + rankAddr + " " + setGrade(aptrank_value_score) +" 랭크</button><br>"
+      if(apt_type == "EBYG"){
+        footerHtml += "<button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>"        
+      }
+      else{
+        footerHtml += "<button type='button' class='goLink' onclick='openNaver(\"" + searchCode + "\")'>네이버 부동산 보기</button></div>"        
+      }
+
+      if(checkMobile() == "ios"){
+        footerHtml += "<div class='toShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+      }
+      else{
+        footerHtml += "<div class='bShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"kakao_icon.png\" height=\"30px\"/></div>"
+      }      
+      footerHtml += "<div class='toShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+    }
+
+    //shareURL = "https://www.realrankus.com/theme" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&theme=" + selectedTheme + "&complex=" + index
+    shareURL = "https://www.realrankus.com/theme" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&theme=" + selectedTheme
+
+    $('#exampleModalLabel').html(titleHtml);
+    $('#aptDetail').html(detailHtml);
+    $('#footer').html(footerHtml);
+    
+    //지도 그리는 함수
+    if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+      var dw = $(window).width() - 40;	 
+      //var w = 430;	 
+    }
+    else{
+      var dw = 480;	 
+    }    
+    var dh = 200;
+
+    var detailMapOptions = {
+      center: new naver.maps.LatLng(String(coord_y), String(coord_x)),
+      size: new naver.maps.Size(dw, dh),
+      zoom: 15, //지도의 초기 줌 레벨
+      zoomControl: false, //줌 컨트롤의 표시 여부
+      draggable: false,
+      pinchZoom: false,
+      scrollWheel: false,
+      keyboardShortcuts: false,
+      disableDoubleTapZoom: true,
+      disableDoubleClickZoom: true,
+      disableTwoFingerTapZoom: true,
+    };
+
+    var detailMap = new naver.maps.Map('detail_map', detailMapOptions);
+    
+    var detailMarker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(String(coord_y), String(coord_x)),
+        map: detailMap
+    });
+
+    //if(UserAgent.indexOf("inApp")>-1){
+    //  $('.modal-footer').css({"grid-template-columns" : "0.2fr 1fr 0.2fr", "text-align":"center", "text-align": "-webkit-center"})
+    //}
+    //else{
+      $('.modal-footer').css({"grid-template-columns" : "1fr 0.15fr 0.15fr", "text-align":"center", "text-align": "-webkit-center"})
+    //}
+  }
+
+  function goMap(url){
+    if(checkMobile() == "ios"){
+      window.location.href = url
+    }
+    else{
+      window.open(url)
+    }      
+  }
+</script>
+</html>

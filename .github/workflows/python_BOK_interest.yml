@@ -1,0 +1,54 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Daily Update
+
+on:
+  schedule:    
+    - cron: "0 19 * * *"
+
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirement.txt ]; then pip install -r requirement.txt; fi
+    - name: get Standatd interest, Market daily
+      run: |
+        python BOK_Standard_Interest.py
+    - name: Commits
+      run: |        
+        git pull
+        git config --local user.email "aptranking@gmail.com"
+        git config --local user.name "APT-Rank"
+        git add BOK_standatd_interest.json
+        git add FED_standatd_interest.json
+        git add ./moneyflow/market_daily_info.json
+        git commit -m "Standard Interest, Daily Market Update"
+    - name: Push
+      uses: ad-m/github-push-action@master
+      with:
+        branch: 'master'
+        github_token: '${{ secrets.GITHUB_TOKEN }}'
+        

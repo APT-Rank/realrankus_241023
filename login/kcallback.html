@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+</body>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="../js/login_240308.js"></script>
+<script>
+
+const KAKAO_REST_API_KEY = "a9beb4e1299d7fac7e38fdecb8f8038e"
+const KAKAO_JS_KEY = "a8a036bfb275fc87317e07f76dccecb2"
+const KAKAO_SEC = "569Y4IAWGU0uRdjjf5h2Mqd678rQ8NUP"
+const params = new URLSearchParams(location.search);
+const AUTH_CODE = params.get('code');
+const CODE = new URL(window.location.href).searchParams.get("code");
+//const REDIRECT_URI = "http://127.0.0.1:5500/login/kcallback.html"
+const REDIRECT_URI = "https://www.realrankus.com/login/kcallback.html"
+
+Kakao.init(KAKAO_JS_KEY);
+
+fetch(`https://kauth.kakao.com/oauth/token`, {
+	method: 'POST',
+	headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+	body: "grant_type=authorization_code&client_id=" + KAKAO_REST_API_KEY + "&redirect_uri=" + REDIRECT_URI + "&code=" + CODE,
+})
+.then(res => res.json())
+.then(data => {
+	//console.log("Kakao Token : " , data)
+	localStorage.setItem('kToken', data.access_token)
+	//localStorage.setItem('krToken', data.refresh_token)
+	pageName = localStorage.getItem('pageName')
+	console.log("PAGENAME : ", pageName)
+	//var redirect = "http://127.0.0.1:5500";
+	var redirect = setLogoutDest(pageName)
+	window.location.replace(redirect);
+})
+
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Hourly Update
+
+on:
+  schedule:    
+    - cron: "5 */1 * * *"
+
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirement.txt ]; then pip install -r requirement.txt; fi
+    - name: get News Update
+      run: |
+        python ./newsinfo/naver_news_generate.py
+    - name: Commits
+      run: |        
+        git pull
+        git config --local user.email "aptranking@gmail.com"
+        git config --local user.name "APT-Rank"
+        git add ./newsinfo/news.json
+        git add ./newsinfo/blogs.json
+        git add ./moneyflow/market_hourly_info.json
+        git commit -m "News, Blog, Hourly Market Update"
+    - name: Push
+      uses: ad-m/github-push-action@master
+      with:
+        branch: 'master'
+        github_token: '${{ secrets.GITHUB_TOKEN }}'

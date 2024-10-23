@@ -1,0 +1,2172 @@
+{
+    "schema":{
+        "fields":[
+            {
+                "name":"index",
+                "type":"integer"
+            },
+            {
+                "name":"Level",
+                "type":"string"
+            },
+            {
+                "name":"Upper_region",
+                "type":"string"
+            },
+            {
+                "name":"Region",
+                "type":"string"
+            },
+            {
+                "name":"Region_ENG",
+                "type":"string"
+            },
+            {
+                "name":"Sum",
+                "type":"number"
+            }
+        ],
+        "primaryKey":[
+            "index"
+        ],
+        "pandas_version":"1.4.0"
+    },
+    "data":[
+        {
+            "index":0,
+            "Level":"Level0",
+            "Upper_region":"Korea",
+            "Region":"전국",
+            "Region_ENG":"Korea",
+            "Sum":56743875.7100054324
+        },
+        {
+            "index":1,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"서울시",
+            "Region_ENG":"Seoul",
+            "Sum":18707426.8529378846
+        },
+        {
+            "index":2,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"경기도",
+            "Region_ENG":"Gyeonggi",
+            "Sum":17793157.3657515943
+        },
+        {
+            "index":3,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"부산시",
+            "Region_ENG":"Busan",
+            "Sum":3051139.4073186708
+        },
+        {
+            "index":4,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"대구시",
+            "Region_ENG":"Daegu",
+            "Sum":2303004.961872383
+        },
+        {
+            "index":5,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"인천시",
+            "Region_ENG":"Incheon",
+            "Sum":2843517.8252095147
+        },
+        {
+            "index":6,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"광주시",
+            "Region_ENG":"Gwangju",
+            "Sum":1171047.3305317475
+        },
+        {
+            "index":7,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"대전시",
+            "Region_ENG":"Daejeon",
+            "Sum":1251343.7948336659
+        },
+        {
+            "index":8,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"울산시",
+            "Region_ENG":"Ulsan",
+            "Sum":858511.1390820576
+        },
+        {
+            "index":9,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"세종시",
+            "Region_ENG":"Sejong",
+            "Sum":684848.103013202
+        },
+        {
+            "index":10,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"강원도",
+            "Region_ENG":"Gangwondo",
+            "Sum":832017.9648508629
+        },
+        {
+            "index":11,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"충청북도",
+            "Region_ENG":"Chungcheongbukdo",
+            "Sum":977580.6969948316
+        },
+        {
+            "index":12,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"충청남도",
+            "Region_ENG":"Chungcheongnamdo",
+            "Sum":1488312.1241268073
+        },
+        {
+            "index":13,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"전북도",
+            "Region_ENG":"Jeollabukdo",
+            "Sum":775417.5559099745
+        },
+        {
+            "index":14,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"전라남도",
+            "Region_ENG":"Jeollanamdo",
+            "Sum":751659.844833832
+        },
+        {
+            "index":15,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"경상북도",
+            "Region_ENG":"Gyeongsangbukdo",
+            "Sum":1059770.8764516995
+        },
+        {
+            "index":16,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"경상남도",
+            "Region_ENG":"Gyeongsangnamdo",
+            "Sum":2017249.0706983446
+        },
+        {
+            "index":17,
+            "Level":"Level1",
+            "Upper_region":"Korea",
+            "Region":"제주도",
+            "Region_ENG":"Jejudo",
+            "Sum":177870.7955883621
+        },
+        {
+            "index":18,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 강남구",
+            "Region_ENG":"1168000000_Seoul_Gangnam",
+            "Sum":2934216.8207828146
+        },
+        {
+            "index":19,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 강동구",
+            "Region_ENG":"1174000000_Seoul_Gangdong",
+            "Sum":915098.7544437968
+        },
+        {
+            "index":20,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 강북구",
+            "Region_ENG":"1130500000_Seoul_Gangbuk",
+            "Sum":184354.032440043
+        },
+        {
+            "index":21,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 강서구",
+            "Region_ENG":"1150000000_Seoul_Gangseo",
+            "Sum":645027.2698041475
+        },
+        {
+            "index":22,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 관악구",
+            "Region_ENG":"1162000000_Seoul_Gwanak",
+            "Sum":316254.8870845325
+        },
+        {
+            "index":23,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 광진구",
+            "Region_ENG":"1121500000_Seoul_Gwangjin",
+            "Sum":420985.3844748937
+        },
+        {
+            "index":24,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 구로구",
+            "Region_ENG":"1153000000_Seoul_Guro",
+            "Sum":480081.9666216187
+        },
+        {
+            "index":25,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 금천구",
+            "Region_ENG":"1154500000_Seoul_Geumcheon",
+            "Sum":158300.2204796337
+        },
+        {
+            "index":26,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 노원구",
+            "Region_ENG":"1135000000_Seoul_Nowon",
+            "Sum":823947.5294672296
+        },
+        {
+            "index":27,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 도봉구",
+            "Region_ENG":"1132000000_Seoul_Dobong",
+            "Sum":338815.9764723259
+        },
+        {
+            "index":28,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 동대문구",
+            "Region_ENG":"1123000000_Seoul_Dongdaemun",
+            "Sum":521557.9319964951
+        },
+        {
+            "index":29,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 동작구",
+            "Region_ENG":"1159000000_Seoul_Dongjak",
+            "Sum":771666.287927055
+        },
+        {
+            "index":30,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 마포구",
+            "Region_ENG":"1144000000_Seoul_Mapo",
+            "Sum":787540.167818333
+        },
+        {
+            "index":31,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 서대문구",
+            "Region_ENG":"1141000000_Seoul_Seodaemun",
+            "Sum":445058.0540019863
+        },
+        {
+            "index":32,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 서초구",
+            "Region_ENG":"1165000000_Seoul_Seocho",
+            "Sum":1977678.5833659971
+        },
+        {
+            "index":33,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 성동구",
+            "Region_ENG":"1120000000_Seoul_Seongdong",
+            "Sum":831676.2272853182
+        },
+        {
+            "index":34,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 성북구",
+            "Region_ENG":"1129000000_Seoul_Seongbuk",
+            "Sum":626090.4056823814
+        },
+        {
+            "index":35,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 송파구",
+            "Region_ENG":"1171000000_Seoul_Songpa",
+            "Sum":1857758.8430452414
+        },
+        {
+            "index":36,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 양천구",
+            "Region_ENG":"1147000000_Seoul_Yangcheon",
+            "Sum":782586.0751549971
+        },
+        {
+            "index":37,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 영등포구",
+            "Region_ENG":"1156000000_Seoul_Yeongdeungpo",
+            "Sum":1126225.0212355135
+        },
+        {
+            "index":38,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 용산구",
+            "Region_ENG":"1117000000_Seoul_Yongsan",
+            "Sum":668016.7454101656
+        },
+        {
+            "index":39,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 은평구",
+            "Region_ENG":"1138000000_Seoul_Eunpyeong",
+            "Sum":422962.4990668892
+        },
+        {
+            "index":40,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 종로구",
+            "Region_ENG":"1111000000_Seoul_Jongno",
+            "Sum":146109.4305422024
+        },
+        {
+            "index":41,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 중구",
+            "Region_ENG":"1114000000_Seoul_Jung",
+            "Sum":229909.676992015
+        },
+        {
+            "index":42,
+            "Level":"Level2",
+            "Upper_region":"Seoul",
+            "Region":"서울시 중랑구",
+            "Region_ENG":"1126000000_Seoul_Jungnang",
+            "Sum":295508.0613422561
+        },
+        {
+            "index":43,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 가평군",
+            "Region_ENG":"4182000000_Gyeonggi_Gapyeong",
+            "Sum":23005.9319810508
+        },
+        {
+            "index":44,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 고양시 덕양구",
+            "Region_ENG":"4128100000_Gyeonggi_Goyang_Deogyang",
+            "Sum":554336.8087495766
+        },
+        {
+            "index":45,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 고양시 일산동구",
+            "Region_ENG":"4128500000_Gyeonggi_Goyang_Ilsandong",
+            "Sum":358755.0663723901
+        },
+        {
+            "index":46,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 고양시 일산서구",
+            "Region_ENG":"4128700000_Gyeonggi_Goyang_Ilsanseo",
+            "Sum":363700.8231814493
+        },
+        {
+            "index":47,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 과천시",
+            "Region_ENG":"4129000000_Gyeonggi_Gwacheon",
+            "Sum":349121.3962024206
+        },
+        {
+            "index":48,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 광명시",
+            "Region_ENG":"4121000000_Gyeonggi_Gwangmyeong",
+            "Sum":573427.924003678
+        },
+        {
+            "index":49,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 광주시",
+            "Region_ENG":"4161000000_Gyeonggi_Gwangju",
+            "Sum":237343.7625469768
+        },
+        {
+            "index":50,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 구리시",
+            "Region_ENG":"4131000000_Gyeonggi_Guri",
+            "Sum":286522.1863428344
+        },
+        {
+            "index":51,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 군포시",
+            "Region_ENG":"4141000000_Gyeonggi_Gunpo",
+            "Sum":314829.9127190656
+        },
+        {
+            "index":52,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 김포시",
+            "Region_ENG":"4157000000_Gyeonggi_Gimpo",
+            "Sum":674107.1747375801
+        },
+        {
+            "index":53,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 남양주시",
+            "Region_ENG":"4136000000_Gyeonggi_Namyangju",
+            "Sum":1077752.1780206545
+        },
+        {
+            "index":54,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 동두천시",
+            "Region_ENG":"4125000000_Gyeonggi_Dongducheon",
+            "Sum":37001.5436060597
+        },
+        {
+            "index":55,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 부천시 소사구",
+            "Region_ENG":"4119400000_Gyeonggi_Bucheon_Sosa",
+            "Sum":226821.3025876784
+        },
+        {
+            "index":56,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 부천시 오정구",
+            "Region_ENG":"4119600000_Gyeonggi_Bucheon_Ojeong",
+            "Sum":47625.5348889221
+        },
+        {
+            "index":57,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 부천시 원미구",
+            "Region_ENG":"4119200000_Gyeonggi_Bucheon_Wonmi",
+            "Sum":409534.4127987655
+        },
+        {
+            "index":58,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 성남시 분당구",
+            "Region_ENG":"4113500000_Gyeonggi_Seongnam_Bundang",
+            "Sum":1649282.3324994459
+        },
+        {
+            "index":59,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 성남시 수정구",
+            "Region_ENG":"4113100000_Gyeonggi_Seongnam_Sujeong",
+            "Sum":267386.327329186
+        },
+        {
+            "index":60,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 성남시 중원구",
+            "Region_ENG":"4113300000_Gyeonggi_Seongnam_Jungwon",
+            "Sum":202050.1812694002
+        },
+        {
+            "index":61,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 수원시 권선구",
+            "Region_ENG":"4111300000_Gyeonggi_Suwon_Gwonseon",
+            "Sum":349442.1824737921
+        },
+        {
+            "index":62,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 수원시 영통구",
+            "Region_ENG":"4111700000_Gyeonggi_Suwon_Yeongtong",
+            "Sum":696367.5624839164
+        },
+        {
+            "index":63,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 수원시 장안구",
+            "Region_ENG":"4111100000_Gyeonggi_Suwon_Jangan",
+            "Sum":273190.0394982512
+        },
+        {
+            "index":64,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 수원시 팔달구",
+            "Region_ENG":"4111500000_Gyeonggi_Suwon_Paldal",
+            "Sum":231331.0623660031
+        },
+        {
+            "index":65,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 시흥시",
+            "Region_ENG":"4139000000_Gyeonggi_Siheung",
+            "Sum":536525.6713263339
+        },
+        {
+            "index":66,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 안산시 단원구",
+            "Region_ENG":"4127300000_Gyeonggi_Ansan_Danwon",
+            "Sum":328279.6737847648
+        },
+        {
+            "index":67,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 안산시 상록구",
+            "Region_ENG":"4127100000_Gyeonggi_Ansan_Sangnok",
+            "Sum":198954.8877442118
+        },
+        {
+            "index":68,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 안성시",
+            "Region_ENG":"4155000000_Gyeonggi_Anseong",
+            "Sum":179097.2165477367
+        },
+        {
+            "index":69,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 안양시 동안구",
+            "Region_ENG":"4117300000_Gyeonggi_Anyang_Dongan",
+            "Sum":631368.9207238412
+        },
+        {
+            "index":70,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 안양시 만안구",
+            "Region_ENG":"4117100000_Gyeonggi_Anyang_Manan",
+            "Sum":231965.5237215402
+        },
+        {
+            "index":71,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 양주시",
+            "Region_ENG":"4163000000_Gyeonggi_Yangju",
+            "Sum":251585.7567303609
+        },
+        {
+            "index":72,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 양평군",
+            "Region_ENG":"4183000000_Gyeonggi_Yangpyeong",
+            "Sum":66152.9327531484
+        },
+        {
+            "index":73,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 여주시",
+            "Region_ENG":"4167000000_Gyeonggi_Yeoju",
+            "Sum":37710.1103102637
+        },
+        {
+            "index":74,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 연천군",
+            "Region_ENG":"4180000000_Gyeonggi_Yeoncheon",
+            "Sum":12003.5864650968
+        },
+        {
+            "index":75,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 오산시",
+            "Region_ENG":"4137000000_Gyeonggi_Osan",
+            "Sum":217471.2634128309
+        },
+        {
+            "index":76,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 용인시 기흥구",
+            "Region_ENG":"4146300000_Gyeonggi_Yongin_Giheung",
+            "Sum":662918.3398956163
+        },
+        {
+            "index":77,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 용인시 수지구",
+            "Region_ENG":"4146500000_Gyeonggi_Yongin_Suji",
+            "Sum":889108.4081978478
+        },
+        {
+            "index":78,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 용인시 처인구",
+            "Region_ENG":"4146100000_Gyeonggi_Yongin_Cheoin",
+            "Sum":229846.5457840046
+        },
+        {
+            "index":79,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 의왕시",
+            "Region_ENG":"4143000000_Gyeonggi_Uiwang",
+            "Sum":289315.1291148481
+        },
+        {
+            "index":80,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 의정부시",
+            "Region_ENG":"4115000000_Gyeonggi_Uijeongbu",
+            "Sum":380166.4731197978
+        },
+        {
+            "index":81,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 이천시",
+            "Region_ENG":"4150000000_Gyeonggi_Icheon",
+            "Sum":137508.1665486411
+        },
+        {
+            "index":82,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 파주시",
+            "Region_ENG":"4148000000_Gyeonggi_Paju",
+            "Sum":454918.7903787321
+        },
+        {
+            "index":83,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 평택시",
+            "Region_ENG":"4122000000_Gyeonggi_Pyeongtaek",
+            "Sum":611158.3921034361
+        },
+        {
+            "index":84,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 포천시",
+            "Region_ENG":"4165000000_Gyeonggi_Pocheon",
+            "Sum":57897.1314691089
+        },
+        {
+            "index":85,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 하남시",
+            "Region_ENG":"4145000000_Gyeonggi_Hanam",
+            "Sum":637498.1483186141
+        },
+        {
+            "index":86,
+            "Level":"Level2",
+            "Upper_region":"Gyeonggi",
+            "Region":"경기도 화성시",
+            "Region_ENG":"4159000000_Gyeonggi_Hwaseong",
+            "Sum":1548770.6506417221
+        },
+        {
+            "index":87,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 강화군",
+            "Region_ENG":"2871000000_Incheon_Ganghwa",
+            "Sum":9197.0693337447
+        },
+        {
+            "index":88,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 계양구",
+            "Region_ENG":"2824500000_Incheon_Gyeyang",
+            "Sum":196167.5890214083
+        },
+        {
+            "index":89,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 남동구",
+            "Region_ENG":"2820000000_Incheon_Namdong",
+            "Sum":348483.9095594441
+        },
+        {
+            "index":90,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 동구",
+            "Region_ENG":"2814000000_Incheon_Dong",
+            "Sum":37720.5630279889
+        },
+        {
+            "index":91,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 미추홀구",
+            "Region_ENG":"2817700000_Incheon_Michuhol",
+            "Sum":208709.7523542968
+        },
+        {
+            "index":92,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 부평구",
+            "Region_ENG":"2823700000_Incheon_Bupyeong",
+            "Sum":385626.8755556124
+        },
+        {
+            "index":93,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 서구",
+            "Region_ENG":"2826000000_Incheon_Seo",
+            "Sum":720836.9780967402
+        },
+        {
+            "index":94,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 연수구",
+            "Region_ENG":"2818500000_Incheon_Yeonsu",
+            "Sum":777958.9836234149
+        },
+        {
+            "index":95,
+            "Level":"Level2",
+            "Upper_region":"Incheon",
+            "Region":"인천시 중구",
+            "Region_ENG":"2811000000_Incheon_Jung",
+            "Sum":158816.1046368644
+        },
+        {
+            "index":96,
+            "Level":"Level2",
+            "Upper_region":"Gwangju",
+            "Region":"광주시 광산구",
+            "Region_ENG":"2920000000_Gwangju_Gwangsan",
+            "Sum":326186.8332557442
+        },
+        {
+            "index":97,
+            "Level":"Level2",
+            "Upper_region":"Gwangju",
+            "Region":"광주시 남구",
+            "Region_ENG":"2915500000_Gwangju_Nam",
+            "Sum":188004.3240422189
+        },
+        {
+            "index":98,
+            "Level":"Level2",
+            "Upper_region":"Gwangju",
+            "Region":"광주시 동구",
+            "Region_ENG":"2911000000_Gwangju_Dong",
+            "Sum":89263.5370978738
+        },
+        {
+            "index":99,
+            "Level":"Level2",
+            "Upper_region":"Gwangju",
+            "Region":"광주시 북구",
+            "Region_ENG":"2917000000_Gwangju_Buk",
+            "Sum":299560.6596510759
+        },
+        {
+            "index":100,
+            "Level":"Level2",
+            "Upper_region":"Gwangju",
+            "Region":"광주시 서구",
+            "Region_ENG":"2914000000_Gwangju_Seo",
+            "Sum":268031.9764848349
+        },
+        {
+            "index":101,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 남구",
+            "Region_ENG":"2720000000_Daegu_Nam",
+            "Sum":72880.4973346128
+        },
+        {
+            "index":102,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 달서구",
+            "Region_ENG":"2729000000_Daegu_Dalseo",
+            "Sum":447413.8253117116
+        },
+        {
+            "index":103,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 달성군",
+            "Region_ENG":"2771000000_Daegu_Dalseong",
+            "Sum":349621.7845690777
+        },
+        {
+            "index":104,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 동구",
+            "Region_ENG":"2714000000_Daegu_Dong",
+            "Sum":229975.1163655823
+        },
+        {
+            "index":105,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 북구",
+            "Region_ENG":"2723000000_Daegu_Buk",
+            "Sum":288098.4234456788
+        },
+        {
+            "index":106,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 서구",
+            "Region_ENG":"2717000000_Daegu_Seo",
+            "Sum":83835.8320022383
+        },
+        {
+            "index":107,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 수성구",
+            "Region_ENG":"2726000000_Daegu_Suseong",
+            "Sum":694743.6395093248
+        },
+        {
+            "index":108,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 중구",
+            "Region_ENG":"2711000000_Daegu_Jung",
+            "Sum":136435.8433341568
+        },
+        {
+            "index":109,
+            "Level":"Level2",
+            "Upper_region":"Daegu",
+            "Region":"대구시 군위군",
+            "Region_ENG":"2772000000_Daegu_Gunwi",
+            "Sum":0.0
+        },
+        {
+            "index":110,
+            "Level":"Level2",
+            "Upper_region":"Daejeon",
+            "Region":"대전시 대덕구",
+            "Region_ENG":"3023000000_Daejeon_Daedeok",
+            "Sum":87194.6187022423
+        },
+        {
+            "index":111,
+            "Level":"Level2",
+            "Upper_region":"Daejeon",
+            "Region":"대전시 동구",
+            "Region_ENG":"3011000000_Daejeon_Dong",
+            "Sum":131559.8523255373
+        },
+        {
+            "index":112,
+            "Level":"Level2",
+            "Upper_region":"Daejeon",
+            "Region":"대전시 서구",
+            "Region_ENG":"3017000000_Daejeon_Seo",
+            "Sum":411988.7768196786
+        },
+        {
+            "index":113,
+            "Level":"Level2",
+            "Upper_region":"Daejeon",
+            "Region":"대전시 유성구",
+            "Region_ENG":"3020000000_Daejeon_Yuseong",
+            "Sum":454221.8523767812
+        },
+        {
+            "index":114,
+            "Level":"Level2",
+            "Upper_region":"Daejeon",
+            "Region":"대전시 중구",
+            "Region_ENG":"3014000000_Daejeon_Jung",
+            "Sum":166378.6946094263
+        },
+        {
+            "index":115,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 강서구",
+            "Region_ENG":"2644000000_Busan_Gangseo",
+            "Sum":167692.9674808443
+        },
+        {
+            "index":116,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 금정구",
+            "Region_ENG":"2641000000_Busan_Geumjeong",
+            "Sum":184324.6149839931
+        },
+        {
+            "index":117,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 기장군",
+            "Region_ENG":"2671000000_Busan_Gijangn",
+            "Sum":236494.3881031901
+        },
+        {
+            "index":118,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 남구",
+            "Region_ENG":"2629000000_Busan_Nam",
+            "Sum":265454.9203858252
+        },
+        {
+            "index":119,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 동구",
+            "Region_ENG":"2617000000_Busan_Dong",
+            "Sum":43438.904161562
+        },
+        {
+            "index":120,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 동래구",
+            "Region_ENG":"2626000000_Busan_Dongnae",
+            "Sum":308727.558508792
+        },
+        {
+            "index":121,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 부산진구",
+            "Region_ENG":"2623000000_Busan_Busanjin",
+            "Sum":287151.1650616803
+        },
+        {
+            "index":122,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 북구",
+            "Region_ENG":"2632000000_Busan_Buk",
+            "Sum":214060.9999427885
+        },
+        {
+            "index":123,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 사상구",
+            "Region_ENG":"2653000000_Busan_Sasang",
+            "Sum":102126.8895380083
+        },
+        {
+            "index":124,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 사하구",
+            "Region_ENG":"2638000000_Busan_Saha",
+            "Sum":154540.2181688741
+        },
+        {
+            "index":125,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 서구",
+            "Region_ENG":"2614000000_Busan_Seo",
+            "Sum":50825.8576772239
+        },
+        {
+            "index":126,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 수영구",
+            "Region_ENG":"2650000000_Busan_Suyeong",
+            "Sum":201646.1112849263
+        },
+        {
+            "index":127,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 연제구",
+            "Region_ENG":"2647000000_Busan_Yeonje",
+            "Sum":208095.8782243927
+        },
+        {
+            "index":128,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 영도구",
+            "Region_ENG":"2620000000_Busan_Yeongdo",
+            "Sum":46547.2708920425
+        },
+        {
+            "index":129,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 중구",
+            "Region_ENG":"2611000000_Busan_Jung",
+            "Sum":5553.7484023864
+        },
+        {
+            "index":130,
+            "Level":"Level2",
+            "Upper_region":"Busan",
+            "Region":"부산시 해운대구",
+            "Region_ENG":"2635000000_Busan_Haeundae",
+            "Sum":574457.9145021415
+        },
+        {
+            "index":131,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 강릉시",
+            "Region_ENG":"5115000000_Gangwondo_Gangneung",
+            "Sum":116882.8589893673
+        },
+        {
+            "index":132,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 고성군",
+            "Region_ENG":"5182000000_Gangwondo_Goseong",
+            "Sum":16515.7884129361
+        },
+        {
+            "index":133,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 동해시",
+            "Region_ENG":"5117000000_Gangwondo_Donghae",
+            "Sum":34605.7014036338
+        },
+        {
+            "index":134,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 삼척시",
+            "Region_ENG":"5123000000_Gangwondo_Samcheok",
+            "Sum":14723.1098417222
+        },
+        {
+            "index":135,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 속초시",
+            "Region_ENG":"5121000000_Gangwondo_Sokcho",
+            "Sum":65438.9140224688
+        },
+        {
+            "index":136,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 양구군",
+            "Region_ENG":"5180000000_Gangwondo_Yanggu",
+            "Sum":3118.6938377816
+        },
+        {
+            "index":137,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 양양군",
+            "Region_ENG":"5183000000_Gangwondo_Yangyang",
+            "Sum":18258.3240021512
+        },
+        {
+            "index":138,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 영월군",
+            "Region_ENG":"5175000000_Gangwondo_Yeongwol",
+            "Sum":10244.1341340533
+        },
+        {
+            "index":139,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 원주시",
+            "Region_ENG":"5113000000_Gangwondo_Wonju",
+            "Sum":270463.9268136632
+        },
+        {
+            "index":140,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 인제군",
+            "Region_ENG":"5181000000_Gangwondo_Inje",
+            "Sum":5648.1844651959
+        },
+        {
+            "index":141,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 정선군",
+            "Region_ENG":"5177000000_Gangwondo_Jeongseon",
+            "Sum":5993.0121892195
+        },
+        {
+            "index":142,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 철원군",
+            "Region_ENG":"5178000000_Gangwondo_Cheorwon",
+            "Sum":6393.2370049368
+        },
+        {
+            "index":143,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 춘천시",
+            "Region_ENG":"5111000000_Gangwondo_Chuncheon",
+            "Sum":196730.8080758906
+        },
+        {
+            "index":144,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 태백시",
+            "Region_ENG":"5119000000_Gangwondo_Taebaek",
+            "Sum":7157.5512835056
+        },
+        {
+            "index":145,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 평창군",
+            "Region_ENG":"5176000000_Gangwondo_Pyeongchang",
+            "Sum":18632.6576491247
+        },
+        {
+            "index":146,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 홍천군",
+            "Region_ENG":"5172000000_Gangwondo_Hongcheon",
+            "Sum":27033.1277657887
+        },
+        {
+            "index":147,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 화천군",
+            "Region_ENG":"5179000000_Gangwondo_Hwacheon",
+            "Sum":2442.2998135594
+        },
+        {
+            "index":148,
+            "Level":"Level2",
+            "Upper_region":"Gangwondo",
+            "Region":"강원도 횡성군",
+            "Region_ENG":"5173000000_Gangwondo_Hoengseong",
+            "Sum":11735.6351458641
+        },
+        {
+            "index":149,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 거제시",
+            "Region_ENG":"4831000000_Gyeongsangnamdo_Geoje",
+            "Sum":97169.7170107473
+        },
+        {
+            "index":150,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 거창군",
+            "Region_ENG":"4888000000_Gyeongsangnamdo_Geochang",
+            "Sum":22087.3717868262
+        },
+        {
+            "index":151,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 고성군",
+            "Region_ENG":"4882000000_Gyeongsangnamdo_Goseong",
+            "Sum":8473.00511337
+        },
+        {
+            "index":152,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 김해시",
+            "Region_ENG":"4825000000_Gyeongsangnamdo_Gimhae",
+            "Sum":355581.894053688
+        },
+        {
+            "index":153,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 남해군",
+            "Region_ENG":"4884000000_Gyeongsangnamdo_Namhae",
+            "Sum":2647.6544072168
+        },
+        {
+            "index":154,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 밀양시",
+            "Region_ENG":"4827000000_Gyeongsangnamdo_Miryang",
+            "Sum":24190.7385793802
+        },
+        {
+            "index":155,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 사천시",
+            "Region_ENG":"4824000000_Gyeongsangnamdo_Sacheon",
+            "Sum":58268.7108462173
+        },
+        {
+            "index":156,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 산청군",
+            "Region_ENG":"4886000000_Gyeongsangnamdo_Sancheong",
+            "Sum":2159.7856766461
+        },
+        {
+            "index":157,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 양산시",
+            "Region_ENG":"4833000000_Gyeongsangnamdo_Yangsan",
+            "Sum":379590.3977149604
+        },
+        {
+            "index":158,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 의령군",
+            "Region_ENG":"4872000000_Gyeongsangnamdo_Uiryeong",
+            "Sum":1933.8842418907
+        },
+        {
+            "index":159,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 진주시",
+            "Region_ENG":"4817000000_Gyeongsangnamdo_Jinju",
+            "Sum":226515.7278056482
+        },
+        {
+            "index":160,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 창녕군",
+            "Region_ENG":"4874000000_Gyeongsangnamdo_Changnyeong",
+            "Sum":8723.0442788519
+        },
+        {
+            "index":161,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 창원시 마산합포구",
+            "Region_ENG":"4812500000_Gyeongsangnamdo_Changwon_Masanhappo",
+            "Sum":87892.6550750628
+        },
+        {
+            "index":162,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 창원시 마산회원구",
+            "Region_ENG":"4812700000_Gyeongsangnamdo_Changwon_Masanhoewon",
+            "Sum":109032.9942246316
+        },
+        {
+            "index":163,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 창원시 성산구",
+            "Region_ENG":"4812300000_Gyeongsangnamdo_Changwon_Seongsan",
+            "Sum":268706.9303932763
+        },
+        {
+            "index":164,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 창원시 의창구",
+            "Region_ENG":"4812100000_Gyeongsangnamdo_Changwon_Uichang",
+            "Sum":180993.7559350468
+        },
+        {
+            "index":165,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 창원시 진해구",
+            "Region_ENG":"4812900000_Gyeongsangnamdo_Changwon_Jinhae",
+            "Sum":85301.5763926577
+        },
+        {
+            "index":166,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 통영시",
+            "Region_ENG":"4822000000_Gyeongsangnamdo_Tongyeong",
+            "Sum":65979.3057249347
+        },
+        {
+            "index":167,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 하동군",
+            "Region_ENG":"4885000000_Gyeongsangnamdo_Hadong",
+            "Sum":2430.1755436976
+        },
+        {
+            "index":168,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 함안군",
+            "Region_ENG":"4873000000_Gyeongsangnamdo_Haman",
+            "Sum":21914.5649674413
+        },
+        {
+            "index":169,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 함양군",
+            "Region_ENG":"4887000000_Gyeongsangnamdo_Hamyang",
+            "Sum":6561.326748281
+        },
+        {
+            "index":170,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangnamdo",
+            "Region":"경상남도 합천군",
+            "Region_ENG":"4889000000_Gyeongsangnamdo_Hapcheon",
+            "Sum":1093.8541778718
+        },
+        {
+            "index":171,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 경산시",
+            "Region_ENG":"4729000000_Gyeongsangbukdo_Gyeongsan",
+            "Sum":183306.9501495891
+        },
+        {
+            "index":172,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 경주시",
+            "Region_ENG":"4713000000_Gyeongsangbukdo_Gyeongju",
+            "Sum":94695.5185894729
+        },
+        {
+            "index":173,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 고령군",
+            "Region_ENG":"4783000000_Gyeongsangbukdo_Goryeong",
+            "Sum":4949.4801579955
+        },
+        {
+            "index":174,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 구미시",
+            "Region_ENG":"4719000000_Gyeongsangbukdo_Gumi",
+            "Sum":218431.8519979908
+        },
+        {
+            "index":175,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 김천시",
+            "Region_ENG":"4715000000_Gyeongsangbukdo_Gimcheon",
+            "Sum":47139.3873778935
+        },
+        {
+            "index":176,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 문경시",
+            "Region_ENG":"4728000000_Gyeongsangbukdo_Mungyeong",
+            "Sum":10181.2607805295
+        },
+        {
+            "index":177,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 봉화군",
+            "Region_ENG":"4792000000_Gyeongsangbukdo_Bonghwa",
+            "Sum":1192.9750528618
+        },
+        {
+            "index":178,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 상주시",
+            "Region_ENG":"4725000000_Gyeongsangbukdo_Sangju",
+            "Sum":15918.0109393065
+        },
+        {
+            "index":179,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 성주군",
+            "Region_ENG":"4784000000_Gyeongsangbukdo_Seongju",
+            "Sum":4450.5569407874
+        },
+        {
+            "index":180,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 안동시",
+            "Region_ENG":"4717000000_Gyeongsangbukdo_Andong",
+            "Sum":50538.9386240454
+        },
+        {
+            "index":181,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 영덕군",
+            "Region_ENG":"4777000000_Gyeongsangbukdo_Yeongdeok",
+            "Sum":1614.4157586134
+        },
+        {
+            "index":182,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 영양군",
+            "Region_ENG":"4776000000_Gyeongsangbukdo_Yeongyang",
+            "Sum":0.0
+        },
+        {
+            "index":183,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 영주시",
+            "Region_ENG":"4721000000_Gyeongsangbukdo_Yeongju",
+            "Sum":24258.6222002312
+        },
+        {
+            "index":184,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 영천시",
+            "Region_ENG":"4723000000_Gyeongsangbukdo_Yeongcheon",
+            "Sum":20790.9839092277
+        },
+        {
+            "index":185,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 예천군",
+            "Region_ENG":"4790000000_Gyeongsangbukdo_Yecheon",
+            "Sum":21424.9063977983
+        },
+        {
+            "index":186,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 울진군",
+            "Region_ENG":"4793000000_Gyeongsangbukdo_Uljin",
+            "Sum":3736.2521471923
+        },
+        {
+            "index":187,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 의성군",
+            "Region_ENG":"4773000000_Gyeongsangbukdo_Uiseong",
+            "Sum":2694.1033956439
+        },
+        {
+            "index":188,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 청도군",
+            "Region_ENG":"4782000000_Gyeongsangbukdo_Cheongdo",
+            "Sum":2270.7965170201
+        },
+        {
+            "index":189,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 청송군",
+            "Region_ENG":"4775000000_Gyeongsangbukdo_Cheongsong",
+            "Sum":37.1851611869
+        },
+        {
+            "index":190,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 칠곡군",
+            "Region_ENG":"4785000000_Gyeongsangbukdo_Chilgok",
+            "Sum":56919.5094178262
+        },
+        {
+            "index":191,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 포항시 남구",
+            "Region_ENG":"4711100000_Gyeongsangbukdo_Pohang_Nam",
+            "Sum":120499.5919014222
+        },
+        {
+            "index":192,
+            "Level":"Level2",
+            "Upper_region":"Gyeongsangbukdo",
+            "Region":"경상북도 포항시 북구",
+            "Region_ENG":"4711300000_Gyeongsangbukdo_Pohang_Buk",
+            "Sum":174719.5790350647
+        },
+        {
+            "index":193,
+            "Level":"Level2",
+            "Upper_region":"Sejong",
+            "Region":"세종시 세종시",
+            "Region_ENG":"3611000000_Sejong_Sejong",
+            "Sum":684848.103013202
+        },
+        {
+            "index":194,
+            "Level":"Level2",
+            "Upper_region":"Ulsan",
+            "Region":"울산시 남구",
+            "Region_ENG":"3114000000_Ulsan_Nam",
+            "Sum":284188.999236196
+        },
+        {
+            "index":195,
+            "Level":"Level2",
+            "Upper_region":"Ulsan",
+            "Region":"울산시 동구",
+            "Region_ENG":"3117000000_Ulsan_Dong",
+            "Sum":64044.6437043763
+        },
+        {
+            "index":196,
+            "Level":"Level2",
+            "Upper_region":"Ulsan",
+            "Region":"울산시 북구",
+            "Region_ENG":"3120000000_Ulsan_Buk",
+            "Sum":155844.9198402963
+        },
+        {
+            "index":197,
+            "Level":"Level2",
+            "Upper_region":"Ulsan",
+            "Region":"울산시 울주군",
+            "Region_ENG":"3171000000_Ulsan_Ulju",
+            "Sum":222932.357531844
+        },
+        {
+            "index":198,
+            "Level":"Level2",
+            "Upper_region":"Ulsan",
+            "Region":"울산시 중구",
+            "Region_ENG":"3111000000_Ulsan_Jung",
+            "Sum":131500.2187693447
+        },
+        {
+            "index":199,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 강진군",
+            "Region_ENG":"4681000000_Jeollanamdo_Gangjin",
+            "Sum":5135.4728811167
+        },
+        {
+            "index":200,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 고흥군",
+            "Region_ENG":"4677000000_Jeollanamdo_Goheung",
+            "Sum":5863.1845728858
+        },
+        {
+            "index":201,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 곡성군",
+            "Region_ENG":"4672000000_Jeollanamdo_Gokseong",
+            "Sum":1362.1083244852
+        },
+        {
+            "index":202,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 광양시",
+            "Region_ENG":"4623000000_Jeollanamdo_Gwangyang",
+            "Sum":82254.8185382933
+        },
+        {
+            "index":203,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 구례군",
+            "Region_ENG":"4673000000_Jeollanamdo_Gurye",
+            "Sum":3401.5658754035
+        },
+        {
+            "index":204,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 나주시",
+            "Region_ENG":"4617000000_Jeollanamdo_Naju",
+            "Sum":57193.2748153341
+        },
+        {
+            "index":205,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 담양군",
+            "Region_ENG":"4671000000_Jeollanamdo_Damyang",
+            "Sum":6378.278975676
+        },
+        {
+            "index":206,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 목포시",
+            "Region_ENG":"4611000000_Jeollanamdo_Mokpo",
+            "Sum":82678.5248849237
+        },
+        {
+            "index":207,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 무안군",
+            "Region_ENG":"4684000000_Jeollanamdo_Muan",
+            "Sum":90414.7865460024
+        },
+        {
+            "index":208,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 보성군",
+            "Region_ENG":"4678000000_Jeollanamdo_Boseong",
+            "Sum":4440.1599991984
+        },
+        {
+            "index":209,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 순천시",
+            "Region_ENG":"4615000000_Jeollanamdo_Suncheon",
+            "Sum":197417.4634683707
+        },
+        {
+            "index":210,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 여수시",
+            "Region_ENG":"4613000000_Jeollanamdo_Yeosu",
+            "Sum":129070.7472802011
+        },
+        {
+            "index":211,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 영광군",
+            "Region_ENG":"4687000000_Jeollanamdo_Yeonggwang",
+            "Sum":9690.3984464151
+        },
+        {
+            "index":212,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 영암군",
+            "Region_ENG":"4683000000_Jeollanamdo_Yeongam",
+            "Sum":7889.5912758235
+        },
+        {
+            "index":213,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 완도군",
+            "Region_ENG":"4689000000_Jeollanamdo_Wando",
+            "Sum":8511.1516595126
+        },
+        {
+            "index":214,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 장성군",
+            "Region_ENG":"4688000000_Jeollanamdo_Jangseong",
+            "Sum":5554.860033154
+        },
+        {
+            "index":215,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 장흥군",
+            "Region_ENG":"4680000000_Jeollanamdo_Jangheung",
+            "Sum":5145.8995646695
+        },
+        {
+            "index":216,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 진도군",
+            "Region_ENG":"4690000000_Jeollanamdo_Jindo",
+            "Sum":1084.3850395821
+        },
+        {
+            "index":217,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 함평군",
+            "Region_ENG":"4686000000_Jeollanamdo_Hampyeong",
+            "Sum":2186.2342874169
+        },
+        {
+            "index":218,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 해남군",
+            "Region_ENG":"4682000000_Jeollanamdo_Haenam",
+            "Sum":11624.1991559804
+        },
+        {
+            "index":219,
+            "Level":"Level2",
+            "Upper_region":"Jeollanamdo",
+            "Region":"전라남도 화순군",
+            "Region_ENG":"4679000000_Jeollanamdo_Hwasun",
+            "Sum":34362.7392093872
+        },
+        {
+            "index":220,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 고창군",
+            "Region_ENG":"5279000000_Jeollabukdo_Gochang",
+            "Sum":11369.7166972191
+        },
+        {
+            "index":221,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 군산시",
+            "Region_ENG":"5213000000_Jeollabukdo_Gunsan",
+            "Sum":114250.5988969946
+        },
+        {
+            "index":222,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 김제시",
+            "Region_ENG":"5221000000_Jeollabukdo_Gimje",
+            "Sum":11937.6849196107
+        },
+        {
+            "index":223,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 남원시",
+            "Region_ENG":"5219000000_Jeollabukdo_Namwon",
+            "Sum":15644.2491961831
+        },
+        {
+            "index":224,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 무주군",
+            "Region_ENG":"5273000000_Jeollabukdo_Muju",
+            "Sum":1526.3728228351
+        },
+        {
+            "index":225,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 부안군",
+            "Region_ENG":"5280000000_Jeollabukdo_Buan",
+            "Sum":12524.9489301153
+        },
+        {
+            "index":226,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 순창군",
+            "Region_ENG":"5277000000_Jeollabukdo_Sunchang",
+            "Sum":4139.2427131387
+        },
+        {
+            "index":227,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 완주군",
+            "Region_ENG":"5271000000_Jeollabukdo_Wanju",
+            "Sum":58049.6410293239
+        },
+        {
+            "index":228,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 익산시",
+            "Region_ENG":"5214000000_Jeollabukdo_Iksan",
+            "Sum":108426.4845036018
+        },
+        {
+            "index":229,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 임실군",
+            "Region_ENG":"5275000000_Jeollabukdo_Imsil",
+            "Sum":1422.2547429409
+        },
+        {
+            "index":230,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 장수군",
+            "Region_ENG":"5274000000_Jeollabukdo_Jangsu",
+            "Sum":775.5497666216
+        },
+        {
+            "index":231,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 전주시 덕진구",
+            "Region_ENG":"5211300000_Jeollabukdo_Jeonju_Deokjin",
+            "Sum":205617.9494708329
+        },
+        {
+            "index":232,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 전주시 완산구",
+            "Region_ENG":"5211100000_Jeollabukdo_Jeonju_Wansan",
+            "Sum":201389.5591513189
+        },
+        {
+            "index":233,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 정읍시",
+            "Region_ENG":"5218000000_Jeollabukdo_Jeongeup",
+            "Sum":26915.8697616172
+        },
+        {
+            "index":234,
+            "Level":"Level2",
+            "Upper_region":"Jeollabukdo",
+            "Region":"전북도 진안군",
+            "Region_ENG":"5272000000_Jeollabukdo_Jinan",
+            "Sum":1427.4333076209
+        },
+        {
+            "index":235,
+            "Level":"Level2",
+            "Upper_region":"Jejudo",
+            "Region":"제주도 제주시",
+            "Region_ENG":"5011000000_Jejudo_Jeju",
+            "Sum":142453.9871556596
+        },
+        {
+            "index":236,
+            "Level":"Level2",
+            "Upper_region":"Jejudo",
+            "Region":"제주도 서귀포시",
+            "Region_ENG":"5013000000_Jejudo_Seogwipo",
+            "Sum":35416.8084327025
+        },
+        {
+            "index":237,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 계룡시",
+            "Region_ENG":"4425000000_Chungcheongnamdo_Gyeryong",
+            "Sum":52102.1701657042
+        },
+        {
+            "index":238,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 공주시",
+            "Region_ENG":"4415000000_Chungcheongnamdo_Gongju",
+            "Sum":27881.4113037457
+        },
+        {
+            "index":239,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 금산군",
+            "Region_ENG":"4471000000_Chungcheongnamdo_Geumsan",
+            "Sum":9977.8507899675
+        },
+        {
+            "index":240,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 논산시",
+            "Region_ENG":"4423000000_Chungcheongnamdo_Nonsan",
+            "Sum":25993.0325029863
+        },
+        {
+            "index":241,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 당진시",
+            "Region_ENG":"4427000000_Chungcheongnamdo_Dangjin",
+            "Sum":94023.9386145998
+        },
+        {
+            "index":242,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 보령시",
+            "Region_ENG":"4418000000_Chungcheongnamdo_Boryeong",
+            "Sum":23580.0232550392
+        },
+        {
+            "index":243,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 부여군",
+            "Region_ENG":"4476000000_Chungcheongnamdo_Buyeo",
+            "Sum":11167.323463025
+        },
+        {
+            "index":244,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 서산시",
+            "Region_ENG":"4421000000_Chungcheongnamdo_Seosan",
+            "Sum":94894.0249724578
+        },
+        {
+            "index":245,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 서천군",
+            "Region_ENG":"4477000000_Chungcheongnamdo_Seocheon",
+            "Sum":9667.1642753947
+        },
+        {
+            "index":246,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 아산시",
+            "Region_ENG":"4420000000_Chungcheongnamdo_Asan",
+            "Sum":449159.2112802683
+        },
+        {
+            "index":247,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 예산군",
+            "Region_ENG":"4481000000_Chungcheongnamdo_Yesan",
+            "Sum":55798.9373047787
+        },
+        {
+            "index":248,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 천안시 동남구",
+            "Region_ENG":"4413100000_Chungcheongnamdo_Cheonan_Dongnam",
+            "Sum":183685.1762033268
+        },
+        {
+            "index":249,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 천안시 서북구",
+            "Region_ENG":"4413300000_Chungcheongnamdo_Cheonan_Seobuk",
+            "Sum":357785.4721309364
+        },
+        {
+            "index":250,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 청양군",
+            "Region_ENG":"4479000000_Chungcheongnamdo_Cheongyang",
+            "Sum":1916.1262493988
+        },
+        {
+            "index":251,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 태안군",
+            "Region_ENG":"4482500000_Chungcheongnamdo_Taean",
+            "Sum":13740.1884484387
+        },
+        {
+            "index":252,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongnamdo",
+            "Region":"충청남도 홍성군",
+            "Region_ENG":"4480000000_Chungcheongnamdo_Hongseong",
+            "Sum":76940.0731667393
+        },
+        {
+            "index":253,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 괴산군",
+            "Region_ENG":"4376000000_Chungcheongbukdo_Goesan",
+            "Sum":1854.5001200167
+        },
+        {
+            "index":254,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 단양군",
+            "Region_ENG":"4380000000_Chungcheongbukdo_Danyang",
+            "Sum":6930.1201272111
+        },
+        {
+            "index":255,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 보은군",
+            "Region_ENG":"4372000000_Chungcheongbukdo_Boeun",
+            "Sum":3471.670082524
+        },
+        {
+            "index":256,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 영동군",
+            "Region_ENG":"4374000000_Chungcheongbukdo_Yeongdong",
+            "Sum":5456.0117523442
+        },
+        {
+            "index":257,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 옥천군",
+            "Region_ENG":"4373000000_Chungcheongbukdo_Okcheon",
+            "Sum":20144.3567500759
+        },
+        {
+            "index":258,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 음성군",
+            "Region_ENG":"4377000000_Chungcheongbukdo_Eumseong",
+            "Sum":53582.765241534
+        },
+        {
+            "index":259,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 제천시",
+            "Region_ENG":"4315000000_Chungcheongbukdo_Jecheon",
+            "Sum":43307.5060526764
+        },
+        {
+            "index":260,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 증평군",
+            "Region_ENG":"4374500000_Chungcheongbukdo_Jeungpyeong",
+            "Sum":23541.2425835378
+        },
+        {
+            "index":261,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 진천군",
+            "Region_ENG":"4375000000_Chungcheongbukdo_Jincheon",
+            "Sum":65021.932839191
+        },
+        {
+            "index":262,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 청주시 상당구",
+            "Region_ENG":"4311100000_Chungcheongbukdo_Cheongju_Sangdang",
+            "Sum":111141.9620510832
+        },
+        {
+            "index":263,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 청주시 서원구",
+            "Region_ENG":"4311200000_Chungcheongbukdo_Cheongju_Seowon",
+            "Sum":106421.4808228433
+        },
+        {
+            "index":264,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 청주시 청원구",
+            "Region_ENG":"4311400000_Chungcheongbukdo_Cheongju_Cheongwon",
+            "Sum":145756.0601758414
+        },
+        {
+            "index":265,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 청주시 흥덕구",
+            "Region_ENG":"4311300000_Chungcheongbukdo_Cheongju_Heungdeok",
+            "Sum":295173.3152770852
+        },
+        {
+            "index":266,
+            "Level":"Level2",
+            "Upper_region":"Chungcheongbukdo",
+            "Region":"충청북도 충주시",
+            "Region_ENG":"4313000000_Chungcheongbukdo_Chungju",
+            "Sum":95777.7731188675
+        }
+    ]
+}

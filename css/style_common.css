@@ -1,0 +1,273 @@
+.offcanvas-body{
+  padding: 0 !important
+}
+#offcanvas_menu{
+  padding: 5px;
+  padding-top: 15px;
+}
+#offcanvasRightLabel{
+  font-weight: 600;
+  font-size: 1.2em;
+  margin-bottom: 0;
+}
+.offcanvas-header{
+  padding: 10px;
+  border-bottom: 1px solid #ccc;  
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+.offcanvas_info{
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.offcanvas_link{
+  display: grid;
+  grid-template-columns: 30px 1fr;
+}
+.offcanvas_link:active{
+  transform: translateY(2px);
+}
+.offcanvas_active{
+    transform: translateY(2px);
+    color: green
+}
+.offcanvas_direction{
+  text-align: center;
+  padding-top: 7px;  
+}
+.offcanvas_sub_menu{
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 3px;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+.offcanvas_sub_menu_title{
+  font-size: 1.05em;
+  font-weight: 600;
+}
+.offcanvas_sub_menu_description{
+  font-size: 0.7em;    
+}
+#offcanvas_footer, #offcanvas_footer_link, #offcanvas_footer_policy{
+  padding: 5px;
+  font-size: 0.85em;
+  font-weight: 600;
+  grid-row-gap: 13px;
+  display: grid;
+  grid-template-columns: 30px 1fr;  
+  margin-top: 20px;
+}
+.offcanvas_footer_icon{
+  text-align: center;
+}
+
+#offcanvas_company, #offcanvas_company_long{
+  font-size: 0.75em;
+  font-weight: 600;
+  padding: 15px;
+  text-align: left;
+  color: #888;
+  background: #eee;
+  margin-top: 30px;
+  position: relative;
+}
+
+#company_info_detail{
+  display: grid;
+  row-gap: 5px;
+  text-align: left;
+  grid-template-columns: 110px 1fr;
+}
+
+#company_CI{  
+  margin-top: 10px;
+}
+
+.loginBox{
+  display: grid;
+  text-align: center;  
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  justify-items: center;
+}
+#aptrankLoginGuide{
+  padding-bottom: 5px;
+  font-size: 0.85em;
+}
+.loginCI{
+  display: grid;
+  justify-content: center;  
+  padding-top: 2px;
+  text-align: center;
+}
+.loginText{
+  line-height: 1.3em;
+}
+#loginDetail{
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+#policy_box{
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+#policy_agreement{  
+  display: grid;
+  grid-template-columns: 220px 40px;
+  font-size: 0.9em;
+  row-gap: 10px;
+  background: #eee;
+  border-radius: 5px;
+  padding: 10px
+}
+#all_agree{
+  grid-column: span 2;
+}
+#all_agree_button{
+  text-align: center;
+  font-weight: 600;
+  border-radius: 5px;
+  background: #666;
+  color:white;
+  margin-top: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+#all_agree_button:active{
+  background: #444;
+}
+.policy_checker{
+  vertical-align: -2px;
+  margin-right: 10px;
+}
+#naverIdLogin, #kakaoIdLogin, #appleIdLogin, #naverLogin{
+  display: grid;  
+  grid-template-columns: 50px 1fr;
+  border-radius: 5px;
+  margin-bottom: 10px;  
+  width: 280px;
+  padding-right: 30px;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+  text-align: center;
+  font-weight: 600;
+}
+#naverIdLogin_loginButton, #appleIdLogin_loginButton{
+  text-decoration: none;
+  color: white;
+}
+
+#kakaoIdLogin_loginButton{
+  text-decoration: none;
+  color: #000;
+}
+#naverIdLogin, #naverLogin{
+    background-color: #03C75A;
+}
+#kakaoIdLogin{
+  background-color: #FEE500;
+}
+#appleIdLogin{
+  background-color: #000;
+}
+
+#aptrankLoginButton{
+  border-radius: 5px;
+  background-color: #e31939;
+  color: white;
+  text-align: center;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  width: 300px;  
+  font-weight: 600
+}
+
+#aptrankLoginButton:hover, #aptrankLoginButton:active{
+  background-color: #cf1e3b;
+}
+
+#aptrankLoginButton2{
+  border-radius: 5px;
+  font-size: 0.8em;
+  background-color: rgba( 255, 255, 255, 0.0 );
+  color: white;
+  border: 1px solid white;
+  text-align: center;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  width: auto;
+  font-weight: 600
+}
+
+#aptrankLoginButton2:hover, #aptrankLoginButton2:active{
+  background-color: rgba( 255, 255, 255, 0.1 );
+}
+
+#linkToAptrank_bottom{
+  display: inline-block;
+  width: 100%;
+  overflow:auto;
+  align-content: center;
+  justify-content: center;
+  padding-bottom: 1px;    
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3em;
+  line-height: 2.8em;
+  background-color: #eeeeee;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px -5px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  text-align: center;
+  z-index: 860;
+}
+
+#tab1, #tab2, #tab3, #tab4, #tab5, #tab6, #tab7, #tab8, #tab9{
+  font-size: 0.8em;
+  font-weight: 600;
+  border-top: 2px solid #e31939;
+  color: gray;
+}
+#tab1:active, #tab2:active, #tab3:active, #tab4:active, #tab5:active, #tab6:active, #tab7:active, #tab8:active, #tab9:active{
+  color: #fff;
+  background-color: #e31939;
+} 
+
+#bottom_memu_wrapper{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  overflow : auto;
+}
+
+#pageLoadingBack{
+  position:fixed;
+  top:0;    
+  justify-items: center;
+  align-content: center;
+  display: grid;
+  background:rgba(0, 0, 0, 0.6);
+  width:100%;
+  height:100%;
+  z-index: 1500;
+}
+.text-pageLoading{
+  color: #ffffff
+}
+
+/*
+@media (max-height:950px){  
+  #linkToAptrank_bottom{
+    display: none;
+  }
+}
+@media screen and (min-width: 800px){
+  #linkToAptrank_bottom{
+    width: 800px;
+    margin: 0 auto;
+  }
+}
+*/

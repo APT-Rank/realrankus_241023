@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <meta name="appleid-signin-client-id" content="com.realrankus.web">
+        <meta name="appleid-signin-scope" content="name email">
+        <meta name="appleid-signin-redirect-uri" content="https://www.realrankus.com/login/aCallback.html">
+        <meta name="appleid-signin-state" content="asdhfg">
+        <meta name="appleid-signin-nonce" content="dkufh">
+        <meta name="appleid-signin-use-popup" content="false">
+    </head>
+    <body>
+        <div id="appleid-signin" data-color="black" data-border="true" data-type="sign in"></div>
+        
+        <a href="https://appleid.apple.com/auth/authorize?client_id=com.realrankus.web&redirect_uri=https://www.realrankus.com/login/aCallback.html&response_type=code id_token&state=STATE&scope=name%20email&response_mode=form_post">Sign In with Apple</a>        
+    </body>
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+</html>
+
+<script>
+  // Listen for authorization success.
+  document.addEventListener('AppleIDSignInOnSuccess', (event) => {
+      // Handle successful response.
+      console.log(event.detail.data);
+  });
+
+
+  // Listen for authorization failures.
+  document.addEventListener('AppleIDSignInOnFailure', (event) => {
+      // Handle error.
+      console.log(event.detail.error);
+  });
+</script>

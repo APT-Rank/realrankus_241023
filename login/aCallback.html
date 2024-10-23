@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous" ></script>
+<script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+
+<script>
+$(document).ready(function () {
+	const url = new URL(window.location.href)
+	console.log(url)
+
+	// Listen for authorization success.
+	document.addEventListener('AppleIDSignInOnSuccess', (event) => {
+		// Handle successful response.
+		console.log(event.detail.data);
+	});
+
+
+	// Listen for authorization failures.
+	document.addEventListener('AppleIDSignInOnFailure', (event) => {
+		// Handle error.
+		console.log(event.detail.error);
+	});
+})
+
+const APPLE_CLIENT_ID = "com.realrankus.web"
+const APPLE_CLIENT_SECRET = "3TL3W2U762"
+const REDIRECT_URI = "https://www.realrankus.com/login/aCallback.html"
+//const params = new URLSearchParams(location.search);
+//const AUTH_CODE = params.get('code');
+//const CODE = new URL(window.location.href).searchParams.get("code");
+//const AUTH_STATE = params.get('state');
+//const STATE = new URL(window.location.href).searchParams.get("state");
+const STATE = ""
+const SCOPE = "name email"
+const RESPONSE_MODE = "form_post"
+const RESPONSE_TYPE = "code id_token"
+
+"https://appleid.apple.com/auth/authorize?&response_type=code id_token&state=STATE&scope=name%20email&response_mode=form_post"
+
+fetch(`appleid.apple.com/auth/authorize`, {
+	method: 'POST',
+	headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Access-Control-Allow-Origin':'*' },
+	body: "content-type=application/x-www-form-urlencode"
+			//+ "&grant_type=authorization_code"
+			+ "&client_id=" + APPLE_CLIENT_ID
+			//+ "&client_secret=" + APPLE_CLIENT_SECRET
+			//+ "&code=" + CODE
+			+ "&scope=" + SCOPE 
+			+ "&redirect_uri=" + REDIRECT_URI 
+			+ "&state=" + STATE
+			+ "&response_mode=" + RESPONSE_MODE
+			+ "&response_type=" + RESPONSE_TYPE
+})
+.then(res => res.json())
+.then(data => {
+	console.log(data)
+	//localStorage.setItem('kToken', data.access_token)
+	//pageName = localStorage.getItem('pageName')
+	//console.log("PAGENAME : ", pageName)
+	//var redirect = "http://www.realrankus.com";
+	//var redirect = setLogoutDest(pageName)
+	//window.location.replace(redirect);
+})
+
+
+async function getAppleLogin(){
+	try {
+		const res = await window.AppleID.auth.signIn();
+		console.log(res);
+	} catch (error) {
+		console.log(error);
+	}   
+}
+
+function b64DecodeUnicode(str) {
+	return decodeURIComponent(
+		atob(str).replace(/(.)/g, function (m, p) {
+			var code = p.charCodeAt(0).toString(16).toUpperCase();
+			if (code.length < 2) {
+				code = "0" + code;
+			}
+			return "%" + code;
+		})
+	);
+}
+
+
+function base64_url_decode(str) {
+	var output = str.replace(/-/g, "+").replace(/_/g, "/");
+	switch (output.length % 4) {
+	case 0:
+		break;
+	case 2:
+		output += "==";
+		break;
+	case 3:
+		output += "=";
+		break;
+	default:
+		throw "Illegal base64url string!";
+	}
+
+	try {
+		return b64DecodeUnicode(output);
+	} catch (err) {
+		return atob(output);
+	}
+}
+
+//getAppleLogin()
+
+</script>
+</body>
+</html>

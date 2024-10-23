@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>PRINT</title>
+    <meta charset="utf-8">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="리얼랭커스 GUIDER" />
+    <meta property="og:description" content="리얼랭커스 GUIDER" />
+    <meta property="og:image" content="https://www.realrankus.com/priceCal/thumbnail_priceCal.png" />
+    <meta property="og:url" content="https://www.realrankus.com/priceCal/" />
+    <meta name="keyword" content="부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수" />
+    <meta name="description" content="리얼랭커스 GUIDER" />
+    <meta name="author" content="리얼랭커스 GUIDER" />
+    <meta name="robots" content="index,follow" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=yes, minimal-ui, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- 상태 바의 스타일을 지정 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+    <meta name="apple-mobile-web-app-title" content="리얼랭커스 GUIDER" />
+    <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+    <link rel="apple-touch-icon" href="https://www.realrankus.com/biz/apt-rank-biz-152x152.png" />
+    <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    <link rel="shortcut icon" href="https://www.realrankus.com/biz/apt-rank-biz.png" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+    <script src="../js/share.js" type="text/javascript"></script>
+    <script src="./nearby_findings.js" type="text/javascript"></script>
+    <script src="./guider_setting.js" type="text/javascript"></script>
+
+    <link href="../css/style_common.css" rel="stylesheet"/>
+    <link href="./style_guider.css" rel="stylesheet" />
+    <link href="../css/distance.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+      var UserAgent = navigator.userAgent;
+      var scr_width = screen.width;
+      var scr_height = screen.height;
+    </script>
+  </head>
+  <style></style>
+
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd" ></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd&submodules=geocoder"></script>
+
+    <div id="cover_page">
+      <div id="cover_page_top"></div>
+      <div id="cover_page_middle"></div>
+      <div id="cover_page_bottom"></div>
+    </div>
+    <div id="print_area"></div>
+    <div id="end_of_document">
+      <div id="eod_top"></div>
+      <div id="eod_middle"></div>
+      <div id="eod_bottom"></div>
+    </div>
+
+    <div id="print_it" onClick="window.print()"><i class="fa-solid fa-print"></i> PRINT</div>
+
+  </body>
+  <script>
+    var itemNum = 0;
+    var aptData = "";
+    var sortData = [];
+
+    var budget_cash = 0
+    var budget_loan = 0
+
+    var fav_point_x = 0
+    var fav_point_y = 0
+
+    var movingMethod = 'public'
+
+    var priority_living = 100
+    var priority_trans = 100
+    var priority_infra = 100
+    var priority_edu = 100
+
+    var apt_result = ""
+
+    var wanted_region = []
+
+    var today = new Date();
+    var today_year = today.getFullYear();
+    var today_month = dateReturn(today.getMonth() + 1);
+    var today_day = dateReturn(today.getDate());
+    var today_num = Number("" + today_year + today_month + today_day);
+    var today_str = today_year + "-" + today_month + "-" + today_day;
+
+    var date_delta = 1
+    weekday = today.getDay()
+
+    //일 0, 월 1, 화 2, 수 3, 목 4, 금 5, 토 6
+    if(weekday < 4){
+      date_delta = 4 - weekday
+    }
+    else{
+      date_delta = (4+7) - weekday
+    }
+
+    var tomorrow_num = today.setDate(today.getDate() + date_delta)
+    var tomorrow = new Date(tomorrow_num);
+    var tomorrow_year = tomorrow.getFullYear();
+    var tomorrow_month = dateReturn(tomorrow.getMonth() + 1);
+    var tomorrow_day = dateReturn(tomorrow.getDate());
+    var tomorrow_num = Number("" + tomorrow_year + tomorrow_month + tomorrow_day);
+    var tomorrow_str = tomorrow_year + "-" + tomorrow_month + "-" + tomorrow_day;
+
+    function dateReturn(n) {
+      return n < 10 ? "0" + n : n;
+    }
+
+    var todayMonthQuater = "";
+
+    todayQuaterCheck = today.getMonth() + 1;
+    if (todayQuaterCheck >= 1 && todayQuaterCheck <= 3) {
+      todayMonthQuater = "1Q";
+    } else if (todayQuaterCheck >= 4 && todayQuaterCheck <= 6) {
+      todayMonthQuater = "2Q";
+    } else if (todayQuaterCheck >= 7 && todayQuaterCheck <= 9) {
+      todayMonthQuater = "3Q";
+    } else {
+      todayMonthQuater = "4Q";
+    }
+    var todayQuater = today_year.toString() + "-" + todayMonthQuater;
+
+    var startYear = "2019";
+    var startMonth = "06";
+    var startQuater = "2Q";
+
+    var firstEnter = true
+
+    var priceResult = [];
+
+    $(document).ready(function () {
+      $('body').css({'background' : '#fff'})
+
+      var report_text = window.opener.report_text
+      var complex_value_div = window.opener.complex_value_div
+      var complex_raw_list = window.opener.complex_raw_list
+      var today_str = window.opener.today_str
+      var customer_name = window.opener.customer_name
+
+      cover_page_top_html = ""
+      cover_page_middle_html = ""
+      cover_page_bottom_html = ""
+
+      cover_page_top_html += "<div><span style='color:#0b1279'>" + customer_name + "</span>님을 위한 <br> 리얼랭커스 추천 보고서</div>"
+      cover_page_middle_html = "<div id='cover_page_CI'><img src = '../apt-rank.png' width=150px id='cover_page_img'></div>"
+      cover_page_bottom_html += "<div><span style='font-size: 1.5em'>" + today_str + "</span><br><span style='font-weight:600; font-size: 2em'>리얼랭커스</span></div>"
+
+      $('#cover_page_top').html(cover_page_top_html)      
+      $('#cover_page_middle').html(cover_page_middle_html)
+      $('#cover_page_bottom').html(cover_page_bottom_html)
+
+      eod_top_html = ""
+      eod_middle_html = ""
+      eod_bottom_html = ""
+      
+      eod_top_html += `
+      <div>
+        <ul>
+          <li>리얼랭커스의 추천 보고 결과는 투자지표가 아니며, 투자 판단에 대한 모든 책임은 본인에게 있습니다.</li>
+          <li>보고서의 모든 결과는 발행일 기준으로 설정된 내용이며, 정책 또는 사회적 상황의 변화를 반영하지 않습니다.</li>
+          <li>보고서의 추천 결과는 최대 10개까지 표시됩니다.</li>
+        </ul>
+      </div>
+      `
+      eod_middle_html += "<div>감사합니다.</div>"
+      eod_bottom_html += "<div><span style='font-size: 1.5em'>" + today_str + "</span><br><span style='font-weight:600; font-size: 2em'>리얼랭커스</span></div>"
+
+      $('#eod_top').html(eod_top_html)      
+      $('#eod_middle').html(eod_middle_html)
+      $('#eod_bottom').html(eod_bottom_html)
+
+      $('#print_area').html(window.opener.report_text)
+
+      //지도 그리기
+      for(var k = 0 ; k < complex_value_div.length ; k++){
+        div_id = complex_value_div[k]["map_div"]
+        coord_y = complex_raw_list[k]["Y"]
+        coord_x = complex_raw_list[k]["X"]
+        aptValue = complex_raw_list[k]["가치 총점"]
+
+        draw_minimap(div_id, aptValue, coord_y, coord_x)
+
+        canvas_id = complex_value_div[k]["score_div"]
+        livingScore = complex_raw_list[k]["주거총점"]
+        transportScore = complex_raw_list[k]["교통총점"]
+        infraScore = complex_raw_list[k]["인프라총점"]
+        eduScore = complex_raw_list[k]["학군총점"]
+        draw_score_graph(canvas_id, livingScore, transportScore, infraScore, eduScore)
+        
+        qr_id = complex_value_div[k]["QR_div"]
+        qr_url = complex_raw_list[k]["sURL"]
+        img_source = "https://quickchart.io/qr?text=" + qr_url
+
+        $("#" + qr_id).html("<img src=\'" + img_source + "\' height=\'100px\'/><br>" + today_str)
+      }
+
+
+    });
+  </script>  
+</html>
