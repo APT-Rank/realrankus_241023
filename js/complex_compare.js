@@ -1,8 +1,10 @@
+/*
 var btn_timer = setInterval(function () {
   $('#btn_complex_compare').animate({'opacity': 0} ,750 , function () {
     $('#btn_complex_compare').animate({'opacity': 1}, 750);
   });
 }, 3000);
+*/
 
 var compareOption = "";
 for (i = 1; i < regions.length; i++) {
@@ -34,7 +36,7 @@ for (i = 1; i < regions.length; i++) {
 }
 
 function openCompare(complex_data){
-  clearInterval(btn_timer)
+  //clearInterval(btn_timer)
 
   if(isMobile){
     $("#compareModal > div").css({'flex-direction': 'column', 'margin-top': '0em'})

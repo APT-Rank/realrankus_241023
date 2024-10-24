@@ -1885,7 +1885,7 @@
         }
         detailHtml += "</div></div>";
       }
-      */ 
+      */
 
       if(login_status == false){
           detailHtml += "<div class='loginBox'>"
@@ -1902,10 +1902,10 @@
                 
         detailHtml += "<hr class='hr_small'>";
         if (selectedMonth == thisMonth) {          
-          detailHtml += "<div id='advanced_feature'>"
-          detailHtml += "<div id='btn_complex_compare' onclick='openCompare(aptData.data[" + index + "])'>단지 비교하기 <span id='newFeature'>NEW!!</span></div>"
+          detailHtml += "<div id='advanced_feature'>"          
           detailHtml += "<div class='popupSubtitle' style='text-align: center; margin-top: 10px'>↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓</div>";
           detailHtml += "<div id='rankSimul' onclick='openSimulation(aptData.data," + index + ")'>랭크 시뮬레이션</div>";
+          detailHtml += "<div id='btn_complex_compare' onclick='openCompare(aptData.data[" + index + "])'>단지 비교하기 <span id='newFeature'>NEW!!</span></div>"
           detailHtml += "</div>"
         }
         else{
