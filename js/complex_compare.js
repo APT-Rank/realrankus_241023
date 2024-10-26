@@ -6,6 +6,8 @@ var btn_timer = setInterval(function () {
 }, 3000);
 */
 
+$("#complex_compare_search").hide()
+
 var compareOption = "";
 for (i = 1; i < regions.length; i++) {
   region_name = regions[i][0]
@@ -48,19 +50,33 @@ function openCompare(complex_data){
 
     compare_detail_html += "<div id='compare1_option'>"
       compare_detail_html += "<div id='compare1_sido_selection'><select id='compare1_sido' onChange='compareSidoChange(this.value, 1)'></select></div>"
-      compare_detail_html += "<div id='compare1_gungu_selection'><select id='compare1_gungu' onChange='loadComplexList(1)'></select></div>"
+      compare_detail_html += "<div id='compare1_gungu_selection'><select id='compare1_gungu' onChange='loadComplexList(1, \"init\")'></select></div>"      
     compare_detail_html += "</div>"  
 
     compare_detail_html += "<div class='compare_option_middle'>시군구</div>"
 
     compare_detail_html += "<div id='compare2_option'>"
       compare_detail_html += "<div id='compare2_sido_selection'><select id='compare2_sido' onChange='compareSidoChange(this.value, 2)'></select></div>"
-      compare_detail_html += "<div id='compare2_gungu_selection'><select id='compare2_gungu' onChange='loadComplexList(2)'></select></div>"
+      compare_detail_html += "<div id='compare2_gungu_selection'><select id='compare2_gungu' onChange='loadComplexList(2, \"init\")'></select></div>"      
     compare_detail_html += "</div>"
 
-    compare_detail_html += "<div class='complex_compare_detail' id='compare1_complex_selection'><select id='compare1_complex' onChange='loadComplex(1)'></select></div>"
+    /*
+    compare_detail_html += "<div class='complex_compare_detail' id='compare1_complex_selection'><select id='compare1_complex' onChange='loadComplex(1)'></select></div>"    
     compare_detail_html += "<div class='compare_option_middle'>단지</div>"
-    compare_detail_html += "<div class='complex_compare_detail' id='compare2_complex_selection'><select id='compare2_complex' onChange='loadComplex(2)'></select></div>"
+    compare_detail_html += "<div class='complex_compare_detail' id='compare2_complex_selection'><select id='compare2_complex' onChange='loadComplex(2)'></select></div>"    
+    */
+    
+    compare_detail_html += "<div class='complex_compare_detail_wrapper' onClick='loadComplexSearch(1)'>"
+    compare_detail_html += "<div class='complex_compare_detail' id='compare1_complex_search' value=''></div>"    
+    compare_detail_html += "<div class='complex_compare_detail'><i class='fa-solid fa-sort-down'></i></div>"
+    compare_detail_html += "</div>"
+
+    compare_detail_html += "<div class='compare_option_middle'>단지</div>"
+
+    compare_detail_html += "<div class='complex_compare_detail_wrapper' onClick='loadComplexSearch(2)'>"
+    compare_detail_html += "<div class='complex_compare_detail' id='compare2_complex_search' value=''></div>"
+    compare_detail_html += "<div class='complex_compare_detail' ><i class='fa-solid fa-sort-down'></i></div>"
+    compare_detail_html += "</div>"
 
   compare_detail_html += "</div>"
 
@@ -276,8 +292,8 @@ function openCompare(complex_data){
   $("#compareModal").css({"z-index":"1200"})
   $(".modal-backdrop").css({"width":"100%", "z-index":"1100"})
 
-  loadComplexList(1)
-  loadComplexList(2)
+  loadComplexList(1, complex_data['검색코드'])
+  loadComplexList(2, "init")
 
   $("#compare_loading").show()
   $("#compare_wrapper").css({'visibility':'hidden'})
@@ -285,6 +301,9 @@ function openCompare(complex_data){
   compare1_code = complex_data['검색코드']  
   $("#compare1_complex").val(compare1_code).prop("selected", true);
   $("#compare1_complex_info").html(complex_data['아파트명'])
+
+  $("#compare1_complex_search").html(complex_data['아파트명']);
+  $("#compare1_complex_search").val(complex_data['검색코드'] );
 
   /*
   setTimeout(function(){
@@ -368,8 +387,11 @@ function compareOptionChange(compareSelectedRegion, compareSelectedSubRegion, co
       if(compareSelectedSubRegion == ""){
         $("#compare1_gungu").val(selectedSubRegion).prop("selected", true);
       }
-      else{
+      else if(compareSelectedSubRegion == "init"){
         $("#compare1_gungu").val(changeItem[0][1]).prop("selected", true);
+      }
+      else{
+        $("#compare1_gungu").val(compareSelectedSubRegion).prop("selected", true);
       }
     }
   }
@@ -389,23 +411,29 @@ function compareOptionChange(compareSelectedRegion, compareSelectedSubRegion, co
       if(compareSelectedSubRegion == ""){
         $("#compare2_gungu").val(selectedSubRegion).prop("selected", true);
       }
-      else{
+      else if(compareSelectedSubRegion == "init"){
         $("#compare2_gungu").val(changeItem[0][1]).prop("selected", true);
+      }
+      else{
+        $("#compare2_gungu").val(compareSelectedSubRegion).prop("selected", true);
       }
     }
   }  
 }
+
 function compareSidoChange(compareSelectedRegion, compareNum){
   compareOptionChange(compareSelectedRegion, "init", compareNum)
-  loadComplexList(compareNum)
+  loadComplexList(compareNum, "init")
 }
 
-function loadComplexList(compareNum){  
+function loadComplexList(compareNum, code){  
   var searchingData_list = searchingData.data
-  var selected_compare_list = []    
+  var selected_compare_list = []
+  var complex_code = code
 
   if(compareNum == 1){
     $("#compare1_complex").html("")
+    $("#complex_compare1_search_list").html("");
     compareSubRegion = $("#compare1_gungu option:selected").val()
 
     for(var i = 0 ; i < searchingData_list.length ; i++){
@@ -417,13 +445,27 @@ function loadComplexList(compareNum){
     var compare_list_result = selected_compare_list.sort((a, b) => b['가치 총점'] - a['가치 총점']);    
 
     for (var j = 0; j < selected_compare_list.length; j++) {
-      var complexListOption = $( "<option value='" + compare_list_result[j]['검색코드'] + "'>" + compare_list_result[j]['아파트명'] + "</option>" );
-      $("#compare1_complex").append(complexListOption);
-    }    
+      //var complexListOption = $( "<option value='" + compare_list_result[j]['검색코드'] + "'>" + compare_list_result[j]['아파트명'] + "</option>" );
+      //$("#compare1_complex").append(complexListOption);      
+      
+      var complexListSearch = "<div class='compare_search_list' value='" + compare_list_result[j]['검색코드'] + "' onClick='loadComplex2(" + compareNum + ",\"" + compare_list_result[j]['검색코드'] + "\")'>"
+        complexListSearch += "<div class='searched_apt_name'>" + compare_list_result[j]['아파트명'] + "</div>"
+        complexListSearch += "<div class='searched_apt_info'>" + compare_list_result[j]['법정동주소'] + "</div>"
+      complexListSearch += "</div>"        
+
+      $("#complex_compare1_search_list").append(complexListSearch);
+    }
+
+    if(complex_code == "init"){
+      $("#compare1_complex_search").html(compare_list_result[0]['아파트명'])
+      $("#compare1_complex_search").val(compare_list_result[0]['검색코드'])
+      complex_code = compare_list_result[0]['검색코드']
+    }
   }
   
   if(compareNum == 2){
     $("#compare2_complex").html("")
+    $("#complex_compare2_search_list").html("");
     compareSubRegion = $("#compare2_gungu option:selected").val()
 
     for(var i = 0 ; i < searchingData_list.length ; i++){
@@ -436,13 +478,87 @@ function loadComplexList(compareNum){
     var compare_list_result = selected_compare_list.sort((a, b) => b['가치 총점'] - a['가치 총점']); 
 
     for (var j = 0; j < selected_compare_list.length; j++) {
-      var complexListOption = $( "<option value='" + compare_list_result[j]['검색코드'] + "'>" + compare_list_result[j]['아파트명'] + "</option>" );
-      $("#compare2_complex").append(complexListOption);
-    }    
+      //var complexListOption = $( "<option value='" + compare_list_result[j]['검색코드'] + "'>" + compare_list_result[j]['아파트명'] + "</option>" );
+      //$("#compare2_complex").append(complexListOption);
+
+      var complexListSearch = "<div class='compare_search_list' value='" + compare_list_result[j]['검색코드'] + "' onClick='loadComplex2(" + compareNum + ",\"" + compare_list_result[j]['검색코드'] + "\")'>"
+        complexListSearch += "<div class='listed_apt_name'>" + compare_list_result[j]['아파트명'] + "</div>"
+        complexListSearch += "<div class='listed_apt_info'>" + compare_list_result[j]['법정동주소'] + "</div>"
+      complexListSearch += "</div>" 
+
+      $("#complex_compare2_search_list").append(complexListSearch);
+    }
+
+    if(complex_code == "init"){
+      $("#compare2_complex_search").html(compare_list_result[0]['아파트명'])    
+      $("#compare2_complex_search").val(compare_list_result[0]['검색코드'])
+      complex_code = compare_list_result[0]['검색코드']
+    }
   }
-  setTimeout(function(){
-     loadComplex(compareNum)
-  }, 300)
+  
+  loadComplex2(compareNum, complex_code)  
+}
+
+var complexSearchCompareNum = 1
+function loadComplexSearch(compareNum){  
+  $('body').append("<div id='complex_compare_search_bg' onClick='closeComplexSearch(" + compareNum + ", \"\")' style='opacity:0.0'></div>")
+  
+  $("#complex_compare_search").show()
+  $("#complex_compare_search_list_wrapper").scrollTop(0)  
+
+  if(compareNum == 1){
+    $("#complex_compare1_search_list").show()
+    $("#complex_compare2_search_list").hide()
+
+    $("#compareInputSearch1").show()
+    $("#compareInputSearch2").hide()
+
+    $("#close_compare1_search").show()
+    $("#close_compare2_search").hide()
+
+    $("#close_compare1_modal").show()
+    $("#close_compare2_modal").hide()
+  }
+  if(compareNum == 2){
+    $("#complex_compare2_search_list").show()
+    $("#complex_compare1_search_list").hide()
+
+    $("#compareInputSearch2").show()
+    $("#compareInputSearch1").hide()
+
+    $("#close_compare2_search").show()
+    $("#close_compare1_search").hide()
+
+    $("#close_compare2_modal").show()
+    $("#close_compare1_modal").hide()
+  }
+
+  $("#complex_compare_search").animate({
+      opacity: 1.0,
+    }, 350
+  );
+  $("#complex_compare_search_bg").animate({
+      opacity: 0.6,
+    }, 350
+  );
+}
+
+function closeComplexSearch(compareNum, code){   
+  $("#complex_compare_search").animate({
+      opacity: 0.0,
+    }, 350, '', function(){      
+      $("#compareInputSearch" + compareNum).val("")
+      loadComplexList(compareNum, code)
+      $("#complex_compare_search").hide()
+      compareInput = ""
+    }
+  );
+  $("#complex_compare_search_bg").animate({
+      opacity: 0.0,
+    }, 350, "", function(){
+      $("#complex_compare_search_bg").remove()
+    }
+  );
 }
 
 function loadComplex(compareNum){
@@ -505,8 +621,140 @@ function loadComplex(compareNum){
     })
   }  
 }
+function clearInput(compareNum){
+  compareInput = ""
+  $("#compareInputSearch" + compareNum).val("")
+  compareSearch(compareNum)
+}
 
-function drawComplex(complexInfo, compareNum){  
+var compareInput = ""
+function compareSearch(compareNum){  
+  searching_list = "complex_compare" + compareNum + "_search_list"
+  $('#' + searching_list).html("");
+
+  input_field = "compareInputSearch" + compareNum
+  compareInput = $('#' + input_field).val()
+
+  if(compareInput.length >= 2){
+    for(var i = 0 ; i < searchingData.data.length ; i++){
+      var aptName = searchingData.data[i]["아파트명"]
+      var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+
+      if(searchName.indexOf(compareInput) >= 0){
+        var aptName = searchingData.data[i]["아파트명"]
+        var aptAddress = searchingData.data[i]["법정동주소"]
+        var code = searchingData.data[i]["검색코드"]
+        var sido = searchingData.data[i]["sido"]
+        var gungu = searchingData.data[i]["gungu"]
+
+        var addon_html = "<div class='compare_search_list' onClick='compareSearchingUpdate(\"" + aptName + "\", \"" + code + "\",\"" + sido + "\",\"" + gungu + "\"," + compareNum + ")'>";
+        addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
+        addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
+        addon_html += "</div>"
+        
+        $('#' + searching_list).append(addon_html);        
+      }
+    }
+
+    $(".searched_apt_name:contains('" + compareInput + "')").each(function(){
+      var regex = new RegExp(compareInput, 'gi')
+      $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+compareInput+"</span>") );
+    })
+    $(".searched_apt_info:contains('" + compareInput + "')").each(function(){
+      var regex2 = new RegExp(compareInput, 'gi')
+      $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+compareInput+"</span>") );
+    })
+
+    $('#' + searching_list).append("<div style='height: 3em'></div>");
+    //$('html').scrollTop(0)
+  }
+  else{      
+    var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br></div>"
+    $('#' + searching_list).append(addon_html);
+  }
+}
+
+function compareSearchingUpdate(aptName, code, sido, gungu, compareNum){
+  $("#compare" + compareNum + "_sido").val(sido).prop("selected", true);  
+  $("#compare" + compareNum + "_complex_search").html(aptName)
+  $("#compare" + compareNum + "_complex_search").val(code)
+
+  compareOptionChange(sido, gungu, compareNum) 
+  closeComplexSearch(compareNum, code)
+}
+
+function loadComplex2(compareNum, val){
+  if(compareNum == 1){
+    search_region = $("#compare1_gungu option:selected").val()
+    search_val = val
+    if(search_val != ""){
+      firebase.database().ref().child("complex_info").child(search_region).child(search_val).get()
+      .then((snapshot) => {
+        if(snapshot.exists()){			  
+          complex_info = snapshot.val()
+          tlgm_txt = $("#compare1_complex option:selected").text() + " vs " + $("#compare2_complex option:selected").text()
+          tlgm_txt += "%0A"
+          tlgm_txt += "(Loaded Complex 1 = " + complex_info['아파트명'] + ")"
+          //sendTelegram_single_message(tlgm_txt)
+          if(complex_info == null){
+            setTimeout(function(){
+              loadComplex2(compareNum, search_val)
+            }, 350)
+          }
+          else{
+            closeComplexSearch(compareNum, "")
+            $("#compare1_complex_search").html(complex_info['아파트명'])
+            $("#compare1_complex_search").val(complex_info['검색코드']) 
+            drawComplex(complex_info, compareNum)
+          }
+        }
+        else{
+          alert("불러오기 실패했어요. 다시 시도해 주세요.")
+        }
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })
+    }
+  }
+  if(compareNum == 2){
+    search_region = $("#compare2_gungu option:selected").val()
+    search_val = val
+    if(search_val != ""){
+      firebase.database().ref().child("complex_info").child(search_region).child(search_val).get()
+      .then((snapshot) => {
+        if (snapshot.exists){
+          complex_info = snapshot.val()        
+          tlgm_txt = $("#compare1_complex option:selected").text() + " vs " + $("#compare2_complex option:selected").text()
+          tlgm_txt += "%0A"
+          tlgm_txt += "(Loaded Complex 2 = " + complex_info['아파트명'] + ")"
+          //drawComplex(complex_info, compareNum)  
+          
+          if(complex_info == null){
+            setTimeout(function(){
+              loadComplex2(compareNum, search_val)
+            }, 350)
+          }
+          else{				  
+            closeComplexSearch(compareNum, "")
+            $("#compare2_complex_search").html(complex_info['아파트명'])
+            $("#compare2_complex_search").val(complex_info['검색코드']) 
+            drawComplex(complex_info, compareNum)
+          }
+          
+        }
+        else{
+          alert("불러오기 실패했어요. 다시 시도해 주세요.")
+        }
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })
+    }
+  }  
+}
+
+function drawComplex(complexInfo, compareNum){
   selectedCompare = "#compare" + compareNum + "_complex_"
   var address = complexInfo["법정동주소"]
   var aptValue = complexInfo["가치 총점"]
@@ -694,8 +942,7 @@ function drawComplex(complexInfo, compareNum){
   var last_sales = complexInfo["last_sales"].split(",");
   var last_sales_date = last_sales[0].toString();
   var last_sales_price = last_sales[1].toString();
-  var last_sales_area = last_sales[2];
-  console.log(last_sales_price)
+  var last_sales_area = last_sales[2];  
   if(last_sales_price == NaN || last_sales_price == undefined || isNaN(last_sales_price)){
     last_sales_info = "거래 이력 없음"
   }

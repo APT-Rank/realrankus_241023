@@ -165,8 +165,8 @@
               <option value="202408">2024년 08월</option>
               <option value="202407">2024년 07월</option>
               <option value="202406">2024년 06월</option>
-              <option value="202405">2024년 05월</option>
               <!--
+              <option value="202405">2024년 05월</option>              
               <option value="202404">2024년 04월</option>              
               <option value="202403">2024년 03월</option>              
               <option value="202402">2024년 02월</option>              
@@ -364,17 +364,35 @@
       </div>
     </div>
 
+    <!--단지비교 검색창-->    
+    <div id="complex_compare_search">
+      <div id="close_compare1_modal" onClick="closeComplexSearch(1, '')"><i class="fa-solid fa-xmark"></i></div>
+      <div id="close_compare2_modal" onClick="closeComplexSearch(2, '')"><i class="fa-solid fa-xmark"></i></div>
+      <div class="complex_compare_search_bar">        
+        <div><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div id="compareSearchInputBox">
+          <input id="compareInputSearch1" type="text" placeholder="전국 단지를 검색하세요" onkeyup="compareSearch(1)" />
+          <input id="compareInputSearch2" type="text" placeholder="전국 단지를 검색하세요" onkeyup="compareSearch(2)" />
+        </div>
+        <div id="close_compare1_search" onClick="clearInput(1)"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div id="close_compare2_search" onClick="clearInput(2)"><i class="fa-solid fa-circle-xmark"></i></div>
+      </div>
+      <div id="complex_compare_search_list_wrapper">
+        <div id="complex_compare1_search_list"></div>
+        <div id="complex_compare2_search_list"></div>
+      </div>
+    </div>    
+
     <!-- Compare modal -->
     <div class="modal fade" id="compareModal" tabindex="-1" aria-labelledby="compareModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div id="compareModal_close"><button type="button" class="compareModalclose" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+        <div id="compareModal_close" ><a class="compareModalclose" data-bs-dismiss="modal"  data-keyboard="false" aria-label="Close"><i class="fa-solid fa-xmark"></i></a></div>
         <div class="modal-content">          
           <div class="modal-body" id="compareDetail"></div>
           <div id="compareFooter"></div>
         </div>
       </div>
     </div>
-
 
     <!-- Modal -->
     <div class="modal fade" id="baseModal" tabindex="-1" aria-labelledby="baseModalLabel" aria-hidden="true">
@@ -831,7 +849,7 @@
       $("#searchingBox").hide()
       var inHeight = window.innerHeight
       $("#commentBox").css({'height': inHeight-50-42})
-      commentBox_height = $("#commentBox").height()      
+      commentBox_height = $("#commentBox").height()
       if(!isMobile){
         //$("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
         $("#commentBox").css({'width':'580px', 'bottom': -commentBox_height + 92 + "px"})
@@ -1111,7 +1129,7 @@
       }
     }
     function updateRegion() {
-      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")  
+      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
       minValue = 0;
       maxValue = 60;
 
@@ -1887,6 +1905,8 @@
       }
       */
 
+      login_status = true
+
       if(login_status == false){
           detailHtml += "<div class='loginBox'>"
           detailHtml += "<div id='aptrankLoginGuide'>더 자세한 정보와 분석을 확인하세요</div>"
@@ -2440,11 +2460,14 @@
 
         priceCharts = [];
         for (var p = 0; p < area_array.length; p++) {
+          if(sales_history_price[p] == undefined){
+            break
+          }
+
           generatedID = "pChart" + p;
           generated_priceID = "pChange" + p;
-          generated_ratioID = "pRatio" + p;
-
-          //console.log(sales_history_price[p])
+          generated_ratioID = "pRatio" + p;          
+          
           if (Math.max(...sales_history_price[p]) <= 0) {
             showGraph = false;
           } else {

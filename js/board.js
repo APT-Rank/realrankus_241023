@@ -142,9 +142,10 @@ non_blog_html += "</div>"
 
 function complex_blog(complex_id, aptName){
 	var current_region_id = selectedSubRegion
+	console.log("POSTING!!")
 	firebase.database().ref().child("realrankus_blog").child(current_region_id).child("complex_" + complex_id).child("blog_list").get()
 	.then((snapshot) => {
-		if(snapshot.exists()){						
+		if(snapshot.exists()){
 			blog_list = snapshot.val()			
 			blog_list_keys = Object.keys(blog_list)
 

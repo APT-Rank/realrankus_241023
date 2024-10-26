@@ -9,7 +9,7 @@
     height: 100vh;
     height: var(--doc-height);
     font-family: 'Noto Sans KR', sans-serif;
-  }
+  }  
   #container{
     margin-top: constant(safe-area-inset-top);
     margin-top: env(safe-area-inset-top);
@@ -564,7 +564,6 @@
   .searchedListBox:active{    
     background: #ffdfde
   }
-
   .themeListBox{
     display: grid;
     grid-template-columns: 1fr 80px;
@@ -594,14 +593,23 @@
     padding-bottom: 10px;
     margin-top: 10px;    
   }
-  #compareModal_close{
+  #compareModal_close{    
     display: grid;
+    color: #ddd;
     width: 100%;
     font-size: 2em;    
     justify-items: end
   }
-  .compareModalclose{
+  #compareModal_close > a{
+    color: #ddd
+  }
+  #close_compare1_modal, #close_compare2_modal{
+    display: grid;
+    align-content: center;
+    justify-content: end;
     color: #ddd;
+    font-size: 2em;
+    padding-right: 10px;
     border: 0;
     background-color: transparent;
   }
@@ -677,6 +685,12 @@
     background-color: white;
     color: black;    
   }
+  #compare1_complex_search:hover, #compare2_complex_search:hover{
+    color: #e31939
+  }
+  #compare1_complex_search:active, #compare2_complex_search:active{
+    transform: translateY(1px);
+  }
   #compare1_complex, #compare2_complex{
     font-weight: 600;
     border-radius: 0;
@@ -684,8 +698,7 @@
     width: 100%;
     margin-right: 2px;
     border: none;
-    background-color: white;
-    color: black;
+    background-color: white;    
     margin-top: 5px;
     margin-bottom: 5px;
     border-bottom: 1px solid #eee;
@@ -708,6 +721,10 @@
     border-top: 1px solid rgba(0, 0, 0, .125);
     border-bottom: 1px solid rgba(0, 0, 0, .125);
   }
+  .complex_compare_detail_wrapper{
+    display: grid;
+    grid-template-columns: 1fr 15px;
+  }
   .complex_compare_detail{
     font-size: 0.9em;
     text-align: center;
@@ -715,6 +732,9 @@
     margin-top: 5px;
     padding-bottom: 5px;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .complex1_compare_detail, .complex2_compare_detail{
     font-size: 0.8em;    
@@ -722,6 +742,7 @@
     margin-top: 5px;
     padding-bottom: 5px;
     font-weight: 600;
+    text-overflow: ellipsis
   }
   .complex1_compare_detail{
     text-align : right;
@@ -798,6 +819,40 @@
     background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */              
     color: #fff;
+  }
+  #complex_compare_search_list_wrapper{
+    display: grid;    
+    padding-left: 5px;
+    padding-right: 5px;
+    overflow: auto;
+    background-color: #fff;
+    align-content: space-between;
+  }
+  #complex_compare1_search_list, #complex_compare2_search_list{
+    display: grid;
+    align-items: start;
+    grid-column: 1fr;
+    row-gap: 5px;
+  }
+  .compare_search_list{
+    align-items: center;    
+    padding-left: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #ddd;
+  }
+  .compare_search_list:hover{
+    color: #e31939;
+  }
+  .compare_search_list:active{
+    transform: translateY(1px);
+  }
+  .compare_search_apt{
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+  .compare_search_addr{
+    font-size: 0.7em;    
   }
 
   #rankSimul:active, #btn_complex_compare:active{
@@ -889,11 +944,11 @@
     font-size: 0.7em;
     color:rgb(85, 85, 85);
   }
-  .searched_apt_name{
+  .searched_apt_name, .listed_apt_name{
     font-size: 0.9em;
     font-weight: 600;
   }
-  .searched_apt_info{
+  .searched_apt_info, .listed_apt_info{
     font-size: 0.7em;
     color: gray;    
   }
@@ -1463,7 +1518,7 @@
   }
   .form-check-input:active{
     background-color: #ffcecc;
-    border-color:  #e31939;  
+    border-color:  #e31939;
   }
 
   .cls-2_small_text, .cls-3_text, .cls-4_text, .cls-5_text, .cls-6_text{
@@ -1471,6 +1526,28 @@
     -moz-user-select:none;
     -ms-user-select:none;
     user-select:none
+  }
+  #complex_compare_search{    
+    position: absolute;
+    display: grid;
+    grid-template-rows: 50px 50px 1fr;    
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 90%;
+    display: grid;
+    z-index: 3000;
+    opacity: 0
+  }
+  #complex_compare_search_bg{
+    position: absolute;
+    background-color: #000;
+    opacity: 0.6;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;    
+    z-index: 2999;
   }
   #compare_loading{
     display: grid;
@@ -1483,6 +1560,40 @@
     justify-items: center;    
     padding: 5px;
     height: 90px;    
+  }
+  .complex_compare_search_bar{
+    display: grid;    
+    grid-template-columns: 20px 1fr 20px;
+    column-gap: 10px;
+    align-items: center;
+    background-color: #eee;
+    border-bottom: 1px solid #999;    
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  #compareSearchInputBox{
+    display: grid;
+    align-items: center;
+  }
+  #compareInputSearch1, #compareInputSearch2{
+    background-color: #eee;
+    height: 2em;
+    font-size: 1em;
+    border: none;
+    text-align: left;
+    padding-left: 10px;
+    border-bottom: 1px solid #ddd;    
+  }
+  #compareInputSearch1:focus, #compareInputSearch2:focus{
+    outline: none;
+  }
+  #close_compare1_search:hover, #close_compare2_search:hover{
+    color:  #e31939;
+  }
+  #close_compare1_search:active, #close_compare2_search:hover{
+    transform: translateY(1px);
   }
   .blog_list{
     width: 100%;    
@@ -1711,5 +1822,9 @@
     }
     #compare1_option, #compare2_option{      
       grid-template-columns: 110px 1fr;      
+    }
+    #complex_compare_search{
+      width: 1000px;
+      left: calc(50% - 500px)
     } 
   }  
