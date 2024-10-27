@@ -3,7 +3,7 @@
         "fields":[
             {
                 "name":"index",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래금액",
@@ -15,15 +15,15 @@
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"동",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"등기일자",
@@ -47,15 +47,15 @@
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"전용면적",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"중개사소재지",
@@ -67,11 +67,11 @@
             },
             {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"해제사유발생일",
@@ -111,15 +111,15 @@
             },
             {
                 "name":"code",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"y",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"x",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"rank_info",
