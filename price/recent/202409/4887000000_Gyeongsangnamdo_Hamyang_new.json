@@ -19,11 +19,11 @@
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"도로명",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"도로명건물본번호코드",
@@ -47,11 +47,11 @@
             },
             {
                 "name":"동",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"등기일자",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"매도자",
@@ -91,15 +91,15 @@
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"일련번호",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"전용면적",
@@ -111,15 +111,15 @@
             },
             {
                 "name":"지번",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"해제사유발생일",
@@ -220,7 +220,7 @@
             "일련번호":null,
             "전용면적":84.994,
             "중개사소재지":"경남 함양군",
-            "지번":"134",
+            "지번":134,
             "지역코드":48870,
             "층":20,
             "해제사유발생일":null,
