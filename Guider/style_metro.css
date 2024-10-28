@@ -156,6 +156,19 @@
     box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 6px, rgba(0, 0, 0, 0.3) 0px 3px 6px;
     white-space:nowrap
   }
+  .station_marker_small{
+    display: grid;
+    font-size: 0.8em;    
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #111378;
+    color: #fff;
+    border: 1px solid #fff;    
+    justify-content: center;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 6px, rgba(0, 0, 0, 0.3) 0px 3px 6px;
+    white-space:nowrap
+  }  
   .entrance_marker{
     display: grid;
     font-size: 0.85em;
