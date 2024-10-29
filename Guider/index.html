@@ -1192,7 +1192,12 @@
 
       var addon_html = ""
 
-      for(var i in sortData){
+      var total_listup_num = 30
+      if(sortData.length < 30){
+        total_listup_num = sortData.length
+      }
+
+      for(var i=0; i < total_listup_num ; i++){
         var complex_type = ""
         var value_val = sortData[i]['custom_value']        
         var aptName = sortData[i]["아파트명"];
