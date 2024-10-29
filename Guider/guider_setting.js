@@ -115,7 +115,12 @@ function generateReport(){
     selected_py.push("50평 이상")
   }
 
-  consult_text = commentWin.returnComment()
+  if(commentWin){
+    consult_text = commentWin.returnComment()
+  }
+  else{
+    consult_text = ""
+  }  
 
   naver.maps.Service.reverseGeocode({
     coords: new naver.maps.LatLng(fav_point_y, fav_point_x),
