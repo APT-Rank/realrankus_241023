@@ -1742,9 +1742,7 @@ function updateTable(region){
     $.getJSON(url, function(json) {
         regData = json;
         regSortData = regData;
-        itemNum = json.data.length;
-
-        console.log(regData)
+        itemNum = json.data.length;        
 
         shareURL = get_sURL($("#gungu option:selected").val())
 
