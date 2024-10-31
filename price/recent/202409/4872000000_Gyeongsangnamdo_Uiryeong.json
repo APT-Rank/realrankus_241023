@@ -6,39 +6,7 @@
                 "type":"integer"
             },
             {
-                "name":"거래금액",
-                "type":"string"
-            },
-            {
-                "name":"거래유형",
-                "type":"string"
-            },
-            {
-                "name":"건축년도",
-                "type":"integer"
-            },
-            {
-                "name":"년",
-                "type":"integer"
-            },
-            {
                 "name":"동",
-                "type":"string"
-            },
-            {
-                "name":"등기일자",
-                "type":"string"
-            },
-            {
-                "name":"매도자",
-                "type":"string"
-            },
-            {
-                "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"법정동",
                 "type":"string"
             },
             {
@@ -46,32 +14,12 @@
                 "type":"string"
             },
             {
-                "name":"월",
+                "name":"건축년도",
                 "type":"integer"
             },
             {
-                "name":"일",
-                "type":"integer"
-            },
-            {
-                "name":"전용면적",
-                "type":"number"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"number"
-            },
-            {
-                "name":"지번",
+                "name":"매수자",
                 "type":"string"
-            },
-            {
-                "name":"지역코드",
-                "type":"integer"
-            },
-            {
-                "name":"층",
-                "type":"integer"
             },
             {
                 "name":"해제사유발생일",
@@ -80,6 +28,62 @@
             {
                 "name":"해제여부",
                 "type":"number"
+            },
+            {
+                "name":"거래금액",
+                "type":"string"
+            },
+            {
+                "name":"일",
+                "type":"integer"
+            },
+            {
+                "name":"월",
+                "type":"integer"
+            },
+            {
+                "name":"년",
+                "type":"integer"
+            },
+            {
+                "name":"거래유형",
+                "type":"string"
+            },
+            {
+                "name":"중개사소재지",
+                "type":"number"
+            },
+            {
+                "name":"전용면적",
+                "type":"number"
+            },
+            {
+                "name":"층",
+                "type":"integer"
+            },
+            {
+                "name":"지번",
+                "type":"string"
+            },
+            {
+                "name":"아파트여부",
+                "type":"string"
+            },
+            {
+                "name":"등기일자",
+                "type":"string"
+            },
+            {
+                "name":"지역코드",
+                "type":"integer"
+            },
+            {
+                "name":"매도자",
+                "type":"string"
+            },
+            {
+                "name":"법정동",
+                "type":"string"
             },
             {
                 "name":"history_date",
@@ -142,25 +146,26 @@
     "data":[
         {
             "index":0,
-            "거래금액":"8,000",
-            "거래유형":"직거래",
-            "건축년도":1992,
-            "년":2024,
             "동":"비",
-            "등기일자":"24.10.16",
-            "매도자":"개인",
-            "매수자":"개인",
-            "법정동":"의령읍 동동리",
             "아파트":"삼영타운",
-            "월":9,
-            "일":18,
-            "전용면적":59.76,
-            "중개사소재지":null,
-            "지번":"862-18",
-            "지역코드":48720,
-            "층":9,
+            "건축년도":1992,
+            "매수자":"개인",
             "해제사유발생일":null,
             "해제여부":null,
+            "거래금액":"8,000",
+            "일":18,
+            "월":9,
+            "년":2024,
+            "거래유형":"직거래",
+            "중개사소재지":null,
+            "전용면적":59.76,
+            "층":9,
+            "지번":"862-18",
+            "아파트여부":"N",
+            "등기일자":"24.10.16",
+            "지역코드":48720,
+            "매도자":"개인",
+            "법정동":"의령읍 동동리",
             "history_date":[
                 "2019-05-01",
                 "2020-02-28",

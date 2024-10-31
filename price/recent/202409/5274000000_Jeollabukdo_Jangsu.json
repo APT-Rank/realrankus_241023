@@ -6,11 +6,11 @@
                 "type":"integer"
             },
             {
-                "name":"거래금액",
-                "type":"string"
+                "name":"동",
+                "type":"number"
             },
             {
-                "name":"거래유형",
+                "name":"아파트",
                 "type":"string"
             },
             {
@@ -18,60 +18,8 @@
                 "type":"integer"
             },
             {
-                "name":"년",
-                "type":"integer"
-            },
-            {
-                "name":"동",
-                "type":"number"
-            },
-            {
-                "name":"등기일자",
-                "type":"number"
-            },
-            {
-                "name":"매도자",
-                "type":"string"
-            },
-            {
                 "name":"매수자",
                 "type":"string"
-            },
-            {
-                "name":"법정동",
-                "type":"string"
-            },
-            {
-                "name":"아파트",
-                "type":"string"
-            },
-            {
-                "name":"월",
-                "type":"integer"
-            },
-            {
-                "name":"일",
-                "type":"integer"
-            },
-            {
-                "name":"전용면적",
-                "type":"number"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"number"
-            },
-            {
-                "name":"지번",
-                "type":"string"
-            },
-            {
-                "name":"지역코드",
-                "type":"integer"
-            },
-            {
-                "name":"층",
-                "type":"integer"
             },
             {
                 "name":"해제사유발생일",
@@ -80,6 +28,62 @@
             {
                 "name":"해제여부",
                 "type":"number"
+            },
+            {
+                "name":"거래금액",
+                "type":"string"
+            },
+            {
+                "name":"일",
+                "type":"integer"
+            },
+            {
+                "name":"월",
+                "type":"integer"
+            },
+            {
+                "name":"년",
+                "type":"integer"
+            },
+            {
+                "name":"거래유형",
+                "type":"string"
+            },
+            {
+                "name":"중개사소재지",
+                "type":"number"
+            },
+            {
+                "name":"전용면적",
+                "type":"number"
+            },
+            {
+                "name":"층",
+                "type":"integer"
+            },
+            {
+                "name":"지번",
+                "type":"string"
+            },
+            {
+                "name":"아파트여부",
+                "type":"string"
+            },
+            {
+                "name":"등기일자",
+                "type":"number"
+            },
+            {
+                "name":"지역코드",
+                "type":"integer"
+            },
+            {
+                "name":"매도자",
+                "type":"string"
+            },
+            {
+                "name":"법정동",
+                "type":"string"
             },
             {
                 "name":"history_date",
@@ -142,25 +146,26 @@
     "data":[
         {
             "index":0,
-            "거래금액":"5,200",
-            "거래유형":"직거래",
-            "건축년도":1991,
-            "년":2024,
             "동":null,
-            "등기일자":null,
-            "매도자":"개인",
-            "매수자":"개인",
-            "법정동":"장수읍 노하리",
             "아파트":"장수신천",
-            "월":9,
-            "일":25,
-            "전용면적":59.94,
-            "중개사소재지":null,
-            "지번":"377-1",
-            "지역코드":52740,
-            "층":5,
+            "건축년도":1991,
+            "매수자":"개인",
             "해제사유발생일":null,
             "해제여부":null,
+            "거래금액":"5,200",
+            "일":25,
+            "월":9,
+            "년":2024,
+            "거래유형":"직거래",
+            "중개사소재지":null,
+            "전용면적":59.94,
+            "층":5,
+            "지번":"377-1",
+            "아파트여부":"N",
+            "등기일자":null,
+            "지역코드":52740,
+            "매도자":"개인",
+            "법정동":"장수읍 노하리",
             "history_date":[
                 "2019-03-06",
                 "2019-07-24",

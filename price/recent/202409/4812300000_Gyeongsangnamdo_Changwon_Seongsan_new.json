@@ -6,11 +6,23 @@
                 "type":"string"
             },
             {
-                "name":"거래금액",
+                "name":"동",
                 "type":"string"
             },
             {
-                "name":"거래유형",
+                "name":"아파트",
+                "type":"string"
+            },
+            {
+                "name":"일련번호",
+                "type":"string"
+            },
+            {
+                "name":"법정동본번코드",
+                "type":"string"
+            },
+            {
+                "name":"법정동부번코드",
                 "type":"string"
             },
             {
@@ -18,7 +30,63 @@
                 "type":"string"
             },
             {
+                "name":"매수자",
+                "type":"string"
+            },
+            {
+                "name":"해제사유발생일",
+                "type":"string"
+            },
+            {
+                "name":"해제여부",
+                "type":"string"
+            },
+            {
+                "name":"거래금액",
+                "type":"string"
+            },
+            {
+                "name":"일",
+                "type":"string"
+            },
+            {
+                "name":"월",
+                "type":"string"
+            },
+            {
                 "name":"년",
+                "type":"string"
+            },
+            {
+                "name":"거래유형",
+                "type":"string"
+            },
+            {
+                "name":"중개사소재지",
+                "type":"string"
+            },
+            {
+                "name":"전용면적",
+                "type":"string"
+            },
+            {
+                "name":"층",
+                "type":"string"
+            },
+            {
+                "name":"지번",
+                "type":"string"
+            },
+            {
+                "name":"법정동지번코드",
+                "type":"string"
+            },
+            {
+                "name":"아파트여부",
+                "type":"string"
+            },
+            {
+                "name":"등기일자",
                 "type":"string"
             },
             {
@@ -34,7 +102,7 @@
                 "type":"string"
             },
             {
-                "name":"도로명시군구코드",
+                "name":"도로명코드",
                 "type":"string"
             },
             {
@@ -42,79 +110,11 @@
                 "type":"string"
             },
             {
+                "name":"도로명시군구코드",
+                "type":"string"
+            },
+            {
                 "name":"도로명지상지하코드",
-                "type":"string"
-            },
-            {
-                "name":"도로명코드",
-                "type":"string"
-            },
-            {
-                "name":"동",
-                "type":"string"
-            },
-            {
-                "name":"등기일자",
-                "type":"string"
-            },
-            {
-                "name":"매도자",
-                "type":"string"
-            },
-            {
-                "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"법정동",
-                "type":"string"
-            },
-            {
-                "name":"법정동본번코드",
-                "type":"string"
-            },
-            {
-                "name":"법정동부번코드",
-                "type":"string"
-            },
-            {
-                "name":"법정동시군구코드",
-                "type":"string"
-            },
-            {
-                "name":"법정동읍면동코드",
-                "type":"string"
-            },
-            {
-                "name":"법정동지번코드",
-                "type":"string"
-            },
-            {
-                "name":"아파트",
-                "type":"string"
-            },
-            {
-                "name":"월",
-                "type":"string"
-            },
-            {
-                "name":"일",
-                "type":"string"
-            },
-            {
-                "name":"일련번호",
-                "type":"string"
-            },
-            {
-                "name":"전용면적",
-                "type":"string"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"string"
-            },
-            {
-                "name":"지번",
                 "type":"string"
             },
             {
@@ -122,15 +122,15 @@
                 "type":"string"
             },
             {
-                "name":"층",
+                "name":"매도자",
                 "type":"string"
             },
             {
-                "name":"해제사유발생일",
+                "name":"법정동읍면동코드",
                 "type":"string"
             },
             {
-                "name":"해제여부",
+                "name":"법정동",
                 "type":"string"
             },
             {
@@ -183,10 +183,6 @@
             },
             {
                 "name":"type",
-                "type":"string"
-            },
-            {
-                "name":"구분",
                 "type":"string"
             }
         ],

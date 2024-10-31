@@ -3,19 +3,11 @@
         "fields":[
             {
                 "name":"index",
-<<<<<<< HEAD
                 "type":"string"
             },
             {
                 "name":"동",
                 "type":"string"
-=======
-                "type":"integer"
-            },
-            {
-                "name":"동",
-                "type":"number"
->>>>>>> ecbf7613a48a2d7019200700937135cd7e8ebac3
             },
             {
                 "name":"아파트",
@@ -23,13 +15,7 @@
             },
             {
                 "name":"건축년도",
-<<<<<<< HEAD
                 "type":"string"
-            },
-            {
-                "name":"매수자",
-=======
-                "type":"integer"
             },
             {
                 "name":"매수자",
@@ -37,67 +23,10 @@
             },
             {
                 "name":"해제사유발생일",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"해제여부",
-                "type":"number"
-            },
-            {
-                "name":"거래금액",
-                "type":"string"
-            },
-            {
-                "name":"일",
-                "type":"integer"
-            },
-            {
-                "name":"월",
-                "type":"integer"
-            },
-            {
-                "name":"년",
-                "type":"integer"
-            },
-            {
-                "name":"거래유형",
-                "type":"string"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"string"
-            },
-            {
-                "name":"전용면적",
-                "type":"number"
-            },
-            {
-                "name":"층",
-                "type":"integer"
-            },
-            {
-                "name":"지번",
-                "type":"integer"
-            },
-            {
-                "name":"아파트여부",
->>>>>>> ecbf7613a48a2d7019200700937135cd7e8ebac3
-                "type":"string"
-            },
-            {
-                "name":"등기일자",
-                "type":"number"
-            },
-            {
-                "name":"지역코드",
-                "type":"integer"
-            },
-            {
-                "name":"매도자",
-                "type":"string"
-            },
-            {
-                "name":"법정동",
                 "type":"string"
             },
             {
@@ -186,15 +115,15 @@
             },
             {
                 "name":"code",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"y",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"x",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"rank_info",
