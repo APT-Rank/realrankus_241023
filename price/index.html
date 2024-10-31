@@ -436,6 +436,10 @@
   var monthago = new Date(prev_date)
   //var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() + 1))
   var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth()+1 ) )
+  
+  if(prev_month == this_month){
+    prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() ) )
+  }
 
   var start_date_str = (today.getMonth() + 1) + "/1"
   var end_date_str = (today.getMonth() + 1) + "/" + today.getDate()
@@ -1740,6 +1744,8 @@ function updateTable(region){
         regSortData = regData;
         itemNum = json.data.length;
 
+        console.log(regData)
+
         shareURL = get_sURL($("#gungu option:selected").val())
 
         //광고정보표시
@@ -1756,7 +1762,7 @@ function updateTable(region){
           var reg_sURL = regData.data[i]["sURL"]
 
           if(Number(selectedMonth) == this_month || Number(selectedMonth) == prev_month || selectedMonth == "latest_deal"){
-            var reg_vol_month_end_predition = regData.data[i]["월말예측"]
+            var reg_vol_month_end_predition = regData.data[i]["월말예측"]            
             var reg_vol_prev_month_end_predition = regData.data[i][prev_month]
           }
 
@@ -1815,7 +1821,8 @@ function updateTable(region){
                     addon_html += "<div class='compare_volume_sub'>"
                       if(selectedMonth == "latest_deal"){
                         str_prev_month = Number(prev_month.slice(-2)) + "월"
-                        str_this_month = Number(this_month.slice(-2)) + "월"                        
+                        str_this_month = Number(this_month.slice(-2)) + "월"
+                        
                         
                         addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
                         addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
