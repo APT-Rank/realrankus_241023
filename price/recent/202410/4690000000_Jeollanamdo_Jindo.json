@@ -6,39 +6,7 @@
                 "type":"integer"
             },
             {
-                "name":"거래금액",
-                "type":"string"
-            },
-            {
-                "name":"거래유형",
-                "type":"string"
-            },
-            {
-                "name":"건축년도",
-                "type":"integer"
-            },
-            {
-                "name":"년",
-                "type":"integer"
-            },
-            {
                 "name":"동",
-                "type":"number"
-            },
-            {
-                "name":"등기일자",
-                "type":"number"
-            },
-            {
-                "name":"매도자",
-                "type":"string"
-            },
-            {
-                "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"법정동",
                 "type":"string"
             },
             {
@@ -46,32 +14,12 @@
                 "type":"string"
             },
             {
-                "name":"월",
+                "name":"건축년도",
                 "type":"integer"
             },
             {
-                "name":"일",
-                "type":"integer"
-            },
-            {
-                "name":"전용면적",
-                "type":"number"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"number"
-            },
-            {
-                "name":"지번",
-                "type":"integer"
-            },
-            {
-                "name":"지역코드",
-                "type":"integer"
-            },
-            {
-                "name":"층",
-                "type":"integer"
+                "name":"매수자",
+                "type":"string"
             },
             {
                 "name":"해제사유발생일",
@@ -80,6 +28,62 @@
             {
                 "name":"해제여부",
                 "type":"number"
+            },
+            {
+                "name":"거래금액",
+                "type":"string"
+            },
+            {
+                "name":"일",
+                "type":"integer"
+            },
+            {
+                "name":"월",
+                "type":"integer"
+            },
+            {
+                "name":"년",
+                "type":"integer"
+            },
+            {
+                "name":"거래유형",
+                "type":"string"
+            },
+            {
+                "name":"중개사소재지",
+                "type":"number"
+            },
+            {
+                "name":"전용면적",
+                "type":"number"
+            },
+            {
+                "name":"층",
+                "type":"integer"
+            },
+            {
+                "name":"지번",
+                "type":"integer"
+            },
+            {
+                "name":"아파트여부",
+                "type":"string"
+            },
+            {
+                "name":"등기일자",
+                "type":"string"
+            },
+            {
+                "name":"지역코드",
+                "type":"integer"
+            },
+            {
+                "name":"매도자",
+                "type":"string"
+            },
+            {
+                "name":"법정동",
+                "type":"string"
             },
             {
                 "name":"history_date",
@@ -142,25 +146,26 @@
     "data":[
         {
             "index":0,
-            "거래금액":"29,500",
-            "거래유형":"직거래",
-            "건축년도":2020,
-            "년":2024,
-            "동":null,
-            "등기일자":null,
-            "매도자":"개인",
-            "매수자":"개인",
-            "법정동":"진도읍 남동리",
+            "동":"102동",
             "아파트":"진도미래엔스위트",
-            "월":10,
-            "일":23,
-            "전용면적":84.7411,
-            "중개사소재지":null,
-            "지번":858,
-            "지역코드":46900,
-            "층":4,
+            "건축년도":2020,
+            "매수자":"개인",
             "해제사유발생일":null,
             "해제여부":null,
+            "거래금액":"29,500",
+            "일":23,
+            "월":10,
+            "년":2024,
+            "거래유형":"직거래",
+            "중개사소재지":null,
+            "전용면적":84.7411,
+            "층":4,
+            "지번":858,
+            "아파트여부":"N",
+            "등기일자":"24.10.25",
+            "지역코드":46900,
+            "매도자":"개인",
+            "법정동":"진도읍 남동리",
             "history_date":[
                 "2020-10-07",
                 "2022-11-14",
