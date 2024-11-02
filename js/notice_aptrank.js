@@ -1,3 +1,15 @@
+var notice_202411 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 11월 업데이트 안내 (2024-11-02)</div>"
++"<ul>"
++"<li><div class='notice' style='color: #e31939'>2024년 지하철 승객 승하차 기준 주요역을 재설정 했습니다</div></li>"
++"<li><div class='notice' style='color: #e31939'>주요역까지의 이동 시간 측정을 구글에서 T-MAP으로 변경했습니다</div></li>"
++"<li><div class='notice' style='color: #e31939'>2030년까지 개통 예정역을 추가 반영 했습니다</div></li>"
++"<li><div class='notice' style='color: #e31939'>전국 지하철 역과 출구좌표를 재설정 했습니다</div></li>"
++"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
++"<li><div class='notice'>2024년 10월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202410 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 10월 업데이트 안내 (2024-10-03)</div>"
 +"<ul>"

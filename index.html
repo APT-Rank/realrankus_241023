@@ -160,12 +160,13 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202410" selected>2024년 10월</option>
+              <option value="202411" selected>2024년 11월</option>
+              <option value="202410">2024년 10월</option>
               <option value="202409">2024년 09월</option>
               <option value="202408">2024년 08월</option>
               <option value="202407">2024년 07월</option>
-              <option value="202406">2024년 06월</option>
               <!--
+              <option value="202406">2024년 06월</option>              
               <option value="202405">2024년 05월</option>              
               <option value="202404">2024년 04월</option>              
               <option value="202403">2024년 03월</option>              
@@ -552,8 +553,8 @@
 
   </body>
   <script>
-    var thisMonth = "202410"; //수정
-    var selectedMonth = "202410"; //수정
+    var thisMonth = "202411"; //수정
+    var selectedMonth = "202411"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -812,7 +813,7 @@
       //optionChange(selectedSubRegion);
       //updateRegion();
 
-      if ($.cookie("popCookie") != "202410" && urlParams.has("reg") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202411" && urlParams.has("reg") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -3955,7 +3956,10 @@
       }
       if (selectedMonth == "202410") {
         detailHtml += notice_202410;
-      }              
+      }
+      if (selectedMonth == "202411") {
+        detailHtml += notice_202411;
+      }
 
       detailHtml += "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>리얼랭커스란?</div>";
       detailHtml += "<div class='notice'>리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.</div>";
@@ -4005,7 +4009,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202410") {
+      if ($.cookie("popCookie") != "202411") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4013,7 +4017,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202410", { expires: 7, path: "/" });
+          $.cookie("popCookie", "202411", { expires: 7, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });

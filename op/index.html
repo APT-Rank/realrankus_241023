@@ -118,13 +118,14 @@
         <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"></select></div>
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
-            <option value="202410" selected>2024년 10월</option>
+            <option value="202411" selected>2024년 11월</option>
+            <option value="202410">2024년 10월</option>
             <option value="202409">2024년 09월</option>
             <option value="202408">2024년 08월</option>
             <option value="202407">2024년 07월</option>
             <option value="202406">2024년 06월</option>
-            <option value="202405">2024년 05월</option>
             <!--
+            <option value="202405">2024년 05월</option>            
             <option value="202404">2024년 04월</option>            
             <option value="202403">2024년 03월</option>            
             <option value="202402">2024년 02월</option>            
@@ -341,7 +342,7 @@
 </body>
 
 <script>
-  var selectedMonth = "202410"
+  var selectedMonth = "202411"
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
   var update_ver = "?v=1.0"
@@ -516,7 +517,7 @@
       }
     })
 
-    if($.cookie('popCookie') != "202410"){
+    if($.cookie('popCookie') != "202411"){
       startNotice = true
       showNotice()
       //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당      
@@ -2024,7 +2025,7 @@
     } 
     $('.modal-footer').css({"padding-top" : "3px"})
 
-    if($.cookie('popCookie') != '202410'){
+    if($.cookie('popCookie') != '202411'){
       $('#flexCheckDefault').prop("checked", false)
     }
     else{
@@ -2034,7 +2035,7 @@
     $('#flexCheckDefault').change(function(){
       if($(this).is(':checked')){
         //console.log("CHECKED!!")
-        $.cookie('popCookie', '202410', { expires: 7, path: '/' });
+        $.cookie('popCookie', '202411', { expires: 7, path: '/' });
         //console.log($.cookie('popCookie'))
       }
       else{
