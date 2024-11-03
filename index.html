@@ -2093,7 +2093,14 @@
           detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_1h + "</div></div><hr style='margin-top: 2px'>";
         }
 
-        detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 구글 대중교통 이동 시간 정보를 사용합니다.</div>";
+        if (Number(selectedMonth) < 202411){
+          detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 구글 대중교통 이동 시간 정보를 사용합니다.</div>";
+        }
+        else{
+          detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.</div>";
+        }
+
+        
         detailHtml += "</div></div></div></div>";
         avgTransportScore = ( Math.round((transportSum / itemNum) * 100) / 100 ).toFixed(2);
       }
