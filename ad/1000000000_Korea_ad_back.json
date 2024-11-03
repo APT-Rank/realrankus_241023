@@ -1,0 +1,108 @@
+{
+  "schema": {
+    "fields": [
+      {
+        "name": "index",
+        "type": "string"
+      },
+      {
+        "name": "request_type",
+        "type": "string"
+      },
+      {
+        "name": "shop_name",
+        "type": "string"
+      },
+      {
+        "name": "owner",
+        "type": "string"
+      },
+      {
+        "name": "main_title",
+        "type": "string"
+      },
+      {
+        "name": "sub_title",
+        "type": "string"
+      },
+      {
+        "name": "cellphone",
+        "type": "string"
+      },
+      {
+        "name": "phone",
+        "type": "string"
+      },
+      {
+        "name": "start_date",
+        "type": "string"
+      },
+      {
+        "name": "end_date",
+        "type": "string"
+      },
+      {
+        "name": "duration",
+        "type": "string"
+      },
+      {
+        "name": "address",
+        "type": "string"
+      },
+      {
+        "name": "email",
+        "type": "string"
+      },
+      {
+        "name": "icon",
+        "type": "string"
+      },
+      {
+        "name": "comment",
+        "type": "string"
+      },
+      {
+        "name": "y",
+        "type": "string"
+      },
+      {
+        "name": "x",
+        "type": "string"
+      },
+      {
+        "name": "homepage",
+        "type": "string"
+      },
+      {
+        "name": "map_url",
+        "type": "string"
+      }
+    ],
+    "primaryKey": ["index"],
+    "pandas_version": "1.4.0"
+  },
+  "data": [
+    {
+      "index":1,
+      "request_type":"Direct",
+      "shop_name":"리얼랭커스",
+      "owner":"리얼랭커스",
+      "main_title":"리얼랭커스 CEO, MY 데이터 맞춤 미팅",
+      "sub_title":"생애주기를 생각한 부동산 교육, 이해",
+      "sub_comment" : "Data 해석, 활용, 1:1 맞춤형 통합 교육 (유료)",
+      "cellphone":"1027262071",
+      "phone":"1027262071",
+      "start_date":"2023-02-05",
+      "end_date":"2099-12-31",
+      "duration":365,
+      "address":"",
+      "email":"aptranking@gmail.com",
+      "icon":"RR_meeting.png",
+      "comment":"",
+      "y":127.05386160000018,
+      "x":37.50693309999991,
+      "homepage":"https:\/\/naver.me\/xDJJrRGf",
+      "map_url":""
+    }
+  ]
+}
