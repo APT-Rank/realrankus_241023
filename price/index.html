@@ -423,7 +423,7 @@
   var prev_date = new Date()
  
   //var today = new Date('2023-10-30')
-  var today_day = today.getDate();
+  var today_day = dateReturn( today.getDate() );
   if (today_day == 1){    
     today = new Date(today.setDate(today.getDate() - 1))
   }
@@ -431,7 +431,7 @@
   var today_month = dateReturn( (today.getMonth() + 1))
   var today_num = Number("" + today_year + today_month + today_day)  
   var today_str = today_year + "-" + today_month + "-" + today_day
-  var today_short_str = (today.getMonth() + 1) + "/" + today_day
+  var today_short_str = (today.getMonth() + 1) + "/" + today.getDate()
   var this_month = "" + (today_year) + today_month
 
   prev_date = prev_date.setMonth(today.getMonth()-1)

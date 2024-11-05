@@ -79,7 +79,6 @@ function load_parrtnership(region){
         partData = part_json;
         part_detail = partData.data
         part_selection = Math.floor(Math.random() * (part_detail.length))
-
         part_title = part_detail[part_selection]['shop_name'] 
         part_type = part_detail[part_selection]['request_type']
         part_main_title = part_detail[part_selection]['main_title']
@@ -99,53 +98,53 @@ function load_parrtnership(region){
     })
 }
 
-function show_partnership(){
- //광고정보 표시영역
- if(partData.data.length > 0 && (today_num >= part_sDate_Num && today_num <= part_eDate_Num) ){
+function show_partnership(){    
+//광고정보 표시영역
+if(partData.data.length > 0 && (today_num >= part_sDate_Num && today_num <= part_eDate_Num) ){
     gtag('event','파트너쉽노출', { 'event_category' : 'View_Partnership', 'event_label' : "리얼랭커스," + today_str + "," + part_title + ",뷰,파트너쉽"});
     if(part_type == 'Direct'){
-      $('#dataList').append(part_info);
-      $('.partBox').click(function(){
+        $('#dataList').append(part_info);
+        $('.partBox').click(function(){
         var ad_click_date = new Date();
         gtag('event','파트너쉽선택', { 'event_category' : 'Click_Partnership', 'event_label' : "리얼랭커스," + today_str + "," + part_title + ",클릭,파트너쉽"});
         if(checkMobile() == "ios"){
-          window.location.href = page_url
+            window.location.href = page_url
         }
         else{
-          window.open(page_url)
+            window.open(page_url)
         }              
-      })
-    }    
+        })
+    }
     if(part_type == 'Pop'){
-      $('#dataList').append(part_pop);
+        $('#dataList').append(part_pop);
     }
     if(part_type == 'Static_Pop'){
-      $('#dataList').append(part_static_pop);      
+        $('#dataList').append(part_static_pop);
     }
     if(part_type == 'Static_Pop2'){
-      $('#dataList').append(part_static_pop2);
-    }
+        $('#dataList').append(part_static_pop2);
+    }    
     
     $('#partSub1').html(sub_title)
     $('#partTitle').html(part_main_title)
     if(sub_comment == ""){
-      $('#partInfo').html(cell_num_with_pyphen + " / " + phone_num_with_pyphen)
+        $('#partInfo').html(cell_num_with_pyphen + " / " + phone_num_with_pyphen)
     }
     else{
-      $('#partInfo').html(sub_comment)
+        $('#partInfo').html(sub_comment)
     }
 
     if(checkMobile() == 'other'){
-      $('#partImage').html("<img src='../ad/image/" + img_url + "' height='70px' style='border-radius: 10px;'>")
+        $('#partImage').html("<img src='./ad/image/" + img_url + "' height='70px' style='border-radius: 10px;'>")
     }
     else{
-      $('#partImage').html("<img src='../ad/image/" + img_url + "' height='58px' style='border-radius: 10px;'>")
+        $('#partImage').html("<img src='./ad/image/" + img_url + "' height='58px' style='border-radius: 10px;'>")
     }
-  }
-  else{
+    }
+    else{
     $('#dataList').append(part_default);
     $('.partBox').css({'grid-template-columns':'1fr'})
-  }
+    }
 }
 
 function showPART(){
