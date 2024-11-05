@@ -423,7 +423,7 @@
   var prev_date = new Date()
  
   //var today = new Date('2023-10-30')
-  var today_day = dateReturn( today.getDate() );
+  var today_day = today.getDate();
   if (today_day == 1){    
     today = new Date(today.setDate(today.getDate() - 1))
   }
@@ -1871,10 +1871,9 @@ function updateTable(region){
                 else{
                   shareText += "『" + regName + "』\n"
                   shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
-                }               
-                
-                shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
-                shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() +"건)\n"                 
+                  shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
+                  shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() +"건)\n"
+                }                
               }
               //shareText += "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + regCode + "&pmon=" + selectedMonth + "\n\n"
               shareText +=  reg_sURL + "\n\n"              
