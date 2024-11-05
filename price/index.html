@@ -1162,7 +1162,12 @@ function updateTable(region){
             shareText += "등록된 실거래 정보 없음\n\n"
         }
 
-        shareText += shareURL
+        shareText += shareURL + "\n\n"
+
+        shareText += "[리얼랭커스 앱 다운로드]\n"
+        shareText += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+        shareText += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n" 
+
         popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
       
         if(isMobile){
@@ -1631,12 +1636,12 @@ function updateTable(region){
     }
     else{
       if(selectedMonth == "latest_deal"){
-        shareTitle = "[" + regionName + " " + today_year + "년 " + Number(today_month) + "월 거래량]"
-        shareText = "[" + regionName + " " + today_year + "년 " + Number(today_month) + "월 거래량]\n\n"
+        shareTitle = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 실거래]"
+        shareText = shareTitle + "\n\n"        
       }
       else{
         shareTitle = "[" + regionName + " " + selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량]"
-        shareText = "[" + regionName + " " + selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량]\n\n"
+        shareText = shareTitle + "\n\n"
       }
     }
     //shareURL = "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + $("#gungu option:selected").val() + "&pmon=" + selectedMonth
@@ -1842,11 +1847,7 @@ function updateTable(region){
 
                       addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>"  + "<div>" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() + "건</div>"
                       addon_html += "<div>3년평균 대비</div>" + "<div>"  + reg_ratio_3y_avg_tag + "</div>"  + "<div>" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() + "건</div>"
-                    addon_html += "</div>"
-
-
-              
-              shareText += "『" + regName + "』\n"
+                    addon_html += "</div>"              
               
               if(Number(this_month) == Number(selectedMonth) || Number(prev_month) == Number(selectedMonth) ){
                 //shareText += "ㆍ국토부 신규 등록 : " + deal_vol + "건 (+" + count_gap + ")\n"
@@ -1864,9 +1865,11 @@ function updateTable(region){
                 else { reg_ratio_3y_avg_share = "= " + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
 
                 if(selectedMonth == "latest_deal"){
-                  shareText += "ㆍ" + today_year + "년 " + Number(today_month) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
+                  shareText += "ㆍ" + regName + " : "
+                  shareText += Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
                 }
                 else{
+                  shareText += "『" + regName + "』\n"
                   shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
                 }               
                 
@@ -1978,9 +1981,8 @@ function updateTable(region){
 
                     addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>"  + "<div>" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() + "건</div>"
                     addon_html += "<div>3년평균 대비</div>" + "<div>"  + reg_ratio_3y_avg_tag + "</div>"  + "<div>" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() + "건</div>"
-                  addon_html += "</div>"
+                  addon_html += "</div>"              
               
-              shareText += "『" + regName + "』\n"              
               if( this_month == Number(selectedMonth) || prev_month == Number(selectedMonth) ){
                 //shareText += "ㆍ국토부 신규 등록 : " + t_vol.toLocaleString() + "건 (+" + count_vol_gap + ")\n"
                 shareText += "ㆍ국토부 신규 등록 : " + (today_count_this_month + today_count_prev_month).toLocaleString() + "건\n"                
@@ -1997,13 +1999,15 @@ function updateTable(region){
                 else { reg_ratio_3y_avg_share = "= " + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
 
                 if(selectedMonth == "latest_deal"){
-                  shareText += "ㆍ" + today_year + "년 " + Number(today_month) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
+                  shareText += "ㆍ" + regName + " : "
+                  shareText += Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
                 }
                 else{
+                  shareText += "『" + regName + "』\n"
                   shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
-                }                  
-                shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
-                shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"                
+                  shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
+                  shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
+                }
               }
               
               //shareText += "https://www.realrankus.com/price" + "?preg=" + regSido + "&psub=" + regCode + "&pmon=" + selectedMonth + "\n\n"
@@ -2015,6 +2019,10 @@ function updateTable(region){
             }            
           }
         }
+
+        shareText += "[리얼랭커스 앱 다운로드]\n"
+        shareText += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+        shareText += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n" 
 
         if(isMobile){
           $(".volume_content").css('grid-template-columns', '1fr')
