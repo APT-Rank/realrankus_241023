@@ -477,11 +477,13 @@ function createLargeMarker(markers){
       var svg_color = "#CC0000"
       var grade = ""
       if(aptValue >= 70){
-        svg_color = "#CC0000"
+        //svg_color = "#CC0000"
+        svg_color = "#5f0bbf"
         grade = "gradeS"
       }
       else if(aptValue < 70 && aptValue >= 55){
-        svg_color = "#F72020"
+        //svg_color = "#F72020"
+        svg_color = "#CC0000"
         grade = "gradeA"
       }
       else if(aptValue < 55 && aptValue >= 40){
@@ -580,13 +582,17 @@ function createSmallMarker(markers){
     var stroke_color = "#CC0000"
     var grade = ""
     if(aptValue >= 70){
-      svg_color = "#CC0000"
-      stroke_color = "#8F0000"
+      //svg_color = "#CC0000"
+      //stroke_color = "#8F0000"
+      svg_color = "#5f0bbf"
+      stroke_color = "#2c0559"
       grade = "gradeS"
     }
     else if(aptValue < 70 && aptValue >= 55){
-      svg_color = "#F72020"
-      stroke_color = "#C50707"
+      //svg_color = "#F72020"
+      //stroke_color = "#C50707"
+      svg_color = "#CC0000"
+      stroke_color = "#8F0000"
       grade = "gradeA"
     }
     else if(aptValue < 55 && aptValue >= 40){
