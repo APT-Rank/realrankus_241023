@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"number"
             },
@@ -132,10 +136,6 @@
             {
                 "name":"sURL",
                 "type":"string"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -146,6 +146,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"황실타운2차",
             "건축년도":1994.0,
@@ -336,8 +337,7 @@
             "y":36.6062666,
             "x":128.2043745,
             "rank_info":"['', '', '']",
-            "sURL":"https:\/\/m.land.naver.com\/map\/36.6062666:128.2043745:17:\/APT\/A1",
-            "type":"TRADE"
+            "sURL":"https:\/\/m.land.naver.com\/map\/36.6062666:128.2043745:17:\/APT\/A1"
         }
     ]
 }
