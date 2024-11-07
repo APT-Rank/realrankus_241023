@@ -1866,7 +1866,7 @@ function updateTable(region){
 
                 if(selectedMonth == "latest_deal"){
                   shareText += "ㆍ" + regName + " : "
-                  shareText += Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
+                  shareText += (deal_this_vol + deal_prev_vol).toLocaleString() + "건\n"
                 }
                 else{
                   shareText += "『" + regName + "』\n"
@@ -1999,7 +1999,7 @@ function updateTable(region){
 
                 if(selectedMonth == "latest_deal"){
                   shareText += "ㆍ" + regName + " : "
-                  shareText += Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
+                  shareText += (today_count_this_month + today_count_prev_month).toLocaleString() + "건\n"
                 }
                 else{
                   shareText += "『" + regName + "』\n"
