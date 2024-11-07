@@ -139,10 +139,11 @@
           </div>
           <!--타이틀 표시-->          
           <!-- <div id="title" onClick="scrollUp()"> -->
-          <div id="title" onClick="location.reload()">            
-            <img src="./apt-rank_blank2.png" height="32px" />
+          <!-- <div id="title" onClick="location.reload()"><img src="./apt-rank_blank2.png" height="32px" /></div> -->
+          <div id="title_div" onClick="location.reload()">
+            <div id="title_logo"><img src="./apt-rank_blank2.png" height="26px" /></div>
+            <div id="title_text"> 리얼랭커스</div>
           </div>
-          <!-- <div id="title" onClick='sendTo()'>리얼랭커스</div> -->
           <!--공유 버튼-->
           <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
           <!--단지 가중치 설정 버튼 표시-->
@@ -475,7 +476,7 @@
 
     <div class="modal fade" id="noticeModal" tabindex="-1" aria-labelledby="noticeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+        <div class="modal-content" id="noticeModaloutline">
           <div class="modal-header">
             <h5 class="modal-title" id="noticeModalLabel">잠시만 기다려 주세요</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -843,13 +844,16 @@
         $("#mobile_map_list").hide()        
       }
       else{
+        $("#noticeDetail").height(window.innerHeight/3)
+        $("#noticeModaloutline").css({'bottom': (-1)*window.innerHeight/7})
+
         $("#dataList_wrapper").hide()
         $("#commentBox").css({'bottom': -commentBox_height + 92 + "px"})
         $("#rearrange").css({'visibility' : 'hidden'})
         $("#mobile_map_list_icon").html("<i class='fa-solid fa-list'></i>")
-        $("#mobile_map_list_text").html("목록보기")
-        
+        $("#mobile_map_list_text").html("목록보기")        
       }
+
       $("#commentBack").hide()
     });
 
