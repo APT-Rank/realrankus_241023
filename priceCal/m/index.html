@@ -373,7 +373,7 @@
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedTheme = "under100M";
-    var currentMonth = "202411"; //수정
+    var currentMonth = "202411"; //수정 
 
     var pageName = "aptrank_PriceCal" //20231020    
 
@@ -837,10 +837,10 @@
       }
       else{
         regionName = upperReion        
-        $("#gungu").val(selectedSubRegion).prop("selected", true);
+        $("#gungu_m").val(selectedSubRegion).prop("selected", true);
       }      
       selectedRegion = regionName;
-      $("#sido").val(selectedRegion).prop("selected", true);
+      $("#sido_m").val(selectedRegion).prop("selected", true);
 
       var changeItem;
       if (regionName == "Korea") {
