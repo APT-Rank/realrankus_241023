@@ -712,19 +712,84 @@
 
       $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
 
-      //통합검색
-      if (selectedMonth >= 202211) {
-        //$('#search').css("visibility", "hidden")
-        //searching_url = "https://www.realrankus.com/" + selectedMonth + "/Searching_list.json" + update_ver;
+      if(thisMonth == selectedMonth){
+        firebase.database().ref().child("searchingList").child(selectedMonth).get()
+        .then((snapshot) => {
+          if(snapshot.exists()){
+            searchingData = snapshot.val()
+            console.log("FB")
+
+            //지도서비스추가      
+            region_url = "./" + selectedMonth + "/region_map.json";
+            $.getJSON(region_url, function (json) {        
+              //console.log(json);
+              regionMapData = json.data;            
+              }).done(function(){
+                for (var i in regionMapData){
+                  if(regionMapData[i]['Level'] == "Level0"){
+                    level0_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level1"){
+                    level1_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level2"){
+                    level2_loc.push(regionMapData[i])
+                  }
+                }
+                if(selectedRegion == "Korea"){
+                  loadMap(127.9564, 36.6778)
+                }
+                else{
+                  region_code = selectedSubRegion.split("_")[0]
+                  for(var i in level1_loc){
+                    if(level1_loc[i]['법정동코드']+"" == region_code){
+                      loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
+                      break;
+                    }
+                  }
+                }
+                current_pos = defaultMap.getCenterPoint()
+                projection = defaultMap.getProjection();
+                current_coord = projection.fromPointToCoord(current_pos)
+
+                origin_lat = current_coord['y']
+                origin_lng = current_coord['x']
+
+                nearby_region = []
+                nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
+                
+                show_up_complexs = []
+                show_up_complexs = defineMarkerList(nearby_region)
+
+                current_zoom = defaultMap.getZoom()              
+
+                showHideMarker(current_zoom)
+                $("#pageLoadingBack").remove()
+                optionChange(selectedSubRegion, selectedRegion);
+                updateRegion();
+              })
+          }
+          else{
+            alert("검색 정보 불러오기 실패했어요. 다시 시도해 주세요.")
+          }
+        })
+        .catch((error) => {
+          console.log(error.message)
+        })
+      }
+      
+      else{
+        //통합검색
         searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
-        $.getJSON(searching_url, function (json) {
+        $.getJSON(searching_url, function (json) {          
           searchingData = json;
+          console.log("LOCAL")
         }).done(function(){
           //지도서비스추가      
           region_url = "./" + selectedMonth + "/region_map.json";
           $.getJSON(region_url, function (json) {        
             //console.log(json);
-            regionMapData = json.data;        
+            regionMapData = json.data;            
             }).done(function(){
               for (var i in regionMapData){
                 if(regionMapData[i]['Level'] == "Level0"){
