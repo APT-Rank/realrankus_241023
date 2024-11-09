@@ -477,7 +477,7 @@ function createLargeMarker(markers){
       var svg_color = "#CC0000"
       var grade = ""
       if(aptValue >= 70){
-        svg_color = "#CC0000"
+        svg_color = "#a70000"
         //svg_color = "#5f0bbf"
         grade = "gradeS"
       }
@@ -578,12 +578,12 @@ function createSmallMarker(markers){
       last_sales_area_kor = last_sales_area
     }
 
-    var svg_color = "#CC0000"
-    var stroke_color = "#CC0000"
+    var svg_color = "#a70000"
+    var stroke_color = "#a70000"
     var grade = ""
     if(aptValue >= 70){
-      svg_color = "#CC0000"
-      stroke_color = "#8F0000"
+      svg_color = "#a70000"
+      stroke_color = "#820000"
       //svg_color = "#5f0bbf"
       //stroke_color = "#2c0559"
       grade = "gradeS"

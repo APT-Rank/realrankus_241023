@@ -36,6 +36,17 @@ for (i = 1; i < regions.length; i++) {
   }  
   compareOption += "<option value='" + regions[i][1] + "'>" + region_name + "</option>";
 }
+function compareCheck(){  
+  if(!login_status){    
+    $(".modal-backdrop").css({"width":"100%"})
+    $("#baseModal").css({"width":"100%"})    
+    $("#loginModal").modal("show")
+    showLogin()
+  }
+  else{
+    openCompare(aptData.data[0])
+  }
+}
 
 function openCompare(complex_data){
   //clearInterval(btn_timer)

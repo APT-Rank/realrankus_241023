@@ -310,7 +310,7 @@
         </div>
         <div id="dataMap"></div>
 
-        <!--댓글서비스창-->
+        <!--댓글서비스창
         <div id="commentBack" onClick="commentbox_animate()"></div>
         <div id="commentWrapper" style='display:none'>
           <div id="commentBox">
@@ -324,6 +324,7 @@
             <div id="writeBox"></div>
           </div>
         </div>
+        -->
 
         <!--리얼랭커스 연결-->
         <div id="linkToAptrank_bottom"></div>
@@ -526,6 +527,9 @@
     <!--지도 위 배너-->
     <div id="map_banner" onClick='openOuterLink("https://naver.me/xDJJrRGf")'>
       리얼랭커스 CEO의 MY 데이터 맞춤 미팅
+    </div>
+    <div id="map_banner2" onClick='compareCheck()'>
+      단지 비교하기 <span id='newFeature' style="margin-left: 10px;">NEW!!</span>
     </div>
 
     <script
@@ -1131,7 +1135,8 @@
       $("#localSearch").html(localSearchText + " 검색");      
 
       if (selectedSubRegion != "1000000000_Korea") {
-        $("#commentWrapper").show()        
+        //$("#commentWrapper").show()
+        $("#map_banner2").show()
         if (selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300" || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300") {
           //로딩          
           updateTopTable(selectedMonth, selectedSubRegion);
@@ -1154,7 +1159,8 @@
 
         $("#recent_comment_num").html(comment_html)
       } else {
-        $("#commentWrapper").hide()        
+        //$("#commentWrapper").hide()
+        $("#map_banner2").hide()
         updateRegionTable(selectedMonth, selectedSubRegion);
       }
       showWeight();
@@ -1287,7 +1293,7 @@
 
         if(isMobile){        
           $("#dataMap").css({'margin-top':$("#titleBar").height() + $("#selections").height()+ $("#weight").height() + 20,
-                            'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height() + $("#linkToAptrank_bottom").height() + 10 )})        
+                            'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height() + $("#linkToAptrank_bottom").height() + 20 )})        
         }
         //동 DB 생성 완료
 
@@ -2677,10 +2683,10 @@
           last_sales_area_kor = last_sales_area
         }
         
-        var svg_color = "#CC0000"
+        var svg_color = "#a70000"
         var grade = ""
         if(aptValue >= 70){
-          svg_color = "#CC0000"
+          svg_color = "#a70000"
           grade = "gradeS"
         }
         else if(aptValue < 70 && aptValue >= 55){
