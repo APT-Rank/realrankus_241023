@@ -105,7 +105,7 @@
     <script src="./js/notice_aptrank.js" type="text/javascript"></script>
     <script src="./js/ad_aptrank.js" type="text/javascript"></script>
     <script src="./js/restrict_words.js" type="text/javascript"></script>
-    <script src="./js/map_control.js" type="text/javascript"></script>
+    <script src="./js/map_control.js" type="text/javascript"></script>    
     <script src="./js/distance.js" type="text/javascript"></script>
 
     <link href="./css/style_common.css" rel="stylesheet" />
@@ -139,10 +139,11 @@
           </div>
           <!--타이틀 표시-->          
           <!-- <div id="title" onClick="scrollUp()"> -->
-          <div id="title" onClick="location.reload()">            
-            <img src="./apt-rank_blank2.png" height="32px" />
+          <!-- <div id="title" onClick="location.reload()"><img src="./apt-rank_blank2.png" height="32px" /></div> -->
+          <div id="title_div" onClick="location.reload()">
+            <div id="title_logo"><img src="./apt-rank_blank2.png" height="26px" /></div>
+            <div id="title_text"> 리얼랭커스</div>
           </div>
-          <!-- <div id="title" onClick='sendTo()'>리얼랭커스</div> -->
           <!--공유 버튼-->
           <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
           <!--단지 가중치 설정 버튼 표시-->
@@ -158,14 +159,17 @@
             <select id="gungu" onChange="updateRegion()"></select>
           </div>
           <div id="month_selection">
+            <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202409" selected>2024년 09월</option>
+              <option value="202411" selected>2024년 11월</option>
+              <option value="202410">2024년 10월</option>
+              <option value="202409">2024년 09월</option>
               <option value="202408">2024년 08월</option>
               <option value="202407">2024년 07월</option>
-              <option value="202406">2024년 06월</option>
-              <option value="202405">2024년 05월</option>
-              <option value="202404">2024년 04월</option>
               <!--
+              <option value="202406">2024년 06월</option>              
+              <option value="202405">2024년 05월</option>              
+              <option value="202404">2024년 04월</option>              
               <option value="202403">2024년 03월</option>              
               <option value="202402">2024년 02월</option>              
               <option value="202401">2024년 01월</option>              
@@ -306,7 +310,7 @@
         </div>
         <div id="dataMap"></div>
 
-        <!--댓글서비스창-->
+        <!--댓글서비스창
         <div id="commentBack" onClick="commentbox_animate()"></div>
         <div id="commentWrapper" style='display:none'>
           <div id="commentBox">
@@ -320,6 +324,7 @@
             <div id="writeBox"></div>
           </div>
         </div>
+        -->
 
         <!--리얼랭커스 연결-->
         <div id="linkToAptrank_bottom"></div>
@@ -362,8 +367,36 @@
       </div>
     </div>
 
-    <!-- Vertically centered scrollable modal -->
-    <!-- Button trigger modal -->
+    <!--단지비교 검색창-->    
+    <div id="complex_compare_search">
+      <div id="close_compare1_modal" onClick="closeComplexSearch(1, '')"><i class="fa-solid fa-xmark"></i></div>
+      <div id="close_compare2_modal" onClick="closeComplexSearch(2, '')"><i class="fa-solid fa-xmark"></i></div>
+      <div class="complex_compare_search_bar">        
+        <div><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div id="compareSearchInputBox">
+          <input id="compareInputSearch1" type="text" placeholder="전국 단지를 검색하세요" onkeyup="compareSearch(1)" />
+          <input id="compareInputSearch2" type="text" placeholder="전국 단지를 검색하세요" onkeyup="compareSearch(2)" />
+        </div>
+        <div id="close_compare1_search" onClick="clearInput(1)"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div id="close_compare2_search" onClick="clearInput(2)"><i class="fa-solid fa-circle-xmark"></i></div>
+      </div>
+      <div id="complex_compare_search_list_wrapper">
+        <div id="complex_compare1_search_list"></div>
+        <div id="complex_compare2_search_list"></div>
+      </div>
+    </div>    
+
+    <!-- Compare modal -->
+    <div class="modal fade" id="compareModal" tabindex="-1" aria-labelledby="compareModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div id="compareModal_close" ><a class="compareModalclose" data-bs-dismiss="modal"  data-keyboard="false" aria-label="Close"><i class="fa-solid fa-xmark"></i></a></div>
+        <div class="modal-content">          
+          <div class="modal-body" id="compareDetail"></div>
+          <div id="compareFooter"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="baseModal" tabindex="-1" aria-labelledby="baseModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -444,7 +477,7 @@
 
     <div class="modal fade" id="noticeModal" tabindex="-1" aria-labelledby="noticeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+        <div class="modal-content" id="noticeModaloutline">
           <div class="modal-header">
             <h5 class="modal-title" id="noticeModalLabel">잠시만 기다려 주세요</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -453,7 +486,7 @@
           <div id="noticeFooter"></div>
         </div>
       </div>
-    </div>    
+    </div>
 
     <!-- Offcanvas Right -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
@@ -492,8 +525,11 @@
     </div>
 
     <!--지도 위 배너-->
-    <div id="map_banner" onClick='openOuterLink("https://www.realrankus.com/mbti")'>
-      내 MBTI와 어울리는 단지는?
+    <div id="map_banner" onClick='openOuterLink("https://naver.me/xDJJrRGf")'>
+      리얼랭커스 CEO의 MY 데이터 맞춤 미팅
+    </div>
+    <div id="map_banner2" onClick='compareCheck()'>
+      단지 비교하기 <span id='newFeature' style="margin-left: 10px;">NEW!!</span>
     </div>
 
     <script
@@ -503,24 +539,27 @@
     ></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>    
+    
     <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>    
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>   
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
     
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/open-graph-scraper@6.8.1/dist/cjs/index.min.js"></script>
 
-    <script src="./js/login_240308.js" type="text/javascript"></script>
+    <script src="./js/con_counter_js.js"></script>
     <script src="./js/apple.js" type="text/javascript"></script>
+    <script src="./js/login_240308.js" type="text/javascript"></script>
     <script src="./js/board.js" type="text/javascript"></script>    
-    <script type="module" src="./js/con_counter.js"></script>       
+    <script src="./js/complex_compare.js" type="text/javascript"></script>    
 
   </body>
   <script>
-    var selectedMonth = "202409";  //수정
+    var thisMonth = "202411"; //수정
+    var selectedMonth = "202411"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -568,6 +607,11 @@
     var prev_selection = ""
     var current_selection = ""
 
+    var lastRegion = localStorage.getItem("lastRegion");
+    var lastSubRegion = localStorage.getItem("lastSubRegion");
+    var lastMonth = localStorage.getItem("lastMonth");
+    var lastNoticed = localStorage.getItem("lastNoticed");    
+
     var sales_history_price = [];
     var sales_history_date = [];
     var priceCharts = [];
@@ -595,21 +639,14 @@
 
     $(document).ready(function () {
       Kakao.init(kakaoKey);
+      
       countUp(pageName)
-      // SDK 초기화 여부를 판단합니다.
-      //console.log(Kakao.isInitialized());
-      //login_checker()
-
+      
       var option = "";
       for (i = 0; i < regions.length; i++) {
         option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
       }
       $("#sido").html(option);
-
-      var lastRegion = localStorage.getItem("lastRegion");
-      var lastSubRegion = localStorage.getItem("lastSubRegion");
-      var lastMonth = localStorage.getItem("lastMonth");
-      var lastNoticed = localStorage.getItem("lastNoticed");
       alwaysSortingPop = localStorage.getItem("lastSortingPop");
 
       //var lastRegion = sessionStorage.getItem('lastRegion')
@@ -667,29 +704,92 @@
 
       $("#month").val(selectedMonth).prop("selected", true);
       $("#sido").val(selectedRegion).prop("selected", true);
+      $("#gungu").val(selectedSubRegion).prop("selected", true);
       regionName = $("#sido option:selected").val();
 
-      $("#dataList").html("");      
-
-      //var regionSubName = $("#gungu option:selected").val()
-
+      $("#dataList").html("");
       month = selectedMonth;
-      //updateTable(month, regionSubName)
+
       $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
 
-      //통합검색
-      if (selectedMonth >= 202211) {
-        //$('#search').css("visibility", "hidden")
-        //searching_url = "https://www.realrankus.com/" + selectedMonth + "/Searching_list.json" + update_ver;
+      if(thisMonth == selectedMonth){
+        firebase.database().ref().child("searchingList").child(selectedMonth).get()
+        .then((snapshot) => {
+          if(snapshot.exists()){
+            searchingData = snapshot.val()
+            console.log("FB")
+
+            //지도서비스추가      
+            region_url = "./" + selectedMonth + "/region_map.json";
+            $.getJSON(region_url, function (json) {        
+              //console.log(json);
+              regionMapData = json.data;            
+              }).done(function(){
+                for (var i in regionMapData){
+                  if(regionMapData[i]['Level'] == "Level0"){
+                    level0_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level1"){
+                    level1_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level2"){
+                    level2_loc.push(regionMapData[i])
+                  }
+                }
+                if(selectedRegion == "Korea"){
+                  loadMap(127.9564, 36.6778)
+                }
+                else{
+                  region_code = selectedSubRegion.split("_")[0]
+                  for(var i in level1_loc){
+                    if(level1_loc[i]['법정동코드']+"" == region_code){
+                      loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
+                      break;
+                    }
+                  }
+                }
+                current_pos = defaultMap.getCenterPoint()
+                projection = defaultMap.getProjection();
+                current_coord = projection.fromPointToCoord(current_pos)
+
+                origin_lat = current_coord['y']
+                origin_lng = current_coord['x']
+
+                nearby_region = []
+                nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
+                
+                show_up_complexs = []
+                show_up_complexs = defineMarkerList(nearby_region)
+
+                current_zoom = defaultMap.getZoom()              
+
+                showHideMarker(current_zoom)
+                $("#pageLoadingBack").remove()
+                optionChange(selectedSubRegion, selectedRegion);
+                updateRegion();
+              })
+          }
+          else{
+            alert("검색 정보 불러오기 실패했어요. 다시 시도해 주세요.")
+          }
+        })
+        .catch((error) => {
+          console.log(error.message)
+        })
+      }
+      
+      else{
+        //통합검색
         searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
-        $.getJSON(searching_url, function (json) {
+        $.getJSON(searching_url, function (json) {          
           searchingData = json;
+          console.log("LOCAL")
         }).done(function(){
           //지도서비스추가      
           region_url = "./" + selectedMonth + "/region_map.json";
           $.getJSON(region_url, function (json) {        
             //console.log(json);
-            regionMapData = json.data;        
+            regionMapData = json.data;            
             }).done(function(){
               for (var i in regionMapData){
                 if(regionMapData[i]['Level'] == "Level0"){
@@ -711,7 +811,7 @@
                   if(level1_loc[i]['법정동코드']+"" == region_code){
                     loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
                     break;
-                  }                  
+                  }
                 }
               }
               current_pos = defaultMap.getCenterPoint()
@@ -727,12 +827,11 @@
               show_up_complexs = []
               show_up_complexs = defineMarkerList(nearby_region)
 
-              current_zoom = defaultMap.getZoom()
+              current_zoom = defaultMap.getZoom()              
 
               showHideMarker(current_zoom)
               $("#pageLoadingBack").remove()
-
-              optionChange(selectedSubRegion);
+              optionChange(selectedSubRegion, selectedRegion);
               updateRegion();
             })
         })
@@ -761,13 +860,30 @@
       $("#baseModal").on("hidden.bs.modal", function () {
         changeMetaTagToDefault();
         current_selection = ""
-        removeAnimation()                  
+        removeAnimation()
       });
-
+      $("#noticeModal").on("hidden.bs.modal", function () {
+        $("#baseModal").css({"z-index" : "1055"})
+        $(".modal-backdrop").css({"z-index" : "1000"})
+      });
+      $("#compareModal").on("hidden.bs.modal", function () {
+        $("#baseModal").css({"z-index" : "1055"})
+        $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+      });      
+      $("#toggleModal1").on("hidden.bs.modal", function () {
+        $("#baseModal").css({"z-index" : "1055"})
+        $(".modal-backdrop").css({"z-index" : "1000"})
+      });
+      /*
+      $("#toggleModal2").on("hidden.bs.modal", function () {
+        $("#baseModal").css({"z-index" : "1055"})
+        $(".modal-backdrop").css({"z-index" : "1000"})
+      });
+      */
       //optionChange(selectedSubRegion);
       //updateRegion();
 
-      if ($.cookie("popCookie") != "202409" && urlParams.has("reg") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202411" && urlParams.has("reg") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -790,20 +906,23 @@
       $("#searchingBox").hide()
       var inHeight = window.innerHeight
       $("#commentBox").css({'height': inHeight-50-42})
-      commentBox_height = $("#commentBox").height()      
+      commentBox_height = $("#commentBox").height()
       if(!isMobile){
         //$("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
         $("#commentBox").css({'width':'580px', 'bottom': -commentBox_height + 92 + "px"})
         $("#mobile_map_list").hide()        
       }
       else{
+        $("#noticeDetail").height(window.innerHeight/3)
+        $("#noticeModaloutline").css({'bottom': (-1)*window.innerHeight/7})
+
         $("#dataList_wrapper").hide()
         $("#commentBox").css({'bottom': -commentBox_height + 92 + "px"})
         $("#rearrange").css({'visibility' : 'hidden'})
         $("#mobile_map_list_icon").html("<i class='fa-solid fa-list'></i>")
-        $("#mobile_map_list_text").html("목록보기")
-        
+        $("#mobile_map_list_text").html("목록보기")        
       }
+
       $("#commentBack").hide()
     });
 
@@ -926,6 +1045,14 @@
 
     function radioActive(val) {
       searchType = val;
+
+      if(selectedRegion=="Korea" && selectedSubRegion=="1000000000_Korea" && searchType == "local"){
+        $("#unifiedSearchExample").html("예) 강남, 분당, 수지, 해운대");
+      }
+      else{
+        $("#unifiedSearchExample").html("예) 서초동, 래미안, 힐스테이트, 주공");
+      }      
+
       $("#inputUnifiedSearch").val("");
       goSearchBySearchType();
       $("#inputUnifiedSearch").focus();
@@ -951,10 +1078,18 @@
       $("html, body").animate({ scrollTop: 0 }, 50);
     }
 
-    function optionChange(subRegion) {
+    function optionChange(subRegion, upperReion) {
       selectedSubRegion = subRegion;
-      regionName = $("#sido option:selected").val();
+      if(upperReion == null || upperReion == "" || upperReion == undefined){
+        regionName = $("#sido option:selected").val();
+      }
+      else{
+        regionName = upperReion        
+        $("#gungu").val(selectedSubRegion).prop("selected", true);
+      }      
       selectedRegion = regionName;
+      $("#sido").val(selectedRegion).prop("selected", true);
+      
       var changeItem;
 
       if (regionName == "Korea") {
@@ -1054,18 +1189,19 @@
       }
     }
     function updateRegion() {
-      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='location.reload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")  
+      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
       minValue = 0;
       maxValue = 60;
-      //var selection = document.getElementById("gungu")
+
       selectedRegion = $("#sido option:selected").val();
       selectedSubRegion = $("#gungu option:selected").val();
 
       localSearchText = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
-      $("#localSearch").html(localSearchText + " 검색");
+      $("#localSearch").html(localSearchText + " 검색");      
 
       if (selectedSubRegion != "1000000000_Korea") {
-        $("#commentWrapper").show()        
+        //$("#commentWrapper").show()
+        $("#map_banner2").show()
         if (selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300" || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300") {
           //로딩          
           updateTopTable(selectedMonth, selectedSubRegion);
@@ -1088,7 +1224,8 @@
 
         $("#recent_comment_num").html(comment_html)
       } else {
-        $("#commentWrapper").hide()        
+        //$("#commentWrapper").hide()
+        $("#map_banner2").hide()
         updateRegionTable(selectedMonth, selectedSubRegion);
       }
       showWeight();
@@ -1221,7 +1358,7 @@
 
         if(isMobile){        
           $("#dataMap").css({'margin-top':$("#titleBar").height() + $("#selections").height()+ $("#weight").height() + 20,
-                            'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#linkToAptrank_bottom").height() )})        
+                            'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height() + $("#linkToAptrank_bottom").height() + 20 )})        
         }
         //동 DB 생성 완료
 
@@ -1475,9 +1612,7 @@
         }
         //console.log("Table Update")
         complex_list_like_status()
-        $("#pageLoadingBack").remove()
-
-        console.log(internalSearching)
+        $("#pageLoadingBack").remove()        
       })
       .fail(function(jqXMLHttpRequest,status,error){
         $("#gungu option:eq(0)").prop("selected", true);
@@ -1652,18 +1787,18 @@
         var last_rent_area = last_rent[2];
       }
 
-      var floor_rate = "";
-      if (aptData.data[index]["용적률"] == "0") {
+      var floor_rate = aptData.data[index]["용적률"];      
+      if (floor_rate == "0" || floor_rate == 0 || floor_rate == undefined || isNaN(floor_rate)) {
         floor_rate = "--%";
       } else {
-        floor_rate = aptData.data[index]["용적률"] + "%";
+        floor_rate = Number(aptData.data[index]["용적률"]).toFixed(0) + "%";
       }
 
-      var cover_rate = "";
-      if (aptData.data[index]["건폐율"] == "0") {
+      var cover_rate = aptData.data[index]["건폐율"];
+      if (cover_rate == "0" || cover_rate == 0 || cover_rate == undefined || isNaN(cover_rate)) {
         cover_rate = "--%";
       } else {
-        cover_rate = aptData.data[index]["건폐율"] + "%";
+        cover_rate = Number(aptData.data[index]["건폐율"]).toFixed(0) + "%";
       }
 
       var populationScore =
@@ -1744,6 +1879,16 @@
           detailHtml += "</div>"
         detailHtml += "</div>"
       detailHtml += "</div>"
+
+      //임장기
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-header'>";
+      detailHtml += "<div class='popTitle' id='blog_popTitle'><div><i class='fa-solid fa-tags'></i>&nbsp 리얼포스팅</div>";
+      detailHtml += "<div id='blog_register' onClick='showBlogGuide()'><i class='fa-solid fa-circle-question'></i> 등록신청</div>";
+      detailHtml += "</div></div>";
+      detailHtml += "<div class='card-body' id='blog_list_area'><div class='spinner-border' role='status' style='opacity:0.2'></div>";
+      detailHtml += "</div>";
+      detailHtml += "</div>";
 
       //총점,순위
       detailHtml += "<div class='card'>";
@@ -1834,28 +1979,22 @@
         detailHtml += "<div class='card-body' style='padding-top: 2px'>";
         detailHtml += "<div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>";
         detailHtml += "<div class='comment'>(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)</div>";
-
-        if (Number(selectedMonth) > 202206) {
-          detailHtml += "<hr>";
+                
+        detailHtml += "<hr class='hr_small'>";
+        if (selectedMonth == thisMonth) {          
+          detailHtml += "<div id='advanced_feature'>"          
           detailHtml += "<div class='popupSubtitle' style='text-align: center; margin-top: 10px'>↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓</div>";
-          detailHtml += "<div id='rankSimul' onclick='openSimulation(aptData.data," + index + ")'>랭크 시뮬레이션 <span style='font-size: 0.8em; outline: 1px solid white; border-radius: 10px; padding: 0px 7px 0px 7px'> BETA </span></div>";
+          detailHtml += "<div id='rankSimul' onclick='openSimulation(aptData.data," + index + ")'>랭크 시뮬레이션</div>";
+          detailHtml += "<div id='btn_complex_compare' onclick='openCompare(aptData.data[" + index + "])'>단지 비교하기 <span id='newFeature'>NEW!!</span></div>"
+          detailHtml += "</div>"
+        }
+        else{
+          detailHtml += "<div class='popupSubtitle' style='text-align: center; margin-top: 10px'>↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓</div>";
+          detailHtml += "<div id='rankSimul' onclick='openSimulation(aptData.data," + index + ")'>랭크 시뮬레이션</div>";
         }        
-      }
+      }      
 
       detailHtml += "</div></div>"
-
-      /*
-      if (Number(selectedMonth) > 202203) {
-        detailHtml +=
-          "<hr style='margin-bottom: 0'><div class='rankGraphTitle'>- 균형잡힌 가중치 순위 변동 -</div><div class='graph' style='height: 120px;'> <canvas id='rankChart'></canvas></div>";
-      }
-      */
-      /*
-    if(Number(selectedMonth) > 202205){
-      detailHtml += "<div id='rankSimul' onclick='openSimulation(aptData.data," + index + ")'>랭크 시뮬레이션 <span style='font-size: 0.8em; outline: 1px solid white; border-radius: 10px; padding: 0px 7px 0px 7px'> BETA </span></div>"
-    }
-    */
-      
 
       if (Number(selectedMonth) > 202212) {
         //지도
@@ -2029,7 +2168,14 @@
           detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_1h + "</div></div><hr style='margin-top: 2px'>";
         }
 
-        detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 구글 대중교통 이동 시간 정보를 사용합니다.</div>";
+        if (Number(selectedMonth) < 202411){
+          detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 구글 대중교통 이동 시간 정보를 사용합니다.</div>";
+        }
+        else{
+          detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.</div>";
+        }
+
+        
         detailHtml += "</div></div></div></div>";
         avgTransportScore = ( Math.round((transportSum / itemNum) * 100) / 100 ).toFixed(2);
       }
@@ -2381,11 +2527,14 @@
 
         priceCharts = [];
         for (var p = 0; p < area_array.length; p++) {
+          if(sales_history_price[p] == undefined){
+            break
+          }
+
           generatedID = "pChart" + p;
           generated_priceID = "pChange" + p;
-          generated_ratioID = "pRatio" + p;
-
-          //console.log(sales_history_price[p])
+          generated_ratioID = "pRatio" + p;          
+          
           if (Math.max(...sales_history_price[p]) <= 0) {
             showGraph = false;
           } else {
@@ -2555,6 +2704,11 @@
       $("#aptDetail").html(detailHtml);
       $("#footer").html(footerHtml);
 
+      //임장기 로딩해서 넣는 함수
+      setTimeout(function(){
+        complex_blog(searchCode, aptName)
+      }, 350)
+
       //지도 그리는 함수
       if (isMobile) {
         var dw = $(window).innerWidth() - 40;
@@ -2594,10 +2748,10 @@
           last_sales_area_kor = last_sales_area
         }
         
-        var svg_color = "#CC0000"
+        var svg_color = "#a70000"
         var grade = ""
         if(aptValue >= 70){
-          svg_color = "#CC0000"
+          svg_color = "#a70000"
           grade = "gradeS"
         }
         else if(aptValue < 70 && aptValue >= 55){
@@ -2739,7 +2893,7 @@
             "</option>";
         }
         $("#pStart").html(price_sOption);
-        $("#pStart").val(5).prop("selected", true);
+        $("#pStart").val(30).prop("selected", true);
 
         $("#pEnd").html(price_eOption);
         $("#pEnd")
@@ -3320,6 +3474,15 @@
     }
 
     function showRegionDetail(index) {
+      if(isMobile){
+        $(".modal-backdrop").css({"width":"100%"})
+        $("#baseModal").css({"width":"100%"})
+      }
+      else{
+        $(".modal-backdrop").css({"width":"600px"})
+        $("#baseModal").css({"width":"600px"})
+      }
+
       titleHtml = "";
       detailHtml = "";
       footerHtml = "";
@@ -3432,27 +3595,13 @@
       var end_y = (Number(start_y) + 1).toString();
       var start_m = selectedMonth.substr(4, 2);
       var duration =
-        "<span style='font-size:0.8em'> (" +
-        start_y +
-        "-" +
-        start_m +
-        " ~ " +
-        end_y +
-        "-" +
-        start_m +
-        ") </span>";
+        "<span style='font-size:0.8em'> (" + start_y + "-" + start_m + " ~ " + end_y + "-" + start_m + ") </span>";
       if (Number(selectedMonth) > 202208) {
-        detailHtml +=
-          "<div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량" +
-          duration +
-          "</div>";
-        detailHtml +=
-          "<div class='comment2'>2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.</div>";
-        detailHtml +=
-          "<div class='comment2'>적정 공급량은 \"인구 X 0.5%\"로 계산됩니다.</div>";
+        detailHtml += "<div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량" + duration + "</div>";
+        detailHtml += "<div class='comment2'>2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.</div>";
+        detailHtml += "<div class='comment2'>적정 공급량은 \"인구 X 0.5%\"로 계산됩니다.</div>";
       } else {
-        detailHtml +=
-          "<div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량</div>";
+        detailHtml += "<div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량</div>";
       }
       detailHtml += "</div>";
       detailHtml += "<div class='card-body'>";
@@ -3460,54 +3609,17 @@
       detailHtml += "<div class='popTable'>";
       //detailHtml += "<div class='graph' style='height: 120px'> <canvas id='supplyChart'></canvas></div>"
       if (Number(selectedMonth) < 202209) {
-        detailHtml +=
-          "<div class='popSubTable'><div class='popContent'>" +
-          "총 공급량" +
-          "</div>" +
-          "<div class='popResult'>" +
-          Math.round(regSupplyAll).toLocaleString() +
-          "세대</div></div>";
-        detailHtml +=
-          "<div class='popSubTable'><div class='popContent'>" +
-          "적정 공급량" +
-          "</div>" +
-          "<div class='popResult'>" +
-          Math.round(regSupplyProper).toLocaleString() +
-          "세대</div></div>";
-        detailHtml +=
-          "<div class='popSubTable'><div class='popContent'>" +
-          "과부족" +
-          "</div>" +
-          "<div class='popResult'>" +
-          Math.round(regSupplyUpDown).toLocaleString() +
-          "세대 " +
-          regSupplyLevel +
-          "</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "총 공급량" + "</div>" + "<div class='popResult'>" + Math.round(regSupplyAll).toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "적정 공급량" + "</div>" + "<div class='popResult'>" + Math.round(regSupplyProper).toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "과부족" + "</div>" + "<div class='popResult'>" + Math.round(regSupplyUpDown).toLocaleString() + "세대 " + regSupplyLevel + "</div></div>";
         detailHtml += "</div></div></div></div>";
       } else {
-        detailHtml +=
-          "<div class='popSubTable'><div class='popContent'>" +
-          "총 공급량" +
-          "</div>" +
-          "<div class='popResult'>" +
-          Math.round(regSupplyProper_nearby).toLocaleString() +
-          "세대</div></div>";
-        detailHtml +=
-          "<div class='popSubTable'><div class='popContent'>" +
-          "적정 공급량" +
-          "</div>" +
-          "<div class='popResult'>" +
-          Math.round(regSupplyAll_nearby).toLocaleString() +
-          "세대</div></div>";
-        detailHtml +=
-          "<div class='popSubTable'><div class='popContent'>" +
-          "과부족" +
-          "</div>" +
-          "<div class='popResult'>" +
-          Math.round(regSupplyUpDown_nearby).toLocaleString() +
-          "세대 " +
-          regSupplyLevel +
-          "</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "총 공급량" + "</div>" +
+          "<div class='popResult'>" + Math.round(regSupplyProper_nearby).toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "적정 공급량" + "</div>" +
+          "<div class='popResult'>" + Math.round(regSupplyAll_nearby).toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "과부족" + "</div>" +
+          "<div class='popResult'>" + Math.round(regSupplyUpDown_nearby).toLocaleString() + "세대 " + regSupplyLevel + "</div></div>";
 
         detailHtml += "<div class='column2'>";
         detailHtml += "<div class='column_table'>";
@@ -3520,12 +3632,7 @@
         } else if (regData.data[index]["과부족수"] == 0) {
           vol_info = "적정";
         }
-        detailHtml +=
-          "<div class='supplySubTable'><div class='supplyResult'>" +
-          regSupplyUpDown.toFixed() +
-          "세대 공급 " +
-          vol_info +
-          "</div></div>";
+        detailHtml += "<div class='supplySubTable'><div class='supplyResult'>" + regSupplyUpDown.toFixed() + "세대 공급 " + vol_info + "</div></div>";
         detailHtml += "</div>";
         detailHtml += "</div>";
 
@@ -3538,12 +3645,7 @@
             short_region_name += " ";
           }
 
-          detailHtml +=
-            "<div class='column_table_title'>" +
-            short_region_name +
-            "<span style='font-size:0.9em'>(" +
-            nearby_info[i][5].toFixed(1) +
-            " km)</span>";
+          detailHtml += "<div class='column_table_title'>" + short_region_name + "<span style='font-size:0.9em'>(" + nearby_info[i][5].toFixed(1) + " km)</span>";
           detailHtml += "</div>";
           detailHtml += "<div class='column_table_content'>";
           if (nearby_info[i][2] - nearby_info[i][3] > 0) {
@@ -3556,46 +3658,26 @@
           //detailHtml += "<div class='supplySubTable'><div class='supplyContent'>" + "" + "</div>" + "<div class='supplyResult'>" + (nearby_info[i][3].toFixed()).toLocaleString() + "세대 적정 공급</div></div>";
           detailHtml +=
             "<div class='supplySubTable'><div class='supplyResult'>" +
-            Math.abs(nearby_info[i][2] - nearby_info[i][3])
-              .toFixed()
-              .toLocaleString() +
-            "세대 공급 " +
-            vol_info +
+            Math.abs(nearby_info[i][2] - nearby_info[i][3]).toFixed().toLocaleString() + "세대 공급 " + vol_info +
             "</div></div>";
           detailHtml += "</div>";
           detailHtml += "</div>";
         }
         detailHtml += "</div></div></div></div></div>";
       }
-      avgSupplyScore = (
-        Math.round((regSupplySum / itemNum) * 100) / 100
-      ).toFixed(2);
+      avgSupplyScore = (Math.round((regSupplySum / itemNum) * 100) / 100).toFixed(2);
 
       //인구
       detailHtml += "<div class='card'>";
       detailHtml += "<div class='card-header'>";
-      detailHtml +=
-        "<div class='popTitle'><i class='fas fa-user-friends'></i>&nbsp&nbsp인구</div>";
+      detailHtml += "<div class='popTitle'><i class='fas fa-user-friends'></i>&nbsp&nbsp인구</div>";
       detailHtml += "</div>";
       detailHtml += "<div class='card-body'>";
       detailHtml += "<div id='popInfra'>";
-      detailHtml +=
-        "<div class='graph' style='height: 120px'> <canvas id='popChart'></canvas></div>";
+      detailHtml += "<div class='graph' style='height: 120px'> <canvas id='popChart'></canvas></div>";
       detailHtml += "<div class='popTable'>";
-      detailHtml +=
-        "<div class='popSubTable'><div class='popContent'>" +
-        "인구수" +
-        "</div>" +
-        "<div class='popResult'>" +
-        regPop.toLocaleString() +
-        "명 </div></div>";
-      detailHtml +=
-        "<div class='popSubTable'><div class='popContent'>" +
-        "인구증가" +
-        "</div>" +
-        "<div class='popResult'>" +
-        Math.round(regPopUpDown).toLocaleString() +
-        "명</div></div>";
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "인구수" + "</div>" + "<div class='popResult'>" + regPop.toLocaleString() + "명 </div></div>";
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "인구증가" + "</div>" + "<div class='popResult'>" + Math.round(regPopUpDown).toLocaleString() + "명</div></div>";
       detailHtml += "</div></div></div></div>";
       avgPopScore = (Math.round((regPopSum / itemNum) * 100) / 100).toFixed(2);
 
@@ -3741,6 +3823,11 @@
           drawPriceRateChart(dateArray, salesArray, rentArray);
         });
       }
+      
+      setTimeout(function(){
+        closeUnifiedSearch()
+        $('#baseModal').modal("show")            
+      }, 150)
     }
 
     function show_apt(month, filename, sido) {
@@ -3789,7 +3876,7 @@
       $("#toggleModal1").modal("hide");
       $("#toggleModal2").modal("hide");
 
-      optionChange(filename);
+      optionChange(filename, "");
       updateRegion();
     }
 
@@ -3822,6 +3909,30 @@
       }
     }
 
+    function showBlogGuide() {
+      $(".offcanvas").offcanvas("hide") //offcanvas
+      
+      noticePop = true;
+      var titleHtml = "<div class='popupTitle'> 리얼포스팅은요... </div>";
+      var footerHtml = "";
+      var detailHtml = "";
+      detailHtml += "<ul>"
+      detailHtml += "<li><div class='realPosting'>리얼랭커스의 리얼포스팅 등록은 무료이며, <a href='https://open.kakao.com/me/realrankus' target='_blank'>카카오톡 오픈채팅</a>을 통해 신청 가능합니다.</div>";
+      detailHtml += "<li><div class='realPosting'>오픈채팅으로 <span class='blogFocus'>\"리얼포스팅 등록 신청 합니다\'</span> 말씀하시고,포스팅 링크를 보내시면 됩니다.</div>";
+      detailHtml += "<li><div class='realPosting'>리얼랭커스에 등록 가능한 포스팅은 <span class='blogFocus'>반드시 리얼랭커스를 통한 단지의 총평 또는 분석 결과가 스크린샷 이미지와 함께 포함</span>되어야 합니다.</div>";
+      detailHtml += "<li><div class='realPosting'>리얼포스팅 등록을 신청하시면 검토 후, 해당하는 단지 팝업에 표시됩니다.</div>";
+      detailHtml += "<li><div class='realPosting'>리얼포스팅은 각 단지별 최대 3개로 노출되며, 그 이상 되는 경우 무작위로 노출됩니다.</div>";
+      detailHtml += "</ul>"
+
+      $("#noticeModalLabel").html(titleHtml);
+      $("#noticeDetail").html(detailHtml);
+      $("#noticeFooter").html(footerHtml);
+
+      $("#noticeModal").modal("show"); //offcanvas
+      $("#baseModal").css({"z-index":"800"})
+      $(".modal-backdrop").css({"width":"100%"})
+    }
+
     function showNotice() {      
       $(".offcanvas").offcanvas("hide") //offcanvas
       
@@ -3830,6 +3941,7 @@
         "<div class='popupTitle'> 리얼랭커스에서 알려드립니다 </div>";
       var footerHtml = "";
       var detailHtml = "";
+      /*
       if (selectedMonth == "202203") {
         detailHtml += notice_202203;
       }
@@ -3908,6 +4020,7 @@
       if (selectedMonth == "202404") {
         detailHtml += notice_202404;
       }
+      */
       if (selectedMonth == "202405") {
         detailHtml += notice_202405;
       }
@@ -3922,7 +4035,13 @@
       }
       if (selectedMonth == "202409") {
         detailHtml += notice_202409;
-      }              
+      }
+      if (selectedMonth == "202410") {
+        detailHtml += notice_202410;
+      }
+      if (selectedMonth == "202411") {
+        detailHtml += notice_202411;
+      }
 
       detailHtml += "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>리얼랭커스란?</div>";
       detailHtml += "<div class='notice'>리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.</div>";
@@ -3972,7 +4091,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202409") {
+      if ($.cookie("popCookie") != "202411") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -3980,7 +4099,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202409", { expires: 7, path: "/" });
+          $.cookie("popCookie", "202411", { expires: 7, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });

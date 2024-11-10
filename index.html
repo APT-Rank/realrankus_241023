@@ -606,6 +606,8 @@
 
     var prev_selection = ""
     var current_selection = ""
+    var searchingData = {}
+    var indexedDB_data = {}
 
     var lastRegion = localStorage.getItem("lastRegion");
     var lastSubRegion = localStorage.getItem("lastSubRegion");
@@ -712,12 +714,16 @@
 
       $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
 
+      /*
       if(thisMonth == selectedMonth){
         firebase.database().ref().child("searchingList").child(selectedMonth).get()
         .then((snapshot) => {
           if(snapshot.exists()){
             searchingData = snapshot.val()
             console.log("FB")
+            console.log(searchingData)
+            writeIdxedDB(searchingData.data)
+            //indexedDB.deleteDatabase('202411')
 
             //지도서비스추가      
             region_url = "./" + selectedMonth + "/region_map.json";
@@ -779,11 +785,149 @@
       }
       
       else{
+      */
+
+      searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
+      region_url = "./" + selectedMonth + "/region_map.json";
+
+      const request = indexedDB.open(thisMonth);      // 1. DB 열기
+      request.onerror =(e)=> console.log("ERROR : ", e.target.errorCode);
+      request.onsuccess =(e)=> {
+        const db = request.result;
+        if(db.objectStoreNames.length == 0){                   
+          $.getJSON(searching_url, function (json) {          
+          searchingData = json;          
+          }).done(function(){
+            //지도서비스추가
+            request.result.close();
+            writeIdxedDB(searchingData.data)
+            region_url = "./" + selectedMonth + "/region_map.json";
+            $.getJSON(region_url, function (json) {        
+              //console.log(json);
+              regionMapData = json.data;            
+              }).done(function(){
+                for (var i in regionMapData){
+                  if(regionMapData[i]['Level'] == "Level0"){
+                    level0_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level1"){
+                    level1_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level2"){
+                    level2_loc.push(regionMapData[i])
+                  }
+                }
+                if(selectedRegion == "Korea"){
+                  loadMap(127.9564, 36.6778)
+                }
+                else{
+                  region_code = selectedSubRegion.split("_")[0]
+                  for(var i in level1_loc){
+                    if(level1_loc[i]['법정동코드']+"" == region_code){
+                      loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
+                      break;
+                    }
+                  }
+                }
+                current_pos = defaultMap.getCenterPoint()
+                projection = defaultMap.getProjection();
+                current_coord = projection.fromPointToCoord(current_pos)
+
+                origin_lat = current_coord['y']
+                origin_lng = current_coord['x']
+
+                nearby_region = []
+                nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
+                
+                show_up_complexs = []
+                show_up_complexs = defineMarkerList(nearby_region)
+
+                current_zoom = defaultMap.getZoom()              
+
+                showHideMarker(current_zoom)
+                $("#pageLoadingBack").remove()
+                optionChange(selectedSubRegion, selectedRegion);
+                updateRegion();
+              })
+          })
+        }
+        else{        
+          const transaction = db.transaction('complex');
+          transaction.onerror =(e)=> console.log('fail');
+          transaction.oncomplete =(e)=> console.log('success');
+
+          const objStore = transaction.objectStore('complex');    // 2. name 저장소 접근
+          const cursorRequest = objStore.openCursor();
+          cursorRequest.onsuccess =(e)=> {            
+            let cursor = e.target.result;
+            if (cursor) {
+              const value = objStore.get(cursor.key);         // 3. 커서를 사용해 데이터 접근
+              value.onsuccess =(e)=> {                
+                indexedDB_data[e.target.result.index] = e.target.result
+              }
+              cursor.continue();                              // 4. cursor로 순회
+            }
+            else{
+              searchingData.data = indexedDB_data
+              $.getJSON(region_url, function (json) {        
+              //console.log(json);
+              regionMapData = json.data;            
+              }).done(function(){
+                for (var i in regionMapData){
+                  if(regionMapData[i]['Level'] == "Level0"){
+                    level0_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level1"){
+                    level1_loc.push(regionMapData[i])
+                  }
+                  if(regionMapData[i]['Level'] == "Level2"){
+                    level2_loc.push(regionMapData[i])
+                  }
+                }
+                if(selectedRegion == "Korea"){
+                  loadMap(127.9564, 36.6778)
+                }
+                else{
+                  region_code = selectedSubRegion.split("_")[0]
+                  for(var i in level1_loc){
+                    if(level1_loc[i]['법정동코드']+"" == region_code){
+                      loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
+                      break;
+                    }
+                  }
+                }
+                current_pos = defaultMap.getCenterPoint()
+                projection = defaultMap.getProjection();
+                current_coord = projection.fromPointToCoord(current_pos)
+
+                origin_lat = current_coord['y']
+                origin_lng = current_coord['x']
+
+                nearby_region = []
+                nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
+                
+                show_up_complexs = []
+                show_up_complexs = defineMarkerList(nearby_region)
+
+                current_zoom = defaultMap.getZoom()              
+
+                showHideMarker(current_zoom)
+                $("#pageLoadingBack").remove()
+                optionChange(selectedSubRegion, selectedRegion);
+                updateRegion();
+              })          
+            }
+          }          
+        }        
+      }
+
+      /*
         //통합검색
         searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
         $.getJSON(searching_url, function (json) {          
           searchingData = json;
-          console.log("LOCAL")
+          //writeIdxedDB(searchingData.data)
+          //getIdxedDBValues()
         }).done(function(){
           //지도서비스추가      
           region_url = "./" + selectedMonth + "/region_map.json";
@@ -835,7 +979,8 @@
               updateRegion();
             })
         })
-      }
+      //}
+      */
 
       $("div.modal").on("show.bs.modal", function () {
         var modal = this;
@@ -925,6 +1070,37 @@
 
       $("#commentBack").hide()
     });
+
+    function writeIdxedDB(searchingData) {
+      window.indexedDB.deleteDatabase('202410') //수정
+      window.indexedDB.deleteDatabase(thisMonth)
+     
+      const dbName = thisMonth
+      var request = indexedDB.open(dbName);
+
+      request.onerror = function (event) {
+        // Handle errors.
+      };
+      request.onupgradeneeded = function (event) {
+        var db = event.target.result;
+        var objectStore = db.createObjectStore("complex", { keyPath: "index" });                       
+        objectStore.transaction.oncomplete = function (event) {          
+          // Store values in the newly created objectStore.
+          var customerObjectStore = db
+            .transaction("complex", "readwrite")
+            .objectStore("complex");
+
+          for(var i = 0 ; i < searchingData.length; i++){
+            customerObjectStore.add(searchingData[i]);
+          }
+        };
+      };      
+
+      request.onsuccess =(e)=> {        
+        var db = request.result;
+        const transaction = db.transaction(['complex'], 'readwrite');
+      }
+    }
 
     var commentBox_on = false
     function commentbox_animate(){
@@ -1189,7 +1365,7 @@
       }
     }
     function updateRegion() {
-      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
+      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>단지별 랭크를 계산하고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
       minValue = 0;
       maxValue = 60;
 
