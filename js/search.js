@@ -37,7 +37,13 @@ function showSearchBar(){
     $("#unifiedSearchExample").html("예) 강남, 분당, 수지, 해운대");
   }
   else{
-    $("#unifiedSearchExample").html("예) 서초동, 래미안, 힐스테이트, 주공");
+    radioSelected = $('input[name="options"]:checked').val();
+    if(radioSelected == "local"){
+      $("#unifiedSearchExample").html("예) 서초동, 래미안, 힐스테이트, 주공");
+    }
+    if(radioSelected == "global"){
+      $("#unifiedSearchExample").html("예) 강남 래미안, 래미안 힐스테이트, 주공");
+    }
   }
 
   if(selectedMonth >= 202211){

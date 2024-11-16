@@ -218,7 +218,7 @@
                 onkeyup="aptSearch()"
               />
             </div>
-            <div id="searchExample">예) 서초동, 래미안, 힐스테이트, 주공</div>
+            <div id="searchExample">예) 강남 래미안, 래미안 힐스테이트, 주공</div>
           </div>
           <div id="closeSearch" onClick="closeSearch()">
             <i class="fas fa-times"></i>
@@ -246,7 +246,7 @@
             <div id="unifiedInputBox">
               <input id="inputUnifiedSearch" type="text" placeholder="두 글자 이상 입력해 주세요" onkeyup="goSearchBySearchType()" />
             </div>
-            <div id="unifiedSearchExample">예) 서초동, 래미안, 힐스테이트, 주공</div>
+            <div id="unifiedSearchExample">예) 강남 래미안, 래미안 힐스테이트, 주공</div>
           </div>
           <div id="closeUnifiedSearch" onClick="closeUnifiedSearch()"><i class="fas fa-times"></i></div>
         </div>
@@ -1216,8 +1216,14 @@
       if(selectedRegion=="Korea" && selectedSubRegion=="1000000000_Korea" && searchType == "local"){
         $("#unifiedSearchExample").html("예) 강남, 분당, 수지, 해운대");
       }
-      else{
-        $("#unifiedSearchExample").html("예) 서초동, 래미안, 힐스테이트, 주공");
+      else{        
+        radioSelected = $('input[name="options"]:checked').val();
+        if(radioSelected == "local"){
+          $("#unifiedSearchExample").html("예) 서초동, 래미안, 힐스테이트, 주공");
+        }
+        if(radioSelected == "global"){
+          $("#unifiedSearchExample").html("예) 강남 래미안, 래미안 힐스테이트, 주공");
+        }        
       }      
 
       $("#inputUnifiedSearch").val("");

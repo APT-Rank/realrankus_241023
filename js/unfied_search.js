@@ -101,41 +101,106 @@ var unifiedInput = ""
 function unifiedAptSearch(){
   //$('#dataList').html("");
   $('#searchingBox').html("");
-  unifiedInput = $('#inputUnifiedSearch').val()
-  if(unifiedInput.length >= 2){
-    for(var i = 0 ; i < searchingData.data.length ; i++){
-      var aptName = searchingData.data[i]["아파트명"]
-      var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+  unifiedInput_base = $('#inputUnifiedSearch').val()
+  unifiedInput = unifiedInput_base.trim()
 
-      if(searchName.indexOf(unifiedInput) >= 0){
-        var aptName = searchingData.data[i]["아파트명"]
-        var aptAddress = searchingData.data[i]["법정동주소"]
-        var code = searchingData.data[i]["검색코드"]
-        var sido = searchingData.data[i]["sido"]
-        var gungu = searchingData.data[i]["gungu"]
-
-        var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\")'>";
-        addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
-        addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
-        addon_html += "</div>"
-
-        //$('#dataList').append(addon_html);
-        $('#searchingBox').append(addon_html);
-        $('#searchingBox').show()
-      }
+  unifiedInput_arr = []
+  unifiedInput_arr_base = unifiedInput.split(" ")
+  
+  if(unifiedInput_arr_base.length == 1){
+    unifiedInput_arr[0] = unifiedInput_arr_base[0]
+  }
+  else if(unifiedInput_arr_base.length == 2){
+    unifiedInput_arr[0] = unifiedInput_arr_base[0]
+    unifiedInput_arr[1] = unifiedInput_arr_base[1]
+  }
+  else{    
+    inputStr = ""
+    for(var k = 1; k < unifiedInput_arr_base.length ; k++){
+      inputStr += unifiedInput_arr_base[k]
     }
+    unifiedInput_arr[0] = unifiedInput_arr_base[0]
+    unifiedInput_arr[1] = inputStr    
+  }
 
-    $(".searched_apt_name:contains('" + unifiedInput + "')").each(function(){
-      var regex = new RegExp(unifiedInput, 'gi')
-      $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+unifiedInput+"</span>") );
-    })
-    $(".searched_apt_info:contains('" + unifiedInput + "')").each(function(){
-      var regex2 = new RegExp(unifiedInput, 'gi')
-      $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+unifiedInput+"</span>") );
-    })
+  console.log(unifiedInput_arr)
 
+  if(unifiedInput.length >= 2){
+      if(unifiedInput_arr.length == 1){
+        for(var i = 0 ; i < searchingData.data.length ; i++){
+          var aptName = searchingData.data[i]["아파트명"]
+          var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+
+          if(searchName.indexOf(unifiedInput) >= 0){
+            var aptName = searchingData.data[i]["아파트명"]
+            var aptAddress = searchingData.data[i]["법정동주소"]
+            var code = searchingData.data[i]["검색코드"]
+            var sido = searchingData.data[i]["sido"]
+            var gungu = searchingData.data[i]["gungu"]
+
+            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\")'>";
+            addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
+            addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
+            addon_html += "</div>"
+
+            //$('#dataList').append(addon_html);
+            $('#searchingBox').append(addon_html);
+            $('#searchingBox').show()
+          }
+        }
+        $(".searched_apt_name:contains('" + unifiedInput + "')").each(function(){
+          var regex = new RegExp(unifiedInput, 'gi')
+          $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+unifiedInput+"</span>") );
+        })
+        $(".searched_apt_info:contains('" + unifiedInput + "')").each(function(){
+          var regex2 = new RegExp(unifiedInput, 'gi')
+          $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+unifiedInput+"</span>") );
+        })
+      }
+      else{
+        for(var i = 0 ; i < searchingData.data.length ; i++){
+          var aptName = searchingData.data[i]["아파트명"]
+          var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+
+          if(searchName.indexOf(unifiedInput_arr[0]) >= 0 && searchName.indexOf(unifiedInput_arr[1]) >= 0){
+            
+            var aptName = searchingData.data[i]["아파트명"]
+            var aptAddress = searchingData.data[i]["법정동주소"]
+            var code = searchingData.data[i]["검색코드"]
+            var sido = searchingData.data[i]["sido"]
+            var gungu = searchingData.data[i]["gungu"]            
+
+            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\")'>";
+            addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
+            addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
+            addon_html += "</div>"
+
+            //$('#dataList').append(addon_html);
+            $('#searchingBox').append(addon_html);
+            $('#searchingBox').show()
+          }
+        }
+
+        $(".searched_apt_name:contains('" + unifiedInput_arr[0] + "')").each(function(){
+          var regex3 = new RegExp(unifiedInput_arr[0], 'gi')
+          $(this).html( $(this).text().replace(regex3, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>") );
+        })
+        $(".searched_apt_info:contains('" + unifiedInput_arr[0] + "')").each(function(){
+          var regex4 = new RegExp(unifiedInput_arr[0], 'gi')
+          $(this).html( $(this).text().replace(regex4, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>") );
+        })
+  
+        $(".searched_apt_name:contains('" + unifiedInput_arr[1] + "')").each(function(){
+          var regex5 = new RegExp(unifiedInput_arr[1], 'gi')
+          $(this).html( $(this).text().replace(regex5, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>") );
+        })
+        $(".searched_apt_info:contains('" + unifiedInput_arr[1] + "')").each(function(){
+          var regex6 = new RegExp(unifiedInput_arr[1], 'gi')
+          $(this).html( $(this).text().replace(regex6, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>") );
+        })
+      }
     $('#searchingBox').append("<div style='height: 3em'></div>");
-    //$('html').scrollTop(0)
+
   }
   else{      
     var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br></div>"
