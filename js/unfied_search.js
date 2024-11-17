@@ -123,8 +123,6 @@ function unifiedAptSearch(){
     unifiedInput_arr[1] = inputStr    
   }
 
-  console.log(unifiedInput_arr)
-
   if(unifiedInput.length >= 2){
       if(unifiedInput_arr.length == 1){
         for(var i = 0 ; i < searchingData.data.length ; i++){
@@ -181,22 +179,17 @@ function unifiedAptSearch(){
           }
         }
 
-        $(".searched_apt_name:contains('" + unifiedInput_arr[0] + "')").each(function(){
+        $(".searched_apt_name:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_name:contains('" + unifiedInput_arr[1] + "')").each(function(){
           var regex3 = new RegExp(unifiedInput_arr[0], 'gi')
-          $(this).html( $(this).text().replace(regex3, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>") );
+          var regex4 = new RegExp(unifiedInput_arr[1], 'gi')
+          console.log($(this).text())
+          $(this).html( $(this).text().replace(regex3, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>").replace(regex4, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>"))          
         })
-        $(".searched_apt_info:contains('" + unifiedInput_arr[0] + "')").each(function(){
-          var regex4 = new RegExp(unifiedInput_arr[0], 'gi')
-          $(this).html( $(this).text().replace(regex4, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>") );
-        })
-  
-        $(".searched_apt_name:contains('" + unifiedInput_arr[1] + "')").each(function(){
-          var regex5 = new RegExp(unifiedInput_arr[1], 'gi')
-          $(this).html( $(this).text().replace(regex5, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>") );
-        })
-        $(".searched_apt_info:contains('" + unifiedInput_arr[1] + "')").each(function(){
+
+        $(".searched_apt_info:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_info:contains('" + unifiedInput_arr[1] + "')").each(function(){
+          var regex5 = new RegExp(unifiedInput_arr[0], 'gi')
           var regex6 = new RegExp(unifiedInput_arr[1], 'gi')
-          $(this).html( $(this).text().replace(regex6, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>") );
+          $(this).html( $(this).text().replace(regex5, "<span class='colorTxt2'>"+unifiedInput_arr[0]+"</span>").replace(regex6, "<span class='colorTxt2'>"+unifiedInput_arr[1]+"</span>"))
         })
       }
     $('#searchingBox').append("<div style='height: 3em'></div>");
