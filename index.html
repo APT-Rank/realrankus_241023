@@ -560,6 +560,7 @@
   <script>
     var thisMonth = "202411"; //수정
     var selectedMonth = "202411"; //수정
+    var DB_Date = "20241117"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -790,7 +791,7 @@
       searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
       region_url = "./" + selectedMonth + "/region_map.json";
 
-      const request = indexedDB.open(thisMonth);      // 1. DB 열기
+      const request = indexedDB.open(DB_Date);      // 1. DB 열기
       request.onerror =(e)=> console.log("ERROR : ", e.target.errorCode);
       request.onsuccess =(e)=> {
         const db = request.result;
@@ -912,67 +913,6 @@
         }        
       }
 
-      /*
-        //통합검색
-        searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
-        $.getJSON(searching_url, function (json) {          
-          searchingData = json;
-          //writeIdxedDB(searchingData.data)
-          //getIdxedDBValues()
-        }).done(function(){
-          //지도서비스추가      
-          region_url = "./" + selectedMonth + "/region_map.json";
-          $.getJSON(region_url, function (json) {        
-            //console.log(json);
-            regionMapData = json.data;            
-            }).done(function(){
-              for (var i in regionMapData){
-                if(regionMapData[i]['Level'] == "Level0"){
-                  level0_loc.push(regionMapData[i])
-                }
-                if(regionMapData[i]['Level'] == "Level1"){
-                  level1_loc.push(regionMapData[i])
-                }
-                if(regionMapData[i]['Level'] == "Level2"){
-                  level2_loc.push(regionMapData[i])
-                }
-              }
-              if(selectedRegion == "Korea"){
-                loadMap(127.9564, 36.6778)
-              }
-              else{
-                region_code = selectedSubRegion.split("_")[0]
-                for(var i in level1_loc){
-                  if(level1_loc[i]['법정동코드']+"" == region_code){
-                    loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
-                    break;
-                  }
-                }
-              }
-              current_pos = defaultMap.getCenterPoint()
-              projection = defaultMap.getProjection();
-              current_coord = projection.fromPointToCoord(current_pos)
-
-              origin_lat = current_coord['y']
-              origin_lng = current_coord['x']
-
-              nearby_region = []
-              nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
-              
-              show_up_complexs = []
-              show_up_complexs = defineMarkerList(nearby_region)
-
-              current_zoom = defaultMap.getZoom()              
-
-              showHideMarker(current_zoom)
-              $("#pageLoadingBack").remove()
-              optionChange(selectedSubRegion, selectedRegion);
-              updateRegion();
-            })
-        })
-      //}
-      */
-
       $("div.modal").on("show.bs.modal", function () {
         var modal = this;
         var hash = modal.id;
@@ -1063,10 +1003,10 @@
     });
 
     function writeIdxedDB(searchingData) {
-      window.indexedDB.deleteDatabase('202410') //수정
-      window.indexedDB.deleteDatabase(thisMonth)
+      window.indexedDB.deleteDatabase('202411') //수정
+      window.indexedDB.deleteDatabase(DB_Date)
      
-      const dbName = thisMonth
+      const dbName = DB_Date
       var request = indexedDB.open(dbName);
 
       request.onerror = function (event) {
