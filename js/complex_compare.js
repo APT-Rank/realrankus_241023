@@ -36,7 +36,8 @@ for (i = 1; i < regions.length; i++) {
   }  
   compareOption += "<option value='" + regions[i][1] + "'>" + region_name + "</option>";
 }
-function compareCheck(){  
+function compareCheck(){
+  /*
   if(!login_status){    
     $(".modal-backdrop").css({"width":"100%"})
     $("#baseModal").css({"width":"100%"})    
@@ -46,6 +47,8 @@ function compareCheck(){
   else{
     openCompare(aptData.data[0])
   }
+    */
+  openCompare(aptData.data[0])
 }
 
 function openCompare(complex_data){
@@ -644,15 +647,66 @@ function compareSearch(compareNum){
   $('#' + searching_list).html("");
 
   input_field = "compareInputSearch" + compareNum
-  compareInput = $('#' + input_field).val()
+  compareInput_base = $('#' + input_field).val()
+  compareInput = compareInput_base.trim()
+
+  compareInput_arr = []
+  compareInput_arr_base = compareInput.split(" ")
+  
+  if(compareInput_arr_base.length == 1){
+    compareInput_arr[0] = compareInput_arr_base[0]
+  }
+  else if(compareInput_arr_base.length == 2){
+    compareInput_arr[0] = compareInput_arr_base[0]
+    compareInput_arr[1] = compareInput_arr_base[1]
+  }
+  else{    
+    inputStr = ""
+    for(var k = 1; k < compareInput_arr_base.length ; k++){
+      inputStr += compareInput_arr_base[k]
+    }
+    compareInput_arr[0] = compareInput_arr_base[0]
+    compareInput_arr[1] = inputStr    
+  }  
 
   if(compareInput.length >= 2){
+    if(compareInput_arr.length == 1){
+      for(var i = 0 ; i < searchingData.data.length ; i++){
+        var aptName = searchingData.data[i]["아파트명"]
+        var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+
+        if(searchName.indexOf(compareInput) >= 0){        
+          var aptName = searchingData.data[i]["아파트명"] 
+          var aptAddress = searchingData.data[i]["법정동주소"]
+          var code = searchingData.data[i]["검색코드"]
+          var sido = searchingData.data[i]["sido"]
+          var gungu = searchingData.data[i]["gungu"]
+
+          var addon_html = "<div class='compare_search_list' onClick='compareSearchingUpdate(\"" + aptName + "\", \"" + code + "\",\"" + sido + "\",\"" + gungu + "\"," + compareNum + ")'>";
+          addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
+          addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
+          addon_html += "</div>"
+          
+          $('#' + searching_list).append(addon_html);        
+        }
+      }
+
+      $(".searched_apt_name:contains('" + compareInput + "')").each(function(){
+        var regex = new RegExp(compareInput, 'gi')
+        $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+compareInput+"</span>") );
+      })
+      $(".searched_apt_info:contains('" + compareInput + "')").each(function(){
+        var regex2 = new RegExp(compareInput, 'gi')
+        $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+compareInput+"</span>") );
+      })
+  }
+  else{
     for(var i = 0 ; i < searchingData.data.length ; i++){
       var aptName = searchingData.data[i]["아파트명"]
       var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
 
-      if(searchName.indexOf(compareInput) >= 0){
-        var aptName = searchingData.data[i]["아파트명"]
+      if(searchName.indexOf(compareInput_arr[0]) >= 0 && searchName.indexOf(compareInput_arr[1]) >= 0){
+        var aptName = searchingData.data[i]["아파트명"] 
         var aptAddress = searchingData.data[i]["법정동주소"]
         var code = searchingData.data[i]["검색코드"]
         var sido = searchingData.data[i]["sido"]
@@ -667,14 +721,18 @@ function compareSearch(compareNum){
       }
     }
 
-    $(".searched_apt_name:contains('" + compareInput + "')").each(function(){
-      var regex = new RegExp(compareInput, 'gi')
-      $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+compareInput+"</span>") );
+    $(".searched_apt_name:contains('" + compareInput_arr[0] + "')" + "," + ".searched_apt_name:contains('" + compareInput_arr[1] + "')").each(function(){
+      var regex3 = new RegExp(compareInput_arr[0], 'gi')
+      var regex4 = new RegExp(compareInput_arr[1], 'gi')
+      console.log($(this).text())
+      $(this).html( $(this).text().replace(regex3, "<span class='colorTxt'>"+compareInput_arr[0]+"</span>").replace(regex4, "<span class='colorTxt'>"+compareInput_arr[1]+"</span>"))
     })
-    $(".searched_apt_info:contains('" + compareInput + "')").each(function(){
-      var regex2 = new RegExp(compareInput, 'gi')
-      $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+compareInput+"</span>") );
+    $(".searched_apt_info:contains('" + compareInput_arr[0] + "')" + "," + ".searched_apt_info:contains('" + compareInput_arr[1] + "')").each(function(){
+      var regex5 = new RegExp(compareInput_arr[0], 'gi')
+      var regex6 = new RegExp(compareInput_arr[1], 'gi')
+      $(this).html( $(this).text().replace(regex5, "<span class='colorTxt2'>"+compareInput_arr[0]+"</span>").replace(regex6, "<span class='colorTxt2'>"+compareInput_arr[1]+"</span>"))
     })
+  }
 
     $('#' + searching_list).append("<div style='height: 3em'></div>");
     //$('html').scrollTop(0)
