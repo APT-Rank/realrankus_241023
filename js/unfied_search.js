@@ -18,14 +18,14 @@ function goSearchBySearchType(){
     }
     else{      
       aptSearch2()
-    }
-    console.log(selectedSubRegion)    
+    }      
   }
 }
 
 function showUnifiedSearchBar(){  
   showUnifiedAptSearchBar()
 }
+
 function showUnifiedAptSearchBar(){
   $("#baseModal").css({'width' : '600px'})
   //$("#searchCard").slideDown();    
@@ -39,9 +39,54 @@ function showUnifiedAptSearchBar(){
     right: '5'
   }, 700, 'easeOutQuad'
   );
-
   $('#inputUnifiedSearch').focus();
+
+  var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br></div>"
+  addon_html += "<div id='recent_search_box'>최근검색</div>"
+
+  if(recent_search.length > 0){    
+    for(var i = 0 ; i < recent_search.length ; i++){
+      addon_html += "<div class='recentListBox'>";
+      addon_html += "<div class='recentListBox_complex' onClick='searchingUpdate(\"" + recent_search[i][0] + "\",\"" + recent_search[i][1] + "\",\"" + recent_search[i][2] + "\",\"" + recent_search[i][3] + "\",\"" + recent_search[i][4] + "\")'>"
+        addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
+        addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
+        addon_html += "<div class='searched_apt_date'>" + recent_search[i][5] + "에 검색</div>"
+      addon_html += "</div>"
+      addon_html += "<div class='deleteRecent' onClick='removeRecent( + \"" + i + "\")'><i class='fa-solid fa-circle-xmark'></i></div>"
+      addon_html += "</div>"
+    }
+  }
+
+  $('#searchingBox').html("");
+  $('#searchingBox').append(addon_html);
+  $("#searchingBox").show()
 }
+
+function removeRecent(index){
+  recent_search.splice(index, 1)
+  save_recent_to_LocalStorage(recent_search)
+
+  var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br></div>"
+  addon_html += "<div id='recent_search_box'>최근검색</div>"
+
+  if(recent_search.length > 0){    
+    for(var i = 0 ; i < recent_search.length ; i++){
+      addon_html += "<div class='recentListBox'>";
+      addon_html += "<div class='recentListBox_complex'  onClick='searchingUpdate(\"" + recent_search[i][0] + "\",\"" + recent_search[i][1] + "\",\"" + recent_search[i][2] + "\",\"" + recent_search[i][3] + "\",\"" + recent_search[i][4] + "\")'>"
+        addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
+        addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
+        addon_html += "<div class='searched_apt_date'>" + recent_search[i][5] + "에 검색</div>"
+      addon_html += "</div>"
+      addon_html += "<div class='deleteRecent' onClick='removeRecent( + \"" + i + "\")'><i class='fa-solid fa-circle-xmark'></i></div>"
+      addon_html += "</div>"
+    }
+  }
+
+  $('#searchingBox').html("");
+  $('#searchingBox').append(addon_html);
+  $("#searchingBox").show()
+}
+
 function closeUnifiedSearch(){
   $("#unifiedSearchCard").animate({
     opacity: 0.0,
@@ -136,7 +181,7 @@ function unifiedAptSearch(){
             var sido = searchingData.data[i]["sido"]
             var gungu = searchingData.data[i]["gungu"]
 
-            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\")'>";
+            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";
             addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
             addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
             addon_html += "</div>"
@@ -168,7 +213,7 @@ function unifiedAptSearch(){
             var sido = searchingData.data[i]["sido"]
             var gungu = searchingData.data[i]["gungu"]            
 
-            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\")'>";
+            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";
             addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
             addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
             addon_html += "</div>"
@@ -181,8 +226,7 @@ function unifiedAptSearch(){
 
         $(".searched_apt_name:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_name:contains('" + unifiedInput_arr[1] + "')").each(function(){
           var regex3 = new RegExp(unifiedInput_arr[0], 'gi')
-          var regex4 = new RegExp(unifiedInput_arr[1], 'gi')
-          console.log($(this).text())
+          var regex4 = new RegExp(unifiedInput_arr[1], 'gi')          
           $(this).html( $(this).text().replace(regex3, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>").replace(regex4, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>"))          
         })
 
@@ -197,15 +241,71 @@ function unifiedAptSearch(){
   }
   else{      
     var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br></div>"
-    $('#searchingBox').append(addon_html);
+    addon_html += "<div id='recent_search_box'>최근검색</div>"
+
+    if(recent_search.length > 0){    
+      for(var i = 0 ; i < recent_search.length ; i++){
+        addon_html += "<div class='recentListBox'>";
+        addon_html += "<div class='recentListBox_complex'  onClick='searchingUpdate(\"" + recent_search[i][0] + "\",\"" + recent_search[i][1] + "\",\"" + recent_search[i][2] + "\",\"" + recent_search[i][3] + "\",\"" + recent_search[i][4] + "\")'>"
+          addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
+          addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
+          addon_html += "<div class='searched_apt_date'>" + recent_search[i][5] + "에 검색</div>"
+        addon_html += "</div>"
+        addon_html += "<div class='deleteRecent' onClick='removeRecent( + \"" + i + "\")'><i class='fa-solid fa-circle-xmark'></i></div>"
+        addon_html += "</div>"
+      }
+    }
+    $('#searchingBox').html("");
+    $('#searchingBox').append(addon_html);  
   }
 }
 
 var searched_code = ""
+
+function save_recent_to_LocalStorage(recent_search) {
+  recent_search_json = JSON.stringify(recent_search)
+  localStorage.setItem("recentSearch", recent_search_json);
+}
+
 //var title_loading_html = "<div class='popupTitle'><h1 style='font-size: 1em; font-weight: 600'>데이터를 불러오고 있어요!</h></div>";
-function searchingUpdate(code, sido, gungu){
+function searchingUpdate(code, sido, gungu, aptName, aptAddress){
   $('#searchingBox').hide()
   $("#baseModal").modal("hide")
+
+  var searchingDate = new Date()
+  var searchingY = searchingDate.getFullYear()
+  var searchingM = searchingDate.getMonth() + 1
+  var searchingD = searchingDate.getDate()
+  var searchingH = searchingDate.getHours()
+  var searchingMm = searchingDate.getMinutes()
+  searchingDateStr = (searchingY.toString()).substring(2, 4) + "년 " + searchingM + "월 " + searchingD + "일, " + searchingH + "시 " + searchingMm + "분"
+
+  //최근검색에 하나도 없으면 바로 최금 검색 저장
+  if(recent_search.length == 0){
+    recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
+  }
+  else{    
+    if(recent_search[0][0] != code){
+      //최근검색단지는 최대 10개 표시
+      //10개가 넘어가면 배열 앞에서 부터 채움      
+
+      if(recent_search.length == 10){    
+        recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
+        recent_search.pop()
+      }
+      else{
+        recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
+      }
+      //최근검색단지는 LocalStorage에 저장      
+    }
+    //마지막 검색과 현재 검색이 동일하면 최근 검색으로 대체
+    else{
+      recent_search.shift()
+      recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])            
+    }
+    save_recent_to_LocalStorage(recent_search)
+  }
+
   removeMarkers()
   defaultMap.setZoom(17)
   

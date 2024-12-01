@@ -639,6 +639,22 @@
   .searchedListBox:active{    
     background: #ffdfde
   }
+  .recentListBox{
+    display: grid;
+    grid-template-columns: 1fr 40px;    
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-left: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+  .recentListBox_complex:active{    
+    color: #e31939
+  }
+  .deleteRecent{
+    text-align: center;
+    color: #aaa;
+  }
   .themeListBox{
     display: grid;
     grid-template-columns: 1fr 80px;
@@ -1027,6 +1043,11 @@
     font-size: 0.7em;
     color: gray;    
   }
+  .searched_apt_date{
+    margin-top: 5px;
+    font-size: 0.7em;
+    color: #ccc;
+  }
   .searched_region_name{
     font-weight: 600;
     height: 2em;
@@ -1043,7 +1064,17 @@
     font-weight: 600;
     color: #e31939;
   }
-
+  #recent_search_box{
+    font-size: 0.8em;
+    font-weight: 600;
+    background-color: #eee;
+    margin-top: 2em;
+    padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
   #selections{        
     display: grid;    
     grid-template-columns: 0.8fr 1.5fr 1fr;

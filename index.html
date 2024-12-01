@@ -635,6 +635,7 @@
     var pop_state = []
 
     var come_from_map = false
+    var recent_search = []
 
     function dateReturn(n) {
       return n < 10 ? "0" + n : n;
@@ -655,6 +656,11 @@
       //var lastRegion = sessionStorage.getItem('lastRegion')
       //var lastSubRegion = sessionStorage.getItem('lastSubRegion')
       //var lastMonth = sessionStorage.getItem('lastMonth')
+      
+      recent_search = JSON.parse(localStorage.getItem("recentSearch"))
+      if(recent_search == null){
+        recent_search = []
+      }
 
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
@@ -978,7 +984,7 @@
       }
       setBottomMenu()
 
-      $("#searchingBox").css({'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height()+23 +$("#linkToAptrank_bottom").height() )})
+      $("#searchingBox").css({'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height()+39 +$("#linkToAptrank_bottom").height() )})
       $("#searchingBox").hide()
       var inHeight = window.innerHeight
       $("#commentBox").css({'height': inHeight-50-42})
