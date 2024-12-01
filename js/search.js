@@ -36,7 +36,7 @@ function showSearchBar(){
   if(selectedRegion=="Korea" && selectedSubRegion=="1000000000_Korea" && searchType == "local"){
     $("#unifiedSearchExample").html("예) 강남, 분당, 수지, 해운대");
   }
-  else{
+  else{    
     radioSelected = $('input[name="options"]:checked').val();
     if(radioSelected == "local"){
       $("#unifiedSearchExample").html("예) 서초동, 래미안, 힐스테이트, 주공");

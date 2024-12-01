@@ -26,7 +26,7 @@ function showUnifiedSearchBar(){
   showUnifiedAptSearchBar()
 }
 
-function showUnifiedAptSearchBar(){
+function showUnifiedAptSearchBar(){  
   $("#baseModal").css({'width' : '600px'})
   //$("#searchCard").slideDown();    
   $("#unifiedSearchCard").animate({
@@ -114,10 +114,12 @@ function aptSearch2(){
 
       if(searchName.indexOf(unifiedInput) >= 0){
         var aptName = internalSearching[i]["아파트명"]
-        var aptAddress = internalSearching[i]["법정동주소"]
-        //var code = internalSearching[i]["검색코드"]
+        var aptAddress = internalSearching[i]["법정동주소"]        
+        var code = internalSearching[i]["검색코드"]
+        var sido = internalSearching[i]["시도"]
+        var gungu = internalSearching[i]["군구"]        
 
-        var addon_html = "<div class='searchedListBox' onClick='internalSearchingUpdate(" + i + ")'>";
+        var addon_html = "<div class='searchedListBox' onClick='internalSearchingUpdate(\"" + i + "\", \"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";        
         addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
         addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
         addon_html += "</div>"
@@ -324,9 +326,44 @@ function searchingUpdate(code, sido, gungu, aptName, aptAddress){
   }, 500)
 }
 
-function internalSearchingUpdate(index){
+function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){
   $('#searchingBox').hide()
   $("#baseModal").modal("hide")
+
+  var searchingDate = new Date()
+  var searchingY = searchingDate.getFullYear()
+  var searchingM = searchingDate.getMonth() + 1
+  var searchingD = searchingDate.getDate()
+  var searchingH = searchingDate.getHours()
+  var searchingMm = searchingDate.getMinutes()
+  searchingDateStr = (searchingY.toString()).substring(2, 4) + "년 " + searchingM + "월 " + searchingD + "일, " + searchingH + "시 " + searchingMm + "분"
+
+  //최근검색에 하나도 없으면 바로 최금 검색 저장
+  if(recent_search.length == 0){
+    recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
+  }
+  else{    
+    if(recent_search[0][0] != code){
+      //최근검색단지는 최대 10개 표시
+      //10개가 넘어가면 배열 앞에서 부터 채움      
+
+      if(recent_search.length == 10){    
+        recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
+        recent_search.pop()
+      }
+      else{
+        recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
+      }
+      //최근검색단지는 LocalStorage에 저장      
+    }
+    //마지막 검색과 현재 검색이 동일하면 최근 검색으로 대체
+    else{
+      recent_search.shift()
+      recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])            
+    }
+    save_recent_to_LocalStorage(recent_search)
+  }
+
   removeMarkers()
   defaultMap.setZoom(17)
   showDetail(index)

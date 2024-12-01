@@ -1517,8 +1517,7 @@
           var searchCode = aptData.data[i]["검색코드"];
 
           complex_grade = setGrade(aptValue)
-
-          internalSearching[i] = {"아파트명" : aptName, "법정동주소":aptAddress2, "검색코드":searchCode}
+          internalSearching[i] = {"아파트명" : aptName, "법정동주소":aptAddress2, "검색코드":searchCode, "시도":selectedRegion, "군구":selectedSubRegion}
 
           //가격필터 적용 시
           if (checkPrice(last_sales[1])) {
