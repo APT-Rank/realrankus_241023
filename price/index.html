@@ -226,7 +226,7 @@
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content" id="favModalContent">
         <div class="modal-header" id="favModalHeader">
-          <div class="modal-title" id="baseModalLabel"><i class="fa-solid fa-star"></i> 즐겨찾기</div>
+          <div class="modal-title" id="favModalLabel"><i class="fa-solid fa-star"></i> 즐겨찾기</div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id='favList'></div>        
@@ -2032,14 +2032,33 @@ function updateTable(region){
   }
 
   function showFavorite(){
+    console.log(count_data.data)
+
     fav_html = ""    
     if(price_fav.length == 0){
       fav_html += "<div class='favNotice'>저장된 즐겨찾기가 없어요.<br><br>지역 이름 옆의 <i class='fa-solid fa-star'></i> 을 눌러<br>즐겨찾기를 추가해 주세요.</div>"
     }
     else{
       for(i = 0 ; i < price_fav.length ; i++){
+        for(j = 0; j < (count_data.data).length ; j++){
+          searching_name = price_fav[i][1]
+          searching_name = searching_name.replace("lv1_", "")
+          searching_name = searching_name.replace("lv2_", "")
+          if(searching_name == count_data.data[j]['file_name']){
+            fav_deal_count = count_data.data[j]['deal_count_prev_month'] + count_data.data[j]['deal_count_this_month']
+            break;
+          }
+        }
+        region_name = ""
+        if(price_fav[i][0] == "lv2"){
+          region_name = price_fav[i][2] + " (" + fav_deal_count.toLocaleString() + ")"
+        }
+        else{
+          region_name = price_fav[i][2]
+        }
+
         fav_html += "<div class='fav_list'>"
-          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + price_fav[i][2] + "</div>"
+          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + region_name + "</div>"
           fav_html += "<div class='fav_remove' onClick='removeFav(" + i + ", \"" + price_fav[i][1] + "\", \"" + price_fav[i][2] + "\")''><i class='fa-solid fa-circle-minus'></i></div>"
         fav_html += "</div>"
       }
@@ -2080,8 +2099,25 @@ function updateTable(region){
     }
     else{
       for(i = 0 ; i < price_fav.length ; i++){
+        for(j = 0; j < (count_data.data).length ; j++){
+          searching_name = price_fav[i][1]
+          searching_name = searching_name.replace("lv1_", "")
+          searching_name = searching_name.replace("lv2_", "")
+          if(searching_name == count_data.data[j]['file_name']){
+            fav_deal_count = count_data.data[j]['deal_count_prev_month'] + count_data.data[j]['deal_count_this_month']
+            break;
+          }
+        }
+        region_name = ""
+        if(price_fav[i][0] == "lv2"){
+          region_name = price_fav[i][2] + " (" + fav_deal_count.toLocaleString() + ")"
+        }
+        else{
+          region_name = price_fav[i][2]
+        }
+
         fav_html += "<div class='fav_list'>"
-          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + price_fav[i][2] + "</div>"
+          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + region_name + "</div>"
           fav_html += "<div class='fav_remove' onClick='removeFav(" + i + ", \"" + price_fav[i][1] + "\", \"" + price_fav[i][2] + "\")''><i class='fa-solid fa-circle-minus'></i></div>"
         fav_html += "</div>"
       }
