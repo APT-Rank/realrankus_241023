@@ -524,9 +524,9 @@
     outline: 0;
     background: #bbb
   }
-
-  .listBox:active{
-    background-color: #ffdfde;
+  .volume_content:active, .reg_name:active{
+    color: #cc233f;
+    transform: translateY(1px);
   }
   .value_score{
     text-align: right;
@@ -577,6 +577,20 @@
     font-size: 1em;
     font-weight: 600;    
   }
+  .reg_name_wrapper{
+    display: flex;
+    align-items: center;
+  }
+  .fav_mark{
+    padding-left: 5px;    
+    color: #ddd;
+  }
+  .favNotice{
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: center;
+    color: #999
+  }
   .reg_name{
     font-size: 1.2em;
     font-weight: 600;    
@@ -605,7 +619,10 @@
     font-weight: 600;
     color: #e31939;
   }
-
+  #fav{
+    color: #fff;
+    font-size: 1.2em;
+  }
   #selections{        
     display: grid;    
     grid-template-columns: 0.8fr 1.5fr 1fr;
@@ -725,6 +742,32 @@
   }
   .modal-header{
     width: 100%;
+  }
+  #favModalHeader{
+    padding: 0.8em 0.8em;
+  }
+  #favModalContent{        
+    width: 300px    
+  }
+  .fav_region{
+    font-weight: 600;
+  }
+  .fav_region:active{
+    color:#9b1128;
+    transform: translateY(1px);
+  }
+  .fav_remove{
+    color: #aaa;
+    text-align: center;
+  }
+  .fav_list{
+    display: grid;
+    grid-template-columns: 1fr 30px;
+    padding: 10px;    
+    border-bottom: 1px solid #ccc;
+    background-color: #eee;
+    margin-top: 8px;
+    border-radius: 5px;
   }
   .popRank{
     text-align: center;
@@ -1136,9 +1179,6 @@
     font-weight: 600;    
     border-radius: 5px;
     border: None;
-  }
-  .toast-success {
-    background-color: #801c2d;
   }
   .comment{
     font-size: 0.6em;

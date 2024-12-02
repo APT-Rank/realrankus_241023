@@ -121,7 +121,7 @@
         <!--공유 버튼-->
         <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
         <!--단지 가중치 설정 버튼 표시-->
-        <div id='sort' data-clipboard-text=""></div>
+        <div id='fav' onClick='showFavorite()'><i class="fa-solid fa-star"></i></div>
         <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right" aria-controls="offcanvasRight"><i class="fa-solid fa-ellipsis"></i></div>
 
       </div>
@@ -173,39 +173,6 @@
         <div id="closeSearch" onClick='closeSearch()' ><i class="fas fa-times"></i></div>
       </div>
 
-      <!--통합 검색창-->
-      <div id="unifiedSearchCard">
-        <div id="iconSearch"><i class="fas fa-search"></i></div>
-        <div id="unifiedSearchGuide">
-          <div id="unifiedSearchNotice">
-            <div>
-              <label>
-                <input type="radio" class="searchRadio" name="options" id="option1" autocomplete="off" value = "global" checked onchange="radioActive(this.value)"><span style="padding-left: 5px; vertical-align: middle;">전국검색</span>
-              </label>
-            </div>
-            <div>
-              <label>
-                <input type="radio" class="searchRadio" name="options" id="option2" autocomplete="off" value = "local" onchange="radioActive(this.value)"><span id='localSearch' style="padding-left: 5px; vertical-align: middle;">지역내검색</span>
-              </label>
-            </div>
-          </div>
-          <div id="unifiedInputBox"><input id="inputUnifiedSearch" type="text" placeholder="두 글자 이상 입력해 주세요" onkeyup="goSearchBySearchType()"></div>
-          <div id="unifiedSearchExample">예) 서초동, 래미안, 힐스테이트, 주공</div>
-        </div>
-        <div id="closeUnifiedSearch" onClick='closeUnifiedSearch()' ><i class="fas fa-times"></i></div>
-      </div>
-
-      <!--시군구 검색창-->
-      <div id="regionSearchCard">
-        <div id="iconSearch"><i class="fas fa-search"></i></div>
-        <div id="regionSearchGuide">
-          <div id="regionSearchNotice">전국 시군구 이름으로 검색합니다.</div>
-          <div id="regionInputBox"><input id="regionInputSearch" type="text" placeholder="어느 시군구를 찾아볼까요?" onkeyup="regionSearch()"></div>
-          <div id="regionSearchExample">예) 서울, 창원, 강남, 서구</div>
-        </div>
-        <div id="closeRegionSearch" onClick='closeRegionSearch()' ><i class="fas fa-times"></i></div>
-      </div>
-
       <!--단지 정렬창-->
       <div id="rearrangeCard">
         <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
@@ -222,22 +189,6 @@
         <div id="closeRearrange" onClick='closeRearrange()' ><i class="fas fa-times"></i></div>
       </div>
 
-      <!--시군구 정렬창-->
-      <div id="rearrangeRegionCard">
-        <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
-        <div id="rearrangeContatiner">
-            <div id="rearrangeRegionNotice"></div>
-            <div class='rearrangeArea'>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionScore' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionScore'>총점순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionRank' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionRank'>순위변동순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPop' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionPop'>인구순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPopUpDown' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionPopUpDown'>인구증감순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionJob' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionJob'>일자리순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionIncome' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionIncome'>소득순</label></div>
-            </div>
-        </div>
-        <div id="closeRegionRearrange" onClick='closeRegionRearrange()' ><i class="fas fa-times"></i></div>
-      </div>
       <!--리스트 데이터 붙여넣는 영역-->
       <div id="dataList"></div>
 
@@ -251,35 +202,6 @@
           <div id="clostText_floating">검색닫기</div>
         </div>
       </div>
-      <!--통합 검색창 닫기 플로팅 버튼-->
-      <div id="closeUnifiedSearch_floating" onClick='closeUnifiedSearch()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">검색닫기</div>
-        </div>
-      </div>
-      <!--시군구 검색창 닫기 플로팅 버튼-->
-      <div id="closeRegionSearch_floating" onClick='closeRegionSearch()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">검색닫기</div>
-        </div>
-      </div>
-      <!--단지 재정렬창 닫기 플로팅 버튼-->
-      <div id="closeRearrange_floating" onClick='closeRearrange()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">정렬닫기</div>
-        </div>
-      </div>
-      <!--단지 재정렬창 닫기 플로팅 버튼-->
-      <div id="closeRegionRearrange_floating" onClick='closeRegionRearrange()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">정렬닫기</div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -298,27 +220,16 @@
       </div>
     </div>
   </div>
-  <div class="modal fade" id="toggleModal1" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="toggleModalLabel">Modal title</h5>
+
+  <!-- Favorite Modal -->
+  <div class="modal fade" id="favModal" tabindex="-1" aria-labelledby="favModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content" id="favModalContent">
+        <div class="modal-header" id="favModalHeader">
+          <div class="modal-title" id="baseModalLabel"><i class="fa-solid fa-star"></i> 즐겨찾기</div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id='simulDetail'></div>
-        <div id='toggle1footer'></div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="toggleModal2" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="toggleModalLabe2">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id='simulResult'></div>
-        <div id='toggle2footer'></div>
+        <div class="modal-body" id='favList'></div>        
       </div>
     </div>
   </div>
@@ -418,6 +329,7 @@
   var count_info = ""
 
   var region_all = false
+  var price_fav = []
 
   var today = new Date()
   var prev_date = new Date()
@@ -488,6 +400,31 @@
     //var lastScrollY = sessionStorage.getItem('lastScrollY')
     //var lastSubRegion = sessionStorage.getItem('lastSubRegion')
     //var lastMonth = sessionStorage.getItem('lastMonth')
+
+    price_fav = JSON.parse(localStorage.getItem("priceFav"))
+    if(price_fav == null){
+      price_fav = []
+    }
+
+    toastr.options = {
+      closeButton: false,
+      progressBar: false,
+      showMethod: 'fadeIn',
+      closeMethod: 'fadeOut',
+      positionClass: "toast-top-center",
+      timeOut: 1000
+    };
+
+    console.log($("#fav").offset().left)
+
+    fav_top_pos = $("#fav").position().top + $("#fav").height() - 20
+    if(isMobile){
+      fav_left_pos = $("#fav").offset().left - $("#favModalContent").width()/2 - 65
+    }
+    else{
+      fav_left_pos = $("#fav").offset().left - 800 - $("#favModalContent").width()/2
+    }
+    $("#favModalContent").css({"top": fav_top_pos, "left" : fav_left_pos})
 
     const url = new URL(window.location.href)
     const urlParams = url.searchParams
@@ -1784,11 +1721,21 @@ function updateTable(region){
 
           if(selectedSubRegion == "1000000000_Korea"){
             if((regCode.split("_")).length <= 2){
-              var addon_html = "<div class='listBox' onClick='gotoLink(" + i + ")'>";
+              var addon_html = "<div class='listBox'>";
 
-                addon_html += "<div class='reg_name'>" + regName + "</div>";      
+                if(i == 0){
+                  addon_html += "<div class='reg_name'>" + regName + "</div>";
+                  addon_html += "<div class='volume_content'>"
+                }
+                else{
+                  addon_html += "<div class = 'reg_name_wrapper'>"
+                    addon_html += "<div class='reg_name' onClick='gotoLink(" + i + ")'>" + regName + "</div>";
+                    addon_html += "<div class='fav_mark' id=\'lv1_" + regCode + "\' onClick='addRemoveFav(\"lv1\", this.id, \"" + regName + "\")'><i class='fa-solid fa-star'></i></div>";
+                  addon_html += "</div>"
 
-                addon_html += "<div class='volume_content'>"
+                  addon_html += "<div class='volume_content' onClick='gotoLink(" + i + ")'>"
+                }
+                
                   addon_html += "<div class='price_table'>"
                     if(regCode == "1000000000_Korea"){
                       deal_vol = count_Korea.toLocaleString()
@@ -1826,8 +1773,7 @@ function updateTable(region){
                     addon_html += "<div class='compare_volume_sub'>"
                       if(selectedMonth == "latest_deal"){
                         str_prev_month = Number(prev_month.slice(-2)) + "월"
-                        str_this_month = Number(this_month.slice(-2)) + "월"
-                        
+                        str_this_month = Number(this_month.slice(-2)) + "월"                        
                         
                         addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
                         addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
@@ -1887,13 +1833,19 @@ function updateTable(region){
           else{
             if(regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){              
             //if((regCode.split("_")).length > 2 && regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){
-              var addon_html = "<div class='listBox' onClick='gotoLink(" + i + ")'>";
+              var addon_html = "<div class='listBox'>";
 
                 if((regCode.split("_")).length == 2){
-                  addon_html += "<div class='reg_name'>" + regName + " 전체</div>";
+                  addon_html += "<div class='reg_name_wrapper'>"
+                    addon_html += "<div class='reg_name' onClick='gotoLink(" + i + ")'>" + regName + " 전체</div>";
+                    addon_html += "<div class='fav_mark' id=\'lv2_" + regCode + "\' onClick='addRemoveFav(\"lv2\", this.id, \"" + regName + " 전체\")'><i class='fa-solid fa-star'></i></div>";
+                  addon_html += "</div>"
                 }
                 else{
-                  addon_html += "<div class='reg_name'>" + regName + "</div>";
+                  addon_html += "<div class='reg_name_wrapper'>"
+                    addon_html += "<div class='reg_name' onClick='gotoLink(" + i + ")'>" + regName + "</div>";
+                    addon_html += "<div class='fav_mark' id=\'lv2_" + regCode + "\' onClick='addRemoveFav(\"lv2\", this.id, \"" + regName + "\")'><i class='fa-solid fa-star'></i></div>";
+                  addon_html += "</div>"
                 }                
                 for(var j = 0 ; j < count_data['data'].length; j++){
                   searching_region = count_data['data'][j]
@@ -1919,7 +1871,7 @@ function updateTable(region){
                 count_vol_gap = t_vol - t_prev_vol
                 //count_vol_gap = gungu_gap['gap_count_' + regCode]
 
-                addon_html += "<div class='volume_content'>"
+                addon_html += "<div class='volume_content' onClick='gotoLink(" + i + ")'>"
                   addon_html += "<div class='price_table'>"
                     if(selectedMonth != "latest_deal"){
                       if(isNaN(t_vol)){
@@ -2013,11 +1965,12 @@ function updateTable(region){
               shareText +=  reg_sURL + "\n\n"
 
               popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
-
-              $('#dataList').append(addon_html);              
+              
+              $('#dataList').append(addon_html);
             }            
           }
         }
+        checkFav()
 
         shareText += "[리얼랭커스 앱 다운로드]\n"
         shareText += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
@@ -2076,6 +2029,109 @@ function updateTable(region){
           }
         }
     })
+  }
+
+  function showFavorite(){
+    fav_html = ""    
+    if(price_fav.length == 0){
+      fav_html += "<div class='favNotice'>저장된 즐겨찾기가 없어요.<br><br>지역 이름 옆의 <i class='fa-solid fa-star'></i> 을 눌러<br>즐겨찾기를 추가해 주세요.</div>"
+    }
+    else{
+      for(i = 0 ; i < price_fav.length ; i++){
+        fav_html += "<div class='fav_list'>"
+          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + price_fav[i][2] + "</div>"
+          fav_html += "<div class='fav_remove' onClick='removeFav(" + i + ", \"" + price_fav[i][1] + "\", \"" + price_fav[i][2] + "\")''><i class='fa-solid fa-circle-minus'></i></div>"
+        fav_html += "</div>"
+      }
+    }
+    $("#favList").html(fav_html)
+    $("#favModal").modal("show")
+  }
+
+  function checkFav(){
+    for(var i = 0 ; i < price_fav.length ; i++){      
+      $("#" + price_fav[i][1]).css({'color':'#e31939'})
+    }
+  }
+
+  function gotoFav(level, region){
+    region_name = region.replace("lv1_", "")
+    region_name = region_name.replace("lv2_", "")
+
+    favURL = ""
+
+    if(level == "lv1"){
+      favURL = "https://www.realrankus.com/price/?preg=Korea&psub=" + region_name + "&pmon=latest_deal"
+    }
+    if(level == "lv2"){
+      fav_upper_region = ( region_name.split("_") )[1]
+      favURL = "https://www.realrankus.com/price/?preg=" + fav_upper_region + "&psub=" + region_name + "&pmon=latest_deal"
+    }    
+    window.location = favURL
+  }
+
+  function removeFav(index, regId, regName){
+    price_fav.splice(index, 1)   
+
+    fav_html = ""
+
+    if(price_fav.length == 0){
+      fav_html += "<div class='favNotice'>저장된 즐겨찾기가 없어요.<br><br>지역 이름 옆의 <i class='fa-solid fa-star'></i> 을 눌러<br>즐겨찾기를 추가해 주세요.</div>"
+    }
+    else{
+      for(i = 0 ; i < price_fav.length ; i++){
+        fav_html += "<div class='fav_list'>"
+          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + price_fav[i][2] + "</div>"
+          fav_html += "<div class='fav_remove' onClick='removeFav(" + i + ", \"" + price_fav[i][1] + "\", \"" + price_fav[i][2] + "\")''><i class='fa-solid fa-circle-minus'></i></div>"
+        fav_html += "</div>"
+      }
+    }
+    $("#favList").html("")
+    $("#favList").html(fav_html)    
+    $("#" + regId).css({'color':'#ddd'})
+
+    output = "'" + regName + "' 즐겨찾기가 삭제되었어요."
+    toastr.success(output);
+
+    price_fav_json = JSON.stringify(price_fav)
+    localStorage.setItem("priceFav", price_fav_json);    
+  }
+
+  function addRemoveFav(level, regId, regName){
+    var i = 0    
+    if(price_fav.length == 0){
+      price_fav.push([level, regId, regName])
+      $("#" + regId).css({'color':'#e31939'})
+    }
+    else{
+      base_length = price_fav.length
+      for(i = 0 ; i < price_fav.length ; i++){
+        if(price_fav[i][1] == regId){          
+          $("#" + regId).css({'color':'#ddd'})
+          price_fav.splice(i, 1)
+          output = "'" + regName + "' 즐겨찾기가 삭제되었어요."
+          toastr.success(output);
+          break;
+        }
+      }
+      if(i == base_length){
+        if(price_fav.length == 5){
+          output = "즐겨찾기는 최대 5개까지 추가할 수 있어요."
+          toastr.info(output);          
+        }
+        else{        
+          price_fav.push([level, regId, regName])
+          output = "'" + regName + "' 즐겨찾기가 추가되었어요."
+          toastr.success(output);
+          $("#" + regId).css({'color':'#e31939'})
+        }
+      }
+    }
+
+    price_fav_json = JSON.stringify(price_fav)
+    localStorage.setItem("priceFav", price_fav_json);
+
+    checkFav()
   }
 
   function show_apt(month, filename, sido){
