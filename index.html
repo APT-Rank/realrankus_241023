@@ -741,7 +741,13 @@
           }
         }
         selectedMonth = find_year + find_month
-        selectedComplex = (Number(complex_code)).toString()
+        if(complex_code == ""){
+          selectedComplex = complex_code
+        }
+        else{
+          selectedComplex = (Number(complex_code)).toString()
+        }
+        
       } else if (lastRegion != null) {
         selectedRegion = lastRegion;
       }
