@@ -712,6 +712,49 @@
         initSorting();
       }
 
+      //aaaa al 999
+
+      if (urlParams.has("cpx")) {
+        infoText = urlParams.get("cpx")
+        region_code = infoText.substr(0, 4)
+        year_code = infoText.substr(4, 1)
+        month_code = infoText.substr(5, 1)
+        complex_code = infoText.substr(6, 3)
+
+        for(var i = 0; i < codeMap.length ; i++){
+          if(codeMap[i][0] == region_code){
+            selectedRegion = codeMap[i][1]
+            selectedSubRegion = codeMap[i][2]
+            break;
+          }
+        }
+        for(var i = 0; i < yearMap.length ; i++){
+          if(yearMap[i][0] == year_code){
+            find_year = yearMap[i][1]
+            break;
+          }
+        }
+        for(var i = 0; i < monthMap.length ; i++){
+          if(monthMap[i][0] == month_code){
+            find_month = monthMap[i][1]
+            break;
+          }
+        }
+        selectedMonth = find_year + find_month
+
+        console.log(region_code)
+        console.log(year_code)
+        console.log(month_code)
+        console.log(complex_code)
+
+        console.log(selectedRegion)
+        console.log(selectedSubRegion)
+        console.log(selectedMonth)
+
+      } else if (lastRegion != null) {
+        selectedRegion = lastRegion;
+      }
+
       $("#month").val(selectedMonth).prop("selected", true);
       $("#sido").val(selectedRegion).prop("selected", true);
       $("#gungu").val(selectedSubRegion).prop("selected", true);
@@ -1011,7 +1054,8 @@
 
     function writeIdxedDB(searchingData) {
       window.indexedDB.deleteDatabase('202411') //수정
-      window.indexedDB.deleteDatabase('20241117')      
+      window.indexedDB.deleteDatabase('20241117')
+      window.indexedDB.deleteDatabase('202412_01')
      
       const dbName = DB_Date
       var request = indexedDB.open(dbName);
