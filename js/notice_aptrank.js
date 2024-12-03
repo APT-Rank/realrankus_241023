@@ -1,5 +1,5 @@
 var notice_202412 = 
-"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 11월 업데이트 안내 (2024-11-02)</div>"
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 12월 업데이트 안내 (2024-12-03)</div>"
 +"<ul>"
 +"<li><div class='notice' style='color: #e31939; font-weight: 600'>단지 검색 시, 최근에 검색한 단지가 표시됩니다.</div></li>"
 +"<li><div class='notice' style='color: #e31939; font-weight: 600'>'즐겨찾기'를 추가해 자주 확인하는 지역 등록 가능합니다.(실거래가 우측 상단)</div></li>"
