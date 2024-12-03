@@ -375,7 +375,65 @@
       for(var i = 0; i < codeMap.length ; i++){
         if(codeMap[i][0] == infoText){
           selectedRegion = codeMap[i][1]
-          selectedSubRegion = codeMap[i][2]
+          subRegion = codeMap[i][2]
+          if(subRegion == "1100000000_Seoul"){
+            selectedRegion = selectedSubRegion = "Seoul"
+          }
+          if(subRegion == "2800000000_Incheon"){
+            selectedRegion = selectedSubRegion = "Incheon"
+          }
+          if(subRegion == "2900000000_Gwangju"){
+            selectedRegion = selectedSubRegion = "Gwangju"
+          }
+          if(subRegion == "3000000000_Daejeon"){
+            selectedRegion = selectedSubRegion = "Daejeon"
+          }
+          if(subRegion == "3100000000_Ulsan"){
+            selectedRegion = selectedSubRegion = "Ulsan"
+          }
+          if(subRegion == "2700000000_Daegu"){
+            selectedRegion = selectedSubRegion = "Daegu"
+          }
+          if(subRegion == "4100000000_Gyeonggi"){
+            selectedRegion = "Gyeonggi"
+            selectedSubRegion = "4111000000_Gyeonggi_Suwon"
+          }
+          if(subRegion == "3611000000_Sejong_Sejong" || subRegion == "3600000000_Sejong"){
+            selectedRegion = "Sejong"
+            selectedSubRegion = "3611000000_Sejong_Sejong"
+          }
+          if(subRegion == "5100000000_Gangwondo"){
+            selectedRegion = "Gangwondo"
+            selectedSubRegion = "5113000000_Gangwondo_Wonju"
+          }
+          if(subRegion == "4300000000_Chungcheongbukdo"){
+            selectedRegion = "Chungcheongbukdo"
+            selectedSubRegion = "4311100000_Chungcheongbukdo_Cheongju_Sangdang"
+          }
+          if(subRegion == "4400000000_Chungcheongnamdo"){
+            selectedRegion = "Chungcheongnamdo"
+            selectedSubRegion = "4413300000_Chungcheongnamdo_Cheonan_Seobuk"
+          }
+          if(subRegion == "5200000000_Jeollabukdo"){
+            selectedRegion = "Jeollabukdo"
+            selectedSubRegion = "4511100000_Jeollabukdo_Jeonju_Wansan"
+          }
+          if(subRegion == "4600000000_Jeollanamdo"){
+            selectedRegion = "Jeollanamdo"
+            selectedSubRegion = "4613000000_Jeollanamdo_Yeosu"
+          }
+          if(subRegion == "4700000000_Gyeongsangbukdo"){
+            selectedRegion = "Gyeongsangbukdo"
+            selectedSubRegion = "4711100000_Gyeongsangbukdo_Pohang_Nam"
+          }
+          if(subRegion == "4800000000_Gyeongsangnamdo"){
+            selectedRegion = "Gyeongsangnamdo"
+            selectedSubRegion = "4812500000_Gyeongsangnamdo_Changwon_Masanhappo"
+          }
+          if(subRegion == "5000000000_Jejudo"){
+            selectedRegion = "Jejudo"
+            selectedSubRegion = "5011000000_Jejudo_Jeju"
+          }
           break;
         }
       }      
