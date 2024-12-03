@@ -37,6 +37,7 @@ var user_stat = new Object({
 })
 
 var codeMap = [
+  ['sotp', 'Korea', '1100000000_Seoul'],
   ['sogn', 'Seoul', '1168000000_Seoul_Gangnam'],
   ['sogd', 'Seoul', '1174000000_Seoul_Gangdong'],
   ['sogb', 'Seoul', '1130500000_Seoul_Gangbuk'],
@@ -62,6 +63,8 @@ var codeMap = [
   ['sojr', 'Seoul', '1111000000_Seoul_Jongno'],
   ['sojg', 'Seoul', '1114000000_Seoul_Jung'],
   ['sojn', 'Seoul', '1126000000_Seoul_Jungnang'],
+
+  ['ggtp', 'Korea', '4100000000_Gyeonggi'],
   ['ggga', 'Gyeonggi', '4182000000_Gyeonggi_Gapyeong'],
   ['ggdy', 'Gyeonggi', '4128100000_Gyeonggi_Goyang_Deogyang'],
   ['ggid', 'Gyeonggi', '4128500000_Gyeonggi_Goyang_Ilsandong'],
@@ -106,6 +109,8 @@ var codeMap = [
   ['ggpc', 'Gyeonggi', '4165000000_Gyeonggi_Pocheon'],
   ['gghn', 'Gyeonggi', '4145000000_Gyeonggi_Hanam'],
   ['gghs', 'Gyeonggi', '4159000000_Gyeonggi_Hwaseong'],
+
+  ['intp', 'Korea', '2800000000_Incheon'],
   ['ingh', 'Incheon', '2871000000_Incheon_Ganghwa'],
   ['ingy', 'Incheon', '2824500000_Incheon_Gyeyang'],
   ['innd', 'Incheon', '2820000000_Incheon_Namdong'],
@@ -115,25 +120,33 @@ var codeMap = [
   ['inse', 'Incheon', '2826000000_Incheon_Seo'],
   ['inys', 'Incheon', '2818500000_Incheon_Yeonsu'],
   ['inju', 'Incheon', '2811000000_Incheon_Jung'],
+
+  ['gjtp', 'Korea', '2900000000_Gwangju'],
   ['gjgs', 'Gwangju', '2920000000_Gwangju_Gwangsan'],
   ['gjna', 'Gwangju', '2915500000_Gwangju_Nam'],
   ['gjdo', 'Gwangju', '2911000000_Gwangju_Dong'],
   ['gjbu', 'Gwangju', '2917000000_Gwangju_Buk'],
   ['gjse', 'Gwangju', '2914000000_Gwangju_Seo'],
+
+  ['dgtp', 'Korea', '2700000000_Daegu'],
   ['dgna', 'Daegu', '2720000000_Daegu_Nam'],
   ['dgds', 'Daegu', '2729000000_Daegu_Dalseo'],
   ['dgdg', 'Daegu', '2771000000_Daegu_Dalseong'],
   ['dgdo', 'Daegu', '2714000000_Daegu_Dong'],
   ['dgbu', 'Daegu', '2723000000_Daegu_Buk'],
   ['dgse', 'Daegu', '2717000000_Daegu_Seo'],
-  ['dgss', 'Daegu', '2726000000_Daegu_Suseong'],
+  ['dgss', 'Daegu', '2726000000_Daegu_Suseong'],  
   ['dgju', 'Daegu', '2711000000_Daegu_Jung'],
   ['dggw', 'Daegu', '2772000000_Daegu_Gunwi'],
+
+  ['djtp', 'Korea', '3000000000_Daejeon'],
   ['djdd', 'Daejeon', '3023000000_Daejeon_Daedeok'],
   ['djdo', 'Daejeon', '3011000000_Daejeon_Dong'],
   ['djse', 'Daejeon', '3017000000_Daejeon_Seo'],
   ['djys', 'Daejeon', '3020000000_Daejeon_Yuseong'],
   ['djju', 'Daejeon', '3014000000_Daejeon_Jung'],
+
+  ['bstp', 'Korea', '2600000000_Busan'],
   ['bsgs', 'Busan', '2644000000_Busan_Gangseo'],
   ['bsgj', 'Busan', '2641000000_Busan_Geumjeong'],
   ['bsgi', 'Busan', '2671000000_Busan_Gijangn'],
@@ -150,6 +163,8 @@ var codeMap = [
   ['bsyd', 'Busan', '2620000000_Busan_Yeongdo'],
   ['bsju', 'Busan', '2611000000_Busan_Jung'],
   ['bshd', 'Busan', '2635000000_Busan_Haeundae'],
+
+  ['gwtp', 'Korea', '5100000000_Gangwondo'],
   ['gwgn', 'Gangwondo', '5115000000_Gangwondo_Gangneung'],
   ['gwgs', 'Gangwondo', '5182000000_Gangwondo_Goseong'],
   ['gwdh', 'Gangwondo', '5117000000_Gangwondo_Donghae'],
@@ -168,6 +183,8 @@ var codeMap = [
   ['gwhc', 'Gangwondo', '5172000000_Gangwondo_Hongcheon'],
   ['gwhw', 'Gangwondo', '5179000000_Gangwondo_Hwacheon'],
   ['gwhs', 'Gangwondo', '5173000000_Gangwondo_Hoengseong'],
+
+  ['gntp', 'Korea', '4800000000_Gyeongsangnamdo'],
   ['gngj', 'Gyeongsangnamdo', '4831000000_Gyeongsangnamdo_Geoje'],
   ['gngc', 'Gyeongsangnamdo', '4888000000_Gyeongsangnamdo_Geochang'],
   ['gngs', 'Gyeongsangnamdo', '4882000000_Gyeongsangnamdo_Goseong'],
@@ -190,6 +207,8 @@ var codeMap = [
   ['gnha', 'Gyeongsangnamdo', '4873000000_Gyeongsangnamdo_Haman'],
   ['gnhy', 'Gyeongsangnamdo', '4887000000_Gyeongsangnamdo_Hamyang'],
   ['gnhc', 'Gyeongsangnamdo', '4889000000_Gyeongsangnamdo_Hapcheon'],
+
+  ['gbtp', 'Korea', '4700000000_Gyeongsangbukdo'],
   ['gbgs', 'Gyeongsangbukdo', '4729000000_Gyeongsangbukdo_Gyeongsan'],
   ['gbgj', 'Gyeongsangbukdo', '4713000000_Gyeongsangbukdo_Gyeongju'],
   ['gbgr', 'Gyeongsangbukdo', '4783000000_Gyeongsangbukdo_Goryeong'],
@@ -212,12 +231,18 @@ var codeMap = [
   ['gbcg', 'Gyeongsangbukdo', '4785000000_Gyeongsangbukdo_Chilgok'],
   ['gbpn', 'Gyeongsangbukdo', '4711100000_Gyeongsangbukdo_Pohang_Nam'],
   ['gbpb', 'Gyeongsangbukdo', '4711300000_Gyeongsangbukdo_Pohang_Buk'],
+
+  ['sjtp', 'Korea', '3600000000_Sejong'],
   ['sjsj', 'Sejong', '3611000000_Sejong_Sejong'],
+
+  ['ustp', 'Korea', '3100000000_Ulsan'],
   ['usna', 'Ulsan', '3114000000_Ulsan_Nam'],
   ['usdo', 'Ulsan', '3117000000_Ulsan_Dong'],
   ['usbu', 'Ulsan', '3120000000_Ulsan_Buk'],
   ['usuj', 'Ulsan', '3171000000_Ulsan_Ulju'],
   ['usju', 'Ulsan', '3111000000_Ulsan_Jung'],
+
+  ['jntp', 'Korea', '4600000000_Jeollanamdo'],
   ['jngj', 'Jeollanamdo', '4681000000_Jeollanamdo_Gangjin'],
   ['jngh', 'Jeollanamdo', '4677000000_Jeollanamdo_Goheung'],
   ['jngs', 'Jeollanamdo', '4672000000_Jeollanamdo_Gokseong'],
@@ -239,6 +264,8 @@ var codeMap = [
   ['jnhp', 'Jeollanamdo', '4686000000_Jeollanamdo_Hampyeong'],
   ['jnhn', 'Jeollanamdo', '4682000000_Jeollanamdo_Haenam'],
   ['jnhs', 'Jeollanamdo', '4679000000_Jeollanamdo_Hwasun'],
+
+  ['jbtp', 'Korea', '5200000000_Jeollabukdo'],
   ['jbgc', 'Jeollabukdo', '5279000000_Jeollabukdo_Gochang'],
   ['jbgs', 'Jeollabukdo', '5213000000_Jeollabukdo_Gunsan'],
   ['jbgj', 'Jeollabukdo', '5221000000_Jeollabukdo_Gimje'],
@@ -254,8 +281,12 @@ var codeMap = [
   ['jbws', 'Jeollabukdo', '5211100000_Jeollabukdo_Jeonju_Wansan'],
   ['jbje', 'Jeollabukdo', '5218000000_Jeollabukdo_Jeongeup'],
   ['jbja', 'Jeollabukdo', '5272000000_Jeollabukdo_Jinan'],
+
+  ['jjtp', 'Korea', '5000000000_Jejudo'],
   ['jjjj', 'Jejudo', '5011000000_Jejudo_Jeju'],
   ['jjsp', 'Jejudo', '5013000000_Jejudo_Seogwipo'],
+
+  ['cntp', 'Korea', '4400000000_Chungcheongnamdo'],
   ['cngr', 'Chungcheongnamdo', '4425000000_Chungcheongnamdo_Gyeryong'],
   ['cngj', 'Chungcheongnamdo', '4415000000_Chungcheongnamdo_Gongju'],
   ['cngs', 'Chungcheongnamdo', '4471000000_Chungcheongnamdo_Geumsan'],
@@ -272,6 +303,8 @@ var codeMap = [
   ['cncy', 'Chungcheongnamdo', '4479000000_Chungcheongnamdo_Cheongyang'],
   ['cnta', 'Chungcheongnamdo', '4482500000_Chungcheongnamdo_Taean'],
   ['cnhs', 'Chungcheongnamdo', '4480000000_Chungcheongnamdo_Hongseong'],
+
+  ['cbtp', 'Korea', '4300000000_Chungcheongbukdo'],
   ['cbgs', 'Chungcheongbukdo', '4376000000_Chungcheongbukdo_Goesan'],
   ['cbdy', 'Chungcheongbukdo', '4380000000_Chungcheongbukdo_Danyang'],
   ['cbbe', 'Chungcheongbukdo', '4372000000_Chungcheongbukdo_Boeun'],

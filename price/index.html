@@ -458,6 +458,19 @@
       initSorting()
     }
 
+    if (urlParams.has("cpx")) {
+      infoText = urlParams.get("cpx")
+      for(var i = 0; i < codeMap.length ; i++){
+        if(codeMap[i][0] == infoText){
+          selectedRegion = codeMap[i][1]
+          selectedSubRegion = codeMap[i][2]
+          break;
+        }
+      }      
+    } else if (lastRegion != null) {
+      selectedRegion = lastRegion;
+    }
+
     if (selectedRegion != 'Korea' && urlParams.has('pmon') == false){
         selectedMonth = 'latest_deal'
     }
