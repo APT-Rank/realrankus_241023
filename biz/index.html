@@ -395,6 +395,9 @@
           if(subRegion == "2700000000_Daegu"){
             selectedRegion = selectedSubRegion = "Daegu"
           }
+          if(subRegion == "2600000000_Busan"){
+            selectedRegion = selectedSubRegion = "Busan"
+          }
           if(subRegion == "4100000000_Gyeonggi"){
             selectedRegion = "Gyeonggi"
             selectedSubRegion = "4111000000_Gyeonggi_Suwon"
@@ -706,8 +709,8 @@
     
     //url = "https://www.realrankus.com/biz/" + region + ".json"
     //url = "https://www.realrankus.com/biz/Location_Build_Valuated.json"
-    url = "https://www.realrankus.com/biz/BIZ_Valuated_202410.json" //수정
-    //url = "./BIZ_Valuated_202207_01.json"
+    //url = "https://www.realrankus.com/biz/BIZ_Valuated_202410.json" //수정
+    url = "./BIZ_Valuated_202410.json"
 
     $.getJSON(url, function(json) {
         aptData = json;         
