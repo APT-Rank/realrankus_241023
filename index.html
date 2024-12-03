@@ -561,7 +561,7 @@
   <script>
     var thisMonth = "202412"; //수정
     var selectedMonth = "202412"; //수정
-    var DB_Date = "202412_01"; //수정
+    var DB_Date = "202412_02"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -741,16 +741,7 @@
           }
         }
         selectedMonth = find_year + find_month
-
-        console.log(region_code)
-        console.log(year_code)
-        console.log(month_code)
-        console.log(complex_code)
-
-        console.log(selectedRegion)
-        console.log(selectedSubRegion)
-        console.log(selectedMonth)
-
+        selectedComplex = (Number(complex_code)).toString()
       } else if (lastRegion != null) {
         selectedRegion = lastRegion;
       }
@@ -763,80 +754,7 @@
       $("#dataList").html("");
       month = selectedMonth;
 
-      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>단지별 랭크를 계산하고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
-
-      /*
-      if(thisMonth == selectedMonth){
-        firebase.database().ref().child("searchingList").child(selectedMonth).get()
-        .then((snapshot) => {
-          if(snapshot.exists()){
-            searchingData = snapshot.val()
-            console.log("FB")
-            console.log(searchingData)
-            writeIdxedDB(searchingData.data)
-            //indexedDB.deleteDatabase('202411')
-
-            //지도서비스추가      
-            region_url = "./" + selectedMonth + "/region_map.json";
-            $.getJSON(region_url, function (json) {        
-              //console.log(json);
-              regionMapData = json.data;            
-              }).done(function(){
-                for (var i in regionMapData){
-                  if(regionMapData[i]['Level'] == "Level0"){
-                    level0_loc.push(regionMapData[i])
-                  }
-                  if(regionMapData[i]['Level'] == "Level1"){
-                    level1_loc.push(regionMapData[i])
-                  }
-                  if(regionMapData[i]['Level'] == "Level2"){
-                    level2_loc.push(regionMapData[i])
-                  }
-                }
-                if(selectedRegion == "Korea"){
-                  loadMap(127.9564, 36.6778)
-                }
-                else{
-                  region_code = selectedSubRegion.split("_")[0]
-                  for(var i in level1_loc){
-                    if(level1_loc[i]['법정동코드']+"" == region_code){
-                      loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
-                      break;
-                    }
-                  }
-                }
-                current_pos = defaultMap.getCenterPoint()
-                projection = defaultMap.getProjection();
-                current_coord = projection.fromPointToCoord(current_pos)
-
-                origin_lat = current_coord['y']
-                origin_lng = current_coord['x']
-
-                nearby_region = []
-                nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
-                
-                show_up_complexs = []
-                show_up_complexs = defineMarkerList(nearby_region)
-
-                current_zoom = defaultMap.getZoom()              
-
-                showHideMarker(current_zoom)
-                $("#pageLoadingBack").remove()
-                optionChange(selectedSubRegion, selectedRegion);
-                updateRegion();
-              })
-          }
-          else{
-            alert("검색 정보 불러오기 실패했어요. 다시 시도해 주세요.")
-          }
-        })
-        .catch((error) => {
-          console.log(error.message)
-        })
-      }
-      
-      else{
-      */
+      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>단지별 랭크를 계산하고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")     
 
       searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
       region_url = "./" + selectedMonth + "/region_map.json";
@@ -1056,6 +974,7 @@
       window.indexedDB.deleteDatabase('202411') //수정
       window.indexedDB.deleteDatabase('20241117')
       window.indexedDB.deleteDatabase('202412_01')
+      window.indexedDB.deleteDatabase(DB_Date)      
      
       const dbName = DB_Date
       var request = indexedDB.open(dbName);
