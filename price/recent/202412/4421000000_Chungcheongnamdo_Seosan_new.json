@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -136,6 +132,10 @@
             {
                 "name":"sURL",
                 "type":"string"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -146,7 +146,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"스마트701",
             "건축년도":2012.0,
@@ -178,11 +177,11 @@
             "y":36.774665,
             "x":126.457267,
             "rank_info":"['', '', '']",
-            "sURL":"https:\/\/m.land.naver.com\/map\/36.774665:126.457267:17:\/APT\/A1"
+            "sURL":"https:\/\/m.land.naver.com\/map\/36.774665:126.457267:17:\/APT\/A1",
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"이안더서산아파트",
             "건축년도":2018.0,
@@ -214,11 +213,11 @@
             "y":36.820843,
             "x":126.451709,
             "rank_info":"[76.0, 36.0, 43.113]",
-            "sURL":"https:\/\/me2.do\/GI3mGf0T"
+            "sURL":"https:\/\/me2.do\/GI3mGf0T",
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"서산예천효성해링턴플레이스",
             "건축년도":2016.0,
@@ -250,7 +249,8 @@
             "y":36.769123,
             "x":126.442534,
             "rank_info":"[76.0, 17.0, 51.103]",
-            "sURL":"https:\/\/me2.do\/GkRLU4n5"
+            "sURL":"https:\/\/me2.do\/GkRLU4n5",
+            "type":"TRADE"
         }
     ]
 }

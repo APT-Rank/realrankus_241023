@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -136,6 +132,10 @@
             {
                 "name":"sURL",
                 "type":"string"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -146,7 +146,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"아산한라비발디스마트밸리",
             "건축년도":2023.0,
@@ -178,11 +177,11 @@
             "y":36.848306,
             "x":127.104692,
             "rank_info":"[184.0, 36.0, 52.944]",
-            "sURL":"https:\/\/me2.do\/xprQBLYZ"
+            "sURL":"https:\/\/me2.do\/xprQBLYZ",
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"한들물빛도시신영지웰시티센트럴푸르지오1단지",
             "건축년도":2022.0,
@@ -214,11 +213,11 @@
             "y":36.784937,
             "x":127.082635,
             "rank_info":"[184.0, 3.0, 65.655]",
-            "sURL":"https:\/\/me2.do\/xLWcsz1i"
+            "sURL":"https:\/\/me2.do\/xLWcsz1i",
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"탕정삼성트라팰리스(1단지~3단지)",
             "건축년도":2009.0,
@@ -250,7 +249,8 @@
             "y":36.801565,
             "x":127.059579,
             "rank_info":"[184.0, 25.0, 54.823]",
-            "sURL":"https:\/\/me2.do\/FfeUB8ih"
+            "sURL":"https:\/\/me2.do\/FfeUB8ih",
+            "type":"TRADE"
         }
     ]
 }
