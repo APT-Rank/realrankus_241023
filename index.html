@@ -2829,7 +2829,12 @@
         var last_sales_area = last_sales[2];
 
         if (isNaN(last_sales_price)) {
-          last_sales_price_kor = "정보없음"
+          if(apt_type == "분양(예정)"){
+            last_sales_price_kor = "분양"
+          }
+          else{
+            last_sales_price_kor = "정보없음"
+          }
           last_sales_area_kor = "--"
         } else {
           last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"

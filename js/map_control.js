@@ -460,6 +460,7 @@ function createLargeMarker(markers){
       coordi_y = markers[k]['lat']
 
       marker_code = markers[k]['검색코드']
+      marker_code_id = marker_code.substr(0, 1)
 
       var last_sales = markers[k]["last_sales"].split(",");
       var last_sales_date = last_sales[0].toString();
@@ -467,7 +468,12 @@ function createLargeMarker(markers){
       var last_sales_area = last_sales[2];
 
       if (isNaN(last_sales_price)) {
-        last_sales_price_kor = "정보없음"
+        if(isNaN(Number(marker_code_id))){
+          last_sales_price_kor = "분양"
+        }
+        else{
+          last_sales_price_kor = "정보없음"
+        }
         last_sales_area_kor = "--"
       } else {
         last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
@@ -564,6 +570,7 @@ function createSmallMarker(markers){
     coordi_y = markers[k]['lat']
 
     marker_code = markers[k]['검색코드']
+    marker_code_id = marker_code.substr(0, 1)
 
     var last_sales = markers[k]["last_sales"].split(",");
     var last_sales_date = last_sales[0].toString();
@@ -571,7 +578,12 @@ function createSmallMarker(markers){
     var last_sales_area = last_sales[2];
 
     if (isNaN(last_sales_price)) {
-      last_sales_price_kor = "정보없음"
+      if(isNaN(Number(marker_code_id))){
+        last_sales_price_kor = "분양"
+      }
+      else{
+        last_sales_price_kor = "정보없음"
+      }
       last_sales_area_kor = "--"
     } else {
       last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
@@ -826,6 +838,7 @@ function createTopMarker(markers){
       coordi_x = markers[k]['lng']
       coordi_y = markers[k]['lat']
       marker_code = markers[k]['검색코드']
+      marker_code_id = marker_code.substr(0, 1)
 
       var last_sales = markers[k]["last_sales"].split(",");
       var last_sales_date = last_sales[0].toString();
@@ -833,7 +846,12 @@ function createTopMarker(markers){
       var last_sales_area = last_sales[2];
 
       if (isNaN(last_sales_price)) {
-        last_sales_price_kor = "정보없음"
+        if(isNaN(Number(marker_code_id))){
+          last_sales_price_kor = "분양"
+        }
+        else{
+          last_sales_price_kor = "정보없음"
+        }
         last_sales_area_kor = "--"
       } else {
         last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
