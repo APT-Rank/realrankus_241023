@@ -561,7 +561,7 @@
   <script>
     var thisMonth = "202412"; //수정
     var selectedMonth = "202412"; //수정
-    var DB_Date = "202412_02"; //수정
+    var DB_Date = "202412_03"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -980,6 +980,7 @@
       window.indexedDB.deleteDatabase('202411') //수정
       window.indexedDB.deleteDatabase('20241117')
       window.indexedDB.deleteDatabase('202412_01')
+      window.indexedDB.deleteDatabase('202412_02')
       window.indexedDB.deleteDatabase(DB_Date)      
      
       const dbName = DB_Date
@@ -2829,7 +2830,7 @@
         var last_sales_area = last_sales[2];
 
         if (isNaN(last_sales_price)) {
-          if(apt_type == "분양(예정)"){
+          if(apt_type == "분양(예정)" || apt_type == "분양권"){
             last_sales_price_kor = "분양"
           }
           else{

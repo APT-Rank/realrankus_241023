@@ -460,25 +460,27 @@ function createLargeMarker(markers){
       coordi_y = markers[k]['lat']
 
       marker_code = markers[k]['검색코드']
-      marker_code_id = marker_code.substr(0, 1)
 
-      var last_sales = markers[k]["last_sales"].split(",");
-      var last_sales_date = last_sales[0].toString();
-      var last_sales_price = last_sales[1].toString();
-      var last_sales_area = last_sales[2];
+      var last_sales_raw = markers[k]["last_sales"]
 
-      if (isNaN(last_sales_price)) {
-        if(isNaN(Number(marker_code_id))){
-          last_sales_price_kor = "분양"
-        }
-        else{
-          last_sales_price_kor = "정보없음"
-        }
-        last_sales_area_kor = "--"
-      } else {
-        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-        last_sales_area_kor = last_sales_area
+      if(last_sales_raw == "BYG"){
+        last_sales_price_kor = "분양"
+        last_sales_area_kor = ""
       }
+      else{
+        var last_sales = last_sales_raw.split(",");
+        var last_sales_date = last_sales[0].toString();
+        var last_sales_price = last_sales[1].toString();
+        var last_sales_area = last_sales[2];
+        
+        if (isNaN(last_sales_price)) {
+          last_sales_price_kor = "정보없음"
+          last_sales_area_kor = "--"
+        } else {
+          last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+          last_sales_area_kor = last_sales_area
+        }
+      }      
 
       var svg_color = "#CC0000"
       var grade = ""
@@ -501,6 +503,14 @@ function createLargeMarker(markers){
         grade = "gradeC"
       }
 
+      var marker_color = "#fff"
+      large_marker_BYG = ""      
+
+      if(last_sales_raw == "BYG"){        
+        marker_color = "#000"
+        large_marker_BYG = "BYG"
+      }
+
       var large_marker_id = 'large_marker_' + markers[k]['검색코드']
 
       svg_loc_large = `
@@ -510,10 +520,10 @@ function createLargeMarker(markers){
       <defs>
       <style>
       .${grade}{fill:${svg_color}}
-      .large_marker_${grade} {stroke:${svg_color}; stroke-width:0.5}      
-      .cls-2{fill:#fff;}
+      .large_marker_${grade} {stroke:${svg_color}; stroke-width:0.5;}
+      .cls-2{fill:#fff;}      
       .cls-3_text{fill:#fff; font-size:8px; font-weight:600}
-      .cls-4_text{fill:#000; font-size:7px; font-weight:600}            
+      .cls-4_text{fill:#000; font-size:7px; font-weight:600}
       .cls-5_text{fill:#000; font-size:5px; font-weight:600}
       .cls-6_text{fill:#000; font-size:4px; font-weight:600}
       </style>
@@ -570,24 +580,26 @@ function createSmallMarker(markers){
     coordi_y = markers[k]['lat']
 
     marker_code = markers[k]['검색코드']
-    marker_code_id = marker_code.substr(0, 1)
 
-    var last_sales = markers[k]["last_sales"].split(",");
-    var last_sales_date = last_sales[0].toString();
-    var last_sales_price = last_sales[1].toString();
-    var last_sales_area = last_sales[2];
+    var last_sales_raw = markers[k]["last_sales"]
 
-    if (isNaN(last_sales_price)) {
-      if(isNaN(Number(marker_code_id))){
-        last_sales_price_kor = "분양"
-      }
-      else{
-        last_sales_price_kor = "정보없음"
-      }
+    if(last_sales_raw == "BYG"){
+      last_sales_price_kor = "분양"
       last_sales_area_kor = "--"
-    } else {
-      last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-      last_sales_area_kor = last_sales_area
+    }
+    else{
+      var last_sales = last_sales_raw.split(",");
+      var last_sales_date = last_sales[0].toString();
+      var last_sales_price = last_sales[1].toString();
+      var last_sales_area = last_sales[2];
+      
+      if (isNaN(last_sales_price)) {
+        last_sales_price_kor = "정보없음"
+        last_sales_area_kor = "--"
+      } else {
+        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+        last_sales_area_kor = last_sales_area
+      }
     }
 
     var svg_color = "#a70000"
@@ -838,24 +850,26 @@ function createTopMarker(markers){
       coordi_x = markers[k]['lng']
       coordi_y = markers[k]['lat']
       marker_code = markers[k]['검색코드']
-      marker_code_id = marker_code.substr(0, 1)
+      
+      var last_sales_raw = markers[k]["last_sales"]
 
-      var last_sales = markers[k]["last_sales"].split(",");
-      var last_sales_date = last_sales[0].toString();
-      var last_sales_price = last_sales[1].toString();
-      var last_sales_area = last_sales[2];
-
-      if (isNaN(last_sales_price)) {
-        if(isNaN(Number(marker_code_id))){
-          last_sales_price_kor = "분양"
-        }
-        else{
-          last_sales_price_kor = "정보없음"
-        }
+      if(last_sales_raw == "BYG"){
+        last_sales_price_kor = "분양"
         last_sales_area_kor = "--"
-      } else {
-        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-        last_sales_area_kor = last_sales_area
+      }
+      else{
+        var last_sales = last_sales_raw.split(",");
+        var last_sales_date = last_sales[0].toString();
+        var last_sales_price = last_sales[1].toString();
+        var last_sales_area = last_sales[2];
+        
+        if (isNaN(last_sales_price)) {
+          last_sales_price_kor = "정보없음"
+          last_sales_area_kor = "--"
+        } else {
+          last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+          last_sales_area_kor = last_sales_area
+        }
       }
 
       var svg_color = "#d1453b"
