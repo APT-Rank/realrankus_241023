@@ -640,21 +640,6 @@
       return n < 10 ? "0" + n : n;
     }
 
-    function og_scrap(url){
-      console.log(url)
-      $.get(url, function(data) {
-        console.log(data)
-        og_title = $(data).filter("meta[property='og\\:title']").attr("content");
-        og_dec = $(data).filter("meta[property='og\\:description']").attr("content");
-        og_url = $(data).filter("meta[property='og\\:url']").attr("content");
-        og_image = $(data).filter("meta[property='og\\:image']").attr("content");        
-        console.log(og_title)
-        console.log(og_dec)
-        console.log(og_url)
-        console.log(og_image)
-      });
-    }
-
     $(document).ready(function () {
       Kakao.init(kakaoKey);
       
@@ -675,9 +660,6 @@
       if(recent_search == null){
         recent_search = []
       }
-
-      //og_scrap("https://www.realrankus.com")
-      og_scrap("https://m.blog.naver.com/spanner-/223697297978")
 
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
