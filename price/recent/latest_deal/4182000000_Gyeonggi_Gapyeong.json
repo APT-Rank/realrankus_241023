@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"string"
             },
@@ -132,10 +136,6 @@
             {
                 "name":"sURL",
                 "type":"string"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -146,6 +146,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"가평센트럴파크더스카이",
             "건축년도":2022.0,
@@ -344,12 +345,12 @@
             "y":37.831463,
             "x":127.511916,
             "rank_info":"[25.0, 10.0, 25.3472]",
-            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=9&sort=sortDefault&apt=가평읍 가평센트럴파크더스카이",
-            "type":"TRADE"
+            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=9&sort=sortDefault&apt=가평읍 가평센트럴파크더스카이"
         },
         {
             "index":1,
-            "동":null,
+            "type":"TRADE",
+            "동":"에이",
             "아파트":"준수아파트A동",
             "건축년도":1992.0,
             "매수자":"개인",
@@ -365,7 +366,7 @@
             "층":2.0,
             "지번":"637-3",
             "아파트여부":"N",
-            "등기일자":null,
+            "등기일자":"24.12.16",
             "지역코드":41820.0,
             "매도자":"개인",
             "법정동":"가평읍 읍내리",
@@ -580,11 +581,11 @@
             "y":37.8339969,
             "x":127.5089773,
             "rank_info":"['', '', '']",
-            "sURL":"https:\/\/m.land.naver.com\/map\/37.8339969:127.5089773:17:\/APT\/A1",
-            "type":"TRADE"
+            "sURL":"https:\/\/m.land.naver.com\/map\/37.8339969:127.5089773:17:\/APT\/A1"
         },
         {
             "index":2,
+            "type":"TRADE",
             "동":"101동",
             "아파트":"가평센트럴파크더스카이",
             "건축년도":2022.0,
@@ -780,11 +781,11 @@
             "y":37.831463,
             "x":127.511916,
             "rank_info":"[25.0, 10.0, 25.3472]",
-            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=9&sort=sortDefault&apt=가평읍 가평센트럴파크더스카이",
-            "type":"TRADE"
+            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=9&sort=sortDefault&apt=가평읍 가평센트럴파크더스카이"
         },
         {
             "index":3,
+            "type":"TRADE",
             "동":null,
             "아파트":"이안지안스청평",
             "건축년도":2018.0,
@@ -1025,11 +1026,11 @@
             "y":37.729775,
             "x":127.410355,
             "rank_info":"[25.0, 20.0, 21.15]",
-            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=20&sort=sortDefault&apt=청평면 이안지안스청평",
-            "type":"TRADE"
+            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=20&sort=sortDefault&apt=청평면 이안지안스청평"
         },
         {
             "index":4,
+            "type":"TRADE",
             "동":null,
             "아파트":"청구",
             "건축년도":1998.0,
@@ -1381,8 +1382,7 @@
             "y":37.738348,
             "x":127.417298,
             "rank_info":"[25.0, 7.0, 27.12]",
-            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=6&sort=sortDefault&apt=청평면 청평청구",
-            "type":"TRADE"
+            "sURL":"https:\/\/www.realrankus.com?reg=Gyeonggi&sub=4182000000_Gyeonggi_Gapyeong&mon=202410&complex=6&sort=sortDefault&apt=청평면 청평청구"
         }
     ]
 }
