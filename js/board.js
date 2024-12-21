@@ -151,8 +151,13 @@ function complex_blog(complex_id, aptName){
 
 				if(i == 0){
 					blog_html += "<div class='blog_list' onClick='openOuterLink(\"" + blog_url + "\")'>"
-				}			
-				blog_html += "<div class='blog_img_box'><img src=\"./image/blog/" + blog_imgLink + "\" width='100px'/></div>"
+				}
+				if (blog_imgLink.indexOf('http') != -1) {
+					blog_html += "<div class='blog_img_box'><img src=\"" + blog_imgLink + "\" width='100px'/></div>"
+				}
+				else{
+					blog_html += "<div class='blog_img_box'><img src=\"./image/blog/" + blog_imgLink + "\" width='100px'/></div>"
+				}
 				blog_html += "<div class='blog_des'>"
 					blog_html += "<div class='blog_title'>" + blog_title + "</div>"
 					blog_html += "<div class='blog_sub'>" + blog_des + "</div>"
