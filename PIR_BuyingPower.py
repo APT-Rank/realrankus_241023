@@ -499,10 +499,10 @@ def save_BOK_GDP_GNI_info():
     print("Start to get BOK GDP/GNI")
 
     #국내총생산 (십억원)
-    url_GDP = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/200Y001/A/' + str_date_10years_ago_y + '/' + str_now_y + '/10101'
+    url_GDP = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/200Y101/A/' + str_date_10years_ago_y + '/' + str_now_y + '/10101'
 
     #1인당 국민총소득 (만원)
-    url_GNI = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/200Y001/A/' + str_date_10years_ago_y + '/' + str_now_y + '/10106'    
+    url_GNI = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/200Y101/A/' + str_date_10years_ago_y + '/' + str_now_y + '/10106'    
 
     response_GDP = requests.get(url_GDP)    
     result_GDP = json.loads(response_GDP.text)
