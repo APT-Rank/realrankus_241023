@@ -348,12 +348,17 @@
   var this_month = "" + (today_year) + today_month
 
   prev_date = prev_date.setMonth(today.getMonth()-1)
+  
   var monthago = new Date(prev_date)
   //var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() + 1))
   var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth()+1 ) )
   
   if(prev_month == this_month){
     prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() ) )
+  }
+
+  if(monthago.getFullYear() != today.getFullYear()){
+    var prev_month = "" + (monthago.getFullYear()-1) + dateReturn( (monthago.getMonth()+1 ) )
   }
 
   var start_date_str = (today.getMonth() + 1) + "/1"
