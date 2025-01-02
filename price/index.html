@@ -358,9 +358,11 @@
     prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() ) )
   }
 
-  if(monthago.getFullYear() != today.getFullYear()){
-    var prev_month = "" + (monthago.getFullYear()-1) + dateReturn( (monthago.getMonth()+1 ) )
-  }
+  if (today_day == 1){    
+    if(monthago.getFullYear() != today.getFullYear()){
+      var prev_month = "" + (monthago.getFullYear()-1) + dateReturn( (monthago.getMonth()+1 ) )
+    }
+  }  
 
   var start_date_str = (today.getMonth() + 1) + "/1"
   var end_date_str = (today.getMonth() + 1) + "/" + today.getDate()
