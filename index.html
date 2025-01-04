@@ -490,6 +490,19 @@
       </div>
     </div>
 
+    <div class="modal fade" id="blogModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" id="blogModaloutline">
+          <div class="modal-header">
+            <h5 class="modal-title" id="blogModalLabel">잠시만 기다려 주세요</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="blogDetail"></div>
+          <div id="blogFooter"></div>
+        </div>
+      </div>
+    </div>    
+
     <!-- Offcanvas Right -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
@@ -917,6 +930,11 @@
         $("#baseModal").css({"z-index" : "1055"})
         $(".modal-backdrop").css({"z-index" : "1000"})
       });
+      $("#blogModal").on("hidden.bs.modal", function () {
+        $("#baseModal").css({"z-index" : "1055"})
+        $(".modal-backdrop").css({"z-index" : "1000"})
+        $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+      });
       $("#compareModal").on("hidden.bs.modal", function () {
         $("#baseModal").css({"z-index" : "1055"})
         $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
@@ -966,6 +984,9 @@
       else{
         $("#noticeDetail").height(window.innerHeight/3)
         $("#noticeModaloutline").css({'bottom': (-1)*window.innerHeight/7})
+
+        $("#blogDetail").height(window.innerHeight/1.35)
+        $("#blogModaloutline").css({'bottom': (-1)*window.innerHeight/40})
 
         $("#dataList_wrapper").hide()
         $("#commentBox").css({'bottom': -commentBox_height + 92 + "px"})

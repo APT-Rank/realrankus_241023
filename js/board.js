@@ -310,12 +310,12 @@ function showBlogWindow(complex_id) {
 
 	footerHtml += "<div class='realPosting_win'><button class='btn btn-danger' onClick='sendBlog(\"" + current_selection + "\")'>등록하기</button></div>"
 
-	$("#noticeModalLabel").html(titleHtml);
-	$("#noticeDetail").html(detailHtml);
-	$("#noticeFooter").html(footerHtml);
+	$("#blogModalLabel").html(titleHtml);
+	$("#blogDetail").html(detailHtml);
+	$("#blogFooter").html(footerHtml);
 
-	$("#noticeModal").modal("show"); //offcanvas
-	$("#baseModal").css({"z-index":"800"})
+	$("#blogModal").modal("show"); //offcanvas
+	$("#baseModal").css({"z-index":"850"})
 	$(".modal-backdrop").css({"width":"100%"})
 }
 
@@ -418,7 +418,7 @@ function sendBlog(complex_id){
 					'blog1' : blog_data,									
 				})
 				.then(() => {
-					$("#noticeModal").modal("hide");
+					$("#blogModal").modal("hide");
 					toastr.options = {
 						closeButton: false,
 						progressBar: false,
@@ -462,7 +462,7 @@ function sendBlog(complex_id){
 					[new_key] : blog_data,									
 				})
 				.then(() => {
-					$("#noticeModal").modal("hide");
+					$("#blogModal").modal("hide");
 					toastr.options = {
 						closeButton: false,
 						progressBar: false,
