@@ -1,3 +1,14 @@
+var notice_202501 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 1월 업데이트 안내 (2025-01-05)</div>"
++"<ul>"
++"<li><div class='notice'>지역별 소득 정보 업데이트 했습니다.(공공데이터 제공)</div></li>"
++"<li><div class='notice'>전국 기피시설 정보 업데이트 했습니다. (자원순환정보시스템 제공)</div></li>"
++"<li><div class='notice'>교육통계서비스 기반 2024년 하반기 초등학교 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>2024년 12월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202412 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 12월 업데이트 안내 (2024-12-03)</div>"
 +"<ul>"
