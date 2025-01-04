@@ -24,6 +24,42 @@ function sendTelegram_single_message(comment){
 	})
 }
 
+function sendTelegram_blog(comment){
+	console.log(comment)
+
+	var current_region = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
+	var current_region_id = selectedSubRegion
+
+	var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+
+	var tlgm_msg = "리얼포스팅이 등록되었습니다!" + "%0A%0A"
+
+	tlgm_msg += "[" + current_region + "]" + "%0A"
+	tlgm_msg += "(" + current_region_id + ")" + "%0A%0A"
+
+	var w_date_set = new Date()
+	var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth()+1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+			+ dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+	tlgm_msg += "ㆍComplex : " + current_apt_name + "%0A"
+	tlgm_msg += "ㆍCode : " + comment[1] + "%0A"
+	tlgm_msg += "ㆍTitle : " + comment[2] + "%0A"
+	tlgm_msg += "ㆍURL : " + comment[3] + "%0A"
+	tlgm_msg += "ㆍBy : " + comment[4] + "%0A"
+	tlgm_msg += "ㆍDate : " + w_date_str
+
+	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+	fetch(request_tlgm_url, {
+	  method: 'POST',
+	  headers: { 'Content-Type': 'application/json' }
+	})
+	.then(res => res.json())
+	.catch(error => {
+	  console.log(error)
+	})
+}
+
 function sendTelegram_message(comment){
 	var current_region = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
 	var current_region_id = selectedSubRegion
@@ -118,13 +154,331 @@ function complex_list_like_status(){
 }
 
 non_blog_html = ""
-non_blog_html += "<div class='blog_list' onClick='showBlogGuide()'>"
+non_blog_html += "<div class='blog_list' onClick='showBlogWindow()'>"
 non_blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 non_blog_html += "<div class='blog_des'>"
-non_blog_html += "<div class='blog_title'>리얼포스팅을 등록해 주세요</div>"
+non_blog_html += "<div class='blog_title'>리얼포스팅을 무료로 등록하세요</div>"
 non_blog_html += "<div class='blog_sub'>실제 찾아가 눈으로 보고 분석한 소중한 경험을 알려주세요</div>"
 non_blog_html += "<div class='blog_sub2'>by 리얼랭커스</div>"
 non_blog_html += "</div>"
+
+function changePosting(type, obj){	
+	if(type == "title"){		
+		if(obj.value == null || obj.value == ""){
+			$("#blog_ex_title").html("포스팅 제목이 표시됩니다")
+			$("#realPosting_guide_title").css({'color' : '#940c23'})
+			$("#realPosting_guide_title").html("<i class='fa-solid fa-circle-exclamation'></i> 제목은 필수 입력항목 이예요")
+			return
+		}
+		else{
+			$("#blog_ex_title").html(obj.value)
+			$("#realPosting_guide_title").css({'color' : '#108527'})
+			$("#realPosting_guide_title").html("<i class='fa-solid fa-circle-exclamation'></i> 문제 없이 입력 되었어요")
+		}	
+	}
+
+	if(type == "owner"){
+		if(obj.value == null || obj.value == ""){
+			$("#blog_ex_owner").html("by 작성자")
+			$("#realPosting_guide_owner").css({'color' : '#940c23'})
+			$("#realPosting_guide_owner").html("<i class='fa-solid fa-circle-exclamation'></i> 작성자는 필수 입력항목 이예요")
+		}
+		else{
+			$("#realPosting_guide_owner").css({'color' : '#108527'})
+			$("#realPosting_guide_owner").html("<i class='fa-solid fa-circle-exclamation'></i> 문제 없이 입력 되었어요")
+			$("#blog_ex_owner").html("by " + obj.value)
+		}		
+	}
+
+	if(type == "description"){
+		if(obj.value == null || obj.value == ""){
+			$("#blog_ex_des").html("포스팅 요약이 표시됩니다")
+		}
+		$("#blog_ex_des").html(obj.value)
+	}
+
+	if(type == "URL"){
+		//URL 감지하는 정규식
+		if(obj.value == null || obj.value == ""){
+			$("#realPosting_guide_url").css({'color' : '#940c23'})
+			$("#realPosting_guide_url").html("<i class='fa-solid fa-circle-exclamation'></i> 링크 주소는 필수 입력항목 이예요")
+			return
+		}
+		if(isValidURL(obj.value)){
+			//URL에 ? 또는 #이 있을 경우
+			//URL을 ? 또는 #으로 나누어서 ? 또는 # 앞의 내용을 가져옴
+			if(obj.value.indexOf("?") != -1){
+				var url = obj.value.split("?")[0]
+				obj.value = url
+			}
+			if(obj.value.indexOf("#") != -1){
+				var url = obj.value.split("#")[0]
+				obj.value = url
+			}
+			$("#realPosting_guide_url").css({'color' : '#108527'})
+			$("#realPosting_guide_url").html("<i class='fa-solid fa-circle-exclamation'></i> 문제 없이 입력 되었어요")
+		}
+		else{
+			$("#realPosting_guide_url").css({'color' : '#940c23'})
+			$("#realPosting_guide_url").html("<i class='fa-solid fa-circle-exclamation'></i> 정확한 URL을 입력해 주세요")
+			return
+		}
+	}
+
+	if(type == "image"){
+		if(obj.value == null || obj.value == ""){
+			$("#realPosting_guide_image").css({'color' : '#aaa'})
+			$("#realPosting_guide_image").html("<i class='fa-solid fa-circle-exclamation'></i> 이미지의 URL을 입력해 주세요")
+			return
+		}
+		//image 감지하는 정규식
+		//이미지 파일 확장자가 포함되어 있다면 이미지 파일로 인식
+		if(obj.value.indexOf(".jpg") != -1 || obj.value.indexOf(".jpeg") != -1 || obj.value.indexOf(".png") != -1 || obj.value.indexOf(".gif") != -1){
+			$("#blog_ex_image").html("<img src=\"" + obj.value + "\" width='100px'/>")
+			$("#realPosting_guide_image").css({'color' : '#108527'})
+			$("#realPosting_guide_image").html("<i class='fa-solid fa-circle-exclamation'></i> 문제 없이 입력 되었어요")
+		}
+		else{
+			$("#blog_ex_image").html("<img src=\"./apt-rank-512x512.png\" width='100px'/>")
+			$("#realPosting_guide_image").css({'color' : '#940c23'})
+			$("#realPosting_guide_image").html("<i class='fa-solid fa-circle-exclamation'></i> 정확한 이미지 URL을 입력해 주세요")
+		}
+	}
+}
+
+function isValidURL(url) {
+	//const urlRegex = /^(https?|ftp):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i;
+	const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+	return urlRegex.test(url);
+}
+
+function showBlogWindow(complex_id) {
+	$(".offcanvas").offcanvas("hide") //offcanvas	
+	
+	noticePop = true;
+	var titleHtml = "<div class='popupTitle'>리얼포스팅 등록</div>";
+	var footerHtml = "";
+	var detailHtml = "";
+
+	detailHtml += "<div class='realPosting_win'>"
+		detailHtml += "<div class='realPosting_title'><label for='blog_title'>제목*</label></div>";
+		detailHtml += "<div class='realPosting_content'><input type='text' onkeyup='changePosting(\"title\",this)' placeholder='포스팅 제목을 입력하세요' class='realPosting_input' id='blog_title' name='blog_title' required></div>";
+		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_title'><i class='fa-solid fa-circle-exclamation'></i> 제목은 필수 입력항목 이예요</div>";
+	detailHtml += "</div>"
+
+	detailHtml += "<div class='realPosting_win'>"
+		detailHtml += "<div class='realPosting_title'><label for='blog_url'>블로그링크*</label></div>";
+		detailHtml += "<div class='realPosting_content'><input type='text' onkeyup='changePosting(\"URL\",this)' placeholder='포스팅 링크 주소를 입력하세요' class='realPosting_input' id='blog_url' name='blog_url' required></div>";
+		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_url'><i class='fa-solid fa-circle-exclamation'></i> 링크 주소는 필수 입력항목 이예요</div>";
+	detailHtml += "</div>"
+
+	detailHtml += "<div class='realPosting_win'>"
+		detailHtml += "<div class='realPosting_title'><label for='blog_owner'>작성자*</label></div>";
+		detailHtml += "<div class='realPosting_content'><input type='text' onkeyup='changePosting(\"owner\",this)' placeholder='작성자를 입력하세요' class='realPosting_input' id='blog_owner' name='blog_owner' required></div>";
+		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_owner'><i class='fa-solid fa-circle-exclamation'></i> 작성자는 필수 입력항목 이예요</div>";
+	detailHtml += "</div>"	
+
+	detailHtml += "<div class='realPosting_win'>"
+		detailHtml += "<div class='realPosting_title'><label for='blog_des'>요약</label></div>";
+		detailHtml += "<div class='realPosting_content'><input type='text' onkeyup='changePosting(\"description\",this)' placeholder='포스팅 요약 내용을 입력하세요' class='realPosting_input' id='blog_des' name='blog_des'></div>";
+		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_des'><i class='fa-solid fa-circle-exclamation'></i> 안 써도 되지만 쓰면 보기 좋아요</div>";
+	detailHtml += "</div>"
+
+	detailHtml += "<div class='realPosting_win'>"
+		detailHtml += "<div class='realPosting_title'><label for='blog_image'>이미지링크</label></div>";
+		detailHtml += "<div class='realPosting_content'><input type='text' onkeyup='changePosting(\"image\",this)' placeholder='포스팅 이미지 링크 주소를 입력하세요' class='realPosting_input' id='blog_image' name='blog_image'></div>";
+		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_image'><i class='fa-solid fa-circle-exclamation'></i> 이미지의 URL을 입력해 주세요</div>";
+	detailHtml += "</div>"
+
+	detailHtml += "<div class='realPosting_title'><label for='blog_image' style='padding-left: 5px; margin-bottom:5px'>리얼포스팅이 이렇게 보여져요!</label></div>";
+	detailHtml += "<div class='blog_list'>"		
+		detailHtml += "<div class='blog_img_box' id='blog_ex_image'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
+		detailHtml += "<div class='blog_des'>"
+		detailHtml += "<div class='blog_title' id='blog_ex_title'>포스팅 제목이 표시됩니다</div>"
+		detailHtml += "<div class='blog_sub' id='blog_ex_des'>포스팅 요약이 표시됩니다</div>"
+		detailHtml += "<div class='blog_sub2' id='blog_ex_owner'>by 작성자</div>"
+		detailHtml += "</div>"
+	detailHtml += "</div>"
+
+	detailHtml += "<hr><div>"
+		+"<ul>"
+		+"<li><div class='supplyContent'>단지 정보와 무관한 포스팅은 검토 후 임의로 삭제됩니다.</div></li>"
+		+"<li><div class='supplyContent'>포스팅 등록 후, 수정/삭제는 <a href='http://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>로 연락주세요.</div></li>"
+		+"<li><div class='supplyContent'>리얼포스팅은 최대 3개까지 보여집니다.</div></li>"
+		+"</ul>"
+		+"</div>"
+
+	footerHtml += "<div class='realPosting_win'><button class='btn btn-danger' onClick='sendBlog(\"" + current_selection + "\")'>등록하기</button></div>"
+
+	$("#noticeModalLabel").html(titleHtml);
+	$("#noticeDetail").html(detailHtml);
+	$("#noticeFooter").html(footerHtml);
+
+	$("#noticeModal").modal("show"); //offcanvas
+	$("#baseModal").css({"z-index":"800"})
+	$(".modal-backdrop").css({"width":"100%"})
+}
+
+function sendBlog(complex_id){
+	var current_region_id = selectedSubRegion
+	//var current_region_id = "test_region"
+	var blog_title = $("#blog_title").val()
+	var blog_url = $("#blog_url").val()
+	var blog_owner = $("#blog_owner").val()
+	var blog_des = $("#blog_des").val()
+	var blog_image = $("#blog_image").val()
+
+	if(blog_title == "" || blog_title == null){
+		toastr.options = {
+			closeButton: false,
+			progressBar: false,
+			showMethod: 'fadeIn',
+			closeMethod: 'fadeOut',
+			positionClass: "toast-bottom-center",
+			timeOut: 1000
+		};
+		toastr.error("제목을 입력해 주세요!");
+		return
+	}
+	if(blog_url == "" || blog_url == null){
+		toastr.options = {
+			closeButton: false,
+			progressBar: false,
+			showMethod: 'fadeIn',
+			closeMethod: 'fadeOut',
+			positionClass: "toast-bottom-center",
+			timeOut: 1000
+		};
+		toastr.error("URL을 입력해 주세요!");
+		return
+	}
+	if(blog_owner == "" || blog_owner == null){
+		toastr.options = {
+			closeButton: false,
+			progressBar: false,
+			showMethod: 'fadeIn',
+			closeMethod: 'fadeOut',
+			positionClass: "toast-bottom-center",
+			timeOut: 1000
+		};
+		toastr.error("작성자를 입력해 주세요!");
+		return
+	}
+
+	//blog_url이 URL 형식인지 확인
+	//URL 형식이 아니라면 URL 형식이 아닙니다 메시지 출력
+	if(!isValidURL(blog_url)){
+		toastr.options = {
+			closeButton: false,
+			progressBar: false,
+			showMethod: 'fadeIn',
+			closeMethod: 'fadeOut',
+			positionClass: "toast-bottom-center",
+			timeOut: 1000
+		};
+		toastr.error("블로그링크에 올바른 URL 주소를 입력해 주세요!");
+		return
+	}
+
+	//blog_image에 파일 확장자가 포함되어 있다면 이미지 파일로 인식
+	//이미지 파일이 아니라면 이미지 파일이 아닙니다 메시지 출력
+	if(blog_image != "" && ( blog_image.indexOf(".jpg") == -1 && blog_image.indexOf(".jpeg") == -1 && blog_image.indexOf(".png") == -1 && blog_image.indexOf(".gif") == -1 )){
+		toastr.options = {
+			closeButton: false,
+			progressBar: false,
+			showMethod: 'fadeIn',
+			closeMethod: 'fadeOut',
+			positionClass: "toast-bottom-center",
+			timeOut: 1000
+		};
+		toastr.error("이미지링크에 올바른 이미지 주소를 입력해 주세요!");
+		console.log(blog_image)
+		return
+	}
+
+	var blog_data = {
+		'title' : blog_title,
+		'url' : blog_url,
+		'auth' : blog_owner,
+		'description' : blog_des,
+		'imgLink' : blog_image,
+	}
+
+	console.log('realrankus_blog/' + current_region_id + '/complex_' + complex_id + "/blog_list")
+
+	firebase.database().ref('realrankus_blog/' + current_region_id + '/complex_' + complex_id).child("blog_list").get()
+	//blog_list의 blog1이 비어있는지 확인
+	.then((snapshot) => {
+		if(snapshot.exists()){
+			blog_list = snapshot.val()
+			blog_list_keys = Object.keys(blog_list)			
+
+			if(blog_list['blog1'] == "" || blog_list['blog1'] == null || blog_list == null){
+				firebase.database().ref('realrankus_blog/' + current_region_id + '/complex_' + complex_id + "/blog_list").set({						
+					'blog1' : blog_data,									
+				})
+				.then(() => {
+					$("#noticeModal").modal("hide");
+					toastr.options = {
+						closeButton: false,
+						progressBar: false,
+						showMethod: 'fadeIn',
+						closeMethod: 'fadeOut',
+						positionClass: "toast-bottom-center",
+						timeOut: 1000
+					};
+					complex_blog(complex_id, "")
+					sendTelegram_blog([current_region_id, "complex_" + complex_id, blog_title, blog_url, blog_owner])
+					toastr.success("리얼포스팅이 등록되었습니다!");
+				})
+			}
+			else{
+				//blog_list의 'url'이 같은 데이터가 있는지 확인
+				//같은 데이터가 있다면 이미 등록된 포스팅입니다 메시지 출력
+				for(var i = 0 ; i < blog_list_keys.length ; i++ ){
+					if(blog_list[blog_list_keys[i]]['url'] == blog_url){
+						toastr.options = {
+							closeButton: false,
+							progressBar: false,
+							showMethod: 'fadeIn',
+							closeMethod: 'fadeOut',
+							positionClass: "toast-bottom-center",
+							timeOut: 1000
+						};
+						toastr.error("이미 등록된 포스팅입니다!");
+						return
+					}
+				}
+				
+				//blog_list의 마지막 key를 가져옴
+				last_key = blog_list_keys[blog_list_keys.length-1]
+				//blog_list의 마지막 key에 1을 더함
+				new_key = Number(last_key.split("blog")[1]) + 1
+				//새로운 key를 생성
+				new_key = "blog" + new_key
+				//새로운 key에 데이터를 저장
+				console.log("NEW KEY : " + new_key)
+				firebase.database().ref('realrankus_blog/' + current_region_id + '/complex_' + complex_id + "/blog_list").update({						
+					[new_key] : blog_data,									
+				})
+				.then(() => {
+					$("#noticeModal").modal("hide");
+					toastr.options = {
+						closeButton: false,
+						progressBar: false,
+						showMethod: 'fadeIn',
+						closeMethod: 'fadeOut',
+						positionClass: "toast-bottom-center",
+						timeOut: 1000
+					};
+					complex_blog(complex_id, "")
+					sendTelegram_blog([current_region_id, "complex_" + complex_id, blog_title, blog_url, blog_owner])
+					toastr.success("리얼포스팅이 등록되었습니다!");
+				})
+			}
+		}
+	})
+}
 
 function complex_blog(complex_id, aptName){
 	var current_region_id = selectedSubRegion
@@ -142,7 +496,17 @@ function complex_blog(complex_id, aptName){
 
 			blog_html = ""
 
-			for(var i = 0 ; i < blog_list_keys.length ; i++ ){
+			if(blog_list_keys.length > 1){
+				//#blog_list_area의 높이를 자동으로 변경
+				$("#blog_list_area").css({'height' : 'auto'})
+			}
+
+			blog_length = blog_list_keys.length
+			if(blog_length > 3){
+				blog_length = 3
+			}
+
+			for(var i = 0 ; i < blog_length ; i++ ){
 				blog_title = blog_list[blog_list_keys[i]]['title']
 				blog_des = blog_list[blog_list_keys[i]]['description']
 				blog_imgLink = blog_list[blog_list_keys[i]]['imgLink']
@@ -152,11 +516,16 @@ function complex_blog(complex_id, aptName){
 				if(i == 0){
 					blog_html += "<div class='blog_list' onClick='openOuterLink(\"" + blog_url + "\")'>"
 				}
-				if (blog_imgLink.indexOf('http') != -1) {
-					blog_html += "<div class='blog_img_box'><img src=\"" + blog_imgLink + "\" width='100px'/></div>"
+				if(blog_imgLink == "" || blog_imgLink == null){
+					blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 				}
 				else{
-					blog_html += "<div class='blog_img_box'><img src=\"./image/blog/" + blog_imgLink + "\" width='100px'/></div>"
+					if (blog_imgLink.indexOf('http') != -1) {
+						blog_html += "<div class='blog_img_box'><img src=\"" + blog_imgLink + "\" width='100px'/></div>"
+					}
+					else{
+						blog_html += "<div class='blog_img_box'><img src=\"./image/blog/" + blog_imgLink + "\" width='100px'/></div>"
+					}
 				}
 				blog_html += "<div class='blog_des'>"
 					blog_html += "<div class='blog_title'>" + blog_title + "</div>"

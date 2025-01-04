@@ -161,7 +161,7 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202501" selected>2025년 1월</option>
+              <option value="202501" selected>2025년 01월</option>
               <option value="202412">2024년 12월</option>
               <option value="202411">2024년 11월</option>
               <option value="202410">2024년 10월</option>
@@ -607,6 +607,7 @@
 
     var prev_selection = ""
     var current_selection = ""
+    var current_apt_name = ""
     var searchingData = {}
     var indexedDB_data = {}
 
@@ -909,6 +910,7 @@
       $("#baseModal").on("hidden.bs.modal", function () {
         changeMetaTagToDefault();
         current_selection = ""
+        current_apt_name = ""
         removeAnimation()
       });
       $("#noticeModal").on("hidden.bs.modal", function () {
@@ -1974,7 +1976,7 @@
       detailHtml += "<div class='card'>";
       detailHtml += "<div class='card-header'>";
       detailHtml += "<div class='popTitle' id='blog_popTitle'><div><i class='fa-solid fa-tags'></i>&nbsp 리얼포스팅</div>";
-      detailHtml += "<div id='blog_register' onClick='showBlogGuide()'><i class='fa-solid fa-circle-question'></i> 등록신청</div>";
+      detailHtml += "<div id='blog_register' onClick='showBlogWindow(\"" + searchCode + "\")'><i class='fa-solid fa-circle-question'></i> 무료등록</div>";
       detailHtml += "</div></div>";
       detailHtml += "<div class='card-body' id='blog_list_area'><div class='spinner-border' role='status' style='opacity:0.2'></div>";
       detailHtml += "</div>";
@@ -3048,6 +3050,7 @@
       
       prev_selection = current_selection
       current_selection = searchCode
+      current_apt_name = aptName
 
       /*
       //리스트 이동
