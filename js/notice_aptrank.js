@@ -1,6 +1,7 @@
 var notice_202501 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 1월 업데이트 안내 (2025-01-05)</div>"
 +"<ul>"
++"<li><div class='notice' style='color: #e31939; font-weight: 600'>단지별 리얼포스팅을 개인이 자유롭게 등록할 수 있도록 수정했습니다.</div></li>"
 +"<li><div class='notice'>지역별 소득 정보 업데이트 했습니다.(공공데이터 제공)</div></li>"
 +"<li><div class='notice'>전국 기피시설 정보 업데이트 했습니다. (자원순환정보시스템 제공)</div></li>"
 +"<li><div class='notice'>교육통계서비스 기반 2024년 하반기 초등학교 정보 업데이트 했습니다.</div></li>"

@@ -952,7 +952,7 @@
       //optionChange(selectedSubRegion);
       //updateRegion();
 
-      if ($.cookie("popCookie") != "202501" && urlParams.has("reg") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202501" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -4192,7 +4192,7 @@
 
       footerHtml += "<div class='modal-footer'>";
       footerHtml +=
-        " <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>일주일 동안 보지 않기</span></label></div>";
+        " <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>다음 업데이트까지 보지 않기</span></label></div>";
       if (checkMobile() == "ios") {
         footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://apps.apple.com/kr/app/id6448044104\")'>iOS 앱 설치</button></div>";
       } else {
@@ -4224,7 +4224,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202501", { expires: 7, path: "/" });
+          $.cookie("popCookie", "202501", { expires: 31, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
