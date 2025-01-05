@@ -155,9 +155,9 @@ function complex_list_like_status(){
 
 non_blog_html = ""
 non_blog_html += "<div class='blog_list' onClick='showBlogWindow()'>"
-non_blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
+//non_blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 non_blog_html += "<div class='blog_des'>"
-non_blog_html += "<div class='blog_title'>리얼포스팅을 무료로 등록하세요</div>"
+non_blog_html += "<div class='blog_title'>단지 임장기를 등록해 주세요!</div>"
 non_blog_html += "<div class='blog_sub'>실제 찾아가 눈으로 보고 분석한 소중한 경험을 알려주세요</div>"
 non_blog_html += "<div class='blog_sub2'>by 리얼랭커스</div>"
 non_blog_html += "</div>"
@@ -284,15 +284,17 @@ function showBlogWindow(complex_id) {
 		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_des'><i class='fa-solid fa-circle-exclamation'></i> 안 써도 되지만 쓰면 보기 좋아요</div>";
 	detailHtml += "</div>"
 
+	/*
 	detailHtml += "<div class='realPosting_win'>"
 		detailHtml += "<div class='realPosting_title'><label for='blog_image'>이미지링크</label></div>";
 		detailHtml += "<div class='realPosting_content'><input type='text' onkeyup='changePosting(\"image\",this)' placeholder='포스팅 이미지 링크 주소를 입력하세요' class='realPosting_input' id='blog_image' name='blog_image'></div>";
 		detailHtml += "<div class='realPosting_guide' id='realPosting_guide_image'><i class='fa-solid fa-circle-exclamation'></i> 이미지의 URL을 입력해 주세요</div>";
 	detailHtml += "</div>"
+	*/
 
-	detailHtml += "<div class='realPosting_title'><label for='blog_image' style='padding-left: 5px; margin-bottom:5px'>리얼포스팅이 이렇게 보여져요!</label></div>";
+	detailHtml += "<div class='realPosting_title'><label style='padding-left: 5px; margin-bottom:5px'>리얼포스팅이 이렇게 보여져요!</label></div>";
 	detailHtml += "<div class='blog_list'>"		
-		detailHtml += "<div class='blog_img_box' id='blog_ex_image'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
+		//detailHtml += "<div class='blog_img_box' id='blog_ex_image'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 		detailHtml += "<div class='blog_des'>"
 		detailHtml += "<div class='blog_title' id='blog_ex_title'>포스팅 제목이 표시됩니다</div>"
 		detailHtml += "<div class='blog_sub' id='blog_ex_des'>포스팅 요약이 표시됩니다</div>"
@@ -326,7 +328,7 @@ function sendBlog(complex_id){
 	var blog_url = $("#blog_url").val()
 	var blog_owner = $("#blog_owner").val()
 	var blog_des = $("#blog_des").val()
-	var blog_image = $("#blog_image").val()
+	//var blog_image = $("#blog_image").val()
 
 	if(blog_title == "" || blog_title == null){
 		toastr.options = {
@@ -380,6 +382,7 @@ function sendBlog(complex_id){
 		return
 	}
 
+	/*
 	//blog_image에 파일 확장자가 포함되어 있다면 이미지 파일로 인식
 	//이미지 파일이 아니라면 이미지 파일이 아닙니다 메시지 출력
 	if(blog_image != "" && ( blog_image.indexOf(".jpg") == -1 && blog_image.indexOf(".jpeg") == -1 && blog_image.indexOf(".png") == -1 && blog_image.indexOf(".gif") == -1 )){
@@ -395,13 +398,14 @@ function sendBlog(complex_id){
 		console.log(blog_image)
 		return
 	}
+	*/
 
 	var blog_data = {
 		'title' : blog_title,
 		'url' : blog_url,
 		'auth' : blog_owner,
 		'description' : blog_des,
-		'imgLink' : blog_image,
+		'imgLink' : "",
 	}
 
 	console.log('realrankus_blog/' + current_region_id + '/complex_' + complex_id + "/blog_list")
@@ -516,6 +520,7 @@ function complex_blog(complex_id, aptName){
 				if(i == 0){
 					blog_html += "<div class='blog_list' onClick='openOuterLink(\"" + blog_url + "\")'>"
 				}
+				/*
 				if(blog_imgLink == "" || blog_imgLink == null){
 					blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 				}
@@ -527,6 +532,7 @@ function complex_blog(complex_id, aptName){
 						blog_html += "<div class='blog_img_box'><img src=\"./image/blog/" + blog_imgLink + "\" width='100px'/></div>"
 					}
 				}
+				*/
 				blog_html += "<div class='blog_des'>"
 					blog_html += "<div class='blog_title'>" + blog_title + "</div>"
 					blog_html += "<div class='blog_sub'>" + blog_des + "</div>"
