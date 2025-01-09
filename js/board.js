@@ -339,7 +339,7 @@ function sendBlog(complex_id){
 			positionClass: "toast-bottom-center",
 			timeOut: 1000
 		};
-		toastr.error("제목을 입력해 주세요!");
+		toastr.warning("제목을 입력해 주세요!");
 		return
 	}
 	if(blog_url == "" || blog_url == null){
@@ -351,7 +351,7 @@ function sendBlog(complex_id){
 			positionClass: "toast-bottom-center",
 			timeOut: 1000
 		};
-		toastr.error("URL을 입력해 주세요!");
+		toastr.warning("URL을 입력해 주세요!");
 		return
 	}
 	if(blog_owner == "" || blog_owner == null){
@@ -363,7 +363,7 @@ function sendBlog(complex_id){
 			positionClass: "toast-bottom-center",
 			timeOut: 1000
 		};
-		toastr.error("작성자를 입력해 주세요!");
+		toastr.warning("작성자를 입력해 주세요!");
 		return
 	}
 
@@ -378,7 +378,7 @@ function sendBlog(complex_id){
 			positionClass: "toast-bottom-center",
 			timeOut: 1000
 		};
-		toastr.error("블로그링크에 올바른 URL 주소를 입력해 주세요!");
+		toastr.warning("블로그링크에 올바른 URL 주소를 입력해 주세요!");
 		return
 	}
 
@@ -407,9 +407,7 @@ function sendBlog(complex_id){
 		'description' : blog_des,
 		'imgLink' : "",
 	}
-
-	console.log('realrankus_blog/' + current_region_id + '/complex_' + complex_id + "/blog_list")
-
+	
 	firebase.database().ref('realrankus_blog/' + current_region_id + '/complex_' + complex_id).child("blog_list").get()
 	//blog_list의 blog1이 비어있는지 확인
 	.then((snapshot) => {
@@ -460,8 +458,7 @@ function sendBlog(complex_id){
 				new_key = Number(last_key.split("blog")[1]) + 1
 				//새로운 key를 생성
 				new_key = "blog" + new_key
-				//새로운 key에 데이터를 저장
-				console.log("NEW KEY : " + new_key)
+				//새로운 key에 데이터를 저장				
 				firebase.database().ref('realrankus_blog/' + current_region_id + '/complex_' + complex_id + "/blog_list").update({						
 					[new_key] : blog_data,									
 				})
@@ -1907,4 +1904,51 @@ function accuse_reply(parent_id, reply_id, user_email, user_id){
 	.catch((error) => {
 		console.error("Error adding document: ", error);
 	});
+}
+
+function realrankus_visit(complex, sido, gungu, dong){	
+	//firebase의 realrankus_visit에 접속해서 전역변수 'today_str'을 사용하여 db가 없으면 생성한다.
+	//today_str하위에 complex, region, dong을 생성하고 해당하는 값을 1씩 증가시킨다.
+	//이때, complex, region, dong은 각각의 변수로 받아서 사용한다.
+	//이후, 해당하는 값을 1씩 증가시킨다.
+
+	firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	firebase.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			firebase.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			firebase.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	firebase.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			firebase.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			firebase.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+	
+	firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
 }

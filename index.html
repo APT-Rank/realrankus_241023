@@ -1889,7 +1889,9 @@
       var last_sales = aptData.data[index]["last_sales"].split(",");
       var last_sales_date = last_sales[0].toString();
       var last_sales_price = last_sales[1].toString();
-      var last_sales_area = last_sales[2];
+      var last_sales_area = last_sales[2];      
+      
+      realrankus_visit(searchCode, $("#sido option:selected").text(), short_name, short_name + " " + dong_name)
 
       if (Number(selectedMonth) > 202207) {
         var rent_info = aptData.data[index]["rent_info"];
