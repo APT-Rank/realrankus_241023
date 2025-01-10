@@ -1913,8 +1913,10 @@ function realrankus_visit(complex, sido, gungu, dong){
 	//이후, 해당하는 값을 1씩 증가시킨다.
 
 	sido = sido.replaceAll(" ", "_")
-	gungu = sido.replaceAll(" ", "_")
-	dong = sido.replaceAll(" ", "_")
+	gungu = gungu.replaceAll(" ", "_")
+	dong = dong.replaceAll(" ", "_")
+
+	console.log(sido, gungu, dong)
 
 	firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
 	.then(function(snapshot){
