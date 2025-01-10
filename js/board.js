@@ -1912,6 +1912,10 @@ function realrankus_visit(complex, sido, gungu, dong){
 	//이때, complex, region, dong은 각각의 변수로 받아서 사용한다.
 	//이후, 해당하는 값을 1씩 증가시킨다.
 
+	sido = sido.replaceAll(" ", "_")
+	gungu = sido.replaceAll(" ", "_")
+	dong = sido.replaceAll(" ", "_")
+
 	firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
 	.then(function(snapshot){
 		if(snapshot.val() === null){
