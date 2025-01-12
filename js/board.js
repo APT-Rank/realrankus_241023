@@ -1916,8 +1916,7 @@ function realrankus_visit(complex, sido, gungu, dong){
 	gungu = gungu.replaceAll(" ", "_")
 	dong = dong.replaceAll(" ", "_")
 
-	console.log(sido, gungu, dong)
-
+	//DEFAULT DB
 	firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
 	.then(function(snapshot){
 		if(snapshot.val() === null){
@@ -1957,4 +1956,210 @@ function realrankus_visit(complex, sido, gungu, dong){
 			firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
 		}
 	})
+
+	//SUB01 DB
+	sub01_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub01_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			sub01_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub01_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub01_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			sub01_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub01_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub01_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			sub01_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub01_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub01_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			sub01_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+	
+	//SUB02 DB
+	sub02_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub02_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			sub02_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub02_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub02_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			sub02_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub02_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub02_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			sub02_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub02_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub02_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			sub02_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+	
+	//SUB03 DB
+	sub03_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub03_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			sub03_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub03_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub03_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			sub03_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub03_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub03_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			sub03_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub03_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub03_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			sub03_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	//SUB04 DB
+	sub04_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub04_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			sub04_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub04_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub04_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			sub04_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub04_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub04_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			sub04_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub04_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub04_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			sub04_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	//SUB05 DB
+	sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub05_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub05_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			sub05_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})	
+
 }

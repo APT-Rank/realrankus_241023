@@ -7,9 +7,30 @@ const firebaseConfig = {
 	messagingSenderId: "987401326011",
 	appId: "1:987401326011:web:8732d04a9fc69280d7489e",
 	measurementId: "G-BH5DRBH380"
-  };
+};
 
-firebase.initializeApp(firebaseConfig);
+const default_db = firebase.initializeApp(firebaseConfig);
+const sub01_db = firebase.initializeApp({
+    databaseURL: "https://realrankus-sub01.firebaseio.com/"
+}, 'sub01_db');
+
+const sub02_db = firebase.initializeApp({
+  databaseURL: "https://realrankus-sub02.firebaseio.com/"
+}, 'sub02_db');
+
+const sub03_db = firebase.initializeApp({
+  databaseURL: "https://realrankus-sub03.firebaseio.com/"
+}, 'sub03_db');
+
+const sub04_db = firebase.initializeApp({
+  databaseURL: "https://realrankus-sub04.firebaseio.com/"
+}, 'sub04_db');
+
+const sub05_db = firebase.initializeApp({
+  databaseURL: "https://realrankus-sub05.firebaseio.com/"
+}, 'sub05_db');
+
+var db_list = [sub01_db, sub02_db, sub03_db, sub04_db, sub05_db]
 
 var comment_db = firebase.firestore()
 var database = firebase.database()  
