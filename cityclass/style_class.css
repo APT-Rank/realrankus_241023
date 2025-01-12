@@ -289,6 +289,10 @@
   .matched_dong:active{
     transform: translateY(2px);
   }
+  .price_per{
+    font-size: 0.65em;
+    color: #ccc
+  }
   #infoModal > .modal-dialog-scrollable{
     max-width: 30%
   }
@@ -1648,5 +1652,9 @@
       width: 1920px;
       height: 1080px;
       left: 50%;
-    }    
+    }
+    .price_per{
+      font-size: 0.8em;
+      color: #ccc
+    }
   }

@@ -361,7 +361,7 @@
         }        
     })
     .then(()=>{
-      console.log(region_class.data[0])
+      //console.log(region_class.data[0])
         $("#update_info_m").html("업데이트 : " + region_class.data[0]['updated'])
         $.getJSON(index_url_balanced, function(json) {
           balanced_index = json;          

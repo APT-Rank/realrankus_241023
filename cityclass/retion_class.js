@@ -277,9 +277,11 @@ function drawDataTable_price(indexData, sido_list, gungu_list, cl){
             tableHtml += "<td class='dataCol'>"
           }
 
-          for (var k = 0 ; k < findings.length ; k++){
+          for (var k = 0 ; k < findings.length ; k++){            
             id_name = "dong_" + findings[k][2]
-            tableHtml += "<div class='matched_dong' id='" + id_name  + "' onClick='showRegionInfo(" + findings[k][2] + ")'>" + findings[k][1] + "</div>"
+            price_per = region_class.data[findings[k][2]]["평단가"]
+            price_per_floor = ( Number(price_per.toFixed(0)) ).toLocaleString() + "만원"
+            tableHtml += "<div class='matched_dong' id='" + id_name  + "' onClick='showRegionInfo(" + findings[k][2] + ")'><div>" + findings[k][1] + "</div><div class='price_per'>" + price_per_floor + "</div></div>"            
             searchingDB.push([findings[k][0] + " " + findings[k][1], findings[k][2]])
           }
           tableHtml += "</td>"
