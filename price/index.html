@@ -1472,6 +1472,13 @@ function updateTable(region){
       }
     }
 
+    if(naver_code != ""){      
+      sido_price = $("#sido option:selected").text()
+      gungu_price = $("#sido option:selected").text() + " " + rankAddr
+      dong_price = $("#sido option:selected").text() + " " + rankAddr + " " + ( (aptData.data[index]["법정동"]).split(" ") )[0]
+      realrankus_visit(naver_code, sido_price, gungu_price, dong_price)
+    }
+
     if(UserAgent.indexOf("inApp")>-1){
       if(naver_code != ""){
         footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + naver_code + ")'>네이버 부동산 보기</button>"
