@@ -322,11 +322,11 @@ function updateVisits(map, markers) {
     show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
 
     for(var j in show_visit_shuffle_chunked){
-      showVisitInfo(show_visit_shuffle_chunked[j], 0)
+      //showVisitInfo(show_visit_shuffle_chunked[j], 0)
     }
   }
   else{
-    showVisitInfo(show_visit_shuffle, 0)
+    //showVisitInfo(show_visit_shuffle, 0)
   }  
 }
 
@@ -350,7 +350,7 @@ function showVisitInfo(visits, visit_check_count){
           }
         }
         //몇 명 이상 방문해야 보여지는지
-        if(visit_count >= 50000){
+        if(visit_count >= 0){
           visit_id = 'visit_' + visits[visit_check_count]       
           $("#" + visit_id).html(visit_count + "명 방문")
           $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
@@ -386,11 +386,11 @@ function updateVisits_lv1_lv2(map, markers) {
     show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
 
     for(var j in show_visit_shuffle_chunked){
-      showVisitInfo_lv1_lv2(show_visit_shuffle_chunked[j], 0)
+      //showVisitInfo_lv1_lv2(show_visit_shuffle_chunked[j], 0)
     }
   }
   else{
-    showVisitInfo_lv1_lv2(show_visit_shuffle, 0)
+    //showVisitInfo_lv1_lv2(show_visit_shuffle, 0)
   }
 }
 
@@ -415,7 +415,7 @@ function showVisitInfo_lv1_lv2(visits, visit_check_count){
           }
         }
         //몇 명 이상 방문해야 보여지는지
-        if(visit_count >= 50000){
+        if(visit_count >= 0){
           visit_id = 'visit_' + visits[visit_check_count]       
           $("#" + visit_id).html(visit_count + "명 방문")
           $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 500);
