@@ -644,7 +644,15 @@
     var today_month = dateReturn(today.getMonth() + 1);
     var today_day = dateReturn(today.getDate());
     var today_num = Number("" + today_year + today_month + today_day);
-    var today_str = today_year + "-" + today_month + "-" + today_day;  
+    var today_str = today_year + "-" + today_month + "-" + today_day;
+
+    var ago_days = 30 //최근 30일 동안의 방문자 수만 합침
+    var days_ago_raw = today.setDate(today.getDate() - ago_days)
+    var days_ago = new Date(days_ago_raw)
+    var days_ago_year = days_ago.getFullYear();
+    var days_ago_month = dateReturn(days_ago.getMonth() + 1);
+    var days_ago_day = dateReturn(days_ago.getDate());
+    var days_ago_num = Number("" + days_ago_year + days_ago_month + days_ago_day);
 
     var pop_state = []
 

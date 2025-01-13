@@ -17,8 +17,8 @@ var regionMapData = ""
 
 var last_zoom = 16
 
-var web_level_control = [16, 15, 13, 10, 6]
-var mobile_level_control = [15, 14, 13, 10, 6]
+var web_level_control = [16, 15, 14, 10, 6]
+var mobile_level_control = [15, 14, 13, 10, 7]
 
 
 /*
@@ -54,7 +54,7 @@ function loadMap(center_x, center_y){
       dh = window.innerHeight - $("#linkToAptrank_bottom").height() - $("#titleBar").height() - $("#selections").height()
     }
     zoom_control = true
-    zoom_level = 15
+    zoom_level = 16
   }
   else{
     dw = window.innerWidth - 600
@@ -296,6 +296,137 @@ function updateMarkers(map, markers) {
   }
 }
 
+function updateVisits(map, markers) {  
+  var mapBounds = map.getBounds();
+  var marker, position;
+  var show_visit = []
+
+  for (var i = 0; i < markers.length; i++) {
+      marker = markers[i]
+      position = marker.getPosition();
+
+      if (mapBounds.hasLatLng(position)) {
+          find_code = marker['code']          
+          show_visit.push(find_code)
+          showMarker(map, marker)
+      }
+      else {
+          hideMarker(map, marker);
+      }
+  }
+
+  show_visit_shuffle = shuffle(show_visit)
+
+  if(show_visit_shuffle.length >= 5){
+    chunk = Math.floor(show_visit_shuffle.length/5)
+    show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
+
+    for(var j in show_visit_shuffle_chunked){
+      showVisitInfo(show_visit_shuffle_chunked[j], 0)
+    }
+  }
+  else{
+    showVisitInfo(show_visit_shuffle, 0)
+  }  
+}
+
+function showVisitInfo(visits, visit_check_count){  
+  loop_count = visits.length  
+  if(visit_check_count == loop_count){
+    visit_check_count = 0
+    return
+  }
+  else{
+    firebase.database().ref().child("realrankus_visit").child(visits[visit_check_count]).get()
+	  .then((snapshot) => {
+      if(snapshot.exists()){
+        visit_obj = snapshot.val()
+        visit_count = 0        
+        for(var i in visit_obj){
+          //날짜가 30일 이전의 날짜보다 큰 경우만 count
+          compare_days = Number(i.replaceAll("-", ""))
+          if(days_ago_num <= compare_days){
+            visit_count += visit_obj[i]
+          }
+        }
+        //몇 명 이상 방문해야 보여지는지
+        if(visit_count >= 50000){
+          visit_id = 'visit_' + visits[visit_check_count]       
+          $("#" + visit_id).html(visit_count + "명 방문")
+          $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
+        }
+      }      
+      visit_check_count++
+      showVisitInfo(visits, visit_check_count)
+    })
+  }
+}
+
+function updateVisits_lv1_lv2(map, markers) {  
+  var mapBounds = map.getBounds();
+  var marker, position;
+  var show_visit = []
+
+  for (var i = 0; i < markers.length; i++) {
+      marker = markers[i]
+      position = marker.getPosition();
+
+      if (mapBounds.hasLatLng(position)) {          
+          find_region = marker['region']
+          show_visit.push(find_region)             
+      }
+      else {
+          hideMarker(map, marker);
+      }
+  }
+  show_visit_shuffle = shuffle(show_visit)
+
+  if(show_visit_shuffle.length >= 5){
+    chunk = Math.floor(show_visit_shuffle.length/5)
+    show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
+
+    for(var j in show_visit_shuffle_chunked){
+      showVisitInfo_lv1_lv2(show_visit_shuffle_chunked[j], 0)
+    }
+  }
+  else{
+    showVisitInfo_lv1_lv2(show_visit_shuffle, 0)
+  }
+}
+
+function showVisitInfo_lv1_lv2(visits, visit_check_count){  
+  loop_count = visits.length  
+  if(visit_check_count == loop_count){
+    visit_check_count = 0
+    return
+  }
+  else{
+    //console.log(visits[visit_check_count])
+    firebase.database().ref().child("realrankus_visit").child(visits[visit_check_count]).get()
+	  .then((snapshot) => {
+      if(snapshot.exists()){
+        visit_obj = snapshot.val()
+        visit_count = 0
+        for(var i in visit_obj){
+          //날짜가 30일 이전의 날짜보다 큰 경우만 count
+          compare_days = Number(i.replaceAll("-", ""))
+          if(days_ago_num <= compare_days){
+            visit_count += visit_obj[i]
+          }
+        }
+        //몇 명 이상 방문해야 보여지는지
+        if(visit_count >= 50000){
+          visit_id = 'visit_' + visits[visit_check_count]       
+          $("#" + visit_id).html(visit_count + "명 방문")
+          $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 500);
+        }
+      }      
+      visit_check_count++
+      showVisitInfo_lv1_lv2(visits, visit_check_count)
+    })
+  }
+}
+
 function showMarker(map, marker) {
   if (marker.getMap()) return;
   marker.setMap(map);
@@ -446,6 +577,7 @@ function level0MarkerAction(marker_obj) {
 function createLargeMarker(markers){  
   //removeMarkers(complex_small_markers)
   complex_large_markers = []
+  visit_display = []
   info_windows = []
 
   var mapBounds = defaultMap.getBounds();
@@ -552,11 +684,33 @@ function createLargeMarker(markers){
         gungu : markers[k]['gungu'],
         address : markers[k]['법정동주소']
       });
+
+      var visit_large_id = 'visit_complex_' + marker_code
+      visit_loc_large = `      
+      <div class='visit_loc_large' id="${visit_large_id}"></div>      
+      `
+      window["visit_obj_" + marker_code] = new naver.maps.Marker({
+        position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
+        icon: {
+            content: visit_loc_large,
+            //size: new naver.maps.Size(24, 37),
+            anchor: new naver.maps.Point(9, 80),
+            origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),            
+        },
+        code : "complex_" + marker_code,
+        zIndex: 100 + Number(k),
+        map: defaultMap,
+      });
+
+      visit_display.push(window["visit_obj_" + marker_code])
       complex_large_markers.push(window["large_marker_obj_" + marker_code])
+
       all_markers.push(window["large_marker_obj_" + marker_code])      
+      all_markers.push(window["visit_obj_" + marker_code])
     }    
   }
   updateMarkers(defaultMap, complex_large_markers);
+  updateVisits(defaultMap, visit_display);
 
   for(var i in complex_large_markers){    
     naver.maps.Event.addListener(complex_large_markers[i], 'click', complexMarkerAction(complex_large_markers[i]));
@@ -679,6 +833,7 @@ function createSmallMarker(markers){
 function createLevel2Marker(markers){
 
   level2_markers = []
+  visit_lv2_markers = []
 
   var mapBounds = defaultMap.getBounds();
   
@@ -690,6 +845,7 @@ function createLevel2Marker(markers){
 
     find_sido = ( markers[i]['name_en'].split("_") )[0]
     find_subRegion = markers[i]['find_link'] + "_" + markers[i]['name_en']
+    name_en = markers[i]['name_en']
     
     if(mapBounds.hasLatLng(markers[i])){
 
@@ -717,13 +873,40 @@ function createLevel2Marker(markers){
         zIndex: 100,
         map: defaultMap,
         sido : find_sido,
-        gungu : find_subRegion
+        gungu : find_subRegion,        
       });
+
+      /////      
+      full_name = full_name.replace("세종시", "세종시 세종시")      
+      var visit_lv2_id = 'visit_' + full_name.replaceAll(" ", "_")
+      visit_loc_lv2 = `      
+      <div class='visit_loc_lv2' id="${visit_lv2_id}"></div>      
+      `
+      window["visit_obj_" + name_en] = new naver.maps.Marker({
+        position: new naver.maps.LatLng(Number(markers[i]['lat']), Number(markers[i]['lng'])),
+        icon: {
+            content: visit_loc_lv2,
+            //size: new naver.maps.Size(24, 37),
+            anchor: new naver.maps.Point(4, 65),
+            origin: new naver.maps.Point( Number(markers[i]['lat']), Number(markers[i]['lng']) ),            
+        },
+        code : name_en,
+        region : full_name.replaceAll(" ", "_"),
+        zIndex: 500 + Number(i),
+        map: defaultMap,
+      });
+
+      visit_lv2_markers.push(window["visit_obj_" + name_en])
+      /////
+
       level2_markers.push(complex_marker_lv2)
       all_markers.push(complex_marker_lv2)
+      all_markers.push(window["visit_obj_" + name_en])
     }
-  }
+  }    
+
   updateMarkers(defaultMap, level2_markers);
+  updateVisits_lv1_lv2(defaultMap, visit_lv2_markers);
 
   for(var i in level2_markers){    
     naver.maps.Event.addListener(level2_markers[i], 'click', level2MarkerAction(level2_markers[i]));
@@ -733,6 +916,7 @@ function createLevel2Marker(markers){
 function createLevel1Marker(markers){
 
   level1_markers = []
+  visit_lv1_markers = []
 
   var mapBounds = defaultMap.getBounds();
 
@@ -744,6 +928,7 @@ function createLevel1Marker(markers){
 
     find_sido = ( markers[i]['name_en'].split("_") )[0]
     find_subRegion = markers[i]['find_link'] + "_" + markers[i]['name_en']
+    name_en = markers[i]['name_en']
 
     if(mapBounds.hasLatLng(markers[i])){
       var marker_lv1_id = 'large_marker_' + markers[i]['name_en']
@@ -774,11 +959,36 @@ function createLevel1Marker(markers){
         sido : find_sido,
         gungu : find_subRegion
       });
+
+      /////
+      var visit_lv1_id = 'visit_' + full_name.replaceAll(" ", "_")      
+      visit_loc_lv1 = `      
+      <div class='visit_loc_lv1' id="${visit_lv1_id}"></div>      
+      `
+      window["visit_obj_" + name_en] = new naver.maps.Marker({
+        position: new naver.maps.LatLng(Number(markers[i]['lat']), Number(markers[i]['lng'])),
+        icon: {
+            content: visit_loc_lv1,
+            //size: new naver.maps.Size(24, 37),
+            anchor: new naver.maps.Point(5, 65),
+            origin: new naver.maps.Point( Number(markers[i]['lat']), Number(markers[i]['lng']) ),            
+        },
+        code : name_en,
+        region : full_name.replaceAll(" ", "_"),
+        zIndex: 500 + Number(i),
+        map: defaultMap,
+      });
+
+      visit_lv1_markers.push(window["visit_obj_" + name_en])
+      /////
+      
       level1_markers.push(complex_marker_lv1)
       all_markers.push(complex_marker_lv1)
+      all_markers.push(window["visit_obj_" + name_en])
     }
   }
   updateMarkers(defaultMap, level1_markers);
+  updateVisits_lv1_lv2(defaultMap, visit_lv1_markers);
 
   for(var i in level1_markers){    
     naver.maps.Event.addListener(level1_markers[i], 'click', level1MarkerAction(level1_markers[i]));
@@ -788,12 +998,13 @@ function createLevel1Marker(markers){
 function createLevel0Marker(markers){
 
   level0_markers = []
+  visit_lv0_markers = []
 
   var mapBounds = defaultMap.getBounds();
 
   for(var i in markers){
     full_name = markers[i]['법정동명']
-    find_sido = markers[i]['name_en']
+    find_sido = markers[i]['name_en']    
 
     if(mapBounds.hasLatLng(markers[i])){
       var marker_lv0_id = 'large_marker_' + markers[i]['name_en']
@@ -823,11 +1034,36 @@ function createLevel0Marker(markers){
         map: defaultMap,
         sido : find_sido
       });
+
+      /////
+      var visit_lv0_id = 'visit_' + full_name.replaceAll(" ", "_")      
+      visit_loc_lv0 = `      
+      <div class='visit_loc_lv0' id="${visit_lv0_id}"></div>      
+      `
+      window["visit_obj_" + name_en] = new naver.maps.Marker({
+        position: new naver.maps.LatLng(Number(markers[i]['lat']), Number(markers[i]['lng'])),
+        icon: {
+            content: visit_loc_lv0,
+            //size: new naver.maps.Size(24, 37),
+            anchor: new naver.maps.Point(2, 65),
+            origin: new naver.maps.Point( Number(markers[i]['lat']), Number(markers[i]['lng']) ),            
+        },
+        code : find_sido,
+        region : full_name.replaceAll(" ", "_"),
+        zIndex: 500 + Number(i),
+        map: defaultMap,
+      });
+
+      visit_lv0_markers.push(window["visit_obj_" + name_en])
+      /////
+
       level0_markers.push(complex_marker_lv0)
       all_markers.push(complex_marker_lv0)
+      all_markers.push(window["visit_obj_" + name_en])
     }
   }
   updateMarkers(defaultMap, level0_markers);
+  updateVisits_lv1_lv2(defaultMap, visit_lv0_markers);
 
   for(var i in level0_markers){    
     naver.maps.Event.addListener(level0_markers[i], 'click', level0MarkerAction(level0_markers[i]));
