@@ -780,7 +780,7 @@ function createLargeMarker(markers){
 
       var visit_large_id = 'visit_complex_' + marker_code
       visit_loc_large = `      
-      <div class='${visit_marker_class}' id="${visit_large_id}"></div>      
+      <div class='${visit_marker_class} ${grade}' id="${visit_large_id}"></div>      
       `
       window["visit_obj_" + marker_code] = new naver.maps.Marker({
         position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
