@@ -1263,7 +1263,7 @@
   font-weight: 600;    
 }
 .popupTitle{    
-  font-weight: 900;    
+  font-weight: 600;    
 }  
 .popupSubtitle{
   font-size: 0.7em;
@@ -1878,6 +1878,16 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
 }
 #blog_des{
   resize: none;
+}
+#complex_visit_info{
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.85em;
+  font-weight: 600;  
+  width: 100%;
+  height: 22px;
+  color: #e31939;
+  background: #fafafa;
 }
 
   @media screen and (min-width: 800px){

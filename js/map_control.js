@@ -194,11 +194,14 @@ function removeAnimation(){
   }
 }
 
-function animateMarker(marker){
+function animateMarker(marker, visit_marker){
   removeAnimation()
 
   setTimeout(function(){
     marker.setAnimation(naver.maps.Animation.BOUNCE)
+    if(visit_marker){
+      visit_marker.setAnimation(naver.maps.Animation.BOUNCE)
+    }
   }, 350)  
 }
 
@@ -511,11 +514,11 @@ var temp_coord = ""
 var temp_code = ""
 var current_click = ""
 
-function complexMarkerAction(marker_obj) {  
+function complexMarkerAction(marker_obj, visit_obj) {  
   return function(e) {
     $('#baseModal').modal("hide")
 
-    animateMarker(marker_obj)
+    animateMarker(marker_obj, visit_obj)    
 
     if(marker_obj['gungu'] == selectedSubRegion){
       complex_code = marker_obj['code']
@@ -806,7 +809,7 @@ function createLargeMarker(markers){
   updateVisits(defaultMap, visit_display);
 
   for(var i in complex_large_markers){    
-    naver.maps.Event.addListener(complex_large_markers[i], 'click', complexMarkerAction(complex_large_markers[i]));
+    naver.maps.Event.addListener(complex_large_markers[i], 'click', complexMarkerAction(complex_large_markers[i], visit_display[i]));
     naver.maps.Event.addListener(complex_large_markers[i], 'mouseover', showUpInfo(complex_large_markers[i]));    
   }  
 }
@@ -1133,7 +1136,7 @@ function createLevel0Marker(markers){
       visit_loc_lv0 = `      
       <div class='visit_loc_lv0' id="${visit_lv0_id}"></div>      
       `
-      window["visit_obj_" + name_en] = new naver.maps.Marker({
+      window["visit_obj_" + find_sido] = new naver.maps.Marker({
         position: new naver.maps.LatLng(Number(markers[i]['lat']), Number(markers[i]['lng'])),
         icon: {
             content: visit_loc_lv0,
@@ -1147,12 +1150,12 @@ function createLevel0Marker(markers){
         map: defaultMap,
       });
 
-      visit_lv0_markers.push(window["visit_obj_" + name_en])
+      visit_lv0_markers.push(window["visit_obj_" + find_sido])
       /////
 
       level0_markers.push(complex_marker_lv0)
       all_markers.push(complex_marker_lv0)
-      all_markers.push(window["visit_obj_" + name_en])
+      all_markers.push(window["visit_obj_" + find_sido])
     }
   }
   updateMarkers(defaultMap, level0_markers);
@@ -1201,7 +1204,9 @@ function createTopMarker(markers){
         }
       }
 
-      var svg_color = "#d1453b"
+      //stroke_color = "#C50707"
+
+      var svg_color = "#F72020"
       var top_marker_id = 'top_marker_' + markers[k]['검색코드']
 
       svg_loc_large = `

@@ -34,7 +34,7 @@ function updateTopTable(month, region){
   load_parrtnership(region);      
   $.ajaxSetup({ async: true });
   
-  if(!login_status){
+  if(login_status){
     if(!isMobile){
       showLoginRequest()
     }

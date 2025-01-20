@@ -1952,9 +1952,10 @@
       } else {
         titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>(신) " + aptAddress + "</div>";
         titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>(구) " + aptData.data[index]["법정동주소"] + "</div>";
-      }
+      }      
       detailHtml += "<div class='card'>";
-        detailHtml += "<div class='card-body' style='padding-top: 5px; padding-bottom: 5px;'>";
+        detailHtml += "<div id='complex_visit_info'></div>";
+        detailHtml += "<div class='card-body' style='padding-top: 5px; padding-bottom: 5px;'>";          
           detailHtml += "<div class='complex_like'>";
 
             detailHtml += "<div class='complex_like_category'>";
@@ -2000,7 +2001,7 @@
             detailHtml += "</div>";
 
           detailHtml += "</div>"
-        detailHtml += "</div>"
+        detailHtml += "</div>"        
       detailHtml += "</div>"
 
       //임장기
@@ -3056,23 +3057,25 @@
       if(mapBounds.hasLatLng(target_position)){
         if(current_zoom >= zoom_levels[0]){      
           marker_obj = window["large_marker_obj_" + searchCode]
+          visit_obj = window["visit_obj_" + searchCode]
         }
         else if(current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]){      
           marker_obj = window["small_marker_obj_" + searchCode]
         }
         marker_obj.setZIndex(marker_z_depth += 1)
-        animateMarker(marker_obj)
+        animateMarker(marker_obj, visit_obj)
       }
       else{
         defaultMap.setCenter(target_position)
         if(current_zoom >= zoom_levels[0]){      
           marker_obj = window["large_marker_obj_" + searchCode]
+          visit_obj = window["visit_obj_" + searchCode]
         }
         else if(current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]){      
           marker_obj = window["small_marker_obj_" + searchCode]
         }
         marker_obj.setZIndex(marker_z_depth += 1)
-        animateMarker(marker_obj)        
+        animateMarker(marker_obj, visit_obj)        
       }
 
       if(current_zoom < zoom_levels[1]){

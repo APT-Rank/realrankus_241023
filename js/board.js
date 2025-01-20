@@ -483,7 +483,7 @@ function sendBlog(complex_id){
 
 function complex_blog(complex_id, aptName){
 	var current_region_id = selectedSubRegion
-	console.log("POSTING!!")
+	//console.log("POSTING!!")
 	firebase.database().ref().child("realrankus_blog").child(current_region_id).child("complex_" + complex_id).child("blog_list").get()
 	.then((snapshot) => {
 		if(snapshot.exists()){
