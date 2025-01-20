@@ -2831,6 +2831,7 @@
       //임장기 로딩해서 넣는 함수
       setTimeout(function(){
         complex_blog(searchCode, aptName)
+        //$("#complex_visit_info").html($("#visit_complex_" + searchCode).text())
       }, 350)
 
       //지도 그리는 함수
@@ -3085,23 +3086,6 @@
       prev_selection = current_selection
       current_selection = searchCode
       current_apt_name = aptName
-
-      /*
-      //리스트 이동
-      if(isMobile){
-        table_offset_y = 165
-      }
-      else{
-        table_offset_y = 175
-      }
-      scroll_back = "#dataList_wrapper"        
-      find_id = "#aptSelect_" + index
-
-      currentY = $(scroll_back).scrollTop()
-      offsetY = $(find_id).offset().top - table_offset_y
-      destY = Math.abs(currentY + offsetY)        
-      $(scroll_back).animate( { scrollTop : destY }, 1500, 'easeOutQuart');
-      */
 
       $("#pageLoadingBack").remove()
     }

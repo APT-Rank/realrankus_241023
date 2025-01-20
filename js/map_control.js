@@ -175,7 +175,7 @@ function showHideMarker(zoom){
   if(current_selection != ""){    
     for(var i in all_markers){
       if(all_markers[i]['code'] == current_selection){
-        animateMarker(all_markers[i])
+        animateMarker(all_markers[i], window["visit_obj_" + current_selection])
         break;
       }      
     }    
