@@ -30,7 +30,11 @@ const sub05_db = firebase.initializeApp({
   databaseURL: "https://realrankus-sub05.firebaseio.com/"
 }, 'sub05_db');
 
-var db_list = [sub01_db, sub02_db, sub03_db, sub04_db, sub05_db]
+const sub06_db = firebase.initializeApp({
+  databaseURL: "https://realrankus-sub06.firebaseio.com/"
+}, 'sub06_db');
+
+var db_list = [sub01_db, sub02_db, sub03_db, sub04_db, sub05_db, sub06_db]
 
 var comment_db = firebase.firestore()
 var database = firebase.database()  

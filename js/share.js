@@ -1696,4 +1696,45 @@ function realrankus_visit(complex, sido, gungu, dong){
 			sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
 		}
 	})
+
+	//SUB06 DB
+	sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+		}
+		else{
+			sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+		}
+		else{
+			sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub06_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub06_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+		}
+		else{
+			sub06_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})
+
+	sub06_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+	.then(function(snapshot){
+		if(snapshot.val() === null){
+			sub06_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+		}
+		else{
+			sub06_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+		}
+	})  
 }
