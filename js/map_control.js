@@ -202,6 +202,9 @@ function animateMarker(marker, visit_marker){
     if(visit_marker){
       visit_marker.setAnimation(naver.maps.Animation.BOUNCE)
     }
+    else{
+      visit_marker.setAnimation(null);
+    }
   }, 350)  
 }
 

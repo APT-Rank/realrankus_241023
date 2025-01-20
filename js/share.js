@@ -1639,34 +1639,6 @@ function realrankus_visit(complex, sido, gungu, dong){
 			sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
 		}
 	})
-  .then(function(){
-    setTimeout(function(){
-      firebase.database().ref().child("realrankus_visit").child("complex_" + complex).get()
-      .then((snapshot) => {
-        if(snapshot.exists()){
-          visit_obj = snapshot.val()
-          visit_count = 0        
-          for(var i in visit_obj){
-            //날짜가 30일 이전의 날짜보다 큰 경우만 count
-            compare_days = Number(i.replaceAll("-", ""))
-            if(days_ago_num <= compare_days){
-              visit_count += visit_obj[i]
-            }
-          }
-          if(visit_count == 1){          
-            $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
-            $("#visit_complex_" + complex).animate({opacity: '1', marginTop:'0px'}, 150);            
-            $("#complex_visit_info").html("첫 번째 방문이네요!")            
-          }
-          else{          
-            $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
-            $("#complex_visit_info").html(visit_count.toLocaleString() + "명 방문했어요!")            
-          }        
-        }
-      })
-    }, 350)
-  })
-
 	sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
 	.then(function(snapshot){
 		if(snapshot.val() === null){
@@ -1706,7 +1678,34 @@ function realrankus_visit(complex, sido, gungu, dong){
 		else{
 			sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
 		}
-	})
+	})  
+  .then(function(){
+    setTimeout(function(){
+      firebase.database().ref().child("realrankus_visit").child("complex_" + complex).get()
+      .then((snapshot) => {
+        if(snapshot.exists()){
+          visit_obj = snapshot.val()
+          visit_count = 0        
+          for(var i in visit_obj){
+            //날짜가 30일 이전의 날짜보다 큰 경우만 count
+            compare_days = Number(i.replaceAll("-", ""))
+            if(days_ago_num <= compare_days){
+              visit_count += visit_obj[i]
+            }
+          }
+          if(visit_count == 1){          
+            $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
+            $("#visit_complex_" + complex).animate({opacity: '1', marginTop:'0px'}, 150);            
+            $("#complex_visit_info").html("첫 번째 방문이네요!")            
+          }
+          else{          
+            $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
+            $("#complex_visit_info").html(visit_count.toLocaleString() + "명 방문했어요!")            
+          }        
+        }
+      })
+    }, 350)
+  })
 
 	sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
 	.then(function(snapshot){
