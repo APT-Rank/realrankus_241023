@@ -1696,11 +1696,11 @@ function realrankus_visit(complex, sido, gungu, dong){
           if(visit_count == 1){          
             $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
             $("#visit_complex_" + complex).animate({opacity: '1', marginTop:'0px'}, 150);            
-            $("#complex_visit_info").html("첫 번째 방문이네요!")            
+            $("#complex_visit_info").html("첫 번째 방문이네요!")
           }
           else{          
             $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
-            $("#complex_visit_info").html(visit_count.toLocaleString() + "명 방문했어요!")            
+            $("#complex_visit_info").html(visit_count.toLocaleString() + "번째 방문이예요!")
           }        
         }
       })
