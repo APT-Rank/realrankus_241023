@@ -1,0 +1,159 @@
+:root {
+  --doc-height: 100%;
+ }   
+ body{
+   -ms-overflow-style: none;
+   /*min-height: 100vh;
+   min-height: -webkit-fill-available;*/ 
+   height: 100vh;
+   height: var(--doc-height);
+   font-family: 'Noto Sans KR', sans-serif;
+ }  
+ #container{
+   margin-top: constant(safe-area-inset-top);
+   margin-top: env(safe-area-inset-top);
+   margin-bottom: constant(safe-area-inset-bottom);
+   margin-bottom: env(safe-area-inset-bottom);
+ }
+ .toast-success {
+   background-color: #0f8b51;
+ }
+ #titleBar{
+   position: fixed;
+   display: grid;
+   grid-template-columns: 50px 50px 50px 1fr 50px 50px 50px;
+   top: 0;
+   left: 0;
+   right: 0;
+   width: 100%;
+   height: 51px;    
+   text-align: center;
+   line-height: 50px;
+   background-color: #e31939;
+   z-index: 800;
+ }
+ #title{
+   font-family: 'Noto Sans KR', sans-serif;
+   color: white;
+   font-size: 1.25em;
+   font-weight: 600;
+ }
+ .listBox2{    
+   display: grid;
+   grid-template-columns: 70px 1fr 60px;
+   align-items: center;
+   border-bottom: 1px solid gray;
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+ }
+.listBox:active{
+ background-color: #ffdfde;
+}
+.value_score{
+ text-align: right;
+ justify-content: center;
+ padding-right: 8px;
+ font-size: 0.9em;
+ font-weight: 600;
+}
+.rank_summary{
+ text-align: center;
+ font-size: 0.85em;
+ font-weight: 600;
+}
+.apt_name{
+ font-size: 0.85em;
+ font-weight: bold;
+}
+#selections{        
+ display: grid;    
+ grid-template-columns: 0.8fr 1.5fr 1fr;
+ align-content: center;
+ justify-content: center;
+ padding-top: 10px;
+ padding-bottom: 10px;    
+ background-color: #e31939;
+ position: fixed;
+ top: 50px;
+ left: 0;
+ right: 0;
+ box-shadow: rgba(50, 50, 93, 0.25) 0px 5px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+ z-index: 810;
+}
+#sido, #gungu, #month, #theme{
+ border-radius: 0;
+ -webkit-border-radius: 0;
+ width: 95%;
+ height: 2em;
+ font-size: 0.8em;
+ margin-right: 2px;
+ border: none;
+ background-color: white;
+ color: black;
+}
+#sido:focus, #gungu:focus, #month:focus, #theme:focus{
+ outline: 0;
+}
+#sido_selection{
+ text-align: left;
+ padding-left: 10px;
+}
+#gungu_selection{
+ text-align: left;
+}
+#month_selection{
+ text-align: right;
+ padding-right: 10px;
+}
+.toShare{
+ width: 100%;    
+ height: 2.5em;    
+ font-weight: 600;
+ border-radius: 5px;
+ border: None;
+ color: black
+}
+.summaryContent{
+  display:grid;
+  grid-template-columns: 100px 1fr;
+  height: 1.5em;
+}
+.summaryTitle{
+  display:grid;
+  grid-template-columns: 1fr 100px;
+  height: 3em;  
+  text-align: center;
+  place-items: center;
+  font-size: 0.9em;
+  font-weight: 600;
+  background-color: rgb(231, 231, 231);
+  border-bottom: 1px solid gray;
+}
+
+ @media screen and (min-width: 800px){
+   body.modal-open {
+     overflow: visible !important;      
+     padding-right: 0px !important;      
+   }
+   ::-webkit-scrollbar {
+     display: 3px;
+   }
+   #centerBox{
+     width: 100%;
+     display: grid;
+     grid-template-columns: 600px 1fr;
+     /* justify-content:center; */
+   }
+   #titleBar, #titleBar_theme{
+     /* margin: 0 auto; */
+     width: 600px;
+   }
+   #selections, #weight, #themeSelections, #linkToAptrank{
+     /* margin: 0 auto; */
+     width: 600px;
+   }
+   #dataList_wrapper, #titleBar, #selections, #weight, .dong_selector{
+     box-shadow: rgba(50, 50, 93, 0.2) 5px 5px 5px -1px, rgba(0, 0, 0, 0.05) 5px 3px 2px -1px;
+     z-index: 300;      
+   }
+ }  
