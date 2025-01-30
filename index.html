@@ -2090,7 +2090,9 @@
         }
         detailHtml += "</div></div>";
       }
-      */      
+      */ 
+     
+      login_status = true
 
       if(login_status == false){
           detailHtml += "<div class='loginBox'>"
@@ -2103,7 +2105,7 @@
       else{
         detailHtml += "<div class='card-body' style='padding-top: 2px'>";
         detailHtml += "<div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>";
-        detailHtml += "<div class='comment'>(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)</div>";
+        detailHtml += "<div class='comment'>(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)</div>";               
                 
         detailHtml += "<hr class='hr_small'>";
         if (selectedMonth == thisMonth) {          
@@ -2116,7 +2118,23 @@
         else{
           detailHtml += "<div class='popupSubtitle' style='text-align: center; margin-top: 10px'>↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓</div>";
           detailHtml += "<div id='rankSimul' onclick='openSimulation(aptData.data," + index + ")'>랭크 시뮬레이션</div>";
-        }        
+        }
+
+        detailHtml += "</div>"
+
+        detailHtml += "<div class='accordion' id='history_accordion'>"
+        detailHtml += "<div class='accordion-item'>"
+        detailHtml += "<h2 class='accordion-header'>"
+        detailHtml += "<button id='btn_history_accordion' class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>"
+        detailHtml += "<i class='fa-solid fa-chart-column'></i>&nbsp&nbspRank History</button>"
+        detailHtml += "</h2>"
+        detailHtml += "<div id='collapseOne' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>"
+        detailHtml += "<div class='accordion-body'>"
+        detailHtml += "<div class='graph' style='height: 120px;'> <canvas id='rankChart'></canvas></div>"
+        detailHtml += "</div>"
+        detailHtml += "</div>"
+        detailHtml += "</div>"
+        detailHtml += "</div>"
       }      
 
       detailHtml += "</div></div>"
@@ -2953,28 +2971,26 @@
       });
       //}
 
-      /*
+      
       if (Number(selectedMonth) > 202203) {
         rank_history = aptData.data[index]["rank_history"];
         rankMonth = [""];
         rankData = [null];
-        for (var j = 0; j < rank_history.length; j++) {
+        history_length = 0
+        if(rank_history.length > 12){
+          history_length = 12
+        }
+        else{
+          history_length = rank_history.length
+        }
+
+        for (var j = 0; j < history_length; j++) {
           if (rank_history[j][1] == 9999) {
           } else if (rank_history[j][1] == 0) {
-            rankMonth.push(
-              "'" +
-                rank_history[j][0].substr(2, 2) +
-                "." +
-                rank_history[j][0].substr(4, 2)
-            );
+            rankMonth.push("'" + rank_history[j][0].substr(2, 2) + "." + rank_history[j][0].substr(4, 2) );
             rankData.push(aptData.data[index]["rank"]);
           } else {
-            rankMonth.push(
-              "'" +
-                rank_history[j][0].substr(2, 2) +
-                "." +
-                rank_history[j][0].substr(4, 2)
-            );
+            rankMonth.push("'" + rank_history[j][0].substr(2, 2) + "." + rank_history[j][0].substr(4, 2) );
             rankData.push(rank_history[j][1]);
           }
         }
@@ -2985,7 +3001,7 @@
         rankData.reverse();
         drawRankChart(rankMonth, rankData, aptData.data[itemNum - 1]["rank"]);
       }
-      */
+      
 
       if(login_status){
         drawChart( aptValue.toFixed(2), livingScore, transportScore, infraScore, eduScore );

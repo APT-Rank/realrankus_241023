@@ -1889,6 +1889,26 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
   color: #e31939;
   background: rgba(0, 0, 0, .03);
 }
+#history_accordion, .accordion-item{
+  border-radius: 0px;
+  border : 0px;  
+}
+#btn_history_accordion{
+  border-radius: 0px;
+  border : 0px;
+  padding: .5rem 1rem;
+  background-color: rgba(0, 0, 0, .03);
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+}
+.accordion-button:not(.collapsed){
+  color:#e31939
+}
+
+.accordion-button:focus{
+  box-shadow : none
+}
 
   @media screen and (min-width: 800px){
     body.modal-open {
