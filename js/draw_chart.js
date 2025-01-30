@@ -392,7 +392,8 @@ function drawRankChart(rankMonth, rankData, totalRank){
         },
         x: {
           ticks: {                
-              maxRotation: 0,
+              maxRotation: 45,
+              minRotation: 45,
               font: {
                 size: 10
               }
@@ -412,15 +413,24 @@ function drawRankChart(rankMonth, rankData, totalRank){
           display: false,          
         },
         datalabels: {
-          display: 'auto',         
+          display: 'show',
           color: 'black',
           align: align_number,
           anchor: 'start',
           padding: 6,
-          textAlign: 'center',          
+          textAlign: 'center',
           font: {
-            weight: 'bold'
-          },              
+              weight: 'bold',
+              size: 11
+          },
+          formatter: function(value, context) {
+            if(value >= 100){
+              return value
+            }
+            else{
+              return value + '위';
+            }
+          }
         }
       }
     },
