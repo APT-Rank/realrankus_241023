@@ -377,15 +377,15 @@ function drawRankChart(rankMonth, rankData, totalRank){
         backgroundColor: "#ff3d38"
       }],
     },
-    options: {      
+    options: {     
       responsive: true,      
       maintainAspectRatio: false,
       scales:{
         y:{
           display: false,
-          reverse: true,            
+          //reverse: false,            
           suggestedMax: totalRank,
-          suggestedMin: 1,
+          suggestedMin: 0,
           ticks:{            
             stepSize: 1,            
           }
@@ -406,6 +406,13 @@ function drawRankChart(rankMonth, rankData, totalRank){
         }
       },
       plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {              
+              return setGrade(context['raw']);
+            }
+          }
+        },
         legend: {
           display: false,
         },
@@ -415,21 +422,16 @@ function drawRankChart(rankMonth, rankData, totalRank){
         datalabels: {
           display: 'show',
           color: 'black',
-          align: align_number,
+          align: 'top',
           anchor: 'start',
           padding: 6,
           textAlign: 'center',
           font: {
               weight: 'bold',
-              size: 11
+              size: 12
           },
           formatter: function(value, context) {
-            if(value >= 100){
-              return value
-            }
-            else{
-              return value + '위';
-            }
+            return setGrade(value)
           }
         }
       }

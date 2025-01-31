@@ -2982,6 +2982,7 @@
           history_length = rank_history.length
         }
 
+        /*
         for (var j = 0; j < history_length; j++) {
           if (rank_history[j][1] == 9999) {
           } else if (rank_history[j][1] == 0) {
@@ -2994,10 +2995,17 @@
         }
         //rankMonth.push("");
         //rankData.push(null);
+        */
+
+        for (var j = 0; j < history_length; j++) {
+          rankMonth.push("'" + rank_history[j][0].substr(2, 2) + "." + rank_history[j][0].substr(4, 2) );
+          rankData.push(rank_history[j][2]);
+        }
 
         rankMonth.reverse();
         rankData.reverse();
-        drawRankChart(rankMonth, rankData, aptData.data[itemNum - 1]["rank"]);
+        //drawRankChart(rankMonth, rankData, aptData.data[itemNum - 1]["rank"]);
+        drawRankChart(rankMonth, rankData, 110);
       }
       
 
