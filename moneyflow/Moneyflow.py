@@ -91,6 +91,7 @@ df_apt_price.set_index('TIME', inplace = True)
 df_apt_price = df_apt_price['전국']
 
 df_MoneyFlow = pd.concat([df_monthly, df_daily], axis=1, join='inner')
+df_cut_length = len(df_MoneyFlow)
 
 #한국부동산원 아파트가격 추가
 #df_kor_apt_price = get_KOR_apt_price()
@@ -101,7 +102,7 @@ sr_sum_kospi_kosdaq = df_MoneyFlow['yf_KOSPI'] + df_MoneyFlow['yf_KOSDAQ']
 df_sum_kospi_kosdaq = sr_sum_kospi_kosdaq.to_frame()
 df_sum_kospi_kosdaq.rename(columns = {0:'yf_KOSPI_KOSDAQ'}, inplace=True)
 
-df_MoneyFlow = pd.concat([df_MoneyFlow, df_sum_kospi_kosdaq, df_apt_price], axis=1, join='inner')
+df_MoneyFlow = pd.concat([df_MoneyFlow, df_sum_kospi_kosdaq, df_apt_price], axis=1, join='outer')
 df_MoneyFlow.rename(columns = {'전국':'KOR_APT_PRICE'}, inplace=True)
 
 #print([df_MoneyFlow.columns])
@@ -117,6 +118,9 @@ for i in range( len(df_MoneyFlow.columns) ):
 
 df_MoneyFlow['GENERATE'] = str(now)
 df_MoneyFlow = df_MoneyFlow.reset_index()
+
+#df_MoneyFlow를 df_cut_length만큼 자름
+df_MoneyFlow = df_MoneyFlow.iloc[:df_cut_length]
 
 #df_MoneyFlow.to_csv(path + "/market_MoneyFlow.csv", encoding='cp949')
 df_MoneyFlow.to_json(path + "/market_moneyflow.json", force_ascii=False, indent=4)
