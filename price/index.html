@@ -360,9 +360,9 @@
 
   if (today_day == 1){    
     if(monthago.getFullYear() != today.getFullYear()){
-      var prev_month = "" + (monthago.getFullYear()-1) + dateReturn( (monthago.getMonth()+1 ) )
+      var prev_month = "" + (today.getFullYear()-1) + dateReturn( (monthago.getMonth()+1 ) )
     }
-  }  
+  }
 
   var start_date_str = (today.getMonth() + 1) + "/1"
   var end_date_str = (today.getMonth() + 1) + "/" + today.getDate()
@@ -391,9 +391,6 @@
         }
       }
     });    
-
-    // SDK 초기화 여부를 판단합니다.
-    //console.log(Kakao.isInitialized());
 
     var option = ""
     for(i = 0 ; i < regions.length ; i++){
@@ -424,7 +421,7 @@
       timeOut: 1000
     };
 
-    console.log($("#fav").offset().left)
+    //console.log($("#fav").offset().left)
 
     fav_top_pos = $("#fav").position().top + $("#fav").height() - 20
     if(isMobile){
@@ -437,10 +434,8 @@
 
     const url = new URL(window.location.href)
     const urlParams = url.searchParams
-    //console.log(urlParams)
 
     if(urlParams.has('preg')){
-      //console.log(urlParams.get('reg'))
       selectedRegion = urlParams.get('preg')
     }
     else if(lastRegion != null){
@@ -448,7 +443,6 @@
     }
 
     if(urlParams.has('psub')){
-      //console.log(urlParams.get('sub'))
       selectedSubRegion = urlParams.get('psub')
     }
     else if(lastSubRegion != null){
@@ -456,7 +450,6 @@
     }
 
     if(urlParams.has('pmon')){
-      //console.log(urlParams.get('mon'))
       selectedMonth = urlParams.get('pmon')
     }
     else if(lastMonth != null){
@@ -848,7 +841,6 @@ function updateTable(region){
 
     url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
     $.getJSON(url, function(json) {
-        //console.log(json);
         aptData = json;
         //sortData = json;
         //aptData.data = Object.assign(aptData.data, this_apt_data.data)
@@ -1196,9 +1188,6 @@ function updateTable(region){
     
     last_dealed_date = dealed_history_date[history_date_length - 1]
     last_dealed_price = dealed_history_price[history_price_length - 1]
-    
-    //console.log("last_dealed_date :", last_dealed_date)
-    //console.log("dealed_date :", dealed_date)
 
     if(last_dealed_date == dealed_date){
       last_dealed_date = dealed_history_date[history_date_length - 2]
@@ -2061,8 +2050,6 @@ function updateTable(region){
   }
 
   function showFavorite(){
-    console.log(count_data.data)
-
     fav_html = ""    
     if(price_fav.length == 0){
       fav_html += "<div class='favNotice'>저장된 즐겨찾기가 없어요.<br><br>지역 이름 옆의 <i class='fa-solid fa-star'></i> 을 눌러<br>즐겨찾기를 추가해 주세요.</div>"
