@@ -1164,6 +1164,11 @@ function show_daily_info(){
   mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], "5Y" )
   mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "5Y" )
 
+  //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
+  mf_housing_apt_price = mf_housing_apt_price.map( x => {
+    if(x == 0){ x = null }
+    return x
+  })  
   mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "5Y" )
   mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "5Y" )
   mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "5Y" )  
