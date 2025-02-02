@@ -74,11 +74,12 @@
   <script src="../js/search_theme.js" type="text/javascript"></script>
   <script src="../js/rearrange_theme.js" type="text/javascript"></script>
   <script src="../js/share.js" type="text/javascript"></script>
+  <script src="../js/map_control_theme.js" type="text/javascript"></script>
   <script src="../js/distance.js" type="text/javascript"></script>
   <script src="../js/ad_aptrank_theme.js" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet"/>
-  <link href="../css/style_theme.css" rel="stylesheet"/>
+  <link href="../css/style_theme_map.css" rel="stylesheet"/>
   <link href="../css/slider.css" rel="stylesheet"/>
   <link href="../css/distance.css" rel="stylesheet"/>
 
@@ -184,8 +185,11 @@
         <div id="closeRegionRearrange" onClick='closeRegionRearrange()' ><i class="fas fa-times"></i></div>
       </div>
 
-      <!--리스트 데이터 붙여넣는 영역-->
-      <div id="themeDataList"></div>      
+      <!--리스트 데이터 붙여넣는 영역-->      
+      <div id="dataList_wrapper">
+        <div id="themeDataList"></div>
+      </div>
+      <div id="dataMap"></div>
 
       <!--리얼랭커스 연결-->      
       <div id="linkToAptrank_bottom"></div>
@@ -305,7 +309,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
   
-  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd"></script>
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd"></script>  
 
 </body>
 
@@ -342,6 +346,12 @@
   var popupHistory = [];
   var routeArray = []
 
+  var prev_selection = ""
+  var current_selection = ""
+  var current_apt_name = ""
+  var searchingData = {}
+  var indexedDB_data = {}  
+
   var currentMenu = ""
 
   var popMsg = "클립보드에 복사되었습니다."
@@ -374,7 +384,7 @@
     }
     $('#sido').html(option)
 
-    $('#themeDataList').css({'padding-top': '115px'})
+    //$('#themeDataList').css({'padding-top': '115px'})
 
     var lastRegion = localStorage.getItem('lastRegion')
     var lastSubRegion = localStorage.getItem('lastSubRegion')
@@ -421,11 +431,61 @@
     $('#themeDataList').html("");
 
     optionChange(selectedSubRegion, selectedRegion);
+
+    region_url = "../" + updatedMonth + "/region_map.json";
+    $.getJSON(region_url, function (json) {        
+    //console.log(json);
+    regionMapData = json.data;            
+    }).done(function(){
+      for (var i in regionMapData){
+        if(regionMapData[i]['Level'] == "Level0"){
+          level0_loc.push(regionMapData[i])
+        }
+        if(regionMapData[i]['Level'] == "Level1"){
+          level1_loc.push(regionMapData[i])
+        }
+        if(regionMapData[i]['Level'] == "Level2"){
+          level2_loc.push(regionMapData[i])
+        }
+      }
+      if(selectedRegion == "Korea"){
+        loadMap(127.9564, 36.6778)
+      }
+      else{
+        region_code = selectedSubRegion.split("_")[0]
+        for(var i in level1_loc){
+          if(level1_loc[i]['법정동코드']+"" == region_code){
+            loadMap(level1_loc[i]['lng'], level1_loc[i]['lat'])
+            break;
+          }
+        }
+      }
+      current_pos = defaultMap.getCenterPoint()
+      projection = defaultMap.getProjection();
+      current_coord = projection.fromPointToCoord(current_pos)
+
+      origin_lat = current_coord['y']
+      origin_lng = current_coord['x']
+
+      nearby_region = []
+      nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
+      
+      show_up_complexs = []
+      show_up_complexs = defineMarkerList(nearby_region)
+
+      current_zoom = defaultMap.getZoom()              
+
+      showHideMarker(current_zoom)
+      $("#pageLoadingBack").remove()
+      optionChange(selectedSubRegion, selectedRegion);
+      updateRegion();
+    })    
+
     updateRegion()
     initSorting()
 
-    $("#theme").val(selectedTheme).prop("selected", true);    
-    $("#sido").val(selectedRegion).prop("selected", true);
+    //$("#theme").val(selectedTheme).prop("selected", true);    
+    //$("#sido").val(selectedRegion).prop("selected", true);
     regionName = $("#sido option:selected").val();
 
     $('div.modal').on('show.bs.modal', function() {
@@ -444,12 +504,16 @@
       history.replaceState('', document.title, window.location.pathname);
     })
 
-    /*
-    if($.cookie('popThemeCookie') != "202211" && login_status == false){
-      showNotice()
-      $('#exampleModal').modal("show");
-    }
-    */
+    $("#exampleModal").on("hidden.bs.modal", function () {
+      changeMetaTagToDefault();
+      current_selection = ""
+      current_apt_name = ""
+      removeAnimation()
+    });    
+
+    $("#linkToAptrank_bottom").css({'width' : '100%'})
+    
+    $("#dataList_wrapper").css({'margin-top':'117px', 'height': window.innerHeight - ( $("#titleBar_theme").height() + $("#themeSelections").height() + 23 +$("#linkToAptrank_bottom").height() )})
 
     if(UserAgent.indexOf("inApp")>-1){
       if(checkMobile() == "ios"){
@@ -740,7 +804,14 @@
         var changeRegion = $("#gungu > option:selected").val();
         updateTable(type, changeRegion)
       })
-  }
+    }
+    $("#dataList_wrapper").css({'margin-top':$("#titleBar_theme").height() + $("#themeSelections").height() + $("#weight").height() + $(".dong_selector").height() + 25,
+      'height': window.innerHeight - ( $("#titleBar_theme").height() + $("#themeSelections").height() + $("#weight").height() + $(".dong_selector").height() + 23 +$("#linkToAptrank_bottom").height() )})
+
+    if(isMobile){        
+      $("#dataMap").css({'margin-top':$("#titleBar_theme").height() + $("#themeSelections").height()+ $("#weight").height() + 20,
+                        'height': window.innerHeight - ( $("#titleBar_theme").height() + $("#themeSelections").height() + $("#weight").height() + $("#linkToAptrank_bottom").height() + 20 )})        
+    }
 }
 
   function showDistance(arr){    
