@@ -352,6 +352,7 @@
   var searchingData = {}
   var indexedDB_data = {}  
 
+  var come_from_map = false
   var currentMenu = ""
 
   var popMsg = "클립보드에 복사되었습니다."
@@ -484,8 +485,8 @@
     updateRegion()
     initSorting()
 
-    //$("#theme").val(selectedTheme).prop("selected", true);    
-    //$("#sido").val(selectedRegion).prop("selected", true);
+    $("#theme").val(selectedTheme).prop("selected", true);    
+    $("#sido").val(selectedRegion).prop("selected", true);
     regionName = $("#sido option:selected").val();
 
     $('div.modal').on('show.bs.modal', function() {
@@ -735,6 +736,7 @@
   }
 
   function updateTable(type, region){
+    removeMarkers()
     var distance_check = []
     routeArray = []
     $('div.modal').modal("hide");
@@ -763,6 +765,7 @@
       })
       .done(function(){
         RatioListUp(aptData, type)
+        markerOnMap(aptData)
       })
       .fail(function(jqXMLHttpRequest,status,error){
         $("#gungu option:eq(0)").prop("selected", true);
@@ -780,6 +783,7 @@
       })
       .done(function(){
         Ratio2ListUp(aptData, type)
+        markerOnMap(aptData)
       })
       .fail(function(jqXMLHttpRequest,status,error){
         $("#gungu option:eq(0)").prop("selected", true);
@@ -798,13 +802,15 @@
       })
       .done(function(){
         ListUp(aptData, type)
+        markerOnMap(aptData)
       })
       .fail(function(jqXMLHttpRequest,status,error){
         $("#gungu option:eq(0)").prop("selected", true);
         var changeRegion = $("#gungu > option:selected").val();
         updateTable(type, changeRegion)
       })
-    }
+    }               
+
     $("#dataList_wrapper").css({'margin-top':$("#titleBar_theme").height() + $("#themeSelections").height() + $("#weight").height() + $(".dong_selector").height() + 25,
       'height': window.innerHeight - ( $("#titleBar_theme").height() + $("#themeSelections").height() + $("#weight").height() + $(".dong_selector").height() + 23 +$("#linkToAptrank_bottom").height() )})
 
@@ -812,6 +818,133 @@
       $("#dataMap").css({'margin-top':$("#titleBar_theme").height() + $("#themeSelections").height()+ $("#weight").height() + 20,
                         'height': window.innerHeight - ( $("#titleBar_theme").height() + $("#themeSelections").height() + $("#weight").height() + $("#linkToAptrank_bottom").height() + 20 )})        
     }
+}
+
+function markerOnMap(aptData){
+  var loop_length = aptData.data.length
+  var sorted_aptData = []
+  //aptData.data의 "최소공지가/100000000" 이 0보다 크고, 1보다 작거나 같은 배열만 sorted_aptData에 넣는다.
+
+  if(selectedTheme == "under100M"){
+    for(var i = 0 ; i < loop_length ; i++){
+      min_land_price = aptData.data[i]["최소공지가"] / 100000000
+      if(min_land_price > 0 && min_land_price <= 1){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }
+  if(selectedTheme == "under200M"){
+    for(var i = 0 ; i < loop_length ; i++){
+      min_land_price = aptData.data[i]["최소공지가"] / 100000000
+      if(min_land_price > 0 && min_land_price <= 2){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }
+  if(selectedTheme == "under300M"){
+    for(var i = 0 ; i < loop_length ; i++){
+      min_land_price = aptData.data[i]["최소공지가"] / 100000000
+      if(min_land_price > 0 && min_land_price <= 3){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }
+  if(selectedTheme == "under5floor"){
+    for(var i = 0 ; i < loop_length ; i++){
+      max_floor = aptData.data[i]["최고층"]
+      if(max_floor <= 5  && max_floor != null){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }
+  if(selectedTheme == "over30year"){    
+    for(var i = 0 ; i < loop_length ; i++){
+      aptDuration = aptData.data[i]["준공년차"]
+      if(aptDuration >= 30){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }
+  if(selectedTheme == "newApt"){    
+    for(var i = 0 ; i < loop_length ; i++){
+      apt_type = aptData.data[i]["타입"]
+      if(apt_type == "ABYG" || apt_type == "EBYG"){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }    
+  }
+
+  if(selectedTheme == "rebuild"){
+    for(var i = 0 ; i < loop_length ; i++){
+      apt_type = aptData.data[i]["타입"]
+      if(apt_type == "JGC"){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }
+
+  if(selectedTheme == "hPriceRatio"){
+    sorted_aptData = aptData.data    
+  }
+  
+  if(selectedTheme == "ratioFrom202107"){
+    sorted_aptData = aptData.data
+  }
+
+  if(selectedTheme == "tripGuide"){
+    for(var i = 0 ; i < loop_length ; i++){
+      apt_type = aptData.data[i]["타입"]
+      if(apt_type == "JGC"){
+        sorted_aptData.push(aptData.data[i])
+      }
+    }
+  }  
+
+  if(!come_from_map){
+    region_code = selectedSubRegion.split("_")[0]
+   
+    for(var i in level1_loc){      
+      if(level1_loc[i]['법정동코드']+"" == region_code){                
+        if(sorted_aptData.length > 0){
+          new_center = new naver.maps.LatLng(sorted_aptData[0]['y'], sorted_aptData[0]['x'])
+        }
+        else{          
+          new_center = new naver.maps.LatLng(level1_loc[i]['lat'], level1_loc[i]['lng'])          
+        }        
+        
+        defaultMap.setCenter(new_center);
+        current_zoom = defaultMap.getZoom()
+
+        if(current_zoom < 14){
+          defaultMap.setZoom(16)
+        }              
+
+        origin_lat = level1_loc[i]['lat']
+        origin_lng = level1_loc[i]['lng']
+
+        //origin_lat = aptData.data[0]['lat']
+        //origin_lng = aptData.data[0]['lng']
+
+        nearby_region = []
+        nearby_region = findNearbyRegion(origin_lat, origin_lng, 15)
+
+        show_up_complexs = []
+        show_up_complexs = defineMarkerList(nearby_region)
+
+        show_up_complexs = sorted_aptData
+
+        showHideMarker(current_zoom)
+        $("#pageLoadingBack").remove()
+
+        break;
+      }
+    }
+  }
+  else{
+    come_from_map = false;
+    showHideMarker(current_zoom)
+    $("#pageLoadingBack").remove()
+  }
 }
 
   function showDistance(arr){    
@@ -921,7 +1054,10 @@
     show_partnership()
 
     //로그인 확인
-    if(!login_status){
+
+    //login_status = true
+
+    if(login_status){
       if(type == "under5floor" || type == "over30year" || type == "newApt" || type == "rebuild" || type == "tripGuide"){
           $("#themeShare").css("visibility", "hidden")          
           $("#rearrange").css("visibility", "hidden")
@@ -1086,7 +1222,7 @@
       } 
 
       if(type == "under5floor"){            
-        if(max_floor <= 5){
+        if(max_floor <= 5 && max_floor != null){
           count += 1;              
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
@@ -1299,7 +1435,7 @@
     show_partnership()
 
     //로그인 확인
-    if(!login_status){      
+    if(login_status){      
         $("#themeShare").css("visibility", "hidden")          
         $("#rearrange").css("visibility", "hidden")
         $("#guide_and_search").css("visibility", "hidden")
@@ -1411,7 +1547,7 @@
     show_partnership()
 
     //로그인 확인
-    if(!login_status){      
+    if(login_status){      
         $("#themeShare").css("visibility", "hidden")          
         $("#rearrange").css("visibility", "hidden")
         $("#guide_and_search").css("visibility", "hidden")

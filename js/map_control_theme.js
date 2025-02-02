@@ -120,8 +120,8 @@ function loadMap(center_x, center_y){
     nearby_region = []
     nearby_region = findNearbyRegion(origin_lat, origin_lng, 30)
 
-    show_up_complexs = []
-    show_up_complexs = defineMarkerList(nearby_region)
+    //show_up_complexs = []
+    //show_up_complexs = defineMarkerList(nearby_region)
     //getDistanceFromLatLonInKm()
 
     showHideMarker(current_zoom)
@@ -129,7 +129,8 @@ function loadMap(center_x, center_y){
 
   naver.maps.Event.addListener(defaultMap, 'zoom_changed', function (zoom) {
     current_zoom = defaultMap.getZoom()    
-    showHideMarker(current_zoom)
+    showHideMarker(current_zoom)    
+    console.log(show_up_complexs)
   });
 }
 
@@ -143,13 +144,11 @@ function showHideMarker(zoom){
     //[15, 14, 13, 10, 6]
   } 
 
-  if(selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300"
-     || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300"){
-      return
-  }
+  removeMarkers() 
 
-  removeMarkers()
-  
+  createLargeMarker(show_up_complexs)
+
+  /*  
   if(zoom >= zoom_levels[0]){      
     //createLargeMarker(marker_coordinations)
     createLargeMarker(show_up_complexs)
@@ -171,7 +170,9 @@ function showHideMarker(zoom){
     createLevel0Marker(level0_loc)
     min_visit = min_level0_visit
   }
+    */
 
+  /*
   if(current_selection != ""){    
     for(var i in all_markers){
       if(all_markers[i]['code'] == current_selection){
@@ -180,8 +181,7 @@ function showHideMarker(zoom){
       }      
     }    
   }
-
-  setGradeFilter()
+  */
 }
 
 function removeAnimation(){
@@ -320,189 +320,6 @@ function updateMarkers(map, markers) {
   }
 }
 
-function updateVisits(map, markers) {  
-  var mapBounds = map.getBounds();
-  var marker, position;
-  var show_visit = []
-
-  for (var i = 0; i < markers.length; i++) {
-      marker = markers[i]
-      position = marker.getPosition();
-
-      if (mapBounds.hasLatLng(position)) {
-          find_code = marker['code']          
-          show_visit.push(find_code)
-          showMarker(map, marker)
-      }
-      else {
-          hideMarker(map, marker);
-      }
-  }
-
-  show_visit_shuffle = shuffle(show_visit)
-
-  if(show_visit_shuffle.length >= 5){
-    chunk = Math.floor(show_visit_shuffle.length/5)
-    show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
-
-    for(var j in show_visit_shuffle_chunked){
-      showVisitInfo(show_visit_shuffle_chunked[j], 0)
-    }
-  }
-  else{
-    showVisitInfo(show_visit_shuffle, 0)
-  }  
-}
-
-function showVisitInfo(visits, visit_check_count){  
-  loop_count = visits.length  
-  if(visit_check_count == loop_count){
-    visit_check_count = 0
-    return
-  }
-  else{
-    firebase.database().ref().child("realrankus_visit").child(visits[visit_check_count]).get()
-	  .then((snapshot) => {
-      if(snapshot.exists()){
-        visit_obj = snapshot.val()
-        visit_count = 0        
-        for(var i in visit_obj){
-          //날짜가 30일 이전의 날짜보다 큰 경우만 count
-          compare_days = Number(i.replaceAll("-", ""))
-          if(days_ago_num <= compare_days){
-            visit_count += visit_obj[i]
-          }
-        }
-        //몇 명 이상 방문해야 보여지는지
-        if(visit_count >= min_visit){
-          visit_id = 'visit_' + visits[visit_check_count]
-          //visit_count = 99
-          $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
-          $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
-          
-          if(visit_count < 1000){
-            if(isMobile && current_zoom == 15){
-              $("#" + visit_id).css({'width': '53px', 'left':'1px'});
-            }
-            else{
-              $("#" + visit_id).css({'width': '60px'});
-            }            
-          }
-          else if(visit_count >= 1000 && visit_count < 10000){
-            if(isMobile && current_zoom == 15){
-              $("#" + visit_id).css({'width': '70px', 'left':'-6px'});
-            }
-            else{
-              $("#" + visit_id).css({'width': '70px', 'left':'-3px'});
-            }
-          }
-          else{
-            if(isMobile && current_zoom == 15){
-              $("#" + visit_id).css({'width': '80px', 'left':'-11px'});
-            }
-            else{
-              $("#" + visit_id).css({'width': '80px', 'left':'-8px'});
-            }
-          }
-        }
-      }      
-      visit_check_count++
-      showVisitInfo(visits, visit_check_count)
-    })
-  }
-}
-
-function updateVisits_lv1_lv2(map, markers) {  
-  var mapBounds = map.getBounds();
-  var marker, position;
-  var show_visit = []
-
-  for (var i = 0; i < markers.length; i++) {
-      marker = markers[i]
-      position = marker.getPosition();
-
-      if (mapBounds.hasLatLng(position)) {          
-          find_region = marker['region']
-          show_visit.push(find_region)             
-      }
-      else {
-          hideMarker(map, marker);
-      }
-  }
-  show_visit_shuffle = shuffle(show_visit)
-
-  if(show_visit_shuffle.length >= 5){
-    chunk = Math.floor(show_visit_shuffle.length/5)
-    show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
-
-    for(var j in show_visit_shuffle_chunked){
-      showVisitInfo_lv1_lv2(show_visit_shuffle_chunked[j], 0)
-    }
-  }
-  else{
-    showVisitInfo_lv1_lv2(show_visit_shuffle, 0)
-  }
-}
-
-function showVisitInfo_lv1_lv2(visits, visit_check_count){  
-  loop_count = visits.length  
-  if(visit_check_count == loop_count){
-    visit_check_count = 0
-    return
-  }
-  else{
-    //console.log(visits[visit_check_count])
-    firebase.database().ref().child("realrankus_visit").child(visits[visit_check_count]).get()
-	  .then((snapshot) => {
-      if(snapshot.exists()){
-        visit_obj = snapshot.val()
-        visit_count = 0
-        for(var i in visit_obj){
-          //날짜가 30일 이전의 날짜보다 큰 경우만 count
-          compare_days = Number(i.replaceAll("-", ""))
-          if(days_ago_num <= compare_days){
-            visit_count += visit_obj[i]
-          }
-        }
-        //몇 명 이상 방문해야 보여지는지
-        if(visit_count >= min_visit){
-          visit_id = 'visit_' + visits[visit_check_count]
-          //visit_count = 9999
-          $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
-          $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 500);
-
-          if(visit_count < 1000){
-            if( (visits[visit_check_count].split("_")).length >= 2){
-              $("#" + visit_id).css({'width': '60px'});
-            }
-            else{
-              $("#" + visit_id).css({'width': '80px'});
-            }
-          }
-          else if(visit_count >= 1000 && visit_count < 10000){
-            if( (visits[visit_check_count].split("_")).length >= 2){
-              $("#" + visit_id).css({'width': '75px', 'left':'-8px'});
-            }
-            else{
-              $("#" + visit_id).css({'width': '80px', 'left':'0px'});
-            }
-          }
-          else{
-            if( (visits[visit_check_count].split("_")).length >= 2){
-              $("#" + visit_id).css({'width': '80px', 'left':'-10px'});
-            }
-            else{
-              $("#" + visit_id).css({'width': '80px', 'left':'0px'});
-            }            
-          }
-        }
-      }      
-      visit_check_count++
-      showVisitInfo_lv1_lv2(visits, visit_check_count)
-    })
-  }
-}
-
 function showMarker(map, marker) {
   if (marker.getMap()) return;
   marker.setMap(map);
@@ -519,7 +336,7 @@ var current_click = ""
 
 function complexMarkerAction(marker_obj, visit_obj) {  
   return function(e) {
-    $('#baseModal').modal("hide")
+    $('#exampleModal').modal("hide")
 
     animateMarker(marker_obj, visit_obj)    
 
@@ -527,18 +344,18 @@ function complexMarkerAction(marker_obj, visit_obj) {
       complex_code = marker_obj['code']
       temp_code = marker_obj['code']
       for(var i in aptData.data){    
-        apt_code = aptData.data[i]['검색코드'] + ""      
+        apt_code = aptData.data[i]['코드'] + ""      
         if(apt_code == complex_code){          
           //현재 모달이 띄워져 있으면 숨기고, 0.35초 후에 새로 열기
-          if($('#baseModal').is(':visible')){
+          if($('#exampleModal').is(':visible')){
             setTimeout(function(){
               showDetail(i);              
-              $('#baseModal').modal("show")
+              $('#exampleModal').modal("show")
             }, 350)
           }
           else{
             showDetail(i);            
-            $('#baseModal').modal("show")
+            $('#exampleModal').modal("show")
           }
           return;
         }
@@ -651,6 +468,7 @@ function level0MarkerAction(marker_obj) {
 }
 
 function createLargeMarker(markers){  
+
   //removeMarkers(complex_small_markers)
   complex_large_markers = []
   visit_display = []
@@ -671,31 +489,13 @@ function createLargeMarker(markers){
       var aptValue = Math.round(markers[k]["가치 총점"] * 100) / 100;
       complex_grade = setGrade(aptValue)  
 
-      coordi_x = markers[k]['lng']
-      coordi_y = markers[k]['lat']
+      coordi_x = markers[k]['x']
+      coordi_y = markers[k]['y']
 
-      marker_code = markers[k]['검색코드']
+      marker_code = markers[k]['코드']
 
-      var last_sales_raw = markers[k]["last_sales"]
-
-      if(last_sales_raw == "BYG"){
-        last_sales_price_kor = "분양"
-        last_sales_area_kor = ""
-      }
-      else{
-        var last_sales = last_sales_raw.split(",");
-        var last_sales_date = last_sales[0].toString();
-        var last_sales_price = last_sales[1].toString();
-        var last_sales_area = last_sales[2];
-        
-        if (isNaN(last_sales_price)) {
-          last_sales_price_kor = "정보없음"
-          last_sales_area_kor = "--"
-        } else {
-          last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-          last_sales_area_kor = last_sales_area
-        }
-      }      
+      var min_land_price = markers[k]["최소공지가"] / 100000000
+      var max_land_price = markers[k]["최대공지가"] / 100000000
 
       var svg_color = "#CC0000"
       var grade = ""
@@ -719,30 +519,10 @@ function createLargeMarker(markers){
       }
 
       var marker_color = "#fff"
-      large_marker_BYG = ""      
-
-      if(last_sales_raw == "BYG"){        
-        marker_color = "#000"
-        large_marker_BYG = "BYG"
-      }
-
-      var visit_marker_class = "visit_loc_large"
-      var visit_marker_anchor_x = 9
-      var visit_marker_anchor_y = 80
 
       var large_marker_anchor_x = 12
       var large_marker_anchor_y = 60
-
-      if(isMobile && current_zoom == 15){
-        visit_marker_class = "visit_loc_mid"
-        visit_marker_anchor_x = 12
-        visit_marker_anchor_y = 65
-
-        large_marker_anchor_x = 12
-        large_marker_anchor_y = 47
-      }      
-
-      var large_marker_id = 'large_marker_' + markers[k]['검색코드']
+      var large_marker_id = 'large_marker_' + markers[k]['코드']
 
       svg_loc_large = `
       <svg version="1.1" class='large_marker ${grade}' id="${large_marker_id}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -763,8 +543,8 @@ function createLargeMarker(markers){
       <path class="cls-1 large_marker_${grade}" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>
       <path class="cls-2 large_marker_${grade}" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>
       <text class="cls-3_text" text-anchor="middle" x="16.5" y="10">${complex_grade}</text>
-      <text class="cls-4_text" text-anchor="middle" x="17" y="20">${last_sales_price_kor}</text>
-      <text class="cls-5_text" text-anchor="middle" x="17" y="26">${last_sales_area_kor}</text>
+      <text class="cls-4_text" text-anchor="middle" x="17" y="20">${min_land_price}</text>
+      <text class="cls-5_text" text-anchor="middle" x="17" y="26">${min_land_price}</text>
       </g>
       </svg>
       `
@@ -780,36 +560,15 @@ function createLargeMarker(markers){
         map: defaultMap,
         apt_name : markers[k]['아파트명'],
         code : marker_code,
-        gungu : markers[k]['gungu'],
+        //gungu : markers[k]['gungu'],
         address : markers[k]['법정동주소']
       });
 
-      var visit_large_id = 'visit_complex_' + marker_code
-      visit_loc_large = `      
-      <div class='${visit_marker_class} ${grade}' id="${visit_large_id}"></div>      
-      `
-      window["visit_obj_" + marker_code] = new naver.maps.Marker({
-        position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
-        icon: {
-            content: visit_loc_large,
-            //size: new naver.maps.Size(24, 37),
-            anchor: new naver.maps.Point(visit_marker_anchor_x, visit_marker_anchor_y),
-            origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),            
-        },
-        code : "complex_" + marker_code,
-        zIndex: 500 + Number(k),
-        map: defaultMap,
-      });
-
-      visit_display.push(window["visit_obj_" + marker_code])
       complex_large_markers.push(window["large_marker_obj_" + marker_code])
-
-      all_markers.push(window["large_marker_obj_" + marker_code])      
-      all_markers.push(window["visit_obj_" + marker_code])
+      all_markers.push(window["large_marker_obj_" + marker_code])
     }    
   }
   updateMarkers(defaultMap, complex_large_markers);
-  updateVisits(defaultMap, visit_display);
 
   for(var i in complex_large_markers){    
     naver.maps.Event.addListener(complex_large_markers[i], 'click', complexMarkerAction(complex_large_markers[i], visit_display[i]));
@@ -973,39 +732,11 @@ function createLevel2Marker(markers){
         map: defaultMap,
         sido : find_sido,
         gungu : find_subRegion,        
-      });
-
-      /////      
-      full_name = full_name.replace("세종시", "세종시 세종시")      
-      var visit_lv2_id = 'visit_' + full_name.replaceAll(" ", "_")
-      visit_loc_lv2 = `      
-      <div class='visit_loc_lv2' id="${visit_lv2_id}"></div>      
-      `
-      window["visit_obj_" + name_en] = new naver.maps.Marker({
-        position: new naver.maps.LatLng(Number(markers[i]['lat']), Number(markers[i]['lng'])),
-        icon: {
-            content: visit_loc_lv2,
-            //size: new naver.maps.Size(24, 37),
-            anchor: new naver.maps.Point(4, 65),
-            origin: new naver.maps.Point( Number(markers[i]['lat']), Number(markers[i]['lng']) ),            
-        },
-        code : name_en,
-        region : full_name.replaceAll(" ", "_"),
-        zIndex: 500 + Number(i),
-        map: defaultMap,
-      });
-
-      visit_lv2_markers.push(window["visit_obj_" + name_en])
-      /////
-
-      level2_markers.push(complex_marker_lv2)
-      all_markers.push(complex_marker_lv2)
-      all_markers.push(window["visit_obj_" + name_en])
+      });      
     }
   }    
 
   updateMarkers(defaultMap, level2_markers);
-  updateVisits_lv1_lv2(defaultMap, visit_lv2_markers);
 
   for(var i in level2_markers){    
     naver.maps.Event.addListener(level2_markers[i], 'click', level2MarkerAction(level2_markers[i]));
@@ -1058,36 +789,9 @@ function createLevel1Marker(markers){
         sido : find_sido,
         gungu : find_subRegion
       });
-
-      /////
-      var visit_lv1_id = 'visit_' + full_name.replaceAll(" ", "_")      
-      visit_loc_lv1 = `      
-      <div class='visit_loc_lv1' id="${visit_lv1_id}"></div>      
-      `
-      window["visit_obj_" + name_en] = new naver.maps.Marker({
-        position: new naver.maps.LatLng(Number(markers[i]['lat']), Number(markers[i]['lng'])),
-        icon: {
-            content: visit_loc_lv1,
-            //size: new naver.maps.Size(24, 37),
-            anchor: new naver.maps.Point(5, 65),
-            origin: new naver.maps.Point( Number(markers[i]['lat']), Number(markers[i]['lng']) ),            
-        },
-        code : name_en,
-        region : full_name.replaceAll(" ", "_"),
-        zIndex: 500 + Number(i),
-        map: defaultMap,
-      });
-
-      visit_lv1_markers.push(window["visit_obj_" + name_en])
-      /////
-      
-      level1_markers.push(complex_marker_lv1)
-      all_markers.push(complex_marker_lv1)
-      all_markers.push(window["visit_obj_" + name_en])
     }
   }
   updateMarkers(defaultMap, level1_markers);
-  updateVisits_lv1_lv2(defaultMap, visit_lv1_markers);
 
   for(var i in level1_markers){    
     naver.maps.Event.addListener(level1_markers[i], 'click', level1MarkerAction(level1_markers[i]));
