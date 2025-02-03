@@ -161,7 +161,7 @@
         <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
         <div id="rearrangeContatiner">
             <div id="rearrangeNotice"></div>
-            <div class='rearrangeArea'>              
+            <div class='rearrangeArea'>
             </div>
         </div>
         <div id="closeRearrange" onClick='closeRearrange()' ><i class="fas fa-times"></i></div>
@@ -678,9 +678,13 @@
     $('html').scrollTop(0)
     initSorting()
     //console.log("AAAAAAAAAA", region)
-    url = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + ".json" + updated_ver
-    url2 = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + "_ratio.json" + updated_ver
-    url3 = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + "_ratioFrom202107.json" + updated_ver
+    //url = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + ".json" + updated_ver
+    //url2 = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + "_ratio.json" + updated_ver
+    //url3 = "https://www.realrankus.com/theme/" + updatedMonth + "/" + region + "_ratioFrom202107.json" + updated_ver
+
+    url = "../theme/" + updatedMonth + "/" + region + ".json"
+    url2 = "../theme/" + updatedMonth + "/" + region + "_ratio.json"
+    url3 = "../theme/" + updatedMonth + "/" + region + "_ratioFrom202107.json"
     $('#themeDataList').html("");
     $("#themeDataList").html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-theme' role='status'></div></div>")
 
@@ -692,7 +696,7 @@
     if(type == "hPriceRatio"){
       $.getJSON(url2, function(json) {
         //console.log(json);
-        aptData = json;         
+        aptData = json;
         //sortData = $.extend({}, json);
         sortData = deepCopy(aptData)
         itemNum = json.data.length;        
@@ -872,6 +876,8 @@
           $("#guide_and_search").css("visibility", "visible")
       }
     }
+
+    console.log(listData)
     
     for(var i = 0 ; i < itemNum ; i++){
       var aptName = listData.data[i]["아파트명"]
@@ -1245,7 +1251,7 @@
     }
     else{
         $("#themeShare").css("visibility", "visible")
-        $("#rearrange").css("visibility", "visible")
+        $("#rearrange").css("visibility", "hidden")
         $("#guide_and_search").css("visibility", "visible")
     }
 
@@ -1281,8 +1287,8 @@
       var addon_html = ""
 
       if(hPrice_info[0] != '거래 정보 없음'){
-        addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
-        addon_html += "<div class='content'>";
+        addon_html += "<div class='themeListBox'>";
+        addon_html += "<div class='content' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
         addon_html += "<div>";
           addon_html += "<div class='apt_name'>" + aptName + "</div>";
           addon_html += "<div class='aptYear'>" + aptYear + "</div>";
@@ -1296,17 +1302,47 @@
         else{
           addon_html += aptAddress + "</div>";
         }
-        var hPrice = (hPrice_info[0]/10000).toFixed(2)
-        var cPrice = (cPrice_info[0]/10000).toFixed(2)
-        var hPrice_date = hPrice_info[1].substr(2, 10)
-        var cPrice_date = cPrice_info[1].substr(2, 10)        
-        
-        addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
-        addon_html += "<div class='themeInfo'>" + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")</div>";
+
+        //var hPrice = (hPrice_info[0]/10000).toFixed(2)
+        //var cPrice = (cPrice_info[0]/10000).toFixed(2)
+        //var hPrice_date = hPrice_info[1].substr(2, 10)
+        //var cPrice_date = cPrice_info[1].substr(2, 10)
 
         addon_html += "</div>";
-        addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"        
+        addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
 
+        addon_html += "<div class='accordion accordion-flush ratioList' id='accordionFlush'>"
+          addon_html += "<div class='accordion-item'>"
+            addon_html += "<div class='accordion-header'>"
+              addon_html += "<button class='accordion-button collapsed themeDropList' type='button' data-bs-toggle='collapse' data-bs-target='#flush-collapse_" + searchCode + "' aria-expanded='false' aria-controls='flush-collapseOne'>"
+                addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+                  if(gap_ratio[0] == 0){
+                    addon_html += "<br><span style='color:#555'>거래 정보가 없어요</span></div>";
+                  }
+                  else{
+                    addon_html += "<br><span style='color:#555'>" + (hPrice_info[0][0]/10000).toFixed(2) + "억 (" + hPrice_info[0][1] + ") → " + (cPrice_info[0][0]/10000).toFixed(2) + "억 (" + cPrice_info[0][1] +")</span></div>";
+                  }                
+              addon_html += "</button>"
+            addon_html += "</div>"
+          addon_html += "<div id='flush-collapse_" + searchCode + "' class='accordion-collapse collapse' data-bs-parent='#accordionFlush'>"
+          addon_html += "<div class='accordion-body themeDropBody'>"            
+          for (var j = 1 ; j < hPrice_info.length ; j++){                
+            addon_html += "<div class='ratioList_body'>"
+              addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";
+              if(gap_ratio[j] == 0){
+                addon_html += "<div class='themeInfo'><span style='color:#555'>거래 정보가 없어요</span></div>";
+              }
+              else{
+                addon_html += "<div class='themeInfo'>" + (hPrice_info[j][0]/10000).toFixed(2) + "억 (" + hPrice_info[j][1] + ") → " + (cPrice_info[j][0]/10000).toFixed(2) + "억 (" + cPrice_info[j][1] +")</div>";
+              }              
+            addon_html += "</div>"
+          }
+            
+        addon_html += "</div>"
+        addon_html += "</div>"
+        addon_html += "</div>"
+
+        /*
         if(i < 5){
           if (i == 0){
             shareText += "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' " + "최고가 대비 변동\n\n"
@@ -1315,6 +1351,7 @@
           shareText += hPrice + " → " + cPrice + "억\n"
           shareText += "(" + gap_ratio.toFixed(2) + "%, " + (gap_price/10000).toFixed(2) + "억) \n\n"          
         }
+        */
         
         $('#themeDataList').append(addon_html);
       }
@@ -1357,7 +1394,7 @@
     }
     else{
         $("#themeShare").css("visibility", "visible")
-        $("#rearrange").css("visibility", "visible")
+        $("#rearrange").css("visibility", "hidden")
         $("#guide_and_search").css("visibility", "visible")
     }
 
@@ -1393,8 +1430,8 @@
       var addon_html = ""
 
       if(hPrice_info[0] != '거래 정보 없음'){
-        addon_html += "<div class='themeListBox'  data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
-        addon_html += "<div class='content'>";
+        addon_html += "<div class='themeListBox'>";
+        addon_html += "<div class='content' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")' >";
 
         addon_html += "<div>";
           addon_html += "<div class='apt_name'>" + aptName + "</div>";
@@ -1409,22 +1446,68 @@
         else{
           addon_html += aptAddress + "</div>";
         }
-        var hPrice = (hPrice_info[0]/10000).toFixed(2)
-        var cPrice = (cPrice_info[0]/10000).toFixed(2)
-        var hPrice_date = hPrice_info[1].substr(2, 10)
-        var cPrice_date = cPrice_info[1].substr(2, 10)
-
-        if(gap_ratio < 0){        
-          addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
-        }
-        else{
-          addon_html += "<div class='themePoint'>▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
-        }
-        addon_html += "<div class='themeInfo'>" + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")</div>";
+        //var hPrice = (hPrice_info[0]/10000).toFixed(2)
+        //var cPrice = (cPrice_info[0]/10000).toFixed(2)
+        //var hPrice_date = hPrice_info[1].substr(2, 10)
+        //var cPrice_date = cPrice_info[1].substr(2, 10)
 
         addon_html += "</div>";
-        addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"        
+        addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
 
+        addon_html += "<div class='accordion accordion-flush ratioList' id='accordionFlush'>"
+          addon_html += "<div class='accordion-item'>"
+            addon_html += "<div class='accordion-header'>"
+              addon_html += "<button class='accordion-button collapsed themeDropList' type='button' data-bs-toggle='collapse' data-bs-target='#flush-collapse_" + searchCode + "' aria-expanded='false' aria-controls='flush-collapseOne'>"
+              
+              if(gap_ratio[0] < 0){        
+                addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+              }
+              else if(gap_ratio[0] == 0){
+                addon_html += "<div class='themeZero'>" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+              }
+              else{
+                addon_html += "<div class='themePoint2'>▲" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+              }
+
+              if(gap_ratio[0] != 0){
+                addon_html += "<br><span style='color:#555'>" + (hPrice_info[0][0]/10000).toFixed(2) + "억 (" + hPrice_info[0][1] + ") → " + (cPrice_info[0][0]/10000).toFixed(2) + "억 (" + cPrice_info[0][1] +")</span></div>";
+              }
+              else{
+                addon_html += "<br><span style='color:#555'>거래 정보가 없어요</span></div>";
+              }
+
+              addon_html += "</button>"
+            addon_html += "</div>"
+          addon_html += "<div id='flush-collapse_" + searchCode + "' class='accordion-collapse collapse' data-bs-parent='#accordionFlush'>"
+          addon_html += "<div class='accordion-body themeDropBody'>"            
+          for (var j = 1 ; j < hPrice_info.length ; j++){                
+            addon_html += "<div class='ratioList_body'>"
+              if(gap_ratio[j] < 0){
+                addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";
+              }
+              else if(gap_ratio[j] == 0){
+                addon_html += "<div class='themeZero'>-" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";                
+              }
+              else{
+                addon_html += "<div class='themePoint2'>▲" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";
+              }
+              
+              if(gap_ratio[j] == 0){
+                addon_html += "<div class='themeInfo'><span style='color:#555'>거래 정보가 없어요</span></div>";
+              }
+              else{
+                addon_html += "<div class='themeInfo'>" + (hPrice_info[j][0]/10000).toFixed(2) + "억 (" + hPrice_info[j][1] + ") → " + (cPrice_info[j][0]/10000).toFixed(2) + "억 (" + cPrice_info[j][1] +")</div>";
+              }
+              
+              
+            addon_html += "</div>"
+          }
+            
+        addon_html += "</div>"
+        addon_html += "</div>"
+        addon_html += "</div>"        
+
+        /*
         if(i < 5){
           if (i == 0){
             shareText += "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' " + "2021년 7월 대비 변동\n\n"
@@ -1433,6 +1516,7 @@
           shareText += hPrice + " → " + cPrice + "억\n"
           shareText += "(" + gap_ratio.toFixed(2) + "%, " + (gap_price/10000).toFixed(2) + "억) \n\n"          
         }
+        */
         
         $('#themeDataList').append(addon_html);
       }
@@ -1755,15 +1839,14 @@
       go_url = "https://new.land.naver.com/complexes/" + searchCode
     } 
     detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>"
-    detailHtml += "<div id='detail_map' ></div>"
+    detailHtml += "<div id='detail_map'></div>"
     detailHtml += "</div></div></div>"
 
-    //총점,순위
-    detailHtml += "<div class='card'>";
-    detailHtml += "<div class='card-body'>";
-    detailHtml += "<div class='popTable'>"
-
     if(selectedTheme == "under100M" || selectedTheme == "under200M" || selectedTheme == "under300M"){
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-body'>";
+      detailHtml += "<div class='popTable'>"
+
       detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "공시가격" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + min_land_price + "억 ~ " + max_land_price + "억" + "</div></div>";
       if(house_num != null){
         detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
@@ -1780,6 +1863,10 @@
     }
 
     if(selectedTheme == "under5floor"){
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-body'>";
+      detailHtml += "<div class='popTable'>"
+
       detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "최고/최저층" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + "최고 " + max_floor + "층, 최저 " + min_floor + "층" + "</div></div>";      
       detailHtml += "<div class='popSubTable'><div class='popContent'>" + "공시가격" + "</div>" + "<div class='popResult'>" + min_land_price + "억 ~ " + max_land_price + "억" + "</div></div>";
       if(house_num != null){
@@ -1797,6 +1884,10 @@
     }
 
     if(selectedTheme == "over30year"){
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-body'>";
+      detailHtml += "<div class='popTable'>"
+
       detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "준공년차" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + aptYear + "</div></div>";            
       if(house_num != null){
         detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
@@ -1814,6 +1905,10 @@
     }
 
     if(selectedTheme == "newApt"){
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-body'>";
+      detailHtml += "<div class='popTable'>"
+
       if(aptData.data[index]["준공년월"] == null){
         detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "예정일" + "</div>" + "<div class='popResult' style='color: #ff3849'>정보 없음</div></div>";
       }
@@ -1850,6 +1945,10 @@
     }
 
     if(selectedTheme == "rebuild"){
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-body'>";
+      detailHtml += "<div class='popTable'>"
+
       detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "용적률" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + floor_rate + "</div></div>";
       detailHtml += "<div class='popSubTable'><div class='popContent' style='color: #ff3849; font-weight: 600'>" + "건폐율" + "</div>" + "<div class='popResult' style='color: #ff3849'>" + cover_rate + "</div></div>";
       if(house_num != null){
@@ -1869,72 +1968,111 @@
     }
 
     if(selectedTheme == "hPriceRatio"){
-      var hPrice = (hPrice_info[0]/10000).toFixed(2)
-      var cPrice = (cPrice_info[0]/10000).toFixed(2)
-      var hPrice_date = hPrice_info[1].substr(2, 10)
-      var cPrice_date = cPrice_info[1].substr(2, 10)        
+      //var hPrice = (hPrice_info[0]/10000).toFixed(2)
+      //var cPrice = (cPrice_info[0]/10000).toFixed(2)
+      //var hPrice_date = hPrice_info[1].substr(2, 10)
+      //var cPrice_date = cPrice_info[1].substr(2, 10)
 
-      detailHtml += "<div class='popSubTable'><div class='popContent'; style='font-weight: 600'>" + "변동률" + "</div>"
-                 + "<div class='popResult' style='color: blue'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)</div></div>";
-
-      detailHtml += "<div class='popSubTable2'><div class='popContent' font-weight: 600'>" + "변동가격" + "</div>"
-
-                 + "<div class='popResult'>" + hPrice + "억 (" + hPrice_date + ") <br>→ " + cPrice + "억 (" + cPrice_date +")" + "</div></div>";                 
-      detailHtml += "<div class='popSubTable'><div class='popContent' font-weight: 600'>" + "평형" + "</div>"
-                 + "<div class='popResult'>" + apt_p + "(" + apt_m + "㎡)" + "</div></div>";
-      
       if(house_num != null){
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTableRatio'><div class='popContentRatio'>" + "세대수" + "</div>" + "<div class='popResultRatio'>" + house_num.toLocaleString() + "세대</div></div>";
       }
       else{
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+        detailHtml += "<div class='popSubTableRatio'><div class='popContentRatio'>" + "세대수" + "</div>" + "<div class='popResultRatio'>미정</div></div>";
+      }     
+
+      detailHtml += "<div class='card-wrapper'>";
+      for(var i in hPrice_info){        
+        detailHtml += "<div class='ratioCard'>";
+
+        detailHtml += "<div class='popSubTableContent'><div class='popContent'>" + apt_p[i] + "(" + apt_m[i] + "㎡)" + "</div>"        
+        if(gap_ratio[i] < 0){ 
+          detailHtml += "<div class='popResult' style='color: #347aeb'>▼" + Math.abs(gap_ratio[i]).toFixed(2) + "% (" + (gap_price[i]/10000).toFixed(2) +"억)</div></div>";
+          //shareText += "ㆍ변동률 : " + "▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+        }
+        else if(gap_ratio[i] == 0){
+          detailHtml += "<div class='popResult' style='color: #777'>" + Math.abs(gap_ratio[i]).toFixed(2) + "% (" + (gap_price[i]/10000).toFixed(2) +"억)</div></div>";
+          //shareText += "ㆍ변동률 : " + "▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+        }
+        else{          
+          detailHtml += "<div class='popResult' style='color: #ff3849'>▲" + Math.abs(gap_ratio[i]).toFixed(2) + "% (" + (gap_price[i]/10000).toFixed(2) +"억)</div></div>";
+          //shareText += "ㆍ변동률 : " + "▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+        }
+
+        if(gap_ratio[i] != 0){
+          detailHtml += "<div class='popSubTableContent' style='border-bottom:0px'><div class='popContent' font-weight: 600'></div>"
+          + "<div class='ratioPopResult'>" + (hPrice_info[i][0]/10000).toFixed(2) + "억 (" + hPrice_info[i][1] + ") → " + (cPrice_info[i][0]/10000).toFixed(2) + "억 (" + cPrice_info[i][1] +")" + "</div></div>";
+        }
+        else{
+          detailHtml += "<div class='popSubTableContent' style='border-bottom:0px'><div class='popContent' font-weight: 600'></div>"
+          + "<div class='ratioPopResult'>거래 정보가 없어요</div></div>";
+        }
+        detailHtml += "</div>";
       }
 
+      /*
       shareText += "ㆍ변동률 : " + "▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
       shareText += "ㆍ변동가격 : " + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")" + "\n"      
       shareText += "ㆍ평형 : " + apt_p + "(" + apt_m + "㎡)" + "\n"
       shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
       shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
       shareText += shareURL + "\n"
+      */
     }
 
     if(selectedTheme == "ratioFrom202107"){
 
-      var hPrice = (hPrice_info2[0]/10000).toFixed(2)
-      var cPrice = (cPrice_info[0]/10000).toFixed(2)
-      var hPrice_date = hPrice_info2[1].substr(2, 10)
-      var cPrice_date = cPrice_info[1].substr(2, 10)
+      //var hPrice = (hPrice_info2[0]/10000).toFixed(2)
+      //var cPrice = (cPrice_info[0]/10000).toFixed(2)
+      //var hPrice_date = hPrice_info2[1].substr(2, 10)
+      //var cPrice_date = cPrice_info[1].substr(2, 10)
 
-      detailHtml += "<div class='popSubTable'><div class='popContent'; style='font-weight: 600'>" + "변동률" + "</div>"
-      if(gap_ratio < 0){ 
-        detailHtml += "<div class='popResult' style='color: blue'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)</div></div>";
-        shareText += "ㆍ변동률 : " + "▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
-      }
-      else{
-        detailHtml += "<div class='popResult' style='color: #ff3849'>▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)</div></div>";
-        shareText += "ㆍ변동률 : " + "▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
-      }                 
-
-      detailHtml += "<div class='popSubTable2'><div class='popContent' font-weight: 600'>" + "변동가격" + "</div>"
-                 + "<div class='popResult'>" + + hPrice + "억 (" + hPrice_date + ") <br>→ " + cPrice + "억 (" + cPrice_date +")" + "</div></div>"; 
-
-      detailHtml += "<div class='popSubTable'><div class='popContent' font-weight: 600'>" + "평형" + "</div>"
-                 + "<div class='popResult'>" + apt_p + "(" + apt_m + "㎡)" + "</div></div>";
-      
       if(house_num != null){
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTableRatio'><div class='popContentRatio'>" + "세대수" + "</div>" + "<div class='popResultRatio'>" + house_num.toLocaleString() + "세대</div></div>";
       }
       else{
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
-      }
+        detailHtml += "<div class='popSubTableRatio'><div class='popContentRatio'>" + "세대수" + "</div>" + "<div class='popResultRatio'>미정</div></div>";
+      }     
+
+      detailHtml += "<div class='card-wrapper'>";
+      for(var i in hPrice_info2){        
+        detailHtml += "<div class='ratioCard'>";
+
+        detailHtml += "<div class='popSubTableContent'><div class='popContent'>" + apt_p[i] + "(" + apt_m[i] + "㎡)" + "</div>"        
+        if(gap_ratio[i] < 0){ 
+          detailHtml += "<div class='popResult' style='color: #347aeb'>▼" + Math.abs(gap_ratio[i]).toFixed(2) + "% (" + (gap_price[i]/10000).toFixed(2) +"억)</div></div>";
+          //shareText += "ㆍ변동률 : " + "▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+        }
+        else if(gap_ratio[i] == 0){
+          detailHtml += "<div class='popResult' style='color: #777'>" + Math.abs(gap_ratio[i]).toFixed(2) + "% (" + (gap_price[i]/10000).toFixed(2) +"억)</div></div>";
+          //shareText += "ㆍ변동률 : " + "▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+        }
+        else{          
+          detailHtml += "<div class='popResult' style='color: #ff3849'>▲" + Math.abs(gap_ratio[i]).toFixed(2) + "% (" + (gap_price[i]/10000).toFixed(2) +"억)</div></div>";
+          //shareText += "ㆍ변동률 : " + "▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억)" + "\n"
+        }
+
+        if(gap_ratio[i] != 0){
+          detailHtml += "<div class='popSubTableContent' style='border-bottom:0px'><div class='popContent' font-weight: 600'></div>"
+          + "<div class='ratioPopResult'>" + (hPrice_info2[i][0]/10000).toFixed(2) + "억 (" + hPrice_info2[i][1] + ") → " + (cPrice_info[i][0]/10000).toFixed(2) + "억 (" + cPrice_info[i][1] +")" + "</div></div>";
+        }
+        else{
+          detailHtml += "<div class='popSubTableContent' style='border-bottom:0px'><div class='popContent' font-weight: 600'></div>"
+          + "<div class='ratioPopResult'>거래 정보가 없어요</div></div>";
+        }
+        detailHtml += "</div>";
+      }      
       
+      /*
       shareText += "ㆍ변동가격 : " + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")" + "\n"      
       shareText += "ㆍ평형 : " + apt_p + "(" + apt_m + "㎡)" + "\n"
       shareText += "ㆍ세대수 : " + house_num.toLocaleString() + "세대" + "\n"
       shareText += "ㆍ리얼랭커스 등급 : " + setGrade(aptrank_value_score) + " 랭크" + "\n\n"
       shareText += shareURL + "\n"
+      */
     }
     detailHtml += "</div></div>";
+
+    detailHtml += "</div>";
 
     footerHtml += "<div class='modal-footer'>"
     if(UserAgent.indexOf("inApp")>-1){      
@@ -1978,14 +2116,16 @@
     $('#exampleModalLabel').html(titleHtml);
     $('#aptDetail').html(detailHtml);
     $('#footer').html(footerHtml);
+
+    $(".card-wrapper").height(window.innerHeight/2.8)
     
     //지도 그리는 함수
-    if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
-      var dw = $(window).width() - 40;	 
+    if (isMobile){
+      var dw = $(window).width() - 40;
       //var w = 430;	 
     }
     else{
-      var dw = 480;	 
+      var dw = 476
     }    
     var dh = 200;
 

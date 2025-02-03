@@ -124,37 +124,84 @@
             var addon_html = ""
       
             if(hPrice_info[0] != '거래 정보 없음'){
-              addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
-              addon_html += "<div class='content'>";
+              addon_html += "<div class='themeListBox'>";
+              addon_html += "<div class='content' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")' >";
+      
               addon_html += "<div>";
-                addon_html += "<div class='searched_apt_name'>" + aptName + "</div>";
-                addon_html += "<div class='aptYear' style='font-weight: 600; font-size: 0.65em'>" + aptYear + "</div>";
+                addon_html += "<div class='apt_name searched_apt_name'>" + aptName + "</div>";
+                addon_html += "<div class='aptYear'>" + aptYear + "</div>";
               addon_html += "</div>";
-              addon_html += "<div class='searched_apt_info'>"+ house_num.toLocaleString() + "세대 / ";
+              addon_html += "<div class='apt_info searched_apt_info'>"+ house_num.toLocaleString() + "세대 / ";
       
               if(apt_type == "ABYG"){
-                aptAddress = sortData.data[i]["법정동주소"]
+                aptAddress = listData.data[i]["법정동주소"]
                 addon_html += aptAddress + "</div>";
               }
               else{
                 addon_html += aptAddress + "</div>";
               }
-              var hPrice = (hPrice_info[0]/10000).toFixed(2)
-              var cPrice = (cPrice_info[0]/10000).toFixed(2)
-              var hPrice_date = hPrice_info[1].substr(2, 10)
-              var cPrice_date = cPrice_info[1].substr(2, 10)        
-              
-              if(gap_ratio < 0){        
-                addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
-              }
-              else{
-                addon_html += "<div class='themePoint'>▲" + Math.abs(gap_ratio).toFixed(2) + "% (" + (gap_price/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p + "(" + apt_m + "㎡)</span></div>";
-              }
-              addon_html += "<div class='themeInfo'>" + hPrice + "억 (" + hPrice_date + ") → " + cPrice + "억 (" + cPrice_date +")</div>";
+              //var hPrice = (hPrice_info[0]/10000).toFixed(2)
+              //var cPrice = (cPrice_info[0]/10000).toFixed(2)
+              //var hPrice_date = hPrice_info[1].substr(2, 10)
+              //var cPrice_date = cPrice_info[1].substr(2, 10)
       
               addon_html += "</div>";
-              addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"        
+              addon_html += "<div id='NLink'><button type='button' class='goThemeLink' onclick='openNaver(" + searchCode + ")'>N부동산</button></div>"
       
+              addon_html += "<div class='accordion accordion-flush ratioList' id='accordionFlush'>"
+                addon_html += "<div class='accordion-item'>"
+                  addon_html += "<div class='accordion-header'>"
+                    addon_html += "<button class='accordion-button collapsed themeDropList' type='button' data-bs-toggle='collapse' data-bs-target='#flush-collapse_" + searchCode + "' aria-expanded='false' aria-controls='flush-collapseOne'>"
+                    
+                    if(gap_ratio[0] < 0){        
+                      addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+                    }
+                    else if(gap_ratio[0] == 0){
+                      addon_html += "<div class='themeZero'>" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+                    }
+                    else{
+                      addon_html += "<div class='themePoint2'>▲" + Math.abs(gap_ratio[0]).toFixed(2) + "% (" + (gap_price[0]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[0] + "(" + apt_m[0] + "㎡)</span>";
+                    }
+      
+                    if(gap_ratio[0] != 0){
+                      addon_html += "<br><span style='color:#555'>" + (hPrice_info[0][0]/10000).toFixed(2) + "억 (" + hPrice_info[0][1] + ") → " + (cPrice_info[0][0]/10000).toFixed(2) + "억 (" + cPrice_info[0][1] +")</span></div>";
+                    }
+                    else{
+                      addon_html += "<br><span style='color:#555'>거래 정보가 없어요</span></div>";
+                    }
+      
+                    addon_html += "</button>"
+                  addon_html += "</div>"
+                addon_html += "<div id='flush-collapse_" + searchCode + "' class='accordion-collapse collapse' data-bs-parent='#accordionFlush'>"
+                addon_html += "<div class='accordion-body themeDropBody'>"            
+                for (var j = 1 ; j < hPrice_info.length ; j++){                
+                  addon_html += "<div class='ratioList_body'>"
+                    if(gap_ratio[j] < 0){
+                      addon_html += "<div class='themeDrop'>▼" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";
+                    }
+                    else if(gap_ratio[j] == 0){
+                      addon_html += "<div class='themeZero'>-" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";                
+                    }
+                    else{
+                      addon_html += "<div class='themePoint2'>▲" + Math.abs(gap_ratio[j]).toFixed(2) + "% (" + (gap_price[j]/10000).toFixed(2) +"억) <span style='color:#555'> / " + apt_p[j] + "(" + apt_m[j] + "㎡)</span></div>";
+                    }
+                    
+                    if(gap_ratio[j] == 0){
+                      addon_html += "<div class='themeInfo'><span style='color:#555'>거래 정보가 없어요</span></div>";
+                    }
+                    else{
+                      addon_html += "<div class='themeInfo'>" + (hPrice_info[j][0]/10000).toFixed(2) + "억 (" + hPrice_info[j][1] + ") → " + (cPrice_info[j][0]/10000).toFixed(2) + "억 (" + cPrice_info[j][1] +")</div>";
+                    }
+                    
+                    
+                  addon_html += "</div>"
+                }
+                  
+              addon_html += "</div>"
+              addon_html += "</div>"
+              addon_html += "</div>"
+
+              /*      
               if(i < 5){
                 if (i == 0){
                   shareText += "'" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "' " + "최고가 대비 변동\n\n"
@@ -163,6 +210,7 @@
                 shareText += hPrice + " → " + cPrice + "억\n"
                 shareText += "(" + gap_ratio.toFixed(2) + "%, " + (gap_price/10000).toFixed(2) + "억) \n\n"          
               }
+              */
               
               $('#themeDataList').append(addon_html);
             }
