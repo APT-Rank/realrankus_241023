@@ -2117,7 +2117,12 @@
     $('#aptDetail').html(detailHtml);
     $('#footer').html(footerHtml);
 
-    $(".card-wrapper").height(window.innerHeight/2.8)
+    if(isMobile){
+      $(".card-wrapper").height(window.innerHeight/3.5)
+    }
+    else{
+      $(".card-wrapper").height(window.innerHeight/2.8)
+    }
     
     //지도 그리는 함수
     if (isMobile){
