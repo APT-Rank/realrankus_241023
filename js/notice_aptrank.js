@@ -1,5 +1,5 @@
 var notice_202502 = 
-"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 1월 업데이트 안내 (2025-01-05)</div>"
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 2월 업데이트 안내 (2025-02-06)</div>"
 +"<ul>"
 +"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
 +"<li><div class='notice'>교육통계서비스 기반 2024년 하반기 초등학교 정보 업데이트 했습니다.</div></li>"
