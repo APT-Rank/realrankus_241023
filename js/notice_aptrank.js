@@ -1,3 +1,13 @@
+var notice_202502 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 1월 업데이트 안내 (2025-01-05)</div>"
++"<ul>"
++"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
++"<li><div class='notice'>교육통계서비스 기반 2024년 하반기 초등학교 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>교육 감점요소인 유흥주점, 단란주점, 모텔정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>2024년 11월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202501 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 1월 업데이트 안내 (2025-01-05)</div>"
 +"<ul>"
