@@ -522,7 +522,7 @@
     setOffcanvasMenu() //offcanvas
     //login_checker() //LOGIN
 
-    if(!login_status){
+    if(login_status){
       $('#step3').html("")
       var addon_html = "<div id='login_subRegion_line'>"
       addon_html += "<div class='biz_loginBox'>"
@@ -763,7 +763,7 @@
       selected_point_y = 0
 
       $('#step3MapArea').show()
-      firstEnter = true
+      firstEnter = true      
 
       optionChange();
       updateRegion();
@@ -789,8 +789,8 @@
         $("#gungu").val(selectedSubRegion).prop("selected", true);
       }      
       selectedRegion = regionName;
-      $("#sido").val(selectedRegion).prop("selected", true);
-      
+      $("#sido").val(selectedRegion).prop("selected", true);      
+            
       var changeItem;
       if (regionName == "Korea") {
         changeItem = inKorea;
@@ -832,7 +832,7 @@
         changeItem = inChungcheongnamdo;
       }
       if (regionName == "Jeollabukdo") {
-        changeItem = inJeollabukdo;
+        changeItem = inNewJeollabukdo;
       }
       if (regionName == "Jeollanamdo") {
         changeItem = inJeollanamdo;
@@ -856,9 +856,9 @@
       if (selectedSubRegion == undefined) {
         $("#gungu").val(changeItem[0][1]).prop("selected", true);
         selectedSubRegion = $("#gungu option:selected").val();
-      } else {
-        $("#gungu").val(selectedSubRegion).prop("selected", true);
-      }
+      } else {        
+        $("#gungu").val(selectedSubRegion).prop("selected", true);        
+      }      
       //updateRegion();
     }
 
@@ -866,6 +866,7 @@
       var selection = document.getElementById("gungu");
       selectedRegion = $("#sido option:selected").val();
       selectedSubRegion = $("#gungu option:selected").val();
+
       updateTable();
       regionName = $("#sido option:selected").text();      
 
@@ -886,13 +887,13 @@
 
       $("#mapOn").hide()
       $("#mapOff").show()
-      showMap(selected_point_y, selected_point_x)      
+      showMap(selected_point_y, selected_point_x)
     }
 
     nearby_area = []
     merged_apt_list = []
 
-    function updateTable() {
+    function updateTable() {      
       $("div.modal").modal("hide");
       //$('#sort').css("visibility", "visible")
       $("html").scrollTop(0);
@@ -902,11 +903,12 @@
 
       for (var i = 0 ; i < nearby_findings.length ; i++){        
         if(selectedSubRegion == nearby_findings[i][1]){
-          nearby_area = nearby_findings[i][3]
+          nearby_area = nearby_findings[i][3]          
           break;
         }
       }
-      merged_apt_list = []
+      merged_apt_list = []      
+      
       url = "https://www.realrankus.com/" + currentMonth + "/" + selectedSubRegion + ".json";
       multi_getJSON(url, nearby_area, 0)
       $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>아파트 정보를 불러오고 있어요~!</div></div>")  
@@ -1166,7 +1168,7 @@
       if (val == -1) {
         $("#aptpy" + compareid).html("<option value='0'>" + "--" + "</option>");
       } else {
-        selectedComplex = sortData[Number(val)];
+        selectedComplex = sortData[Number(val)];        
         window["selectedComplex" + compareid] = selectedComplex;
         pyeong = selectedComplex["area_info"];
         pyeong_list = pyeong.split(",");
@@ -1188,9 +1190,13 @@
 
     function updatePrice(compareid) {
       selectedComplex = window["selectedComplex" + compareid];
+      if (selectedComplex == "" || selectedComplex == undefined || selectedComplex == null) {
+        return;
+      }
       dateArray = selectedComplex["매매실거래날짜목록"];
       sales_history = selectedComplex["sales_history_price"];
       buildYear = selectedComplex["준공년월"];
+
       buildYearNum = buildYear.substr(0, 4);
       years = Number(startYear) - Number(buildYearNum);
 
@@ -1441,23 +1447,29 @@
               map_subregion = "세종시"
             }
 
-            //console.log(map_region + " " + map_subregion)            
+            //console.log(map_region + " " + map_subregion)
             
             current_sido = $("#sido option:selected").val();
-            current_gungu = $("#gungu option:selected").val();
+            current_gungu = $("#gungu option:selected").val();            
 
             for (var i = 0 ; i < regions.length ; i++){
               if(regions[i][0] == map_region){
                 region_val = regions[i][1]
                 $("#sido").val(region_val).prop("selected", true);
                 subRegionVal = "in" + region_val
+                if(region_val == "Gangwondo"){
+                  subRegionVal = "inNewGangwondo"
+                }
+                if(region_val == "Jeollabukdo"){
+                  subRegionVal = "inNewJeollabukdo"
+                }
                 subRegionValList = eval(subRegionVal)
 
                 for(var j = 0 ; j < subRegionValList.length ; j++){                  
                   if(subRegionValList[j][0] == map_subregion){
-                    selectedSubRegion = subRegionValList[j][1]
+                    selectedSubRegion = subRegionValList[j][1]                    
                     optionChange(selectedSubRegion)
-                    updateRegion()
+                    updateRegion()                    
                     break;
                   }
                 }                
