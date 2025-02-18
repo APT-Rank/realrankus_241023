@@ -136,6 +136,10 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"usingRatio",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -178,7 +182,8 @@
             "x":127.0117946,
             "rank_info":"[44.0, 22.0, 47.010000000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbb022",
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingRatio":null
         },
         {
             "index":1,
@@ -214,7 +219,8 @@
             "x":126.963882,
             "rank_info":"[44.0, 2.0, 64.63159999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbb001",
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingRatio":null
         }
     ]
 }
