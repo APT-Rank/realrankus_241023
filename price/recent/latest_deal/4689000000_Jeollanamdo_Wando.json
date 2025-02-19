@@ -140,6 +140,10 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"usingArea",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -354,7 +358,8 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         }
     ]
 }

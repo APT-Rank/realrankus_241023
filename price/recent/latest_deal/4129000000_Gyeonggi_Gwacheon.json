@@ -142,6 +142,10 @@
                 "type":"string"
             },
             {
+                "name":"usingArea",
+                "type":"number"
+            },
+            {
                 "name":"일련번호",
                 "type":"string"
             },
@@ -187,6 +191,10 @@
             },
             {
                 "name":"법정동읍면동코드",
+                "type":"number"
+            },
+            {
+                "name":"area_p",
                 "type":"number"
             }
         ],
@@ -400,6 +408,7 @@
             "sURL":"https:\/\/www.realrankus.com?cpx=gggcbb005",
             "usingRatio":null,
             "type":"TRADE",
+            "usingArea":null,
             "일련번호":null,
             "법정동본번코드":null,
             "법정동부번코드":null,
@@ -411,7 +420,8 @@
             "도로명일련번호코드":null,
             "도로명시군구코드":null,
             "도로명지상지하코드":null,
-            "법정동읍면동코드":null
+            "법정동읍면동코드":null,
+            "area_p":null
         },
         {
             "index":1,
@@ -806,6 +816,7 @@
             "sURL":"https:\/\/www.realrankus.com?cpx=gggcbb003",
             "usingRatio":null,
             "type":"TRADE",
+            "usingArea":null,
             "일련번호":"41290-13",
             "법정동본번코드":6.0,
             "법정동부번코드":0.0,
@@ -817,7 +828,8 @@
             "도로명일련번호코드":2.0,
             "도로명시군구코드":41290.0,
             "도로명지상지하코드":0.0,
-            "법정동읍면동코드":10900.0
+            "법정동읍면동코드":10900.0,
+            "area_p":null
         },
         {
             "index":2,
@@ -1839,6 +1851,7 @@
             "sURL":"https:\/\/www.realrankus.com?cpx=gggcbb004",
             "usingRatio":null,
             "type":"TRADE",
+            "usingArea":null,
             "일련번호":null,
             "법정동본번코드":null,
             "법정동부번코드":null,
@@ -1850,7 +1863,8 @@
             "도로명일련번호코드":null,
             "도로명시군구코드":null,
             "도로명지상지하코드":null,
-            "법정동읍면동코드":null
+            "법정동읍면동코드":null,
+            "area_p":null
         }
     ]
 }

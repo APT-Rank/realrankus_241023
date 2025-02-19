@@ -140,6 +140,10 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"usingArea",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -183,7 +187,8 @@
             "rank_info":"[15.0, 2.0, 35.768]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsbb001",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         },
         {
             "index":1,
@@ -220,7 +225,8 @@
             "rank_info":"[15.0, 2.0, 35.768]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsbb001",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         }
     ]
 }

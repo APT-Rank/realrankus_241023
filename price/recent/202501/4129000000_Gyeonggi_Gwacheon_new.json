@@ -188,6 +188,14 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"area_p",
+                "type":"number"
+            },
+            {
+                "name":"usingArea",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -243,7 +251,9 @@
             "rank_info":"[23.0, 4.0, 63.0264]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gggcbb003",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "area_p":null,
+            "usingArea":null
         }
     ]
 }

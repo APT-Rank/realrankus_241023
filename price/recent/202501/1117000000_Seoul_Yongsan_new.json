@@ -140,6 +140,10 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"usingArea",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -183,7 +187,8 @@
             "rank_info":"[98.0, 1.0, 74.67479999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soysbb000",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         },
         {
             "index":1,
@@ -220,7 +225,8 @@
             "rank_info":"[98.0, 9.0, 63.93160000000001]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soysbb008",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         }
     ]
 }

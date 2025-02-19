@@ -188,6 +188,10 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"usingArea",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -405,7 +409,8 @@
             "rank_info":"[61.0, 5.0, 55.5024]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgnabb004",
             "usingRatio":null,
-            "type":"BYG"
+            "type":"BYG",
+            "usingArea":null
         },
         {
             "index":1,
@@ -619,7 +624,8 @@
             "rank_info":"[61.0, 1.0, 59.3882]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgnabb000",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         },
         {
             "index":2,
@@ -977,7 +983,8 @@
             "rank_info":"[61.0, 34.0, 40.943]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgnabb033",
             "usingRatio":null,
-            "type":"TRADE"
+            "type":"TRADE",
+            "usingArea":null
         }
     ]
 }
