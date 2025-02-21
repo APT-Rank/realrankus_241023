@@ -952,9 +952,18 @@ function updateTable(region){
 
           var aptName = aptData.data[i]["아파트"]
           var apt_m = aptData.data[i]["전용면적"]
-          var apt_p = (Number(apt_m)/3.3058)
-          if(apt_m < 84){ apt_p += 7 }
-          else if(apt_m >= 84){ apt_p += 8 }
+
+          var apt_p = 0
+          var usingArea = aptData.data[i]["usingArea"]
+          if(usingArea == null || usingArea == "" || usingArea == undefined){
+            apt_p = (Number(apt_m)/3.3058)
+            if(apt_m < 84){ apt_p += 7 }
+            else if(apt_m >= 84){ apt_p += 8 }
+          }
+          else{
+            apt_p = ( Number(apt_m) * (100/Number(usingArea)) ) / 3.3058
+          }          
+
           var deal_type = aptData.data[i]["거래유형"]
           var deal_price = aptData.data[i]["거래금액"]
           if(typeof(deal_price) != "number"){
@@ -1065,7 +1074,7 @@ function updateTable(region){
                 addon_html += "<div class='hided_ratio'>직전대비 " + compare_last_tag + "</div>"
               addon_html += "</div>"
               addon_html += "<div class='complex_table'>"
-                addon_html += "<div class='apt_address' style='color:black'>" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m + ")</div>"
+                addon_html += "<div class='apt_address' style='color:black'>" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")</div>"
                 if(deal_type != "중개거래"){
                   addon_html += "<div class='apt_address'><span style='color: #e31939'>"  + deal_type + "</span> | " + dealed_date + "</div>"
                 }
@@ -1103,7 +1112,7 @@ function updateTable(region){
               shareText += " (" + year_gap + "년차)』\n"
             }
             shareText += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
-            shareText += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m + ")\n"
+            shareText += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
             shareText += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
           }
 
@@ -1232,9 +1241,18 @@ function updateTable(region){
 
     var aptName = aptData.data[index]["아파트"]
     var apt_m = aptData.data[index]["전용면적"]
-    var apt_p = (Number(apt_m)/3.3058)
-    if(apt_m < 84){ apt_p += 7 }
-    else if(apt_m >= 84){ apt_p += 8 }
+
+    var apt_p = 0
+    var usingArea = aptData.data[index]["usingArea"]
+    if(usingArea == null || usingArea == "" || usingArea == undefined){
+      apt_p = (Number(apt_m)/3.3058)
+      if(apt_m < 84){ apt_p += 7 }
+      else if(apt_m >= 84){ apt_p += 8 }
+    }
+    else{
+      apt_p = ( Number(apt_m) * (100/Number(usingArea)) ) / 3.3058
+    }
+
     var deal_type = aptData.data[index]["거래유형"]
     var deal_price = aptData.data[index]["거래금액"]
     if(typeof(deal_price) != "number"){
@@ -1359,7 +1377,7 @@ function updateTable(region){
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + "최근 실거래일" + "</div>" + "<div class='popResult'>" + dealed_date + "</div></div>";
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 유형" + "</div>" + "<div class='popResult'>" + deal_type + "</div></div>";
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 층수" + "</div>" + "<div class='popResult'>" + deal_floor + "층</div></div>";
-    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 면적" + "</div>" + "<div class='popResult'>" + "약 " + apt_p.toFixed(0) + "평 (" + apt_m + ")</div></div>";    
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 면적" + "</div>" + "<div class='popResult'>" + "약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")</div></div>";    
 
     compare_list = compare_price(deal_price_num, max_price_deal, min_price_deal, dealed_history_date, dealed_history_price, dealed_date)    
 
