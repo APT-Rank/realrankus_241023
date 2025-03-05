@@ -1,10 +1,21 @@
+var notice_202503 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 3월 업데이트 안내 (2025-03-06)</div>"
++"<ul>"
++"<li><div class='notice'>인프라 대형마트에 '이마트 트레이더스 마곡점, 수원화서점' 추가</div></li>"
++"<li><div class='notice'>인프라 쇼핑몰에 '엔터식스' 추가</div></li>"
++"<li><div class='notice'>전국 지역별 일자리 수 업데이트 (통계청, 지역별고용조사)</div></li>"
++"<li><div class='notice'>은행 정보 업데이트 했습니다. (전국은행연합회 제공)</div></li>"
++"<li><div class='notice'>2025년 2월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202502 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 2월 업데이트 안내 (2025-02-06)</div>"
 +"<ul>"
 +"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
 +"<li><div class='notice'>교육통계서비스 기반 2024년 하반기 초등학교 정보 업데이트 했습니다.</div></li>"
 +"<li><div class='notice'>교육 감점요소인 유흥주점, 단란주점, 모텔정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
-+"<li><div class='notice'>2024년 11월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>2025년 1월 인구 변동 정보 업데이트 했습니다.</div></li>"
 +"</ul>"
 +"<hr>"
 
