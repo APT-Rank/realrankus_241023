@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"중앙하이츠",
             "건축년도":1999.0,
@@ -183,11 +182,11 @@
             "x":126.849332,
             "rank_info":"[226.0, 78.0, 52.0128]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb077",
-            "usingArea":79.0
+            "usingArea":79.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"마곡수명산파크2단지",
             "건축년도":2007.0,
@@ -220,11 +219,11 @@
             "x":126.827519,
             "rank_info":"[226.0, 16.0, 62.2736]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb015",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"우장산힐스테이트",
             "건축년도":2005.0,
@@ -257,11 +256,11 @@
             "x":126.840704,
             "rank_info":"[226.0, 12.0, 63.2572]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb011",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"가양역두산위브",
             "건축년도":2022.0,
@@ -294,11 +293,11 @@
             "x":126.854472,
             "rank_info":"[226.0, 134.0, 46.43]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb133",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"마곡힐스테이트",
             "건축년도":2017.0,
@@ -331,11 +330,11 @@
             "x":126.818111,
             "rank_info":"[226.0, 15.0, 62.3296]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb014",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"마곡우림필유아파트",
             "건축년도":2003.0,
@@ -368,11 +367,11 @@
             "x":126.8213564,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.5718085:126.8213564:17:\/APT\/A1",
-            "usingArea":82.0
+            "usingArea":82.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"관음삼성",
             "건축년도":1997.0,
@@ -405,11 +404,11 @@
             "x":126.869165,
             "rank_info":"[226.0, 54.0, 54.1348]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb053",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"남광아파트",
             "건축년도":2015.0,
@@ -442,11 +441,11 @@
             "x":126.841569,
             "rank_info":"[226.0, 210.0, 38.4512]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sogsbb210",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"메종드로제",
             "건축년도":2019.0,
@@ -479,11 +478,11 @@
             "x":126.842624,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.52881:126.842624:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"혜성오피아파트",
             "건축년도":2018.0,
@@ -516,7 +515,8 @@
             "x":126.8462594,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.5315847:126.8462594:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }

@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"구서동롯데캐슬골드2단지(1049)",
             "건축년도":2006.0,
@@ -183,11 +182,11 @@
             "x":129.0861464,
             "rank_info":"[109.0, 13.0, 57.6152]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsgjbb012",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"구서동롯데캐슬골드1단지(1051)",
             "건축년도":2006.0,
@@ -220,11 +219,11 @@
             "x":129.0888527,
             "rank_info":"[109.0, 10.0, 58.455200000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsgjbb009",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"경희빌리지",
             "건축년도":2004.0,
@@ -257,11 +256,11 @@
             "x":129.090043,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.245086:129.090043:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"구서우성",
             "건축년도":1994.0,
@@ -294,11 +293,11 @@
             "x":129.085523,
             "rank_info":"[109.0, 59.0, 46.6652]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsgjbb058",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"거성경원",
             "건축년도":1997.0,
@@ -331,11 +330,11 @@
             "x":129.083767,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.267199:129.083767:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"쌍용",
             "건축년도":2000.0,
@@ -368,11 +367,11 @@
             "x":129.089117,
             "rank_info":"[109.0, 20.0, 54.99]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsgjbb019",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"온천리젠시타워아파트",
             "건축년도":2015.0,
@@ -405,11 +404,11 @@
             "x":129.087964,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.219362:129.087964:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"부곡동푸르지오",
             "건축년도":2007.0,
@@ -442,11 +441,11 @@
             "x":129.090232,
             "rank_info":"[109.0, 6.0, 62.259600000000006]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsgjbb005",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"장전동금정산SKVIEW",
             "건축년도":2010.0,
@@ -479,11 +478,11 @@
             "x":129.080235,
             "rank_info":"[109.0, 3.0, 64.94155281073697]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsgjbb002",
-            "usingArea":67.0
+            "usingArea":67.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":201.0,
             "아파트":"벽산블루밍장전디자인시티2단지",
             "건축년도":2012.0,
@@ -516,7 +515,8 @@
             "x":129.082895,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.2287952:129.082895:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
