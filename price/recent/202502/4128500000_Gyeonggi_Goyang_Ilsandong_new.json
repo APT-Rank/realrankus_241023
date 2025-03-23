@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"number"
             },
@@ -136,10 +140,6 @@
             {
                 "name":"usingArea",
                 "type":"number"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,6 +150,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"백마마을(쌍용)",
             "건축년도":1994.0,
@@ -182,11 +183,11 @@
             "x":126.7912713,
             "rank_info":"[118.0, 15.0, 65.4616]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb014",
-            "usingArea":68.0,
-            "type":"TRADE"
+            "usingArea":68.0
         },
         {
             "index":1,
+            "type":"TRADE",
             "동":null,
             "아파트":"일산요진와이시티",
             "건축년도":2016.0,
@@ -219,11 +220,11 @@
             "x":126.793281,
             "rank_info":"[118.0, 9.0, 67.5336]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb008",
-            "usingArea":71.0,
-            "type":"TRADE"
+            "usingArea":71.0
         },
         {
             "index":2,
+            "type":"TRADE",
             "동":null,
             "아파트":"일산요진와이시티",
             "건축년도":2016.0,
@@ -256,11 +257,11 @@
             "x":126.793281,
             "rank_info":"[118.0, 9.0, 67.5336]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb008",
-            "usingArea":71.0,
-            "type":"TRADE"
+            "usingArea":71.0
         },
         {
             "index":3,
+            "type":"TRADE",
             "동":null,
             "아파트":"백송마을(대림)",
             "건축년도":1993.0,
@@ -293,11 +294,11 @@
             "x":126.7908559,
             "rank_info":"[118.0, 24.0, 63.2116]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb023",
-            "usingArea":82.0,
-            "type":"TRADE"
+            "usingArea":82.0
         },
         {
             "index":4,
+            "type":"TRADE",
             "동":null,
             "아파트":"일산자이센트리지",
             "건축년도":2020.0,
@@ -330,11 +331,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":5,
+            "type":"TRADE",
             "동":null,
             "아파트":"은행마을2(동문)",
             "건축년도":2002.0,
@@ -367,11 +368,11 @@
             "x":126.8067481,
             "rank_info":"[118.0, 106.0, 39.9404]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb105",
-            "usingArea":76.0,
-            "type":"TRADE"
+            "usingArea":76.0
         },
         {
             "index":6,
+            "type":"TRADE",
             "동":null,
             "아파트":"중산마을1단지(두산)",
             "건축년도":1995.0,
@@ -404,11 +405,11 @@
             "x":126.7813873,
             "rank_info":"[118.0, 114.0, 32.1092]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb113",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":7,
+            "type":"TRADE",
             "동":null,
             "아파트":"중산마을1단지(두산)",
             "건축년도":1995.0,
@@ -441,11 +442,11 @@
             "x":126.7813873,
             "rank_info":"[118.0, 114.0, 32.1092]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb113",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":8,
+            "type":"TRADE",
             "동":null,
             "아파트":"중산마을9단지두산한성",
             "건축년도":1996.0,
@@ -478,11 +479,11 @@
             "x":126.7797616,
             "rank_info":"[118.0, 104.0, 40.0892]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb103",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":9,
+            "type":"TRADE",
             "동":null,
             "아파트":"숲속마을9단지(성원)",
             "건축년도":2006.0,
@@ -515,8 +516,7 @@
             "x":126.803112,
             "rank_info":"[118.0, 99.0, 43.3204]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggidbb098",
-            "usingArea":78.0,
-            "type":"TRADE"
+            "usingArea":78.0
         }
     ]
 }
