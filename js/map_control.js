@@ -577,20 +577,7 @@ function complexMarkerAction(marker_obj, visit_obj) {
     $('#baseModal').modal("hide")
 
     animateMarker(marker_obj, visit_obj)
-    find_gungu =  ""
-
-    if(marker_obj['gungu'].length < 3){      
-      regcode = marker_obj['sido'] + marker_obj['gungu']      
-      for(var i = 0; i < codeMap.length ; i++){
-        if(codeMap[i][0] == regcode){
-          find_gungu = codeMap[i][2]          
-          break;
-        }
-      }
-    }
-    else{
-      find_gungu = marker_obj['gungu']      
-    }
+    find_gungu = marker_obj['gungu']
 
     if(find_gungu == selectedSubRegion){
       complex_code = marker_obj['code']
