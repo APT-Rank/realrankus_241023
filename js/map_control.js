@@ -354,6 +354,61 @@ function updateVisits(map, markers) {
   }  
 }
 
+//동시에 여러개 띄우는 함수임
+function showVisitInfo_test(visits){  
+  var promises = visits.map(function(visit){    
+    return firebase.database().ref("/realrankus_visit/").child(visit).once("value")
+  })
+  Promise.all(promises).then(function(snapshots){
+    snapshots.forEach(function(snapshot){
+      if(snapshot.exists()){
+        visit_obj = snapshot.val()
+        visit_count = 0
+        for(var i in visit_obj){
+          //날짜가 30일 이전의 날짜보다 큰 경우만 count
+          compare_days = Number(i.replaceAll("-", ""))
+          if(days_ago_num <= compare_days){
+            visit_count += visit_obj[i]
+          }
+        }
+        //몇 명 이상 방문해야 보여지는지
+        if(visit_count >= min_visit){
+          visit_id = 'visit_'+ snapshot.key
+          console.log(visit_id)
+          //visit_count = 99
+          $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
+          $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
+          
+          if(visit_count < 1000){
+            if(isMobile && current_zoom == 15){
+              $("#" + visit_id).css({'width': '53px', 'left':'1px'});
+            }
+            else{
+              $("#" + visit_id).css({'width': '60px'});
+            }            
+          }
+          else if(visit_count >= 1000 && visit_count < 10000){
+            if(isMobile && current_zoom == 15){
+              $("#" + visit_id).css({'width': '70px', 'left':'-6px'});
+            }
+            else{
+              $("#" + visit_id).css({'width': '70px', 'left':'-3px'});
+            }
+          }
+          else{
+            if(isMobile && current_zoom == 15){
+              $("#" + visit_id).css({'width': '80px', 'left':'-11px'});
+            }
+            else{
+              $("#" + visit_id).css({'width': '80px', 'left':'-8px'});
+            }
+          }
+        }
+      }      
+    })
+  })
+}
+
 function showVisitInfo(visits, visit_check_count){  
   loop_count = visits.length  
   if(visit_check_count == loop_count){
@@ -521,9 +576,23 @@ function complexMarkerAction(marker_obj, visit_obj) {
   return function(e) {
     $('#baseModal').modal("hide")
 
-    animateMarker(marker_obj, visit_obj)    
+    animateMarker(marker_obj, visit_obj)
+    find_gungu =  ""
 
-    if(marker_obj['gungu'] == selectedSubRegion){
+    if(marker_obj['gungu'].length < 3){      
+      regcode = marker_obj['sido'] + marker_obj['gungu']      
+      for(var i = 0; i < codeMap.length ; i++){
+        if(codeMap[i][0] == regcode){
+          find_gungu = codeMap[i][2]          
+          break;
+        }
+      }
+    }
+    else{
+      find_gungu = marker_obj['gungu']      
+    }
+
+    if(find_gungu == selectedSubRegion){
       complex_code = marker_obj['code']
       temp_code = marker_obj['code']
       for(var i in aptData.data){    
@@ -545,14 +614,14 @@ function complexMarkerAction(marker_obj, visit_obj) {
       }
     }
     else{      
-      region_full = marker_obj['gungu'].split("_")
+      region_full = find_gungu.split("_")
       sido_name = region_full[1]
 
       temp_coord = new naver.maps.LatLng(Number(marker_obj['position']['y']), Number(marker_obj['position']['x']))
       temp_code = marker_obj['code']
 
       $("#sido").val(sido_name).prop("selected", true);
-      optionChange(marker_obj['gungu'])
+      optionChange(find_gungu)
       updateRegion()
 
       return;
@@ -781,6 +850,7 @@ function createLargeMarker(markers){
         apt_name : markers[k]['아파트명'],
         code : marker_code,
         gungu : markers[k]['gungu'],
+        sido : markers[k]['sido'],
         address : markers[k]['법정동주소']
       });
 
@@ -914,6 +984,7 @@ function createSmallMarker(markers){
       apt_name : markers[k]['아파트명'],
       code : markers[k]['검색코드'],
       gungu : markers[k]['gungu'],
+      sido : markers[k]['sido'],
       address : markers[k]['법정동주소']
     });
     complex_small_markers.push(window["small_marker_obj_" + marker_code])
