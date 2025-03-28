@@ -340,7 +340,7 @@ function showHide_filtered_marker(onMap_list, onMap_markers){
   //  return
   //}
 
-  filtered_list = returnFilteredData_onMap(onMap_list)
+  filtered_list = returnFilteredData_onMap(onMap_list)  
  
   for(var i in onMap_markers){
     onMap_markers[i].setMap(null);
@@ -350,21 +350,27 @@ function showHide_filtered_marker(onMap_list, onMap_markers){
       if(onMap_markers[i]['code'] == filtered_list[j]['검색코드']){        
         //window["visit_obj_" + onMap_markers[i]['code']].setMap(defaultMap)
         onMap_markers[i].setMap(defaultMap);
-        $("#visit_complex_" + onMap_markers[i]['code']).css({"visibility" : "visible"})        
+        $("#visit_complex_" + onMap_markers[i]['code']).css({"visibility" : "visible"})
+
+        var last_sales_raw = filtered_list[j]["last_sales"]
         
         if(filtered){
-          sPrice_last_arr = ( filtered_list[j]['sprice'] ).split(",")
-          sPrice_last = sPrice_last_arr[sPrice_last_arr.length-1] + "억"
+          if(last_sales_raw == "BYG"){
+            sPrice_last = "분양"
+            area_last = ""
+          }
+          else{
+            sPrice_last_arr = ( filtered_list[j]['sprice'] ).split(",")
+            sPrice_last = sPrice_last_arr[sPrice_last_arr.length-1] + "억"
 
-          area_last_arr = ( filtered_list[j]['area'] ).split(",")
-          area_last = area_last_arr[area_last_arr.length-1] + "평"
+            area_last_arr = ( filtered_list[j]['area'] ).split(",")
+            area_last = area_last_arr[area_last_arr.length-1] + "평"
+          }
 
           $("#sPrice_" + onMap_markers[i]['code']).html(sPrice_last)
           $("#area_" + onMap_markers[i]['code']).html(area_last)
         }
         else{
-          var last_sales_raw = filtered_list[j]["last_sales"]
-
           if(last_sales_raw == "BYG"){
             last_sales_price_kor = "분양"
             last_sales_area_kor = ""
@@ -402,7 +408,8 @@ function getKeyByValue(object, value){
   }
 }
 
-function returnFilteredData_onMap(onMap_list){  
+function returnFilteredData_onMap(onMap_list){
+  console.log(onMap_list)
   area_filtered_list = return_area_FilteredData_onMap(onMap_list)
   sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)
 
@@ -431,7 +438,7 @@ function return_area_FilteredData_onMap(onMap_list){
       }      
     }
 
-    if(filtered_area.length > 0){
+    if(filtered_area.length > 0 || onMap_list[i]['last_sales'] == "BYG"){
       onMap_list[i]['area'] = String(filtered_area)
       onMap_list[i]['sprice'] = String(filtered_sPrice)
       onMap_list[i]['rprice'] = String(filtered_rPrice)
@@ -470,7 +477,7 @@ function return_sPrice_FilteredData_onMap(onMap_list){
       }      
     }
 
-    if(filtered_sPrice.length > 0){
+    if(filtered_sPrice.length > 0 || onMap_list[i]['last_sales'] == "BYG"){
       onMap_list[i]['area'] = String(filtered_area)
       onMap_list[i]['sprice'] = String(filtered_sPrice)
       onMap_list[i]['rprice'] = String(filtered_rPrice)

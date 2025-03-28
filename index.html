@@ -1564,17 +1564,22 @@
             new_rent_price.push(temp_rent_price[i])
             new_rent_ratio.push(temp_rent_ratio[i])            
           }
-        }        
-
+        }
+        
         if(checkListFiltered(new_area_info, new_sales_price, new_rent_price, new_rent_ratio)){
           $("#" + list_id).show()
-          show_list.push(list_id)
+          show_list.push(list_id)          
         }
         else{
           $("#" + list_id).hide()
           hide_list.push(list_id)
         }
-      }
+              
+        if(aptData.data[i]['매매타입'] == "분양(예정)" || aptData.data[i]['매매타입'] == "분양"){
+          $("#aptSelect_" + aptData.data[i]['검색코드']).show()
+          show_list.push("aptSelect_" + aptData.data[i]['검색코드'])
+        }
+      }      
     }
 
     function checkListFiltered(area_arr, sales_arr, rent_arr, ratio_arr){
