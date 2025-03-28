@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"푸른마을10단지",
             "건축년도":2009.0,
@@ -183,11 +182,11 @@
             "x":126.90334,
             "rank_info":"[199.0, 181.0, 24.1432]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb181",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"삼송10단지동일스위트2차",
             "건축년도":2018.0,
@@ -220,11 +219,11 @@
             "x":126.886476,
             "rank_info":"[199.0, 91.0, 47.01559999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb091",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"루미아트",
             "건축년도":2004.0,
@@ -257,11 +256,11 @@
             "x":126.838858,
             "rank_info":"[199.0, 162.0, 37.2532]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb162",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"행신2차에스케이뷰",
             "건축년도":2006.0,
@@ -294,11 +293,11 @@
             "x":126.83203,
             "rank_info":"[199.0, 40.0, 51.6852]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb040",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"햇빛주공(18-1)",
             "건축년도":1998.0,
@@ -331,11 +330,11 @@
             "x":126.83918,
             "rank_info":"[199.0, 75.0, 48.1836]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb075",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"샘터마을(효성)",
             "건축년도":1997.0,
@@ -368,11 +367,11 @@
             "x":126.8404812,
             "rank_info":"[199.0, 42.0, 51.4552]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb042",
-            "usingArea":80.0
+            "usingArea":80.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"서정마을7단지파크하임휴먼시아",
             "건축년도":2009.0,
@@ -405,11 +404,11 @@
             "x":126.844634,
             "rank_info":"[199.0, 38.0, 52.5268]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb038",
-            "usingArea":81.0
+            "usingArea":81.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"달빛마을(경남)",
             "건축년도":1995.0,
@@ -442,7 +441,8 @@
             "x":126.837657,
             "rank_info":"[199.0, 103.0, 46.212]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggdybb103",
-            "usingArea":80.0
+            "usingArea":80.0,
+            "type":"TRADE"
         }
     ]
 }
