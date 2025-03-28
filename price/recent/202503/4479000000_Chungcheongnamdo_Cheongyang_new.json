@@ -14,18 +14,6 @@
                 "type":"string"
             },
             {
-                "name":"일련번호",
-                "type":"number"
-            },
-            {
-                "name":"법정동본번코드",
-                "type":"number"
-            },
-            {
-                "name":"법정동부번코드",
-                "type":"number"
-            },
-            {
                 "name":"건축년도",
                 "type":"number"
             },
@@ -63,7 +51,7 @@
             },
             {
                 "name":"중개사소재지",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"전용면적",
@@ -78,43 +66,11 @@
                 "type":"string"
             },
             {
-                "name":"법정동지번코드",
-                "type":"number"
-            },
-            {
                 "name":"아파트여부",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"등기일자",
-                "type":"number"
-            },
-            {
-                "name":"도로명",
-                "type":"number"
-            },
-            {
-                "name":"도로명건물본번호코드",
-                "type":"number"
-            },
-            {
-                "name":"도로명건물부번호코드",
-                "type":"number"
-            },
-            {
-                "name":"도로명코드",
-                "type":"number"
-            },
-            {
-                "name":"도로명일련번호코드",
-                "type":"number"
-            },
-            {
-                "name":"도로명시군구코드",
-                "type":"number"
-            },
-            {
-                "name":"도로명지상지하코드",
                 "type":"number"
             },
             {
@@ -124,10 +80,6 @@
             {
                 "name":"매도자",
                 "type":"string"
-            },
-            {
-                "name":"법정동읍면동코드",
-                "type":"number"
             },
             {
                 "name":"법정동",
@@ -188,6 +140,54 @@
             {
                 "name":"type",
                 "type":"string"
+            },
+            {
+                "name":"일련번호",
+                "type":"string"
+            },
+            {
+                "name":"법정동본번코드",
+                "type":"number"
+            },
+            {
+                "name":"법정동부번코드",
+                "type":"number"
+            },
+            {
+                "name":"법정동지번코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명",
+                "type":"string"
+            },
+            {
+                "name":"도로명건물본번호코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명건물부번호코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명일련번호코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명시군구코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명지상지하코드",
+                "type":"number"
+            },
+            {
+                "name":"법정동읍면동코드",
+                "type":"number"
             }
         ],
         "primaryKey":[
@@ -200,9 +200,6 @@
             "index":0,
             "동":null,
             "아파트":"청양 금성백조 예미지 퍼스트클래스",
-            "일련번호":null,
-            "법정동본번코드":null,
-            "법정동부번코드":null,
             "건축년도":null,
             "매수자":"개인",
             "해제사유발생일":null,
@@ -216,19 +213,10 @@
             "전용면적":84.9949,
             "층":16,
             "지번":"308-4",
-            "법정동지번코드":null,
             "아파트여부":null,
             "등기일자":null,
-            "도로명":null,
-            "도로명건물본번호코드":null,
-            "도로명건물부번호코드":null,
-            "도로명코드":null,
-            "도로명일련번호코드":null,
-            "도로명시군구코드":null,
-            "도로명지상지하코드":null,
             "지역코드":44790,
             "매도자":"기타",
-            "법정동읍면동코드":null,
             "법정동":"청양읍 읍내리",
             "history_date":"[]",
             "history_price":"[]",
@@ -243,7 +231,19 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.4458243:126.7992931:17:\/APT\/A1",
             "usingArea":null,
-            "type":"BYG"
+            "type":"BYG",
+            "일련번호":null,
+            "법정동본번코드":null,
+            "법정동부번코드":null,
+            "법정동지번코드":null,
+            "도로명":null,
+            "도로명건물본번호코드":null,
+            "도로명건물부번호코드":null,
+            "도로명코드":null,
+            "도로명일련번호코드":null,
+            "도로명시군구코드":null,
+            "도로명지상지하코드":null,
+            "법정동읍면동코드":null
         }
     ]
 }
