@@ -144,7 +144,7 @@
     background-color: #efefef;
     border: 2px solid #940c23;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-    z-index: 950;
+    z-index: 910;
   }
   #filterSelector > .filterInfo{
     margin-top: 1px;
@@ -1533,7 +1533,7 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
   background: #e31939;
   z-index: 940;
   position: fixed;
-  bottom: 35px;
+  bottom: 55px;
   right: -200px;
   margin: 0 auto;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
@@ -2150,7 +2150,7 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
       background-color: #efefef;
       border: 2px solid #940c23;
       box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-      z-index: 850;
+      z-index: 910;
     }
     #filterSelector > .filterInfo{
       margin-top: 1px;

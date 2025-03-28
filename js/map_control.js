@@ -408,8 +408,7 @@ function getKeyByValue(object, value){
   }
 }
 
-function returnFilteredData_onMap(onMap_list){
-  console.log(onMap_list)
+function returnFilteredData_onMap(onMap_list){  
   area_filtered_list = return_area_FilteredData_onMap(onMap_list)
   sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)
 
