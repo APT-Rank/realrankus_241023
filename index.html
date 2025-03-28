@@ -543,6 +543,10 @@
       <div class='gradeSelector_check'><input class="form-check-input" type="checkbox" id="check_grade_C" value="C" checked onChange="setGradeFilter()"><label id="check_grade_C_text" for="check_grade_C">C</label></div>
     </div>
 
+    <!--지도에 필터 표시 -->
+    <div id="filterOnOff" onClick="filterOnOff()">필터</div>
+    <div id="filterSelector"></div>
+
     <!--지도 위 배너-->
     <!--
     <div id="map_banner" onClick='openOuterLink("https://naver.me/xDJJrRGf")'>
@@ -660,10 +664,21 @@
     var days_ago_day = dateReturn(days_ago.getDate());
     var days_ago_num = Number("" + days_ago_year + days_ago_month + days_ago_day);
 
+    var ago_years = 2 //최근 2년간의 실거래가만으로 필터링 함
+    var years_ago_raw = today.setFullYear(today.getFullYear() - ago_years)
+    years_ago_raw = today.setDate(1)
+    var years_ago = new Date(years_ago_raw)
+    var years_ago_year = years_ago.getFullYear();
+    var years_ago_month = dateReturn(years_ago.getMonth() + 2);
+    var years_ago_day = dateReturn(years_ago.getDate());
+    var years_ago_num = Number("" + years_ago_year + years_ago_month + years_ago_day);    
+
     var pop_state = []
 
     var come_from_map = false
     var recent_search = []
+
+    var filter_ui = true
 
     function dateReturn(n) {
       return n < 10 ? "0" + n : n;
@@ -849,7 +864,7 @@
                 showHideMarker(current_zoom)
                 $("#pageLoadingBack").remove()
                 optionChange(selectedSubRegion, selectedRegion);
-                updateRegion();
+                updateRegion();                
               })
           })
         }
@@ -910,8 +925,63 @@
                 optionChange(selectedSubRegion, selectedRegion);
                 updateRegion();
               })          
-          }        
-        }        
+          }          
+        }
+
+        filterHtml = ""
+
+        //평형 필터 슬라이더
+        filterHtml += "<div class='filterInfo'>"
+          filterHtml += "<div class='filterName'>평형</div>"
+          filterHtml += "<div class='filterVal' id='filterName_area'></div>"
+        filterHtml += "</div>"
+        filterHtml += "<div class='filterRange'>"
+          filterHtml += "<div> </div>"
+          filterHtml += "<div id='area_slider'></div>"
+          filterHtml += "<div> </div>"
+          filterHtml += "<div> </div>"
+          filterHtml += "<div id='area_divider'>"
+          for(var i = 0 ; i < 9 ; i++){
+            if(i == 0){
+              filterHtml += "<div class='sPrice_index'>0</div>"
+            }
+            else{
+              filterHtml += "<div class='sPrice_index'>" + (i*10) + "평</div>"
+            }
+          }
+          filterHtml += "</div>"
+          filterHtml += "<div> </div>"
+        filterHtml += "</div>";    
+
+        filterHtml += "<hr style='margin-top:.5em; margin-bottom:.5em'>";
+
+        //매매가격 필터 슬라이더
+        filterHtml += "<div class='filterInfo'>"
+          filterHtml += "<div class='filterName'>가격</div>"
+          filterHtml += "<div class='filterVal' id='filterName_sPrice'></div>"
+        filterHtml += "</div>"
+        filterHtml += "<div class='filterRange'>"
+          filterHtml += "<div> </div>"
+          filterHtml += "<div id='sPrice_slider'></div>"
+          filterHtml += "<div> </div>"
+          filterHtml += "<div> </div>"
+          filterHtml += "<div id='sPrice_divider'>"
+        for(var i = 0 ; i < 5 ; i++){
+          if(i == 0){
+            filterHtml += "<div class='sPrice_index'>0</div>"
+          }
+          else{
+            filterHtml += "<div class='sPrice_index'>" + (i*10) + "억</div>"
+          }
+        }
+        filterHtml += "</div>"
+        filterHtml += "<div> </div>"
+        filterHtml += "</div>";
+
+        $("#filterSelector").html(filterHtml)               
+
+        initSlider_sPrice()
+        initSlider_area()
       }
 
       $("div.modal").on("show.bs.modal", function () {
@@ -1008,7 +1078,10 @@
         $("#commentBox").css({'bottom': -commentBox_height + 92 + "px"})
         $("#rearrange").css({'visibility' : 'hidden'})
         $("#mobile_map_list_icon").html("<i class='fa-solid fa-list'></i>")
-        $("#mobile_map_list_text").html("목록보기")        
+        $("#mobile_map_list_text").html("목록보기")
+
+        filterSelector_width = window.innerWidth - 80        
+        $("#filterSelector").css({"width" : filterSelector_width+"px"})        
       }
 
       $("#commentBack").hide()
@@ -1054,6 +1127,42 @@
       request.onsuccess =(e)=> {        
         var db = request.result;
         const transaction = db.transaction(['complex'], 'readwrite');
+      }
+    }
+
+    function filterOnOff(){
+      if(filter_ui){
+        $("#filterSelector").hide()
+        if(isMobile){
+          $("#gradeSelector").hide()
+        }
+        if(filtered){
+          $("#filterOnOff").html("<i class='fa-solid fa-check'></i>&nbsp필터")
+          $("#filterOnOff").css({"color":"#fff", "background-color": "#940c23", "border":"2px solid #940c23"})
+        }
+        else{
+          $("#filterOnOff").html("필터")
+          $("#filterOnOff").css({"color":"#000", "background-color": "#efefef", "border":"2px solid #940c23"})
+        }
+        
+        filter_ui = false
+      }
+      else{
+        $("#filterSelector").show()
+        if(isMobile){
+          $("#gradeSelector").show()
+        }
+
+        if(filtered){
+          $("#filterOnOff").html("<i class='fa-solid fa-check'></i>&nbsp필터")
+          $("#filterOnOff").css({"color":"#fff", "background-color": "#940c23", "border":"2px solid #940c23"})
+        }
+        else{
+          $("#filterOnOff").html("필터")
+          $("#filterOnOff").css({"color":"#fff", "background-color": "#940c23", "border":"2px solid #940c23"})
+        }
+        
+        filter_ui = true
       }
     }
 
@@ -1337,13 +1446,19 @@
       $("#localSearch").html(localSearchText + " 검색");      
 
       if (selectedSubRegion != "1000000000_Korea") {
-        //$("#commentWrapper").show()
-        $("#map_banner2").show()
+        //$("#commentWrapper").show()       
         if (selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300" || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300") {
-          //로딩          
+          //로딩
+          $("#gradeSelector").hide()
+          $("#filterOnOff").hide()
+          $("#filterSelector").hide()
           updateTopTable(selectedMonth, selectedSubRegion);
         } else {
           //로딩
+          $("#map_banner2").show()
+          $("#gradeSelector").show()
+          $("#filterOnOff").show()
+          $("#filterSelector").show()           
           $("#dataList").html("");
           //var detail_loading_html = "<div style='display: grid; text-align: center; justify-items: center;'><br><br><br><br><div class='spinner-border text-danger' role='status'></div></div>";
           //$("#dataList").html(detail_loading_html);
@@ -1363,10 +1478,152 @@
       } else {
         //$("#commentWrapper").hide()
         $("#map_banner2").hide()
+        $("#gradeSelector").hide()
+        $("#filterOnOff").hide()
+        $("#filterSelector").hide()        
         updateRegionTable(selectedMonth, selectedSubRegion);
       }
       showWeight();
     }
+
+    var show_list = []
+    var hide_list = []
+
+    function showHideListFiltered(aptData){
+      show_list = []
+      hide_list = []
+      for (i in aptData.data){
+        list_id = "aptSelect_" + aptData.data[i]["검색코드"]
+
+        area_arr = (aptData.data[i]['area_info']).split(",")
+        sales_arr = (aptData.data[i]['sales_info']).split(",")
+        sales_date_arr = (aptData.data[i]['sales_info']).split(",")
+        rent_arr = (aptData.data[i]['rent_info']).split(",")
+        ratio_arr = (aptData.data[i]['rent_ratio']).split(",")        
+
+        for (k in area_arr){
+          area_arr[k] = Number( (area_arr[k].split("평"))[0] )
+          sales_arr[k] = Number( (sales_arr[k].split("억"))[0] )          
+          sales_date = (sales_date_arr[k].split("("))[1]          
+          if(sales_date == undefined){
+            sales_date = -1
+          }
+          else{
+            sales_date = sales_date.replace(")", "")
+            sales_date = sales_date.replaceAll("-", "")
+          }          
+          sales_date_arr[k] = Number(sales_date)
+          rent_arr[k] = Number( (rent_arr[k].split("억"))[0] )
+          ratio_arr[k] = Number( ratio_arr[k] )
+        }
+
+        var temp_area_info =[]
+        var temp_sales_price = []
+        var temp_rent_price = []
+        var temp_sales_date = []
+        var temp_rent_date = []
+        var temp_rent_ratio = []
+
+        for (i in area_arr){
+          if(i == 0){
+            temp_area_info[i] = area_arr[i]
+            temp_sales_price[i] = sales_arr[i]
+            temp_rent_price[i] = rent_arr[i]
+            temp_rent_ratio[i] = ratio_arr[i]
+            temp_sales_date[i] = sales_date_arr[i]
+          }
+          else{
+            if(area_arr[i] == area_arr[i-1]){
+              if(sales_date_arr[i] > area_arr[i-1]){
+                temp_area_info[i] = area_arr[i]
+                temp_sales_price[i] = sales_arr[i]
+                temp_rent_price[i] = rent_arr[i]
+                temp_rent_ratio[i] = ratio_arr[i]
+                temp_sales_date[i] = sales_date_arr[i]                
+              }
+            }
+            else{
+              temp_area_info[i] = area_arr[i]
+              temp_sales_price[i] = sales_arr[i]
+              temp_rent_price[i] = rent_arr[i]
+              temp_rent_ratio[i] = ratio_arr[i]
+              temp_sales_date[i] = sales_date_arr[i]
+            }
+          }
+        }
+
+        new_area_info = []
+        new_sales_price = []
+        new_rent_price = []
+        new_rent_ratio = []
+
+        for (i in temp_sales_date){
+          if(temp_sales_date[i] > years_ago_num){
+            new_area_info.push(temp_area_info[i])
+            new_sales_price.push(temp_sales_price[i])
+            new_rent_price.push(temp_rent_price[i])
+            new_rent_ratio.push(temp_rent_ratio[i])            
+          }
+        }        
+
+        if(checkListFiltered(new_area_info, new_sales_price, new_rent_price, new_rent_ratio)){
+          $("#" + list_id).show()
+          show_list.push(list_id)
+        }
+        else{
+          $("#" + list_id).hide()
+          hide_list.push(list_id)
+        }
+      }
+    }
+
+    function checkListFiltered(area_arr, sales_arr, rent_arr, ratio_arr){
+      area_filtered_list = return_area_FilteredData_onList(area_arr, sales_arr, rent_arr, ratio_arr)
+      sPrice_filtered_list = return_sPrice_FilteredData_onList(area_filtered_list[0], area_filtered_list[1], area_filtered_list[2], area_filtered_list[3])
+      
+      if(sPrice_filtered_list[0].length == 0){
+        return false
+      }
+      else{
+        return true
+      }
+    }
+
+    function return_area_FilteredData_onList(area_arr, sales_arr, rent_arr, ratio_arr){
+      filtered_area  = []
+      filtered_sPrice  = []
+      filtered_rPrice  = []
+      filtered_ratio  = []
+
+      for(var j in area_arr){
+        if(Number(area_arr[j]) >= area_min && Number(area_arr[j]) <= area_max){        
+          filtered_area.push(Number(area_arr[j]))
+          filtered_sPrice.push(Number(sales_arr[j]))
+          filtered_rPrice.push(Number(rent_arr[j]))
+          filtered_ratio.push(Number(ratio_arr[j]))
+        }
+      }
+
+      return [filtered_area, filtered_sPrice, filtered_rPrice, filtered_ratio]
+    }
+
+    function return_sPrice_FilteredData_onList(area_arr, sales_arr, rent_arr, ratio_arr){
+      filtered_area  = []
+      filtered_sPrice  = []
+      filtered_rPrice  = []
+      filtered_ratio  = []
+
+      for(var j in sales_arr){
+        if(Number(sales_arr[j]) >= sPrice_min && Number(sales_arr[j]) <= sPrice_max){        
+          filtered_area.push(Number(area_arr[j]))
+          filtered_sPrice.push(Number(sales_arr[j]))
+          filtered_rPrice.push(Number(rent_arr[j]))
+          filtered_ratio.push(Number(ratio_arr[j]))
+        }
+      }
+
+      return [filtered_area, filtered_sPrice, filtered_rPrice, filtered_ratio]
+    }    
 
     var svg_loc = ""
 
@@ -1425,12 +1682,12 @@
       .done(function(){
         $("#dataList").html("")
         //광고정보표시
-        show_partnership();
+        show_partnership();        
 
         //동 DB 만들기
-        dongDB = []        
+        dongDB = []
         $("#dataList").append("<div class='dong_selector'><div id='dong_list'></div></div>")  
-        for (var j = 0; j < itemNum; j++){          
+        for (var j = 0; j < itemNum; j++){
           var split_addr = (aptData.data[j]["법정동주소"]).split(" ")
           var dong_name = split_addr[2]
           if(split_addr[0] == "경기도" || split_addr[0] == "충청남도" || split_addr[0] == "충청북도" || split_addr[0] == "전북도" || split_addr[0] == "전라북도" || split_addr[0] == "경상북도"  || split_addr[0] == "경상남도"){
@@ -1543,9 +1800,11 @@
             for(var j = 0 ; j < dongDB.length ; j++){
               var dong_compare = dongDB[j][0]
 
+              list_id = "aptSelect_" + searchCode
+
               if(compare_dong_name == dong_compare){
                 var dongClass = "dong_" + dongDB[j][1]
-                var addon_html = "<div class='listBox2 " + dongClass + "' data-bs-toggle='modal' data-bs-target='#baseModal' id='aptSelect_" + i + "' onClick='showDetail(" + i + ")' value=" + i + ">";
+                var addon_html = "<div class='listBox2 " + dongClass + "' data-bs-toggle='modal' data-bs-target='#baseModal' id='" + list_id + "' onClick='showDetail(" + i + ")' value=" + i + ">";
                 break
               }
             }           
@@ -1632,9 +1891,11 @@
                   addon_html +="<div id='complex_like_num_" + searchCode +"\'>0</div>"
                 addon_html +="</div>"
               addon_html +="</div>"
-            addon_html += "</div>";
-
-            $("#dataList").append(addon_html);            
+            addon_html += "</div>";            
+            
+            $("#dataList").append(addon_html);
+            
+            showHideListFiltered(aptData)            
           }          
         }        
         
@@ -1758,6 +2019,7 @@
 
       showWeight();
       saveLocalStorage();
+      showHideListFiltered(aptData)
     }
 
     function searchAndShow(searched_code) {
@@ -4273,6 +4535,7 @@
       $("#noticeModal").modal("show"); //offcanvas
       $(".modal-backdrop").css({"width":"100%"})
     }
+
     function dong_filter(selection){      
       $("#blank_list").html("")
       $("#blank_list").css({'height' : '3em'})
@@ -4298,6 +4561,10 @@
         $(selected_class).fadeIn(950, 'easeOutQuart')
       }
       $('html').scrollTop(0)
+
+      for(i in hide_list){
+        $("#" + hide_list[i]).hide()
+      }
     }
   </script>
 </html>

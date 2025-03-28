@@ -60,8 +60,10 @@
     padding-left: 5px;
     padding-right: 5px;
     border-radius: 5px;
-    bottom: 70px;
+    bottom: 100px;
     right: 10px;
+    width: 64px;
+    height: 145px;
     background-color: #efefef;
     border: 2px solid #940c23;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
@@ -103,6 +105,50 @@
     background-color: #dc3545 !important;
     border-color: #dc3545 !important;
   }
+  #filterOnOff{      
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;      
+    font-weight: 600;
+    position: absolute;      
+    border-radius: 6px;
+    width: 64px;
+    height: 36px;    
+    bottom : 60px;
+    right : 10px;
+    color: #fff;    
+    background-color: #940c23;
+    border: 2px solid #940c23;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    z-index: 900;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none
+  }
+  #filterSelector{
+    font-size: 0.85em;
+    position: absolute;
+    display: grid;
+    column-gap: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 5px;
+    width: 320px;
+    height: 145px;
+    bottom : 100px;    
+    right : 75px;      
+    background-color: #efefef;
+    border: 2px solid #940c23;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    z-index: 950;
+  }
+  #filterSelector > .filterInfo{
+    margin-top: 1px;
+  }  
   #map_banner{
     position: absolute;
     display: grid;
@@ -133,6 +179,7 @@
     display: flex;
     align-items: center;
     width: 260px;
+    height: 30px;
     font-size: 0.85em;
     font-weight: 600;
     padding-top: 5px;
@@ -140,7 +187,7 @@
     padding-left: 15px;
     padding-right: 15px;
     border-radius: 10px;
-    bottom: 65px;
+    bottom: 60px;
     left: -8px;
     background: #8E2DE2;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
@@ -1667,9 +1714,47 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
   position: relative;    
   align-items: center;    
   width: 100%;
-  grid-template-columns: 60px 1fr 60px;
+  margin-top: 10px;  
+  grid-template-columns: 20px 1fr 20px;
 }
-#max_val, #min_val{
+.filterInfo{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 10px;
+}
+
+.filterName{
+  
+  font-weight: 600;
+  padding-left: 0.5em;
+  color:#222;
+  text-align: left;
+}
+#sPrice_slider > .ui-slider-range,
+#area_slider > .ui-slider-range
+{
+  outline: 1px solid #e31939 !important
+}
+.filterVal{
+  
+  color:#e31939;
+  font-weight: 600;
+  padding-right: 0.8em;
+  text-align: right;
+}
+#sPrice_divider, #area_divider{
+  grid-column: 1/4;
+  font-size: 0.75em;
+  color: #666;  
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+.sPrice_index{
+  text-align: center;
+  width: 42px
+}
+#sPrice_maxVal, #sPrice_minVal{
   text-align: center;
 }
 
@@ -1996,8 +2081,9 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
       padding-bottom: 10px;
       padding-left: 20px;
       padding-right: 5px;
-      border-radius: 15px;
+      border-radius: 8px;
       width: 400px;
+      height: auto;
       top: 12px;
       bottom : unset;
       left : unset;
@@ -2022,6 +2108,53 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
       border-color: #0dcaf0 !important;
       background-color: #0dcaf0 !important;
     }
+    #filterOnOff{      
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85em;      
+      font-weight: 600;
+      position: absolute;      
+      border-radius: 6px;
+      width: 64px;
+      height: 36px;
+      top: 65px;
+      bottom : unset;
+      left : unset;
+      right : 55px;
+      color: #fff;
+      background-color: #940c23;
+      border: 2px solid #940c23;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+      z-index: 900;
+      -webkit-user-select:none;
+      -moz-user-select:none;
+      -ms-user-select:none;
+      user-select:none
+    }
+    #filterSelector{
+      font-size: 0.85em;
+      position: absolute;
+      display: grid;
+      column-gap: 5px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-radius: 8px;
+      width: 334px;
+      top: 65px;
+      bottom : unset;
+      left : unset;
+      right : 120px;      
+      background-color: #efefef;
+      border: 2px solid #940c23;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+      z-index: 850;
+    }
+    #filterSelector > .filterInfo{
+      margin-top: 1px;
+    }
     #map_banner{
       width: 300px;
       font-size: 1em;
@@ -2036,6 +2169,7 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
     }
     #map_banner2{
       width: 300px;
+      height: auto;
       font-size: 1em;
       padding-top: 5px;
       padding-bottom: 5px;

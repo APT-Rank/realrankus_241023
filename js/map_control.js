@@ -304,34 +304,200 @@ function removeMarkers(){
   all_markers = []
 }
 
+var onMap_list = []
+var onMap_markers = []
+var onMap_visit_markers = []
+
 function updateMarkers(map, markers) {  
   var mapBounds = map.getBounds();
   var marker, position;
 
+  onMap_markers = []
+  onMap_list = []  
   for (var i = 0; i < markers.length; i++) {
       marker = markers[i]
       position = marker.getPosition();
 
       if (mapBounds.hasLatLng(position)) {
+          find_code = marker['code']
+          find_obj = getKeyByValue(searchingData.data, find_code)
+          onMap_markers.push(marker)
+          onMap_list.push(find_obj)          
           showMarker(map, marker);
       } else {
           hideMarker(map, marker);
       }
   }
+
+  current_zoom = defaultMap.getZoom() 
+  if(current_zoom >= zoom_levels[1]){
+    showHide_filtered_marker(onMap_list, onMap_markers)
+  }
+}
+
+function showHide_filtered_marker(onMap_list, onMap_markers){
+  //if(!filtered){
+  //  return
+  //}
+
+  filtered_list = returnFilteredData_onMap(onMap_list)
+ 
+  for(var i in onMap_markers){
+    onMap_markers[i].setMap(null);
+    //window["visit_obj_" + onMap_markers[i]['code']].setMap(null)
+    $("#visit_complex_" + onMap_markers[i]['code']).css({"visibility" : "hidden"})
+    for(var j in filtered_list){
+      if(onMap_markers[i]['code'] == filtered_list[j]['검색코드']){        
+        //window["visit_obj_" + onMap_markers[i]['code']].setMap(defaultMap)
+        onMap_markers[i].setMap(defaultMap);
+        $("#visit_complex_" + onMap_markers[i]['code']).css({"visibility" : "visible"})        
+        
+        if(filtered){
+          sPrice_last_arr = ( filtered_list[j]['sprice'] ).split(",")
+          sPrice_last = sPrice_last_arr[sPrice_last_arr.length-1] + "억"
+
+          area_last_arr = ( filtered_list[j]['area'] ).split(",")
+          area_last = area_last_arr[area_last_arr.length-1] + "평"
+
+          $("#sPrice_" + onMap_markers[i]['code']).html(sPrice_last)
+          $("#area_" + onMap_markers[i]['code']).html(area_last)
+        }
+        else{
+          var last_sales_raw = filtered_list[j]["last_sales"]
+
+          if(last_sales_raw == "BYG"){
+            last_sales_price_kor = "분양"
+            last_sales_area_kor = ""
+          }
+          else{
+            var last_sales = last_sales_raw.split(",");
+            var last_sales_date = last_sales[0].toString();
+            var last_sales_price = last_sales[1].toString();
+            var last_sales_area = last_sales[2];
+            
+            if (isNaN(last_sales_price)) {
+              last_sales_price_kor = "정보없음"
+              last_sales_area_kor = "--"
+            } else {
+              last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+              last_sales_area_kor = last_sales_area
+            }
+          }
+
+          $("#sPrice_" + onMap_markers[i]['code']).html(last_sales_price_kor)
+          $("#area_" + onMap_markers[i]['code']).html(last_sales_area_kor)
+        }
+      }
+    }
+  }
+  showHideListFiltered(aptData)
+}
+
+function getKeyByValue(object, value){
+  //object안의 object에서 value를 가지는 key를 찾아서 반환
+  for(var key in object){
+    if(object[key]['검색코드'] == value){
+      return object[key]
+    }
+  }
+}
+
+function returnFilteredData_onMap(onMap_list){  
+  area_filtered_list = return_area_FilteredData_onMap(onMap_list)
+  sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)
+
+  return sPrice_filtered_list
+}
+
+function return_area_FilteredData_onMap(onMap_list){
+  return_filtered_array = []
+  filtered_area  = []
+  filtered_sPrice  = []
+  filtered_rPrice  = []
+  filtered_ratio  = []
+
+  for(var i in onMap_list){
+    area_arr = (onMap_list[i]['area']).split(",")
+    sPrice_arr = (onMap_list[i]['sprice']).split(",")
+    rPrice_arr = (onMap_list[i]['rprice']).split(",")
+    ratio_arr = (onMap_list[i]['ratio']).split(",")
+
+    for(var j in area_arr){
+      if(Number(area_arr[j]) >= area_min && Number(area_arr[j]) <= area_max){        
+        filtered_area.push(Number(area_arr[j]))
+        filtered_sPrice.push(Number(sPrice_arr[j]))
+        filtered_rPrice.push(Number(rPrice_arr[j]))
+        filtered_ratio.push(Number(ratio_arr[j]))
+      }      
+    }
+
+    if(filtered_area.length > 0){
+      onMap_list[i]['area'] = String(filtered_area)
+      onMap_list[i]['sprice'] = String(filtered_sPrice)
+      onMap_list[i]['rprice'] = String(filtered_rPrice)
+      onMap_list[i]['ratio'] = String(filtered_ratio)
+
+      return_filtered_array.push(onMap_list[i])
+      filtered_area  = []
+      filtered_sPrice  = []
+      filtered_rPrice  = []
+      filtered_ratio  = []
+    }
+  }
+
+  return return_filtered_array
+}
+
+function return_sPrice_FilteredData_onMap(onMap_list){
+  return_filtered_array = []
+  filtered_area  = []
+  filtered_sPrice  = []
+  filtered_rPrice  = []
+  filtered_ratio  = []
+
+  for(var i in onMap_list){
+    area_arr = (onMap_list[i]['area']).split(",")
+    sPrice_arr = (onMap_list[i]['sprice']).split(",")
+    rPrice_arr = (onMap_list[i]['rprice']).split(",")
+    ratio_arr = (onMap_list[i]['ratio']).split(",")
+
+    for(var j in sPrice_arr){      
+      if(Number(sPrice_arr[j]) >= sPrice_min && Number(sPrice_arr[j]) <= sPrice_max){        
+        filtered_area.push(Number(area_arr[j]))
+        filtered_sPrice.push(Number(sPrice_arr[j]))
+        filtered_rPrice.push(Number(rPrice_arr[j]))
+        filtered_ratio.push(Number(ratio_arr[j]))
+      }      
+    }
+
+    if(filtered_sPrice.length > 0){
+      onMap_list[i]['area'] = String(filtered_area)
+      onMap_list[i]['sprice'] = String(filtered_sPrice)
+      onMap_list[i]['rprice'] = String(filtered_rPrice)
+      onMap_list[i]['ratio'] = String(filtered_ratio)
+
+      return_filtered_array.push(onMap_list[i])
+      filtered_area  = []
+      filtered_sPrice  = []
+      filtered_rPrice  = []
+      filtered_ratio  = []
+    }
+  }
+
+  return return_filtered_array
 }
 
 function updateVisits(map, markers) {  
   var mapBounds = map.getBounds();
   var marker, position;
-  var show_visit = []
+  var show_visit = []  
 
   for (var i = 0; i < markers.length; i++) {
       marker = markers[i]
-      position = marker.getPosition();
+      position = marker.getPosition();     
 
       if (mapBounds.hasLatLng(position)) {
-          find_code = marker['code']          
-          show_visit.push(find_code)
+          show_visit.push(marker['code'])          
           showMarker(map, marker)
       }
       else {
@@ -373,8 +539,7 @@ function showVisitInfo_test(visits){
         }
         //몇 명 이상 방문해야 보여지는지
         if(visit_count >= min_visit){
-          visit_id = 'visit_'+ snapshot.key
-          console.log(visit_id)
+          visit_id = 'visit_'+ snapshot.key          
           //visit_count = 99
           $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
           $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
@@ -799,6 +964,8 @@ function createLargeMarker(markers){
       }      
 
       var large_marker_id = 'large_marker_' + markers[k]['검색코드']
+      var sPrice_marker_id = 'sPrice_' + markers[k]['검색코드']
+      var area_marker_id = 'area_' + markers[k]['검색코드']
 
       svg_loc_large = `
       <svg version="1.1" class='large_marker ${grade}' id="${large_marker_id}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -819,8 +986,8 @@ function createLargeMarker(markers){
       <path class="cls-1 large_marker_${grade}" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>
       <path class="cls-2 large_marker_${grade}" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>
       <text class="cls-3_text" text-anchor="middle" x="16.5" y="10">${complex_grade}</text>
-      <text class="cls-4_text" text-anchor="middle" x="17" y="20">${last_sales_price_kor}</text>
-      <text class="cls-5_text" text-anchor="middle" x="17" y="26">${last_sales_area_kor}</text>
+      <text class="cls-4_text" id="${sPrice_marker_id}" text-anchor="middle" x="17" y="20">${last_sales_price_kor}</text>
+      <text class="cls-5_text" id="${area_marker_id}" text-anchor="middle" x="17" y="26">${last_sales_area_kor}</text>
       </g>
       </svg>
       `
@@ -1137,8 +1304,6 @@ function createLevel1Marker(markers){
       });
 
       visit_lv1_markers.push(window["visit_obj_" + name_en])
-      /////
-      
       level1_markers.push(complex_marker_lv1)
       all_markers.push(complex_marker_lv1)
       all_markers.push(window["visit_obj_" + name_en])

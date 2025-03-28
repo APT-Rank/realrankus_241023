@@ -8,40 +8,6 @@
   var valInfra_temp = 0;
   var valEdu_temp = 0;
   var sortSelection = ""
-  var minValue = 0;
-  var maxValue = 60;
-  var lastMinValue = 0;
-  var lastMaxValue = 60;
-  var sliders = "<div slider id='slider-distance'>"
-  sliders += "<div>"
-  sliders += "<div inverse-left class='leftBar' style='width:100%;'></div>"
-  sliders += "<div inverse-right class='rightBar' style='width:100%;'></div>"
-  sliders += "<div range class='rangeBar' style='left:0%;right:0%;'></div>"
-  sliders += "<span thumb id='leftThumb' style='left:0%;'></span> <span thumb id='rightThumb' style='left:100%;'></span>"  
-  sliders += "</div>"
-  sliders += "<input type='range' id='minRange' tabindex='0' value='" + minValue +"' max='60' min='0' step='1' oninput='slideMin(this)'></input>"
-  sliders += "<input type='range' id='maxRange' tabindex='0' value='" + maxValue +"' max='60' min='0' step='1' oninput='slideMax(this)'></input>"
-  sliders += "</div>"
-
-  /*
-  <div slider id='slider-distance'>
-        <div>
-          <div inverse-left style='width:100%;'></div>
-          <div inverse-right style='width:100%;'></div>
-          <div range style='left:0%;right:0%;'></div>
-          <span thumb style='left:0%;'></span>
-          <span thumb style='left:100%;'></span>
-          <div sign style='left:0%;'>
-            <span id='value'>0</span>
-          </div>
-          <div sign style='left:100%;'>
-            <span id='value'>30</span>
-          </div>
-        </div>
-        <input type='range' tabindex='0' value='0' max='60' min='0' step='1' oninput='slideMin(this)'></input>      
-        <input type='range' tabindex='0' value='60' max='60' min='0' step='1' oninput='slideMax(this)'></input>        
-      </div>
-  */
 
   function sleep (delay) {
     var start = new Date().getTime();
@@ -53,11 +19,12 @@
   }
 
   function showSorting(){
-    
+    login_status = true
+        
     if(!login_status){      
       showLogin()
       return
-    }    
+    }
 
     toastr.options = {
       closeButton: true,
@@ -82,7 +49,63 @@
     titleHtml += "<div class='comment2'> 각 항목별 점수는 변하지 않으며, 가중치에 따라 총점을 다시 계산합니다.</div>";    
     var footerHtml = "" 
 
-    var detailHtml = "<div style='font-size: 0.85em; text-align:center'> 지도에 표시되는 랭커는 '균형잡힌' 정보로만 보여집니다.</div>";
+    var detailHtml = "";
+
+    /*
+    detailHtml += "<div class='filterArea'>"
+
+    //평형 필터 슬라이더
+    detailHtml += "<div class='filterInfo'>"
+      detailHtml += "<div class='filterName'>평형</div>"
+      detailHtml += "<div class='filterVal' id='filterName_area'></div>"
+    detailHtml += "</div>"
+    detailHtml += "<div class='filterRange'>"
+      detailHtml += "<div> </div>"
+      detailHtml += "<div id='area_slider'></div>"
+      detailHtml += "<div> </div>"
+      detailHtml += "<div> </div>"
+      detailHtml += "<div id='area_divider'>"
+      for(var i = 0 ; i < 9 ; i++){
+        if(i == 0){
+          detailHtml += "<div class='sPrice_index'>0</div>"
+        }
+        else{
+          detailHtml += "<div class='sPrice_index'>" + (i*10) + "평</div>"
+        }
+      }
+      detailHtml += "</div>"
+      detailHtml += "<div> </div>"
+    detailHtml += "</div>";    
+
+    detailHtml += "<hr style='margin-top:1.5em'>";
+
+    //매매가격 필터 슬라이더
+    detailHtml += "<div class='filterInfo'>"
+    detailHtml += "<div class='filterName'>가격</div>"
+    detailHtml += "<div class='filterVal' id='filterName_sPrice'></div>"
+    detailHtml += "</div>"
+    detailHtml += "<div class='filterRange'>"
+    detailHtml += "<div> </div>"
+    detailHtml += "<div id='sPrice_slider'></div>"
+    detailHtml += "<div> </div>"
+    detailHtml += "<div> </div>"
+    detailHtml += "<div id='sPrice_divider'>"
+    for(var i = 0 ; i < 5 ; i++){
+      if(i == 0){
+        detailHtml += "<div class='sPrice_index'>0</div>"
+      }
+      else{
+        detailHtml += "<div class='sPrice_index'>" + (i*10) + "억</div>"
+      }
+    }
+    detailHtml += "</div>"
+    detailHtml += "<div> </div>"
+    detailHtml += "</div>";
+
+    detailHtml += "<hr style='margin-top:1.5em; margin-bottom:1em'>";
+    */  
+
+    detailHtml += "<div style='font-size: 0.85em; text-align:center'> 지도에 표시되는 랭커는 '균형잡힌' 정보로만 보여집니다.</div>";
 
     detailHtml += "<div class='settingArea' style='padding-top:0.5em'>";    
     detailHtml += "<div><input type='radio' class='btn-check' name='btnSort' autocomplete='off' id='sortLiving' onClick='setRangeValue(this)'><label class='btn btn-outline-danger' for='sortLiving'>주거우선</label></div>"
@@ -119,17 +142,6 @@
     detailHtml += "<div class='rangeSet'><input type='range' class='form-range' min='0' max='100' step='5' value='50' id='rangeEdu' onInput='updateRangeValue(" + 'setEduValue,' + 'this' + ")'/></div>";
     detailHtml += "<div class='rangeValue' id='setEduValue'>50%</div>";
     detailHtml += "</div>";
-
-    detailHtml += "<hr>";
-    
-    detailHtml += "<div class='filterArea'>"
-    detailHtml += "<div id='filterName'></div>"
-    detailHtml += "<div class='filterRange'>"    
-    detailHtml += "<div id='min_val'></div>"
-    detailHtml += sliders
-    detailHtml += "<div id='max_val'></div>"    
-    detailHtml += "</div>";
-    detailHtml += "<div class='comment2' style='padding-left:4px; padding-top:1.3em'> 가격 필터는 마지막 업데이트 시점의 실거래가를 기준으로 하며, 전체 평형을 반영하지 않습니다.</div>"; 
 
     footerHtml += "<div class='modal-footer'>"
     footerHtml += "<div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='startSortPop'><label class='form-check-label' for='startSortPop'><span class='notice'>지역 변경 시 표시하지 않기</span></label></div>"
@@ -172,7 +184,8 @@
     $('#sortClose').css({"border-radius": '5px', "background-color": "#ff3849", "color":"white", "height":"2.5em"})
     $('#footerCheck').css({"grid-column" : "span 2", "height" : "2em"})    
 
-    initSlide();    
+    initSlider_area();
+    initSlider_sPrice();    
 
     $('#startSortPop').change(function(){
       if($(this).is(':checked')){      
@@ -193,6 +206,8 @@
     else{
       $('#startSortPop').prop("checked", false)
     }
+
+    $('#baseModal').modal("show")
   }  
 
   function setRangeValue(e){
