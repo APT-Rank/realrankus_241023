@@ -552,6 +552,14 @@ def market_monthly_info():
     df.reset_index(inplace=True)    
     df.rename(columns = {'index':'TIME'}, inplace=True)
 
+    df['TIME'] = df['TIME'].fillna(0)
+
+    if df.iloc[-1]['TIME'] == 0:
+        last_date = datetime.datetime.strptime(df.iloc[-2]['TIME'], "%Y-%m-%d")
+        last_date_after = last_date + relativedelta(months=1)
+        str_last_date_after = last_date_after.strftime("%Y-%m-%d")
+        df.loc[len(df)-1, 'TIME'] = str_last_date_after
+
     df = df.sort_values('TIME')
     df['GENERATE'] = str(now)
     df = df.reset_index(drop=True)   
