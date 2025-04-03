@@ -1620,8 +1620,12 @@
       filtered_rPrice  = []
       filtered_ratio  = []
 
+      if(sPrice_max == f_sales_price_max){
+        max_price = 1000
+      }
+
       for(var j in sales_arr){
-        if(Number(sales_arr[j]) >= sPrice_min && Number(sales_arr[j]) <= sPrice_max){        
+        if(Number(sales_arr[j]) >= sPrice_min && Number(sales_arr[j]) <= max_price){        
           filtered_area.push(Number(area_arr[j]))
           filtered_sPrice.push(Number(sales_arr[j]))
           filtered_rPrice.push(Number(rent_arr[j]))

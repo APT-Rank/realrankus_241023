@@ -338,9 +338,9 @@ function updateMarkers(map, markers) {
 function showHide_filtered_marker(onMap_list, onMap_markers){
   //if(!filtered){
   //  return
-  //}
+  //}  
 
-  filtered_list = returnFilteredData_onMap(onMap_list)  
+  filtered_list = returnFilteredData_onMap(onMap_list)    
  
   for(var i in onMap_markers){
     onMap_markers[i].setMap(null);
@@ -410,7 +410,7 @@ function getKeyByValue(object, value){
 
 function returnFilteredData_onMap(onMap_list){  
   area_filtered_list = return_area_FilteredData_onMap(onMap_list)
-  sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)
+  sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)  
 
   return sPrice_filtered_list
 }
@@ -467,8 +467,14 @@ function return_sPrice_FilteredData_onMap(onMap_list){
     rPrice_arr = (onMap_list[i]['rprice']).split(",")
     ratio_arr = (onMap_list[i]['ratio']).split(",")
 
+    max_price = sPrice_max
+
+    if(sPrice_max == f_sales_price_max){
+      max_price = 1000
+    }
+
     for(var j in sPrice_arr){      
-      if(Number(sPrice_arr[j]) >= sPrice_min && Number(sPrice_arr[j]) <= sPrice_max){        
+      if(Number(sPrice_arr[j]) >= sPrice_min && Number(sPrice_arr[j]) <= max_price){        
         filtered_area.push(Number(area_arr[j]))
         filtered_sPrice.push(Number(sPrice_arr[j]))
         filtered_rPrice.push(Number(rPrice_arr[j]))
