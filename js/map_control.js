@@ -410,9 +410,9 @@ function getKeyByValue(object, value){
 
 function returnFilteredData_onMap(onMap_list){  
   area_filtered_list = return_area_FilteredData_onMap(onMap_list)
-  console.log("AREA:", area_filtered_list)
+  //console.log("AREA:", area_filtered_list)
   sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)  
-  console.log("PRICE:", sPrice_filtered_list)
+  //console.log("PRICE:", sPrice_filtered_list)
 
   return sPrice_filtered_list
 }
