@@ -410,7 +410,9 @@ function getKeyByValue(object, value){
 
 function returnFilteredData_onMap(onMap_list){  
   area_filtered_list = return_area_FilteredData_onMap(onMap_list)
+  console.log("AREA:", area_filtered_list)
   sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)  
+  console.log("PRICE:", sPrice_filtered_list)
 
   return sPrice_filtered_list
 }
@@ -480,6 +482,11 @@ function return_sPrice_FilteredData_onMap(onMap_list){
         filtered_rPrice.push(Number(rPrice_arr[j]))
         filtered_ratio.push(Number(ratio_arr[j]))
       }      
+    }
+
+    no_sales = sPrice_arr.every(num => num = -1)
+    if(!filtered && no_sales){
+      return_filtered_array.push(onMap_list[i])
     }
 
     if(filtered_sPrice.length > 0 || onMap_list[i]['last_sales'] == "BYG"){

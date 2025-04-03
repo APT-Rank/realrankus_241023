@@ -1624,6 +1624,14 @@
         max_price = 1000
       }
 
+      no_sales = sales_arr.every(num => num = -1)
+      if(!filtered && no_sales){
+        filtered_area.push(Number(area_arr[j]))
+        filtered_sPrice.push(Number(sales_arr[j]))
+        filtered_rPrice.push(Number(rent_arr[j]))
+        filtered_ratio.push(Number(ratio_arr[j]))
+      }
+
       for(var j in sales_arr){
         if(Number(sales_arr[j]) >= sPrice_min && Number(sales_arr[j]) <= max_price){        
           filtered_area.push(Number(area_arr[j]))
