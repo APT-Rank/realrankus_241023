@@ -1,11 +1,10 @@
 var notice_202504 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 4월 업데이트 안내 (2025-04-03)</div>"
 +"<ul>"
-+"<li><div class='notice'>인프라 대형마트에 '이마트 트레이더스 마곡점, 수원화서점' 추가</div></li>"
-+"<li><div class='notice'>인프라 쇼핑몰에 '엔터식스' 추가</div></li>"
-+"<li><div class='notice'>전국 지역별 일자리 수 업데이트 (통계청, 지역별고용조사)</div></li>"
-+"<li><div class='notice'>은행 정보 업데이트 했습니다. (전국은행연합회 제공)</div></li>"
-+"<li><div class='notice'>2025년 2월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>가격 및 평형 필터 기능 추가</div></li>"
++"<li><div class='notice'>인프라 대형마트에 '이케아 강동점' 추가</div></li>"
++"<li><div class='notice'>공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>2025년 3월 인구 변동 정보 업데이트 했습니다.</div></li>"
 +"</ul>"
 +"<hr>"
 
@@ -76,6 +75,7 @@ var notice_202410 =
 +"</ul>"
 +"<hr>"
 
+/*
 var notice_202409 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 9월 업데이트 안내 (2024-09-03)</div>"
 +"<ul>"
@@ -155,7 +155,6 @@ var notice_202402 =
 +"</ul>"
 +"<hr>"
 
-/*
 var notice_202401 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 1월 업데이트 안내 (2024-01-03)</div>"
 +"<ul>"
