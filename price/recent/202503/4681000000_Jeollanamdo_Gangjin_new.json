@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"강진서성남양휴튼아파트2단지",
             "건축년도":2019.0,
@@ -183,11 +182,11 @@
             "x":126.7632796,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6392847:126.7632796:17:\/APT\/A1",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"대동맨션",
             "건축년도":1990.0,
@@ -220,11 +219,11 @@
             "x":126.763448,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.636712:126.763448:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"CNS후레쉬빌3차",
             "건축년도":2005.0,
@@ -257,11 +256,11 @@
             "x":126.7628248,
             "rank_info":"[9.0, 2.0, 38.108]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbc001",
-            "usingArea":65.0
+            "usingArea":65.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"한성노블",
             "건축년도":2012.0,
@@ -294,11 +293,11 @@
             "x":126.762876,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6366905:126.762876:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"금호",
             "건축년도":1996.0,
@@ -331,11 +330,11 @@
             "x":126.76734,
             "rank_info":"[9.0, 9.0, 25.833]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbc009",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"대아",
             "건축년도":1992.0,
@@ -368,11 +367,11 @@
             "x":126.7656636,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6354041:126.7656636:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"대아",
             "건축년도":1992.0,
@@ -405,11 +404,11 @@
             "x":126.7656636,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6354041:126.7656636:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"강진코아루블루핀아파트",
             "건축년도":2020.0,
@@ -442,11 +441,11 @@
             "x":126.78328,
             "rank_info":"[9.0, 6.0, 33.493]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbc006",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":"101동",
             "아파트":"팰리스파크",
             "건축년도":2018.0,
@@ -479,11 +478,11 @@
             "x":126.811792,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.455288:126.811792:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"남우천년예가",
             "건축년도":2017.0,
@@ -516,7 +515,8 @@
             "x":126.8191145,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.4499904:126.8191145:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
