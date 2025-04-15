@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"주공1차",
             "건축년도":2000.0,
@@ -183,11 +182,11 @@
             "x":127.487854,
             "rank_info":"[12.0, 4.0, 36.216]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbd003",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":102.0,
             "아파트":"삼호",
             "건축년도":1997.0,
@@ -220,11 +219,11 @@
             "x":127.486873,
             "rank_info":"[12.0, 5.0, 33.241]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbd004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"주공1차",
             "건축년도":2000.0,
@@ -257,11 +256,11 @@
             "x":127.487854,
             "rank_info":"[12.0, 4.0, 36.216]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbd003",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"대원칸타빌아파트",
             "건축년도":2015.0,
@@ -294,11 +293,11 @@
             "x":127.479815,
             "rank_info":"[12.0, 2.0, 41.506]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbd001",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"e편한세상금산프라임포레",
             "건축년도":2022.0,
@@ -331,11 +330,11 @@
             "x":127.46443,
             "rank_info":"[12.0, 3.0, 40.406]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbd002",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"도담도담채",
             "건축년도":2021.0,
@@ -368,11 +367,11 @@
             "x":127.495611,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.107886:127.495611:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"도담도담채",
             "건축년도":2021.0,
@@ -405,11 +404,11 @@
             "x":127.495611,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.107886:127.495611:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"e편한세상금산센터하임",
             "건축년도":2022.0,
@@ -442,7 +441,8 @@
             "x":127.495612,
             "rank_info":"[12.0, 1.0, 42.986]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbd000",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         }
     ]
 }
