@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":"103",
             "아파트":"새평지늘푸른숲",
             "건축년도":2006.0,
@@ -183,11 +182,11 @@
             "x":128.403231,
             "rank_info":"[13.0, 9.0, 32.849999999999994]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngsbd009",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":"104",
             "아파트":"디에스아이존빌",
             "건축년도":2008.0,
@@ -220,11 +219,11 @@
             "x":128.311605,
             "rank_info":"[13.0, 5.0, 36.027]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngsbd004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":"1동",
             "아파트":"고성휴메인",
             "건축년도":2017.0,
@@ -257,11 +256,11 @@
             "x":128.310065,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.976413:128.310065:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"협동그린타운",
             "건축년도":1997.0,
@@ -294,11 +293,11 @@
             "x":128.312661,
             "rank_info":"[13.0, 10.0, 29.902]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngsbd010",
-            "usingArea":83.0
+            "usingArea":83.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"덕진5차휴먼빌",
             "건축년도":2009.0,
@@ -331,11 +330,11 @@
             "x":128.315385,
             "rank_info":"[13.0, 6.0, 34.277]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngsbd006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"덕진5차휴먼빌",
             "건축년도":2009.0,
@@ -368,11 +367,11 @@
             "x":128.315385,
             "rank_info":"[13.0, 6.0, 34.277]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngsbd006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"덕진5차휴먼빌",
             "건축년도":2009.0,
@@ -405,11 +404,11 @@
             "x":128.315385,
             "rank_info":"[13.0, 6.0, 34.277]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngsbd006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"장미",
             "건축년도":1989.0,
@@ -442,7 +441,8 @@
             "x":128.323573,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.971141:128.323573:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
