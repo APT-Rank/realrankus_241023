@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"인왕산아이파크",
             "건축년도":2008.0,
@@ -183,11 +182,11 @@
             "x":126.957225,
             "rank_info":"[44.0, 4.0, 58.9664]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd003",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"인왕산아이파크",
             "건축년도":2008.0,
@@ -220,11 +219,11 @@
             "x":126.957225,
             "rank_info":"[44.0, 4.0, 58.9664]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd003",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"창신쌍용2",
             "건축년도":1993.0,
@@ -257,11 +256,11 @@
             "x":127.0117946,
             "rank_info":"[44.0, 22.0, 47.010000000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd022",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"창신쌍용2",
             "건축년도":1993.0,
@@ -294,11 +293,11 @@
             "x":127.0117946,
             "rank_info":"[44.0, 22.0, 47.010000000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd022",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"경희궁자이(3단지)",
             "건축년도":2017.0,
@@ -331,11 +330,11 @@
             "x":126.965989,
             "rank_info":"[44.0, 3.0, 61.906400000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd002",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"경희궁자이(3단지)",
             "건축년도":2017.0,
@@ -368,11 +367,11 @@
             "x":126.965989,
             "rank_info":"[44.0, 3.0, 61.906400000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd002",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"경희궁자이(3단지)",
             "건축년도":2017.0,
@@ -405,11 +404,11 @@
             "x":126.965989,
             "rank_info":"[44.0, 3.0, 61.906400000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd002",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"경희궁자이(3단지)",
             "건축년도":2017.0,
@@ -442,11 +441,11 @@
             "x":126.965989,
             "rank_info":"[44.0, 3.0, 61.906400000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd002",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"두레엘리시안",
             "건축년도":2007.0,
@@ -479,11 +478,11 @@
             "x":126.9697337,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.5782244:126.9697337:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"경희궁자이(2단지)",
             "건축년도":2017.0,
@@ -516,7 +515,8 @@
             "x":126.963882,
             "rank_info":"[44.0, 2.0, 64.6364]",
             "sURL":"https:\/\/www.realrankus.com?cpx=sojrbd001",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         }
     ]
 }

@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"동익파크2동(355-98)",
             "건축년도":1991.0,
@@ -183,11 +182,11 @@
             "x":126.9071974,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.6150208:126.9071974:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"대림아파트(276)",
             "건축년도":1993.0,
@@ -220,11 +219,11 @@
             "x":126.937239,
             "rank_info":"[152.0, 70.0, 45.3972]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd069",
-            "usingArea":79.0
+            "usingArea":79.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"북한산대창센시티",
             "건축년도":2004.0,
@@ -257,11 +256,11 @@
             "x":126.929145,
             "rank_info":"[152.0, 92.0, 41.3444]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd091",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"북한산현대힐스테이트3차아파트",
             "건축년도":2010.0,
@@ -294,11 +293,11 @@
             "x":126.934884,
             "rank_info":"[152.0, 25.0, 53.620000000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd024",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"현대2",
             "건축년도":1994.0,
@@ -331,11 +330,11 @@
             "x":126.907138,
             "rank_info":"[152.0, 101.0, 40.3788]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd100",
-            "usingArea":82.0
+            "usingArea":82.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"녹번역e편한세상캐슬",
             "건축년도":2021.0,
@@ -368,11 +367,11 @@
             "x":126.932045,
             "rank_info":"[152.0, 3.0, 62.3076]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd002",
-            "usingArea":68.0
+            "usingArea":68.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"명남스카이뷰",
             "건축년도":2023.0,
@@ -405,11 +404,11 @@
             "x":126.916405,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.589869:126.916405:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"명남스카이뷰",
             "건축년도":2023.0,
@@ -442,11 +441,11 @@
             "x":126.916405,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.589869:126.916405:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"상림마을7단지아이파크(719~729동)BL1-13",
             "건축년도":2008.0,
@@ -479,11 +478,11 @@
             "x":126.9293541,
             "rank_info":"[152.0, 125.0, 37.1192]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd124",
-            "usingArea":79.0
+            "usingArea":79.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"은평스카이뷰자이",
             "건축년도":2019.0,
@@ -516,7 +515,8 @@
             "x":126.917999,
             "rank_info":"[152.0, 6.0, 58.9044]",
             "sURL":"https:\/\/www.realrankus.com?cpx=soepbd005",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         }
     ]
 }
