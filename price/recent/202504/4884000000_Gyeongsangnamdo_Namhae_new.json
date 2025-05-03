@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"양지빌2차",
             "건축년도":2011.0,
@@ -183,11 +182,11 @@
             "x":127.897987,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.843545:127.897987:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"스타펠레스",
             "건축년도":2020.0,
@@ -220,11 +219,11 @@
             "x":127.893094,
             "rank_info":"[7.0, 1.0, 43.392]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnnhbd000",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"남해신우보람",
             "건축년도":2002.0,
@@ -257,11 +256,11 @@
             "x":127.893275,
             "rank_info":"[7.0, 5.0, 29.892]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnnhbd004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"현대",
             "건축년도":1997.0,
@@ -294,7 +293,8 @@
             "x":127.895428,
             "rank_info":"[7.0, 4.0, 31.492]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnnhbd003",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
