@@ -6,8 +6,12 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"아파트",
@@ -71,7 +75,7 @@
             },
             {
                 "name":"등기일자",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"지역코드",
@@ -136,10 +140,6 @@
             {
                 "name":"usingArea",
                 "type":"number"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,6 +150,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"피오레",
             "건축년도":2009.0,
@@ -182,11 +183,11 @@
             "x":127.704123,
             "rank_info":"[124.0, 13.0, 49.238]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnysbd012",
-            "usingArea":65.0,
-            "type":"TRADE"
+            "usingArea":65.0
         },
         {
             "index":1,
+            "type":"TRADE",
             "동":null,
             "아파트":"죽림양우내안애아파트",
             "건축년도":2017.0,
@@ -219,11 +220,11 @@
             "x":127.6414,
             "rank_info":"[124.0, 4.0, 56.615]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnysbd003",
-            "usingArea":71.0,
-            "type":"TRADE"
+            "usingArea":71.0
         },
         {
             "index":2,
+            "type":"TRADE",
             "동":null,
             "아파트":"프레지던트",
             "건축년도":2002.0,
@@ -256,11 +257,11 @@
             "x":127.645057,
             "rank_info":"[124.0, 63.0, 39.744]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnysbd065",
-            "usingArea":70.0,
-            "type":"TRADE"
+            "usingArea":70.0
         },
         {
             "index":3,
+            "type":"TRADE",
             "동":null,
             "아파트":"여수주은금호2,3단지",
             "건축년도":2002.0,
@@ -293,11 +294,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":70.0,
-            "type":"TRADE"
+            "usingArea":70.0
         },
         {
             "index":4,
+            "type":"TRADE",
             "동":null,
             "아파트":"부영3",
             "건축년도":1989.0,
@@ -330,11 +331,11 @@
             "x":127.668348,
             "rank_info":"[124.0, 110.0, 30.294]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnysbd116",
-            "usingArea":74.0,
-            "type":"TRADE"
+            "usingArea":74.0
         },
         {
             "index":5,
+            "type":"TRADE",
             "동":null,
             "아파트":"코아루",
             "건축년도":2006.0,
@@ -367,11 +368,11 @@
             "x":127.710572,
             "rank_info":"[124.0, 66.0, 39.056]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnysbd068",
-            "usingArea":75.0,
-            "type":"TRADE"
+            "usingArea":75.0
         },
         {
             "index":6,
+            "type":"TRADE",
             "동":null,
             "아파트":"웅천지웰1차(2블럭)",
             "건축년도":2010.0,
@@ -404,12 +405,12 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":7,
-            "동":null,
+            "type":"TRADE",
+            "동":"208동",
             "아파트":"웅천더힐2단지",
             "건축년도":2022.0,
             "매수자":"개인",
@@ -425,7 +426,7 @@
             "층":12.0,
             "지번":"1840",
             "아파트여부":"N",
-            "등기일자":null,
+            "등기일자":"25.04.30",
             "지역코드":46130.0,
             "매도자":"개인",
             "법정동":"웅천동",
@@ -441,11 +442,11 @@
             "x":127.689758,
             "rank_info":"[124.0, 15.0, 48.548]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnysbd014",
-            "usingArea":78.0,
-            "type":"TRADE"
+            "usingArea":78.0
         },
         {
             "index":8,
+            "type":"TRADE",
             "동":null,
             "아파트":"포레나여수웅천2단지",
             "건축년도":2019.0,
@@ -478,11 +479,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":9,
+            "type":"TRADE",
             "동":null,
             "아파트":"포레나여수웅천1단지",
             "건축년도":2019.0,
@@ -515,8 +516,7 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         }
     ]
 }
