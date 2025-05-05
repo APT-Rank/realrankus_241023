@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"string"
             },
@@ -136,10 +140,6 @@
             {
                 "name":"usingArea",
                 "type":"number"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,6 +150,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"오션타워",
             "건축년도":2013.0,
@@ -182,11 +183,11 @@
             "x":126.748668,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.327172:126.748668:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":1,
+            "type":"TRADE",
             "동":"전망대아파트",
             "아파트":"전망대",
             "건축년도":2011.0,
@@ -219,11 +220,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":2,
+            "type":"TRADE",
             "동":null,
             "아파트":"완도진아리채",
             "건축년도":2016.0,
@@ -256,8 +257,7 @@
             "x":126.740158,
             "rank_info":"[8.0, 3.0, 35.941]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnwdbd002",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         }
     ]
 }
