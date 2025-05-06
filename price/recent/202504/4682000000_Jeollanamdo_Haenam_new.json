@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"공간",
             "건축년도":2000.0,
@@ -183,11 +182,11 @@
             "x":126.5939,
             "rank_info":"[21.0, 7.0, 35.637]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhnbd006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"공간",
             "건축년도":2000.0,
@@ -220,11 +219,11 @@
             "x":126.5939,
             "rank_info":"[21.0, 7.0, 35.637]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhnbd006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"새시대맨션",
             "건축년도":1994.0,
@@ -257,11 +256,11 @@
             "x":126.594701,
             "rank_info":"[21.0, 12.0, 31.262]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhnbd011",
-            "usingArea":82.0
+            "usingArea":82.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"해남우진아트빌",
             "건축년도":2004.0,
@@ -294,11 +293,11 @@
             "x":126.590013,
             "rank_info":"[21.0, 14.0, 30.412]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhnbd013",
-            "usingArea":63.0
+            "usingArea":63.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":"201동",
             "아파트":"해남코아루더베스트2단지아파트",
             "건축년도":2019.0,
@@ -331,11 +330,11 @@
             "x":126.611207,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.566343:126.611207:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"명지",
             "건축년도":1997.0,
@@ -368,11 +367,11 @@
             "x":126.60846,
             "rank_info":"[21.0, 20.0, 26.334000000000003]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhnbd019",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"명지",
             "건축년도":1997.0,
@@ -405,11 +404,11 @@
             "x":126.60846,
             "rank_info":"[21.0, 20.0, 26.334000000000003]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhnbd019",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"웅진빌라트",
             "건축년도":2001.0,
@@ -442,7 +441,8 @@
             "x":126.607658,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.572329:126.607658:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
