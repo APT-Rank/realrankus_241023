@@ -1,5 +1,3 @@
-from audioop import add
-#from types import NoneType
 import requests
 import datetime
 from dateutil.relativedelta import *
