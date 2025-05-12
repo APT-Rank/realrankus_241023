@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"라온빌리지",
             "건축년도":2025.0,
@@ -183,11 +182,11 @@
             "x":127.2855775,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6097078:127.2855775:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"라온하우스",
             "건축년도":2020.0,
@@ -220,11 +219,11 @@
             "x":127.2839235,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6091641:127.2839235:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"영진맨션",
             "건축년도":1992.0,
@@ -257,11 +256,11 @@
             "x":127.2752739,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.5972065:127.2752739:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"모아리츠빌",
             "건축년도":2016.0,
@@ -294,11 +293,11 @@
             "x":127.2800012,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6079596:127.2800012:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":"주건축물제1동",
             "아파트":"블루베네치아아파트",
             "건축년도":2018.0,
@@ -331,11 +330,11 @@
             "x":127.1361,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.527581:127.1361:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"주공",
             "건축년도":1998.0,
@@ -368,11 +367,11 @@
             "x":127.14465,
             "rank_info":"[9.0, 7.0, 25.917]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbd006",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":"나",
             "아파트":"장미",
             "건축년도":1991.0,
@@ -405,11 +404,11 @@
             "x":127.1395494,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.5273582:127.1395494:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":"104",
             "아파트":"주공",
             "건축년도":1998.0,
@@ -442,11 +441,11 @@
             "x":127.14465,
             "rank_info":"[9.0, 7.0, 25.917]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbd006",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"뉴코아",
             "건축년도":1997.0,
@@ -479,11 +478,11 @@
             "x":127.318965,
             "rank_info":"[9.0, 9.0, 24.628]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbd008",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"뉴코아",
             "건축년도":1997.0,
@@ -516,7 +515,8 @@
             "x":127.318965,
             "rank_info":"[9.0, 9.0, 24.628]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbd008",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         }
     ]
 }
