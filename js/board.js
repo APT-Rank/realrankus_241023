@@ -531,6 +531,7 @@ function complex_blog(complex_id, aptName){
 				}
 				*/
 				blog_html += "<div class='blog_des'>"
+					blog_html += "<div id='blog_img'></div>"
 					blog_html += "<div class='blog_title'>" + blog_title + "</div>"
 					blog_html += "<div class='blog_sub'>" + blog_des + "</div>"
 					blog_html += "<div class='blog_sub2'>by " + blog_auth + "</div>"
@@ -539,6 +540,22 @@ function complex_blog(complex_id, aptName){
 			blog_html += "</div>"
 
 			$("#blog_list_area").html(blog_html)
+
+			var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(blog_url);
+
+			$.getJSON(proxyUrl, function(data) {
+				var html = data.contents;
+				var doc = new DOMParser().parseFromString(html, 'text/html');
+				var ogImage = doc.querySelector('meta[property="og:image"]');
+
+				if (ogImage) {
+					$('#blog_img').html(`<img src="${ogImage.content}" style="max-width: 300px;">`);
+				} else {
+					$('#blog_img').text('og:image 태그를 찾을 수 없습니다.');
+				}
+			}).fail(function () {
+				$('#blog_img').text('프록시 요청 실패');
+			});
 		}
 		else{
 			$("#blog_list_area").html(non_blog_html)		
