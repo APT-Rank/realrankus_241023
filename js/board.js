@@ -531,7 +531,7 @@ function complex_blog(complex_id, aptName){
 				}
 				*/
 				blog_html += "<div class='blog_des'>"
-					blog_html += "<div id='blog_img'></div>"
+					//blog_html += "<div id='blog_img'></div>"
 					blog_html += "<div class='blog_title'>" + blog_title + "</div>"
 					blog_html += "<div class='blog_sub'>" + blog_des + "</div>"
 					blog_html += "<div class='blog_sub2'>by " + blog_auth + "</div>"
@@ -540,7 +540,7 @@ function complex_blog(complex_id, aptName){
 			blog_html += "</div>"
 
 			$("#blog_list_area").html(blog_html)
-
+			/*
 			var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(blog_url);
 
 			$.getJSON(proxyUrl, function(data) {
@@ -556,6 +556,7 @@ function complex_blog(complex_id, aptName){
 			}).fail(function () {
 				$('#blog_img').text('프록시 요청 실패');
 			});
+			*/
 		}
 		else{
 			$("#blog_list_area").html(non_blog_html)		
