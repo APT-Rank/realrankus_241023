@@ -156,7 +156,7 @@ function complex_list_like_status(){
 non_blog_html = ""
 non_blog_html += "<div class='blog_list' onClick='showBlogWindow()'>"
 //non_blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
-non_blog_html += "<div class='blog_des'>"
+non_blog_html += "<div class='blog_list_blank'>"
 non_blog_html += "<div class='blog_title'>단지 임장기를 등록해 주세요!</div>"
 non_blog_html += "<div class='blog_sub'>실제 찾아가 눈으로 보고 분석한 소중한 경험을 알려주세요</div>"
 non_blog_html += "<div class='blog_sub2'>by 리얼랭커스</div>"
@@ -517,7 +517,8 @@ function complex_blog(complex_id, aptName){
 				if(i == 0){
 					blog_html += "<div class='blog_list' onClick='openOuterLink(\"" + blog_url + "\")'>"
 				}
-				/*
+
+				/*				
 				if(blog_imgLink == "" || blog_imgLink == null){
 					blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 				}
@@ -530,18 +531,21 @@ function complex_blog(complex_id, aptName){
 					}
 				}
 				*/
-				blog_html += "<div class='blog_des'>"
-					//blog_html += "<div id='blog_img'></div>"
-					blog_html += "<div class='blog_title'>" + blog_title + "</div>"
-					blog_html += "<div class='blog_sub'>" + blog_des + "</div>"
-					blog_html += "<div class='blog_sub2'>by " + blog_auth + "</div>"
+				blog_html += "<div class='blog_list_wrapper'>"
+					blog_html += "<div class='blog_img_box'></div>"
+				
+					blog_html += "<div class='blog_des'>"
+						blog_html += "<div class='blog_title'>" + blog_title + "</div>"
+						blog_html += "<div class='blog_sub'>" + blog_des + "</div>"
+						blog_html += "<div class='blog_sub2'>by " + blog_auth + "</div>"
+					blog_html += "</div>"
 				blog_html += "</div>"
 			}
 			blog_html += "</div>"
 
 			$("#blog_list_area").html(blog_html)
-			/*
-			var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(blog_url);
+			
+			var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(blog_url);			
 
 			$.getJSON(proxyUrl, function(data) {
 				var html = data.contents;
@@ -549,14 +553,21 @@ function complex_blog(complex_id, aptName){
 				var ogImage = doc.querySelector('meta[property="og:image"]');
 
 				if (ogImage) {
-					$('#blog_img').html(`<img src="${ogImage.content}" style="max-width: 300px;">`);
-				} else {
-					$('#blog_img').text('og:image 태그를 찾을 수 없습니다.');
+					$('.blog_img_box').html("<div class='spinner-border' role='status' style='opacity:0.2'></div>");
+					var originalImage = ogImage.content;
+					var proxied = "https://images.weserv.nl/?url=" + encodeURIComponent(originalImage.replace(/^https?:\/\//, ''));					
+					$('.blog_img_box').show()
+					$('.blog_img_box').html(`<img src="${proxied}" width='100px' height='100px'">`);
+					$('.blog_list_wrapper').css({'display':'grid', 'grid-template-columns':'100px 1fr'})
+				} else {					
+					$('.blog_list_wrapper').css({'display':'grid', 'grid-template-columns':'1fr', 'padding-bottom': '5px'})
+					$('.blog_img_box').hide()
 				}
 			}).fail(function () {
-				$('#blog_img').text('프록시 요청 실패');
-			});
-			*/
+				$('.blog_img_box').show()
+				$('.blog_list_wrapper').css({'display':'grid', 'grid-template-columns':'100px 1fr', 'padding-bottom': '0px'})
+				$('.blog_img_box').html("<div class='spinner-border' role='status' style='opacity:0.2'></div>");
+			});			
 		}
 		else{
 			$("#blog_list_area").html(non_blog_html)		

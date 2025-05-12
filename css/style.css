@@ -1862,16 +1862,28 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
 }
 .blog_img_box > img{
   width: 100px;
-  height: 80px;
+  height: 70px;
   object-fit:cover;
 }
-.blog_des{
+.blog_list_blank{
   width: 100%;
-  border-radius: 5px;    
-  padding-bottom: 5px;    
+  border-radius: 5px;
+  padding-bottom: 5px;
   background-color: #fffcf5;
   border: 1px solid #fffcf5;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;    
+}
+.blog_list_wrapper{
+  width: 100%;
+  border-radius: 5px;
+  padding-bottom: 5px;
+  background-color: #fffcf5;
+  border: 1px solid #fffcf5;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;    
+}
+.blog_des{
+  display: grid;
+  grid-template-columns: 1fr;
 }
 .blog_title{
   font-size: 0.9em;
