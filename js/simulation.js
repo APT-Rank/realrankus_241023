@@ -7,14 +7,14 @@ simul_edu_score = []
 function openLoading() {
   //console.log("LOADING!!!")
   //화면 높이와 너비를 구합니다.
-  let maskHeight = window.document.body.clientHeight;
-  let maskWidth = window.document.body.clientWidth;
+  let maskHeight = window.innerHeight;
+  let maskWidth = window.innerWidth;
   //출력할 마스크를 설정해준다.
   let mask ="<div id='loadingMask' style='position:absolute; z-index:2500; background-color:#000000; left:0; top:0;'></div>";
   // 로딩 이미지 주소 및 옵션
   let loadingImg ='';
   loadingImg += "<div id='loadingContainer' style='position:fixed; top: 35%; width:100%; z-index:3000; display: block; margin: 0px auto'>"
-  loadingImg += "<div id='loadingImg' style='text-align: center' ><img src='https://www.realrankus.com/loading_block.gif' width=70px height=70px/></div>";
+  loadingImg += "<div id='loadingImg' style='text-align: center' ><div class='spinner-grow text-light' role='status'></div></div>";
   loadingImg += "<div id='loadingTxt' style='text-align: center; color: white; font-size: 1.2em; font-weight: 600; margin-top: 10px'>열심히 분석 중이예요!</div>"  
   loadingImg += "</div>"; 
   //레이어 추가
@@ -1409,6 +1409,7 @@ function makeRate(value_total, living_score, trans_score, infra_score, edu_score
 }
 
 function showSimulResult(resultValue, arr, length){
+  console.log(resultValue)
   closeLoading()
 
   titleHtml = "";
@@ -1424,7 +1425,8 @@ function showSimulResult(resultValue, arr, length){
   //종합
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";  
-  detailHtml += "<div class='popTitle'><i class='fas fa-trophy'></i>&nbsp&nbsp종합 " + resultValue[0][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div></div>"
+  //detailHtml += "<div class='popTitle'><i class='fas fa-trophy'></i>&nbsp&nbsp종합 " + resultValue[0][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div></div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-trophy'></i>&nbsp&nbsp종합 " + setGrade(resultValue[0][0]) + " 예상</div></div>"
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div class='graph' style='height: 120px'> <canvas id='simulBalancedChart'></canvas></div>"
   detailHtml += "</div></div>";
@@ -1432,7 +1434,8 @@ function showSimulResult(resultValue, arr, length){
   //주거
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";
-  detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거 " + resultValue[1][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+  //detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거 " + resultValue[1][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거 " + setGrade(resultValue[1][0]) + " 예상</div>"
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popLiving'>"  
@@ -1451,7 +1454,8 @@ function showSimulResult(resultValue, arr, length){
     //교통
     detailHtml += "<div class='card'>";
     detailHtml += "<div class='card-header'>";
-    detailHtml += "<div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp교통 " + resultValue[2][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+    //detailHtml += "<div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp교통 " + resultValue[2][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+    detailHtml += "<div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp교통 " + setGrade(resultValue[2][0]) + " 예상</div>"
     detailHtml += "</div>";
     detailHtml += "<div class='card-body'>";
     detailHtml += "<div id='popTransport'>"    
@@ -1467,7 +1471,8 @@ function showSimulResult(resultValue, arr, length){
   //인프라
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";
-  detailHtml += "<div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp인프라 " + resultValue[3][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+  //detailHtml += "<div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp인프라 " + resultValue[3][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp인프라 " + setGrade(resultValue[3][0]) + " 예상</div>"
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popInfra'>"  
@@ -1489,7 +1494,8 @@ function showSimulResult(resultValue, arr, length){
   //교육
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";
-  detailHtml += "<div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp교육 " + resultValue[4][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+  //detailHtml += "<div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp교육 " + resultValue[4][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp교육 " + setGrade(resultValue[4][0]) + " 예상</div>"
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popEducation'>"  
