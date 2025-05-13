@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"강진서성남양휴튼아파트1단지",
             "건축년도":2019.0,
@@ -183,11 +182,11 @@
             "x":126.762812,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6396701:126.762812:17:\/APT\/A1",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":"101",
             "아파트":"이에스아뜨리움",
             "건축년도":2013.0,
@@ -220,11 +219,11 @@
             "x":126.771328,
             "rank_info":"[9.0, 4.0, 34.298]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbd004",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":"101동",
             "아파트":"팰리스파크",
             "건축년도":2018.0,
@@ -257,7 +256,8 @@
             "x":126.811792,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.455288:126.811792:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
