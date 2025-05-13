@@ -1034,17 +1034,30 @@
     var temp_index_driving = 0
 
     function priorityFilter(apt_list){
-      baseSum = Number(priority_living) + Number(priority_trans) + Number(priority_infra) + Number(priority_edu)      
-
-      weight_living = Number(priority_living) / baseSum
-      weight_trans = Number(priority_trans) / baseSum
-      weight_infra = Number(priority_infra) / baseSum
-      weight_edu = Number(priority_edu) / baseSum
-
       for(var i in apt_list){
+        trans_score = apt_list[i]['교통총점']
+        if(trans_score == "NA"){
+          trans_score = 0
+          baseSum = Number(priority_living) + Number(priority_infra) + Number(priority_edu)      
+
+          weight_living = Number(priority_living) / baseSum
+          weight_trans = 0
+          weight_infra = Number(priority_infra) / baseSum
+          weight_edu = Number(priority_edu) / baseSum
+        }
+        else{
+          trans_score = Number(trans_score)
+          baseSum = Number(priority_living) + Number(priority_trans) + Number(priority_infra) + Number(priority_edu)      
+
+          weight_living = Number(priority_living) / baseSum
+          weight_trans = Number(priority_trans) / baseSum
+          weight_infra = Number(priority_infra) / baseSum
+          weight_edu = Number(priority_edu) / baseSum
+        }
+
         custom_value_total = 
          Number(apt_list[i]['주거총점']) * weight_living
-         + Number(apt_list[i]['교통총점']) * weight_trans
+         + trans_score * weight_trans
          + Number(apt_list[i]['인프라총점']) * weight_infra
          + Number(apt_list[i]['학군총점']) * weight_edu
 
