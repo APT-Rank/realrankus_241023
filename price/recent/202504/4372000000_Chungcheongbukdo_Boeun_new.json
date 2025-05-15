@@ -15,7 +15,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매수자",
@@ -23,11 +23,11 @@
             },
             {
                 "name":"해제사유발생일",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"해제여부",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"거래금액",
@@ -35,15 +35,15 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -51,7 +51,7 @@
             },
             {
                 "name":"중개사소재지",
-                "type":"string"
+                "type":"number"
             },
             {
                 "name":"전용면적",
@@ -59,7 +59,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -75,7 +75,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -150,7 +150,7 @@
     "data":[
         {
             "index":0,
-            "동":"103",
+            "동":103,
             "아파트":"극동",
             "건축년도":1997,
             "매수자":"개인",

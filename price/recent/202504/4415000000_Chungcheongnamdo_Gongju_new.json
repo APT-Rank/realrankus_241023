@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"공주교동대우",
             "건축년도":1999.0,
@@ -183,11 +182,11 @@
             "x":127.1186,
             "rank_info":"[44.0, 36.0, 26.988000000000003]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd038",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":"D",
             "아파트":"교동아파트D동",
             "건축년도":1982.0,
@@ -220,11 +219,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"새뜸현대4",
             "건축년도":1999.0,
@@ -257,11 +256,11 @@
             "x":127.1497297,
             "rank_info":"[44.0, 6.0, 46.064]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd006",
-            "usingArea":79.0
+            "usingArea":79.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"대아아이투빌",
             "건축년도":2002.0,
@@ -294,11 +293,11 @@
             "x":127.148197,
             "rank_info":"[44.0, 1.0, 52.589]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd000",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"대아곰나루",
             "건축년도":1996.0,
@@ -331,11 +330,11 @@
             "x":127.146577,
             "rank_info":"[44.0, 10.0, 42.889]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd011",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"새뜸현대3차",
             "건축년도":1996.0,
@@ -368,11 +367,11 @@
             "x":127.1474,
             "rank_info":"[44.0, 3.0, 48.614]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd003",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"주공5차",
             "건축년도":2005.0,
@@ -405,11 +404,11 @@
             "x":127.136267,
             "rank_info":"[44.0, 18.0, 38.189]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd019",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"공주신관동효성해링턴플레이스",
             "건축년도":2017.0,
@@ -442,11 +441,11 @@
             "x":127.132416,
             "rank_info":"[44.0, 9.0, 43.014]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd010",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"유진한아름",
             "건축년도":1994.0,
@@ -479,11 +478,11 @@
             "x":127.12811,
             "rank_info":"[44.0, 44.0, 18.214]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd047",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":"201",
             "아파트":"현대아파트(1,2차)",
             "건축년도":1992.0,
@@ -516,7 +515,8 @@
             "x":127.137112,
             "rank_info":"[44.0, 23.0, 33.93899999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngjbd024",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
