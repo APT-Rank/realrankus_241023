@@ -1461,9 +1461,11 @@
         } else {
           //로딩
           $("#map_banner2").show()
-          $("#gradeSelector").show()
           $("#filterOnOff").show()
-          $("#filterSelector").show()           
+          $("#gradeSelector").show()
+          if(filter_ui){            
+            $("#filterSelector").show()
+          }
           $("#dataList").html("");
           //var detail_loading_html = "<div style='display: grid; text-align: center; justify-items: center;'><br><br><br><br><div class='spinner-border text-danger' role='status'></div></div>";
           //$("#dataList").html(detail_loading_html);
