@@ -1086,6 +1086,23 @@
         $("#filterSelector").css({"width" : filterSelector_width+"px"})        
       }
 
+      //창 크기 조정 완료 시
+      if(!isMobile){
+        $(window).resize(function() {
+          clearTimeout(window.resizedFinished);
+          window.resizedFinished = setTimeout(function(){
+            dw = window.innerWidth - 600
+            dh = window.innerHeight - $("#linkToAptrank_bottom").height()
+            new_window_size = new naver.maps.Size(window.innerWidth - 600, window.innerHeight - $("#linkToAptrank_bottom").height())
+            defaultMap.setSize(new_window_size)
+
+            $("#dataList_wrapper").css({'margin-top':$("#titleBar").height() + $("#selections").height() + $("#weight").height() + $(".dong_selector").height() + 25,
+              'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height() + $(".dong_selector").height() + 23 +$("#linkToAptrank_bottom").height() )})
+            
+          }, 50);
+        });
+      }
+
       $("#commentBack").hide()
     });
 
