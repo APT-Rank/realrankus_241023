@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"대암보수맨션",
             "건축년도":1982.0,
@@ -183,11 +182,11 @@
             "x":129.027697,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.1042106:129.027697:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"미소지음주상복합",
             "건축년도":2014.0,
@@ -220,11 +219,11 @@
             "x":129.022851,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.107174:129.022851:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"대림에이스타운",
             "건축년도":1994.0,
@@ -257,11 +256,11 @@
             "x":129.02544,
             "rank_info":"[20.0, 8.0, 43.7784]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bsjubd008",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"서린엘마르센트로뷰",
             "건축년도":2021.0,
@@ -294,11 +293,11 @@
             "x":129.037179,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.104111:129.037179:17:\/APT\/A1",
-            "usingArea":67.0
+            "usingArea":67.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"서린엘마르센트로뷰",
             "건축년도":2021.0,
@@ -331,7 +330,8 @@
             "x":129.037179,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.104111:129.037179:17:\/APT\/A1",
-            "usingArea":67.0
+            "usingArea":67.0,
+            "type":"TRADE"
         }
     ]
 }

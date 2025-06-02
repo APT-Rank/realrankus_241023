@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"센텀롯데캐슬아파트",
             "건축년도":2004.0,
@@ -183,11 +182,11 @@
             "x":129.124064,
             "rank_info":"[224.0, 150.0, 45.6888]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bshdbd150",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"보훈",
             "건축년도":1979.0,
@@ -220,11 +219,11 @@
             "x":129.133882,
             "rank_info":"[224.0, 209.0, 30.1196]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bshdbd213",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"센텀삼환Nauville",
             "건축년도":1996.0,
@@ -257,11 +256,11 @@
             "x":129.138484,
             "rank_info":"[224.0, 62.0, 57.936]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bshdbd062",
-            "usingArea":70.0
+            "usingArea":70.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"롯데",
             "건축년도":1993.0,
@@ -294,11 +293,11 @@
             "x":129.148545,
             "rank_info":"[224.0, 53.0, 59.6888]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bshdbd053",
-            "usingArea":82.0
+            "usingArea":82.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"센텀삼환Nauville",
             "건축년도":1996.0,
@@ -331,11 +330,11 @@
             "x":129.138484,
             "rank_info":"[224.0, 62.0, 57.936]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bshdbd062",
-            "usingArea":70.0
+            "usingArea":70.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"협성루에나센텀",
             "건축년도":2023.0,
@@ -368,11 +367,11 @@
             "x":129.121585,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.188311:129.121585:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"유창맨션",
             "건축년도":1981.0,
@@ -405,11 +404,11 @@
             "x":129.126777,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.179319:129.126777:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"엘지",
             "건축년도":1996.0,
@@ -442,11 +441,11 @@
             "x":129.174728,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.169138:129.174728:17:\/APT\/A1",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"대우2",
             "건축년도":1998.0,
@@ -479,11 +478,11 @@
             "x":129.183357,
             "rank_info":"[224.0, 105.0, 51.9056]",
             "sURL":"https:\/\/www.realrankus.com?cpx=bshdbd105",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"해운대경보이리스오션",
             "건축년도":2020.0,
@@ -516,7 +515,8 @@
             "x":129.163167,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.163495:129.163167:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }

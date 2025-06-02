@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"동문동코아루",
             "건축년도":2007.0,
@@ -183,11 +182,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"동문동코아루",
             "건축년도":2007.0,
@@ -220,11 +219,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"서산석림동라온프라이빗",
             "건축년도":2018.0,
@@ -257,11 +256,11 @@
             "x":126.461773,
             "rank_info":"[77.0, 8.0, 50.586]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd008",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"힐스테이트서산아파트",
             "건축년도":2017.0,
@@ -294,11 +293,11 @@
             "x":126.449762,
             "rank_info":"[77.0, 7.0, 51.121]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd006",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"e편한세상서산테크노밸리",
             "건축년도":2018.0,
@@ -331,11 +330,11 @@
             "x":126.453515,
             "rank_info":"[77.0, 20.0, 48.04599999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd020",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"서산테크노밸리고운라피네",
             "건축년도":2018.0,
@@ -368,11 +367,11 @@
             "x":126.44684,
             "rank_info":"[77.0, 7.0, 51.121]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd007",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"e편한세상서산예천",
             "건축년도":2017.0,
@@ -405,11 +404,11 @@
             "x":126.445053,
             "rank_info":"[77.0, 1.0, 57.136]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd000",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"서정운산마을",
             "건축년도":2000.0,
@@ -442,11 +441,11 @@
             "x":126.566328,
             "rank_info":"[77.0, 76.0, 23.38]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd082",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"서정운산마을",
             "건축년도":2000.0,
@@ -479,11 +478,11 @@
             "x":126.566328,
             "rank_info":"[77.0, 76.0, 23.38]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd082",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"동신",
             "건축년도":1994.0,
@@ -516,7 +515,8 @@
             "x":126.44175,
             "rank_info":"[77.0, 50.0, 33.877]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cnssbd051",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
