@@ -163,13 +163,14 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202505" selected>2025년 05월</option>
+              <option value="202506" selected>2025년 06월</option>
+              <option value="202505">2025년 05월</option>
               <option value="202504">2025년 04월</option>
               <option value="202503">2025년 03월</option>
               <option value="202502">2025년 02월</option>
               <option value="202501">2025년 01월</option>
-              <option value="202412">2024년 12월</option>
               <!--
+              <option value="202412">2024년 12월</option>              
               <option value="202411">2024년 11월</option>              
               <option value="202410">2024년 10월</option>              
               <option value="202409">2024년 09월</option>              
@@ -583,9 +584,9 @@
 
   </body>
   <script>
-    var thisMonth = "202505"; //수정
-    var selectedMonth = "202505"; //수정
-    var DB_Date = "202505_04"; //수정
+    var thisMonth = "202506"; //수정
+    var selectedMonth = "202506"; //수정
+    var DB_Date = "202506_01"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -1038,7 +1039,7 @@
       //optionChange(selectedSubRegion);
       //updateRegion();
 
-      if ($.cookie("popCookie") != "202505" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202506" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -1126,6 +1127,7 @@
       window.indexedDB.deleteDatabase('202505_01')
       window.indexedDB.deleteDatabase('202505_02')
       window.indexedDB.deleteDatabase('202505_03')
+      window.indexedDB.deleteDatabase('202505_04')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -4519,6 +4521,9 @@
       if (selectedMonth == "202505") {
         detailHtml += notice_202505;
       }
+      if (selectedMonth == "202506") {
+        detailHtml += notice_202506;
+      }
 
       detailHtml += "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>리얼랭커스란?</div>";
       detailHtml += "<div class='notice'>리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.</div>";
@@ -4568,7 +4573,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202505") {
+      if ($.cookie("popCookie") != "202506") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4576,7 +4581,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202505", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202506", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
