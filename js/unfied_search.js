@@ -323,8 +323,8 @@ function searchingUpdate(code, sido, gungu, aptName, aptAddress){
 
   setTimeout(function(){    
     updateRegion()
-    $("#baseModal").modal("show")
-  }, 500)
+    //$("#baseModal").modal("show")
+  }, 350)
 }
 
 function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){

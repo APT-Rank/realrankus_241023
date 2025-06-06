@@ -2052,6 +2052,10 @@
           $("html").scrollTop(70 * pos);
           showDetail(pos);
           searched_code = "";
+
+          setTimeout(function(){
+            $('#baseModal').modal("show")            
+          }, 350)
         }
         //console.log("Table Update")
         complex_list_like_status()
