@@ -269,8 +269,11 @@ function save_recent_to_LocalStorage(recent_search) {
   localStorage.setItem("recentSearch", recent_search_json);
 }
 
+var on_searching = false
 //var title_loading_html = "<div class='popupTitle'><h1 style='font-size: 1em; font-weight: 600'>데이터를 불러오고 있어요!</h></div>";
 function searchingUpdate(code, sido, gungu, aptName, aptAddress){
+  on_searching = true
+
   $('#searchingBox').hide()
   $("#baseModal").modal("hide")
 
@@ -308,22 +311,29 @@ function searchingUpdate(code, sido, gungu, aptName, aptAddress){
     save_recent_to_LocalStorage(recent_search)
   }
 
-  removeMarkers()
-  defaultMap.setZoom(17)
-  
-  //$('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>검색 정보를 불러오고 있어요~!</div></div>")
+  removeMarkers()  
+
   searched_code = code  
   selectedRegion = sido
   selectedSubRegion = gungu
   $("#sido").val(sido).prop("selected", true);  
-  sortSelection = "sortDefault"  
-  optionChange(selectedSubRegion)
-  closeUnifiedSearch()
-  updateRegion()
+  sortSelection = "sortDefault"
 
-  setTimeout(function(){    
-    $("#baseModal").modal("show")
-  }, 500)
+  if(!isMobile){
+    defaultMap.setZoom(17)
+    optionChange(selectedSubRegion)
+    closeUnifiedSearch()
+    updateRegion()
+  }
+  else{
+    setTimeout(function(){
+      defaultMap.setZoom(17)
+      optionChange(selectedSubRegion)
+      closeUnifiedSearch()
+      updateRegion()      
+    }, 500)
+  }  
+  //$('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>검색 정보를 불러오고 있어요~!</div></div>")
 }
 
 function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){

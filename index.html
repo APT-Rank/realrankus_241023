@@ -2053,6 +2053,11 @@
           showDetail(pos);
           searched_code = "";
         }
+
+        if(on_searching){
+          on_searching = false
+          $("#baseModal").modal("show")
+        }
         //console.log("Table Update")
         complex_list_like_status()
         $("#pageLoadingBack").remove()        
