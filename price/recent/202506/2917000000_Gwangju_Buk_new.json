@@ -14,8 +14,20 @@
                 "type":"string"
             },
             {
+                "name":"일련번호",
+                "type":"string"
+            },
+            {
+                "name":"법정동본번코드",
+                "type":"number"
+            },
+            {
+                "name":"법정동부번코드",
+                "type":"number"
+            },
+            {
                 "name":"건축년도",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"매수자",
@@ -23,11 +35,11 @@
             },
             {
                 "name":"해제사유발생일",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"해제여부",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"거래금액",
@@ -66,11 +78,43 @@
                 "type":"string"
             },
             {
+                "name":"법정동지번코드",
+                "type":"number"
+            },
+            {
                 "name":"아파트여부",
                 "type":"string"
             },
             {
                 "name":"등기일자",
+                "type":"string"
+            },
+            {
+                "name":"도로명",
+                "type":"string"
+            },
+            {
+                "name":"도로명건물본번호코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명건물부번호코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명일련번호코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명시군구코드",
+                "type":"number"
+            },
+            {
+                "name":"도로명지상지하코드",
                 "type":"number"
             },
             {
@@ -80,6 +124,10 @@
             {
                 "name":"매도자",
                 "type":"string"
+            },
+            {
+                "name":"법정동읍면동코드",
+                "type":"number"
             },
             {
                 "name":"법정동",
