@@ -2007,11 +2007,7 @@
           temp_code = ""
           temp_coord = ""
           
-          showDetail(complex_idx)
-          
-          setTimeout(function(){
-            $('#baseModal').modal("show")            
-          }, 350)          
+          showDetail(complex_idx)        
         }
 
         if (selectedComplex != "") {
@@ -2024,22 +2020,12 @@
           setTimeout(function(){
             if(defaultMap){
               defaultMap.setCenter(map_center);
-              //if(!isMobile){
-                setTimeout(function(){                
-                    showDetail(selectedComplexNum);
-                    $('#baseModal').modal("show")                
-                }, 500)
-              //}
+              showDetail(selectedComplexNum);
             }
             else{
               setTimeout(function(){
                 defaultMap.setCenter(map_center);
-                //if(!isMobile){
-                  setTimeout(function(){                
-                      showDetail(selectedComplexNum);
-                      $('#baseModal').modal("show")                
-                  }, 500)
-                //}
+                showDetail(selectedComplexNum);
               }, 500)
             }
           }, 500)
@@ -2052,10 +2038,6 @@
           $("html").scrollTop(70 * pos);
           showDetail(pos);
           searched_code = "";
-
-          setTimeout(function(){
-            $('#baseModal').modal("show")            
-          }, 350)
         }
         //console.log("Table Update")
         complex_list_like_status()
@@ -3437,6 +3419,31 @@
       current_apt_name = aptName
 
       $("#pageLoadingBack").remove()
+
+      ///////////////////////////////////////////
+      if(temp_code != ""){          
+          setTimeout(function(){
+            $('#baseModal').modal("show")            
+          }, 350)          
+        }
+
+      if (selectedComplex != "") {
+          setTimeout(function(){
+            $('#baseModal').modal("show")                
+          }, 350)
+      }
+      else{
+          setTimeout(function(){
+            $('#baseModal').modal("show")                
+          }, 350)               
+      }
+
+      if (searched_code != "") {
+          setTimeout(function(){
+            $('#baseModal').modal("show")            
+          }, 350)
+      }
+      ////////////////////////////////////////
     }
 
     function changeMetaTag(aptName, addr, rank, short_name, url, aptValue) {
