@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"성암맨션",
             "건축년도":1998.0,
@@ -183,11 +182,11 @@
             "x":127.141248,
             "rank_info":"[5.0, 5.0, 24.372]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngsbe004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":101.0,
             "아파트":"성암맨션",
             "건축년도":1998.0,
@@ -220,11 +219,11 @@
             "x":127.141248,
             "rank_info":"[5.0, 5.0, 24.372]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngsbe004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":101.0,
             "아파트":"성암맨션",
             "건축년도":1998.0,
@@ -257,7 +256,8 @@
             "x":127.141248,
             "rank_info":"[5.0, 5.0, 24.372]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngsbe004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
