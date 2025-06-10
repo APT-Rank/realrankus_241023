@@ -369,8 +369,10 @@ function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){
   defaultMap.setZoom(17)
   showDetail(index)
   closeUnifiedSearch()  
-
+  
+  /*
   setTimeout(function(){    
     $("#baseModal").modal("show")
   }, 500)
+  */
 }

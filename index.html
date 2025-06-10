@@ -3421,6 +3421,7 @@
       $("#pageLoadingBack").remove()
 
       ///////////////////////////////////////////
+      /*
       if(temp_code != ""){          
           setTimeout(function(){
             $('#baseModal').modal("show")            
@@ -3443,7 +3444,11 @@
             $('#baseModal').modal("show")            
           }, 350)
       }
+      */
       ////////////////////////////////////////
+      setTimeout(function(){        
+        $('#baseModal').modal("show")            
+      }, 150)
     }
 
     function changeMetaTag(aptName, addr, rank, short_name, url, aptValue) {

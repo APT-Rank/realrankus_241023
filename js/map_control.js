@@ -773,12 +773,12 @@ function complexMarkerAction(marker_obj, visit_obj) {
           if($('#baseModal').is(':visible')){
             setTimeout(function(){
               showDetail(i);              
-              $('#baseModal').modal("show")
+              //$('#baseModal').modal("show")
             }, 350)
           }
           else{
             showDetail(i);            
-            $('#baseModal').modal("show")
+            //$('#baseModal').modal("show")
           }
           return;
         }
