@@ -1025,8 +1025,42 @@ function setOffcanvasMenu(){
       </div>
     </div>
   `
+
+  offcanvas_info_html_eng = `
+    <div id="offcanvas_company_long">
+      <div id="company_info_detail">
+        <div class="company_info_text">Company</div>
+        <div onClick="openOuterLink('https://naver.me/xDJJrRGf')">Imjinsa Inc.</div>
+
+        <div class="company_info_text">CEO</div>
+        <div>Seunghoon Han</div>
+
+        <div class="company_info_text">Strategic Planner</div>
+        <div>Holym Han</div>
+
+        <div class="company_info_text">Biz Registration No.</div>
+        <div>725-86-02829</div>
+
+        <div class="company_info_text">eCommerce License No.</div>
+        <div>Je2023-SeoulGangnam-05016ho</div>
+
+        <div class="company_info_text">Contact</div>
+        <div><a href="mailto:quenam38@naver.com" style='text-decoration:none; color: #888;'>quenam38@naver.com</a></div>
+
+        <div class="company_info_text">Head Office</div>
+        <div onClick="openOuterLink('https://naver.me/FiOAp7R4')">7F A113, 11-9, Teheran-ro 77-gil, Gangnam-gu, Seoul</div>
+      </div>
+      <hr>
+      <div id='company_CI'>        
+        <div onClick="openOuterLink('https://ccei.creativekorea.or.kr/')"><img src="https://www.realrankus.com/image/support_01.png" height='30'><span style='font-size: 0.8em'><br> 보육기업 (2023-08-30)</span></div>
+        <hr>
+        <div style='margin-bottom:5px'>ⓒ Copyright 2022. Imjinsa Inc. All Rights Reserved.</div>        
+      </div>
+    </div>
+  `  
   $(".offcanvas-body").html(offcanvas_html)
-  $(".offcanvas-body").append(offcanvas_info_html)
+  //$(".offcanvas-body").append(offcanvas_info_html)
+  $(".offcanvas-body").append(offcanvas_info_html_eng)
   setupOffcanvas(currentMenu)
 }
 
