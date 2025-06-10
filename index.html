@@ -3416,9 +3416,7 @@
       
       prev_selection = current_selection
       current_selection = searchCode
-      current_apt_name = aptName
-
-      $("#pageLoadingBack").remove()
+      current_apt_name = aptName      
 
       ///////////////////////////////////////////
       /*
@@ -3446,7 +3444,8 @@
       }
       */
       ////////////////////////////////////////
-      setTimeout(function(){        
+      setTimeout(function(){
+        $("#pageLoadingBack").remove()
         $('#baseModal').modal("show")            
       }, 350)
     }
