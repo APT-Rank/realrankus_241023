@@ -1030,10 +1030,10 @@ function setOffcanvasMenu(){
     <div id="offcanvas_company_long">
       <div id="company_info_detail">
         <div class="company_info_text">Company</div>
-        <div onClick="openOuterLink('https://naver.me/xDJJrRGf')">Imjinsa Inc.</div>
+        <div onClick="openOuterLink('https://naver.me/xDJJrRGf')">임장에진심인사람들</div>
 
         <div class="company_info_text">CEO</div>
-        <div>Seunghoon Han</div>
+        <div>한승훈</div>
 
         <div class="company_info_text">Strategic Planner</div>
         <div>Holym Han</div>
