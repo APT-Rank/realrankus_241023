@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"string"
             },
@@ -136,10 +140,6 @@
             {
                 "name":"usingArea",
                 "type":"number"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,6 +150,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"CNS후레쉬빌3차",
             "건축년도":2005.0,
@@ -182,11 +183,11 @@
             "x":126.7628248,
             "rank_info":"[9.0, 6.0, 29.748]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbe006",
-            "usingArea":65.0,
-            "type":"TRADE"
+            "usingArea":65.0
         },
         {
             "index":1,
+            "type":"TRADE",
             "동":"B",
             "아파트":"대동맨션",
             "건축년도":1990.0,
@@ -219,11 +220,11 @@
             "x":126.763448,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.636712:126.763448:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":2,
+            "type":"TRADE",
             "동":null,
             "아파트":"금호",
             "건축년도":1996.0,
@@ -256,11 +257,11 @@
             "x":126.76734,
             "rank_info":"[9.0, 9.0, 17.473]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbe009",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":3,
+            "type":"TRADE",
             "동":null,
             "아파트":"강진코아루블루핀아파트",
             "건축년도":2020.0,
@@ -293,11 +294,11 @@
             "x":126.78328,
             "rank_info":"[9.0, 3.0, 33.493]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jngjbe003",
-            "usingArea":77.0,
-            "type":"TRADE"
+            "usingArea":77.0
         },
         {
             "index":4,
+            "type":"TRADE",
             "동":null,
             "아파트":"팰리스파크",
             "건축년도":2018.0,
@@ -330,8 +331,7 @@
             "x":126.811792,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.455288:126.811792:17:\/APT\/A1",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         }
     ]
 }
