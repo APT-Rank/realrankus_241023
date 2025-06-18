@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":7.0,
             "아파트":"동점",
             "건축년도":1986.0,
@@ -183,11 +182,11 @@
             "x":129.04879,
             "rank_info":"[31.0, 18.0, 28.627]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe017",
-            "usingArea":88.0
+            "usingArea":88.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":101.0,
             "아파트":"유브리안",
             "건축년도":2008.0,
@@ -220,11 +219,11 @@
             "x":129.003179,
             "rank_info":"[31.0, 10.0, 31.077]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe009",
-            "usingArea":80.0
+            "usingArea":80.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -257,11 +256,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"대산하이츠빌",
             "건축년도":2002.0,
@@ -294,11 +293,11 @@
             "x":128.995043,
             "rank_info":"[31.0, 29.0, 20.486]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe028",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -331,11 +330,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"영조아름다운나날",
             "건축년도":2007.0,
@@ -368,11 +367,11 @@
             "x":128.993332,
             "rank_info":"[31.0, 4.0, 35.172]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe003",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -405,11 +404,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"주공",
             "건축년도":1983.0,
@@ -442,7 +441,8 @@
             "x":128.988792,
             "rank_info":"[31.0, 11.0, 30.711]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe010",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
