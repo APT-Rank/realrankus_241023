@@ -1168,7 +1168,38 @@ function show_daily_info(){
   mf_housing_apt_price = mf_housing_apt_price.map( x => {
     if(x == 0){ x = null }
     return x
-  })  
+  })
+
+  mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "5Y" )
+  mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
+    if(x == 0){ x = null }
+    return x
+  })
+
+  mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "5Y" )
+  mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
+    if(x == 0){ x = null }
+    return x
+  })
+
+  mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "5Y" )
+  mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
+    if(x == 0){ x = null }
+    return x
+  })
+
+  mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "5Y" )
+  mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
+    if(x == 0){ x = null }
+    return x
+  })
+
+  mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "5Y" )      
+  mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
+    if(x == 0){ x = null }
+    return x
+  })
+
   mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "5Y" )
   mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "5Y" )
   mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "5Y" )  
@@ -1197,7 +1228,9 @@ function show_daily_info(){
   mf_currency_JPYKRW.push( return_last_value_rate(moneyflow_market['BOK_Currency_JP'], hourly_market['JPYKRW']['value'], value_index) )
   mf_coin_btc.push( return_last_value_rate(moneyflow_market['yf_BTCUSD'], hourly_market['USDT-BTC']['value'], value_index) )
 
-  moneyflow_dataset = [mf_us_total_asset, mf_ko_total_asset, mf_oil_wti, mf_oil_dubai, mf_metal_gold, mf_housing_trade_all, mf_housing_trade_apt, mf_housing_apt_price, mf_us_nas, mf_us_dow, mf_us_snp, mf_ko_kospi, mf_ko_kosdaq, mf_ko_kospi_kosdaq, mf_currency_USDKRW, mf_currency_JPYKRW, mf_coin_btc]  
+  moneyflow_dataset = [mf_us_total_asset, mf_ko_total_asset, mf_oil_wti, mf_oil_dubai, mf_metal_gold, mf_housing_trade_all, mf_housing_trade_apt, mf_housing_apt_price, 
+                      mf_us_nas, mf_us_dow, mf_us_snp, mf_ko_kospi, mf_ko_kosdaq, mf_ko_kospi_kosdaq, mf_currency_USDKRW, mf_currency_JPYKRW, mf_coin_btc,
+                      mf_housing_apt_price_metro, mf_housing_apt_price_urban, mf_housing_apt_price_seoul, mf_housing_apt_price_kkd, mf_housing_apt_price_largecity6]
 
   addon_html += "<div class='daily_header_mf' id='Money_Flow'>"
   addon_html += "<div class='daily_title_mf'>"
@@ -3814,6 +3847,36 @@ function redraw_graph(obj, duration){
         return x
       })
 
+      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "1Y" )
+      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "1Y" )
+      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "1Y" )
+      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "1Y" )
+      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "1Y" )      
+      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
       mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "1Y" )
       mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "1Y" )
       mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "1Y" )      
@@ -3847,6 +3910,36 @@ function redraw_graph(obj, duration){
         if(x == 0){ x = null }
         return x
       })
+
+      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "3Y" )
+      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "3Y" )
+      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "3Y" )
+      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "3Y" )
+      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "3Y" )      
+      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })      
 
       mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "3Y" )
       mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "3Y" )
@@ -3882,6 +3975,36 @@ function redraw_graph(obj, duration){
         return x
       })
 
+      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "5Y" )
+      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "5Y" )
+      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "5Y" )
+      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "5Y" )
+      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "5Y" )      
+      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })      
+
       mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "5Y" )
       mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "5Y" )
       mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "5Y" )      
@@ -3916,6 +4039,36 @@ function redraw_graph(obj, duration){
         return x
       })
 
+      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "10Y" )
+      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "10Y" )
+      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "10Y" )
+      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "10Y" )
+      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })
+
+      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "10Y" )      
+      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
+        if(x == 0){ x = null }
+        return x
+      })      
+
       mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "10Y" )
       mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "10Y" )
       mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "10Y" )      
@@ -3949,11 +4102,13 @@ function redraw_graph(obj, duration){
     mf_coin_btc.push( return_last_value_rate(moneyflow_market['yf_BTCUSD'], hourly_market['USDT-BTC']['value'], value_index) )
 
     //moneyflow_dataset = [mf_us_total_asset, mf_ko_total_asset, mf_oil_wti, mf_oil_dubai, mf_metal_gold, mf_housing_trade_all, mf_housing_trade_apt, mf_housing_apt_price, mf_us_nas, mf_us_dow, mf_us_snp, mf_ko_kospi, mf_ko_kosdaq, mf_ko_kospi_kosdaq, mf_coin_btc]
-    moneyflow_dataset = [mf_us_total_asset, mf_ko_total_asset, mf_oil_wti, mf_oil_dubai, mf_metal_gold, mf_housing_trade_all, mf_housing_trade_apt, mf_housing_apt_price, mf_us_nas, mf_us_dow, mf_us_snp, mf_ko_kospi, mf_ko_kosdaq, mf_ko_kospi_kosdaq, mf_currency_USDKRW, mf_currency_JPYKRW, mf_coin_btc]
+    moneyflow_dataset = [mf_us_total_asset, mf_ko_total_asset, mf_oil_wti, mf_oil_dubai, mf_metal_gold, mf_housing_trade_all, mf_housing_trade_apt, mf_housing_apt_price, 
+                          mf_us_nas, mf_us_dow, mf_us_snp, mf_ko_kospi, mf_ko_kosdaq, mf_ko_kospi_kosdaq, mf_currency_USDKRW, mf_currency_JPYKRW, mf_coin_btc,
+                          mf_housing_apt_price_metro, mf_housing_apt_price_urban, mf_housing_apt_price_seoul, mf_housing_apt_price_kkd, mf_housing_apt_price_largecity6]
 
     console.log(mf_time_arr)
     console.log(moneyflow_dataset)
     myMoneyFlow_Chart.destroy()
     drawMoneyFlowChart(mf_time_arr, moneyflow_dataset, "MoneyFlow_Chart")
-  }     
+  }
 }

@@ -1,6 +1,7 @@
 var myMoneyFlow_Chart
 
 function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
+  console.log(mf_dataset)
   const totalDuration = 300;
   const delayBetweenPoints = totalDuration / chartDate.length;
   var ctx = document.getElementById(id_name).getContext('2d');
@@ -50,8 +51,8 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
       },{        
         label: '금',
         data: mf_dataset[4],
-        borderColor: "#ccb521",
-        backgroundColor: "#ccb521",
+        borderColor: "#FFD700",
+        backgroundColor: "#FFD700",
         pointRadius: 0,
         borderWidth: 2,
         tension: 0.2,
@@ -75,10 +76,55 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
         tension: 0.2,
         hidden: true
       },*/{
-        label: '한국 아파트 가격',
+        label: '전국 아파트',
         data: mf_dataset[7],
-        borderColor: "#1c2499",
-        backgroundColor: "#1c2499",
+        borderColor: "#1E90FF",
+        backgroundColor: "#1E90FF",
+        pointRadius: 0,
+        borderWidth: 2,
+        tension: 0.2,
+        hidden: true
+      },{
+        label: '수도권 아파트',
+        data: mf_dataset[17],
+        borderColor: "#4682B4",
+        backgroundColor: "#4682B4",
+        pointRadius: 0,
+        borderWidth: 2,
+        tension: 0.2,
+        hidden: true
+      },{
+        label: '지방권 아파트',
+        data: mf_dataset[18],
+        borderColor: "#00BFFF",
+        backgroundColor: "#00BFFF",
+        pointRadius: 0,
+        borderWidth: 2,
+        tension: 0.2,
+        hidden: true
+      },{
+        label: '서울시 아파트',
+        data: mf_dataset[19],
+        borderColor: "#5F9EA0",
+        backgroundColor: "#5F9EA0",
+        pointRadius: 0,
+        borderWidth: 2,
+        tension: 0.2,
+        hidden: true
+      },{
+        label: '경기도 아파트',
+        data: mf_dataset[20],
+        borderColor: "#4169E1",
+        backgroundColor: "#4169E1",
+        pointRadius: 0,
+        borderWidth: 2,
+        tension: 0.2,
+        hidden: true
+      },{
+        label: '6대광역시 아파트',
+        data: mf_dataset[21],
+        borderColor: "#87CEFA",
+        backgroundColor: "#87CEFA",
         pointRadius: 0,
         borderWidth: 2,
         tension: 0.2,
@@ -140,8 +186,8 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
       },{
         label: '원-달러',
         data: mf_dataset[14],
-        borderColor: "#2a94b8",
-        backgroundColor: "#2a94b8",
+        borderColor: "#8B4513",
+        backgroundColor: "#8B4513",
         pointRadius: 0,
         borderWidth: 2,
         tension: 0.2,
@@ -149,8 +195,8 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
       },{
         label: '원-100엔',
         data: mf_dataset[15],
-        borderColor: "#38bbeb",
-        backgroundColor: "#38bbeb",
+        borderColor: "#CD853F",
+        backgroundColor: "#CD853F",
         pointRadius: 0,
         borderWidth: 2,
         tension: 0.2,
@@ -159,8 +205,8 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
       ,{
         label: '비트코인',
         data: mf_dataset[16],
-        borderColor: "#0c4ea2",
-        backgroundColor: "#0c4ea2",
+        borderColor: "#E1AD01",
+        backgroundColor: "#E1AD01",
         pointRadius: 0,
         borderWidth: 2,
         tension: 0.2,
