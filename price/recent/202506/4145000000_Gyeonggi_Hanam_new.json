@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"감일푸르지오마크베르",
             "건축년도":2023.0,
@@ -183,11 +182,11 @@
             "x":127.15516,
             "rank_info":"[109.0, 27.0, 56.3288]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe026",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"감일센트레빌",
             "건축년도":2020.0,
@@ -220,11 +219,11 @@
             "x":127.162113,
             "rank_info":"[109.0, 102.0, 41.2088]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe102",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"미사강변사랑으로부영아파트",
             "건축년도":2017.0,
@@ -257,11 +256,11 @@
             "x":127.19798,
             "rank_info":"[109.0, 8.0, 60.5764]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe007",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"미사강변푸르지오",
             "건축년도":2016.0,
@@ -294,11 +293,11 @@
             "x":127.184148,
             "rank_info":"[109.0, 25.0, 56.878400000000006]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe024",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"미사강변사랑으로부영아파트",
             "건축년도":2017.0,
@@ -331,11 +330,11 @@
             "x":127.19798,
             "rank_info":"[109.0, 8.0, 60.5764]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe007",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"미사강변사랑으로부영아파트",
             "건축년도":2017.0,
@@ -368,11 +367,11 @@
             "x":127.19798,
             "rank_info":"[109.0, 8.0, 60.5764]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe007",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"부영",
             "건축년도":1994.0,
@@ -405,11 +404,11 @@
             "x":127.225392,
             "rank_info":"[109.0, 57.0, 50.8224]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe056",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"미사강변센트럴자이",
             "건축년도":2017.0,
@@ -442,11 +441,11 @@
             "x":127.186257,
             "rank_info":"[109.0, 28.0, 56.25639999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe027",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"위례호반써밋",
             "건축년도":2021.0,
@@ -479,11 +478,11 @@
             "x":127.152116,
             "rank_info":"[109.0, 91.0, 45.1888]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe091",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"플로리체위례",
             "건축년도":2015.0,
@@ -516,7 +515,8 @@
             "x":127.148884,
             "rank_info":"[109.0, 24.0, 57.04879999999999]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gghnbe023",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         }
     ]
 }
