@@ -318,6 +318,8 @@
   var newHigh = 0
   var newLow = 0
   var newDeal = 0
+  var higherDeal = 0
+  var lowerDeal = 0
 
   var modalState = 0;
   var searchState = 0;
@@ -333,6 +335,12 @@
   var sales_history_date = []
   var priceCharts = []
   var currentMenu = ""
+
+  var shareText_all = ""
+  var shareText_highest = ""
+  var shareText_lowest = ""
+  var shareText_up = ""
+  var shareText_down = ""
 
   var count_info = ""
 
@@ -839,10 +847,14 @@ function updateTable(region){
     shareURL = get_sURL(region)
 
     if (selectedMonth == 'latest_deal'){
-      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 실거래]\n"
+      shareText_all = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 실거래]\n"
+      shareText_up = ""
+      shareText_down = ""
+      shareText_highest = ""
+      shareText_lowest = ""
     }
     else{
-      shareText = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
+      shareText_all = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
     }
 
     url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
@@ -921,7 +933,7 @@ function updateTable(region){
 
         share_count = 0
 
-        shareText += "(전체 " + itemNum + "건)\n\n"
+        shareText_all += "(전체 " + itemNum + "건)\n\n"
 
         addon_html = "<div class='hidden_saperator' onClick='simple_and_detail()'>"
           addon_html += "<div class = 'hidden_saperator_text'></div>"
@@ -1044,18 +1056,66 @@ function updateTable(region){
           list_class_name = "listBox"
           if(Number(deal_price) > Number(max_price_deal[1])){
             list_class_name += " highest"
+            if(newHigh < 5){
+              shareText_highest += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_highest += " (분양권)』\n"
+              }
+              else{
+                shareText_highest += " (" + year_gap + "년차)』\n"
+              }
+              shareText_highest += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_highest += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_highest += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }            
             newHigh++
           }
           if(Number(deal_price) < Number(min_price_deal[1])){
             list_class_name += " lowest"
+            if(newLow < 5){
+              shareText_lowest += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_lowest += " (분양권)』\n"
+              }
+              else{
+                shareText_lowest += " (" + year_gap + "년차)』\n"
+              }
+              shareText_lowest += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_lowest += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_lowest += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }
             newLow++
           }
           if(Number(deal_price) > last_dealed_price){
             list_class_name += " higher"
+            if(higherDeal < 5){
+              shareText_up += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_up += " (분양권)』\n"
+              }
+              else{
+                shareText_up += " (" + year_gap + "년차)』\n"
+              }
+              shareText_up += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_up += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_up += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }
             higherDeal++
           }
           if(Number(deal_price) < last_dealed_price){
             list_class_name += " lower"
+            if(lowerDeal < 5){
+              shareText_down += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_down += " (분양권)』\n"
+              }
+              else{
+                shareText_down += " (" + year_gap + "년차)』\n"
+              }
+              shareText_down += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_down += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_down += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }
             lowerDeal++
           }
 
@@ -1109,30 +1169,32 @@ function updateTable(region){
           }
           
           if(i < share_count){
-            shareText += "『" + aptName
+            shareText_all += "『" + aptName
             if(deal_new_old == "BYG"){
-              shareText += " (분양권)』\n"
+              shareText_all += " (분양권)』\n"
             }
             else{
-              shareText += " (" + year_gap + "년차)』\n"
+              shareText_all += " (" + year_gap + "년차)』\n"
             }
-            shareText += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
-            shareText += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
-            shareText += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            shareText_all += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+            shareText_all += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+            shareText_all += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
           }
 
           $('#dataList').append(addon_html);
         }
 
         if(itemNum == 0){
-            shareText += "등록된 실거래 정보 없음\n\n"
+            shareText_all += "등록된 실거래 정보 없음\n\n"
         }
 
-        shareText += shareURL + "\n\n"
+        shareText_all += shareURL + "\n\n"
 
-        shareText += "[리얼랭커스 앱 다운로드]\n"
-        shareText += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
-        shareText += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n" 
+        shareText_all += "[리얼랭커스 앱 다운로드]\n"
+        shareText_all += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+        shareText_all += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n"
+
+        shareText = shareText_all
 
         popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
       
@@ -2382,10 +2444,19 @@ function updateTable(region){
     window.location = aURL
   }
 
+  var shareText_info = ""
+
   function rearrangeList(obj, count){
     selections = obj.id
 
+    shareText_info = shareURL + "\n\n"
+    shareText_info += "[리얼랭커스 앱 다운로드]\n"
+    shareText_info += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+    shareText_info += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n"
+
     if(selections == "rearrangeAll"){
+      shareText = shareText_all
+
       $(".hidden_saperator").hide()      
       if(itemNum < 80){
         $(".listBox").fadeIn(450)
@@ -2397,12 +2468,13 @@ function updateTable(region){
         $(".date_saperator").show()
         $(".date_saperator_web").show()
       }
-      //$(".listBox").show()
-      //$(".date_saperator").show()
-      
-      //$(".hidden_saperator").fadeOut(450)
     }
     else if(selections == "rearrangeHighest"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 신고가]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_highest
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2413,6 +2485,11 @@ function updateTable(region){
       $(".hidden_saperator").slideDown(450)
     }
     else if(selections == "rearrangeLowest"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 신저가]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_lowest
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2423,6 +2500,11 @@ function updateTable(region){
       $(".hidden_saperator").slideDown(450)
     }
     else if(selections == "rearrangeHigher"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 상승 거래]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_up
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2433,6 +2515,11 @@ function updateTable(region){
       $(".hidden_saperator").slideDown(450)
     }
     else if(selections == "rearrangeLower"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 하락 거래]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_down
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2441,7 +2528,7 @@ function updateTable(region){
       $(".lower").fadeIn(450)
       $(".hidden_saperator_text").html("#하락 " + count + "건")
       $(".hidden_saperator").slideDown(450)
-    }
+    }    
   }
 </script>
 </html>
