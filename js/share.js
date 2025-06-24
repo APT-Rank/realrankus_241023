@@ -983,13 +983,13 @@ function setOffcanvasMenu(){
           <div id="offcanvas_footer4" onClick="openOuterLink('https://cafe.naver.com/aptrankkr')">네이버 카페</div>
 
           <div class="offcanvas_footer_icon"><i class="fa-brands fa-youtube"></i></div>
-          <div id="offcanvas_footer2" onClick="openOuterLink('https://youtube.com/@realrankus?si=_XXX2_WsVq_MtlFa')">유튜브: @realrankus</div>
+          <div id="offcanvas_footer2" onClick="openOuterLink('https://youtube.com/@realrankus')">유튜브: @realrankus</div>
 
           <div class="offcanvas_footer_icon"><i class="fa-brands fa-instagram"></i> </div>
           <div id="offcanvas_footer3" onClick="openOuterLink('https://www.instagram.com/realrankus/')">인스타그램: @realrankus</div>         
 
           <div class="offcanvas_footer_icon"><i class="fa-brands fa-facebook"></i></div>
-          <div id="offcanvas_footer5" onClick="openOuterLink('https://www.facebook.com/aptrank/')">페이스북</div>
+          <div id="offcanvas_footer5" onClick="openOuterLink('https://www.facebook.com/profile.php?id=61575248181914')">페이스북</div>
         </div>
 
         <div id="offcanvas_footer">
