@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":201.0,
             "아파트":"대양고운채2차",
             "건축년도":2015.0,
@@ -183,7 +182,8 @@
             "x":127.702286,
             "rank_info":"[5.0, 2.0, 33.413]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhwbe001",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         }
     ]
 }
