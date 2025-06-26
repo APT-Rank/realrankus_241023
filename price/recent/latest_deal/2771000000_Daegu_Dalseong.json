@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"number"
             },
@@ -136,10 +140,6 @@
             {
                 "name":"usingArea",
                 "type":"number"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,6 +150,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"대구국가산단영무예다음",
             "건축년도":2020.0,
@@ -370,11 +371,11 @@
             "x":128.408288,
             "rank_info":"[124.0, 43.0, 45.821200000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe044",
-            "usingArea":76.0,
-            "type":"TRADE"
+            "usingArea":76.0
         },
         {
             "index":1,
+            "type":"TRADE",
             "동":null,
             "아파트":"논공삼주",
             "건축년도":1990.0,
@@ -730,11 +731,11 @@
             "x":128.43886,
             "rank_info":"[124.0, 116.0, 27.919000000000004]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe122",
-            "usingArea":87.0,
-            "type":"TRADE"
+            "usingArea":87.0
         },
         {
             "index":2,
+            "type":"TRADE",
             "동":null,
             "아파트":"죽곡삼정그린코아더베스트",
             "건축년도":2018.0,
@@ -1204,11 +1205,11 @@
             "x":128.461288,
             "rank_info":"[124.0, 18.0, 51.7816]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe017",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":3,
+            "type":"TRADE",
             "동":null,
             "아파트":"죽곡삼정그린코아더베스트",
             "건축년도":2018.0,
@@ -1585,11 +1586,11 @@
             "x":128.461288,
             "rank_info":"[124.0, 18.0, 51.7816]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe017",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":4,
+            "type":"TRADE",
             "동":null,
             "아파트":"죽곡푸르지오1단지",
             "건축년도":2011.0,
@@ -1894,11 +1895,11 @@
             "x":128.468248,
             "rank_info":"[124.0, 14.0, 53.220000000000006]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe013",
-            "usingArea":79.0,
-            "type":"TRADE"
+            "usingArea":79.0
         },
         {
             "index":5,
+            "type":"TRADE",
             "동":null,
             "아파트":"대실역청아람1단지",
             "건축년도":2008.0,
@@ -2293,11 +2294,11 @@
             "x":128.468849,
             "rank_info":"[124.0, 29.0, 48.635000000000005]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe028",
-            "usingArea":74.0,
-            "type":"TRADE"
+            "usingArea":74.0
         },
         {
             "index":6,
+            "type":"TRADE",
             "동":null,
             "아파트":"서재우방타운",
             "건축년도":2002.0,
@@ -2692,11 +2693,11 @@
             "x":128.500972,
             "rank_info":"[124.0, 87.0, 35.1588]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe093",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":7,
+            "type":"TRADE",
             "동":null,
             "아파트":"대실역태왕아너스",
             "건축년도":2017.0,
@@ -3073,11 +3074,11 @@
             "x":128.465416,
             "rank_info":"[124.0, 3.0, 60.045]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe002",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":8,
+            "type":"TRADE",
             "동":null,
             "아파트":"대실역태왕아너스",
             "건축년도":2017.0,
@@ -3787,11 +3788,11 @@
             "x":128.465416,
             "rank_info":"[124.0, 3.0, 60.045]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe002",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":9,
+            "type":"TRADE",
             "동":null,
             "아파트":"대실역태왕아너스",
             "건축년도":2017.0,
@@ -4168,11 +4169,11 @@
             "x":128.465416,
             "rank_info":"[124.0, 3.0, 60.045]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe002",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":10,
+            "type":"TRADE",
             "동":null,
             "아파트":"옥포지구서한이다음",
             "건축년도":2020.0,
@@ -4762,11 +4763,11 @@
             "x":128.44848,
             "rank_info":"[124.0, 72.0, 40.8036]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe078",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":11,
+            "type":"TRADE",
             "동":null,
             "아파트":"미진이지비아",
             "건축년도":2017.0,
@@ -5221,11 +5222,11 @@
             "x":128.466675,
             "rank_info":"[124.0, 55.0, 44.4436]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe059",
-            "usingArea":71.0,
-            "type":"TRADE"
+            "usingArea":71.0
         },
         {
             "index":12,
+            "type":"TRADE",
             "동":null,
             "아파트":"호반베르디움",
             "건축년도":2016.0,
@@ -5536,11 +5537,11 @@
             "x":128.468282,
             "rank_info":"[124.0, 61.0, 43.8322]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe066",
-            "usingArea":73.0,
-            "type":"TRADE"
+            "usingArea":73.0
         },
         {
             "index":13,
+            "type":"TRADE",
             "동":null,
             "아파트":"힐데스하임아파트",
             "건축년도":2015.0,
@@ -6106,11 +6107,11 @@
             "x":128.468307,
             "rank_info":"[124.0, 80.0, 38.136811597152544]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe086",
-            "usingArea":75.0,
-            "type":"TRADE"
+            "usingArea":75.0
         },
         {
             "index":14,
+            "type":"TRADE",
             "동":null,
             "아파트":"호반베르디움",
             "건축년도":2016.0,
@@ -6475,11 +6476,11 @@
             "x":128.468282,
             "rank_info":"[124.0, 61.0, 43.8322]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe066",
-            "usingArea":73.0,
-            "type":"TRADE"
+            "usingArea":73.0
         },
         {
             "index":15,
+            "type":"TRADE",
             "동":null,
             "아파트":"하나리움퀸즈파크",
             "건축년도":2015.0,
@@ -6871,11 +6872,11 @@
             "x":128.461996,
             "rank_info":"[124.0, 59.0, 43.8572]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe063",
-            "usingArea":72.0,
-            "type":"TRADE"
+            "usingArea":72.0
         },
         {
             "index":16,
+            "type":"TRADE",
             "동":null,
             "아파트":"대구테크노폴리스중흥에스-클래스포디움",
             "건축년도":2018.0,
@@ -7741,11 +7742,11 @@
             "x":128.4674071,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.6990455:128.4674071:17:\/APT\/A1",
-            "usingArea":77.0,
-            "type":"TRADE"
+            "usingArea":77.0
         },
         {
             "index":17,
+            "type":"TRADE",
             "동":null,
             "아파트":"화원청구청산맨션",
             "건축년도":1997.0,
@@ -8023,11 +8024,11 @@
             "x":128.50939,
             "rank_info":"[124.0, 93.0, 34.308]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe099",
-            "usingArea":null,
-            "type":"TRADE"
+            "usingArea":null
         },
         {
             "index":18,
+            "type":"TRADE",
             "동":null,
             "아파트":"명곡미래빌1",
             "건축년도":2000.0,
@@ -8902,11 +8903,11 @@
             "x":128.498026,
             "rank_info":"[124.0, 25.0, 49.59882889249798]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe024",
-            "usingArea":78.0,
-            "type":"TRADE"
+            "usingArea":78.0
         },
         {
             "index":19,
+            "type":"TRADE",
             "동":null,
             "아파트":"미래빌5단지",
             "건축년도":2001.0,
@@ -9748,8 +9749,7 @@
             "x":128.492818,
             "rank_info":"[124.0, 47.0, 45.3982]",
             "sURL":"https:\/\/www.realrankus.com?cpx=dgdgbe050",
-            "usingArea":76.0,
-            "type":"TRADE"
+            "usingArea":76.0
         }
     ]
 }
