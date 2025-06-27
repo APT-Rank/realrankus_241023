@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"문경모전코아루노블36",
             "건축년도":2022.0,
@@ -183,11 +182,11 @@
             "x":128.19015,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.585742:128.19015:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"초원",
             "건축년도":1993.0,
@@ -220,11 +219,11 @@
             "x":128.186375,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.591316:128.186375:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"문경점촌코아루아파트",
             "건축년도":2019.0,
@@ -257,11 +256,11 @@
             "x":128.187745,
             "rank_info":"[25.0, 9.0, 38.233]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gbmgbe009",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"우진행복아파트",
             "건축년도":2016.0,
@@ -294,11 +293,11 @@
             "x":128.20263,
             "rank_info":"[25.0, 24.0, 23.865]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gbmgbe024",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"황제",
             "건축년도":1989.0,
@@ -331,11 +330,11 @@
             "x":128.205644,
             "rank_info":"[25.0, 18.0, 29.83]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gbmgbe018",
-            "usingArea":88.0
+            "usingArea":88.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"대화3차",
             "건축년도":1990.0,
@@ -368,11 +367,11 @@
             "x":128.207206,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.606622:128.207206:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"청운A동",
             "건축년도":2003.0,
@@ -405,11 +404,11 @@
             "x":128.2081043,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.606638:128.2081043:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"흥덕시영",
             "건축년도":1992.0,
@@ -442,11 +441,11 @@
             "x":128.205707,
             "rank_info":"[25.0, 19.0, 28.18]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gbmgbe019",
-            "usingArea":56.0
+            "usingArea":56.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":3.0,
             "아파트":"흥덕주공",
             "건축년도":1983.0,
@@ -479,11 +478,11 @@
             "x":128.201822,
             "rank_info":"[25.0, 16.0, 30.43]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gbmgbe016",
-            "usingArea":88.0
+            "usingArea":88.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"흥덕주공",
             "건축년도":1983.0,
@@ -516,7 +515,8 @@
             "x":128.201822,
             "rank_info":"[25.0, 16.0, 30.43]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gbmgbe016",
-            "usingArea":88.0
+            "usingArea":88.0,
+            "type":"TRADE"
         }
     ]
 }

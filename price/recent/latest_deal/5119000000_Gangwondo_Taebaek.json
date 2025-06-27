@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"철암장미",
             "건축년도":2000.0,
@@ -440,11 +439,11 @@
             "x":129.042309,
             "rank_info":"[31.0, 30.0, 20.482]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe029",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -3734,11 +3733,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"영조아름다운나날",
             "건축년도":2007.0,
@@ -4307,11 +4306,11 @@
             "x":128.993332,
             "rank_info":"[31.0, 4.0, 35.172]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe003",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"이원예채",
             "건축년도":2007.0,
@@ -4595,11 +4594,11 @@
             "x":128.9777555,
             "rank_info":"[31.0, 8.0, 31.910999999999994]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe007",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -7889,11 +7888,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"영조아름다운나날",
             "건축년도":2007.0,
@@ -8462,11 +8461,11 @@
             "x":128.993332,
             "rank_info":"[31.0, 4.0, 35.172]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe003",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":103.0,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -11756,11 +11755,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"태백황지청솔",
             "건축년도":2001.0,
@@ -15050,11 +15049,11 @@
             "x":128.983218,
             "rank_info":"[31.0, 3.0, 36.861]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe002",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"시영",
             "건축년도":1991.0,
@@ -15281,11 +15280,11 @@
             "x":128.9851353,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.1588276:128.9851353:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"남청",
             "건축년도":1997.0,
@@ -15563,7 +15562,8 @@
             "x":128.994096,
             "rank_info":"[31.0, 9.0, 31.736]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbe008",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
