@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"꿈의궁전아파트",
             "건축년도":2002.0,
@@ -183,11 +182,11 @@
             "x":128.207161,
             "rank_info":"[10.0, 10.0, 21.282]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwijbe009",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"인제양우내안애아파트",
             "건축년도":2020.0,
@@ -220,7 +219,8 @@
             "x":128.178478,
             "rank_info":"[10.0, 2.0, 35.953]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwijbe001",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         }
     ]
 }

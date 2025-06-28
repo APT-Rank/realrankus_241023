@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"영산맨션",
             "건축년도":1992.0,
@@ -183,11 +182,11 @@
             "x":127.775022,
             "rank_info":"[14.0, 6.0, 31.84]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cbydbe005",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"미주맨션",
             "건축년도":1992.0,
@@ -220,11 +219,11 @@
             "x":127.790169,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.169962:127.790169:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"조한드림플러스",
             "건축년도":2001.0,
@@ -257,11 +256,11 @@
             "x":127.787098,
             "rank_info":"[14.0, 11.0, 27.44]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cbydbe010",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":"101",
             "아파트":"서한101동",
             "건축년도":1993.0,
@@ -294,11 +293,11 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":"104",
             "아파트":"주공아파트(886-0)",
             "건축년도":2002.0,
@@ -331,11 +330,11 @@
             "x":127.780229,
             "rank_info":"[14.0, 10.0, 27.605]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cbydbe009",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":"1동",
             "아파트":"영동부자마을아파트",
             "건축년도":2022.0,
@@ -368,7 +367,8 @@
             "x":null,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
