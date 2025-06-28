@@ -612,9 +612,15 @@ function openExternalLink(url){
   */   
 }
 
-function openExternalLinkWithLoading(url){
+function openExternalLinkWithLoading(url, targetMenu){
   $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>페이지 이동 중입니다</div></div>")  
-  window.location.href = url
+  //targetMenu가 currentMenu와 같으면 새로고침을 함
+  if(currentMenu == targetMenu){
+    location.reload()
+  }
+  else{
+    window.location.href = url
+  }
 }
 
 function openAptrank(){
@@ -740,15 +746,15 @@ function openAptrankMoneyFlow(){
 function setBottomMenu(){
   bottomMenu_html = `
     <div id='bottom_memu_wrapper'>
-      <div class='bottom_tab' id='tab1' onClick='openExternalLinkWithLoading("https://www.realrankus.com")'>아파트분석</div>
-      <div class='bottom_tab' id='tab2' onClick='openExternalLinkWithLoading("https://www.realrankus.com/price")'>실거래가</div>
-      <div class='bottom_tab' id='tab6' onClick='openExternalLinkWithLoading("https://www.realrankus.com/biz")'>지역분석</div>
-      <div class='bottom_tab' id='tab9' onClick='openExternalLinkWithLoading("https://www.realrankus.com/cityclass")'>급지표</div>
-      <div class='bottom_tab' id='tab8' onClick='openExternalLinkWithLoading("https://www.realrankus.com/moneyflow")'>시장지표</div>      
-      <div class='bottom_tab' id='tab3' onClick='openExternalLinkWithLoading("https://www.realrankus.com/theme")'>테마검색</div>      
-      <div class='bottom_tab' id='tab5' onClick='openExternalLinkWithLoading("https://www.realrankus.com/newsinfo")'>뉴스</div>      
-      <div class='bottom_tab' id='tab7' onClick='openExternalLinkWithLoading("https://www.realrankus.com/priceCal")'>분양가계산</div>
-      <div class='bottom_tab' id='tab4' onClick='openExternalLinkWithLoading("https://www.realrankus.com/op")'>오피스텔분석</div>
+      <div class='bottom_tab' id='tab1' onClick='openExternalLinkWithLoading("https://www.realrankus.com", "aptrank")'>아파트분석</div>
+      <div class='bottom_tab' id='tab2' onClick='openExternalLinkWithLoading("https://www.realrankus.com/price", "aptrank_price")'>실거래가</div>
+      <div class='bottom_tab' id='tab6' onClick='openExternalLinkWithLoading("https://www.realrankus.com/biz", "aptrank_biz")'>지역분석</div>
+      <div class='bottom_tab' id='tab9' onClick='openExternalLinkWithLoading("https://www.realrankus.com/cityclass", "cityclass")'>급지표</div>
+      <div class='bottom_tab' id='tab8' onClick='openExternalLinkWithLoading("https://www.realrankus.com/moneyflow", "moneyflow")'>시장지표</div>      
+      <div class='bottom_tab' id='tab3' onClick='openExternalLinkWithLoading("https://www.realrankus.com/theme", "aptrank_theme")'>테마검색</div>      
+      <div class='bottom_tab' id='tab5' onClick='openExternalLinkWithLoading("https://www.realrankus.com/newsinfo", "aptrank_news")'>뉴스</div>      
+      <div class='bottom_tab' id='tab7' onClick='openExternalLinkWithLoading("https://www.realrankus.com/priceCal", "aptrank_priceCal")'>분양가계산</div>
+      <div class='bottom_tab' id='tab4' onClick='openExternalLinkWithLoading("https://www.realrankus.com/op", "aptrank_op")'>오피스텔분석</div>
     </div>
   `
   $('#linkToAptrank_bottom').html(bottomMenu_html)
@@ -807,7 +813,7 @@ function setupBottomMenu(currentMenu){
   }
   
   $(selectedClass).css({'background' : bgColor, 'color' : 'white'})
-  $(selectedClass).prop('onclick', '').unbind('click');
+  //$(selectedClass).prop('onclick', '').unbind('click');
   $(".bottom_tab").css({'border-top': "2px solid " + bgColor})
 
   //var scrollLeft = $(selectedClass).offset().left  
