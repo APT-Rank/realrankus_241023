@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":6.0,
             "아파트":"묵산주공",
             "건축년도":1986.0,
@@ -647,11 +646,11 @@
             "x":128.7779638,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2398782:128.7779638:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":104.0,
             "아파트":"무릉아파트",
             "건축년도":1992.0,
@@ -1043,11 +1042,11 @@
             "x":128.777978,
             "rank_info":"[15.0, 12.0, 24.868]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsbe012",
-            "usingArea":87.0
+            "usingArea":87.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":4.0,
             "아파트":"묵산주공",
             "건축년도":1986.0,
@@ -1544,11 +1543,11 @@
             "x":128.7779638,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2398782:128.7779638:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":105.0,
             "아파트":"무릉아파트",
             "건축년도":1992.0,
@@ -1940,11 +1939,11 @@
             "x":128.777978,
             "rank_info":"[15.0, 12.0, 24.868]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsbe012",
-            "usingArea":87.0
+            "usingArea":87.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":7.0,
             "아파트":"묵산주공",
             "건축년도":1986.0,
@@ -2441,11 +2440,11 @@
             "x":128.7779638,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2398782:128.7779638:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"정선수려안",
             "건축년도":2011.0,
@@ -2939,11 +2938,11 @@
             "x":128.739239,
             "rank_info":"[15.0, 2.0, 35.768]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsbe001",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"정선수려안",
             "건축년도":2011.0,
@@ -3437,11 +3436,11 @@
             "x":128.739239,
             "rank_info":"[15.0, 2.0, 35.768]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsbe001",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"도사곡주공2",
             "건축년도":1991.0,
@@ -3872,11 +3871,11 @@
             "x":128.7999909,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2252438:128.7999909:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"도사곡주공2",
             "건축년도":1991.0,
@@ -4211,11 +4210,11 @@
             "x":128.7999909,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2252438:128.7999909:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":203.0,
             "아파트":"도사곡주공2",
             "건축년도":1991.0,
@@ -4550,7 +4549,8 @@
             "x":128.7999909,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2252438:128.7999909:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }

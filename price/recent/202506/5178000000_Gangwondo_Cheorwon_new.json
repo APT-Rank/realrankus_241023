@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"금강아미움(101~107동)",
             "건축년도":2008.0,
@@ -183,11 +182,11 @@
             "x":127.218027,
             "rank_info":"[11.0, 11.0, 16.448999999999998]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwcwbe010",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"금강아미움(101~107동)",
             "건축년도":2008.0,
@@ -220,7 +219,8 @@
             "x":127.218027,
             "rank_info":"[11.0, 11.0, 16.448999999999998]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwcwbe010",
-            "usingArea":73.0
+            "usingArea":73.0,
+            "type":"TRADE"
         }
     ]
 }
