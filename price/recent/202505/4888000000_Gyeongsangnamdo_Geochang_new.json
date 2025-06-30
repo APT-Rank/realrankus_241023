@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"가조에제르아파트",
             "건축년도":2023.0,
@@ -183,11 +182,11 @@
             "x":128.0163366,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.7093572:128.0163366:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"가조에제르아파트",
             "건축년도":2023.0,
@@ -220,11 +219,11 @@
             "x":128.0163366,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.7093572:128.0163366:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"더샵거창포르시엘1차",
             "건축년도":2024.0,
@@ -257,11 +256,11 @@
             "x":127.899885,
             "rank_info":"[23.0, 3.0, 48.158]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngcbe003",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"세륭1차",
             "건축년도":1988.0,
@@ -294,11 +293,11 @@
             "x":127.9112936,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.6800784:127.9112936:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":101.0,
             "아파트":"판타블",
             "건축년도":2011.0,
@@ -331,11 +330,11 @@
             "x":127.913207,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.681488:127.913207:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"금천아뜨리에",
             "건축년도":2005.0,
@@ -368,11 +367,11 @@
             "x":127.910604,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.679102:127.910604:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"아진빌라텔",
             "건축년도":2000.0,
@@ -405,11 +404,11 @@
             "x":127.9174851,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.6889695:127.9174851:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"동원슈에뜨",
             "건축년도":2024.0,
@@ -442,11 +441,11 @@
             "x":127.924696,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/35.691413:127.924696:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"거창코아루에듀시티",
             "건축년도":2013.0,
@@ -479,11 +478,11 @@
             "x":127.928185,
             "rank_info":"[23.0, 9.0, 39.4]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngcbe009",
-            "usingArea":71.0
+            "usingArea":71.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":106.0,
             "아파트":"상동주공",
             "건축년도":2003.0,
@@ -516,7 +515,8 @@
             "x":127.901033,
             "rank_info":"[23.0, 4.0, 47.073]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gngcbe004",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         }
     ]
 }

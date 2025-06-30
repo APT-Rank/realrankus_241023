@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":"102동",
             "아파트":"고흥승원팰리체더퍼스트아파트",
             "건축년도":2022.0,
@@ -183,11 +182,11 @@
             "x":127.279425,
             "rank_info":"[9.0, 3.0, 35.825]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbe002",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"모아",
             "건축년도":2005.0,
@@ -220,11 +219,11 @@
             "x":127.2924671,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/34.6056029:127.2924671:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":"102",
             "아파트":"고흥경보이-그린",
             "건축년도":2013.0,
@@ -257,11 +256,11 @@
             "x":127.146519,
             "rank_info":"[9.0, 5.0, 32.917]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbe004",
-            "usingArea":70.0
+            "usingArea":70.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":"102",
             "아파트":"주공",
             "건축년도":1998.0,
@@ -294,11 +293,11 @@
             "x":127.14465,
             "rank_info":"[9.0, 7.0, 25.917]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbe006",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":"102",
             "아파트":"녹동프라자",
             "건축년도":1996.0,
@@ -331,11 +330,11 @@
             "x":127.14532,
             "rank_info":"[9.0, 8.0, 25.392000000000003]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbe007",
-            "usingArea":60.0
+            "usingArea":60.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":"102",
             "아파트":"주공",
             "건축년도":1998.0,
@@ -368,7 +367,8 @@
             "x":127.14465,
             "rank_info":"[9.0, 7.0, 25.917]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnghbe006",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         }
     ]
 }

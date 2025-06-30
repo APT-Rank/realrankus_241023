@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"string"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":"101",
             "아파트":"주공1차",
             "건축년도":2000.0,
@@ -183,11 +182,11 @@
             "x":127.487854,
             "rank_info":"[12.0, 4.0, 36.216]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe003",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"삼호",
             "건축년도":1997.0,
@@ -220,11 +219,11 @@
             "x":127.486873,
             "rank_info":"[12.0, 5.0, 33.241]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":"103",
             "아파트":"주공1차",
             "건축년도":2000.0,
@@ -257,11 +256,11 @@
             "x":127.487854,
             "rank_info":"[12.0, 4.0, 36.216]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe003",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":"102",
             "아파트":"삼호",
             "건축년도":1997.0,
@@ -294,11 +293,11 @@
             "x":127.486873,
             "rank_info":"[12.0, 5.0, 33.241]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe004",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":"108",
             "아파트":"주공1차",
             "건축년도":2000.0,
@@ -331,11 +330,11 @@
             "x":127.487854,
             "rank_info":"[12.0, 4.0, 36.216]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe003",
-            "usingArea":75.0
+            "usingArea":75.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":"101동",
             "아파트":"e편한세상금산센터하임",
             "건축년도":2022.0,
@@ -368,11 +367,11 @@
             "x":127.495612,
             "rank_info":"[12.0, 1.0, 42.986]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe000",
-            "usingArea":78.0
+            "usingArea":78.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"스마트",
             "건축년도":1993.0,
@@ -405,11 +404,11 @@
             "x":127.4583476,
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/36.1935923:127.4583476:17:\/APT\/A1",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"신원",
             "건축년도":1998.0,
@@ -442,7 +441,8 @@
             "x":127.471625,
             "rank_info":"[12.0, 7.0, 27.43]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cngsbe006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
