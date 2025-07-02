@@ -1079,7 +1079,7 @@ function return_MoneyFlow_arr(obj_val, duration){
   return_arr_val = ""
 
   if(duration == '1Y'){
-    return_arr_val = arr_val.slice(-13) 
+    return_arr_val = arr_val.slice(-12) 
   }
   if(duration == '3Y'){
     return_arr_val = arr_val.slice(-36)

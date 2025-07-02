@@ -1,3 +1,13 @@
+var notice_202507 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 7월 업데이트 안내 (2025-07-02)</div>"
++"<ul>"
++"<li><div class='notice'>7호선 청라연장 002-01, 005-01 개통 예정역 추가했습니다.</div></li>"
++"<li><div class='notice'>공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>GTX-A 운정중앙, 킨텍스 역세권 정보를 반영했습니다. <br> (단, 이동시간 정보 아직 미반영 상태입니다.)</div></li>"
++"<li><div class='notice'>2025년 6월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202506 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 6월 업데이트 안내 (2025-06-03)</div>"
 +"<ul>"

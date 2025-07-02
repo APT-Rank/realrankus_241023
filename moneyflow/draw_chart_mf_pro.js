@@ -1,7 +1,7 @@
 var myMoneyFlow_Chart
 
 function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
-  console.log(mf_dataset)
+  //console.log(mf_dataset)
   const totalDuration = 300;
   const delayBetweenPoints = totalDuration / chartDate.length;
   var ctx = document.getElementById(id_name).getContext('2d');
@@ -260,7 +260,7 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
           type: 'number',
           easing: 'linear',
           duration: delayBetweenPoints,
-          from: previousY,
+          from: 0,
           delay(ctx) {
             if (ctx.type !== 'data' || ctx.yStarted) {
               return 0;
