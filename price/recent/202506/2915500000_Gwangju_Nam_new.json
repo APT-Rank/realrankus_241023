@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"라인효친1",
             "건축년도":1989.0,
@@ -183,11 +182,11 @@
             "x":126.917818,
             "rank_info":"[184.0, 60.0, 45.7706]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf059",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"포스코더샵",
             "건축년도":2004.0,
@@ -220,11 +219,11 @@
             "x":126.915994,
             "rank_info":"[184.0, 3.0, 63.9788]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf002",
-            "usingArea":69.0
+            "usingArea":69.0,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"포스코더샵",
             "건축년도":2004.0,
@@ -257,11 +256,11 @@
             "x":126.915994,
             "rank_info":"[184.0, 3.0, 63.9788]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf002",
-            "usingArea":69.0
+            "usingArea":69.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"라인",
             "건축년도":1994.0,
@@ -294,11 +293,11 @@
             "x":126.89641,
             "rank_info":"[184.0, 146.0, 34.958800000000004]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf146",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"반도유보라더퍼스트",
             "건축년도":2022.0,
@@ -331,11 +330,11 @@
             "x":126.897175,
             "rank_info":"[184.0, 21.0, 53.3438]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf020",
-            "usingArea":65.0
+            "usingArea":65.0,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"양우내안애프레스티지",
             "건축년도":2021.0,
@@ -368,11 +367,11 @@
             "x":126.898398,
             "rank_info":"[184.0, 98.0, 42.185]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf097",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"양우내안애프레스티지",
             "건축년도":2021.0,
@@ -405,11 +404,11 @@
             "x":126.898398,
             "rank_info":"[184.0, 98.0, 42.185]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf097",
-            "usingArea":76.0
+            "usingArea":76.0,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"일진스위트포레",
             "건축년도":2020.0,
@@ -442,7 +441,8 @@
             "x":126.833017,
             "rank_info":"[184.0, 154.0, 33.772]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gjnabf156",
-            "usingArea":77.0
+            "usingArea":77.0,
+            "type":"TRADE"
         }
     ]
 }
