@@ -928,9 +928,13 @@ function optionChange(selection){
     if(region2_list.length > 0){
       shareText += region2_share_text + "\n"    
     }
-    shareText += shareURL + "\n\n"
-    shareText += "※\'마이리얼MBTI랭커스\'는 리얼랭커스의 입지 분석 정보를 사용합니다." + "\n"
-    shareText += "https://www.realrankus.com/"
+    shareText += shareURL + "\n"
+    shareText += "※\'마이리얼MBTI랭커스\'는 리얼랭커스의 입지 분석 정보를 사용합니다." + "\n\n"
+
+    shareText += "[리얼랭커스 앱 다운로드]\n"
+    shareText += "▶안드로이드\nhttps://naver.me/FDnt79a2\n"
+    shareText += "▶iOS\nhttps://naver.me/Fio4I0UU\n\n"
+
 
     $('#footer').html(footerHtml);
     $(".focusOn").css({"color" : MBTI_color})
