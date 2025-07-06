@@ -591,7 +591,7 @@ function optionChange(selection){
   var region2_list = []
 
   function generateMBTIComplex(){
-    $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='color: white'><br>" + MBTI_word + "에 어울리는 단지는요!!!<br>(분석 결과 나오는데 10~20초 정도 걸리더라고요...)</div></div>")
+    $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='color: white; text-align:center'><br>" + MBTI_word + "에 어울리는 단지는요!!!<br>(분석 결과 나오는데 10~20초 정도 걸리더라고요...)</div></div>")
 
     //console.log("EI_val :", EI_val)
     //console.log("NS_val :", NS_val)
@@ -795,7 +795,7 @@ function optionChange(selection){
         detailHtml += "</div>"
         
         detailHtml += "<div class='chart_canvas'><canvas id='chart_1" + i + "'></canvas></div>"
-        detailHtml += "<div class='complex_link' onClick='goMap(\"" + sURL + "\")'>극T의 분석 정보가 궁금하다면? <i class='fa-solid fa-angles-right'></i></div>"
+        detailHtml += "<div class='complex_link' onClick='goMap(\"" + sURL + "\")'>리얼랭커스에서 자세한 분석 결과 보기 <i class='fa-solid fa-angles-right'></i></div>"
       detailHtml += "</div>"
 
       region1_share_text += "ㆍ" + aptName + " (" + aptDuration + "년차)" + "\n"      
@@ -902,7 +902,7 @@ function optionChange(selection){
     }
 
     footerHtml += "<div id='modal_footer'>"
-      footerHtml += "<div id='footer_btn_01' onClick='goMap(\"https://www.realrankus.com/\")'>극T스러운<br>전국 입지분석 보기</div>"
+      footerHtml += "<div id='footer_btn_01' onClick='goMap(\"https://www.realrankus.com/\")'>전국 입지분석 보기</div>"
       if (navigator.userAgent.indexOf('KAKAO') >= 0){
         footerHtml += "<div id='footer_btn_02' onClick='kakaoShare2(shareTitle, shareText, shareURL)'>결과 공유하기</div>"
       }
