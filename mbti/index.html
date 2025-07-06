@@ -664,11 +664,11 @@ function optionChange(selection){
         })
         .done(function(){
           region2_list = calculate_mbti_complex(apt_list2, living_total, trans_total, infra_total, edu_total)
-          showResult()
+          getMBTI_AnalysisText(MBTI_word)
         })
       }
       else{
-        showResult()        
+        getMBTI_AnalysisText(MBTI_word)
       }
     })
   }
@@ -694,7 +694,44 @@ function optionChange(selection){
     return filtered_list.slice(0, 10)
   }
 
-  function showResult(){
+  function getMBTI_AnalysisText(MBTI_word){
+    request_text = `
+      1. MBTI가 ${MBTI_word}인 사람의 특성을 인터넷에서 검색해서 추출\n
+      2. 아래 입력된 문장을 참조하여 주거환경, 교육환경, 인프라환경, 교통우선환경 중 어떤 성향의 지역을 강력하게 추천하는지 문장을 만들어.\n
+      3. 문장 문장은 3문장 이상으로 작성되어야 하고, 단락이 바뀔 때마다 줄바꿈 부분에<br><br>코드를 넣어.\n
+      4. 글이 과거의 내용과 절대 중복되면 안 되고 읽는 사람에게 매우 설득적으로 느껴져야 해.\n
+      5. 추가적으로 특수문자를 사용하지 말고, 중요한 부분은 **로 강조하지 말고, 굵은 색상의 글씨이면서 ${MBTI_color}의 색상을 갖도록 태그를 붙여줘.\n
+      6. 글의 내용은 아래의 MBTI 성격 유형에 대한 설명을 참고해서 작성해.\n
+
+      ${mbti_result_comment[MBTI_word]["comment1"]}\n
+      ${mbti_result_comment[MBTI_word]["comment2"]}\n
+    `
+
+    result_text = ""
+
+    //getGemini(request_text)에서 return된 결과를 result_text에 저장하고, showResult(result_text) 함수를 호출하여 결과를 화면에 표시합니다.
+    //getGemini 함수는 비동기적으로 작동하므로, then() 메서드를 사용하여 결과가 준비되면 후속 작업을 수행합니다.
+    //이렇게 하면, Gemini API로부터 받은 결과를 기반으로 사용자에게 맞춤형 추천을 제공할 수 있습니다.
+    //이 과정은 사용자의 MBTI 성향에 맞는 지역 추천을 위한 중요한 단계입니다.
+    
+    getGemini(request_text).then(function(result){
+      result_text = result;
+      showResult(result_text);
+    });
+  }
+
+  function shuffle_list(list){
+    var shuffled = list.slice(0);
+    for (var i = shuffled.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = shuffled[i];
+      shuffled[i] = shuffled[j];
+      shuffled[j] = temp;
+    }
+    return shuffled;
+  }
+
+  function showResult(result_text){
     titleHtml = ""
     detailHtml = ""
     footerHtml = ""
@@ -709,10 +746,11 @@ function optionChange(selection){
     titleHtml += "<span class='focusOn'>" + MBTI_word + "</span>인 당신은요,"
     $("#resultModalLabel").html(titleHtml);
 
-    detailHtml += "<div class='comment'>" + mbti_result_comment[MBTI_word]["comment1"] + "</div>"
-    detailHtml += "<div class='reference'> 출처: https://www.16personalities.com/ </div>"
-    detailHtml += "<hr>"
-    detailHtml += "<div class='comment'>" + mbti_result_comment[MBTI_word]["comment2"] + "</div>"
+    //detailHtml += "<div class='comment'>" + mbti_result_comment[MBTI_word]["comment1"] + "</div>"
+    //detailHtml += "<div class='reference'> 출처: https://www.16personalities.com/ </div>"
+    //detailHtml += "<hr>"
+    //detailHtml += "<div class='comment'>" + mbti_result_comment[MBTI_word]["comment2"] + "</div>"
+    detailHtml += "<div class='comment'>" + result_text + "</div>"
     detailHtml += "<hr>"
 
     detailHtml += "<div id='compatable_complex'><span class='focusOn'>" + MBTI_word + "</span>에게 잘 어울리는 단지는요,</div>"
@@ -720,6 +758,9 @@ function optionChange(selection){
     detailHtml += "<div class='recommend_region'>" + selected_region1 +"</div>"
 
     region1_share_text = "『" + selected_region1 + "』 " + "\n"
+
+    region1_list = shuffle_list(region1_list) //리스트 섞기
+    region2_list = shuffle_list(region2_list) //리스트 섞기
 
     for(var i = 0 ; i < 3 ; i++){
       if(region1_list.length == 0){
@@ -869,13 +910,19 @@ function optionChange(selection){
         footerHtml += "<div id='footer_btn_02' onClick='share(shareTitle, shareText, shareURL)'>결과 공유하기</div>"
       }
 
+    //result_text_pure_에 "<br>" 태그를 ""으로 변환하여 저장
+    result_text_pure = result_text.replaceAll("<br>", "")
+    result_text_pure = result_text_pure.replaceAll("\n\n", "\n")
+    //result_text_pure에 있는 모든 <span> 태그를 제거
+    result_text_pure = result_text_pure.replace(/<span[^>]*>/g, "").replace(/<\/span>/g, "");
       
     footerHtml += "</div>"
 
     shareURL = "https://www.realrankus.com/mbti"
     shareTitle += "마이리얼MBTI랭커스\n\n"
     shareText += MBTI_word + "인 당신은요," + "\n\n"
-    shareText += mbti_result_comment_short[MBTI_word] + "\n\n"
+    //shareText += mbti_result_comment_short[MBTI_word] + "\n\n"
+    shareText += result_text_pure + "\n\n"
     shareText += MBTI_word + "인 당신께 잘 어울리는 단지는요," + "\n\n"
     shareText += region1_share_text + "\n"
     if(region2_list.length > 0){
@@ -891,12 +938,17 @@ function optionChange(selection){
 
     $(".recommend_region").css({"background" : MBTI_color})
     $("#footer_btn_01").css({"background" : MBTI_color})
-    $("#footer_btn_02").css({"background" : MBTI_color})    
+    $("#footer_btn_02").css({"background" : MBTI_color})
 
+    $("#pageLoadingBack").remove()
+    $("#resultModal").modal("show")    
+
+    /*
     setTimeout(function(){
       $("#pageLoadingBack").remove()
       $("#resultModal").modal("show")
-    }, 1000)    
+    }, 1000)
+    */
   }
 
   function goMap(url){

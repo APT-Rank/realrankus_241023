@@ -850,4 +850,61 @@ var P1 = {
     "infra": 40,
     "trans": 30,
 }
-    */
+*/
+
+// 중요: API 키를 클라이언트 측 코드에 직접 노출하는 것은 보안상 매우 위험합니다.
+// 이 방법은 개발 및 테스트 목적으로만 사용하고, 프로덕션 환경에서는 반드시
+// 서버 측에서 API 요청을 처리하고 API 키를 안전하게 관리해야 합니다.
+const API_KEY = 'AIzaSyCBMxiDWNNHDxBAXEEIzeRqJMujcNe3I8E'; // 여기에 실제 API 키를 넣으세요
+
+async function getGemini(request_prompt) { // 1. async 키워드 추가
+  const payload = {
+    contents: [
+      {
+        parts: [
+          { text: request_prompt },
+        ],
+      },
+    ],
+  };
+  
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+  const options = {
+    method: 'POST',
+    // 3. 'contentType' 대신 'headers'에 'Content-Type' 추가
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': API_KEY, // 4. API 키를 'x-goog-api-key' 헤더로 전달
+    },
+    // 5. 'payload' 대신 'body' 사용하고, 문자열로 변환
+    body: JSON.stringify(payload)
+  };
+
+  try {
+    // 6. fetch 호출에 await 사용
+    const response = await fetch(url, options);
+
+    // 7. 응답이 성공적인지 확인
+    if (!response.ok) {
+      const errorData = await response.json(); // 오류 응답도 JSON으로 파싱
+      throw new Error(`API 오류: ${response.status} - ${errorData.error ? errorData.error.message : '알 수 없는 오류'}`);
+    }
+
+    // 8. 응답을 JSON으로 파싱 (await 사용)
+    const data = await response.json();
+
+    // 9. 데이터 구조에 따라 내용 추출
+    if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+      const content = data.candidates[0].content.parts[0].text;
+      console.log(content);
+      return content; // 필요한 경우 결과 반환
+    } else {
+      console.warn("응답 형식 오류 또는 내용 없음:", data);
+      return "응답 형식 오류 또는 내용 없음.";
+    }
+
+  } catch (error) {
+    console.error("API 요청 중 오류 발생:", error);
+    return "API 요청 실패: " + error.message; // 오류 메시지 반환
+  }
+}
