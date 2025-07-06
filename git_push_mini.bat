@@ -1,7 +1,7 @@
 cd\
 cd Users\anito\APT-Rank_Git
-git config --global APT-Rank
-git config --global aptranking@gmail.com
+git config --global user.name APT-Rank
+git config --global user.email aptranking@gmail.com
 git config --global core.autocrlf true
 git config --global credential.helper manager-core
 git add *
