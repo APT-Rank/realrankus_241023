@@ -6,10 +6,6 @@
                 "type":"integer"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"동",
                 "type":"number"
             },
@@ -140,6 +136,10 @@
             {
                 "name":"usingArea",
                 "type":"number"
+            },
+            {
+                "name":"type",
+                "type":"string"
             }
         ],
         "primaryKey":[
@@ -150,7 +150,6 @@
     "data":[
         {
             "index":0,
-            "type":"TRADE",
             "동":null,
             "아파트":"한국",
             "건축년도":2000.0,
@@ -183,11 +182,11 @@
             "x":128.417551,
             "rank_info":"[23.0, 21.0, 20.974]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf021",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":1,
-            "type":"TRADE",
             "동":null,
             "아파트":"도항주공1단지",
             "건축년도":2004.0,
@@ -220,11 +219,11 @@
             "x":128.397512,
             "rank_info":"[23.0, 8.0, 34.293000000000006]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf007",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":2,
-            "type":"TRADE",
             "동":null,
             "아파트":"대경파미르(도항)",
             "건축년도":2014.0,
@@ -257,11 +256,11 @@
             "x":128.418246,
             "rank_info":"[23.0, 10.0, 31.649]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf009",
-            "usingArea":74.0
+            "usingArea":74.0,
+            "type":"TRADE"
         },
         {
             "index":3,
-            "type":"TRADE",
             "동":null,
             "아파트":"동신101동",
             "건축년도":1991.0,
@@ -294,11 +293,11 @@
             "x":128.405917,
             "rank_info":"[23.0, 12.0, 30.059]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf011",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":4,
-            "type":"TRADE",
             "동":null,
             "아파트":"남경타운",
             "건축년도":1997.0,
@@ -331,11 +330,11 @@
             "x":128.412446,
             "rank_info":"[23.0, 13.0, 29.649]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf012",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":5,
-            "type":"TRADE",
             "동":null,
             "아파트":"남경타운",
             "건축년도":1997.0,
@@ -368,11 +367,11 @@
             "x":128.412446,
             "rank_info":"[23.0, 13.0, 29.649]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf012",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":6,
-            "type":"TRADE",
             "동":null,
             "아파트":"칠원동성",
             "건축년도":2003.0,
@@ -405,11 +404,11 @@
             "x":128.515496,
             "rank_info":"[23.0, 7.0, 34.607]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf006",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         },
         {
             "index":7,
-            "type":"TRADE",
             "동":null,
             "아파트":"부영벽산블루밍2차",
             "건축년도":2014.0,
@@ -442,11 +441,11 @@
             "x":128.5215781,
             "rank_info":"[23.0, 2.0, 50.162]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf001",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":8,
-            "type":"TRADE",
             "동":null,
             "아파트":"부영벽산블루밍2차",
             "건축년도":2014.0,
@@ -479,11 +478,11 @@
             "x":128.5215781,
             "rank_info":"[23.0, 2.0, 50.162]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf001",
-            "usingArea":72.0
+            "usingArea":72.0,
+            "type":"TRADE"
         },
         {
             "index":9,
-            "type":"TRADE",
             "동":null,
             "아파트":"신영장미맨션",
             "건축년도":1993.0,
@@ -516,7 +515,8 @@
             "x":128.515747,
             "rank_info":"[23.0, 11.0, 30.242]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gnhabf010",
-            "usingArea":null
+            "usingArea":null,
+            "type":"TRADE"
         }
     ]
 }
