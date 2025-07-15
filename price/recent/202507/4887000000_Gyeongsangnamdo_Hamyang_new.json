@@ -3,6 +3,10 @@
         "fields":[
             {
                 "name":"index",
+                "type":"integer"
+            },
+            {
+                "name":"type",
                 "type":"string"
             },
             {
@@ -135,10 +139,6 @@
             },
             {
                 "name":"usingArea",
-                "type":"string"
-            },
-            {
-                "name":"type",
                 "type":"string"
             }
         ],
