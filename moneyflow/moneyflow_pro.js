@@ -1074,6 +1074,7 @@ function return_MoneyFlow_time(obj_val, duration){
 }
 
 function return_MoneyFlow_arr(obj_val, duration){
+  console.log(obj_val)
   var arr_val = Object.values(obj_val)
 
   return_arr_val = ""
