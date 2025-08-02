@@ -1041,7 +1041,7 @@
       //optionChange(selectedSubRegion);
       //updateRegion();
 
-      if ($.cookie("popCookie") != "202507" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202508" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -4599,7 +4599,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202507") {
+      if ($.cookie("popCookie") != "202508") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4607,7 +4607,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202507", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202508", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
