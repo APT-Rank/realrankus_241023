@@ -388,6 +388,7 @@ function draw_minimap(div_id, aptValue, coord_y, coord_x){
 
 function draw_score_graph(canvas_id, livingScore, transportScore, infraScore, eduScore){
     var label = ["주거", "교통", "인프라", "교육"]
+    eduScore = Number(eduScore).toFixed(2)
     var data = [livingScore, transportScore, infraScore, eduScore]    
 
     if(isNaN(transportScore) || transportScore == 0){
