@@ -163,14 +163,15 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202507" selected>2025년 07월</option>
+              <option value="202508" selected>2025년 08월</option>
+              <option value="202507">2025년 07월</option>
               <option value="202506">2025년 06월</option>
               <option value="202505">2025년 05월</option>
               <option value="202504">2025년 04월</option>
               <option value="202503">2025년 03월</option>
-              <option value="202502">2025년 02월</option>
-              <option value="202501">2025년 01월</option>
               <!--
+              <option value="202502">2025년 02월</option>              
+              <option value="202501">2025년 01월</option>              
               <option value="202412">2024년 12월</option>              
               <option value="202411">2024년 11월</option>              
               <option value="202410">2024년 10월</option>              
@@ -585,9 +586,9 @@
 
   </body>
   <script>
-    var thisMonth = "202507"; //수정
-    var selectedMonth = "202507"; //수정
-    var DB_Date = "202507_02"; //수정
+    var thisMonth = "202508"; //수정
+    var selectedMonth = "202508"; //수정
+    var DB_Date = "202508_01"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -1132,6 +1133,7 @@
       window.indexedDB.deleteDatabase('202506_01')
       window.indexedDB.deleteDatabase('202506_02')
       window.indexedDB.deleteDatabase('202507_01')
+      window.indexedDB.deleteDatabase('202507_02')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -2167,7 +2169,8 @@
       var harmful_3km = aptData.data[index]["3km이내혐오시설수"] + "개";
       var pSchool_edu = aptData.data[index]["초등학교학업성취도"];
       var pSchool_distance = aptData.data[index]["초등학교거리"];
-      var mSchool_edu = aptData.data[index]["중학교학업성취도"] + "%";
+      var mSchool_edu = aptData.data[index]["중학교학업성취도"]
+      mSchool_edu = Number(mSchool_edu).toFixed(1) + "%"
       var academy_edu = aptData.data[index]["500m이내학원가"] + "개" + "(총 " + aptData.data[index]["500m이내학원수"] + "개 학원)";
       if (Number(selectedMonth) > 202208) {
         var academy_edu_long = aptData.data[index]["1km이내학원가"] + "개" + "(총 " + aptData.data[index]["1km이내학원수"] + "개 학원)";
@@ -2402,9 +2405,7 @@
         }
         detailHtml += "</div></div>";
       }
-      */ 
-     
-      login_status = true
+      */
 
       if(login_status == false){
           detailHtml += "<div class='loginBox'>"
@@ -4545,6 +4546,9 @@
       }
       if (selectedMonth == "202507") {
         detailHtml += notice_202507;
+      }
+      if (selectedMonth == "202508") {
+        detailHtml += notice_202508;
       }      
 
       detailHtml += "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>리얼랭커스란?</div>";
@@ -4554,11 +4558,11 @@
       detailHtml += "<div class='notice'>업데이트 알림은 <a href='http://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>을 통해 전달됩니다.</div>";
       detailHtml += "<hr>";
       detailHtml += "<ul>";
-      detailHtml += "<li><div class='notice'>아파트 랭크의 점수는 투자지표가 아님을 말씀드립니다. 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.</div></li>";
+      detailHtml += "<li><div class='notice'>리얼랭커스의 점수는 투자지표가 아님을 말씀드립니다. 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.</div></li>";
       detailHtml += "<li><div class='notice'>모든 점수는 환경 요소를 분석한 AI가 선정하며, 일체의 임의적 조작을 가하지 않습니다.</div></li>";
       detailHtml += "<li><div class='notice'>점수는 해당 지역구의 상대 점수이며, 다른 지역구의 동일 점수와 같은 가치를 나타내지 않습니다.</div></li>";
       detailHtml += "<li><div class='notice'>단지의 정보는 네이버 부동산 정보를 참조합니다.</div></li>";
-      detailHtml += "<li><div class='notice'>80세대 이하의 단지는 통계에서 제외됩니다. (2022년 3월 이전은 100세대 이하 제외)</div></li>";
+      detailHtml += "<li><div class='notice'>80세대 이하의 단지는 통계에서 제외됩니다.</div></li>";
       detailHtml += "<li><div class='notice'>재건축 단지의 경우, 용적률과 건폐율로 주거 점수를 산정합니다.</div></li>";
       detailHtml += "<li><div class='notice'>수도권 교통 정보는 지하철역 위치 정보를 기반으로 산정됩니다.</div></li>";
       detailHtml += "<li><div class='notice'>인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정됩니다.</div></li>";
