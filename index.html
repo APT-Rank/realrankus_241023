@@ -562,6 +562,11 @@
       단지 비교하기 <span id='newFeature' style="margin-left: 10px;">NEW!!</span>
     </div>
 
+    <div id="radar-container" style="display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 90%; background: white; z-index: 9999; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+      <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+      <button onclick="closeRadar()" style="position: absolute; top: 10px; right: 10px; z-index: 10000;">닫기</button>
+    </div>    
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
@@ -4668,9 +4673,19 @@
           };
 
           // 데이터 저장
-          sessionStorage.setItem('radarMapData', JSON.stringify(dataToSend));          
+          sessionStorage.setItem('radarMapData', JSON.stringify(dataToSend));
 
-          const radarMapWindow = window.open('./radarMap.html', '_blank');
+          if(isMobile){
+            //const radarMapWindow = window.open('./radarMap.html', '_blank');
+            // iframe으로 열기
+            const container = document.getElementById('radar-container');
+            const iframe = document.getElementById('radar-iframe');
+            iframe.src = './radarMap.html'; // 새로 로딩
+            container.style.display = 'block';
+          }
+          else{
+            const radarMapWindow = window.open('./radarMap.html', '_blank');
+          }          
 
           /*
           // 새 창이 로드될 때까지 기다렸다가 데이터 전송
