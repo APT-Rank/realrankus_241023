@@ -47,7 +47,6 @@ var min_visit = 0
   }
 
 */
-
 function loadMap(center_x, center_y){
   coord_y = center_y
   coord_x = center_x

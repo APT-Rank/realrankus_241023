@@ -681,3 +681,133 @@ function drawPriceChart(duration, dataset_front, dataset, dataset_end, id_name, 
     },    
 });
 }
+
+function drawRadarChart(score, label1, color1, className){
+    var ctx = document.getElementById(className).getContext('2d');
+    var color = 'white'
+    var align = 'start'
+
+    if(score < 85){
+      color = 'black'
+      align = 'end'
+    }
+    else{
+      color = 'white'
+      align = 'start'
+    }
+
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      plugins:[ChartDataLabels],
+      data: {          
+        labels: [label1],
+        datasets: [{                
+          data: [score],
+          backgroundColor: [color1],
+          barThickness: 15,            
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        maintainAspectRatio: false,        
+        plugins:{
+          legend:{
+            display: false
+          },            
+          datalabels: {
+            display: true,
+            color: color,
+            align: align,
+            anchor: 'end',              
+            offset: 2,
+            textAlign: 'center',
+            font: {
+              weight: 'bold'
+            },              
+          },                      
+        },
+        animation: {            
+          x:{
+            from: 100
+          }
+        },
+        scales: {
+          x:{
+            type: 'linear',
+            min: 0,
+            max: 100,
+          },
+          myScale: {              
+            position: 'left', // `axis` is determined by the position as `'y'`
+          }
+        }          
+      }
+  });  
+}
+
+function drawRadarChart_mobile(score, label1, color1, className){
+    var ctx = document.getElementById(className).getContext('2d');
+    var color = 'white'
+    var align = 'start'
+
+    if(score < 85){
+      color = 'black'
+      align = 'end'
+    }
+    else{
+      color = 'white'
+      align = 'start'
+    }
+
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      plugins:[ChartDataLabels],
+      data: {          
+        labels: [""],
+        datasets: [{                
+          data: [score],
+          backgroundColor: [color1],
+          barThickness: 10,            
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        maintainAspectRatio: false,        
+        plugins:{
+          legend:{
+            display: false
+          },            
+          datalabels: {
+            display: true,
+            color: color,
+            align: align,
+            anchor: 'end',              
+            offset: 2,
+            textAlign: 'center',
+            font: {
+              weight: 'bold'
+            },              
+          },                      
+        },
+        animation: {            
+          x:{
+            from: 100
+          }
+        },
+        scales: {
+          x:{
+            display: true,
+            type: 'linear',
+            min: 0,
+            max: 100,
+            ticks:{
+              display: false
+            }
+          },
+          y:{
+            display: false
+          },
+        }          
+      }
+  });  
+}

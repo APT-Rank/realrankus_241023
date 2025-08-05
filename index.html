@@ -2465,7 +2465,8 @@
             go_url = "https://new.land.naver.com/complexes/" + searchCode;
           }
         }
-        detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>";
+        //detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>";
+        detailHtml += "<div id='part_map_wrap' onClick='openRadarMap(\"" + searchCode + "\")'>";
         detailHtml += "<div id='detail_map' ></div>";
         detailHtml += "</div>";
         detailHtml += "</div></div></div>";
@@ -4647,5 +4648,58 @@
         $("#" + hide_list[i]).hide()
       }
     }
+
+    function openRadarMap(searchCode) {
+    // 새 창 열기
+    //const radarMapWindow = window.open('./radarMap.html', '_blank');    
+
+    firebase.database().ref().child("complex_info").child($("#gungu option:selected").val()).child(searchCode).get()
+    .then((snapshot) => {
+      if(snapshot.exists()){			  
+        complex_info = snapshot.val()
+        if(complex_info == null){
+          alert("불러오기 실패했어요. 다시 시도해 주세요.")
+        }
+        else{
+          //데이터 저장해서 새창으로 보내기
+          const dataToSend = {
+              aptDataFull: complex_info,
+              regionCode: $("#gungu option:selected").val()
+          };
+
+          // 데이터 저장
+          sessionStorage.setItem('radarMapData', JSON.stringify(dataToSend));          
+
+          const radarMapWindow = window.open('./radarMap.html', '_blank');
+
+          /*
+          // 새 창이 로드될 때까지 기다렸다가 데이터 전송
+          const sendMessage = () => {
+              if (radarMapWindow && radarMapWindow.postMessage) {
+                  radarMapWindow.postMessage(dataToSend, '*'); // '*' 대신 origin 지정 가능
+              } else {
+                  console.error("새 창이 아직 준비되지 않았습니다.");
+              }
+          };
+
+          // 로딩이 끝나면 메시지 보내기 (새 창에 ready 상태 확인 필요)
+          const timer = setInterval(() => {
+              if (radarMapWindow && radarMapWindow.document.readyState === 'complete') {
+                  clearInterval(timer);
+                  sendMessage();
+              }
+              else{
+                alert("불러오기 실패했어요. 다시 시도해 주세요.")
+              }
+          }, 100);
+          */
+        }
+      }      
+    })
+    .catch((error) => {
+      console.log(error.message)
+    })
+}
+
   </script>
 </html>
