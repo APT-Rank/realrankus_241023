@@ -562,9 +562,8 @@
       단지 비교하기 <span id='newFeature' style="margin-left: 10px;">NEW!!</span>
     </div>
 
-    <div id="radar-container" style="display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 90%; background: white; z-index: 9999; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
-      <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-      <button onclick="closeRadar()" style="position: absolute; top: 10px; right: 10px; z-index: 10000;">닫기</button>
+    <div id="radar-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0); z-index: 1500;">
+      <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none; visibility: hidden;"></iframe>
     </div>    
 
     <script
@@ -1110,6 +1109,15 @@
           }, 50);
         });
       }
+
+      window.addEventListener('popstate', (event) => {
+        const container = document.getElementById('radar-container');
+
+        // radar iframe이 열려 있다면 닫기
+        if (container.style.display === 'block') {
+          closeRadar();
+        }
+      });
 
       $("#commentBack").hide()
     });
@@ -4656,7 +4664,9 @@
 
     function openRadarMap(searchCode) {
     // 새 창 열기
-    //const radarMapWindow = window.open('./radarMap.html', '_blank');    
+    //const radarMapWindow = window.open('./radarMap.html', '_blank');
+    $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
+        <br>단지 정보를 불러오고 있어요!</div></div>")
 
     firebase.database().ref().child("complex_info").child($("#gungu option:selected").val()).child(searchCode).get()
     .then((snapshot) => {
@@ -4681,11 +4691,15 @@
             const container = document.getElementById('radar-container');
             const iframe = document.getElementById('radar-iframe');
             iframe.src = './radarMap.html'; // 새로 로딩
+            iframe.style.visibility = 'hidden';
             container.style.display = 'block';
+
+            // 뒤로가기를 감지할 히스토리 추가
+            history.pushState({ radarOpen: true }, '', '');
           }
           else{
             const radarMapWindow = window.open('./radarMap.html', '_blank');
-          }          
+          }
 
           /*
           // 새 창이 로드될 때까지 기다렸다가 데이터 전송
@@ -4714,7 +4728,23 @@
     .catch((error) => {
       console.log(error.message)
     })
-}
+  }
+  function showRadarIframe() {
+    const iframe = document.getElementById('radar-iframe');
+    iframe.style.visibility = 'visible';
+  }
+
+  function closeRadar() {
+    const container = document.getElementById('radar-container');
+    const iframe = document.getElementById('radar-iframe');
+    iframe.src = '';
+    container.style.display = 'none';
+
+    // 현재 상태가 radarOpen 상태면 히스토리 한 단계 뒤로가기
+    if (history.state && history.state.radarOpen) {
+      history.back();
+    }
+  }
 
   </script>
 </html>
