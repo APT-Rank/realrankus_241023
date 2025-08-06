@@ -1,18 +1,5 @@
-var all_markers = []
-var defaultMap = ""
+var radarMap = ""
 var regionMapData = ""
-var last_zoom = 16
-
-var web_level_control = [16, 15, 14, 11, 7]
-var mobile_level_control = [15, 14, 13, 10, 7]
-
-//각 레벨에서 최소 몇 명 이상의 방문자를 표시할 것인지?
-var min_level0_visit = 0
-var min_level1_visit = 0
-var min_level2_visit = 0
-var min_small_market_visit = 0
-var min_large_market_visit = 0
-var min_visit = 0
 
 /*
 var colorCode = {
@@ -87,6 +74,9 @@ var APT_marker_size_height = 80
 */
 
 function loadRadarMap(center_x, center_y, aptData){
+  radarMap = null
+  $('#radarDataMap').remove();
+
   coord_y = center_y
   coord_x = center_x
 
@@ -132,9 +122,12 @@ function loadRadarMap(center_x, center_y, aptData){
     disableTwoFingerTapZoom: true,
   };
 
-  defaultMap = new naver.maps.Map("dataMap", MapOptions);
+  //if(!radarMap){  
+  $('#radarCenterBox').append("<div id='radarDataMap'></div>");
+  radarMap = new naver.maps.Map("radarDataMap", MapOptions);
+  //}  
 
-  var bounds = defaultMap.getBounds(),
+  var bounds = radarMap.getBounds(),
       southWest = bounds.getSW(),
       northEast = bounds.getNE(),
       lngSpan = northEast.lng() - southWest.lng(),
@@ -155,32 +148,32 @@ function loadRadarMap(center_x, center_y, aptData){
   $(".park").hide()
   $(".harmful").hide()
   $(".drink").hide()
-  $(".motel").hide()
+  $(".motel").hide()  
 
   if(isMobile){
-    defaultMap.panBy(new naver.maps.Point(0, 110));
+    radarMap.panBy(new naver.maps.Point(0, 110));
   }  
 
-  naver.maps.Event.addListener(defaultMap, 'idle', function() {  
+  naver.maps.Event.addListener(radarMap, 'idle', function() {  
   });
 
-  naver.maps.Event.addListener(defaultMap, 'zoom_changed', function (zoom) {
+  naver.maps.Event.addListener(radarMap, 'zoom_changed', function (zoom) {
     //zoom 변경 시 함수
-    current_zoom = defaultMap.getZoom()
+    current_zoom = radarMap.getZoom()
 
     if(current_zoom >= 16){
       $(".radius_250m").show()
-      window['circle_250'].setMap(defaultMap)
+      window['circle_250'].setMap(radarMap)
 
       $(".radius_500m").show()      
-      window['circle_500'].setMap(defaultMap)
+      window['circle_500'].setMap(radarMap)
     }
     if(current_zoom == 15){
       $(".radius_250m").hide()
       window['circle_250'].setMap(null)
 
       $(".radius_500m").show()
-      window['circle_500'].setMap(defaultMap)
+      window['circle_500'].setMap(radarMap)
     }
     if(current_zoom == 14){
       $(".radius_250m").hide()
@@ -190,7 +183,7 @@ function loadRadarMap(center_x, center_y, aptData){
       window['circle_500'].setMap(null)
 
       $(".radius_1km").show()
-      window['circle_1000'].setMap(defaultMap)
+      window['circle_1000'].setMap(radarMap)
     }
     if(current_zoom <= 13){
       $(".radius_250m").hide()
@@ -203,6 +196,7 @@ function loadRadarMap(center_x, center_y, aptData){
       window['circle_1000'].setMap(null)
     }
   });
+
 }
 
 function moveLatLng(center, distance, direction) {
@@ -234,7 +228,7 @@ function drawCircleOnMap(aptInfo){
     radii.forEach((radius, index) => {
       // 원 그리기
       window['circle_' + radius] = new naver.maps.Circle({
-        map: defaultMap,
+        map: radarMap,
         center: center,
         radius: radius,
         strokeColor: colors[index % colors.length],
@@ -258,7 +252,7 @@ function drawCircleOnMap(aptInfo){
         add_class = "radius_" + radius_str
         new naver.maps.Marker({
           position: pos,
-          map: defaultMap,
+          map: radarMap,
           icon: {
             content: `<div class='distance_index ${add_class}'>${radius_str}</div>`,
             anchor: new naver.maps.Point(12, 12)
@@ -297,313 +291,9 @@ function drawPolygon(coords, options = {}) {
   return polygon;
 }
 
-function showHideMarker(zoom){
-  if(isMobile){
-    zoom_levels = mobile_level_control
-    //[16, 15, 13, 10, 6]
-  }
-  else{
-    zoom_levels = web_level_control
-    //[15, 14, 13, 10, 6]
-  } 
-  
-  if(zoom >= zoom_levels[0]){      
-    //createLargeMarker(marker_coordinations)
-    createLargeMarker(show_up_complexs)
-    min_visit = min_large_market_visit    
-  }
-  else if(zoom < zoom_levels[0] && zoom >= zoom_levels[1]){      
-    createSmallMarker(show_up_complexs)
-    min_visit = min_large_market_visit    
-  }
-  else if(zoom < zoom_levels[1] && zoom >= zoom_levels[2]){
-    createLevel2Marker(level2_loc)
-    min_visit = min_level2_visit
-  }
-  else if(zoom < zoom_levels[2] && zoom >= zoom_levels[3]){
-    createLevel1Marker(level1_loc)
-    min_visit = min_level1_visit
-  }
-  else if(zoom < zoom_levels[3] && zoom >= zoom_levels[4]){      
-    createLevel0Marker(level0_loc)
-    min_visit = min_level0_visit
-  }
-
-  if(current_selection != ""){    
-    for(var i in all_markers){
-      if(all_markers[i]['code'] == current_selection){
-        animateMarker(all_markers[i], window["visit_obj_" + current_selection])
-        break;
-      }      
-    }    
-  }
-
-  setGradeFilter()
-}
-
-function removeAnimation(){
-  var mapBounds = defaultMap.getBounds();
-
-  for(var i in all_markers){
-    if(mapBounds.hasLatLng(all_markers[i]['position'])){
-      all_markers[i].setAnimation(null);
-    }
-  }
-}
-
-function animateMarker(marker, visit_marker){
-  removeAnimation()
-
-  setTimeout(function(){
-    marker.setAnimation(naver.maps.Animation.BOUNCE)
-    if(visit_marker){
-      visit_marker.setAnimation(naver.maps.Animation.BOUNCE)
-    }
-    else{
-      visit_marker.setAnimation(null);
-    }
-  }, 350)  
-}
-
-function defineMarkerList(nearby_region){
-  for (var j in searchingData.data){
-    address = searchingData.data[j]['법정동주소']      
-    for(var k in nearby_region){
-      searching_address = nearby_region[k]['법정동명']
-      if (address.includes(searching_address)){
-        show_up_complexs.push(searchingData.data[j])        
-        continue
-      }
-    }      
-  }
-
-  var filtered_complexs = show_up_complexs.filter((element, index) => {
-    return show_up_complexs.indexOf(element) === index;
-  });
-
-  return filtered_complexs
-}
-
-function findNearbyRegion(origin_lat, origin_lng, area_distance){
-  nearby_result = []
-  nearby_regions = []
-  for(var i in level1_loc){
-    dest_lat = level1_loc[i]['lat']
-    dest_lng = level1_loc[i]['lng']
-    distance = getDistanceFromLatLonInKm(origin_lat,origin_lng,dest_lat,dest_lng)      
-
-    if(distance < area_distance){
-      nearby_regions.push(level1_loc[i])
-    }      
-  }
-
-  nearby_result = nearby_regions
-
-  if(nearby_result.length == 0){
-    nearby_result = findNearbyRegion(origin_lat, origin_lng, area_distance + 5)
-  }
-
-  return nearby_result
-}
-
-var marker_z_depth = 500
-
-var infoWindow
-
-function showUpInfo(marker_obj){
-  return function(e) {
-    marker_z_depth += 1
-    zoom = defaultMap.getZoom()
-    marker_last_depth = marker_obj.getZIndex()
-    if(marker_obj['centerPoint'] == true){}
-    else{
-      marker_obj.setZIndex(marker_z_depth += 1)
-    }
-
-    var complex_name = marker_obj['loc_name']
-    //var complex_address = marker_obj['address']
-
-    infoWindow_position = new naver.maps.Point(0, 0)
-
-    infoWindow_content = `
-    <div class='complex_info_window_radar'>
-      <div id='info_window_complex_name'>${complex_name}</div>      
-    </div>
-    `
-    infoWindow = new naver.maps.InfoWindow({
-      content: infoWindow_content,
-      borderWidth: 0,
-      anchorSize: new naver.maps.Size(0, 0),      
-      pixelOffset: infoWindow_position
-    })
-    infoWindow.open(defaultMap, marker_obj);
-    naver.maps.Event.addListener(marker_obj, 'mouseout', showDownInfo(infoWindow));
-    
-  }
-}
-
-function showDownInfo(infoWindow){
-  return function(e) {
-    infoWindow.close()
-  }
-}
-
-function removeMarkers(){
-  for(var i in all_markers){
-    all_markers[i].setMap(null);
-  }
-  if(infoWindow != null){
-    infoWindow.close()
-  }
-  all_markers = []
-}
-
-var onMap_list = []
-var onMap_markers = []
-var onMap_visit_markers = []
-
-function updateMarkers(map, markers) {  
-  var mapBounds = map.getBounds();
-  var marker, position;
-
-  onMap_markers = []
-  onMap_list = []  
-  for (var i = 0; i < markers.length; i++) {
-      marker = markers[i]
-      position = marker.getPosition();
-
-      if (mapBounds.hasLatLng(position)) {
-          find_code = marker['code']
-          find_obj = getKeyByValue(searchingData.data, find_code)
-          onMap_markers.push(marker)
-          onMap_list.push(find_obj)          
-          showMarker(map, marker);
-      } else {
-          hideMarker(map, marker);
-      }
-  }
-
-  current_zoom = defaultMap.getZoom() 
-  if(current_zoom >= zoom_levels[1]){
-    showHide_filtered_marker(onMap_list, onMap_markers)
-  }
-}
-
-function getKeyByValue(object, value){
-  //object안의 object에서 value를 가지는 key를 찾아서 반환
-  for(var key in object){
-    if(object[key]['검색코드'] == value){
-      return object[key]
-    }
-  }
-}
-
-function returnFilteredData_onMap(onMap_list){  
-  area_filtered_list = return_area_FilteredData_onMap(onMap_list)
-  //console.log("AREA:", area_filtered_list)
-  sPrice_filtered_list = return_sPrice_FilteredData_onMap(area_filtered_list)  
-  //console.log("PRICE:", sPrice_filtered_list)
-
-  return sPrice_filtered_list
-}
-
-function updateVisits(map, markers) {  
-  var mapBounds = map.getBounds();
-  var marker, position;
-  var show_visit = []  
-
-  for (var i = 0; i < markers.length; i++) {
-      marker = markers[i]
-      position = marker.getPosition();     
-
-      if (mapBounds.hasLatLng(position)) {
-          show_visit.push(marker['code'])          
-          showMarker(map, marker)
-      }
-      else {
-          hideMarker(map, marker);
-      }
-  }
-
-  show_visit_shuffle = shuffle(show_visit)
-
-  if(show_visit_shuffle.length >= 5){
-    chunk = Math.floor(show_visit_shuffle.length/5)
-    show_visit_shuffle_chunked = arrayChunk(show_visit_shuffle, chunk)    
-
-    for(var j in show_visit_shuffle_chunked){
-      showVisitInfo(show_visit_shuffle_chunked[j], 0)
-    }
-  }
-  else{
-    showVisitInfo(show_visit_shuffle, 0)
-  }  
-}
-
-function showMarker(map, marker) {
-  if (marker.getMap()) return;
-  marker.setMap(map);
-}
-
-function hideMarker(map, marker) {
-  if (!marker.getMap()) return;
-  marker.setMap(null);
-}
-
-var temp_coord = ""
-var temp_code = ""
-var current_click = ""
-
-function complexMarkerAction(marker_obj) {  
-  return function(e) {
-    //$('#baseModal').modal("hide")
-    closeModal("baseModal")
-
-    animateMarker(marker_obj)
-    find_gungu = marker_obj['gungu']
-
-    if(find_gungu == selectedSubRegion){
-      complex_code = marker_obj['code']
-      temp_code = marker_obj['code']
-      for(var i in aptData.data){    
-        apt_code = aptData.data[i]['검색코드'] + ""      
-        if(apt_code == complex_code){          
-          //현재 모달이 띄워져 있으면 숨기고, 0.35초 후에 새로 열기
-          if($('#baseModal').is(':visible')){
-            setTimeout(function(){
-              showDetail(i);              
-              //$('#baseModal').modal("show")
-            }, 350)
-          }
-          else{
-            showDetail(i);            
-            //$('#baseModal').modal("show")
-          }
-          return;
-        }
-      }
-    }
-    else{      
-      region_full = find_gungu.split("_")
-      sido_name = region_full[1]
-
-      temp_coord = new naver.maps.LatLng(Number(marker_obj['position']['y']), Number(marker_obj['position']['x']))
-      temp_code = marker_obj['code']
-
-      $("#sido").val(sido_name).prop("selected", true);
-      optionChange(find_gungu)
-      updateRegion()
-
-      return;
-    }
-  }
-}
-
 function createAPTMarker(markers){
-
   var large_marker_size = 40
-
-  var mapBounds = defaultMap.getBounds();
+  var mapBounds = radarMap.getBounds();
   
   var aptValue = Math.round(markers["가치 총점"] * 100) / 100;
   complex_grade = setGrade(aptValue)  
@@ -706,7 +396,7 @@ function createAPTMarker(markers){
         origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),           
     },
     zIndex: 1000,
-    map: defaultMap,
+    map: radarMap,
     loc_name : markers['아파트명'],
     code : marker_code,
     gungu : markers['gungu'],
@@ -715,8 +405,8 @@ function createAPTMarker(markers){
     centerPoint : true
   });
 
-  //updateMarkers(defaultMap, complex_large_markers);
-  //updateVisits(defaultMap, visit_display);
+  //updateMarkers(radarMap, complex_large_markers);
+  //updateVisits(radarMap, visit_display);
   naver.maps.Event.addListener(radar_apt_marker, 'click', complexMarkerAction(radar_apt_marker));
   //naver.maps.Event.addListener(radar_apt_marker, 'mouseover', showUpInfo(radar_apt_marker));
 }
@@ -755,24 +445,24 @@ function createMetroMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 190,
-      map: defaultMap,
+      map: radarMap,
       loc_name : metro_name + "역",
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: metro_name + "역",
       class: "trans_marker metro_station"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
     
     destination = new naver.maps.LatLng(coordi_y, coordi_x);
 
     metro_line = new naver.maps.Polyline({
-      map: defaultMap,
+      map: radarMap,
       path: [origin_yx, destination],
       strokeColor: colorCode['지하철역'],
       strokeWeight: 2,
@@ -792,7 +482,7 @@ function createMetroMarker(aptData){
     // 거리 표시용 커스텀 오버레이 생성
     metroDistanceLabel = new naver.maps.Marker({
         position: midpoint,
-        map: defaultMap,
+        map: radarMap,
         icon: {
           content: `<div class='distance_index trans_marker' style='color:#fff; background:${colorCode['지하철역']}'>${metro_distance}</div>`,
           anchor: new naver.maps.Point(12, 12)
@@ -861,25 +551,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 180,
-      map: defaultMap,
+      map: radarMap,
       loc_name : department_store_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: department_store_name,
       class: "infra_marker department_store"
     });
 
-    overlay.setMap(defaultMap)    
+    overlay.setMap(radarMap)    
 
     infra_department_store_markers.push(window["department_store_marker_" + k])
-    all_markers.push(window["department_store_marker_" + k])
+    //all_markers.push(window["department_store_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 /*
   if(isMobile){
     infoWindow_content = `
@@ -894,7 +584,7 @@ function createInfraMarker(aptData){
       borderWidth: 0,        
       pixelOffset: new naver.maps.Point(icon_size_width/10, 0)
     })
-    info_window_test.open(defaultMap, window["department_store_marker_" + k]);
+    info_window_test.open(radarMap, window["department_store_marker_" + k]);
   }
     */
 
@@ -941,25 +631,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 180,
-      map: defaultMap,
+      map: radarMap,
       loc_name : mall_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: mall_name,
       class: "infra_marker mall"
     });
 
-    overlay.setMap(defaultMap)    
+    overlay.setMap(radarMap)    
 
     infra_mall_markers.push(window["mall_marker_" + k])
-    all_markers.push(window["mall_marker_" + k])
+    //all_markers.push(window["mall_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_mall_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1004,25 +694,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 180,
-      map: defaultMap,
+      map: radarMap,
       loc_name : mart_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: mart_name,
       class: "infra_marker mart"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
     
     infra_mart_markers.push(window["mart_marker_" + k])
-    all_markers.push(window["mart_marker_" + k])
+    //all_markers.push(window["mart_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_mart_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1042,7 +732,7 @@ function createInfraMarker(aptData){
     rawCoords = market_area_arr[k]
 
     market_coords = convertToLatLngArray(rawCoords)    
-    window['market_polygon' + k] = drawPolygon(market_coords, { map: defaultMap, strokeColor: '#e65715ff', fillColor: '#e65715ff', fillOpacity: 0.2 });
+    window['market_polygon' + k] = drawPolygon(market_coords, { map: radarMap, strokeColor: '#e65715ff', fillColor: '#e65715ff', fillOpacity: 0.2 });
     infra_market_polygons.push(window['market_polygon' + k])
 
     var svg_color = colorCode['상권']
@@ -1076,25 +766,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 150,
-      map: defaultMap,
+      map: radarMap,
       loc_name : loc_name,
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: loc_name,
       class: "infra_marker market"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_market_markers.push(window["market_marker_" + k])
-    all_markers.push(window["market_marker_" + k])
+    //all_markers.push(window["market_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_market_markers){    
     //naver.maps.Event.addListener(infra_market_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1141,25 +831,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 100,
-      map: defaultMap,
+      map: radarMap,
       loc_name : bank_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: bank_name,
       class: "infra_marker bank"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_bank_markers.push(window["bank_marker_" + k])
-    all_markers.push(window["bank_marker_" + k])
+    //all_markers.push(window["bank_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_bank_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1203,25 +893,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 100,
-      map: defaultMap,
+      map: radarMap,
       loc_name : hospital_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: hospital_name,
       class: "infra_marker hospital"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_hospital_markers.push(window["hospital_marker_" + k])
-    all_markers.push(window["hospital_marker_" + k])
+    //all_markers.push(window["hospital_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_hospital_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1265,25 +955,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 160,
-      map: defaultMap,
+      map: radarMap,
       loc_name : big_hospital_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: big_hospital_name,
       class: "infra_marker big_hospital"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_big_hospital_markers.push(window["big_hospital_marker_" + k])
-    all_markers.push(window["big_hospital_marker_" + k])
+    //all_markers.push(window["big_hospital_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_big_hospital_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1330,25 +1020,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 100,
-      map: defaultMap,
+      map: radarMap,
       loc_name : park_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: park_name,
       class: "infra_marker park"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_park_markers.push(window["park_marker_" + k])
-    all_markers.push(window["park_marker_" + k])
+    //all_markers.push(window["park_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_park_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1394,25 +1084,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 160,
-      map: defaultMap,
+      map: radarMap,
       loc_name : big_park_name,      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: big_park_name,
       class: "infra_marker big_park"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_big_park_markers.push(window["big_park_marker_" + k])
-    all_markers.push(window["big_park_marker_" + k])
+    //all_markers.push(window["big_park_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_big_park_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1456,25 +1146,25 @@ function createInfraMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 120,
-      map: defaultMap,
+      map: radarMap,
       loc_name : harmful_name + "시설",      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: harmful_name + "시설",
       class: "infra_marker harmful"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     infra_harmful_markers.push(window["harmful_marker_" + k])
-    all_markers.push(window["harmful_marker_" + k])
+    //all_markers.push(window["harmful_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in infra_harmful_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1522,26 +1212,26 @@ function createEduMarker(aptData){
         origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
     },
     zIndex: 160,
-    map: defaultMap,
+    map: radarMap,
     loc_name : pSchool_name,      
   });
 
   //이름표시
   var overlay = new CustomOverlay({
-    map: defaultMap,
+    map: radarMap,
     position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
     name: pSchool_name,
     class: "edu_marker pSchool"
   });
 
-  overlay.setMap(defaultMap)
+  overlay.setMap(radarMap)
   
-  all_markers.push(pSchool_name)
+  //all_markers.push(pSchool_name)
 
   destination = new naver.maps.LatLng(coordi_y, coordi_x);
 
   pSchool_line = new naver.maps.Polyline({
-    map: defaultMap,
+    map: radarMap,
     path: [origin_yx, destination],
     strokeColor: colorCode['초등학교'],
     strokeWeight: 2,
@@ -1561,7 +1251,7 @@ function createEduMarker(aptData){
   // 거리 표시용 커스텀 오버레이 생성
   pSchoolDistanceLabel = new naver.maps.Marker({
       position: midpoint,
-      map: defaultMap,
+      map: radarMap,
       icon: {
         content: `<div class='distance_index edu_marker pSchool' style='color:#fff; background:${colorCode['초등학교']}'>${pSchool_distance}</div>`,
         anchor: new naver.maps.Point(12, 12)
@@ -1607,14 +1297,14 @@ function createEduMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 160,
-      map: defaultMap,
+      map: radarMap,
       loc_name : mSchool_name,      
     });    
 
     destination = new naver.maps.LatLng(coordi_y, coordi_x);
 
     window["mSchool_line" + k] = new naver.maps.Polyline({
-      map: defaultMap,
+      map: radarMap,
       path: [origin_yx, destination],
       strokeColor: colorCode['중학교'],
       strokeWeight: 2,
@@ -1634,7 +1324,7 @@ function createEduMarker(aptData){
     // 거리 표시용 커스텀 오버레이 생성
     window["mSchoolDistanceLabel" + k] = new naver.maps.Marker({
       position: midpoint,
-      map: defaultMap,
+      map: radarMap,
       icon: {
         content: `<div class='distance_index edu_marker mSchool' style='color:#fff; background:${colorCode['중학교']}'>${mSchool_distance}</div>`,
         anchor: new naver.maps.Point(12, 12)
@@ -1643,20 +1333,20 @@ function createEduMarker(aptData){
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: mSchool_name,
       class: "edu_marker mSchool"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     edu_mSchool_markers.push(window["mSchool_marker_" + k])
     edu_mSchool_lines.push(window["mSchool_line" + k])
-    all_markers.push(window["mSchool_marker_" + k])
+    //all_markers.push(window["mSchool_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in edu_mSchool_markers){    
     //naver.maps.Event.addListener(infra_mall_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1683,7 +1373,7 @@ function createEduMarker(aptData){
     //rawCoords = academy_arr[k]
 
     //academy_coords = convertToLatLngArray(rawCoords)    
-    //drawPolygon(market_coords, { map: defaultMap, strokeColor: '#e65715ff', fillColor: '#e65715ff', fillOpacity: 0.2 });
+    //drawPolygon(market_coords, { map: radarMap, strokeColor: '#e65715ff', fillColor: '#e65715ff', fillOpacity: 0.2 });
 
     var svg_color = colorCode['학원가']
     var stroke_color = "#FFFFFF"
@@ -1717,25 +1407,25 @@ function createEduMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 160,
-      map: defaultMap,
+      map: radarMap,
       loc_name : loc_name,
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: loc_name,
       class: "edu_marker academy"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     edu_academy_markers.push(window["academy_marker_" + k])
-    all_markers.push(window["academy_marker_" + k])
+    //all_markers.push(window["academy_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in edu_academy_markers){    
     //naver.maps.Event.addListener(infra_market_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1790,25 +1480,25 @@ function createEduMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 100,
-      map: defaultMap,
+      map: radarMap,
       loc_name : loc_name,
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: loc_name,
       class: "edu_marker drink"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     edu_drink_markers.push(window["drink_marker_" + k])
-    all_markers.push(window["drink_marker_" + k])
+    //all_markers.push(window["drink_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in edu_drink_markers){    
     //naver.maps.Event.addListener(infra_market_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));
@@ -1852,25 +1542,25 @@ function createEduMarker(aptData){
           origin: new naver.maps.Point( Number(coordi_y), Number(coordi_x) ),
       },
       zIndex: 100,
-      map: defaultMap,
+      map: radarMap,
       loc_name : loc_name,
     });
 
     //이름표시
     var overlay = new CustomOverlay({
-      map: defaultMap,
+      map: radarMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
       name: loc_name,
       class: "edu_marker motel"
     });
 
-    overlay.setMap(defaultMap)
+    overlay.setMap(radarMap)
 
     edu_motel_markers.push(window["motel_marker_" + k])
-    all_markers.push(window["motel_marker_" + k])
+    //all_markers.push(window["motel_marker_" + k])
   }
 
-  //updateMarkers(defaultMap, complex_small_markers);
+  //updateMarkers(radarMap, complex_small_markers);
 
   //for(var i in edu_motel_markers){    
     //naver.maps.Event.addListener(infra_market_markers[i], 'click', complexMarkerAction(infra_mall_markers[i]));

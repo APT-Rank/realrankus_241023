@@ -390,6 +390,36 @@ function connectionInfo(){
 
 connectionInfo()
 
+let modalStack = []
+
+function openModal(modalId) {
+  console.log("OPEN-MODAL")
+  $(`#${modalId}`).modal('show');
+  modalStack.push(modalId);
+  history.pushState({ modal: modalId }, '', '');
+
+  //console.log(modalStack)
+}
+
+
+function closeModal(modalId) {
+  $(`#${modalId}`).modal('hide');
+  
+  // 모달이 닫혔을 때 스택에서 제거
+  const idx = modalStack.lastIndexOf(modalId);
+  if (idx !== -1) {
+    modalStack.splice(idx, 1);
+  }
+}
+
+window.addEventListener('popstate', (event) => {  
+    const modalId = modalStack.pop();
+    if (modalId) {
+      $(`#${modalId}`).modal('hide');
+      return;
+    }
+});
+
 function deepCopy(object) {
   if (object === null || typeof object !== "object") {
     return object;
@@ -1737,10 +1767,12 @@ function realrankus_visit(complex, sido, gungu, dong){
             $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
             $("#visit_complex_" + complex).animate({opacity: '1', marginTop:'0px'}, 150);            
             $("#complex_visit_info").html("첫 번째 방문이네요!")
+            $("#complex_visit_info_radar").html("첫 번째 방문이네요!")
           }
           else{          
             $("#visit_complex_" + complex).html(visit_count.toLocaleString() + "명 방문")
             $("#complex_visit_info").html(visit_count.toLocaleString() + "번째 방문이예요!")
+            $("#complex_visit_info_radar").html(visit_count.toLocaleString() + "번째 방문이예요!")
           }        
         }
       })

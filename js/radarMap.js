@@ -1,0 +1,1451 @@
+var origin_x = 0
+var origin_y = 0
+var origin_yx
+
+/*
+window.addEventListener('DOMContentLoaded', () => {
+  const raw = sessionStorage.getItem('radarMapData');
+
+  //데이터 불러오기
+  if (raw) {
+    const { aptDataFull, regionCode } = JSON.parse(raw);
+    const loc_y = aptDataFull["Y"];
+    const loc_x = aptDataFull["X"];
+
+    origin_x = loc_x
+    origin_y = loc_y        
+
+    apt_name = aptDataFull["아파트명"]
+    selectedSubRegion = regionCode        
+
+    changeMetaTag( aptDataFull["아파트명"], aptDataFull["법정동주소"], aptDataFull["rank"].toFixed(), aptDataFull["법정동주소"], "", Math.round(aptDataFull["가치 총점"] * 100) / 100 );
+    showRadarDetail(aptDataFull)
+    //loadRadarMap(loc_x, loc_y, aptDataFull)
+
+  } else {
+      console.warn('데이터가 존재하지 않습니다. 이전 창에서 다시 열어주세요.');
+  }
+
+  if (window.parent && typeof window.parent.showRadarIframe === 'function') {
+    setTimeout(function(){
+      window.parent.$("#pageLoadingBack").remove()
+      window.parent.showRadarIframe();
+    }, 150)                
+  }      
+});
+*/
+
+$(document).ready(function () {      
+  $("#radarDataList").css({'padding-top':'55px', 'padding-left':'10px', 'padding-right':'10px', 'padding-bottom':'5px'})
+  $("#radarDataList_wrapper").css({'height' : window.innerHeight})
+  
+  $(document).on('click', '.check-facility', function (e) {
+    e.stopPropagation(); // 상위 .popSubTableRadar 클릭 이벤트 차단
+  });
+
+  // 2. .popSubTableRadar 클릭 시 내부 체크박스 토글
+  $(document).on('click', '.popSubTableRadar', function () {
+    const $checkbox = $(this).find('.check-facility');
+    const newState = !$checkbox.prop('checked');
+    $checkbox.prop('checked', newState).trigger('change');
+  });
+
+  $(document).on('click', '.popTitleRadar', function () {
+    const $checkbox = $(this).find('.check-facility');
+    const newState = !$checkbox.prop('checked');
+    $checkbox.prop('checked', newState).trigger('change');
+  })
+
+  // 3. 체크박스 상태 변경 시 icon_show_hide 함수 호출
+  $(document).on('change', '.check-facility', function () {
+    const id = $(this).attr('id');
+    const isChecked = $(this).is(':checked');
+    icon_show_hide(id, isChecked); // 인자로 id와 상태 전달
+  });
+
+  //모바일일 때, Map 화면
+  info_pos = window.innerHeight * 2/3 + 10
+  info_size = window.innerHeight * 1/3
+  if(isMobile){        
+    $("#radarDataMap").css({'height': window.innerHeight, 'width' : '100%'})
+    $("#radarDataList_wrapper").css({'position':'fixed', 'top': info_pos + 'px', 'height' : info_size + 'px', 
+    'background-color': 'rgba(255, 255, 255, 0)', 'box-shadow': 'rgba(0, 0, 0, 0.06) 0px -6px 6px, rgba(0, 0, 0, 0.12) 0px -4px 4px',
+    'border-top-left-radius' : '10px', 'border-top-right-radius' : '10px', 'font-size':'0.9em'})
+    $("#radarDataList").css({'background-color': 'rgba(255, 255, 255, 1)', 'padding':'0px'})
+    $("#titleBar_radar").hide()        
+    $("#apt_radar_info").hide()
+    $("#visit_like_card").hide()
+    $(".mobile_card").css({'margin-left':'5px', 'margin-right':'5px'})
+  }
+  else{
+    $("#titleBar_radar").css({'z-index' : 1000})
+  }
+
+  //창 크기 조정 완료 시
+  if(!isMobile){
+    $(window).resize(function() {
+      clearTimeout(window.resizedFinished);
+      window.resizedFinished = setTimeout(function(){
+        dw = window.innerWidth - 500
+        dh = window.innerHeight
+        new_window_size = new naver.maps.Size(window.innerWidth - 500, window.innerHeight)
+        defaultMap.setSize(new_window_size)
+
+        $("#radarDataList_wrapper").css({'height' : window.innerHeight})
+        
+      }, 50);
+    });
+  }
+});
+
+function showRadarDetail(aptDataFull) {
+  if(isMobile){
+    $(".modal-backdrop").css({"width":"100%"})
+  }
+  else{
+    $(".modal-backdrop").css({"width":"600px"})
+  }      
+
+  detail_loading = true
+  titleHtml = "";
+  detailHtml = "";
+  detailHtml_mobile = ""
+  footerHtml = "";
+
+  var aptName = aptDataFull["아파트명"];
+  var rank = aptDataFull["rank"].toFixed();
+  var apt_m = aptDataFull["전용면적(m2)"];
+  var apt_p = aptDataFull["전용면적(평)"];
+  var apt_type = aptDataFull["매매타입"];
+  var aptAddress = aptDataFull["도로명주소"];
+  var aptValue = Math.round(aptDataFull["가치 총점"] * 100) / 100;
+  var aptDuration = aptDataFull["준공년차"];
+  var aptYear = "";
+  var short_name = $("#sido option:selected").text() + " " + $("#gungu option:selected").text();
+
+  complex_grade = setGrade(aptValue)
+  eventURL = aptDataFull["sURL"];
+
+  gtag("event", "아파트상세", {
+    event_category: short_name,
+    event_label: aptName + "(" + short_name + ")",
+  });
+
+  if (apt_type == "아파트") { aptYear =   aptDataFull["준공년월"] + " (" + aptDuration + "년차)"; }
+  if (apt_type == "재건축") { aptYear =   aptDataFull["준공년월"] +   " (" +   aptDuration +   "년차, 재건축)"; }
+  if (apt_type == "분양권") { aptYear =   "(분양권, " +   aptDataFull["준공년월"].substr(0, 7) +   " 예정)"; }
+  if (apt_type == "분양(예정)") { aptYear = "(분양예정)"; }
+
+  var nearestStation = aptDataFull["가까운역이름"] + "역" + "(" + ( Math.round(aptDataFull["가까운역거리"] * 100) / 100 ).toFixed() + "m)";
+  var stationArea = aptDataFull["역세권여부"];
+  var stationPoint_30m = aptDataFull["30분이내주요거점역"];
+  var stationPoint_1h = aptDataFull["1시간이내주요거점역"];
+  var departmentStore_3km = aptDataFull["3km이내백화점수"] + "개";
+  var OutletMall_5km = aptDataFull["5km이내아울렛몰수"] + "개";
+  var bigMart_1km = aptDataFull["1km이내대형먀트수"] + "개";
+  var bank_500m = aptDataFull["500m이내은행수"] + "개";
+  var hospital_500m = aptDataFull["500m이내병원수"] + "개";
+  var bigHospital_5km = aptDataFull["5km이내대형병원수"] + "개";
+  var park_500m = aptDataFull["500m이내공원수"] + "개";
+  var big_park_1km = aptDataFull["800m이내대형공원수"] + "개";
+  var harmful_3km = aptDataFull["3km이내혐오시설수"] + "개";
+  var pSchool_edu = aptDataFull["초등학교학업성취도"];
+  var pSchool_distance = aptDataFull["초등학교거리"];
+  var mSchool_edu = aptDataFull["중학교학업성취도"]
+  mSchool_edu = Number(mSchool_edu).toFixed(1) + "%"
+  var academy_edu = aptDataFull["500m이내학원가"] + "개" + "(총 " + aptDataFull["500m이내학원수"] + "개 학원)";
+  var academy_edu_long = aptDataFull["1km이내학원가"] + "개" + "(총 " + aptDataFull["1km이내학원수"] + "개 학원)";
+  var market_infra = aptDataFull["300m이내상권"] + "개" + "(총 " + aptDataFull["300m이내점포수"] + "개 지점)";
+  var livingScore = ( Math.round(aptDataFull["주거총점"] * 100) / 100 ).toFixed(2);
+  var transportScore = ( Math.round(aptDataFull["교통총점"] * 100) / 100 ).toFixed(2);
+  var infraScore = ( Math.round(aptDataFull["인프라총점"] * 100) / 100 ).toFixed(2);
+  var eduScore = ( Math.round(aptDataFull["학군총점"] * 100) / 100 ).toFixed(2);
+  var area_info = aptDataFull["area_info"];
+  var maintainance = aptDataFull["maintenance"];
+
+  var rooms = aptDataFull["room"];
+  var baths = aptDataFull["bath"];
+  var house_num = aptDataFull["세대수"];
+  var parking = aptDataFull["주차"];
+  var heating = aptDataFull["난방"];
+  var entrance = aptDataFull["현관구조"];
+  var sales_info = aptDataFull["sales_info"];
+  var price_per = aptDataFull["price_per"];
+  var floor_noise = aptDataFull["층간소음"];
+
+  var searchCode = aptDataFull["검색코드"];
+  var coord_y = aptDataFull["Y"];
+  var coord_x = aptDataFull["X"];
+
+  var drink_pub = aptDataFull["300m이내유흥주점"];
+  var daran_pub = aptDataFull["300m이내단란주점"];
+  var motel = aptDataFull["300m이내모텔"];
+
+  var last_sales = aptDataFull["last_sales"].split(",");
+  var last_sales_date = last_sales[0].toString();
+  var last_sales_price = last_sales[1].toString();
+  var last_sales_area = last_sales[2];      
+  
+  var rent_info = aptDataFull["rent_info"];
+  var rent_ratio = aptDataFull["rent_ratio"];
+  var last_rent = aptDataFull["last_rent"].split(",");
+  var last_rent_date = last_rent[0].toString();
+  var last_rent_price = last_rent[1].toString();
+  var last_rent_area = last_rent[2];
+
+  realrankus_visit(searchCode, $("#sido option:selected").text(), short_name, short_name + " " + dong_name)
+
+  var floor_rate = aptDataFull["용적률"];      
+  if (floor_rate == "0" || floor_rate == 0 || floor_rate == undefined || isNaN(floor_rate)) {
+    floor_rate = "--%";
+  } else {
+    floor_rate = Number(aptDataFull["용적률"]).toFixed(0) + "%";
+  }
+
+  var cover_rate = aptDataFull["건폐율"];
+  if (cover_rate == "0" || cover_rate == 0 || cover_rate == undefined || isNaN(cover_rate)) {
+    cover_rate = "--%";
+  } else {
+    cover_rate = Number(aptDataFull["건폐율"]).toFixed(0) + "%";
+  }
+
+  //아파트 정보
+  if(isMobile){
+    detailHtml_mobile += "<div class='card' id='apt_info_mobile' style='box-shadow:none; border:none; padding-top:0px; padding-bottom:0px''>";
+      detailHtml_mobile += "<div class='card-body' id='apt_info_body' style='padding-top:5px; padding-bottom:5px'>"
+        detailHtml_mobile += "<div id='iframe_back' onClick='history.back()' style='font-size:2em'> <i class='fa-solid fa-chevron-left'></i> </div>"
+        detailHtml_mobile += "<div onClick=''>"
+          detailHtml_mobile += "<div class='popupTitle' style='font-size: 1.25em; font-weight: 600'>" + aptName 
+          detailHtml_mobile += "<span style='font-size:0.8em'> (Rank " + complex_grade + ")</span></div>"
+          detailHtml_mobile += "<div class='popContent'>" + aptYear + "</div>";
+          if (apt_type == "분양권" || apt_type == "분양(예정)")
+          {
+            detailHtml_mobile += "<div class='popContent' style='font-size: 0.8em'>" + aptDataFull["법정동주소"] + "</div>";
+          } else {
+            detailHtml_mobile += "<div class='popContent' style='font-size: 0.8em'>" + aptAddress + "</div>";
+          }
+        detailHtml_mobile += "</div>"
+      detailHtml_mobile += "</div>"
+    detailHtml_mobile += "</div>"        
+
+    aptInfoHtml = detailHtml_mobile
+
+    detailHtml += "<div class='card-body' id='info_check_card'>"          
+      detailHtml += "<div id='info_check_div'>"
+        if (isNaN(transportScore) == false){
+          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>교통</div>"
+          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>인프라</div>"
+          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>교육</div>"
+        }
+        else{
+          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>인프라</div>"
+          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>교육</div>"
+          detailHtml += "<div></div>"
+        }
+        detailHtml += "<div id='info_OnOff' onClick='moveInfoWindow()'><i class='fa-solid fa-chevron-down'></i></div>"
+        detailHtml += "</div>"
+    detailHtml += "</div>"        
+  }
+  else{
+    detailHtml += "<div class='card' id='apt_radar_info' style='box-shadow:none; border:none; padding-top:0px; padding-bottom:0px'>";
+      detailHtml += "<div class='card-body' style='padding-top:5px; padding-bottom:5px'>"
+        detailHtml += "<div class='popupTitle' style='font-size: 1.25em; font-weight: 600'>" + aptName 
+        detailHtml += "<span style='font-size:0.8em'> (Rank " + complex_grade + ")</span></div>"
+        detailHtml += "<div class='popContent'>" + aptYear + "</div>";
+        if (apt_type == "분양권" || apt_type == "분양(예정)")
+        {
+          detailHtml += "<div class='popContent' style='font-size: 0.8em'>" + aptDataFull["법정동주소"] + "</div>";
+        } else {
+          detailHtml += "<div class='popContent' style='font-size: 0.8em'>(신) " + aptAddress + "</div>";
+          detailHtml += "<div class='popContent' style='font-size: 0.8em'>(구) " + aptDataFull["법정동주소"] + "</div>";
+        }          
+      detailHtml += "</div>"
+    detailHtml += "</div>"
+  }
+
+  //타이틀
+  //titleHtml += "<div class='popupTitle'>" + aptName + " " + apt_p + "(" + apt_m + ")</div>";
+  //titleHtml += "<div class='popupTitle'><a href='#' onclick='return false;' style='text-decoration: none; color: black'>" + aptName + "</a></div>";
+  /*
+
+  living_like = ($("#complex_like_num_living_" + searchCode).html())
+  trans_like = ($("#complex_like_num_trans_" + searchCode).html())
+  infra_like = ($("#complex_like_num_infra_" + searchCode).html())
+  edu_like = ($("#complex_like_num_edu_" + searchCode).html())
+
+  detailHtml += "<div class='card' id='visit_like_card'>";
+    detailHtml += "<div id='complex_visit_info_radar'><div class='spinner-border spinner-border-sm' role='status'></div></div>";
+    detailHtml += "<div class='card-body' style='padding-top: 5px; padding-bottom: 5px;'>";          
+      detailHtml += "<div class='complex_like'>";
+
+        detailHtml += "<div class='complex_like_category'>";
+          detailHtml += "<div class='complex_like_living'>";
+            detailHtml += "<div class='complex_like_name'>주거</div>";
+            detailHtml += "<div class='complex_like_num' id='complex_like_living_" + searchCode + "\'>";
+              detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+              detailHtml += "<div id='complex_like_num_living_" + searchCode + "\'>" + living_like + "</div>";
+            detailHtml += "</div>";
+          detailHtml += "</div>";
+        detailHtml += "</div>";
+
+        if (isNaN(transportScore) == false) {
+          detailHtml += "<div class='complex_like_category'>";
+            detailHtml += "<div class='complex_like_trans'>";
+              detailHtml += "<div class='complex_like_name'>교통</div>";
+              detailHtml += "<div class='complex_like_num' id='complex_like_trans_" + searchCode + "\'>";
+                detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+                detailHtml += "<div id='complex_like_num_trans_" + searchCode + "\'>" + trans_like + "</div>";
+              detailHtml += "</div>";
+            detailHtml += "</div>";
+          detailHtml += "</div>";
+        }
+        
+        detailHtml += "<div class='complex_like_category'>";
+          detailHtml += "<div class='complex_like_infra'>";
+            detailHtml += "<div class='complex_like_name'>인프라</div>";
+            detailHtml += "<div class='complex_like_num' id='complex_like_infra_" + searchCode + "\'>";
+              detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+              detailHtml += "<div id='complex_like_num_infra_" + searchCode + "\'>" + infra_like + "</div>";
+            detailHtml += "</div>";
+          detailHtml += "</div>";
+        detailHtml += "</div>";
+        
+        detailHtml += "<div class='complex_like_category'>";
+          detailHtml += "<div class='complex_like_edu'>";
+            detailHtml += "<div class='complex_like_name'>교육</div>";
+            detailHtml += "<div class='complex_like_num' id='complex_like_edu_" + searchCode + "\'>";
+              detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+              detailHtml += "<div id='complex_like_num_edu_" + searchCode + "\'>" + edu_like + "</div>";
+            detailHtml += "</div>";
+          detailHtml += "</div>";
+        detailHtml += "</div>";
+
+      detailHtml += "</div>"
+    detailHtml += "</div>"        
+  detailHtml += "</div>"
+
+  //임장기  
+  detailHtml += "<div class='card'>";
+  detailHtml += "<div class='card-header'>";
+  detailHtml += "<div class='popTitle' id='blog_popTitle'><div><i class='fa-solid fa-tags'></i>&nbsp 리얼포스팅</div>";
+  detailHtml += "<div id='blog_register' onClick='showBlogWindow(\"" + searchCode + "\")'><i class='fa-solid fa-circle-question'></i> 무료등록</div>";
+  detailHtml += "</div></div>";
+  detailHtml += "<div class='card-body' id='blog_list_area'><div class='spinner-border' role='status' style='opacity:0.2'></div>";
+  detailHtml += "</div>";
+  detailHtml += "</div>";
+  */
+
+  var chartWidth = window.innerWidth - 130
+
+  if (isNaN(transportScore) == false) {
+    //교통
+    detailHtml += "<div class='card mobile_card'>";
+    detailHtml += "<div class='card-header'>";
+    if(isMobile){
+      detailHtml += "<div class='popTitle_mobile'>"
+      detailHtml += "<div><i class='fas fa-bus'></i></div>"
+      detailHtml += "<div>교통</div>";
+      detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='transportChart_radar'></canvas></div>";          
+      detailHtml += "</div>"
+    }
+    else{
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>교통</div>";
+    }        
+    detailHtml += "</div>";
+    detailHtml += "<div class='card-body'>";
+    detailHtml += "<div id='popTransport'>";
+    if(!isMobile){
+      detailHtml += "<div class='graph' style='height: 80px'> <canvas id='transportChart_radar'></canvas></div>";
+    }
+    detailHtml += "<div class='popTable'>";
+    detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_trans_child' type='checkbox' id='check_nearestStation' checked>
+        </div>
+        <div class='popContent'>가장 가까운 역</div>
+        <div class='popResult'>${nearestStation}</div>
+      </div>
+    `;
+    var subway_line = aptDataFull["역노선"];
+    subway_line = subway_line.replace("[", "").replace("]", "").replace(/\'/g, "");
+    detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + subway_line + "</div></div>";
+
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "30분 이내 도착 가능 주요역" + "</div>" + "<div class='popResult'>" + stationPoint_30m + "개</div></div>";
+    if (stationPoint_30m != 0) {
+      var stations_30m = aptDataFull["30분거점역이름"];
+      stations_30m = stations_30m.replace("[", "").replace("]", "").replace(/\'/g, "");
+      detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_30m + "</div></div>";
+    }
+
+    detailHtml += "<div class='popSubTable' id='stationTable'><div class='popContent'>" + "1시간 이내 도착 가능 주요역" + "</div>" + "<div class='popResult'>" + stationPoint_1h + "개</div></div>";
+    if (stationPoint_1h != 0) {
+      var stations_1h = aptDataFull["1시간거점역이름"];
+      stations_1h = stations_1h.replace("[", "").replace("]", "").replace(/\'/g, "");
+      detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_1h + "</div></div><hr style='margin-top: 2px'>";
+    }
+    detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.</div>";
+    detailHtml += "</div></div></div></div>";        
+  }
+
+  //인프라
+  detailHtml += "<div class='card mobile_card'>";
+  detailHtml += "<div class='card-header'>";
+  if(isMobile){
+    detailHtml += "<div class='popTitle_mobile'>"
+    detailHtml += "<div><i class='fas fa-hospital-user'></i></div>"
+    detailHtml += "<div>인프라</div>";
+    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='infraChart_radar'></canvas></div>";
+    detailHtml += "</div>"
+  }
+  else{
+    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>인프라</div>";
+  }      
+  detailHtml += "</div>";
+  detailHtml += "<div class='card-body'>";
+  detailHtml += "<div id='popInfra'>";
+  if(!isMobile){
+    detailHtml += "<div class='graph' style='height: 80px'> <canvas id='infraChart_radar'></canvas></div>";
+  }
+  detailHtml += "<div class='popTable'>";      
+
+  //백화점      
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_departmentStore' checked>
+        </div>
+        <div class='popContent'>3km 이내 백화점</div>
+        <div class='popResult'>${departmentStore_3km}</div>
+      </div>
+    `;
+
+  //아울렛몰      
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_mall' checked>
+        </div>
+        <div class='popContent'>5km 이내 아울렛/몰</div>
+        <div class='popResult'>${OutletMall_5km}</div>
+      </div>
+    `;
+
+  //대형마트      
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_mart' checked>
+        </div>
+        <div class='popContent'>1km 이내 대형마트</div>
+        <div class='popResult'>${bigMart_1km}</div>
+      </div>
+    `;
+
+  if (aptDataFull["300m이내상권"] == "0") {
+    detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_market' checked>
+        </div>
+        <div class='popContent'>300m 이내 상권</div>
+        <div class='popResult'>${market_infra}</div>
+      </div>
+    `;
+  } else {        
+    detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_market' checked>
+        </div>
+        <div class='popContent'>300m 이내 상권</div>
+        <div class='popResult'>${market_infra}</div>
+      </div>
+    `;
+  }
+
+  //은행      
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_bank'>
+        </div>
+        <div class='popContent'>500m 이내 은행</div>
+        <div class='popResult'>${bank_500m}</div>
+      </div>
+    `;
+
+  //병원
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_hospital'>
+        </div>
+        <div class='popContent'>500m 이내 병원</div>
+        <div class='popResult'>${hospital_500m}</div>
+      </div>
+    `;
+
+  //대형병원
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_big_hospital' checked>
+        </div>
+        <div class='popContent'>5km 이내 대형병원</div>
+        <div class='popResult'>${bigHospital_5km}</div>
+      </div>
+    `;
+
+  //공원
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_park'>
+        </div>
+        <div class='popContent'>500m 이내 공원</div>
+        <div class='popResult'>${park_500m}</div>
+      </div>
+    `;
+
+  //대형공원
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_big_park' checked>
+        </div>
+        <div class='popContent'>1km 이내 대형공원</div>
+        <div class='popResult'>${big_park_1km}</div>
+      </div>
+    `;
+
+  //혐오시설
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_harmful'>
+        </div>
+        <div class='popContent'>3km 이내 혐오시설</div>
+        <div class='popResult'>${harmful_3km}</div>
+      </div>
+    `;        
+  detailHtml += "<div class='comment2'>인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정되며, 상권은 호갱노노 정보를 사용합니다.</div>";
+  detailHtml += "</div></div></div></div>";      
+
+  //교육
+  detailHtml += "<div class='card mobile_card'>";
+  detailHtml += "<div class='card-header'>";
+
+  if(isMobile){
+    detailHtml += "<div class='popTitle_mobile'>"
+    detailHtml += "<div><i class='fas fa-graduation-cap'></i></div>"
+    detailHtml += "<div>교육</div>";
+    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='eduChart_radar'></canvas></div>";
+    detailHtml += "</div>"
+  }
+  else{
+    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>교육</div>";
+  }      
+  detailHtml += "</div>";
+  detailHtml += "<div class='card-body'>";
+  detailHtml += "<div id='popEducation'>";
+  if(!isMobile){
+    detailHtml += "<div class='graph' style='height: 80px'> <canvas id='eduChart_radar'></canvas></div>";
+  }
+  detailHtml += "<div class='popTable'>";
+  if (pSchool_distance - 100 < 0) {
+    minDistance = parseInt(pSchool_distance * 0.8);
+  } else {
+    minDistance = parseInt(pSchool_distance - 100);
+  }
+  maxDistance = parseInt(pSchool_distance);      
+
+  //초등학교
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_pSchool' checked>
+        </div>
+        <div class='popContent'>초등학교 거리</div>
+        <div class='popResult'>${minDistance.toLocaleString() + "~" + maxDistance.toLocaleString()}m</div>
+      </div>
+    `;  
+
+  if (pSchool_edu > 95 && pSchool_edu <= 100) {
+    pSchool_edu_result = "많은 전입";
+  } else if (pSchool_edu >= 92 && pSchool_edu <= 95) {
+    pSchool_edu_result = "적은 전입";
+  } else if (pSchool_edu >= 88 && pSchool_edu < 92) {
+    pSchool_edu_result = "전입/전출 적음";
+  } else if (pSchool_edu >= 85 && pSchool_edu < 88) {
+    pSchool_edu_result = "적은 전출";
+  } else {
+    pSchool_edu_result = "많은 전출";
+  }
+  detailHtml += "<div class='popSubTableRadar'><div></div><div class='popContent'>" + "초등학교 학생증감" + "</div>" + "<div class='popResult'>" + pSchool_edu_result + "</div></div>";
+  
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_mSchool' checked>
+        </div>
+        <div class='popContent'>중학교 보통 학력 이상</div>
+        <div class='popResult'>${mSchool_edu}</div>
+      </div>
+    `;
+  
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_academy' checked>
+        </div>
+        <div class='popContent'>300m 이내 학원가</div>
+        <div class='popResult'>${academy_edu}</div>
+      </div>
+    `;
+  detailHtml += "<div class='popSubTableRadar'><div></div><div class='popContent'>" + "1km 이내 학원가" + "</div>" + "<div class='popResult'>" + academy_edu_long + "</div></div>";
+
+  detailHtml += `
+      <div class='popSubTableRadar'>
+        <div>
+          <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_drink'>
+        </div>
+        <div class='popContent'>300m 이내 유흥시설/모텔</div>
+        <div class='popResult'>${drink_pub + daran_pub + motel}개</div>
+      </div>
+    `;
+
+  detailHtml += "<div class='comment2'>교육 정보는 교육통계서비스 정보를 기반으로 산정되며,<br>학원가는 호갱노노의 정보를 사용합니다.<br>초등학교까지의 거리는 직선거리로 계산됩니다.<br>유흥시설과 모텔정보는 교육 감점요소로 적용됩니다.</div>";      
+  detailHtml += "</div></div></div></div>";
+
+  //주거
+  detailHtml += "<div class='card mobile_card'>";
+  detailHtml += "<div class='card-header'>";
+  if(isMobile){
+    detailHtml += "<div class='popTitle_mobile'>"
+    detailHtml += "<div><i class='fas fa-home'></i></div>"
+    detailHtml += "<div>주거</div>";
+    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='livingChart_radar'></canvas></div>";
+    detailHtml += "</div>"
+  }
+  else{
+    detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거</div>";
+  }      
+  detailHtml += "</div>";
+  detailHtml += "<div class='card-body'>";
+  detailHtml += "<div id='popLiving'>";
+
+  if(!isMobile){
+    detailHtml += "<div class='graph' style='height: 80px'> <canvas id='livingChart_radar'></canvas></div>";
+  }      
+  if(apt_type == "분양(예정)"){
+    detailHtml += "<div class='comment'>\'미정\' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.</div><hr>";          
+  }
+  if(apt_type == "재건축"){
+    detailHtml += "<div class='comment'>재건축의 경우, 향후 신축이 될 가능성을 고려하여<br>용적률과 건폐율로 주거 점수를 계산합니다.</div><hr>";      }        
+  
+  detailHtml += "<div class='popTable'>";
+  if (aptDataFull["한강"] > 0) {
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "한강 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>";
+  }
+  if (aptDataFull["해운대"] > 0) {
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "해운대 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>";
+  }
+
+  if (house_num != null) {
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+  } else {
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+  }
+  if (apt_type >= "재건축") {
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "용적률" + "</div>" + "<div class='popResult'>" + floor_rate + "</div></div>";
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "건폐율" + "</div>" + "<div class='popResult'>" + cover_rate + "</div></div>";
+  }    
+  detailHtml += "<div class='popSubTable' id='popSubStation'><div class='popContent'>" + "주차" + "</div>" + "<div class='popResult'>" + parking + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "난방방식" + "</div>" + "<div class='popResult'>" + heating + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "현관구조" + "</div>" + "<div class='popResult'>" + entrance + "</div></div>";      
+
+
+  if (apt_type == "분양(예정)") { }
+  else {
+    var area_array = area_info.split(",");
+    var maintainance_array = maintainance.split(",");
+    var rooms_array = rooms.split(",");
+    var baths_array = baths.split(",");
+    detailHtml +=
+      "<div class='table-responsive' style='max-height: 200px; overflow-y: scroll'>";
+    detailHtml +=
+      "<table class='table table-striped' style='font-size:0.8em'>";
+    detailHtml +=
+      "<thead class='table-light' style='position:sticky ;top: 0'>";
+    detailHtml += "<tr>";
+    detailHtml += "<th scope='col'>" + "평형" + "</th>";
+    detailHtml += "<th scope='col'>" + "방수/욕실수" + "</th>";
+    detailHtml += "<th scope='col'>" + "평균 관리비" + "</th>";
+    detailHtml += "</tr>";
+    detailHtml += "</thead>";
+
+    detailHtml += "<tbody>";
+    for (var k = 0; k < area_array.length; k++) {
+      detailHtml += "<tr>";
+      detailHtml += "<td>" + area_array[k] + "</td>";
+      detailHtml += "<td>" + parseInt(rooms_array[k]) + " / " + parseInt(baths_array[k]) + "</td>";
+      if (isNaN(maintainance_array[k]) == true) {
+        detailHtml += "<td>" + "---" + "</td>";
+      } else {
+        detailHtml += "<td>" + Number(maintainance_array[k]).toLocaleString() + "원" + "</td>";
+      }
+      detailHtml += "</tr>";
+    }
+    detailHtml += "</tbody>";
+    detailHtml += "</table>";
+    detailHtml += "</div>";
+  }
+  detailHtml += "<div class='comment2'>주거총점 계산을 위한 정보는 네이버 부동산으로 취득하며, 세대수/평형/난방방식 등의 항목을 상대점수로 산정합니다.</div>";      
+  detailHtml += "</div></div></div></div>";       
+
+  //실거래가
+  var rent_info_array = rent_info.split(",");
+  var rent_ratio_array = rent_ratio.split(",");
+
+  if (apt_type != "분양(예정)") {
+    var sales_info_array = sales_info.split(",");
+    var price_per_array = price_per.split(",");
+
+    detailHtml += "<div class='card mobile_card'>";
+    detailHtml += "<div class='card-header'>";
+    detailHtml +=
+      "<div class='popTitle'><i class='fa-solid fa-coins'></i>&nbsp&nbsp실거래가 <span style='font-size: 0.7em; color:#fe4040'> (최근 1개월내 실거래는 빨간색으로 표시)</span> </div>";
+    detailHtml += "</div>";
+    detailHtml +=
+      "<div class='card-body' style='padding-left: 5px ; padding-right: 5px; padding-top: 5px;'>";
+    detailHtml += "<div id='popEducation'>";
+    detailHtml += "<div class='popTable'>";
+    detailHtml +=
+      "<div id='popSubStation' style='grid-template-columns: 0.3fr 1fr; margin-left: 5px ; margin-right: 5px; margin-top: 10px;'>";
+    detailHtml += "<div class='popContent'>최근 매매</div>";
+
+    var start_date = new Date();
+    start_date.setMonth(today.getMonth() - 1);
+
+    if (isNaN(last_sales_price)) {
+      detailHtml += "<div class='popResult'>거래 정보 없음</div></div>";
+    } else {
+      var compare_year = Number(last_sales_date.substr(0, 4));
+      var compare_month = Number(last_sales_date.substr(5, 2) - 1);
+      var compare_day = Number(last_sales_date.substr(8, 2));
+      var compare_date = new Date(compare_year, compare_month, compare_day);
+
+      if (compare_date > today) {
+        detailHtml += "<div class='popResult' style='color: #fe4040'>" + last_sales_area + ", " + Math.round(last_sales_price / 100) / 100 + "억, " + last_sales_date.substr(2) + "</div></div>";
+      } else {
+        detailHtml += "<div class='popResult'>" + last_sales_area + ", " + Math.round(last_sales_price / 100) / 100 + "억, " + last_sales_date.substr(2) + "</div></div>";
+      }
+    }
+    detailHtml += "<hr>";
+    detailHtml += "<table class='table table-striped' style='font-size:0.8em'>";
+    detailHtml += "<thead class='table-light'>";
+    detailHtml += "<tr>";
+
+    detailHtml += "<th scope='col' style='line-height: 2.9em;'>" + "평형" + "</th>";
+    detailHtml += "<th scope='col'>" + "매매 실거래가<br>전세 실거래가" + "</th>";
+    detailHtml += "<th scope='col'>" + "평단가<br>전세가율" + "</th>";
+
+    detailHtml += "</tr>";
+    detailHtml += "</thead>";
+
+    detailHtml += "<tbody>";
+    for (var k = 0; k < area_array.length; k++) {
+      detailHtml += "<tr>";
+      if (sales_info_array[k] == "거래 정보 없음") {
+          detailHtml += "<td>" + area_array[k] + "</td>";
+          detailHtml += "<td>" + "거래 정보 없음" + "<br>";
+          if (rent_ratio_array[k] == "정보 없음") {
+            detailHtml += "거래 정보 없음</td>";
+          }
+      } else {
+        var sales_info_split = sales_info_array[k].split("억");
+        var compare_year = Number(sales_info_split[1].substr(2, 4));
+        var compare_month = Number(sales_info_split[1].substr(7, 2) - 1);
+        var compare_day = Number(sales_info_split[1].substr(10, 2));
+        var compare_date = new Date( compare_year, compare_month, compare_day );
+        var rent_info_split = rent_info_array[k].split("억");
+        if (rent_info_split[0] == "거래 정보 없음") {
+        } else {
+          var compare_rent_year = Number(rent_info_split[1].substr(2, 4));
+          var compare_rent_month = Number( rent_info_split[1].substr(7, 2) - 1 );
+          var compare_rent_day = Number(rent_info_split[1].substr(10, 2));
+          var compare_rent_date = new Date( compare_rent_year, compare_rent_month, compare_rent_day );
+        }
+
+        if (compare_date > start_date) {
+          detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + area_array[k] + "</span></td>";
+          detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + (Math.round(sales_info_split[0] * 100) / 100).toFixed(2)+ "억"
+            + "<span style='font-size: 0.85em'>" + sales_info_split[1] + "</span></span><br>";
+        } else {
+          detailHtml += "<td>" + area_array[k] + "</td>";
+          detailHtml += "<td>" + (Math.round(sales_info_split[0] * 100) / 100).toFixed(2) + "억" +
+            "<span style='font-size: 0.85em'>" + sales_info_split[1] + "</span><br>";
+        }
+
+        if (compare_rent_date > start_date) {
+          if (rent_info_split[0] == "거래 정보 없음") {
+            detailHtml += "거래 정보 없음</td>";
+          } else {
+            detailHtml += "<span style='color:#fe4040; font-weight:600'>" + (Math.round(rent_info_split[0] * 100) / 100).toFixed(2) + "억" +
+              "<span style='font-size: 0.85em'>" + rent_info_split[1] + "</span></span></td>";
+          }
+        } else {
+          if (rent_info_split[0] == "거래 정보 없음") {
+            detailHtml += "거래 정보 없음</td>";
+          } else {
+            detailHtml += "" + (Math.round(rent_info_split[0] * 100) / 100).toFixed(2) + "억" +
+              "<span style='font-size: 0.85em'>" + rent_info_split[1] + "</span></td>";
+          }
+        }            
+      }
+
+      if (price_per_array[k] == "nan" || price_per_array[k] == 0) {
+        detailHtml += "<td>" + "---" + "<br>";
+      } else {
+        if (compare_date > start_date) {
+          detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + Number(price_per_array[k]).toLocaleString() + "만원" + "</span><br>";
+        } else {
+          detailHtml += "<td>" + Number(price_per_array[k]).toLocaleString() + "만원<br>";
+        }
+      }
+
+      if (rent_ratio_array[k] == "정보 없음") {
+        detailHtml += "---" + "</td>";
+      } else {
+        if (compare_rent_date > start_date) {
+          detailHtml += "<span style='color:#fe4040; font-weight:600'>" + (Math.round(rent_ratio_array[k] * 100) / 100).toFixed(2) + "%" + "</span></td>";
+        } else {
+          detailHtml += (Math.round(rent_ratio_array[k] * 100) / 100).toFixed(2) + "%" + "</td>";
+        }
+      }          
+
+      detailHtml += "</tr>";
+    }
+    detailHtml += "</tbody>";
+    detailHtml += "</table>";
+    detailHtml += "<div class='comment2'>&nbsp&nbsp실거래가 정보는 네이버 부동산으로 취득합니다.</div>";
+    detailHtml += "</div></div></div></div>";
+  }
+
+  if (apt_type != "분양(예정)") {
+    //매매 실거래가
+    detailHtml += "<div class='card mobile_card'>";
+    detailHtml += "<div class='card-header'>";
+    detailHtml += "<div class='popPriceTitle'><i class='fa-solid fa-chart-line'></i>&nbsp&nbsp매매가변동<span id='themeLogo'>BETA</span></div>";
+    detailHtml += "</div>";
+
+    detailHtml += "<div class='card-body' style='padding-top: 5px; padding-left: 5px; padding-right: 5px;'>";
+    detailHtml += "<div class='priceHistoryOption'>";
+    if(isMobile){
+      detailHtml += "<div style='text-align:left; padding-left:10px'><input type='checkbox' id='showGraph_radar' onChange='graphShowHide(this)' style='width: 0.8em; height: 0.8em'>";
+    }
+    else{
+      detailHtml += "<div style='text-align:left; padding-left:10px'><input type='checkbox' id='showGraph_radar' onChange='graphShowHide(this)' style='width: 0.8em; height: 0.8em' checked>";
+    }
+    detailHtml += "<label for='showGraph_radar' style='font-size: 0.85em; padding-left: 3px'>그래프보기</label></input></div>";
+    detailHtml += "<div style='text-align: right'><select id='pStart_radar' onChange='price_sDateChange_radar(this.value)'></select> - <select id='pEnd_radar' onChange='price_eDateChange_radar(this.value)'></select></div>";
+    detailHtml += "</div>";
+    detailHtml += "<div id='popEducation'>";
+    detailHtml += "<div class='popTable'>";
+
+    sales_history_price = aptDataFull["sales_history_price"];
+    sales_history_price_cleaned = sales_history_price.replace(/^\(\s*/, '[').replace(/\s*\)$/, ']')        
+    sales_history_price = JSON.parse(sales_history_price_cleaned);
+    
+    if (sales_history_price[0][0] == undefined) {
+      sales_history_price = [sales_history_price];
+    }
+    sales_history_date = aptDataFull["매매실거래날짜목록"];
+
+    sales_history_date_cleaned = sales_history_date.replace(/'/g, '"');
+    sales_history_date = JSON.parse(sales_history_date_cleaned)
+    //console.log(sales_history_price)
+
+    priceCharts = [];
+    for (var p = 0; p < area_array.length; p++) {
+      if(sales_history_price[p] == undefined){
+        break
+      }
+
+      generatedID = "pChart_radar" + p;
+      generated_priceID = "pChange_radar" + p;
+      generated_ratioID = "pRatio_radar" + p;          
+      
+      if (Math.max(...sales_history_price[p]) <= 0) {
+        showGraph = false;
+      } else {
+        showGraph = true;
+      }
+
+      detailHtml += "<div class='popSubPriceTable' style='background: #eee'>";
+      detailHtml += "<div class='priceResult' style='padding-left: 5px'>" + area_array[p] + "</div>";
+      detailHtml += "<div class='popSubPriceTableDetail'>";
+      if (showGraph) {
+        detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 4px'><span id=" + generated_priceID + "></span>" + "</div>";
+        detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 8px'><span id=" + generated_ratioID + "></span>" + "</div>";
+      } else {
+        detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 4px'>거래 정보 없음" + "</div>";
+        detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 8px'>( --- , --- )</div>";
+      }
+      detailHtml += "</div>";
+      detailHtml += "</div>";
+
+      detailHtml += "<div class='priceGraph' style='height: 150px; border-bottom: 1px solid #ddd'> <canvas id=" + generatedID + "></canvas></div>";
+      priceCharts.push(generatedID);
+    }
+    detailHtml += "</div></div></div></div>";
+  }      
+
+  //Footer에 네이버 부동산 버튼
+  footerHtml += "<div class='modal-footer'>";
+  
+  if (house_num == null) {
+    house_num = 0;
+  }
+
+  if (UserAgent.indexOf("inApp") > -1) {
+    if (apt_type == "분양(예정)") {
+      footerHtml +=
+        "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" +
+        searchCode +
+        "\")'>호갱노노 보기</button></div>";
+    } else {
+      footerHtml +=
+        "<div><button type='button' class='goLink' onclick='openNaver(" +
+        searchCode +
+        ")'>네이버 부동산 보기</button></div>";
+    }
+
+    if (checkMobile() == "ios") {
+      footerHtml +=
+        "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+    } else {
+      footerHtml +=
+        "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+    }
+
+    footerHtml +=
+      "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
+  } else {
+    if (apt_type == "분양(예정)") {
+      footerHtml +=
+        "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" +
+        searchCode +
+        "\")'>호갱노노 보기</button></div>";
+    } else {
+      footerHtml +=
+        "<div><button type='button' class='goLink' onclick='openNaver(\"" +
+        searchCode +
+        "\")'>네이버 부동산 보기</button></div>";
+    }
+
+    if (checkMobile() == "ios") {
+      footerHtml +=
+        "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
+    } else {
+      footerHtml +=
+        "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+    }
+
+    footerHtml +=
+      "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+  }
+  footerHtml += "</div>";
+
+  $("#radarDataList").html(detailHtml);
+  //$("#footer").html(footerHtml);
+
+  //임장기 로딩해서 넣는 함수
+  
+  setTimeout(function(){
+    //complex_blog(searchCode, aptName)
+    $("#complex_visit_info_radar").html($("#visit_complex_" + searchCode).text())
+  }, 350)  
+  if(isMobile){
+    $('#radarDetailInfo').html(aptInfoHtml)
+    $("#apt_info_mobile").css({'position':'fixed', 'top': '10px', 'left': '3px', 'font-size':'0.85em', 'width':window.innerWidth-50, 'z-index':'950',
+      'border-radius':'3px', 'box-shadow' : 'rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px', 'background-color':'rgba(255, 255, 255, 0.75)'
+    })        
+  }     
+
+  if (isNaN(transportScore) == false){
+    $(".complex_like").css({'grid-template-columns': '1fr 1fr 1fr 1fr'})        
+  }
+  else{
+    $(".complex_like").css({'grid-template-columns': '1fr 1fr 1fr'})
+  }
+  $(".modal-footer").css({
+    "grid-template-columns": "1fr 0.15fr 0.15fr",
+    "text-align": "center",
+    "text-align": "-webkit-center",
+  });
+
+  price_sOption = "";
+  price_eOption = "";
+  for (w = 0; w < sales_history_date.length - 1; w++) {
+    price_sOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+  }
+  for (w = 1; w < sales_history_date.length; w++) {
+    price_eOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+  }
+  $("#pStart_radar").html(price_sOption);
+  $("#pStart_radar").val(30).prop("selected", true);
+
+  $("#pEnd_radar").html(price_eOption);
+  $("#pEnd_radar").val(sales_history_date.length - 1).prop("selected", true);
+
+  //초기 그래프 표시 안 함
+  if(isMobile){
+    $(".priceGraph").hide();
+  }
+  $(".popSubPriceTable").css({ "margin-top": "3px", "margin-bottom": "0px"});  
+
+  setTimeout(function(){    
+    if(isMobile){
+      drawRadarChart_mobile( livingScore, "주거총점", "#fe4040", "livingChart_radar" );
+      if (isNaN(transportScore) == false) {
+        drawRadarChart_mobile( transportScore, "교통총점", "#fe4040", "transportChart_radar" );
+      }
+      drawRadarChart_mobile( infraScore, "인프라총점", "#fe4040", "infraChart_radar" );
+      drawRadarChart_mobile( eduScore, "교육총점", "#fe4040", "eduChart_radar" );
+    }
+    else{
+      drawRadarChart( livingScore, "주거총점", "#fe4040", "livingChart_radar" );
+      if (isNaN(transportScore) == false) {
+        drawRadarChart( transportScore, "교통총점", "#fe4040", "transportChart_radar" );
+      }
+      drawRadarChart( infraScore, "인프라총점", "#fe4040", "infraChart_radar" );
+      drawRadarChart( eduScore, "교육총점", "#fe4040", "eduChart_radar" );
+    }
+    
+    if (apt_type != "분양(예정)") {
+      priceChartDraw_radar( priceCharts, sales_history_price, sales_history_date, 0, sales_history_date.length );
+    }
+    price_sDateChange_radar($("#pStart_radar").val());
+    $("#pageLoadingBack").remove()
+  }, 350)
+
+  openModal("radarModal")
+  $("#pageLoadingBack").remove()
+}
+
+function icon_show_hide(id, isChecked) {
+  //교통      
+  if(id == "check_trans"){
+    if(isChecked){
+      $(".check_trans_child").prop({'checked':true})
+      $(".trans_marker").show()
+      metro_line.setMap(defaultMap);
+    }
+    else{
+      $(".check_trans_child").prop({'checked':false})
+      $(".trans_marker").hide()
+      metro_line.setMap(null);
+    }
+  }
+
+  //가까운 역
+  if(id == "check_nearestStation"){
+    if(isChecked){
+      $("#check_trans").prop({'checked':true})
+      $(".trans_marker").show()
+      metro_line.setMap(defaultMap);
+    }
+    else{
+      $("#check_trans").prop({'checked':false})
+      $(".trans_marker").hide()
+      metro_line.setMap(null);
+    }
+  }
+
+  //인프라      
+  if(id == "check_infra"){
+    if(isChecked){
+      $(".check_infra_child").prop({'checked':true})          
+      $(".infra_marker").show()
+      infra_market_polygons.forEach(polygon => polygon.setMap(defaultMap));
+    }
+    else{
+      $(".check_infra_child").prop({'checked':false})
+      $(".infra_marker").hide()
+      infra_market_polygons.forEach(polygon => polygon.setMap(null));
+    }
+  }
+
+  //백화점
+  if(id == "check_departmentStore"){
+    if(isChecked){ $(".department_store").show() }
+    else{ $(".department_store").hide() }
+  }
+
+  //아울렛몰
+  if(id == "check_mall"){
+    if(isChecked){ $(".mall").show() }
+    else{ $(".mall").hide() }
+  }
+
+  //마트
+  if(id == "check_mart"){
+    if(isChecked){ $(".mart").show() }
+    else{ $(".mart").hide() }
+  }
+
+  //상권
+  if(id == "check_market"){
+    if(isChecked){
+      $(".market").show()
+      infra_market_polygons.forEach(polygon => polygon.setMap(defaultMap));
+    }
+    else{
+      $(".market").hide()
+      infra_market_polygons.forEach(polygon => polygon.setMap(null));
+    }
+  }
+
+  //은행
+  if(id == "check_bank"){
+    if(isChecked){ $(".bank").show() }
+    else{ $(".bank").hide() }
+  }
+
+  //병원
+  if(id == "check_hospital"){
+    if(isChecked){ $(".hospital").show() }
+    else{ $(".hospital").hide() }
+  }
+
+  //대형병원
+  if(id == "check_big_hospital"){
+    if(isChecked){ $(".big_hospital").show() }
+    else{ $(".big_hospital").hide() }
+  }
+
+  //공원
+  if(id == "check_park"){
+    if(isChecked){ $(".park").show() }
+    else{ $(".park").hide() }
+  }
+
+  //대형공원
+  if(id == "check_big_park"){
+    if(isChecked){ $(".big_park").show() }
+    else{ $(".big_park").hide() }
+  }
+
+  //혐오시설
+  if(id == "check_harmful"){
+    if(isChecked){ $(".harmful").show() }
+    else{ $(".harmful").hide() }
+  }
+
+  var all_infra_unchecked = $(".check_infra_child").filter(":checked").length === 0;
+  if(all_infra_unchecked){
+    $("#check_infra").prop({'checked':false}) 
+  }
+  else{
+    $("#check_infra").prop({'checked':true}) 
+  }
+
+  //교육      
+  if(id == "check_edu"){
+    if(isChecked){
+      $(".check_edu_child").prop({'checked':true})          
+      $(".edu_marker").show()
+      pSchool_line.setMap(defaultMap);
+      edu_mSchool_lines.forEach(polyline => polyline.setMap(defaultMap));
+    }
+    else{
+      $(".check_edu_child").prop({'checked':false})
+      $(".edu_marker").hide()
+      pSchool_line.setMap(null);
+      edu_mSchool_lines.forEach(polyline => polyline.setMap(null));
+    }
+  }
+
+  //초등학교
+  if(id == "check_pSchool"){
+    if(isChecked){
+      $(".pSchool").show()
+      pSchool_line.setMap(defaultMap);
+    }
+    else{
+      $(".pSchool").hide()
+      pSchool_line.setMap(null);
+    }
+  }
+
+  //중학교
+  if(id == "check_mSchool"){
+    if(isChecked){
+      $(".mSchool").show()
+      edu_mSchool_lines.forEach(polyline => polyline.setMap(defaultMap));
+    }
+    else{
+      $(".mSchool").hide()
+      edu_mSchool_lines.forEach(polyline => polyline.setMap(null));
+    }
+  }
+
+  //학원가
+  if(id == "check_academy"){
+    if(isChecked){ $(".academy").show() }
+    else{ $(".academy").hide() }
+  }
+
+  //유흥주점, 모텔
+  if(id == "check_drink"){
+    if(isChecked){
+      $(".drink").show()
+      $(".motel").show()
+    }
+    else{
+      $(".drink").hide()
+      $(".motel").hide()
+    }
+  }
+
+  var all_edu_unchecked = $(".check_edu_child").filter(":checked").length === 0;
+  if(all_edu_unchecked){
+    $("#check_edu").prop({'checked':false}) 
+  }
+  else{
+    $("#check_edu").prop({'checked':true}) 
+  }
+}
+
+let isDown = false    
+function moveInfoWindow(){
+  if(isDown){
+    moving_dest = info_pos
+  }
+  else{
+    moving_dest = window.innerHeight - $("#info_check_card").height() - 20        
+  }
+
+  isDown = !isDown
+  $('#info_OnOff').toggleClass('rotated');
+  $('#radarDataList_wrapper').animate({ top: moving_dest }, 350);
+}
+
+function price_sDateChange_radar(val) {
+  startVal = Number(val) + 1;
+  endVal = $("#pEnd_radar").val();
+
+  eDateOption = "";
+  for (var w = startVal; w < sales_history_date.length; w++) {
+    eDateOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+  }
+  $("#pEnd_radar").html(eDateOption);
+
+  if (endVal > startVal) {
+    $("#pEnd_radar").val(endVal).prop("selected", true);
+  } else {
+    endVal = $("#pEnd_radar").val();
+  }
+
+  priceChartUpdate_radar( priceCharts, sales_history_price, sales_history_date, startVal, endVal );
+}
+
+function price_eDateChange_radar(val) {
+  startVal = $("#pStart_radar").val();
+  endVal = Number(val) - 1;
+
+  priceChartUpdate_radar( priceCharts, sales_history_price, sales_history_date, startVal, endVal );
+}
+
+function priceChartUpdate_radar( priceChart, sales_history_price, sales_history_date, sVal, eVal ) {
+  for (var p = 0; p < priceChart.length; p++) {
+    sales_grayHistory1 = [];
+    sales_pHistory = [];
+    sales_grayHistory2 = [];
+
+    sales_pHistory.push(null);
+    sales_grayHistory1.push(null);
+    sales_grayHistory2.push(null);
+
+    sales_dHistory = [];
+    sales_dHistory.push("");
+
+    for (var y = 0; y < sales_history_date.length; y++) {
+      if (y < sVal) {
+        if (sales_history_price[p][y] == 0) {
+          sales_grayHistory1.push(0);
+        } else {
+          sales_grayHistory1.push(
+            (sales_history_price[p][y] / 10000).toFixed(1)
+          );
+        }
+        sales_pHistory.push(null);
+        sales_grayHistory2.push(null);
+      }
+      if (y >= sVal && y <= eVal) {
+        sales_grayHistory1.push(null);
+        if (sales_history_price[p][y] == 0) {
+          sales_pHistory.push(0);
+        } else {
+          sales_pHistory.push(
+            (sales_history_price[p][y] / 10000).toFixed(1)
+          );
+        }
+        sales_grayHistory2.push(null);
+      }
+      if (y > eVal) {
+        sales_grayHistory1.push(null);
+        sales_pHistory.push(null);
+        if (sales_history_price[p][y] == 0) {
+          sales_grayHistory2.push(0);
+        } else {
+          sales_grayHistory2.push(
+            (sales_history_price[p][y] / 10000).toFixed(1)
+          );
+        }
+      }
+      //sales_pHistory.push( (sales_history_price[p][y]/10000).toFixed(1) )
+      sales_dHistory.push( "'" + sales_history_date[y].substr(2, 2) + "." + sales_history_date[y].substr(4, 2) );
+    }
+    sales_pHistory.push(null);
+    sales_grayHistory1.push(null);
+    sales_grayHistory2.push(null);
+    sales_dHistory.push("");
+
+    chartView[p].data.datasets[0].data = sales_grayHistory1;
+    chartView[p].data.datasets[1].data = sales_pHistory;
+    chartView[p].data.datasets[2].data = sales_grayHistory2;
+    chartView[p].update();
+
+    sPrice = sales_history_price[p][sVal];
+    ePrice = sales_history_price[p][eVal - 1];
+    priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+    priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
+
+    priceChangeText = "";
+    priceChangeText += (sPrice / 10000).toFixed(2) + " → " + (ePrice / 10000).toFixed(2) + "억";
+
+    priceRatioText = "";
+    if (sPrice == 0) {
+      priceRatioText += " ( --- , --- )";
+    } else {
+      if (priceGap >= 0) {
+        priceRatioText += " (+" + priceGap + "억, ";
+      } else {
+        priceRatioText += " (" + priceGap + "억, ";
+      }
+
+      if (priceRatio > 0) {
+        priceRatioText +=
+          "<span style='color:#fe4040'>▲" + priceRatio + "%</span>)";
+      } else if (priceRatio == 0) {
+        priceRatioText +=
+          "<span style='color:#000'>" + priceRatio + "%</span>)";
+      } else {
+        priceRatioText +=
+          "<span style='color:blue'>▼" + priceRatio * -1 + "%</span>)";
+      }
+    }
+    $("#pChange_radar" + p).html(priceChangeText);
+    $("#pRatio_radar" + p).html(priceRatioText);
+  }
+}
+
+function priceChartDraw_radar( priceChart, sales_history_price, sales_history_date, sVal, eVal ) {
+  for (var p = 0; p < priceChart.length; p++) {
+    sales_grayHistory1 = [];
+    sales_pHistory = [];
+    sales_grayHistory2 = [];
+
+    sales_pHistory.push(null);
+    sales_grayHistory1.push(null);
+    sales_grayHistory2.push(null);
+
+    sales_dHistory = [];
+    sales_dHistory.push("");
+
+    for (var y = 0; y < sales_history_date.length; y++) {
+      if (y < sVal) {
+        if (sales_history_price[p][y] == 0) {
+          sales_grayHistory1.push(0);
+        } else {
+          sales_grayHistory1.push(
+            (sales_history_price[p][y] / 10000).toFixed(1)
+          );
+        }
+        sales_pHistory.push(null);
+        sales_grayHistory2.push(null);
+      }
+      if (y >= sVal && y <= eVal) {
+        sales_grayHistory1.push(null);
+        if (sales_history_price[p][y] == 0) {
+          sales_pHistory.push(0);
+        } else {
+          sales_pHistory.push(
+            (sales_history_price[p][y] / 10000).toFixed(1)
+          );
+        }
+        sales_grayHistory2.push(null);
+      }
+      if (y > eVal) {
+        sales_grayHistory1.push(null);
+        sales_pHistory.push(null);
+        if (sales_history_price[p][y] == 0) {
+          sales_grayHistory2.push(0);
+        } else {
+          sales_grayHistory2.push(
+            (sales_history_price[p][y] / 10000).toFixed(1)
+          );
+        }
+      }
+      //sales_pHistory.push( (sales_history_price[p][y]/10000).toFixed(1) )
+      sales_dHistory.push( "'" + sales_history_date[y].substr(2, 2) + "." + sales_history_date[y].substr(4, 2) );
+    }
+    sales_pHistory.push(null);
+    sales_grayHistory1.push(null);
+    sales_grayHistory2.push(null);
+    sales_dHistory.push("");
+
+    priceMax = Math.max(...sales_pHistory) * 1.3;
+    drawPriceChart( sales_dHistory, sales_grayHistory1, sales_pHistory, sales_grayHistory2, priceChart[p], priceMax, p );
+
+    sPrice = sales_history_price[p][sVal];
+    ePrice = sales_history_price[p][eVal - 1];
+    priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+    priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
+
+    sPrice = sales_history_price[p][sVal];
+    ePrice = sales_history_price[p][eVal - 1];
+    priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+    priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
+
+    priceChangeText = "";
+    priceChangeText += (sPrice / 10000).toFixed(2) + " → " + (ePrice / 10000).toFixed(2) + "억";
+
+    priceRatioText = "";
+    if (sPrice == 0) {
+      priceRatioText += " ( --- , --- )";
+    } else {
+      if (priceGap >= 0) {
+        priceRatioText += " (+" + priceGap + "억, ";
+      } else {
+        priceRatioText += " (" + priceGap + "억, ";
+      }
+
+      if (priceRatio > 0) {
+        priceRatioText +=
+          "<span style='color:#fe4040'>▲" + priceRatio + "%</span>)";
+      } else if (priceRatio == 0) {
+        priceRatioText +=
+          "<span style='color:#000'>" + priceRatio + "%</span>)";
+      } else {
+        priceRatioText +=
+          "<span style='color:blue'>▼" + priceRatio * -1 + "%</span>)";
+      }
+    }
+    $("#pChange_radar" + p).html(priceChangeText);
+    $("#pRatio_radar" + p).html(priceRatioText);
+  }
+}

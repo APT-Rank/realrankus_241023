@@ -316,7 +316,8 @@ function showBlogWindow(complex_id) {
 	$("#blogDetail").html(detailHtml);
 	$("#blogFooter").html(footerHtml);
 
-	$("#blogModal").modal("show"); //offcanvas
+	//$("#blogModal").modal("show"); //offcanvas
+	openModal('blogModal')
 	$("#baseModal").css({"z-index":"850"})
 	$(".modal-backdrop").css({"width":"100%"})
 }

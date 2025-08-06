@@ -40,7 +40,8 @@ function compareCheck(){
   if(!login_status){    
     $(".modal-backdrop").css({"width":"100%"})
     $("#baseModal").css({"width":"100%"})    
-    $("#loginModal").modal("show")
+    //$("#loginModal").modal("show")
+    openModal("loginModal")
     showLogin()
   }
   else{
@@ -299,7 +300,8 @@ function openCompare(complex_data){
   $("#compare2_sido").val(selectedRegion).prop("selected", true);
   compareOptionChange($("#compare1_sido option:selected").val(), "", 2)
 
-  $("#compareModal").modal("show");
+  //$("#compareModal").modal("show");
+  openModal("compareModal")
   $("#compareModal").css({"z-index":"1200"})
   $(".modal-backdrop").css({"width":"100%", "z-index":"1100"})
 

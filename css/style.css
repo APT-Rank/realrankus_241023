@@ -434,11 +434,11 @@
   .settingArea > div > .btn-outline-danger{
     border: 1px solid #e31939;
   }
-  #dataList_wrapper{
+  #dataList_wrapper, #radarDataList_wrapper{
     overflow-y: auto;
     z-index: 300;
   }
-  #dataList{
+  #dataList, #radarDataList{
     display:block;
     width: 100%;
     /* padding-top: 96px; */
@@ -1383,7 +1383,7 @@
   display: grid;    
   grid-template-columns: 1fr 1.2fr;
 }
-#pStart, #pEnd{
+#pStart, #pEnd, #pStart_radar, #pEnd_radar{
   width: 90px;    
   font-size: 0.85em;
   height: 2em;
@@ -2069,7 +2069,11 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
 #blog_des{
   resize: none;
 }
-#complex_visit_info{
+.mobile_card{
+  margin-left: 5px;
+  margin-right: 5px;
+}
+#complex_visit_info, #complex_visit_info_radar{
   border-bottom: 1px solid #ddd;
   text-align: center;
   font-size: 0.9em;
@@ -2171,7 +2175,7 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
       /* margin: 0 auto; */
       width: 600px;
     }
-    #dataList_wrapper, #titleBar, #selections, #weight, .dong_selector{
+    #dataList_wrapper, #radarDataList_wrapper, #titleBar, #titleBar_radar, #selections, #weight, .dong_selector {
       box-shadow: rgba(50, 50, 93, 0.2) 5px 5px 5px -1px, rgba(0, 0, 0, 0.05) 5px 3px 2px -1px;
       z-index: 300;      
     }    

@@ -107,7 +107,8 @@
     <script src="./js/notice_aptrank.js" type="text/javascript"></script>
     <script src="./js/ad_aptrank.js" type="text/javascript"></script>
     <script src="./js/restrict_words.js" type="text/javascript"></script>
-    <script src="./js/map_control.js" type="text/javascript"></script>    
+    <script src="./js/map_control.js" type="text/javascript"></script>
+    <script src="./js/map_control_radar2.js" type="text/javascript"></script>
     <script src="./js/distance.js" type="text/javascript"></script>
 
     <link href="./css/style_common.css" rel="stylesheet" />
@@ -427,7 +428,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="toggleModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="simulDetail"></div>
           <div id="toggle1footer"></div>
@@ -440,7 +441,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="toggleModalLabe2">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="simulResult"></div>
           <div id="toggle2footer"></div>
@@ -491,7 +492,7 @@
         <div class="modal-content" id="noticeModaloutline">
           <div class="modal-header">
             <h5 class="modal-title" id="noticeModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="noticeDetail"></div>
           <div id="noticeFooter"></div>
@@ -504,7 +505,7 @@
         <div class="modal-content" id="blogModaloutline">
           <div class="modal-header">
             <h5 class="modal-title" id="blogModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="blogDetail"></div>
           <div id="blogFooter"></div>
@@ -564,7 +565,31 @@
 
     <div id="radar-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0); z-index: 1500;">
       <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none; visibility: hidden;"></iframe>
-    </div>    
+    </div>
+
+    <!--레이더맵 표시 모달 -->
+    <div class="modal fade" id="radarModal" tabindex="-1" aria-labelledby="radarModalLabel">
+      <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+        <div class="modal-content" id="radarModaloutline">
+          <div class="modal-body" id="radarDetail" style="padding:0">
+            <div id="radarCenterBox">
+              <div id="titleBar_radar">
+                <div></div>
+                <div id="title_div">
+                  <div id="title_logo"><img src="./apt-rank_blank2.png" height="26px" /></div>
+                  <div id="title_text"> 리얼랭커스</div>
+                </div>
+                <div></div>
+              </div>
+              <div id="radarDataList_wrapper">
+                <div id="radarDataList"></div>                
+              </div>            
+            <div id="radarDataMap"></div>
+            <div id="radarDetailInfo"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
@@ -587,6 +612,7 @@
     <script src="./js/login_240308.js" type="text/javascript"></script>
     <script src="./js/board.js" type="text/javascript"></script>    
     <script src="./js/complex_compare.js" type="text/javascript"></script>
+    <script src="./js/radarMap.js" type="text/javascript"></script>
 
   </body>
   <script>
@@ -993,6 +1019,7 @@
         initSlider_area()
       }
 
+      /*
       $("div.modal").on("show.bs.modal", function () {
         var modal = this;
         var hash = modal.id;
@@ -1003,6 +1030,7 @@
           }
         };
       });
+      */
       $("#linkToAptrank_bottom").css({'width' : '100%'})
       if(regionName != "Korea"){
         $("#dataList_wrapper").css({'height' : window.innerHeight-$("#linkToAptrank_bottom").height()-$("#titleBar").height()-$("#selections").height()-90, 'margin-top':'170px'})      
@@ -1011,45 +1039,52 @@
         $("#dataList_wrapper").css({'height' : window.innerHeight-$("#linkToAptrank_bottom").height()-$("#titleBar").height(), 'margin-top':'97px'})
         $("#dataList_wrapper").css({'margin-top':'96px', 'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + 23 +$("#linkToAptrank_bottom").height() )})
       }
-      
 
-      $("#baseModal").on("hidden.bs.modal", function () {
-        changeMetaTagToDefault();
-        current_selection = ""
-        current_apt_name = ""
-        removeAnimation()
+      $('.modal').on('hidden.bs.modal', function () {
+        const modalId = this.id;
+
+        if(modalId == "baseModal"){
+          changeMetaTagToDefault();
+          current_selection = ""
+          current_apt_name = ""
+          removeAnimation()
+        }
+        if(modalId == "noticeModal")
+        {
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000"})          
+        }
+        if(modalId == "blogModal"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000"})
+          $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+        }
+        if(modalId == "compareModal"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+        }
+        if(modalId == "toggleModal1"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000"})
+        }
+        // 모달 닫힐 때 스택에서 제거
+        const idx = modalStack.lastIndexOf(modalId);
+        if (idx !== -1) {
+          modalStack.splice(idx, 1);
+        }
+
+        // 히스토리도 자동으로 맞추기
+        if (history.state?.modal === modalId) {
+          history.back();
+        }
       });
-      $("#noticeModal").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-      });
-      $("#blogModal").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-        $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
-      });
-      $("#compareModal").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
-      });      
-      $("#toggleModal1").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-      });
-      /*
-      $("#toggleModal2").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-      });
-      */
-      //optionChange(selectedSubRegion);
-      //updateRegion();
 
       if ($.cookie("popCookie") != "202508" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
-        $("#noticeModal").modal("show");
+        //$("#noticeModal").modal("show");
+        openModal("noticeModal")
       }
 
       blank_height = "3em";
@@ -1110,6 +1145,7 @@
         });
       }
 
+      /*
       window.addEventListener('popstate', (event) => {
         const container = document.getElementById('radar-container');
 
@@ -1118,6 +1154,7 @@
           closeRadar();
         }
       });
+      */
 
       $("#commentBack").hide()
     });
@@ -2283,7 +2320,7 @@
         titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em'>(구) " + aptData.data[index]["법정동주소"] + "</div>";
       }      
       detailHtml += "<div class='card'>";
-        detailHtml += "<div id='complex_visit_info'><div class='spinner-border spinner-border-sm' role='status'></div></div>";
+        detailHtml += "<div id='complex_visit_info' class='complex_visit_info'><div class='spinner-border spinner-border-sm' role='status'></div></div>";
         detailHtml += "<div class='card-body' style='padding-top: 5px; padding-bottom: 5px;'>";          
           detailHtml += "<div class='complex_like'>";
 
@@ -2480,7 +2517,7 @@
         }
         //detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>";
         detailHtml += "<div id='part_map_wrap' onClick='openRadarMap(\"" + searchCode + "\")'>";
-        detailHtml += "<div id='detail_map' ></div>";
+        detailHtml += "<div id='detail_map'></div>";
         detailHtml += "</div>";
         detailHtml += "</div></div></div>";
       }
@@ -3464,8 +3501,8 @@
       */
       ////////////////////////////////////////
       setTimeout(function(){
-        $("#pageLoadingBack").remove()
-        $('#baseModal').modal("show")            
+        $("#pageLoadingBack").remove()        
+        openModal("baseModal")
       }, 350)
     }
 
@@ -3564,15 +3601,7 @@
 
       eDateOption = "";
       for (var w = startVal; w < sales_history_date.length; w++) {
-        eDateOption +=
-          "<option value='" +
-          w +
-          "'>" +
-          "'" +
-          sales_history_date[w].substr(2, 2) +
-          "." +
-          sales_history_date[w].substr(4, 2) +
-          "</option>";
+        eDateOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
       }
       $("#pEnd").html(eDateOption);
 
@@ -3582,35 +3611,17 @@
         endVal = $("#pEnd").val();
       }
 
-      priceChartUpdate(
-        priceCharts,
-        sales_history_price,
-        sales_history_date,
-        startVal,
-        endVal
-      );
+      priceChartUpdate( priceCharts, sales_history_price, sales_history_date, startVal, endVal );
     }
 
     function price_eDateChange(val) {
       startVal = $("#pStart").val();
       endVal = Number(val) - 1;
 
-      priceChartUpdate(
-        priceCharts,
-        sales_history_price,
-        sales_history_date,
-        startVal,
-        endVal
-      );
+      priceChartUpdate( priceCharts, sales_history_price, sales_history_date, startVal, endVal );
     }
 
-    function priceChartUpdate(
-      priceChart,
-      sales_history_price,
-      sales_history_date,
-      sVal,
-      eVal
-    ) {
+    function priceChartUpdate( priceChart, sales_history_price, sales_history_date, sVal, eVal ) {
       for (var p = 0; p < priceChart.length; p++) {
         sales_grayHistory1 = [];
         sales_pHistory = [];
@@ -3658,12 +3669,7 @@
             }
           }
           //sales_pHistory.push( (sales_history_price[p][y]/10000).toFixed(1) )
-          sales_dHistory.push(
-            "'" +
-              sales_history_date[y].substr(2, 2) +
-              "." +
-              sales_history_date[y].substr(4, 2)
-          );
+          sales_dHistory.push( "'" + sales_history_date[y].substr(2, 2) + "." + sales_history_date[y].substr(4, 2) );
         }
         sales_pHistory.push(null);
         sales_grayHistory1.push(null);
@@ -3681,11 +3687,7 @@
         priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
 
         priceChangeText = "";
-        priceChangeText +=
-          (sPrice / 10000).toFixed(2) +
-          " → " +
-          (ePrice / 10000).toFixed(2) +
-          "억";
+        priceChangeText += (sPrice / 10000).toFixed(2) + " → " + (ePrice / 10000).toFixed(2) + "억";
 
         priceRatioText = "";
         if (sPrice == 0) {
@@ -3713,13 +3715,7 @@
       }
     }
 
-    function priceChartDraw(
-      priceChart,
-      sales_history_price,
-      sales_history_date,
-      sVal,
-      eVal
-    ) {
+    function priceChartDraw( priceChart, sales_history_price, sales_history_date, sVal, eVal ) {
       for (var p = 0; p < priceChart.length; p++) {
         sales_grayHistory1 = [];
         sales_pHistory = [];
@@ -3767,12 +3763,7 @@
             }
           }
           //sales_pHistory.push( (sales_history_price[p][y]/10000).toFixed(1) )
-          sales_dHistory.push(
-            "'" +
-              sales_history_date[y].substr(2, 2) +
-              "." +
-              sales_history_date[y].substr(4, 2)
-          );
+          sales_dHistory.push( "'" + sales_history_date[y].substr(2, 2) + "." + sales_history_date[y].substr(4, 2) );
         }
         sales_pHistory.push(null);
         sales_grayHistory1.push(null);
@@ -3780,15 +3771,7 @@
         sales_dHistory.push("");
 
         priceMax = Math.max(...sales_pHistory) * 1.3;
-        drawPriceChart(
-          sales_dHistory,
-          sales_grayHistory1,
-          sales_pHistory,
-          sales_grayHistory2,
-          priceChart[p],
-          priceMax,
-          p
-        );
+        drawPriceChart( sales_dHistory, sales_grayHistory1, sales_pHistory, sales_grayHistory2, priceChart[p], priceMax, p );
 
         sPrice = sales_history_price[p][sVal];
         ePrice = sales_history_price[p][eVal - 1];
@@ -3801,11 +3784,7 @@
         priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
 
         priceChangeText = "";
-        priceChangeText +=
-          (sPrice / 10000).toFixed(2) +
-          " → " +
-          (ePrice / 10000).toFixed(2) +
-          "억";
+        priceChangeText += (sPrice / 10000).toFixed(2) + " → " + (ePrice / 10000).toFixed(2) + "억";
 
         priceRatioText = "";
         if (sPrice == 0) {
@@ -4321,7 +4300,8 @@
       
       setTimeout(function(){
         closeUnifiedSearch()
-        $('#baseModal').modal("show")            
+        //$('#baseModal').modal("show")
+        openModal("baseModal")
       }, 150)
     }
 
@@ -4367,9 +4347,13 @@
       );
       rearrangeSelection = "rearrangeRegionScore";
 
-      $("#baseModal").modal("hide");
-      $("#toggleModal1").modal("hide");
-      $("#toggleModal2").modal("hide");
+      //$("#baseModal").modal("hide");
+      //$("#toggleModal1").modal("hide");
+      //$("#toggleModal2").modal("hide");
+
+      closeModal("baseModal")
+      closeModal("toggleModal1")
+      closeModal("toggleModal2")
 
       optionChange(filename, "");
       updateRegion();
@@ -4423,7 +4407,8 @@
       $("#noticeDetail").html(detailHtml);
       $("#noticeFooter").html(footerHtml);
 
-      $("#noticeModal").modal("show"); //offcanvas
+      //$("#noticeModal").modal("show"); //offcanvas
+      openModal("noticeModal")
       $("#baseModal").css({"z-index":"800"})
       $(".modal-backdrop").css({"width":"100%"})
     }
@@ -4627,7 +4612,8 @@
           $.removeCookie("popCookie", null, { path: "/" });
         }
       });      
-      $("#noticeModal").modal("show"); //offcanvas
+      //$("#noticeModal").modal("show"); //offcanvas
+      openModal("noticeModal")
       $(".modal-backdrop").css({"width":"100%"})
     }
 
@@ -4663,71 +4649,112 @@
     }
 
     function openRadarMap(searchCode) {
+      $("#radarDataList").scrollTop(0)
+      $("#radarDataList_wrapper").scrollTop(0)
+      
     // 새 창 열기
     //const radarMapWindow = window.open('./radarMap.html', '_blank');
-    $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
-        <br>단지 정보를 불러오고 있어요!</div></div>")
+    if(isMobile){
+      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
+          <br>단지 정보를 불러오고 있어요!</div></div>")
+    }    
+    saved_data_raw = sessionStorage.getItem('radarMapData');
 
-    firebase.database().ref().child("complex_info").child($("#gungu option:selected").val()).child(searchCode).get()
-    .then((snapshot) => {
-      if(snapshot.exists()){			  
-        complex_info = snapshot.val()
-        if(complex_info == null){
-          alert("불러오기 실패했어요. 다시 시도해 주세요.")
-        }
-        else{
-          //데이터 저장해서 새창으로 보내기
-          const dataToSend = {
-              aptDataFull: complex_info,
-              regionCode: $("#gungu option:selected").val()
-          };
+    if((saved_data_raw != null)){
+      saved_data = JSON.parse(saved_data_raw)
+      matching_code = saved_data['aptDataFull']['검색코드']
+    }
+    else{
+      matching_code = "NO_DATA"
+    }    
+    
+    if(matching_code == searchCode){
+      console.log("INTERNAL 에서 불러오기")
+      const loc_y = saved_data['aptDataFull']['Y'];
+      const loc_x = saved_data['aptDataFull']['X'];
 
-          // 데이터 저장
-          sessionStorage.setItem('radarMapData', JSON.stringify(dataToSend));
+      if(isMobile){
+        loadRadarMap(loc_x, loc_y, saved_data['aptDataFull'])
+        showRadarDetail(saved_data['aptDataFull'])
+      }
+      else{
+        const radarMapWindow = window.open('./radarMap.html', '_blank');
+      }
+    }
 
-          if(isMobile){
-            //const radarMapWindow = window.open('./radarMap.html', '_blank');
-            // iframe으로 열기
-            const container = document.getElementById('radar-container');
-            const iframe = document.getElementById('radar-iframe');
-            iframe.src = './radarMap.html'; // 새로 로딩
-            iframe.style.visibility = 'hidden';
-            container.style.display = 'block';
-
-            // 뒤로가기를 감지할 히스토리 추가
-            history.pushState({ radarOpen: true }, '', '');
+    else{
+      console.log("EXTERNAL 에서 불러오기")
+      firebase.database().ref().child("complex_info").child($("#gungu option:selected").val()).child(searchCode).get()
+      .then((snapshot) => {
+        if(snapshot.exists()){			  
+          complex_info = snapshot.val()
+          if(complex_info == null){
+            alert("불러오기 실패했어요. 다시 시도해 주세요.")
           }
           else{
-            const radarMapWindow = window.open('./radarMap.html', '_blank');
+            //데이터 저장해서 새창으로 보내기
+            const dataToSend = {
+                aptDataFull: complex_info,
+                regionCode: $("#gungu option:selected").val()
+            };
+            const loc_y = complex_info["Y"];
+            const loc_x = complex_info["X"];
+
+            // 데이터 저장
+            sessionStorage.setItem('radarMapData', JSON.stringify(dataToSend));
+
+            if(isMobile){
+              //const radarMapWindow = window.open('./radarMap.html', '_blank');
+              // iframe으로 열기
+              /*
+              const container = document.getElementById('radar-container');
+              const iframe = document.getElementById('radar-iframe');
+              iframe.src = './radarMap.html'; // 새로 로딩
+              iframe.style.visibility = 'hidden';
+              container.style.display = 'block';
+
+              // 뒤로가기를 감지할 히스토리 추가
+              history.pushState({ radarOpen: true }, '', '');
+              */
+              loadRadarMap(loc_x, loc_y, complex_info)
+              showRadarDetail(complex_info)
+            }
+            else{
+              //loadRadarMap(loc_x, loc_y, complex_info)
+              //showRadarDetail(complex_info)
+              const radarMapWindow = window.open('./radarMap.html', '_blank');
+            }
+
+            /*
+            // 새 창이 로드될 때까지 기다렸다가 데이터 전송
+            const sendMessage = () => {
+                if (radarMapWindow && radarMapWindow.postMessage) {
+                    radarMapWindow.postMessage(dataToSend, '*'); // '*' 대신 origin 지정 가능
+                } else {
+                    console.error("새 창이 아직 준비되지 않았습니다.");
+                }
+            };
+
+            // 로딩이 끝나면 메시지 보내기 (새 창에 ready 상태 확인 필요)
+            const timer = setInterval(() => {
+                if (radarMapWindow && radarMapWindow.document.readyState === 'complete') {
+                    clearInterval(timer);
+                    sendMessage();
+                }
+                else{
+                  alert("불러오기 실패했어요. 다시 시도해 주세요.")
+                }
+            }, 100);
+            */
           }
-
-          /*
-          // 새 창이 로드될 때까지 기다렸다가 데이터 전송
-          const sendMessage = () => {
-              if (radarMapWindow && radarMapWindow.postMessage) {
-                  radarMapWindow.postMessage(dataToSend, '*'); // '*' 대신 origin 지정 가능
-              } else {
-                  console.error("새 창이 아직 준비되지 않았습니다.");
-              }
-          };
-
-          // 로딩이 끝나면 메시지 보내기 (새 창에 ready 상태 확인 필요)
-          const timer = setInterval(() => {
-              if (radarMapWindow && radarMapWindow.document.readyState === 'complete') {
-                  clearInterval(timer);
-                  sendMessage();
-              }
-              else{
-                alert("불러오기 실패했어요. 다시 시도해 주세요.")
-              }
-          }, 100);
-          */
-        }
-      }      
-    })
-    .catch((error) => {
-      console.log(error.message)
-    })
+        }      
+      })
+      .catch((error) => {
+        console.log(error.message)
+        $("#pageLoadingBack").remove()
+        alert("단지 정보 불러오기 실패했어요. 다시 시도해 주세요.")
+      })
+    }
   }
   function showRadarIframe() {
     const iframe = document.getElementById('radar-iframe');
