@@ -207,8 +207,7 @@
       $('#startSortPop').prop("checked", false)
     }
 
-    //$('#baseModal').modal("show")
-    openModal("baseModal")
+    $('#baseModal').modal("show")
   }  
 
   function setRangeValue(e){

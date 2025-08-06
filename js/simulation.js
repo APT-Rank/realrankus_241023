@@ -522,8 +522,7 @@ function openSimulation(arr, index){
   $('.popSubTable').css({"height" : "2.5em"})
   $('.modal-title').css({"width" : "100%"})
 
-  //$('#toggleModal1').modal("show");
-  openModal("toggleModal1")
+  $('#toggleModal1').modal("show");
   $("#toggleModal1").css({"z-index":"1200"})
   $(".modal-backdrop").css({"width":"100%", "z-index":"1100"})  
 }
@@ -1525,8 +1524,7 @@ function showSimulResult(resultValue, arr, length){
   drawSimulSubChart(resultValue[3][0].toFixed(2), arr["인프라총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulInfraChart")
   drawSimulSubChart(resultValue[4][0].toFixed(2), arr["학군총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulEduChart")
   
-  //$('#toggleModal2').modal("show");
-  openModal("toggleModal2")
+  $('#toggleModal2').modal("show");
   $("#toggleModal2").css({"z-index":"1200"})
   $(".modal-backdrop").css({"width":"100%", "z-index":"1100"})  
 }

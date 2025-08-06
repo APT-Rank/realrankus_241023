@@ -273,8 +273,7 @@ function save_recent_to_LocalStorage(recent_search) {
 //var title_loading_html = "<div class='popupTitle'><h1 style='font-size: 1em; font-weight: 600'>데이터를 불러오고 있어요!</h></div>";
 function searchingUpdate(code, sido, gungu, aptName, aptAddress){
   $('#searchingBox').hide()
-  //$("#baseModal").modal("hide")
-  closeModal("baseModal")
+  $("#baseModal").modal("hide")
 
   var searchingDate = new Date()
   var searchingY = searchingDate.getFullYear()
@@ -330,8 +329,7 @@ function searchingUpdate(code, sido, gungu, aptName, aptAddress){
 
 function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){
   $('#searchingBox').hide()
-  //$("#baseModal").modal("hide")
-  closeModal("baseModal")
+  $("#baseModal").modal("hide")
 
   var searchingDate = new Date()
   var searchingY = searchingDate.getFullYear()

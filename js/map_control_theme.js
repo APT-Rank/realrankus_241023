@@ -336,8 +336,7 @@ var current_click = ""
 
 function complexMarkerAction(marker_obj, visit_obj) {  
   return function(e) {
-    //$('#exampleModal').modal("hide")
-    closeModal("exampleModal")
+    $('#exampleModal').modal("hide")
 
     animateMarker(marker_obj, visit_obj)    
 
@@ -351,14 +350,12 @@ function complexMarkerAction(marker_obj, visit_obj) {
           if($('#exampleModal').is(':visible')){
             setTimeout(function(){
               showDetail(i);              
-              //$('#exampleModal').modal("show")
-              openModal("exampleModal")
+              $('#exampleModal').modal("show")
             }, 350)
           }
           else{
             showDetail(i);            
-            //$('#exampleModal').modal("show")
-            openModal("exampleModal")
+            $('#exampleModal').modal("show")
           }
           return;
         }
@@ -382,8 +379,7 @@ function complexMarkerAction(marker_obj, visit_obj) {
 
 function complexTopMarkerAction(marker_obj) {  
   return function(e) {
-    //$('#baseModal').modal("hide")
-    closeModal("baseModal")
+    $('#baseModal').modal("hide")
 
     animateMarker(marker_obj)    
 
@@ -395,15 +391,13 @@ function complexTopMarkerAction(marker_obj) {
         if($('#baseModal').is(':visible')){
           setTimeout(function(){
             showTopDetail(i);              
-            //$('#baseModal').modal("show")
-            openModal("baseModal")
+            $('#baseModal').modal("show")
           }, 350)
         }
         else{          
           setTimeout(function(){
             showTopDetail(i);              
-            //$('#baseModal').modal("show")
-            openModal("baseModal")
+            $('#baseModal').modal("show")
           }, 350)
         }
         return;
@@ -414,8 +408,7 @@ function complexTopMarkerAction(marker_obj) {
 
 function level2MarkerAction(marker_obj) {  
   return function(e) {
-    //$('#baseModal').modal("hide")
-    closeModal("baseModal")
+    $('#baseModal').modal("hide")
     move_to_center = marker_obj['position']
     move_to_zoom = 16
     sido = marker_obj['sido']
@@ -439,8 +432,7 @@ function level2MarkerAction(marker_obj) {
 
 function level1MarkerAction(marker_obj) {  
   return function(e) {
-    //$('#baseModal').modal("hide")
-    closeModal("baseModal")
+    $('#baseModal').modal("hide")
     move_to_center = marker_obj['position']
     move_to_zoom = 14
     sido = marker_obj['sido']
