@@ -390,6 +390,34 @@ function connectionInfo(){
 
 connectionInfo()
 
+let modalStack = []
+
+function openModal(modalId) {
+  $(`#${modalId}`).modal('show');
+  modalStack.push(modalId);
+  history.pushState({ modal: modalId }, '', '');
+
+  //console.log(modalStack)
+}
+
+function closeModal(modalId) {
+  $(`#${modalId}`).modal('hide');
+  
+  // 모달이 닫혔을 때 스택에서 제거
+  const idx = modalStack.lastIndexOf(modalId);
+  if (idx !== -1) {
+    modalStack.splice(idx, 1);
+  }
+}
+
+window.addEventListener('popstate', (event) => {  
+    const modalId = modalStack.pop();
+    if (modalId) {
+      $(`#${modalId}`).modal('hide');
+      return;
+    }
+});
+
 function deepCopy(object) {
   if (object === null || typeof object !== "object") {
     return object;

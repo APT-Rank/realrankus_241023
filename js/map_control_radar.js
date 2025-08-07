@@ -556,7 +556,8 @@ var current_click = ""
 
 function complexMarkerAction(marker_obj) {  
   return function(e) {
-    $('#baseModal').modal("hide")
+    //$('#baseModal').modal("hide")
+    closeModal("baseModal")
 
     animateMarker(marker_obj)
     find_gungu = marker_obj['gungu']

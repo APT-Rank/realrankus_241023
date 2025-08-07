@@ -400,7 +400,7 @@
     <!-- Compare modal -->
     <div class="modal fade" id="compareModal" tabindex="-1" aria-labelledby="compareModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div id="compareModal_close" ><a class="compareModalclose" data-bs-dismiss="modal"  data-keyboard="false" aria-label="Close"><i class="fa-solid fa-xmark"></i></a></div>
+        <div id="compareModal_close" ><a class="compareModalclose" onClick="history.back()" data-keyboard="false" aria-label="Close"><i class="fa-solid fa-xmark"></i></a></div>
         <div class="modal-content">          
           <div class="modal-body" id="compareDetail"></div>
           <div id="compareFooter"></div>
@@ -414,7 +414,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="baseModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="aptDetail"></div>
           <div id="footer"></div>
@@ -427,7 +427,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="toggleModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="simulDetail"></div>
           <div id="toggle1footer"></div>
@@ -440,7 +440,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="toggleModalLabe2">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="simulResult"></div>
           <div id="toggle2footer"></div>
@@ -491,7 +491,7 @@
         <div class="modal-content" id="noticeModaloutline">
           <div class="modal-header">
             <h5 class="modal-title" id="noticeModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="noticeDetail"></div>
           <div id="noticeFooter"></div>
@@ -504,7 +504,7 @@
         <div class="modal-content" id="blogModaloutline">
           <div class="modal-header">
             <h5 class="modal-title" id="blogModalLabel">잠시만 기다려 주세요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="blogDetail"></div>
           <div id="blogFooter"></div>
@@ -592,7 +592,7 @@
   <script>
     var thisMonth = "202508"; //수정
     var selectedMonth = "202508"; //수정
-    var DB_Date = "202508_01"; //수정
+    var DB_Date = "202508_02"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -993,6 +993,7 @@
         initSlider_area()
       }
 
+      /*
       $("div.modal").on("show.bs.modal", function () {
         var modal = this;
         var hash = modal.id;
@@ -1003,6 +1004,7 @@
           }
         };
       });
+      */
       $("#linkToAptrank_bottom").css({'width' : '100%'})
       if(regionName != "Korea"){
         $("#dataList_wrapper").css({'height' : window.innerHeight-$("#linkToAptrank_bottom").height()-$("#titleBar").height()-$("#selections").height()-90, 'margin-top':'170px'})      
@@ -1013,43 +1015,51 @@
       }
       
 
-      $("#baseModal").on("hidden.bs.modal", function () {
-        changeMetaTagToDefault();
-        current_selection = ""
-        current_apt_name = ""
-        removeAnimation()
-      });
-      $("#noticeModal").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-      });
-      $("#blogModal").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-        $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
-      });
-      $("#compareModal").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
-      });      
-      $("#toggleModal1").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-      });
-      /*
-      $("#toggleModal2").on("hidden.bs.modal", function () {
-        $("#baseModal").css({"z-index" : "1055"})
-        $(".modal-backdrop").css({"z-index" : "1000"})
-      });
-      */
-      //optionChange(selectedSubRegion);
-      //updateRegion();
+      $('.modal').on('hidden.bs.modal', function () {
+        const modalId = this.id;
 
-      if ($.cookie("popCookie") != "202508" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+        if(modalId == "baseModal"){
+          changeMetaTagToDefault();
+          current_selection = ""
+          current_apt_name = ""
+          removeAnimation()
+        }
+        if(modalId == "noticeModal")
+        {
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000"})          
+        }
+        if(modalId == "blogModal"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000"})
+          $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+        }
+        if(modalId == "compareModal"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+        }
+        if(modalId == "toggleModal1"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000"})
+        }
+        // 모달 닫힐 때 스택에서 제거
+        const idx = modalStack.lastIndexOf(modalId);
+        if (idx !== -1) {
+          modalStack.splice(idx, 1);
+        }
+
+        // 히스토리도 자동으로 맞추기
+        if (history.state?.modal === modalId) {
+          history.back();
+        }
+      });
+
+      if ($.cookie("popCookie") != "202508_02" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
-        $("#noticeModal").modal("show");
+        //$("#noticeModal").modal("show");
+        openModal("noticeModal")
       }
 
       blank_height = "3em";
@@ -1147,6 +1157,7 @@
       window.indexedDB.deleteDatabase('202506_02')
       window.indexedDB.deleteDatabase('202507_01')
       window.indexedDB.deleteDatabase('202507_02')
+      window.indexedDB.deleteDatabase('202508_01')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -3465,7 +3476,8 @@
       ////////////////////////////////////////
       setTimeout(function(){
         $("#pageLoadingBack").remove()
-        $('#baseModal').modal("show")            
+        //$('#baseModal').modal("show")
+        openModal("baseModal")            
       }, 350)
     }
 
@@ -4321,7 +4333,8 @@
       
       setTimeout(function(){
         closeUnifiedSearch()
-        $('#baseModal').modal("show")            
+        //$('#baseModal').modal("show")
+        openModal("baseModal")            
       }, 150)
     }
 
@@ -4367,9 +4380,13 @@
       );
       rearrangeSelection = "rearrangeRegionScore";
 
-      $("#baseModal").modal("hide");
-      $("#toggleModal1").modal("hide");
-      $("#toggleModal2").modal("hide");
+      //$("#baseModal").modal("hide");
+      //$("#toggleModal1").modal("hide");
+      //$("#toggleModal2").modal("hide");
+
+      closeModal("baseModal")
+      closeModal("toggleModal1")
+      closeModal("toggleModal2")
 
       optionChange(filename, "");
       updateRegion();
@@ -4423,7 +4440,8 @@
       $("#noticeDetail").html(detailHtml);
       $("#noticeFooter").html(footerHtml);
 
-      $("#noticeModal").modal("show"); //offcanvas
+      //$("#noticeModal").modal("show"); //offcanvas
+      openModal("noticeModal")
       $("#baseModal").css({"z-index":"800"})
       $(".modal-backdrop").css({"width":"100%"})
     }
@@ -4613,7 +4631,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202508") {
+      if ($.cookie("popCookie") != "202508_02") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4621,13 +4639,14 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202508", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202508_02", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
         }
       });      
-      $("#noticeModal").modal("show"); //offcanvas
+      //$("#noticeModal").modal("show"); //offcanvas
+      openModal("noticeModal")
       $(".modal-backdrop").css({"width":"100%"})
     }
 

@@ -11,7 +11,8 @@ function showLoginLoading(){
 	$("#loginfooter").html(footerHtml);
 	$("#loginModal > .modal-dialog > .modal-content > .modal-header").hide()
 	//$("#loginModal > .modal-dialog > .modal-content").css({'opacity':'0.7'})
-	$("#loginModal").modal("show");
+	//$("#loginModal").modal("show");
+	openModal("loginModal")
 }
 
 function returnLoginStatus(token){

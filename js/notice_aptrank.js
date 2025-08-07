@@ -1,5 +1,10 @@
 var notice_202508 = 
-"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 8월 업데이트 안내 (2025-08-02)</div>"
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 8월 2차 업데이트 안내 (2025-08-07)</div>"
++"<ul>"
++"<li><div class='notice'>인근 상권 검색 범위를 확장하여 더 많은 상권이 감지되도록 수정 반영했습니다.</div></li>"
++"</ul>"
++"<hr>"
++"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 8월 업데이트 안내 (2025-08-02)</div>"
 +"<ul>"
 +"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
 +"<li><div class='notice'>중학교 보통학력이상 결과를 중학군 내 중학교 전체 평균으로 변경했습니다.</div></li>"

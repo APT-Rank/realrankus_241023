@@ -63,7 +63,8 @@ function initSlider_sPrice(){
       checkFiltered()
     },
     change : function (event, ui){
-      $("#baseModal").modal("hide");      
+      //$("#baseModal").modal("hide");
+      closeModal("baseModal")
       showHide_filtered_marker(onMap_list, onMap_markers)
     }
   });  
@@ -122,7 +123,8 @@ function initSlider_area(){
       checkFiltered()
     },
     change : function (event, ui){
-      $("#baseModal").modal("hide");      
+      //$("#baseModal").modal("hide");
+      closeModal("baseModal")
       showHide_filtered_marker(onMap_list, onMap_markers)
     }
   });  

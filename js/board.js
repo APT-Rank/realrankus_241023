@@ -316,7 +316,8 @@ function showBlogWindow(complex_id) {
 	$("#blogDetail").html(detailHtml);
 	$("#blogFooter").html(footerHtml);
 
-	$("#blogModal").modal("show"); //offcanvas
+	//$("#blogModal").modal("show"); //offcanvas
+	openModal('blogModal')
 	$("#baseModal").css({"z-index":"850"})
 	$(".modal-backdrop").css({"width":"100%"})
 }
@@ -420,7 +421,8 @@ function sendBlog(complex_id){
 					'blog1' : blog_data,									
 				})
 				.then(() => {
-					$("#blogModal").modal("hide");
+					//$("#blogModal").modal("hide");
+					closeModal("blogModal")
 					toastr.options = {
 						closeButton: false,
 						progressBar: false,
@@ -463,7 +465,8 @@ function sendBlog(complex_id){
 					[new_key] : blog_data,									
 				})
 				.then(() => {
-					$("#blogModal").modal("hide");
+					//$("#blogModal").modal("hide");
+					closeModal("blogModal")
 					toastr.options = {
 						closeButton: false,
 						progressBar: false,
@@ -591,8 +594,10 @@ function complex_like_updown(category, complex_id, aptName){
 	if(!login_status){
 		showLogin()
 		$("#loginModalLabel>.popupTitle").html("로그인 후에 좋아요를 해 주세요!")
-		$("#baseModal").modal('hide')
-		$('#loginModal').modal('show')
+		//$("#baseModal").modal('hide')
+		closeModal("baseModal")
+		//$('#loginModal').modal('show')
+		openModal("loginModal")
 		return
 	}
 	if(temp_uid == "abcdefghijklmnopqrstuvwxyz"){

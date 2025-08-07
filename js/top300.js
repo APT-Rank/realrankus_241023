@@ -40,7 +40,8 @@ function updateTopTable(month, region){
     }
     else{
       showLogin()
-      $("#loginModal").modal('show')
+      //$("#loginModal").modal('show')
+      openModal("loginModal")
     }
     $("#pageLoadingBack").remove()
     return
@@ -735,7 +736,8 @@ function showTopDetail(index){
   $("#pageLoadingBack").remove()
   setTimeout(function(){
     closeUnifiedSearch()
-    $('#baseModal').modal("show")            
+    //$('#baseModal').modal("show")
+    openModal("baseModal")
   }, 150)
 }
 
