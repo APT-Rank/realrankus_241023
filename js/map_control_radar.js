@@ -105,19 +105,21 @@ function loadRadarMap(center_x, center_y, aptData){
     icon_size_height_small = 40
     APT_marker_size_width = 70
     APT_marker_size_height = 70
+    minZoom_limit = 12
   }
   else{
     dw = window.innerWidth - 500
     dh = window.innerHeight
     zoom_control = true
     zoom_level = 16
+    minZoom_limit = 13
   }
 
   var MapOptions = {
     center: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
     size: new naver.maps.Size(dw, dh),
     zoom: zoom_level, //지도의 초기 줌 레벨
-    minZoom: 13,
+    minZoom: minZoom_limit,
     zoomControl: zoom_control, //줌 컨트롤의 표시 여부
     zoomControlOptions: {
         style: naver.maps.ZoomControlStyle.SMALL,
@@ -1042,7 +1044,7 @@ function createInfraMarker(aptData){
     rawCoords = market_area_arr[k]
 
     market_coords = convertToLatLngArray(rawCoords)    
-    window['market_polygon' + k] = drawPolygon(market_coords, { map: defaultMap, strokeColor: '#e65715ff', fillColor: '#e65715ff', fillOpacity: 0.2 });
+    window['market_polygon' + k] = drawPolygon(market_coords, { map: defaultMap, strokeColor: colorCode['상권'], fillColor: colorCode['상권'], fillOpacity: 0.2 });
     infra_market_polygons.push(window['market_polygon' + k])
 
     var svg_color = colorCode['상권']
@@ -1485,6 +1487,7 @@ function createInfraMarker(aptData){
 var edu_mSchool_markers = []
 var edu_drink_markers = []
 var edu_motel_markers = []
+var edu_academy_polygons = []
 
 function createEduMarker(aptData){
   //초등학교
@@ -1668,11 +1671,16 @@ function createEduMarker(aptData){
   academy_300m_arr = aptData["학원가좌표_300m"]
   academy_1km_arr = aptData["학원가좌표_1km"]
 
+  academy_300m_area_arr = aptData["학원가영역_300m"]
+  academy_1km_area_arr = aptData["학원가영역_1km"]
+
   if(academy_1km_arr == undefined){
     academy_arr = academy_300m_arr
+    academy_area_arr = academy_300m_area_arr
   }
   else{
     academy_arr = academy_1km_arr
+    academy_area_arr = academy_1km_area_arr
   }    
 
   for (var k in academy_arr){
@@ -1680,10 +1688,11 @@ function createEduMarker(aptData){
     coordi_x = academy_arr[k][1]
     coordi_y = academy_arr[k][0]
     
-    //rawCoords = academy_arr[k]
+    rawCoords = academy_area_arr[k]
 
-    //academy_coords = convertToLatLngArray(rawCoords)    
-    //drawPolygon(market_coords, { map: defaultMap, strokeColor: '#e65715ff', fillColor: '#e65715ff', fillOpacity: 0.2 });
+    academy_coords = convertToLatLngArray(rawCoords)    
+    window['academy_polygon' + k] = drawPolygon(academy_coords, { map: defaultMap, strokeColor: colorCode['학원가'], fillColor: colorCode['학원가'], fillOpacity: 0.2 });
+    edu_academy_polygons.push(window['academy_polygon' + k])
 
     var svg_color = colorCode['학원가']
     var stroke_color = "#FFFFFF"

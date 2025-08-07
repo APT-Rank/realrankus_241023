@@ -4684,8 +4684,10 @@
     function openRadarMap(searchCode) {
     // 새 창 열기
     //const radarMapWindow = window.open('./radarMap.html', '_blank');
-    $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
-        <br>단지 정보를 불러오고 있어요!</div></div>")
+    if(isMobile){
+      $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
+          <br>단지 정보를 불러오고 있어요!</div></div>")
+    }
 
     firebase.database().ref().child("complex_info").child($("#gungu option:selected").val()).child(searchCode).get()
     .then((snapshot) => {

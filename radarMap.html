@@ -1795,12 +1795,14 @@
           $(".edu_marker").show()
           pSchool_line.setMap(defaultMap);
           edu_mSchool_lines.forEach(polyline => polyline.setMap(defaultMap));
+          edu_academy_polygons.forEach(polygon => polygon.setMap(defaultMap));
         }
         else{
           $(".check_edu_child").prop({'checked':false})
           $(".edu_marker").hide()
           pSchool_line.setMap(null);
           edu_mSchool_lines.forEach(polyline => polyline.setMap(null));
+          edu_academy_polygons.forEach(polygon => polygon.setMap(null));
         }
       }
 
@@ -1830,8 +1832,14 @@
 
       //학원가
       if(id == "check_academy"){
-        if(isChecked){ $(".academy").show() }
-        else{ $(".academy").hide() }
+        if(isChecked){
+          $(".academy").show()          
+          edu_academy_polygons.forEach(polygon => polygon.setMap(defaultMap));
+        }
+        else{
+          $(".academy").hide()
+          edu_academy_polygons.forEach(polygon => polygon.setMap(null));
+        }        
       }
 
       //유흥주점, 모텔
