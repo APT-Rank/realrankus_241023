@@ -2419,6 +2419,11 @@
         //$('#loginPopup').show()
       }
       else{
+        detailHtml += "<div class='card-body' style='padding-top: 2px'>";
+        detailHtml += "<div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>";
+        detailHtml += "<div class='comment'>(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)</div>";
+        detailHtml += "</div>"
+
         //detailHtml += "<hr class='hr_small'>";
         detailHtml += "<div class='card-body' style='padding-top: 2px'>";
         if (selectedMonth == thisMonth) {          
@@ -4721,14 +4726,11 @@
     }
 
     function openRadarMap(searchCode) {
-    /*      
     if(!login_status){      
       $("#loginModalLabel>.popupTitle").html("로그인 후에 리얼레이더맵을 볼 수 있어요!")      
       showLogin()
       return
     }
-      */
-
     // 새 창 열기
     //const radarMapWindow = window.open('./radarMap.html', '_blank');
     if(isMobile){
