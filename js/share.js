@@ -410,7 +410,12 @@ function closeModal(modalId) {
   }
 }
 
-window.addEventListener('popstate', (event) => {  
+window.addEventListener('popstate', (event) => {
+    if (history.state && history.state.radarOpen) {
+      history.back();
+      return
+    }
+
     const modalId = modalStack.pop();
     if (modalId) {
       $(`#${modalId}`).modal('hide');

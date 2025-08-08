@@ -2401,36 +2401,15 @@
       else{
         detailHtml += "<span class='ranksame'> (" + sortName + ") </span>"  + "</div></div>"
       }
+      var value_chart_height = "160px"
 
-      /*
-      if (selectedMonth == "202201") {
-        detailHtml += "<div class='popRank'><i class='fas fa-trophy'></i> " + aptRank + "</div></div>";
-      } else {
-        detailHtml += "<div class='popRank'><i class='fas fa-trophy'></i> " + aptRank;
-
-        if (sortSelection == "sortDefault" && (rearrangeAPTSelection == "rearrangeScore" || rearrangeAPTSelection == "rearrangeRank")) {
-          if (aptData.data[index]["rank_gap"] == 0) {
-            detailHtml += "<span class='ranksame'> (--) </span>";
-          } else if (aptData.data[index]["rank_gap"] == 9999) {
-            detailHtml += "<span class='ranksame'> (NEW!) </span>";
-          } else if (aptData.data[index]["rank_gap"] > 0) {
-            detailHtml +=
-              "<span class='rankup'> (▲" +
-              Math.abs(aptData.data[index]["rank_gap"]) +
-              ")</span>";
-          } else if (aptData.data[index]["rank_gap"] < 0) {
-            detailHtml +=
-              "<span class='rankdown'>(▼" +
-              Math.abs(aptData.data[index]["rank_gap"]) +
-              ")</span>";
-          }
-        } else {
-          detailHtml += "<span class='ranksame'>(" + sortName + ") </span>";
-        }
-        detailHtml += "</div></div>";
+      if (isNaN(transportScore) == false){
+        value_chart_height = "180px"
       }
-      */
-
+      else{
+        value_chart_height = "160px"
+      }
+      
       if(login_status == false){
           detailHtml += "<div class='loginBox'>"
           detailHtml += "<div id='aptrankLoginGuide'>더 자세한 정보와 분석을 확인하세요</div>"
@@ -2440,11 +2419,6 @@
         //$('#loginPopup').show()
       }
       else{
-        detailHtml += "<div class='card-body' style='padding-top: 2px'>";
-        detailHtml += "<div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>";
-        detailHtml += "<div class='comment'>(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)</div>";
-        detailHtml += "</div>"
-
         //detailHtml += "<hr class='hr_small'>";
         detailHtml += "<div class='card-body' style='padding-top: 2px'>";
         if (selectedMonth == thisMonth) {          
@@ -2477,6 +2451,9 @@
       if (Number(selectedMonth) > 202212) {
         //지도
         detailHtml += "<div class='card'>";
+        detailHtml += "<div class='card-header'>";        
+        detailHtml += "<div class='popTitle'><i class='fa-solid fa-bullseye'></i>&nbsp&nbsp리얼레이더맵</div>";
+        detailHtml += "</div>";
         detailHtml += "<div class='card-body' style='padding: 0'>";
 
         if (apt_type == "분양(예정)") {
@@ -2491,8 +2468,9 @@
         }
         //detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>";
         detailHtml += "<div id='part_map_wrap' onClick='openRadarMap(\"" + searchCode + "\")'>";
-        detailHtml += "<div id='detail_map' ></div>";
+        detailHtml += "<div id='detail_map'></div>";
         detailHtml += "</div>";
+        detailHtml += "<div id='aptrankLoginGuide' style='text-align:center; margin-top:5px'>지도를 선택하면 주변 입지를 확인할 수 있어요!</div>"
         detailHtml += "</div></div></div>";
       }
 
@@ -3191,10 +3169,10 @@
 
       //지도 그리는 함수
       if (isMobile) {
-        var dw = $(window).innerWidth() - 40;
+        var dw = $(window).innerWidth() - 40;        
         //var dw = 372;
       } else {
-        var dw = 459;
+        var dw = 460
       }
       var dh = 200;
 
@@ -3254,7 +3232,7 @@
 
         svg_loc_detail = `
         <svg version="1.1" class="detail_marker_${grade}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-            viewBox="0 0 35 35" style="enable-background:new 0 0 800 1200;" xml:space="preserve" width="68", height="60">
+            viewBox="0 0 35 35" style="enable-background:new 0 0 800 1200;" xml:space="preserve" width="50", height="50">
             
         <defs>
         <style>
@@ -3281,13 +3259,80 @@
           icon: {
               content: svg_loc_detail,
               size: new naver.maps.Size(24, 37),
-              anchor: new naver.maps.Point(12, 60),
+              anchor: new naver.maps.Point(6, 55),
               origin: new naver.maps.Point( Number(coord_y), Number(coord_x)),
           },
           zIndex: 100,
           map: detailMap,
         });
-        ///////////////////////////////////////
+
+
+        circle_center = new naver.maps.LatLng(Number(coord_y)+0.0003, Number(coord_x)+0.0003);
+
+        // 반경 리스트 (미터 단위)
+        radii = [100, 200, 300, 400];
+
+        // 원 색상 및 스타일
+        colors = ['#e31939', '#e31939', '#e31939', '#e31939'];
+
+        // 원 생성
+        radii.forEach((radius, index) => {
+          // 원 그리기
+          window['detailMap_circle_' + radius] = new naver.maps.Circle({
+            map: detailMap,
+            center: circle_center,
+            radius: radius,
+            strokeColor: colors[index % colors.length],
+            strokeOpacity: 0.6,
+            strokeWeight: 1.5,
+            fillColor: colors[index % colors.length],
+            fillOpacity: 0.0
+          });
+        })
+
+        random_marker_num = Math.random()*5 + 4
+
+        for(var k = 0 ; k < random_marker_num ; k++){
+          let randomNumber1 = Math.floor(Math.random() * 700) + 300;
+          let randomNumber2 = Math.floor(Math.random() * 700) + 300;
+          randomNumber1 = randomNumber1 * 1/300000
+          randomNumber2 = randomNumber2 * 1/800000
+
+          if (Math.random() < 0.5) {
+              randomNumber1 *= -1;
+          }
+          if (Math.random() < 0.5) {
+              randomNumber2 *= -1;
+          }
+
+          console.log(randomNumber1)
+          console.log(randomNumber2)
+          
+          svg_loc_small = `            
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                viewBox="0 0 20 20" style="enable-background:new 0 0 800 1200;" xml:space="preserve" width="30", height="30">
+              <defs>
+              <style>
+              .detailMap_small_marker{fill:#555; stroke:#222; stroke-width:1}
+              .cls-2_small_text{fill:#fff; font-size:9px; font-weight:600}
+              </style>
+              </defs>              
+              <path class="detailMap_small_marker" d="M17.89,4.43,9.86.31a1.67,1.67,0,0,0-1.55,0L.36,4.43a.48.48,0,0,0-.24.42v9.58c0,.74.35,1.35.76,1.35h1l2.26,3.35,2.25-3.35h11c.41,0,.75-.61.75-1.35V4.86A.48.48,0,0,0,17.89,4.43Z"/>
+              <text class="cls-2_small_text" text-anchor="middle" x="9" y="12">?</text>
+              </svg>
+              `
+          new naver.maps.Marker({
+            position: new naver.maps.LatLng(Number(coord_y)+randomNumber2, Number(coord_x)+randomNumber1),
+            icon: {
+                content: svg_loc_small,
+                size: new naver.maps.Size(24, 37),
+                anchor: new naver.maps.Point(6, 55),
+                origin: new naver.maps.Point( Number(coord_y), Number(coord_x)),
+            },
+            zIndex: 100,
+            map: detailMap,         
+          });
+        }
       }
 
       if (isNaN(transportScore) == false){
@@ -3345,7 +3390,6 @@
         //drawRankChart(rankMonth, rankData, aptData.data[itemNum - 1]["rank"]);
         drawRankChart(rankMonth, rankData, 110);
       }
-      
 
       if(login_status){
         drawChart( aptValue.toFixed(2), livingScore, transportScore, infraScore, eduScore );
@@ -4682,6 +4726,18 @@
     }
 
     function openRadarMap(searchCode) {
+      
+    if(!login_status){
+      showLogin()
+      $("#loginModalLabel>.popupTitle").html("로그인 후에 리얼레이더맵을 볼 수 있어요!")      
+      //$("#baseModal").modal('hide')      
+      closeModal("baseModal")
+      //$('#loginModal').modal('show')
+      openModal("loginModal")
+      $(".modal-backdrop").css({"width":"100%"})
+      return
+    }
+
     // 새 창 열기
     //const radarMapWindow = window.open('./radarMap.html', '_blank');
     if(isMobile){
@@ -4762,9 +4818,9 @@
     container.style.display = 'none';
 
     // 현재 상태가 radarOpen 상태면 히스토리 한 단계 뒤로가기
-    if (history.state && history.state.radarOpen) {
-      history.back();
-    }
+    //if (history.state && history.state.radarOpen) {
+    //  history.back();
+    //}
   }
 
   </script>

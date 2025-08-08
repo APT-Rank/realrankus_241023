@@ -593,11 +593,12 @@ function complex_like_updown(category, complex_id, aptName){
 
 	if(!login_status){
 		showLogin()
-		$("#loginModalLabel>.popupTitle").html("로그인 후에 좋아요를 해 주세요!")
+		$("#loginModalLabel>.popupTitle").html("로그인 후에 좋아요를 해 주세요!")		
 		//$("#baseModal").modal('hide')
 		closeModal("baseModal")
 		//$('#loginModal').modal('show')
 		openModal("loginModal")
+		$(".modal-backdrop").css({"width":"100%"})
 		return
 	}
 	if(temp_uid == "abcdefghijklmnopqrstuvwxyz"){

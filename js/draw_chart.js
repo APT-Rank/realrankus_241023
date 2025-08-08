@@ -56,7 +56,7 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
               'rgba(255,99,132, 0)',
               'rgba(54, 162, 235, 0)',
           ],                
-          barThickness: 17,            
+          barThickness: 14,            
         }]
       },
       options: {
