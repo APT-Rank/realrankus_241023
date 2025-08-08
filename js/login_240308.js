@@ -325,7 +325,7 @@ function allAgree(){
 
 function showLogin(){	
     $(".modal-backdrop").css({"width":"100%"})
-    //$("#baseModal").css({"width":"100%"})
+    $("#baseModal").css({"width":"100%"})
 
 	var titleHtml = "<div class='popupTitle'>리얼랭커스 로그인</div>";      
 	var detailHtml = `

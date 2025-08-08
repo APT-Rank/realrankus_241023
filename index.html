@@ -2448,31 +2448,29 @@
 
       detailHtml += "</div></div>"
 
-      if (Number(selectedMonth) > 202212) {
-        //지도
-        detailHtml += "<div class='card'>";
-        detailHtml += "<div class='card-header'>";        
-        detailHtml += "<div class='popTitle'><i class='fa-solid fa-bullseye'></i>&nbsp&nbsp리얼레이더맵</div>";
-        detailHtml += "</div>";
-        detailHtml += "<div class='card-body' style='padding: 0'>";
+      //지도
+      detailHtml += "<div class='card'>";
+      detailHtml += "<div class='card-header'>";        
+      detailHtml += "<div class='popTitle'><i class='fa-solid fa-bullseye'></i>&nbsp&nbsp리얼레이더맵</div>";
+      detailHtml += "</div>";
+      detailHtml += "<div class='card-body' style='padding: 0'>";
 
-        if (apt_type == "분양(예정)") {
-          go_url = "https://hogangnono.com/apt/" + searchCode;
-        } else {
-          if(isMobile){
-            go_url = "https://m.land.naver.com/complex/info/" + searchCode;
-          }
-          else{
-            go_url = "https://new.land.naver.com/complexes/" + searchCode;
-          }
+      if (apt_type == "분양(예정)") {
+        go_url = "https://hogangnono.com/apt/" + searchCode;
+      } else {
+        if(isMobile){
+          go_url = "https://m.land.naver.com/complex/info/" + searchCode;
         }
-        //detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>";
-        detailHtml += "<div id='part_map_wrap' onClick='openRadarMap(\"" + searchCode + "\")'>";
-        detailHtml += "<div id='detail_map'></div>";
-        detailHtml += "</div>";
-        detailHtml += "<div id='aptrankLoginGuide' style='text-align:center; margin-top:5px'>지도를 선택하면 주변 입지를 확인할 수 있어요!</div>"
-        detailHtml += "</div></div></div>";
+        else{
+          go_url = "https://new.land.naver.com/complexes/" + searchCode;
+        }
       }
+      //detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>";
+      detailHtml += "<div id='part_map_wrap' onClick='openRadarMap(\"" + searchCode + "\")'>";
+      detailHtml += "<div id='detail_map'></div>";
+      detailHtml += "</div>";
+      detailHtml += "<div id='aptrankLoginGuide' style='text-align:center; margin-top:5px'>지도를 선택하면 주변 입지를 확인할 수 있어요!</div>"
+      detailHtml += "</div></div></div>";
 
       //주거
       detailHtml += "<div class='card'>";
@@ -3304,9 +3302,6 @@
           if (Math.random() < 0.5) {
               randomNumber2 *= -1;
           }
-
-          console.log(randomNumber1)
-          console.log(randomNumber2)
           
           svg_loc_small = `            
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -4726,17 +4721,13 @@
     }
 
     function openRadarMap(searchCode) {
-      
-    if(!login_status){
-      showLogin()
+    /*      
+    if(!login_status){      
       $("#loginModalLabel>.popupTitle").html("로그인 후에 리얼레이더맵을 볼 수 있어요!")      
-      //$("#baseModal").modal('hide')      
-      closeModal("baseModal")
-      //$('#loginModal').modal('show')
-      openModal("loginModal")
-      $(".modal-backdrop").css({"width":"100%"})
+      showLogin()
       return
     }
+      */
 
     // 새 창 열기
     //const radarMapWindow = window.open('./radarMap.html', '_blank');
