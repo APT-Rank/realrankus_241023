@@ -15,7 +15,7 @@
             },
             {
                 "name":"search_code",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"apt_type",
@@ -56,7 +56,7 @@
             "index":0,
             "sort":"balanced",
             "name":"거제2차현대홈타운",
-            "search_code":8914,
+            "search_code":"8914",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":71.372,
@@ -69,7 +69,7 @@
             "index":1,
             "sort":"balanced",
             "name":"아시아드코오롱하늘채",
-            "search_code":114024,
+            "search_code":"114024",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":71.2621142857,
@@ -81,8 +81,21 @@
         {
             "index":2,
             "sort":"balanced",
+            "name":"거제역동원로얄듀크",
+            "search_code":"dpzde",
+            "apt_type":"분양(예정)",
+            "apt_year":-2.0,
+            "value_score":70.312,
+            "region":"부산시 연제구",
+            "region_code":"Busan",
+            "sub_region_code":"2647000000_Busan_Yeonje",
+            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
+        },
+        {
+            "index":3,
+            "sort":"balanced",
             "name":"거제롯데캐슬피렌체",
-            "search_code":26716,
+            "search_code":"26716",
             "apt_type":"아파트",
             "apt_year":14.0,
             "value_score":69.282,
@@ -92,10 +105,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":3,
+            "index":4,
             "sort":"balanced",
             "name":"쌍용1차",
-            "search_code":8913,
+            "search_code":"8913",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":68.7847101939,
@@ -105,10 +118,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":4,
+            "index":5,
             "sort":"balanced",
             "name":"레이카운티",
-            "search_code":136343,
+            "search_code":"136343",
             "apt_type":"아파트",
             "apt_year":1.0,
             "value_score":66.202,
@@ -118,10 +131,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":5,
+            "index":6,
             "sort":"balanced",
             "name":"월드마크아시아드",
-            "search_code":22769,
+            "search_code":"22769",
             "apt_type":"아파트",
             "apt_year":17.0,
             "value_score":64.9316003791,
@@ -131,10 +144,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":6,
+            "index":7,
             "sort":"balanced",
             "name":"거제월드메르디앙",
-            "search_code":12022,
+            "search_code":"12022",
             "apt_type":"아파트",
             "apt_year":20.0,
             "value_score":64.062,
@@ -144,10 +157,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":7,
+            "index":8,
             "sort":"balanced",
             "name":"더샵파크시티",
-            "search_code":105448,
+            "search_code":"105448",
             "apt_type":"아파트",
             "apt_year":10.0,
             "value_score":63.282,
@@ -157,10 +170,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":8,
+            "index":9,
             "sort":"balanced",
             "name":"거제1차현대홈타운",
-            "search_code":8747,
+            "search_code":"8747",
             "apt_type":"아파트",
             "apt_year":24.0,
             "value_score":63.212,
@@ -170,23 +183,23 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":9,
-            "sort":"balanced",
-            "name":"쌍용더플래티넘거제아시아드",
-            "search_code":137746,
-            "apt_type":"아파트",
-            "apt_year":2.0,
-            "value_score":62.252,
+            "index":10,
+            "sort":"living",
+            "name":"거제역동원로얄듀크",
+            "search_code":"dpzde",
+            "apt_type":"분양(예정)",
+            "apt_year":-2.0,
+            "value_score":68.808,
             "region":"부산시 연제구",
             "region_code":"Busan",
             "sub_region_code":"2647000000_Busan_Yeonje",
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":10,
+            "index":11,
             "sort":"living",
             "name":"레이카운티",
-            "search_code":136343,
+            "search_code":"136343",
             "apt_type":"아파트",
             "apt_year":1.0,
             "value_score":68.118,
@@ -196,10 +209,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":11,
+            "index":12,
             "sort":"living",
             "name":"거제2차현대홈타운",
-            "search_code":8914,
+            "search_code":"8914",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":67.548,
@@ -209,10 +222,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":12,
+            "index":13,
             "sort":"living",
             "name":"아시아드코오롱하늘채",
-            "search_code":114024,
+            "search_code":"114024",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":67.1747428571,
@@ -222,10 +235,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":13,
+            "index":14,
             "sort":"living",
             "name":"더샵파크시티",
-            "search_code":105448,
+            "search_code":"105448",
             "apt_type":"아파트",
             "apt_year":10.0,
             "value_score":66.438,
@@ -235,10 +248,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":14,
+            "index":15,
             "sort":"living",
             "name":"연산자이",
-            "search_code":26286,
+            "search_code":"26286",
             "apt_type":"아파트",
             "apt_year":15.0,
             "value_score":65.348,
@@ -248,10 +261,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":15,
+            "index":16,
             "sort":"living",
             "name":"거제월드메르디앙",
-            "search_code":12022,
+            "search_code":"12022",
             "apt_type":"아파트",
             "apt_year":20.0,
             "value_score":64.258,
@@ -261,10 +274,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":16,
+            "index":17,
             "sort":"living",
             "name":"거제롯데캐슬피렌체",
-            "search_code":26716,
+            "search_code":"26716",
             "apt_type":"아파트",
             "apt_year":14.0,
             "value_score":64.238,
@@ -274,10 +287,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":17,
+            "index":18,
             "sort":"living",
             "name":"시청역비스타동원(주상복합)",
-            "search_code":112805,
+            "search_code":"112805",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":63.488,
@@ -287,10 +300,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":18,
+            "index":19,
             "sort":"living",
             "name":"거제1차현대홈타운",
-            "search_code":8747,
+            "search_code":"8747",
             "apt_type":"아파트",
             "apt_year":24.0,
             "value_score":62.108,
@@ -300,23 +313,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":19,
-            "sort":"living",
-            "name":"연제롯데캐슬앤데시앙",
-            "search_code":110733,
-            "apt_type":"아파트",
-            "apt_year":7.0,
-            "value_score":61.908,
-            "region":"부산시 연제구",
-            "region_code":"Busan",
-            "sub_region_code":"2647000000_Busan_Yeonje",
-            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
-        },
-        {
             "index":20,
             "sort":"transport",
             "name":"거제롯데캐슬피렌체",
-            "search_code":26716,
+            "search_code":"26716",
             "apt_type":"아파트",
             "apt_year":14.0,
             "value_score":79.941,
@@ -329,7 +329,7 @@
             "index":21,
             "sort":"transport",
             "name":"아시아드코오롱하늘채",
-            "search_code":114024,
+            "search_code":"114024",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":78.1810571429,
@@ -342,7 +342,7 @@
             "index":22,
             "sort":"transport",
             "name":"거제2차현대홈타운",
-            "search_code":8914,
+            "search_code":"8914",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":77.786,
@@ -354,8 +354,21 @@
         {
             "index":23,
             "sort":"transport",
+            "name":"거제역동원로얄듀크",
+            "search_code":"dpzde",
+            "apt_type":"분양(예정)",
+            "apt_year":-2.0,
+            "value_score":77.056,
+            "region":"부산시 연제구",
+            "region_code":"Busan",
+            "sub_region_code":"2647000000_Busan_Yeonje",
+            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
+        },
+        {
+            "index":24,
+            "sort":"transport",
             "name":"쌍용1차",
-            "search_code":8913,
+            "search_code":"8913",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":76.7923550969,
@@ -365,10 +378,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":24,
+            "index":25,
             "sort":"transport",
             "name":"거제월드메르디앙",
-            "search_code":12022,
+            "search_code":"12022",
             "apt_type":"아파트",
             "apt_year":20.0,
             "value_score":75.381,
@@ -378,10 +391,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":25,
+            "index":26,
             "sort":"transport",
             "name":"레이카운티",
-            "search_code":136343,
+            "search_code":"136343",
             "apt_type":"아파트",
             "apt_year":1.0,
             "value_score":74.701,
@@ -391,10 +404,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":26,
+            "index":27,
             "sort":"transport",
             "name":"거제2차월드메르디앙",
-            "search_code":22438,
+            "search_code":"22438",
             "apt_type":"아파트",
             "apt_year":18.0,
             "value_score":74.516,
@@ -404,10 +417,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":27,
+            "index":28,
             "sort":"transport",
             "name":"월드마크아시아드",
-            "search_code":22769,
+            "search_code":"22769",
             "apt_type":"아파트",
             "apt_year":17.0,
             "value_score":74.4158001896,
@@ -417,10 +430,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":28,
+            "index":29,
             "sort":"transport",
             "name":"시청역비스타동원(주상복합)",
-            "search_code":112805,
+            "search_code":"112805",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":74.216,
@@ -430,23 +443,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":29,
-            "sort":"transport",
-            "name":"다뉴브하이타운",
-            "search_code":4409,
-            "apt_type":"아파트",
-            "apt_year":32.0,
-            "value_score":74.016,
-            "region":"부산시 연제구",
-            "region_code":"Busan",
-            "sub_region_code":"2647000000_Busan_Yeonje",
-            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
-        },
-        {
             "index":30,
             "sort":"infra",
             "name":"아시아드코오롱하늘채",
-            "search_code":114024,
+            "search_code":"114024",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":70.5684285714,
@@ -459,7 +459,7 @@
             "index":31,
             "sort":"infra",
             "name":"쌍용1차",
-            "search_code":8913,
+            "search_code":"8913",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":69.8039251616,
@@ -472,7 +472,7 @@
             "index":32,
             "sort":"infra",
             "name":"거제2차현대홈타운",
-            "search_code":8914,
+            "search_code":"8914",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":68.86,
@@ -485,7 +485,7 @@
             "index":33,
             "sort":"infra",
             "name":"거제롯데캐슬피렌체",
-            "search_code":26716,
+            "search_code":"26716",
             "apt_type":"아파트",
             "apt_year":14.0,
             "value_score":67.81,
@@ -497,8 +497,21 @@
         {
             "index":34,
             "sort":"infra",
+            "name":"거제역동원로얄듀크",
+            "search_code":"dpzde",
+            "apt_type":"분양(예정)",
+            "apt_year":-2.0,
+            "value_score":66.26,
+            "region":"부산시 연제구",
+            "region_code":"Busan",
+            "sub_region_code":"2647000000_Busan_Yeonje",
+            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
+        },
+        {
+            "index":35,
+            "sort":"infra",
             "name":"월드마크아시아드",
-            "search_code":22769,
+            "search_code":"22769",
             "apt_type":"아파트",
             "apt_year":17.0,
             "value_score":65.993000316,
@@ -508,10 +521,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":35,
+            "index":36,
             "sort":"infra",
             "name":"다뉴브하이타운",
-            "search_code":4409,
+            "search_code":"4409",
             "apt_type":"아파트",
             "apt_year":32.0,
             "value_score":63.86,
@@ -521,10 +534,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":36,
+            "index":37,
             "sort":"infra",
             "name":"거제월드메르디앙",
-            "search_code":12022,
+            "search_code":"12022",
             "apt_type":"아파트",
             "apt_year":20.0,
             "value_score":63.56,
@@ -534,10 +547,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":37,
+            "index":38,
             "sort":"infra",
             "name":"더샵파크시티",
-            "search_code":105448,
+            "search_code":"105448",
             "apt_type":"아파트",
             "apt_year":10.0,
             "value_score":62.16,
@@ -547,10 +560,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":38,
+            "index":39,
             "sort":"infra",
             "name":"거제1차현대홈타운",
-            "search_code":8747,
+            "search_code":"8747",
             "apt_type":"아파트",
             "apt_year":24.0,
             "value_score":62.06,
@@ -560,23 +573,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":39,
-            "sort":"infra",
-            "name":"거제동원로얄듀크3차",
-            "search_code":11004,
-            "apt_type":"아파트",
-            "apt_year":21.0,
-            "value_score":61.81,
-            "region":"부산시 연제구",
-            "region_code":"Busan",
-            "sub_region_code":"2647000000_Busan_Yeonje",
-            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
-        },
-        {
             "index":40,
             "sort":"education",
             "name":"거제2차현대홈타운",
-            "search_code":8914,
+            "search_code":"8914",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":70.92,
@@ -589,7 +589,7 @@
             "index":41,
             "sort":"education",
             "name":"아시아드코오롱하늘채",
-            "search_code":114024,
+            "search_code":"114024",
             "apt_type":"아파트",
             "apt_year":6.0,
             "value_score":70.7368571429,
@@ -602,7 +602,7 @@
             "index":42,
             "sort":"education",
             "name":"쌍용1차",
-            "search_code":8913,
+            "search_code":"8913",
             "apt_type":"아파트",
             "apt_year":23.0,
             "value_score":70.4078503231,
@@ -614,8 +614,21 @@
         {
             "index":43,
             "sort":"education",
+            "name":"거제역동원로얄듀크",
+            "search_code":"dpzde",
+            "apt_type":"분양(예정)",
+            "apt_year":-2.0,
+            "value_score":67.32,
+            "region":"부산시 연제구",
+            "region_code":"Busan",
+            "sub_region_code":"2647000000_Busan_Yeonje",
+            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
+        },
+        {
+            "index":44,
+            "sort":"education",
             "name":"거제롯데캐슬피렌체",
-            "search_code":26716,
+            "search_code":"26716",
             "apt_type":"아파트",
             "apt_year":14.0,
             "value_score":67.22,
@@ -625,10 +638,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":44,
+            "index":45,
             "sort":"education",
             "name":"월드마크아시아드",
-            "search_code":22769,
+            "search_code":"22769",
             "apt_type":"아파트",
             "apt_year":17.0,
             "value_score":66.3860006319,
@@ -638,10 +651,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":45,
+            "index":46,
             "sort":"education",
             "name":"다뉴브하이타운",
-            "search_code":4409,
+            "search_code":"4409",
             "apt_type":"아파트",
             "apt_year":32.0,
             "value_score":59.32,
@@ -651,10 +664,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":46,
+            "index":47,
             "sort":"education",
             "name":"레이카운티",
-            "search_code":136343,
+            "search_code":"136343",
             "apt_type":"아파트",
             "apt_year":1.0,
             "value_score":58.62,
@@ -664,10 +677,10 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":47,
+            "index":48,
             "sort":"education",
             "name":"거제유림아시아드",
-            "search_code":9713,
+            "search_code":"9713",
             "apt_type":"아파트",
             "apt_year":24.0,
             "value_score":57.8570656603,
@@ -677,26 +690,13 @@
             "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
         },
         {
-            "index":48,
+            "index":49,
             "sort":"education",
             "name":"거제1차현대홈타운",
-            "search_code":8747,
+            "search_code":"8747",
             "apt_type":"아파트",
             "apt_year":24.0,
             "value_score":57.32,
-            "region":"부산시 연제구",
-            "region_code":"Busan",
-            "sub_region_code":"2647000000_Busan_Yeonje",
-            "shorten_url":"https:\/\/www.realrankus.com?cpx=bsyjbh"
-        },
-        {
-            "index":49,
-            "sort":"education",
-            "name":"더샵파크시티",
-            "search_code":105448,
-            "apt_type":"아파트",
-            "apt_year":10.0,
-            "value_score":57.12,
             "region":"부산시 연제구",
             "region_code":"Busan",
             "sub_region_code":"2647000000_Busan_Yeonje",
