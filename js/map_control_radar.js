@@ -240,8 +240,8 @@ function drawCircleOnMap(aptInfo){
         center: center,
         radius: radius,
         strokeColor: colors[index % colors.length],
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
+        strokeOpacity: 0.4,
+        strokeWeight: 1,
         fillColor: colors[index % colors.length],
         fillOpacity: 0.0
       });
@@ -260,7 +260,7 @@ function drawCircleOnMap(aptInfo){
         add_class = "radius_" + radius_str
         new naver.maps.Marker({
           position: pos,
-          map: defaultMap,
+          map: defaultMap,          
           icon: {
             content: `<div class='distance_index ${add_class}'>${radius_str}</div>`,
             anchor: new naver.maps.Point(12, 12)

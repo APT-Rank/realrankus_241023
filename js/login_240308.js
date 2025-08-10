@@ -359,6 +359,7 @@ function showLogin(){
 			btnNaverLogin.click();
 		}
 	});
+	openModal("loginModal")
 }
 
 function setFirebaseID(userEmail, userID, userName, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider){
