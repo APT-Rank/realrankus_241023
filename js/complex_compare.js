@@ -990,7 +990,7 @@ function drawComplex(complexInfo, compareNum){
   }
   $(selectedCompare +  "edu_pSchool_student").html(pSchool_edu_result)
 
-  var mSchool_edu = complexInfo["중학교학업성취도"] + "%";
+  var mSchool_edu = Number(complexInfo["중학교학업성취도"]).toFixed(1) + "%";
   $(selectedCompare +  "edu_mSchool_edu").html(mSchool_edu)
 
   var academy_edu = complexInfo["500m이내학원가"] + "개" + "(총 " + complexInfo["500m이내학원수"] + "개 학원)";
