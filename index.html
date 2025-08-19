@@ -4732,25 +4732,27 @@
     }
 
     function openRadarMap(searchCode) {
-      
+      /*
       if(!login_status){      
         $("#loginModalLabel>.popupTitle").html("로그인 후에 리얼레이더맵을 볼 수 있어요!")
         closeModal("baseModal")
         showLogin()
         return
       }
+      */
 
       // 새 창 열기
       //const radarMapWindow = window.open('./radarMap.html', '_blank');
       if(isMobile){
         $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
-            <br>단지 정보를 불러오고 있어요!</div></div>")
+            <br>주변 환경 정보를 불러오고 있어요!</div></div>")
       }
 
       firebase.database().ref().child("complex_info").child($("#gungu option:selected").val()).child(searchCode).get()
       .then((snapshot) => {
         if(snapshot.exists()){			  
           complex_info = snapshot.val()
+          console.log(complex_info)
           if(complex_info == null){
             alert("불러오기 실패했어요. 다시 시도해 주세요.")
           }

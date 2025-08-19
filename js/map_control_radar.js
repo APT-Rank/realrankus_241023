@@ -1579,9 +1579,17 @@ function createEduMarker(aptData){
   mSchool_arr = aptData["중학교정보"]
 
   for (var k in mSchool_arr){
-    mSchool_name = mSchool_arr[k]['중학교명']
-    coordi_x = mSchool_arr[k]['x']
-    coordi_y = mSchool_arr[k]['y']    
+    if (mSchool_arr.hasOwnProperty('distance')){
+      console.log("AAAAAA")
+      mSchool_name = mSchool_arr['name']
+      coordi_x = mSchool_arr['yx'][1]
+      coordi_y = mSchool_arr['yx'][0]
+    }
+    else{
+      mSchool_name = mSchool_arr[k]['중학교명']
+      coordi_x = mSchool_arr[k]['x']
+      coordi_y = mSchool_arr[k]['y']
+    }
 
     var svg_color = colorCode['중학교']
     var stroke_color = "#FFFFFF"
@@ -1657,6 +1665,10 @@ function createEduMarker(aptData){
     edu_mSchool_markers.push(window["mSchool_marker_" + k])
     edu_mSchool_lines.push(window["mSchool_line" + k])
     all_markers.push(window["mSchool_marker_" + k])
+
+    if (mSchool_arr.hasOwnProperty('distance')){
+      break;
+    }
   }
 
   //updateMarkers(defaultMap, complex_small_markers);
