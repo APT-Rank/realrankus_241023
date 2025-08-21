@@ -230,7 +230,8 @@
             -->
           </div>
 
-          <div id="generate" onClick = "generateMBTIComplex()"></div>
+          <!-- <div id="generate" onClick = "generateMBTIComplex()"></div> -->
+          <div id="generate"></div>
         </div>       
       </div>
 
@@ -497,7 +498,10 @@
     $("#generate").css({"background" : MBTI_color})
 
     $("#mbti_find").html(MBTI_word + "와 어울리는 단지를 찾아볼까요?")
-    $("#generate").html(MBTI_word + "와 어울리는 단지 찾기")    
+    //$("#generate").html(MBTI_word + "와 어울리는 단지 찾기")
+
+    $("#generate").css({"background" : "#ddd"})
+    $("#generate").html("비용 문제로 한시적 중단할게요 ㅠㅠ")
   }
 
   function scrollUp(){
