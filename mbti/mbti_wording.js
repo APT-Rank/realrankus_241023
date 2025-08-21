@@ -855,7 +855,7 @@ var P1 = {
 // 중요: API 키를 클라이언트 측 코드에 직접 노출하는 것은 보안상 매우 위험합니다.
 // 이 방법은 개발 및 테스트 목적으로만 사용하고, 프로덕션 환경에서는 반드시
 // 서버 측에서 API 요청을 처리하고 API 키를 안전하게 관리해야 합니다.
-const API_KEY = 'AIzaSyCjv5qhWqVgwXTR0p1rZskaV2V8YoHluWY'; // 여기에 실제 API 키를 넣으세요
+const LAUNCHK = 'AIzaSyCjv5qhWqVgwXTR0p1rZskaV2V8YoHluWY'; // 여기에 실제 API 키를 넣으세요
 
 async function getGemini(request_prompt) { // 1. async 키워드 추가
   const payload = {
@@ -874,7 +874,7 @@ async function getGemini(request_prompt) { // 1. async 키워드 추가
     // 3. 'contentType' 대신 'headers'에 'Content-Type' 추가
     headers: {
       'Content-Type': 'application/json',
-      'x-goog-api-key': API_KEY, // 4. API 키를 'x-goog-api-key' 헤더로 전달
+      'x-goog-api-key': LAUNCHK, // 4. API 키를 'x-goog-api-key' 헤더로 전달
     },
     // 5. 'payload' 대신 'body' 사용하고, 문자열로 변환
     body: JSON.stringify(payload)
