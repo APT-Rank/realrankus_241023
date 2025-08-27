@@ -1075,6 +1075,11 @@ function return_MoneyFlow_time(obj_val, duration){
 
 function return_MoneyFlow_arr(obj_val, duration){
   console.log(obj_val)
+  //obj_val이 undefined 이면, 빈 배열 반환
+  if(!obj_val){
+    return []
+  }
+
   var arr_val = Object.values(obj_val)
 
   return_arr_val = ""
@@ -1163,41 +1168,41 @@ function show_daily_info(){
 
   mf_housing_trade_all = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_All_NOR'], "5Y" )
   mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], "5Y" )
-  mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "5Y" )
 
+  mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "5Y" )
   //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
   mf_housing_apt_price = mf_housing_apt_price.map( x => {
-    if(x == 0){ x = null }
+    if(x == 0 || x == undefined){ x = null }
     return x
   })
 
   mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "5Y" )
   mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-    if(x == 0){ x = null }
+    if(x == 0 || x == undefined){ x = null }
     return x
   })
 
   mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "5Y" )
   mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-    if(x == 0){ x = null }
+    if(x == 0 || x == undefined){ x = null }
     return x
   })
 
   mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "5Y" )
   mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-    if(x == 0){ x = null }
+    if(x == 0 || x == undefined){ x = null }
     return x
   })
 
   mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "5Y" )
   mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-    if(x == 0){ x = null }
+    if(x == 0 || x == undefined){ x = null }
     return x
   })
 
   mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "5Y" )      
   mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-    if(x == 0){ x = null }
+    if(x == 0 || x == undefined){ x = null }
     return x
   })
 
@@ -3844,37 +3849,37 @@ function redraw_graph(obj, duration){
       
       //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
       mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "1Y" )
       mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "1Y" )
       mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "1Y" )
       mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "1Y" )
       mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "1Y" )      
       mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
@@ -3908,37 +3913,37 @@ function redraw_graph(obj, duration){
 
       //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
       mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "3Y" )
       mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "3Y" )
       mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "3Y" )
       mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "3Y" )
       mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "3Y" )      
       mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })      
 
@@ -3972,37 +3977,37 @@ function redraw_graph(obj, duration){
 
       //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
       mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "5Y" )
       mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "5Y" )
       mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "5Y" )
       mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "5Y" )
       mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "5Y" )      
       mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })      
 
@@ -4036,37 +4041,37 @@ function redraw_graph(obj, duration){
 
       //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
       mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "10Y" )
       mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "10Y" )
       mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "10Y" )
       mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "10Y" )
       mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })
 
       mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "10Y" )      
       mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0){ x = null }
+        if(x == 0 || x == undefined){ x = null }
         return x
       })      
 
