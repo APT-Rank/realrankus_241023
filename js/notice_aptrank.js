@@ -1,3 +1,14 @@
+var notice_202509 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 9월 업데이트 안내 (2025-09-04)</div>"
++"<ul>"
++"<li><div class='notice'>교육통계서비스 기반 2025년 상반기 초등학교 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>은행 정보 업데이트 했습니다. (전국은행연합회 제공)</div></li>"
++"<li><div class='notice'>지역구별 일자리 수 정보 업데이트 했습니다. (통계청 제공)</div></li>"
++"<li><div class='notice'>공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>2025년 8월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202508 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 8월 2차 업데이트 안내 (2025-08-07)</div>"
 +"<ul>"
