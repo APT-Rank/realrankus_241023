@@ -15,7 +15,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"매수자",
@@ -35,15 +35,15 @@
             },
             {
                 "name":"일",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -51,7 +51,7 @@
             },
             {
                 "name":"중개사소재지",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"전용면적",
@@ -59,11 +59,11 @@
             },
             {
                 "name":"층",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"지번",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"아파트여부",
@@ -75,7 +75,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -115,7 +115,7 @@
             },
             {
                 "name":"code",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"y",
@@ -135,7 +135,7 @@
             },
             {
                 "name":"usingArea",
-                "type":"number"
+                "type":"integer"
             },
             {
                 "name":"type",
@@ -152,22 +152,22 @@
             "index":0,
             "동":null,
             "아파트":"동점",
-            "건축년도":1986.0,
+            "건축년도":1986,
             "매수자":"개인",
             "해제사유발생일":null,
             "해제여부":null,
-            "거래금액":"2,100",
-            "일":2.0,
-            "월":9.0,
-            "년":2025.0,
-            "거래유형":"직거래",
-            "중개사소재지":null,
+            "거래금액":"1,450",
+            "일":2,
+            "월":9,
+            "년":2025,
+            "거래유형":"중개거래",
+            "중개사소재지":"강원 태백시",
             "전용면적":39.72,
-            "층":3.0,
-            "지번":74.0,
+            "층":4,
+            "지번":74,
             "아파트여부":"N",
             "등기일자":null,
-            "지역코드":51190.0,
+            "지역코드":51190,
             "매도자":"개인",
             "법정동":"동점동",
             "history_date":[
@@ -869,12 +869,12 @@
                 "2019-12-04",
                 "800"
             ],
-            "code":114915.0,
+            "code":114915,
             "y":37.0964766,
             "x":129.04879,
             "rank_info":"[32.0, 16.0, 25.02455]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbbh015",
-            "usingArea":88.0,
+            "usingArea":88,
             "type":"TRADE"
         }
     ]
