@@ -1860,7 +1860,7 @@ function updateTable(region){
                     }
 
                     if(selectedMonth != "latest_deal"){
-                      addon_html += "<div class='vol_num'>" + deal_vol + "건</div>" 
+                      addon_html += "<div class='vol_num'>" + reg_vol_this_month.toLocaleString() + "건</div>" 
                     }
                     else{
                       addon_html += "<div id='vol_sum' style='border-right: 1px solid #ddd'>"
@@ -1985,7 +1985,7 @@ function updateTable(region){
                         addon_html += "<div class='vol_num'>0건</div>" 
                       }
                       else{
-                        addon_html += "<div class='vol_num'>" + Number(t_vol).toLocaleString() + "건</div>" 
+                        addon_html += "<div class='vol_num'>" + reg_vol_this_month.toLocaleString() + "건</div>" 
                       }
                     }
                     else{
@@ -2435,7 +2435,7 @@ function updateTable(region){
       //updateRegion()
     }
     else{
-      aURL = "https://www.realrankus.com/price" + "?preg=" + go_region + "&psub=" + code
+      aURL = "https://www.realrankus.com/price" + "?preg=" + go_region + "&psub=" + code + "&pmon=" + selectedMonth
       
       //selectedRegion = selectedSubRegion
       //$("#sido").val(go_region).prop("selected", true);
