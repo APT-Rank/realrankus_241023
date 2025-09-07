@@ -44,12 +44,16 @@
             {
                 "name":"deal_count_this_month",
                 "type":"integer"
+            },
+            {
+                "name":"monthly_count",
+                "type":"string"
             }
         ],
         "primaryKey":[
             "index"
         ],
-        "pandas_version":"0.20.0"
+        "pandas_version":"1.4.0"
     },
     "data":[
         {
@@ -1567,7 +1571,8 @@
                 ]
             ],
             "deal_count_prev_month":3,
-            "deal_count_this_month":236
+            "deal_count_this_month":236,
+            "monthly_count":5429
         },
         {
             "index":1,
@@ -1672,7 +1677,8 @@
                 ]
             ],
             "deal_count_prev_month":2,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":107
         },
         {
             "index":2,
@@ -1808,7 +1814,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":319
         },
         {
             "index":3,
@@ -1899,7 +1906,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":101
         },
         {
             "index":4,
@@ -2015,7 +2023,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":11
+            "deal_count_this_month":11,
+            "monthly_count":338
         },
         {
             "index":5,
@@ -2109,7 +2118,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":187
         },
         {
             "index":6,
@@ -2207,7 +2217,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":165
         },
         {
             "index":7,
@@ -2338,7 +2349,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":35
+            "deal_count_this_month":35,
+            "monthly_count":265
         },
         {
             "index":8,
@@ -2428,7 +2440,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":61
         },
         {
             "index":9,
@@ -2540,7 +2553,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":20
+            "deal_count_this_month":20,
+            "monthly_count":401
         },
         {
             "index":10,
@@ -2634,7 +2648,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":152
         },
         {
             "index":11,
@@ -2771,7 +2786,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":357
         },
         {
             "index":12,
@@ -2902,7 +2918,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":13
+            "deal_count_this_month":13,
+            "monthly_count":329
         },
         {
             "index":13,
@@ -3112,7 +3129,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":11
+            "deal_count_this_month":11,
+            "monthly_count":343
         },
         {
             "index":14,
@@ -3246,7 +3264,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":253
         },
         {
             "index":15,
@@ -3358,7 +3377,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":47
         },
         {
             "index":16,
@@ -3521,7 +3541,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":367
         },
         {
             "index":17,
@@ -3697,7 +3718,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":326
         },
         {
             "index":18,
@@ -3817,7 +3839,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":126
         },
         {
             "index":19,
@@ -3907,7 +3930,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":315
         },
         {
             "index":20,
@@ -4144,7 +4168,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":19
+            "deal_count_this_month":19,
+            "monthly_count":371
         },
         {
             "index":21,
@@ -4237,7 +4262,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":38
         },
         {
             "index":22,
@@ -4383,7 +4409,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":192
         },
         {
             "index":23,
@@ -4491,7 +4518,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":37
         },
         {
             "index":24,
@@ -4582,7 +4610,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":85
         },
         {
             "index":25,
@@ -4695,7 +4724,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":147
         },
         {
             "index":26,
@@ -8157,7 +8187,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":499
+            "deal_count_this_month":499,
+            "monthly_count":12258
         },
         {
             "index":27,
@@ -8253,7 +8284,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":19
         },
         {
             "index":28,
@@ -8351,7 +8383,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":404
         },
         {
             "index":29,
@@ -8450,7 +8483,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":181
         },
         {
             "index":30,
@@ -8571,7 +8605,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":273
         },
         {
             "index":31,
@@ -8679,7 +8714,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":54
         },
         {
             "index":32,
@@ -8783,7 +8819,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":379
         },
         {
             "index":33,
@@ -9006,7 +9043,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":242
         },
         {
             "index":34,
@@ -9114,7 +9152,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":146
         },
         {
             "index":35,
@@ -9216,7 +9255,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":211
         },
         {
             "index":36,
@@ -9404,7 +9444,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":19
+            "deal_count_this_month":19,
+            "monthly_count":471
         },
         {
             "index":37,
@@ -9656,7 +9697,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":22
+            "deal_count_this_month":22,
+            "monthly_count":620
         },
         {
             "index":38,
@@ -9751,7 +9793,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":65
         },
         {
             "index":39,
@@ -9864,7 +9907,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":154
         },
         {
             "index":40,
@@ -9950,7 +9994,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":42
         },
         {
             "index":41,
@@ -10053,7 +10098,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":260
         },
         {
             "index":42,
@@ -10183,7 +10229,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":20
+            "deal_count_this_month":20,
+            "monthly_count":485
         },
         {
             "index":43,
@@ -10291,7 +10338,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":104
         },
         {
             "index":44,
@@ -10391,7 +10439,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":132
         },
         {
             "index":45,
@@ -10543,7 +10592,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":15
+            "deal_count_this_month":15,
+            "monthly_count":310
         },
         {
             "index":46,
@@ -10665,7 +10715,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":32
+            "deal_count_this_month":32,
+            "monthly_count":446
         },
         {
             "index":47,
@@ -10760,7 +10811,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":219
         },
         {
             "index":48,
@@ -10875,7 +10927,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":157
         },
         {
             "index":49,
@@ -11092,7 +11145,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":23
+            "deal_count_this_month":23,
+            "monthly_count":474
         },
         {
             "index":50,
@@ -11201,7 +11255,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":218
         },
         {
             "index":51,
@@ -11319,7 +11374,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":132
         },
         {
             "index":52,
@@ -11549,7 +11605,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":262
         },
         {
             "index":53,
@@ -11652,7 +11709,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":13
+            "deal_count_this_month":13,
+            "monthly_count":464
         },
         {
             "index":54,
@@ -11746,7 +11804,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":190
         },
         {
             "index":55,
@@ -11923,7 +11982,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":223
         },
         {
             "index":56,
@@ -12047,7 +12107,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":57
         },
         {
             "index":57,
@@ -12195,7 +12256,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":90
         },
         {
             "index":58,
@@ -12276,7 +12338,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":11
         },
         {
             "index":59,
@@ -12453,7 +12516,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":254
         },
         {
             "index":60,
@@ -12641,7 +12705,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":421
         },
         {
             "index":61,
@@ -12758,7 +12823,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":24
+            "deal_count_this_month":24,
+            "monthly_count":642
         },
         {
             "index":62,
@@ -12955,7 +13021,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":18
+            "deal_count_this_month":18,
+            "monthly_count":263
         },
         {
             "index":63,
@@ -13069,7 +13136,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":246
         },
         {
             "index":64,
@@ -13224,7 +13292,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":451
         },
         {
             "index":65,
@@ -13418,7 +13487,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":158
         },
         {
             "index":66,
@@ -13608,7 +13678,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":17
+            "deal_count_this_month":17,
+            "monthly_count":433
         },
         {
             "index":67,
@@ -13902,7 +13973,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":679
         },
         {
             "index":68,
@@ -14039,7 +14111,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":71
         },
         {
             "index":69,
@@ -14164,7 +14237,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":244
         },
         {
             "index":70,
@@ -14502,7 +14576,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":42
+            "deal_count_this_month":42,
+            "monthly_count":901
         },
         {
             "index":71,
@@ -15078,7 +15153,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":93
+            "deal_count_this_month":93,
+            "monthly_count":2841
         },
         {
             "index":72,
@@ -15174,7 +15250,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":24
         },
         {
             "index":73,
@@ -15312,7 +15389,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":286
         },
         {
             "index":74,
@@ -15405,7 +15483,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":429
         },
         {
             "index":75,
@@ -15504,7 +15583,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":62
         },
         {
             "index":76,
@@ -15626,7 +15706,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":347
         },
         {
             "index":77,
@@ -15762,7 +15843,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":441
         },
         {
             "index":78,
@@ -15955,7 +16037,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":22
+            "deal_count_this_month":22,
+            "monthly_count":608
         },
         {
             "index":79,
@@ -16060,7 +16143,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":487
         },
         {
             "index":80,
@@ -16191,7 +16275,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":18
+            "deal_count_this_month":18,
+            "monthly_count":157
         },
         {
             "index":81,
@@ -16734,7 +16819,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":31
+            "deal_count_this_month":31,
+            "monthly_count":1458
         },
         {
             "index":82,
@@ -16942,7 +17028,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":15
+            "deal_count_this_month":15,
+            "monthly_count":396
         },
         {
             "index":83,
@@ -17086,7 +17173,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":196
         },
         {
             "index":84,
@@ -17225,7 +17313,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":99
         },
         {
             "index":85,
@@ -17403,7 +17492,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":476
         },
         {
             "index":86,
@@ -17546,7 +17636,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":291
         },
         {
             "index":87,
@@ -18428,7 +18519,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":58
+            "deal_count_this_month":58,
+            "monthly_count":2213
         },
         {
             "index":88,
@@ -18518,7 +18610,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":117
         },
         {
             "index":89,
@@ -18717,7 +18810,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":506
         },
         {
             "index":90,
@@ -18935,7 +19029,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":274
         },
         {
             "index":91,
@@ -19123,7 +19218,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":294
         },
         {
             "index":92,
@@ -19314,7 +19410,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":423
         },
         {
             "index":93,
@@ -19410,7 +19507,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":75
         },
         {
             "index":94,
@@ -19623,7 +19721,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":21
+            "deal_count_this_month":21,
+            "monthly_count":357
         },
         {
             "index":95,
@@ -19774,7 +19873,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":166
         },
         {
             "index":96,
@@ -19847,7 +19947,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":1
         },
         {
             "index":97,
@@ -20498,7 +20599,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":46
+            "deal_count_this_month":46,
+            "monthly_count":1533
         },
         {
             "index":98,
@@ -20670,7 +20772,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":149
         },
         {
             "index":99,
@@ -20833,7 +20936,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":176
         },
         {
             "index":100,
@@ -21008,7 +21112,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":12
+            "deal_count_this_month":12,
+            "monthly_count":560
         },
         {
             "index":101,
@@ -21255,7 +21360,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":17
+            "deal_count_this_month":17,
+            "monthly_count":447
         },
         {
             "index":102,
@@ -21417,7 +21523,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":201
         },
         {
             "index":103,
@@ -22183,7 +22290,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":77
+            "deal_count_this_month":77,
+            "monthly_count":2626
         },
         {
             "index":104,
@@ -22281,7 +22389,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":165
         },
         {
             "index":105,
@@ -22395,7 +22504,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":125
         },
         {
             "index":106,
@@ -22556,7 +22666,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":138
         },
         {
             "index":107,
@@ -22665,7 +22776,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":214
         },
         {
             "index":108,
@@ -22753,7 +22865,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":61
         },
         {
             "index":109,
@@ -22880,7 +22993,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":13
+            "deal_count_this_month":13,
+            "monthly_count":274
         },
         {
             "index":110,
@@ -23006,7 +23120,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":307
         },
         {
             "index":111,
@@ -23104,7 +23219,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":207
         },
         {
             "index":112,
@@ -23209,7 +23325,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":152
         },
         {
             "index":113,
@@ -23332,7 +23449,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":204
         },
         {
             "index":114,
@@ -23463,7 +23581,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":70
         },
         {
             "index":115,
@@ -23567,7 +23686,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":169
         },
         {
             "index":116,
@@ -23648,7 +23768,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":193
         },
         {
             "index":117,
@@ -23743,7 +23864,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":56
         },
         {
             "index":118,
@@ -23834,7 +23956,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":10
         },
         {
             "index":119,
@@ -23956,7 +24079,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":281
         },
         {
             "index":120,
@@ -24857,7 +24981,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":63
+            "deal_count_this_month":63,
+            "monthly_count":1599
         },
         {
             "index":121,
@@ -25037,7 +25162,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":207
         },
         {
             "index":122,
@@ -25130,7 +25256,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":8
         },
         {
             "index":123,
@@ -25249,7 +25376,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":75
         },
         {
             "index":124,
@@ -25349,7 +25477,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":40
         },
         {
             "index":125,
@@ -25458,7 +25587,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":93
         },
         {
             "index":126,
@@ -25536,7 +25666,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":3
         },
         {
             "index":127,
@@ -25649,7 +25780,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":28
         },
         {
             "index":128,
@@ -25732,7 +25864,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":23
         },
         {
             "index":129,
@@ -25941,7 +26074,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":615
         },
         {
             "index":130,
@@ -26029,7 +26163,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":7
         },
         {
             "index":131,
@@ -26134,7 +26269,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":16
         },
         {
             "index":132,
@@ -26225,7 +26361,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":6
         },
         {
             "index":133,
@@ -26417,7 +26554,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":313
         },
         {
             "index":134,
@@ -26506,7 +26644,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":58
         },
         {
             "index":135,
@@ -26633,7 +26772,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":47
         },
         {
             "index":136,
@@ -26728,7 +26868,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":33
         },
         {
             "index":137,
@@ -26811,7 +26952,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":5
         },
         {
             "index":138,
@@ -26904,7 +27046,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":22
         },
         {
             "index":139,
@@ -28473,7 +28616,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":94
+            "deal_count_this_month":94,
+            "monthly_count":3186
         },
         {
             "index":140,
@@ -28654,7 +28798,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":216
         },
         {
             "index":141,
@@ -28769,7 +28914,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":35
         },
         {
             "index":142,
@@ -28862,7 +29008,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":43
         },
         {
             "index":143,
@@ -29136,7 +29283,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":23
+            "deal_count_this_month":23,
+            "monthly_count":656
         },
         {
             "index":144,
@@ -29224,7 +29372,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":5
         },
         {
             "index":145,
@@ -29325,7 +29474,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":57
         },
         {
             "index":146,
@@ -29512,7 +29662,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":116
         },
         {
             "index":147,
@@ -29590,7 +29741,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":2
         },
         {
             "index":148,
@@ -29783,7 +29935,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":407
         },
         {
             "index":149,
@@ -29861,7 +30014,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":4
         },
         {
             "index":150,
@@ -30105,7 +30259,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":17
+            "deal_count_this_month":17,
+            "monthly_count":367
         },
         {
             "index":151,
@@ -30213,7 +30368,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":21
         },
         {
             "index":152,
@@ -30323,7 +30479,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":137
         },
         {
             "index":153,
@@ -30458,7 +30615,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":186
         },
         {
             "index":154,
@@ -30647,7 +30805,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":11
+            "deal_count_this_month":11,
+            "monthly_count":368
         },
         {
             "index":155,
@@ -30807,7 +30966,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":125
         },
         {
             "index":156,
@@ -30989,7 +31149,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":13
+            "deal_count_this_month":13,
+            "monthly_count":271
         },
         {
             "index":157,
@@ -31119,7 +31280,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":108
         },
         {
             "index":158,
@@ -31207,7 +31369,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":8
         },
         {
             "index":159,
@@ -31302,7 +31465,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":44
         },
         {
             "index":160,
@@ -31380,7 +31544,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":5
         },
         {
             "index":161,
@@ -31458,7 +31623,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":5
         },
         {
             "index":162,
@@ -32843,7 +33009,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":100
+            "deal_count_this_month":100,
+            "monthly_count":2049
         },
         {
             "index":163,
@@ -33092,7 +33259,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":227
         },
         {
             "index":164,
@@ -33302,7 +33470,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":219
         },
         {
             "index":165,
@@ -33380,7 +33549,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":8
         },
         {
             "index":166,
@@ -33656,7 +33826,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":34
+            "deal_count_this_month":34,
+            "monthly_count":458
         },
         {
             "index":167,
@@ -33813,7 +33984,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":139
         },
         {
             "index":168,
@@ -33903,7 +34075,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":19
         },
         {
             "index":169,
@@ -33976,7 +34149,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":5
         },
         {
             "index":170,
@@ -34079,7 +34253,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":37
         },
         {
             "index":171,
@@ -34157,7 +34332,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":3
         },
         {
             "index":172,
@@ -34300,7 +34476,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":108
         },
         {
             "index":173,
@@ -34376,7 +34553,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":3
         },
         {
             "index":174,
@@ -34449,7 +34627,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":1
         },
         {
             "index":175,
@@ -34555,7 +34734,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":73
         },
         {
             "index":176,
@@ -34664,7 +34844,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":77
         },
         {
             "index":177,
@@ -34754,7 +34935,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":29
         },
         {
             "index":178,
@@ -34867,7 +35049,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":15
         },
         {
             "index":179,
@@ -34945,7 +35128,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":2
         },
         {
             "index":180,
@@ -35031,7 +35215,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":8
         },
         {
             "index":181,
@@ -35100,7 +35285,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":0
         },
         {
             "index":182,
@@ -35216,7 +35402,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":92
         },
         {
             "index":183,
@@ -35431,7 +35618,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":225
         },
         {
             "index":184,
@@ -35644,7 +35832,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":11
+            "deal_count_this_month":11,
+            "monthly_count":301
         },
         {
             "index":185,
@@ -35778,7 +35967,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":1398
         },
         {
             "index":186,
@@ -35912,7 +36102,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":1398
         },
         {
             "index":187,
@@ -36426,7 +36617,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":83
+            "deal_count_this_month":83,
+            "monthly_count":1579
         },
         {
             "index":188,
@@ -36566,7 +36758,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":25
+            "deal_count_this_month":25,
+            "monthly_count":583
         },
         {
             "index":189,
@@ -36678,7 +36871,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":188
         },
         {
             "index":190,
@@ -36812,7 +37006,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":20
+            "deal_count_this_month":20,
+            "monthly_count":328
         },
         {
             "index":191,
@@ -37028,7 +37223,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":252
         },
         {
             "index":192,
@@ -37208,7 +37404,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":16
+            "deal_count_this_month":16,
+            "monthly_count":228
         },
         {
             "index":193,
@@ -37988,7 +38185,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":69
+            "deal_count_this_month":69,
+            "monthly_count":1372
         },
         {
             "index":194,
@@ -38076,7 +38274,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":4
         },
         {
             "index":195,
@@ -38169,7 +38368,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":21
         },
         {
             "index":196,
@@ -38252,7 +38452,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":4
         },
         {
             "index":197,
@@ -38400,7 +38601,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":10
+            "deal_count_this_month":10,
+            "monthly_count":181
         },
         {
             "index":198,
@@ -38473,7 +38675,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":1
         },
         {
             "index":199,
@@ -38623,7 +38826,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":120
         },
         {
             "index":200,
@@ -38706,7 +38910,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":7
         },
         {
             "index":201,
@@ -38832,7 +39037,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":20
+            "deal_count_this_month":20,
+            "monthly_count":230
         },
         {
             "index":202,
@@ -38933,7 +39139,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":131
         },
         {
             "index":203,
@@ -39006,7 +39213,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":4
         },
         {
             "index":204,
@@ -39216,7 +39424,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":13
+            "deal_count_this_month":13,
+            "monthly_count":348
         },
         {
             "index":205,
@@ -39347,7 +39556,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":178
         },
         {
             "index":206,
@@ -39445,7 +39655,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":18
         },
         {
             "index":207,
@@ -39536,7 +39747,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":43
         },
         {
             "index":208,
@@ -39614,7 +39826,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":4
         },
         {
             "index":209,
@@ -39707,7 +39920,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":14
         },
         {
             "index":210,
@@ -39785,7 +39999,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":12
         },
         {
             "index":211,
@@ -39858,7 +40073,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":3
         },
         {
             "index":212,
@@ -39927,7 +40143,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":0
         },
         {
             "index":213,
@@ -40017,7 +40234,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":14
         },
         {
             "index":214,
@@ -40121,7 +40339,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":35
         },
         {
             "index":215,
@@ -40967,7 +41186,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":68
+            "deal_count_this_month":68,
+            "monthly_count":1897
         },
         {
             "index":216,
@@ -41055,7 +41275,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":16
         },
         {
             "index":217,
@@ -41275,7 +41496,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":13
+            "deal_count_this_month":13,
+            "monthly_count":302
         },
         {
             "index":218,
@@ -41386,7 +41608,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":31
         },
         {
             "index":219,
@@ -41521,7 +41744,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":37
         },
         {
             "index":220,
@@ -41604,7 +41828,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":3
         },
         {
             "index":221,
@@ -41689,7 +41914,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":22
         },
         {
             "index":222,
@@ -41767,7 +41993,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":3
         },
         {
             "index":223,
@@ -41884,7 +42111,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":116
         },
         {
             "index":224,
@@ -42047,7 +42275,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":9
+            "deal_count_this_month":9,
+            "monthly_count":254
         },
         {
             "index":225,
@@ -42125,7 +42354,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":12
         },
         {
             "index":226,
@@ -42198,7 +42428,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":1
         },
         {
             "index":227,
@@ -42386,7 +42617,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":11
+            "deal_count_this_month":11,
+            "monthly_count":477
         },
         {
             "index":228,
@@ -42572,7 +42804,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":23
+            "deal_count_this_month":23,
+            "monthly_count":555
         },
         {
             "index":229,
@@ -42685,7 +42918,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":67
         },
         {
             "index":230,
@@ -42758,7 +42992,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":1
         },
         {
             "index":231,
@@ -43056,7 +43291,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":11
+            "deal_count_this_month":11,
+            "monthly_count":252
         },
         {
             "index":232,
@@ -43282,7 +43518,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":8
+            "deal_count_this_month":8,
+            "monthly_count":150
         },
         {
             "index":233,
@@ -43421,7 +43658,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":102
         },
         {
             "index":234,
@@ -44619,7 +44857,8 @@
                 ]
             ],
             "deal_count_prev_month":3,
-            "deal_count_this_month":73
+            "deal_count_this_month":73,
+            "monthly_count":2531
         },
         {
             "index":235,
@@ -44700,7 +44939,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":68
         },
         {
             "index":236,
@@ -44804,7 +45044,8 @@
                 ]
             ],
             "deal_count_prev_month":2,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":86
         },
         {
             "index":237,
@@ -44899,7 +45140,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":21
         },
         {
             "index":238,
@@ -45032,7 +45274,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":83
         },
         {
             "index":239,
@@ -45224,7 +45467,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":186
         },
         {
             "index":240,
@@ -45329,7 +45573,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":63
         },
         {
             "index":241,
@@ -45425,7 +45670,8 @@
                 ]
             ],
             "deal_count_prev_month":1,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":18
         },
         {
             "index":242,
@@ -45545,7 +45791,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":207
         },
         {
             "index":243,
@@ -45645,7 +45892,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":12
         },
         {
             "index":244,
@@ -45942,7 +46190,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":515
         },
         {
             "index":245,
@@ -46100,7 +46349,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":69
         },
         {
             "index":246,
@@ -46319,7 +46569,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":15
+            "deal_count_this_month":15,
+            "monthly_count":335
         },
         {
             "index":247,
@@ -46547,7 +46798,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":727
         },
         {
             "index":248,
@@ -46620,7 +46872,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":1
         },
         {
             "index":249,
@@ -46703,7 +46956,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":26
         },
         {
             "index":250,
@@ -46826,7 +47080,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":114
         },
         {
             "index":251,
@@ -47790,7 +48045,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":100
+            "deal_count_this_month":100,
+            "monthly_count":1971
         },
         {
             "index":252,
@@ -47862,7 +48118,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":0
         },
         {
             "index":253,
@@ -47950,7 +48207,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":12
         },
         {
             "index":254,
@@ -48045,7 +48303,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":2
+            "deal_count_this_month":2,
+            "monthly_count":18
         },
         {
             "index":255,
@@ -48128,7 +48387,8 @@
 
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":0
+            "deal_count_this_month":0,
+            "monthly_count":24
         },
         {
             "index":256,
@@ -48234,7 +48494,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":1
+            "deal_count_this_month":1,
+            "monthly_count":30
         },
         {
             "index":257,
@@ -48412,7 +48673,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":6
+            "deal_count_this_month":6,
+            "monthly_count":125
         },
         {
             "index":258,
@@ -48564,7 +48826,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":5
+            "deal_count_this_month":5,
+            "monthly_count":147
         },
         {
             "index":259,
@@ -48668,7 +48931,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":4
+            "deal_count_this_month":4,
+            "monthly_count":43
         },
         {
             "index":260,
@@ -48803,7 +49067,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":3
+            "deal_count_this_month":3,
+            "monthly_count":75
         },
         {
             "index":261,
@@ -48959,7 +49224,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":14
+            "deal_count_this_month":14,
+            "monthly_count":276
         },
         {
             "index":262,
@@ -49105,7 +49371,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":15
+            "deal_count_this_month":15,
+            "monthly_count":301
         },
         {
             "index":263,
@@ -49258,7 +49525,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":7
+            "deal_count_this_month":7,
+            "monthly_count":222
         },
         {
             "index":264,
@@ -49443,7 +49711,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":27
+            "deal_count_this_month":27,
+            "monthly_count":496
         },
         {
             "index":265,
@@ -49628,7 +49897,8 @@
                 ]
             ],
             "deal_count_prev_month":0,
-            "deal_count_this_month":15
+            "deal_count_this_month":15,
+            "monthly_count":202
         }
     ]
 }
