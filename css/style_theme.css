@@ -406,7 +406,15 @@
     padding-top: 3px;
     margin-bottom: 5px;
     background: #f7f7f7;
-  }  
+  }
+  .apt_grade{
+    font-size: 0.85em;
+    width: 25px;
+    margin-right: 5px;
+    border-radius: 3px;
+    text-align: center;
+    color: #fff;
+  }
   .apt_address{
     font-size: 0.7em;
     color: gray;
@@ -416,8 +424,10 @@
     color: gray;
   }  
   .apt_name, .searched_apt_name{
+    display: flex;
     font-size: 0.85em;
     font-weight: bold;
+    align-items: baseline;
   }
   .colorTxt{    
     font-weight: 600;
@@ -426,6 +436,7 @@
   .aptYear{
     font-size: 0.65em;
     font-weight: 600;
+    margin-left: 3px;
     color: gray
   }
   .apt_info, .searched_apt_info{

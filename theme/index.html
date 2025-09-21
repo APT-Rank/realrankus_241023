@@ -897,6 +897,21 @@
       var coord_x = listData.data[i]["x"]
       var rank_value_score = listData.data[i]["가치 총점"]
       var sURL = listData.data[i]["sURL"]
+      var apt_grade = setGrade(rank_value_score)
+      var grade_color = ""
+      if(rank_value_score >= 70){
+        grade_color = "#a70000"
+      }
+      else if(rank_value_score < 70 && rank_value_score >= 55){
+        grade_color = "#F72020"
+      }
+      else if(rank_value_score < 55 && rank_value_score >= 40){
+        grade_color = "#F36637"
+      }
+      else{
+        grade_color = "#ED8618"
+      }
+      grade_html = "<span class='apt_grade' style='background-color:" + grade_color + "'>" + apt_grade + "+</span>"
 
       var floor_rate = ""
       if(listData.data[i]["용적률"] == "0"){
@@ -941,7 +956,7 @@
           count += 1;              
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
-          addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+          addon_html += "<div class='apt_name'>" + grade_html + aptName
           addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
           addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -969,7 +984,7 @@
           count += 1;              
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
-          addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+          addon_html += "<div class='apt_name'>" + grade_html + aptName;
           addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
           addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -997,7 +1012,7 @@
           count += 1;              
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
-          addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+          addon_html += "<div class='apt_name'>" + grade_html + aptName;
           addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
           addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -1025,7 +1040,7 @@
           count += 1;              
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
-          addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+          addon_html += "<div class='apt_name'>" + grade_html + aptName;
           addon_html += "<span class='aptYear'>    " + aptYear + "</span></div>";
           addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -1052,7 +1067,7 @@
           count += 1;              
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
-          addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+          addon_html += "<div class='apt_name'>" + grade_html + aptName;
           addon_html += "<span class='themePoint' style = 'font-size: 0.9em'>    " + aptYear + "</span></div>";
           addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -1078,7 +1093,7 @@
             count += 1;              
             addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
             addon_html += "<div class='content'>";
-            addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+            addon_html += "<div class='apt_name'>" + grade_html + aptName;
             addon_html += "<span class='aptYear'><span class='themePoint' style = 'font-size: 1.05em'>    " + aptYear + "</span></div>";
             addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -1109,7 +1124,7 @@
             count += 1;              
             addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
             addon_html += "<div class='content'>";
-            addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName;
+            addon_html += "<div class='apt_name'>" + grade_html + aptName;
             addon_html += "<span class='aptYear'><span class='themePoint'  style = 'font-size: 1.05em'>    " + aptYear + "</span></div>";
             addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
@@ -1275,6 +1290,21 @@
       var gap_ratio = listData.data[i]["등락률"]
       var rank_value_score = listData.data[i]["가치 총점"]
       var sURL = listData.data[i]["sURL"]
+      var apt_grade = setGrade(rank_value_score)
+      var grade_color = ""
+      if(rank_value_score >= 70){
+        grade_color = "#a70000"
+      }
+      else if(rank_value_score < 70 && rank_value_score >= 55){
+        grade_color = "#F72020"
+      }
+      else if(rank_value_score < 55 && rank_value_score >= 40){
+        grade_color = "#F36637"
+      }
+      else{
+        grade_color = "#ED8618"
+      }
+      grade_html = "<span class='apt_grade' style='background-color:" + grade_color + "'>" + apt_grade + "</span>"
 
       if(apt_type == "APT"){        
         aptYear = buildDate + " (" + aptDuration + "년차)"        
@@ -1292,7 +1322,7 @@
         addon_html += "<div class='themeListBox'>";
         addon_html += "<div class='content' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
         addon_html += "<div>";
-          addon_html += "<div class='apt_name'>" + "[" + setGrade(rank_value_score) + "] " + aptName + "</div>";
+          addon_html += "<div class='apt_name'>" + grade_html + aptName + "</div>";
           addon_html += "<div class='aptYear'>" + aptYear + "</div>";
         addon_html += "</div>";
         addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
@@ -1418,6 +1448,23 @@
       var cPrice_info = listData.data[i]["현재가정보"]
       var gap_price = listData.data[i]["차액"]
       var gap_ratio = listData.data[i]["등락률"]
+      var rank_value_score = listData.data[i]["가치 총점"]
+      var sURL = listData.data[i]["sURL"]
+      var apt_grade = setGrade(rank_value_score)
+      var grade_color = ""
+      if(rank_value_score >= 70){
+        grade_color = "#a70000"
+      }
+      else if(rank_value_score < 70 && rank_value_score >= 55){
+        grade_color = "#F72020"
+      }
+      else if(rank_value_score < 55 && rank_value_score >= 40){
+        grade_color = "#F36637"
+      }
+      else{
+        grade_color = "#ED8618"
+      }
+      grade_html = "<span class='apt_grade' style='background-color:" + grade_color + "'>" + apt_grade + "</span>"
 
       if(apt_type == "APT"){        
         aptYear = buildDate + " (" + aptDuration + "년차)"        
@@ -1436,7 +1483,7 @@
         addon_html += "<div class='content' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")' >";
 
         addon_html += "<div>";
-          addon_html += "<div class='apt_name'>[" + setGrade(rank_value_score) + "] " + aptName + "</div>";
+          addon_html += "<div class='apt_name'>" + grade_html + aptName + "</div>";
           addon_html += "<div class='aptYear'>" + aptYear + "</div>";
         addon_html += "</div>";
         addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
