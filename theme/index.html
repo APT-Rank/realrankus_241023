@@ -757,22 +757,22 @@
 
     if(arr.length == 0){
       if(selectedTheme == "under100M"){
-        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 1억 이하 아파트 단지가 없네요. </div></div>"        
+        detailHtml += "<div class='content'><div class='apt_name_blank' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 1억 이하 아파트 단지가 없네요. </div></div>"        
       }
       if(selectedTheme == "under200M"){
-        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 2억 이하 아파트 단지가 없네요. </div></div>"        
+        detailHtml += "<div class='content'><div class='apt_name_blank' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 2억 이하 아파트 단지가 없네요. </div></div>"        
       }
       if(selectedTheme == "under300M"){
-        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 3억 이하 아파트 단지가 없네요. </div></div>"        
+        detailHtml += "<div class='content'><div class='apt_name_blank' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 3억 이하 아파트 단지가 없네요. </div></div>"        
       }
       if(selectedTheme == "under5floor"){
-        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 5층 이하 아파트 단지가 없네요. </div></div>"        
+        detailHtml += "<div class='content'><div class='apt_name_blank' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 5층 이하 아파트 단지가 없네요. </div></div>"        
       }
       if(selectedTheme == "newApt"){
-        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 분양권 아파트 단지가 없네요. </div></div>"        
+        detailHtml += "<div class='content'><div class='apt_name_blank' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 분양권 아파트 단지가 없네요. </div></div>"        
       }
       if(selectedTheme == "rebuild"){
-        detailHtml += "<div class='content'><div class='apt_name' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 재건축 아파트 단지가 없네요. </div></div>"        
+        detailHtml += "<div class='content'><div class='apt_name_blank' style='text-align:center'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 재건축 아파트 단지가 없네요. </div></div>"        
       }      
     }
     else{      
@@ -1068,7 +1068,7 @@
           addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
           addon_html += "<div class='content'>";
           addon_html += "<div class='apt_name'>" + grade_html + aptName;
-          addon_html += "<span class='themePoint' style = 'font-size: 0.9em'>    " + aptYear + "</span></div>";
+          addon_html += "<span class='themePoint' style = 'font-size: 0.9em; margin-left: 5px;'>    " + aptYear + "</span></div>";
           addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
           if(apt_type == "ABYG"){
@@ -1094,7 +1094,7 @@
             addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
             addon_html += "<div class='content'>";
             addon_html += "<div class='apt_name'>" + grade_html + aptName;
-            addon_html += "<span class='aptYear'><span class='themePoint' style = 'font-size: 1.05em'>    " + aptYear + "</span></div>";
+            addon_html += "<span class='aptYear'><span class='themePoint' style = 'font-size: 1.1em'>    " + aptYear + "</span></div>";
             addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
             if(apt_type == "ABYG" || apt_type == "EBYG"){
@@ -1125,7 +1125,7 @@
             addon_html += "<div class='themeListBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showDetail(" + i + ")'>";
             addon_html += "<div class='content'>";
             addon_html += "<div class='apt_name'>" + grade_html + aptName;
-            addon_html += "<span class='aptYear'><span class='themePoint'  style = 'font-size: 1.05em'>    " + aptYear + "</span></div>";
+            addon_html += "<span class='aptYear'><span class='themePoint'  style = 'font-size: 1.1em'>    " + aptYear + "</span></div>";
             addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / ";
 
             if(apt_type == "ABYG"){
@@ -1173,37 +1173,37 @@
 
     if(count < 1 && type != "tripGuide"){          
       if(type == "under100M"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 1억 이하 아파트 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 1억 이하 아파트 단지가 없네요. </div></div>"
         shareText += "공시가격 1억 이하 아파트 단지가 없네요.\n"
       }
       if(type == "under200M"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 2억 이하 아파트 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 2억 이하 아파트 단지가 없네요. </div></div>"
         shareText += "공시가격 2억 이하 아파트 단지가 없네요.\n"
       }
       if(type == "under300M"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 3억 이하 아파트 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 공시가격 3억 이하 아파트 단지가 없네요. </div></div>"
         shareText += "공시가격 3억 이하 아파트 단지가 없네요.\n"
       }
       if(type == "under5floor"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 5층 이하 아파트 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 5층 이하 아파트 단지가 없네요. </div></div>"
         shareText += "5층 이하 아파트 단지가 없네요.\n"
       }
       if(type == "over30year"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 30년 이상 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 30년 이상 단지가 없네요. </div></div>"
         shareText += "30년 이상 아파트 단지가 없네요.\n"
       }
       if(type == "newApt"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 분양권 아파트 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 분양권 아파트 단지가 없네요. </div></div>"
         shareText += "분양권 아파트 단지가 없네요.\n"
       }
       if(type == "rebuild"){
-        addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 재건축 아파트 단지가 없네요. </div></div>"
+        addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 재건축 아파트 단지가 없네요. </div></div>"
         shareText += "재건축 아파트 단지가 없네요.\n"
       }          
       $('#themeDataList').append(addon_html);         
     }
     if(listData.length == 0 && type == "tripGuide"){          
-      addon_html = "<div class='content'><div class='apt_name' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 아파트 단지가 없네요. </div></div>"
+      addon_html = "<div class='content'><div class='apt_name_blank' style='text-align:center; padding-top: 2em'>" + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + "에는 <br> 아파트 단지가 없네요. </div></div>"
       shareText = "아파트 단지가 없네요.\n"
       $('#themeDataList').append(addon_html);        
     }

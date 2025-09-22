@@ -423,12 +423,16 @@
     font-size: 0.8em;
     color: gray;
   }  
-  .apt_name, .searched_apt_name{
+  .apt_name{
     display: flex;
     font-size: 0.85em;
     font-weight: bold;
     align-items: baseline;
   }
+  .apt_name_blank, .searched_apt_name{    
+    font-size: 0.85em;
+    font-weight: bold;
+  }  
   .colorTxt{    
     font-weight: 600;
     color: #fe4040
