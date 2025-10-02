@@ -163,7 +163,8 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202509" selected>2025년 09월</option>
+              <option value="202510" selected>2025년 10월</option>
+              <option value="202509">2025년 09월</option>
               <option value="202508">2025년 08월</option>
               <option value="202507">2025년 07월</option>
               <option value="202506">2025년 06월</option>
@@ -591,9 +592,9 @@
 
   </body>
   <script>
-    var thisMonth = "202509"; //수정
-    var selectedMonth = "202509"; //수정
-    var DB_Date = "202509_04"; //수정
+    var thisMonth = "202510"; //수정
+    var selectedMonth = "202510"; //수정
+    var DB_Date = "202510_01"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -1055,7 +1056,7 @@
         }
       });
 
-      if ($.cookie("popCookie") != "202509" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202510" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -1172,6 +1173,7 @@
       window.indexedDB.deleteDatabase('202509_01')
       window.indexedDB.deleteDatabase('202509_02')
       window.indexedDB.deleteDatabase('202509_03')
+      window.indexedDB.deleteDatabase('202509_04')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -4643,6 +4645,9 @@
       if (selectedMonth == "202509") {
         detailHtml += notice_202509;
       }
+      if (selectedMonth == "202510") {
+        detailHtml += notice_202510;
+      }
 
       detailHtml += "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'>리얼랭커스란?</div>";
       detailHtml += "<div class='notice'>리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.</div>";
@@ -4692,7 +4697,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202509") {
+      if ($.cookie("popCookie") != "202510") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4700,7 +4705,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202509", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202510", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });

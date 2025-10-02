@@ -105,7 +105,8 @@
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <!-- 수정 -->
-            <option value="202509" selected>2025년 09월</option>
+            <option value="202510" selected>2025년 10월</option>
+            <option value="202509">2025년 09월</option>
             <option value="202508">2025년 08월</option>
             <option value="202507">2025년 07월</option>
             <option value="202506">2025년 06월</option>
@@ -190,7 +191,7 @@
 
 
 <script>
-  var selectedMonth = "202509" //수정
+  var selectedMonth = "202510" //수정
   var thisMonth = selectedMonth //수정
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
@@ -214,18 +215,17 @@
   
   //수정
   var prev_month_update =`
-  [25년 8월 업데이트 요약]
-  - 중학군 정보를 학군 내 중학교 전체 평균 적용
-  - 2025년 1월 1일 제정 공시가격 적용
-  - 병원 정보 업데이트 (건강보험심사평가원 제공)\n
-  `
-  //수정
-  var this_month_update =`
   [25년 9월 업데이트 요약]
   - 은행 정보 업데이트
   - 초등학군 정보 업데이트
   - 공원 정보 업데이트 (공공데이터)
   - 지역구별 일자리 수 정보 업데이트\n
+  `
+  //수정
+  var this_month_update =`
+  [25년 10월 업데이트 요약]
+  - 학원가 정보 업데이트
+  - 상권 정보 업데이트\n
   `
   $(document).ready(function(){
     //document.cookie = "safeCookie1=foo; SameSite=Lax";
