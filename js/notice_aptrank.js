@@ -1,5 +1,5 @@
 var notice_202510 = 
-"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 10월 업데이트 안내 (2025-09-02)</div>"
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 10월 업데이트 안내 (2025-10-02)</div>"
 +"<ul>"
 +"<li><div class='notice'>전국 학원가 정보 업데이트 했습니다.</div></li>"
 +"<li><div class='notice'>전국 상권 정보 업데이트 했습니다.</div></li>"
