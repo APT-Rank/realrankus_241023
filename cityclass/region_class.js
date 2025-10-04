@@ -59,31 +59,45 @@ function change_menu(menu){
     $('#table_area').scrollTop(0)
     $('#table_area').scrollLeft(0)
     $('#exampleModal').modal('show')
-  }  
+  }
+
+  current_zoom = defaultMap.getZoom()
 
   if(menu_name == "menu_select_price"){        
     //drawTable(price_index, sido_list, gungu_list); 
     setTimeout(() => drawTable(price_index, sido_list, gungu_list), 300);
+    removeMarkers()
+    setTimeout(() => drawDataMap_price(region_class.data, current_zoom), 300);
   }
   if(menu_name == "menu_select_balanced"){
     //drawTable(balanced_index, sido_list, gungu_list)
     setTimeout(() => drawTable(balanced_index, sido_list, gungu_list), 300);
+    removeMarkers()
+    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
   }
   if(menu_name == "menu_select_edu"){
     //drawTable(edu_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 300); 
+    setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 300);
+    removeMarkers()
+    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
   }
   if(menu_name == "menu_select_living"){
     //drawTable(living_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(living_index, sido_list, gungu_list), 300); 
+    setTimeout(() => drawTable(living_index, sido_list, gungu_list), 300);
+    removeMarkers()
+    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
   }
   if(menu_name == "menu_select_infra"){
     //drawTable(infra_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 300); 
+    setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 300);
+    removeMarkers()
+    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
   }
   if(menu_name == "menu_select_trans"){
     //drawTable(trans_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 300); 
+    setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 300);
+    removeMarkers()
+    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
   }
 }
 
@@ -630,7 +644,7 @@ function region_search(){
       if(regionName.indexOf(unifiedInput) >= 0){
         searching_count += 1
 
-        var addon_html = "<div class='searchedListBox' onClick='goScroll(" + regionIndex + ")'>";
+        var addon_html = "<div class='searchedListBox' onClick='goPosition(" + regionIndex + ")'>";
         addon_html += "<div class='searched_reg_name'>" + regionName + "</div>"        
         addon_html += "</div>"
 
@@ -658,6 +672,28 @@ function region_search(){
     $(".searched_reg_name").css({'font-size':'0.9em', 'height':'3em', 'line-height':'3em'})
 
   }
+}
+function goPosition(index){
+  if(view_mode == "table"){
+    goScroll(index)
+  }
+  else{
+    goMapPosition(index)
+  }  
+}
+function goMapPosition(index){
+  posY = region_class.data[index]["lat"]
+  posX = region_class.data[index]["lng"]
+
+  var newPosition = new naver.maps.LatLng(posY, posX);
+  defaultMap.setCenter(newPosition)
+  if(isMobile){    
+    defaultMap.panBy(new naver.maps.Point(20, 180))  
+  }
+
+  $('#searchingBox').html("");
+  $('#searchingBox').hide()
+  $('#inputSearch').val("")
 }
 
 function goScroll(index){
@@ -916,8 +952,8 @@ function showCostsum(){
   if(current_selection == "Gyeongsangnamdo"){ cost_data = cost_region_arr[17]; cost_sum = cost_treemap.data[16]['Sum']; cost_delta = cost_treemap.data[16]['Sum_delta'] }
   if(current_selection == "Jejudo"){ cost_data = cost_region_arr[18]; cost_sum = cost_treemap.data[17]['Sum']; cost_delta = cost_treemap.data[17]['Sum_delta'] }
   
-  console.log("scr_width", scr_width)
-  console.log("scr_height", scr_height)
+  //console.log("scr_width", scr_width)
+  //console.log("scr_height", scr_height)
   str_cost_sum = setPrice(Math.round(cost_sum)*100000000)
   abs_cost_delta = Math.abs(cost_delta)
   str_cost_delta = setPrice(Math.round(abs_cost_delta)*100000000)
@@ -963,6 +999,8 @@ function showCostsum(){
 function drawTreeMap(data){
   data_list = []
   region_name_list = []
+
+  console.log(data)
 
   for(var i = 0 ; i < data.length; i++){
     data_list.push(data[i]['Sum'])
@@ -1105,10 +1143,18 @@ function colorFromRaw(ctx, border) {
     return 'transparent';
   }
   var percentage = ctx.raw._data.Percentage;
-  //alpha = (1 + Math.log(percentage * 200)) / 5;
+  var sum_delta = ctx.raw._data.Sum_delta;
+
   var color_r = 179
   var color_g = 19
   var color_b = 19
+
+  //alpha = (1 + Math.log(percentage * 200)) / 5;
+  if(sum_delta < 0){
+    color_r = 19
+    color_g = 19
+    color_b = 179
+  } 
 
   alpha = percentage + 0.7
 

@@ -69,11 +69,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
 
-  <script src="./retion_class.js" type="text/javascript"></script>
+  <script src="./region_class.js" type="text/javascript"></script>  
   <script src="../js/sort.js" type="text/javascript"></script>
   <script src="../js/search.js" type="text/javascript"></script>  
   <script src="../js/share.js" type="text/javascript"></script>
-  <script src="../js/distance.js" type="text/javascript"></script>    
+  <script src="../js/distance.js" type="text/javascript"></script>
+  
+  <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+  <script src="./regionMap_class.js" type="text/javascript"></script>  
 
   <link href="../css/style_common.css" rel="stylesheet"/>
   <link href="./style_class.css" rel="stylesheet"/>
@@ -125,9 +128,56 @@
   <div id="container_m">
     <div id="centerBox_m">
       <!--지도 표시 영역-->
-      <div id="map_area">        
-        <div id="table_area_m">
-          <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'></table>
+      <div id="table_area_m">
+        <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'></table>
+      </div>
+      <div id="map_area">
+        <div id="marker_index">
+          <div id="marker_index_title">상위 퍼센티지</div>
+          <div class="marker_index_list">
+            <div class="marker_color CL01"></div>
+            <div id="marker_index_CL01">0~0.1%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL02"></div>
+            <div id="marker_index_CL02">0.1~0.5%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL03"></div>
+            <div id="marker_index_CL03">0.5~1%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL04"></div>
+            <div id="marker_index_CL04">1~5%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL05"></div>
+            <div id="marker_index_CL05">5~10%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL06"></div>
+            <div id="marker_index_CL06">10~20%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL07"></div>
+            <div id="marker_index_CL07">20~30%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL08"></div>
+            <div id="marker_index_CL08">30~40%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL09"></div>
+            <div id="marker_index_CL09">40~50%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL10"></div>
+            <div id="marker_index_CL10">50~70%</div>
+          </div>
+          <div class="marker_index_list">
+            <div class="marker_color CL11"></div>
+            <div id="marker_index_CL11">70~100%</div>
+          </div>
         </div>
       </div>
       <!--리얼랭커스 연결-->
@@ -213,6 +263,15 @@
         <div class="modal-body" id="loginDetail"></div>
         <div id="loginfooter"></div>
       </div>
+    </div>
+  </div>
+  </div>
+  
+  <!--모바일 지도/리스트 변환 버튼-->
+  <div id="map_table_m" onClick="mapTableModeChange()">
+    <div id="map_table_wraper">
+      <div id="map_table_icon"></div>
+      <div id="map_table_text"></div>
     </div>
   </div>  
   
@@ -302,6 +361,7 @@
     if(isMobile){
       $("#costDetail").css({"padding-left":"3px", "padding-right":"3px"})
       $("#costModal > div > div > div.modal-header").css({"padding-top":"5px", "padding-bottom":"5px"})
+      $("#marker_index").css({"bottom":"200px", "right":"5px", "top":"unset"})
     }
 
     scrollUp()    
@@ -394,6 +454,7 @@
                       //console.log(price_index)
                       setTreeMap()
                       drawTable(price_index, sido_list, gungu_list)
+                      drawMap(region_class.data, sido_list, gungu_list)
                   })
                 })
               })
