@@ -358,14 +358,14 @@
       }
     });
 
-    $("#marker_index").hide()
-    $("#map_table_m").hide()
-
     if(isMobile){
       $("#costDetail").css({"padding-left":"3px", "padding-right":"3px"})
       $("#costModal > div > div > div.modal-header").css({"padding-top":"5px", "padding-bottom":"5px"})
       $("#marker_index").css({"bottom":"25px", "right":"5px", "top":"unset"})
     }
+
+    $("#marker_index").css({"visibility":"hidden"})
+    $("#map_table_m").css({"visibility":"hidden"})
 
     scrollUp()    
     

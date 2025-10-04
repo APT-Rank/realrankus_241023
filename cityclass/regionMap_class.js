@@ -11,9 +11,6 @@ function removeMarkers(){
 }
 
 async function drawMap(region_data, sido_list, gungu_list){
-  $("#marker_index").show()
-  $("#map_table_m").show()
-
   if(isMobile){
     $("#table_area_m").hide()    
   }
@@ -78,6 +75,9 @@ async function drawMap(region_data, sido_list, gungu_list){
   $("#map_table_icon").html("<i class='fa-solid fa-table'></i>")
   $("#map_table_text").html("표 보기")
 
+  $("#marker_index").css({"visibility":"visible"})
+  $("#map_table_m").css({"visibility":"visible"})
+
   naver.maps.Event.addListener(defaultMap, 'idle', function() {
     removeMarkers()
     showHideMarker(current_zoom)
@@ -94,18 +94,7 @@ async function drawMap(region_data, sido_list, gungu_list){
   }
   else{
     drawDataMap(region_data)
-  }
-
-  $("#data_table").append("</tbody>")
-
-  if(isMobile){
-  }
-  else{
-    //$("#exampleModal").modal("hide")
-    setTimeout(() => $("#exampleModal").modal("hide"), 500);
-  }
-  $('#data_table').css({'background':'white'}) 
-  
+  }  
 }
 
 function drawDataMap_price(region_data, zoom){
