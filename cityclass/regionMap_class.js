@@ -11,6 +11,9 @@ function removeMarkers(){
 }
 
 async function drawMap(region_data, sido_list, gungu_list){
+  $("#marker_index").show()
+  $("#map_table_m").show()
+
   if(isMobile){
     $("#table_area_m").hide()    
   }
@@ -23,8 +26,8 @@ async function drawMap(region_data, sido_list, gungu_list){
   origin_yx = new naver.maps.LatLng(coord_y, coord_x);  
 
   if(isMobile){
-    dw = window.innerWidth
-    dh = window.innerHeight
+    dw = window.innerWidth    
+    dh = window.innerHeight - $("#titleBar_theme_m").height() - $("#update_info_m").height() - $("#menu_selector_m").height() - $("#region_search_m").height() - $("#linkToAptrank_bottom").height()- 8
     zoom_control = true
     zoom_level = 13
     minZoom_limit = 7
