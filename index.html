@@ -1016,7 +1016,7 @@
       
 
       $('.modal').on('hidden.bs.modal', function () {
-        const modalId = this.id;
+        const modalId = this.id;        
 
         if(modalId == "baseModal"){
           changeMetaTagToDefault();
@@ -1024,10 +1024,9 @@
           current_apt_name = ""
           removeAnimation()
         }
-        if(modalId == "noticeModal")
-        {
+        if(modalId == "noticeModal"){
           $("#baseModal").css({"z-index" : "1055"})
-          $(".modal-backdrop").css({"z-index" : "1000"})          
+          $(".modal-backdrop").css({"z-index" : "1000"})
         }
         if(modalId == "blogModal"){
           $("#baseModal").css({"z-index" : "1055"})
@@ -1041,13 +1040,12 @@
         if(modalId == "toggleModal1"){
           $("#baseModal").css({"z-index" : "1055"})
           $(".modal-backdrop").css({"z-index" : "1000"})
-        }
+        }        
         // 모달 닫힐 때 스택에서 제거
         const idx = modalStack.lastIndexOf(modalId);
         if (idx !== -1) {
           modalStack.splice(idx, 1);
         }
-
         // 히스토리도 자동으로 맞추기
         if (history.state?.modal === modalId) {
           history.back();
@@ -1075,7 +1073,9 @@
       }
         */
       setBottomMenu()
-      setAppDownloadModal();
+      //if(selectedComplex == ""){
+        setAppDownloadModal();
+      //}      
 
       $("#searchingBox").css({'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height()+39 +$("#linkToAptrank_bottom").height() )})
       $("#searchingBox").hide()

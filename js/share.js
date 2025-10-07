@@ -405,7 +405,7 @@ function closeModal(modalId) {
 
   //modalID가 'appDownloadModal'인 경우, 세션스토리지 저장
   if(modalId === 'appDownloadModal') {
-    sessionStorage.setItem('appDownloadModalShown', 'true');
+    sessionStorage.setItem('appDownloadModalShown', 'true');    
   }
   
   // 모달이 닫혔을 때 스택에서 제거
@@ -919,15 +919,15 @@ function setAppDownloadModal(){
     return
   }
 
-  appDownload_html = `
-      <div class="modal fade" id="appDownloadModal" tabindex="-1" role="dialog" aria-labelledby="appDownloadModalLabel" aria-hidden="true">
+  appDownload_html = `      
+      <div class="modal fade" id="appDownloadModal" tabindex="-1" role="dialog" aria-labelledby="appDownloadModalLabel" aria-hidden="true" style="z-index: 1100;">      
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content" id="appDownloadModaloutline">
           <div class="modal-body" id="appDownloadModalBody">
             <div><img src="https://www.realrankus.com/apt-rank-152x152.png" width="70px" style="border-radius: 10px;"></div>
             <div id="appDownloadModalDescription">리얼랭커스 앱을 설치하시면,<br>더 넓은 화면으로 볼 수 있어요!
             <br><span style='font-size: 0.75em; color: #999;'>(앱 크기가 5메가도 안 돼요!)</span></div>            
-            <div class="app-download-link" onClick="openOuterLink('${appDownloadLink}')">앱 설치하기</div>
+            <div class="app-download-link" id="appDownloadLink" onClick="openOuterLink('${appDownloadLink}')">앱 설치하기</div>
             <div id="appDownloadModalCancel" onClick="closeModal('appDownloadModal')">괜찮아요, 모바일 웹으로 볼게요</div>
           </div>
         </div>
@@ -935,9 +935,15 @@ function setAppDownloadModal(){
     </div>
   `
   
-  $('body').append(appDownload_html)
-  $("#appDownloadModaloutline").css({'bottom': (-1)*window.innerHeight/3.2})
-  openModal('appDownloadModal')  
+  $('body').append(appDownload_html)  
+  $("#appDownloadModaloutline").css({'bottom': (-1)*window.innerHeight/3})
+  //350ms 후에 모달이 올라오도록 설정
+  setTimeout(function() {
+    openModal("appDownloadModal")
+    backdrop = $('#appDownloadModal').next('.modal-backdrop')
+    backdrop.css({"z-index" : "1090"})
+  }, 350);
+  //$(".modal-backdrop").css({"z-index" : "1090"})
 }
 
 function setOffcanvasMenu(){  
