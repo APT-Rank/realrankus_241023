@@ -925,7 +925,8 @@ function setAppDownloadModal(){
         <div class="modal-content" id="appDownloadModaloutline">
           <div class="modal-body" id="appDownloadModalBody">
             <div><img src="./apt-rank-152x152.png" width="70px" style="border-radius: 10px;"></div>
-            <div id="appDownloadModalDescription">리얼랭커스 앱을 설치하시면,<br>더 넓은 화면으로 볼 수 있어요!</div>
+            <div id="appDownloadModalDescription">리얼랭커스 앱을 설치하시면,<br>더 넓은 화면으로 볼 수 있어요!
+            <br><span style='font-size: 0.75em; color: #999;'>(앱 크기가 5메가도 안 돼요!)</span></div>            
             <div class="app-download-link" onClick="openOuterLink('${appDownloadLink}')">앱 설치하기</div>
             <div id="appDownloadModalCancel" onClick="closeModal('appDownloadModal')">괜찮아요, 모바일 웹으로 볼게요</div>
           </div>
