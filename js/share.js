@@ -402,6 +402,11 @@ function openModal(modalId) {
 
 function closeModal(modalId) {
   $(`#${modalId}`).modal('hide');
+
+  //modalID가 'appDownloadModal'인 경우, 세션스토리지 저장
+  if(modalId === 'appDownloadModal') {
+    sessionStorage.setItem('appDownloadModalShown', 'true');
+  }
   
   // 모달이 닫혔을 때 스택에서 제거
   const idx = modalStack.lastIndexOf(modalId);
@@ -897,6 +902,43 @@ function setupBottomMenu(currentMenu){
   }
 }
 
+function setAppDownloadModal(){
+  appDownloadLink = ""
+  if(connectionOS == "iOS" && connectionWebApp == "Web"){
+    appDownloadLink = "https://apps.apple.com/kr/app/%EB%A6%AC%EC%96%BC%EB%9E%AD%EC%BB%A4%EC%8A%A4/id6448044104"    
+  }
+  else if(connectionOS == "Android" && connectionWebApp == "Web"){
+    appDownloadLink = "https://play.google.com/store/apps/details?id=com.aptrank.app"
+  }
+  else{
+    return
+  }
+
+  //세션스토리지에 앱다운로드 모달을 띄운 기록이 있으면 띄우지 않음
+  if(sessionStorage.getItem('appDownloadModalShown')) {
+    return
+  }
+
+  appDownload_html = `
+      <div class="modal fade" id="appDownloadModal" tabindex="-1" role="dialog" aria-labelledby="appDownloadModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="appDownloadModaloutline">
+          <div class="modal-body" id="appDownloadModalBody">
+            <div><img src="./apt-rank-152x152.png" width="70px" style="border-radius: 10px;"></div>
+            <div id="appDownloadModalDescription">리얼랭커스 앱을 설치하시면,<br>더 넓은 화면으로 볼 수 있어요!</div>
+            <div class="app-download-link" onClick="openOuterLink('${appDownloadLink}')">앱 설치하기</div>
+            <div id="appDownloadModalCancel" onClick="closeModal('appDownloadModal')">괜찮아요, 모바일 웹으로 볼게요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+  
+  $('body').append(appDownload_html)
+  $("#appDownloadModaloutline").css({'bottom': (-1)*window.innerHeight/3.2})
+  openModal('appDownloadModal')  
+}
+
 function setOffcanvasMenu(){  
   if(isMobile == false){       
     $('.offcanvas').css({'width' : '400px'}) //offcanvas    
@@ -1030,9 +1072,21 @@ function setOffcanvasMenu(){
           <div class="offcanvas_footer_icon"><i class="fa-brands fa-facebook"></i></div>
           <div id="offcanvas_footer5" onClick="openOuterLink('https://www.facebook.com/profile.php?id=61575248181914')">페이스북</div>
         </div>
-
-        <div id="offcanvas_footer">
-        </div>
+  `
+  offcanvas_android_app_download_html = `
+    <div id="offcanvas_app_download">
+      <div class="offcanvas_footer_icon"><i class="fa-brands fa-google-play"></i></div>
+      <div id="offcanvas_footer6" onClick="openOuterLink('https://play.google.com/store/apps/details?id=com.aptrank.app')">앱 다운로드</div>
+    </div>
+  `
+  offcanvas_iOS_app_download_html = `
+    <div id="offcanvas_app_download">
+      <div class="offcanvas_footer_icon"><i class="fa-brands fa-app-store-ios"></i></i></div>
+      <div id="offcanvas_footer7" onClick="openOuterLink('https://apps.apple.com/kr/app/%EB%A6%AC%EC%96%BC%EB%9E%AD%EC%BB%A4%EC%8A%A4/id6448044104')">앱 다운로드</div>
+    </div>
+  `
+  offcanvas_footer_html = `
+    <div id="offcanvas_footer"></div>
   `
 
   offcanvas_info_html = `
@@ -1099,6 +1153,16 @@ function setOffcanvasMenu(){
   `  
   $(".offcanvas-body").html(offcanvas_html)
   //$(".offcanvas-body").append(offcanvas_info_html)
+  //connectionOS가 "android"이고 connectionWebApp가 "web"이면 구글 플레이스토어 링크 표시
+  if(connectionOS == "android" && connectionWebApp == "web"){
+    $(".offcanvas-body").append(offcanvas_android_app_download_html)
+  }
+  if(connectionOS == "iOS" && connectionWebApp == "web"){
+    $(".offcanvas-body").append(offcanvas_iOS_app_download_html)
+  }
+
+  $(".offcanvas-body").append(offcanvas_footer_html)  
+
   $(".offcanvas-body").append(offcanvas_info_html_eng)
   setupOffcanvas(currentMenu)
 }

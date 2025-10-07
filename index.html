@@ -765,8 +765,6 @@
         initSorting();
       }
 
-      //aaaa al 999
-
       if (urlParams.has("cpx")) {
         infoText = urlParams.get("cpx")
         region_code = infoText.substr(0, 4)
@@ -870,7 +868,7 @@
                 show_up_complexs = []
                 show_up_complexs = defineMarkerList(nearby_region)
 
-                current_zoom = defaultMap.getZoom()              
+                current_zoom = defaultMap.getZoom()                
 
                 showHideMarker(current_zoom)
                 $("#pageLoadingBack").remove()
@@ -934,7 +932,7 @@
                 showHideMarker(current_zoom)
                 $("#pageLoadingBack").remove()
                 optionChange(selectedSubRegion, selectedRegion);
-                updateRegion();
+                updateRegion();                
               })          
           }          
         }
@@ -1077,6 +1075,7 @@
       }
         */
       setBottomMenu()
+      setAppDownloadModal();
 
       $("#searchingBox").css({'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height()+39 +$("#linkToAptrank_bottom").height() )})
       $("#searchingBox").hide()

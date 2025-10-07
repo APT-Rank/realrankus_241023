@@ -51,7 +51,7 @@
 .offcanvas_sub_menu_description{
   font-size: 0.7em;    
 }
-#offcanvas_footer, #offcanvas_footer_link, #offcanvas_footer_policy{
+#offcanvas_footer, #offcanvas_footer_link, #offcanvas_footer_policy, #offcanvas_app_download{
   padding: 5px;
   font-size: 0.85em;
   font-weight: 600;
@@ -63,7 +63,34 @@
 .offcanvas_footer_icon{
   text-align: center;
 }
-
+#appDownloadModalBody{
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  row-gap: 15px;
+  text-align: center;
+}
+#appDownloadModalDescription{
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.app-download-link{
+  background-color: #e31939;
+  color: white;  
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  width: 200px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 30px;
+  font-weight: 600;
+}
+#appDownloadModalCancel{
+  font-size: 0.9em;
+  color: #666;
+  text-decoration: underline;
+}
 #offcanvas_company, #offcanvas_company_long{
   font-size: 0.75em;
   font-weight: 600;
