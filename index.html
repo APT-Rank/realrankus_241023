@@ -2921,17 +2921,11 @@
             if (price_per_array[k] == "nan" || price_per_array[k] == 0) {
               detailHtml += "<td>" + "---" + "<br>";
             } else {
+              price_per = Math.floor(price_per_array[k])
               if (compare_date > start_date) {
-                detailHtml +=
-                  "<td><span style='color:#fe4040; font-weight:600'>" +
-                  Number(price_per_array[k]).toLocaleString() +
-                  "만원" +
-                  "</span><br>";
+                detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + price_per.toLocaleString() + "만원" + "</span><br>";
               } else {
-                detailHtml +=
-                  "<td>" +
-                  Number(price_per_array[k]).toLocaleString() +
-                  "만원<br>";
+                detailHtml += "<td>" + price_per.toLocaleString() + "만원<br>";
               }
             }
 
