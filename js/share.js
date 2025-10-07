@@ -1154,11 +1154,11 @@ function setOffcanvasMenu(){
   `  
   $(".offcanvas-body").html(offcanvas_html)
   //$(".offcanvas-body").append(offcanvas_info_html)
-  //connectionOS가 "android"이고 connectionWebApp가 "web"이면 구글 플레이스토어 링크 표시
-  if(connectionOS == "android" && connectionWebApp == "web"){
+  //connectionOS가 "Android"이고 connectionWebApp가 "Web"이면 구글 플레이스토어 링크 표시
+  if(connectionOS == "Android" && connectionWebApp == "Web"){
     $(".offcanvas-body").append(offcanvas_android_app_download_html)
   }
-  if(connectionOS == "iOS" && connectionWebApp == "web"){
+  if(connectionOS == "iOS" && connectionWebApp == "Web"){
     $(".offcanvas-body").append(offcanvas_iOS_app_download_html)
   }
 
