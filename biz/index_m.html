@@ -512,7 +512,7 @@
           $('#PIR_recent_value').html("정보없음")
         }
         else{
-          $('#PIR_recent_value').html(PIR_recent[found_index] + "년")
+          $('#PIR_recent_value').html(PIR_recent[found_index].toFixed(2) + "년")
         }
         
         
@@ -1413,7 +1413,7 @@ function ListUp(listData){
                 if(regu_0 == '적용'){ regu_text_0 = "<span style='color:#c70e0e; font-weight:600'> 투기과열 </span>" } else{ regu_text_0 = "투기과열" }
                 if(regu_1 == '적용'){ regu_text_1 = "<span style='color:#c70e0e; font-weight:600'> 조정대상 </span>" } else{ regu_text_1 = "조정대상" }
                 if(regu_2 == '적용'){ regu_text_2 = "<span style='color:#000000; '> 분양가상한제 </span>" } else{ regu_text_2 = "분양가상한제" }
-                if(regu_3 == '적용'){ regu_text_3 = "<span style='color:#000000; '> 고분양가심사 </span>" } else{ regu_text_3 = "고분양가심사" }
+                if(regu_3 == '적용'){ regu_text_3 = "<span style='color:#000000; '> 토지거래허가 </span>" } else{ regu_text_3 = "토지거래허가" }
 
                 addon_html += "<div class='table_top'>" + regu_text_0 + "</div>" + "<div class='table_top'>" + regu_text_1 + "</div>"
                               + "<div class='table_top'>" + regu_text_2 + "</div>" + "<div class='table_top'>" + regu_text_3 + "</div>"                
