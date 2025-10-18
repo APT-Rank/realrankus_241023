@@ -3124,50 +3124,32 @@
 
       if (UserAgent.indexOf("inApp") > -1) {
         if (apt_type == "분양(예정)") {
-          footerHtml +=
-            "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" +
-            searchCode +
-            "\")'>호갱노노 보기</button></div>";
+          footerHtml += "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>";
         } else {
-          footerHtml +=
-            "<div><button type='button' class='goLink' onclick='openNaver(" +
-            searchCode +
-            ")'>네이버 부동산 보기</button></div>";
+          footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + searchCode + ")'>네이버 부동산 보기</button></div>";
         }
 
         if (checkMobile() == "ios") {
-          footerHtml +=
-            "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+          footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
         } else {
-          footerHtml +=
-            "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+          footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
         }
 
-        footerHtml +=
-          "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
+        footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
       } else {
         if (apt_type == "분양(예정)") {
-          footerHtml +=
-            "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" +
-            searchCode +
-            "\")'>호갱노노 보기</button></div>";
+          footerHtml += "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>";
         } else {
-          footerHtml +=
-            "<div><button type='button' class='goLink' onclick='openNaver(\"" +
-            searchCode +
-            "\")'>네이버 부동산 보기</button></div>";
+          footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(\"" + searchCode + "\")'>네이버 부동산 보기</button></div>";
         }
 
         if (checkMobile() == "ios") {
-          footerHtml +=
-            "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
+          footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
         } else {
-          footerHtml +=
-            "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+          footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
         }
 
-        footerHtml +=
-          "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+        footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
       }
       footerHtml += "</div>";
 

@@ -774,6 +774,7 @@
 
     //console.log("AAAAAAAAAA", region)
     url = "https://www.realrankus.com/op/" + month + "/" + region + "_OPST.json"
+    url = "./" + month + "/" + region + "_OPST.json"
     $('#dataList').html("");
     var detail_loading_html = "<div style='display: grid; text-align: center; justify-items: center;'><br><br><br><br><div class='spinner-border text-danger' role='status'></div></div>";
 
@@ -886,6 +887,9 @@
           if(apt_type == "분양권"){
             addon_html += "<span class='aptYear'> (분양권, " + aptData.data[i]["준공년월"].substr(0, 7) + " 예정)</span></div>";
           }
+          if(apt_type == "분양(예정)"){
+            addon_html += "<span class='aptYear'> (분양예정)</span></div>";
+          }
 
           if(room_type == null || room_type == "" || room_type == undefined){
             room_type = "정보없음"
@@ -909,7 +913,7 @@
             addon_html += "<div class='apt_info'>"+ house_num.toLocaleString() + "세대 / <span class='aptPrice'>" + Math.round(last_sales_price/100)/100 + "억, " + last_sales_area + ", " + last_sales_date_short + "</span></div>";
           }
 
-          if(apt_type == "분양권"){
+          if(apt_type == "분양권" || apt_type == "분양(예정)"){
             addon_html += "<div class='apt_address'>" + aptData.data[i]["법정동주소"] + "</div>";
           }
           else{
@@ -977,7 +981,7 @@
       aptYear = "(분양권, " + aptData.data[index]["준공년월"].substr(0, 7) + " 예정)"
     }
     if(apt_type == "분양(예정)"){
-      aptYear = "(분양 예정)"
+      aptYear = "(분양예정)"
     }
 
     var nearestStation = aptData.data[index]["가까운역이름"] + "역" + "(" + ( Math.round( aptData.data[index]["가까운역거리"] * 100 ) / 100 ).toFixed()  + "m)"
@@ -1454,7 +1458,7 @@
 
     shareText = "\n『" + aptName
 
-    if(apt_type == "분양(예정)"){
+    if(apt_type == "분양권"){
       shareText += "(" + aptData.data[index]["준공년월"].substr(0, 7) + " 예정)』"        
     }
     else{
@@ -1481,34 +1485,36 @@
     shareText += "\n" + "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "\n"
     shareURL = "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
 
-    footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + searchCode + ")'>네이버 부동산 보기</button></div>"
-
-    if(UserAgent.indexOf("inApp")>-1){
+    if (UserAgent.indexOf("inApp") > -1) {
       if (apt_type == "분양(예정)") {
         footerHtml += "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>";
       } else {
         footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + searchCode + ")'>네이버 부동산 보기</button></div>";
       }
 
-      if(checkMobile() == "ios"){
-        footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+      if (checkMobile() == "ios") {
+        footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+      } else {
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
       }
-      else{
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '../kakao_icon.png' height='32px'></div>"
-      }
-      footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
-    }
-    else{
 
-      if(checkMobile() == "ios"){
-        footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+      footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
+    } else {
+      if (apt_type == "분양(예정)") {
+        footerHtml += "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>";
+      } else {
+        footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(\"" + searchCode + "\")'>네이버 부동산 보기</button></div>";
       }
-      else{
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '../kakao_icon.png' height='32px'></div>"
-      }      
-      footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+
+      if (checkMobile() == "ios") {
+        footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
+      } else {
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+      }
+
+      footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
     }
-    footerHtml += "</div>"
+    footerHtml += "</div>";
 
     $('#exampleModalLabel').html(titleHtml);
     $('#aptDetail').html(detailHtml);
@@ -2045,6 +2051,16 @@
     else {
       window.open(nURL)       
     } 
+  }
+
+  function openHGNN(code) {
+    hURL = "https://hogangnono.com/apt/" + code;
+    //window.open(hURL)
+    if (checkMobile() == "ios") {
+      window.location.href = hURL;
+    } else {
+      window.open(hURL);
+    }
   }
 
   function showNotice(){
