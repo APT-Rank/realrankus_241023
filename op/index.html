@@ -122,11 +122,11 @@
             <option value="202510" selected>2025년 10월</option> 
             <option value="202509">2025년 09월</option>
             <option value="202508">2025년 08월</option>
+            <!--
             <option value="202507">2025년 07월</option>
             <option value="202506">2025년 06월</option>
-            <option value="202505">2025년 05월</option>
-            <option value="202504">2025년 04월</option>
-            <!--
+            <option value="202505">2025년 05월</option>            
+            <option value="202504">2025년 04월</option>            
             <option value="202503">2025년 03월</option>            
             <option value="202502">2025년 02월</option>            
             <option value="202501">2025년 01월</option>            
@@ -1058,7 +1058,7 @@
 
     //타이틀
     //titleHtml += "<div class='popupTitle'>" + aptName + " " + apt_p + "(" + apt_m + ")</div>";
-    titleHtml += "<div class='popupTitle'>" + aptName + "</div>";
+    titleHtml += "<div class='popupTitle'><h1 style='font-size: 1em; font-weight:600'>" + aptName + "</h1></div>";
     titleHtml += "<div class='popupSubtitle'>" + aptYear + "</div>";
 
     if(apt_type == "분양권" || apt_type == "분양(예정)"){
@@ -1495,7 +1495,7 @@
       if (checkMobile() == "ios") {
         footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
       } else {
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '../kakao_icon.png' height='32px'></div>";
       }
 
       footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
@@ -1509,7 +1509,7 @@
       if (checkMobile() == "ios") {
         footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
       } else {
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>";
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '../kakao_icon.png' height='32px'></div>";
       }
 
       footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
