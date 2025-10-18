@@ -976,6 +976,9 @@
     if(apt_type == "분양권"){
       aptYear = "(분양권, " + aptData.data[index]["준공년월"].substr(0, 7) + " 예정)"
     }
+    if(apt_type == "분양(예정)"){
+      aptYear = "(분양 예정)"
+    }
 
     var nearestStation = aptData.data[index]["가까운역이름"] + "역" + "(" + ( Math.round( aptData.data[index]["가까운역거리"] * 100 ) / 100 ).toFixed()  + "m)"
     var stationLine = aptData.data[index]["역노선"]
@@ -1054,7 +1057,7 @@
     titleHtml += "<div class='popupTitle'>" + aptName + "</div>";
     titleHtml += "<div class='popupSubtitle'>" + aptYear + "</div>";
 
-    if(apt_type == "분양권"){
+    if(apt_type == "분양권" || apt_type == "분양(예정)"){
       titleHtml += "<div class='popupSubtitle'>" + aptData.data[index]["법정동주소"] + "</div>";
     }
     else{
@@ -1451,7 +1454,7 @@
 
     shareText = "\n『" + aptName
 
-    if(apt_type == "분양권"){
+    if(apt_type == "분양(예정)"){
       shareText += "(" + aptData.data[index]["준공년월"].substr(0, 7) + " 예정)』"        
     }
     else{
@@ -1481,6 +1484,12 @@
     footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + searchCode + ")'>네이버 부동산 보기</button></div>"
 
     if(UserAgent.indexOf("inApp")>-1){
+      if (apt_type == "분양(예정)") {
+        footerHtml += "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>호갱노노 보기</button></div>";
+      } else {
+        footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + searchCode + ")'>네이버 부동산 보기</button></div>";
+      }
+
       if(checkMobile() == "ios"){
         footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
       }
