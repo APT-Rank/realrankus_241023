@@ -1,3 +1,13 @@
+var notice_202511 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 11월 업데이트 안내 (2025-11-04)</div>"
++"<ul>"
++"<li><div class='notice'>시군구별 일자리 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
++"<li><div class='notice'>공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>대형마트에 '트레이더스홀세일 구월점' 추가했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202510 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 10월 업데이트 안내 (2025-10-02)</div>"
 +"<ul>"
