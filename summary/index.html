@@ -570,7 +570,8 @@ function allShareWithComment(){
   var shareTitle = "[리얼랭커스] "
   shareTitle += selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)).toString() + "월, " + balanced[0]["region"] + " 아파트 입지분석\n\n"
 
-  var shareText = "\n리얼랭커스는 저평가를 찾기 위한 목적의 참조데이터 입니다.\n\n"
+  var shareText = "\n리얼랭커스는 '비싼 아파트가 좋은 곳' 이라는 선입견을 해소하고,\n"
+  shareText += "내 생활과 맞는 올바른 주거 선택을 위해, '주거', '인프라', '교통', '교육' 으로만 입지를 분석합니다.\n\n"
 
   shareText += "[리얼랭커스 입지 점수 항목]\n"
   shareText += "ㆍ주거 = 세대수, 입주년차, 주차수, 난방방식, 욕실수, 현관구조\n"
@@ -673,7 +674,7 @@ function allShareWithComment(){
     }    
 
     shareText += "\n리얼랭커스는 '비싼 아파트가 좋은 곳' 이라는 선입견을 해소하고,\n"
-    shareText += "내 생활과 맞는 현명한 주거 선택을 위해, '주거', '인프라', '교통', '교육' 으로만 입지를 분석합니다.\n"
+    shareText += "내 생활과 맞는 올바른 주거 선택을 위해, '주거', '인프라', '교통', '교육' 으로만 입지를 분석합니다.\n"
 
     //만약 selectedMonth과 this_month가 같다면 shareText에 this_month_update를 추가
     if(selectedMonth == thisMonth){
