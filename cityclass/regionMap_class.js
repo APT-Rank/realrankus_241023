@@ -131,26 +131,40 @@ function drawDataMap_price(region_data, zoom){
       dong_name = region_data[i]['읍면동']
       price_per = Number(Number(region_data[i]['평단가']).toFixed(0)).toLocaleString()
       index = region_data[i]['index']
+      value_percentage = region_data[i]['평단가_백분률']
 
       class_name = ""
-      if(region_data[i]['평단가_백분률'] >= 0 && region_data[i]['평단가_백분률'] < 0.1){ class_name = "CL01" }
-      else if(region_data[i]['평단가_백분률'] >= 0.1 && region_data[i]['평단가_백분률'] < 0.5){ class_name = "CL02" }
-      else if(region_data[i]['평단가_백분률'] >= 0.5 && region_data[i]['평단가_백분률'] < 1.0){ class_name = "CL03" }
-      else if(region_data[i]['평단가_백분률'] >= 1.0 && region_data[i]['평단가_백분률'] < 5.0){ class_name = "CL04" }
-      else if(region_data[i]['평단가_백분률'] >= 5.0 && region_data[i]['평단가_백분률'] < 10.0){ class_name = "CL05" }
-      else if(region_data[i]['평단가_백분률'] >= 10.0 && region_data[i]['평단가_백분률'] < 20.0){ class_name = "CL07" }
-      else if(region_data[i]['평단가_백분률'] >= 20.0 && region_data[i]['평단가_백분률'] < 30.0){ class_name = "CL08" }
-      else if(region_data[i]['평단가_백분률'] >= 30.0 && region_data[i]['평단가_백분률'] < 40.0){ class_name = "CL09" }
-      else if(region_data[i]['평단가_백분률'] >= 40.0 && region_data[i]['평단가_백분률'] < 50.0){ class_name = "CL10" }
-      else if(region_data[i]['평단가_백분률'] >= 50.0 && region_data[i]['평단가_백분률'] < 70.0){ class_name = "CL10" }
-      else if(region_data[i]['평단가_백분률'] >= 70.0){ class_name = " CL11" }
+      if(value_percentage >= 0 && value_percentage < 0.1){ class_name = "CL01" }
+      else if(value_percentage >= 0.1 && value_percentage < 0.5){ class_name = "CL02" }
+      else if(value_percentage >= 0.5 && value_percentage < 1.0){ class_name = "CL03" }
+      else if(value_percentage >= 1.0 && value_percentage < 5.0){ class_name = "CL04" }
+      else if(value_percentage >= 5.0 && value_percentage < 10.0){ class_name = "CL05" }
+      else if(value_percentage >= 10.0 && value_percentage < 20.0){ class_name = "CL07" }
+      else if(value_percentage >= 20.0 && value_percentage < 30.0){ class_name = "CL08" }
+      else if(value_percentage >= 30.0 && value_percentage < 40.0){ class_name = "CL09" }
+      else if(value_percentage >= 40.0 && value_percentage < 50.0){ class_name = "CL10" }
+      else if(value_percentage >= 50.0 && value_percentage < 70.0){ class_name = "CL10" }
+      else if(value_percentage >= 70.0){ class_name = " CL11" }
 
 
       var price_marker_id = 'price_marker_' + i
+
+      //value_percentage가 1보다 작은 경우 소수점 3자리까지 표시, 10보다 작은 경우 소수점 2자리까지 표시, 그 외는 정수로 표시
+      var str_value_percentage = ""
+      if(value_percentage < 0.001){
+        str_value_percentage = "< 0.001%"
+      } else if(value_percentage < 1){
+        str_value_percentage = Number(value_percentage).toFixed(3) + "%"
+      } else if(value_percentage < 10){
+        str_value_percentage = Number(value_percentage).toFixed(2) + "%"
+      } else {
+        str_value_percentage = Number(value_percentage).toFixed(1) + "%"
+      }
       var price_marker_html = `
       <div class='price_marker ${class_name}'>
-        <div class='price_marker_dong_name'>${dong_name}</div>
-        <div class='price_marker_price'>${price_per}</div>        
+        <div class='price_marker_dong_name'>${dong_name}</div>        
+        <div class='price_marker_percentage'>${str_value_percentage}</div>
+        <div class='price_marker_price'>${price_per}</div>
       </div>      
       `
       var price_marker_on_map = new naver.maps.Marker({
@@ -315,6 +329,7 @@ function last_zoom_control(zoom){
     $(".price_marker").css({"width": "80px", "padding-top": "3px", "padding-bottom": "3px"})
     $(".price_marker_dong_name").css({"font-size": "0.75em"})
     $(".price_marker_price").css({"font-size": "0.75em"})
+    $(".price_marker_percentage").css({"font-size": "0.75em"})
     $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});
     console.log("current_zoom 15", zoom)
   }
@@ -322,6 +337,7 @@ function last_zoom_control(zoom){
     $(".price_marker").css({"width": "70px", "padding-top": "2px", "padding-bottom": "2px"})
     $(".price_marker_dong_name").css({"font-size": "0.7em"})
     $(".price_marker_price").css({"font-size": "0.7em"})
+    $(".price_marker_percentage").css({"font-size": "0.7em"})
     $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});
     console.log("current_zoom 14", zoom)
   }
@@ -329,6 +345,7 @@ function last_zoom_control(zoom){
     $(".price_marker").css({"width": "60px", "padding-top": "1px", "padding-bottom": "1px"})
     $(".price_marker_dong_name").css({"font-size": "0.65em"})
     $(".price_marker_price").css({"font-size": "0.65em"})
+    $(".price_marker_percentage").css({"font-size": "0.65em"})
     $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});
     console.log("current_zoom 13", zoom)
   }
@@ -336,35 +353,45 @@ function last_zoom_control(zoom){
     $(".price_marker").css({"width": "20px", "height": "20px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
     $(".price_marker_dong_name").html("")
     $(".price_marker_price").html("")
+    $(".price_marker_percentage").html("")
     $(".price_marker_dong_name").css({"border-bottom": "none"});
+    $(".price_marker_percentage").css({"border-bottom": "none"});
     console.log("current_zoom 12", zoom)
   }
   else if(zoom == 11){
     $(".price_marker").css({"width": "15px", "height": "15px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
     $(".price_marker_dong_name").html("")
     $(".price_marker_price").html("")
+    $(".price_marker_percentage").html("")
     $(".price_marker_dong_name").css({"border-bottom": "none"});
+    $(".price_marker_percentage").css({"border-bottom": "none"});
     console.log("current_zoom 11", zoom)
   }
   else if(zoom == 10){
     $(".price_marker").css({"width": "15px", "height": "15px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
     $(".price_marker_dong_name").html("")
     $(".price_marker_price").html("")
+    $(".price_marker_percentage").html("")
     $(".price_marker_dong_name").css({"border-bottom": "none"});
+    $(".price_marker_percentage").css({"border-bottom": "none"});
     console.log("current_zoom 10", zoom)
   }
   else if(zoom == 9){
     $(".price_marker").css({"width": "12px", "height": "12px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
     $(".price_marker_dong_name").html("")
     $(".price_marker_price").html("")
+    $(".price_marker_percentage").html("")
     $(".price_marker_dong_name").css({"border-bottom": "none"});
+    $(".price_marker_percentage").css({"border-bottom": "none"});
     console.log("current_zoom 9", zoom)
   }
   else if(zoom <= 8){
     $(".price_marker").css({"width": "10px", "height": "10px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
     $(".price_marker_dong_name").html("")
     $(".price_marker_price").html("")
+    $(".price_marker_percentage").html("")
     $(".price_marker_dong_name").css({"border-bottom": "none"});
+    $(".price_marker_percentage").css({"border-bottom": "none"});
     console.log("current_zoom 9", zoom)
   }
 }
