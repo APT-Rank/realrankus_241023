@@ -345,17 +345,25 @@ function last_zoom_control(zoom){
     $(".price_marker").css({"width": "60px", "padding-top": "1px", "padding-bottom": "1px"})
     $(".price_marker_dong_name").css({"font-size": "0.65em"})
     $(".price_marker_price").css({"font-size": "0.65em"})
+    $(".price_marker_price").hide()
+    $(".price_marker_percentage").css({"border-bottom": "none"});
     $(".price_marker_percentage").css({"font-size": "0.65em"})
     $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});
     console.log("current_zoom 13", zoom)
   }
   else if(zoom == 12){
-    $(".price_marker").css({"width": "20px", "height": "20px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
-    $(".price_marker_dong_name").html("")
-    $(".price_marker_price").html("")
-    $(".price_marker_percentage").html("")
-    $(".price_marker_dong_name").css({"border-bottom": "none"});
+    //$(".price_marker").css({"width": "20px", "height": "20px", "border-radius": "10px", "padding-top": "0px", "padding-bottom": "0px"})
+    //$(".price_marker_dong_name").html("")
+    //$(".price_marker_price").html("")
+    //$(".price_marker_percentage").html("")
+    //$(".price_marker_dong_name").css({"border-bottom": "none"});
+    //$(".price_marker_percentage").css({"border-bottom": "none"});
+    $(".price_marker").css({"width": "45px", "padding-top": "1px", "padding-bottom": "1px"})
+    $(".price_marker_dong_name").hide()
+    $(".price_marker_price").hide()
+    $(".price_marker_percentage").css({"font-size": "0.6em"})
     $(".price_marker_percentage").css({"border-bottom": "none"});
+    $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});    
     console.log("current_zoom 12", zoom)
   }
   else if(zoom == 11){
