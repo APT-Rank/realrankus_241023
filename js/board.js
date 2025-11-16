@@ -1191,8 +1191,7 @@ function read_comment(scroll_pos){
 					
 					if(temp_email == doc[1]['email']){
 						comment_html += "<div class='comment_addon_button'>"
-						comment_html += "<div></div>"
-						comment_html += "<div></div>"
+						comment_html += "<div></div>"						
 						if(blocked == 'true'){
 							comment_html += "<div><button class='btn_del' style='color:#ccc'>수정</button></div>"
 						}
@@ -1205,6 +1204,7 @@ function read_comment(scroll_pos){
 					}
 					else{
 						comment_html += "<div class='comment_addon_button'>"
+						comment_html += "<div></div>"
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
 						comment_html += "<div><button class='btn_del' onClick='share(\"" + comment_title + "\", \"" + comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
