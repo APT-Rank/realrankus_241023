@@ -1058,6 +1058,18 @@ default_comment = [
 	"아파트의 디자인과 건축 품질에 대해 어떻게 생각하시나요?"
 ]
 
+function retryOnce(promiseFunc, delay = 300) {
+    return promiseFunc().catch(err => {
+        console.warn("첫 번째 시도 실패. 재시도 중...", err);
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                promiseFunc().then(resolve).catch(reject);
+            }, delay);
+        });
+    });
+}
+
+
 function read_comment(scroll_pos){
 	var normal_comments = [];
 	var comment_html = ""
@@ -1066,7 +1078,7 @@ function read_comment(scroll_pos){
 	//리얼포스팅	
 	comment_html += "<div class='card-body' id='blog_list_area'></div>";
 
-	docRef.get().then((comment_list) => {
+	retryOnce(() => docRef.get()).then((comment_list) => {
 		if (comment_list.exists) {
 			doc_list = Object.entries(comment_list.data())
 			comment_num = doc_list.length
