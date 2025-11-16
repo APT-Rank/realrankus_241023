@@ -44,7 +44,8 @@ function sendTelegram_blog(comment){
 	tlgm_msg += "ㆍTitle : " + comment[2] + "%0A"
 	tlgm_msg += "ㆍURL : " + comment[3] + "%0A"
 	tlgm_msg += "ㆍBy : " + comment[4] + "%0A"
-	tlgm_msg += "ㆍDate : " + w_date_str
+	tlgm_msg += "ㆍDate : " + w_date_str + "%0A"
+	tlgm_msg += "ㆍURL : " + shareURL + "%0A"
 
 	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
 
@@ -91,8 +92,9 @@ function sendTelegram_message(comment){
 	tlgm_msg += "ㆍ " + w_email + "%0A"
 	tlgm_msg += "ㆍ " + w_complex_name + "%0A"
 	tlgm_msg += "ㆍ " + w_complex_code + "%0A"
-	tlgm_msg += "ㆍ " + w_comment + "%0A"	
-	tlgm_msg += "ㆍ " + w_date_str
+	tlgm_msg += "ㆍ " + w_comment + "%0A"
+	tlgm_msg += "ㆍ " + w_date_str + "%0A"
+	tlgm_msg += "ㆍ " + shareURL + "%0A"
 
 	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
 
