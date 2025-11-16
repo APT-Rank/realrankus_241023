@@ -25,8 +25,6 @@ function sendTelegram_single_message(comment){
 }
 
 function sendTelegram_blog(comment){
-	console.log(comment)
-
 	var current_region = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
 	var current_region_id = selectedSubRegion
 
@@ -88,6 +86,8 @@ function sendTelegram_message(comment){
 
 	tlgm_msg += "ㆍ " + w_email + "%0A"
 	tlgm_msg += "ㆍ " + w_comment + "%0A"
+	tlgm_msg += "ㆍ " + detail_complex + "%0A"
+	tlgm_msg += "ㆍ " + detail_searchCode + "%0A"
 	tlgm_msg += "ㆍ " + w_date_str
 
 	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
@@ -1098,7 +1098,6 @@ function read_comment(scroll_pos){
 				var index = 0
 
 				//doc_list의 [1]['show'] 값이 normal인 것 중 [1]['comment'] 최상단 10개를 배열에 저장				
-				console.log(doc_list)
 				for(var i = 0 ; i < doc_list.length ; i++){
 					if(doc_list[i][1]['show'] == 'normal'){
 						limit_count = 35
