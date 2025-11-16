@@ -1186,17 +1186,30 @@ function read_comment(scroll_pos){
                       comment_html += "<div><i class='fa-solid fa-heart'></i></div>"
                       comment_html += "<div id=\'like_num_" + comment_id + "\'>" + doc[1]['likeit'] + "</div>"
                     comment_html += "</div>"
+
+					comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"
+					
 					if(temp_email == doc[1]['email']){
 						comment_html += "<div class='comment_addon_button'>"
 						comment_html += "<div></div>"
+						comment_html += "<div></div>"
 						if(blocked == 'true'){
-							comment_html += "<div><button class='btn_del' style='color:#aaa; background:#ccc'>수정</button></div>"
+							comment_html += "<div><button class='btn_del' style='color:#ccc'>수정</button></div>"
 						}
 						else{
 							comment_html += "<div><button class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</button></div>"
 						}
 						comment_html += "<div><button class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</button></div>"
+						comment_html += "<div><button class='btn_del' onClick='share(\"" + comment_title + "\", \"" + comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
 						comment_html += "</div>"
+					}
+					else{
+						comment_html += "<div class='comment_addon_button'>"
+						comment_html += "<div></div>"
+						comment_html += "<div></div>"
+						comment_html += "<div><button class='btn_del' onClick='share(\"" + comment_title + "\", \"" + comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
+						comment_html += "</div>"
+
 					}
 					comment_html += "</div>"
 
@@ -1783,7 +1796,7 @@ function delete_reply(parent_id, reply_id){
 function modify_comment_modal(comment_id, comment){
 	comment = comment.replaceAll("<br>", "\n")
 
-	title_html = "<div>우리동네 랭커스톡 수정</div>" //"우리동네"를 지역변수로 수정
+	title_html = "<div>우리 단지 랭커스톡 수정</div>" //"우리동네"를 지역변수로 수정
 
 	modify_html = "<div>"
 	modify_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + shown_email + "</div>"
@@ -1997,8 +2010,8 @@ function accuse_reply_modal(parent_id, reply_id, user_email, user_id){
 
 function accuse_reply(parent_id, reply_id, user_email, user_id){
 	var accuseRef = comment_db.collection("realrankus_comment").doc("accuse_list")
-	var current_region = "서울시 강남구" //Region id로 수정
-	var current_region_id = "1168000000_Seoul_Gangnam" //Region id로 수정
+	var current_region = selectedRegion //Region id로 수정
+	var current_region_id = selectedSubRegion //Region id로 수정
 	var accuse_type = $("input[name='accuse']:checked").val()
 	var accuse_comment = $('#accuse_input').val()      
 	var accused_comment = $("#" + parent_id + "__" + reply_id).text()

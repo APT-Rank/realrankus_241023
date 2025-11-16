@@ -1312,6 +1312,9 @@ function setupOffcanvas(currentMenu){
 }
 
 function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider){
+  temp_email = userEmail
+  temp_uid = userID  
+
   if(isMobile == false){       
     $('.offcanvas').css({'width' : '400px'}) //offcanvas    
   }

@@ -128,15 +128,13 @@
   box-shadow: rgba(0, 0, 0, 0.45) 0px 2px 5px -1px, rgba(0, 0, 0, 0.65) 0px 1px 3px -1px;
 }
 .btn_del{
-  display:grid;
-  align-content : center;
+  display:grid;  
   font-size: 0.8em;
-  height: 2em;
+  font-weight: 600;
   width: 95%;
   border-radius: 5px;
-  border: 0px;
-  background: #555;
-  color: white;
+  border: 0px;  
+  color: #e31939;
 }
 .comment_line1{
   display: grid;
@@ -170,7 +168,7 @@
 }
 .comment_line3{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr;
   width: 100%;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -189,7 +187,7 @@
 }
 .comment_addon_button{
   display: grid;
-  grid-template-columns: 1fr 70px 70px;
+  grid-template-columns: 1fr 50px 50px 50px;
   width: 100%;
 }
 #accuse_selection{
