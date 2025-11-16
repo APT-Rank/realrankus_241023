@@ -1311,7 +1311,7 @@ function read_comment(scroll_pos){
 		}
 		else {
 			console.log("No comment")			
-			$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i> 0개의 우리 단지 이야기</div>")		
+			$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i> 0개의 우리 단지 이야기</div>")		
 			
 			clearInterval(window.commentSampleInterval);
 			window.commentSampleInterval = setInterval(() => {
@@ -1382,10 +1382,10 @@ function read_comment(scroll_pos){
 		if(scroll_pos == 'end'){
 			$('#comment_list').scrollTop($('#comment_list').prop('scrollHeight'))
 		}
-		else{
-			pos = $("#" + scroll_pos).offset().top
-			$('#comment_list').scrollTop($('#comment_list').prop(pos))
-		}		
+		//else{
+		//	pos = $("#" + scroll_pos).offset().top
+		//	$('#comment_list').scrollTop($('#comment_list').prop(pos))
+		//}		
 	}).catch((error) => {
 		console.log("Error getting document:", error);
 	});

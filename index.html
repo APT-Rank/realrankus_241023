@@ -2274,7 +2274,7 @@
       realrankus_visit(searchCode, $("#sido option:selected").text(), short_name, short_name + " " + dong_name)
 
       //firebase database comment path
-      docRef = comment_db.collection("realrankus_comment").doc(selectedSubRegion).collection("complex").doc(searchCode);
+      docRef = comment_db.collection("realrankus_comment").doc(selectedSubRegion).collection("complex").doc(searchCode + "");
       //if(login_status == true){
         setWriteBox()
         read_comment("top")
