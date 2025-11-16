@@ -252,6 +252,13 @@ function isValidURL(url) {
 	return urlRegex.test(url);
 }
 
+function showCommentWindow(region_id, complex_id) {
+	$(".offcanvas").offcanvas("hide") //offcanvas
+	openModal('commentListModal')
+	$("#baseModal").css({"z-index":"850"})
+	$(".modal-backdrop").css({"width":"100%"})
+}
+
 function showBlogWindow(complex_id) {
 	$(".offcanvas").offcanvas("hide") //offcanvas	
 	
@@ -1011,7 +1018,7 @@ function setWriteBox(){
 		else{
 			writebox_html += "<div id='writeWrapper' onclick='write_comment_modal()'>"
 			writebox_html += "<div id='writing_id'></div>"
-			writebox_html += "<div id='comment_input_wrap_none'>우리 동네 이야기를 남겨보세요</div>"
+			writebox_html += "<div id='comment_input_wrap_none'>우리 단지 이야기를 남겨보세요</div>"
 			writebox_html += "</div>"
 		}
 	}
@@ -1026,31 +1033,91 @@ function setWriteBox(){
 	$("#writing_id").html("<div>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + shown_email + "</div>")	
 }
 
+default_comment = [
+	"단지에 대해 어떻게 생각하시나요?",
+	"단지의 장점은 무엇인가요?",	
+	"단지에 살면서 가장 만족스러운 점은 무엇인가요?",	
+	"아파트 주변의 교통 편의성은 어떤가요?",
+	"주변 교육 환경에 대해 어떻게 생각하시나요?",
+	"단지의 커뮤니티 시설은 만족스러운가요?",
+	"아파트의 보안 시스템에 대해 어떻게 생각하시나요?",
+	"단지의 관리 상태는 어떤가요?",
+	"아파트의 이웃들은 어떤 분들인가요?",
+	"아파트의 가격 대비 가치에 대해 어떻게 생각하시나요?",
+	"단지의 자연 환경은 어떤가요?",
+	"아파트의 주차 시설은 만족스러운가요?",
+	"단지의 소음 수준은 어떤가요?",	
+	"단지의 편의 시설은 만족스러운가요?",		
+	"단지의 위치는 생활에 편리한가요?",
+	"아파트의 디자인과 건축 품질에 대해 어떻게 생각하시나요?"
+]
+
 function read_comment(scroll_pos){
-	var comment_html = ""	
+	var normal_comments = [];
+	var comment_html = ""
+	$("#comment_title").html(detail_complex + " 이야기")
+
+	//리얼포스팅	
+	comment_html += "<div class='card-body' id='blog_list_area'></div>";
+
 	docRef.get().then((comment_list) => {
 		if (comment_list.exists) {
 			doc_list = Object.entries(comment_list.data())
 			comment_num = doc_list.length
 			localSearchText = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
-			$('#recent_comment_num').html("<div><i class='fa-solid fa-comment'></i> " + comment_num + "개의 " + localSearchText + " 이야기</div><div style='text-align: center'><i id='comment_direction' class='fa-solid fa-chevron-up'></i></div>")			
+			if(comment_num == 0){
+				$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 이야기</div>")
+			}
+			else{
+				$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 이야기</div>")
+			}			
 			if(doc_list.length == 0){
+				clearInterval(window.commentSampleInterval);
+				window.commentSampleInterval = setInterval(() => {
+					let randomIndex = Math.floor(Math.random() * default_comment.length);
+					$('#comment_sample').html("<div>" + default_comment[randomIndex] + "</div>");
+				}, 5000);
+
 				if(login_status){
 					comment_html += "<div>"
-						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 " + localSearchText + " 이야기의 주인공이 되어주세요!"
-						comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 글 작성하기</button></div>"
+						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
+						comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 이야기 쓰기</button></div>"
 					comment_html += "</div>"
 				}
 				else{
 					comment_html += "<div>"
-						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 " + localSearchText + " 이야기의 주인공이 되어주세요!"
-						comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 댓글 쓰기</button></div>"
+						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
+						comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 이야기 쓰기</button></div>"
 					comment_html += "</div>"
 				}
 			}
 			else{
-				doc_list.sort()
+				doc_list.sort((a, b) => {
+					return b[1]['written'].toDate() - a[1]['written'].toDate();
+				});
 				var index = 0
+
+				//doc_list의 [1]['show'] 값이 normal인 것 중 [1]['comment'] 최상단 10개를 배열에 저장				
+				console.log(doc_list)
+				for(var i = 0 ; i < doc_list.length ; i++){
+					if(doc_list[i][1]['show'] == 'normal'){
+						//doc_list[i][1]['comment']에서 앞의 20글자만 잘라서 normal_comments 배열에 저장, 20글자가 넘어가는 경우 ... 추가
+						if(doc_list[i][1]['comment'].length > 20){
+							normal_comments.push(doc_list[i][1]['comment'].substring(0, 35) + "...");
+						}
+						else{
+							normal_comments.push(doc_list[i][1]['comment']);
+						}
+					}
+				}
+
+				//다른 setInterval이 겹치지 않도록 기존의 것을 제거
+				clearInterval(window.commentSampleInterval);
+				window.commentSampleInterval = setInterval(() => {
+					let randomIndex = Math.floor(Math.random() * normal_comments.length);
+					$('#comment_sample').html("<div>" + normal_comments[randomIndex] + "</div>");
+				}, 5000);				
+
 				doc_list.forEach((doc) => {
 				showhide = doc[1]['show']
 				
@@ -1231,13 +1298,35 @@ function read_comment(scroll_pos){
 			}
 		}
 		else {
-			console.log("No comment")
+			console.log("No comment")			
+			$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i> 0개의 우리 단지 이야기</div>")		
+			
+			clearInterval(window.commentSampleInterval);
+			window.commentSampleInterval = setInterval(() => {
+				let randomIndex = Math.floor(Math.random() * default_comment.length);
+				$('#comment_sample').html("<div>" + default_comment[randomIndex] + "</div>");
+			}, 5000);
+
+			if(login_status){
+				comment_html += "<div>"
+					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
+					comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 글 작성하기</button></div>"
+				comment_html += "</div>"
+			}
+			else{
+				comment_html += "<div>"
+					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
+					comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 댓글 쓰기</button></div>"
+				comment_html += "</div>"
+			}
 		}
 
 		$('#comment_list').html(comment_html)
 		comment_list_height = $('#comment_list').height()
 		var inHeight = window.innerHeight
+		var blog_list_height = $('#blog_list_area').height()		
 
+		/*
 		comment_db.collection("realrankus_comment").doc(selectedSubRegion).collection(temp_uid).where('like', '==', true).get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               like_status = doc.data()
@@ -1246,6 +1335,7 @@ function read_comment(scroll_pos){
               }              
             })           
           })
+			*/
 
 		if(!login_status){
 			$(".comment_input_reply").html("로그인 후 댓글을 작성할 수 있어요")
@@ -1262,7 +1352,7 @@ function read_comment(scroll_pos){
 
 		//console.log(scroll_pos)
 
-		$('#no_comment').css({'height': (inHeight-160-50)+'px', 'overflow-y' : 'auto'})
+		$('#no_comment').css({'height': (inHeight-160-150-blog_list_height-150)+'px', 'overflow-y' : 'auto'})
 		$('#comment_list').css({'height': (inHeight-160-50)+'px', 'overflow-y' : 'auto'})
 
 		if(isMobile){
@@ -1281,6 +1371,7 @@ function read_comment(scroll_pos){
 	});
 
 	$("#commentWrapper").show()
+	complex_blog(detail_searchCode, detail_complex)
 }
 
 function likeit(comment_id, user_id, like_num){
@@ -1378,7 +1469,7 @@ function likeit(comment_id, user_id, like_num){
   }   
 
 function write_comment_modal(){
-	title_html = "<div>우리동네 랭커스톡 작성</div>" //"우리동네"를 지역변수로 수정
+	title_html = "<div>우리단지 랭커스톡 작성</div>" //"우리동네"를 지역변수로 수정
 
 	comment_html = "<div>"        
 	comment_html += "<div id='comment_write_notice'>"
@@ -1388,8 +1479,7 @@ function write_comment_modal(){
 		<div>
 		<ul class='write_notice'>
 			<li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
-			<li>영리 목적의 게시글은 임의로 삭제됩니다.</li>
-			<li>사용자간 토론이 아닌, 리얼랭커스 서비스에 대한 비난은 임의로 삭제됩니다.</li>
+			<li>영리 목적의 게시글은 임의로 삭제됩니다.</li>			
 		</ul>
 		</div>
 		`
@@ -1441,7 +1531,7 @@ function write_comment(){
 	written_checker = written_checker.replaceAll("\n", "")
 
 	if(written_checker === ''){
-	alert("동네 이야기 작성 후 등록해 주세요!")
+	alert("단지 이야기 작성 후 등록해 주세요!")
 	$('#comment_input').val("")
 	}
 	else if(written_comment.length > 1000){
@@ -1464,7 +1554,7 @@ function write_comment(){
 		} else {
 			setData(docData)
 		}
-		$("#commentModifyModal").modal("hide")		
+		closeModal('commentModifyModal')
 		$('#comment_input').val("")
 	}).catch((error) => {
 		console.log("Error getting document:", error);
@@ -1473,11 +1563,12 @@ function write_comment(){
 }
 
 function addData(doc){
+	console.log("ADD DATA: " , docRef)
 	docRef.update(doc)
 	.then((docRef) => {
 		//console.log("Document written with ID: ", docRef);
 		sendTelegram_message(doc)
-		read_comment("end")
+		read_comment("top")
 	})
 	.catch((error) => {
 		console.error("Error adding document: ", error);
@@ -1485,11 +1576,12 @@ function addData(doc){
 }
 
 function setData(doc){
+	console.log("SET DATA: " , docRef)
 	docRef.set(doc)
 	.then((docRef) => {
 		//console.log("Document written with ID: ", docRef);
 		sendTelegram_message(doc)
-		read_comment("end")
+		read_comment("top")
 	})
 	.catch((error) => {
 		console.error("Error adding document: ", error);
@@ -1507,8 +1599,7 @@ function reply_modal(comment_id){
 		<div>
 		<ul class='write_notice'>
 			<li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
-			<li>영리 목적의 게시글은 임의로 삭제됩니다.</li>
-			<li>사용자간 토론이 아닌, 리얼랭커스 서비스에 대한 비난은 임의로 삭제됩니다.</li>
+			<li>영리 목적의 게시글은 임의로 삭제됩니다.</li>			
 		</ul>
 		</div>
 		`
@@ -1528,8 +1619,8 @@ function reply_modal(comment_id){
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-footer').html(yesno_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-footer').css({'grid-template-columns' : '1fr 1fr'});
 	$('#comment_input').focus()
-
-	$('#commentModifyModal').modal("show")
+		
+	openModal('commentModifyModal')	
 
 	var oldVal = ""
 	var writing_counter_html = ""
@@ -1731,7 +1822,7 @@ function delete_comment(comment_id){
 	})
 	.then((docRef) => {
 	$('#commentModal').modal("hide");
-	read_comment("end")
+	read_comment("top")
 	})
 	.catch((error) => {
 		console.error("Error adding document: ", error);

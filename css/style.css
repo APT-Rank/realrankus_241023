@@ -1902,11 +1902,15 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
   margin-top: 100px;
 }
 #blog_list_area{
+  position: sticky;
+  top: 0;
+  background-color: #fff;
   display: grid;
   align-items: center;
   justify-items: center;    
   padding: 5px;
   height: 85px;
+  width: auto;
 }
 .complex_compare_search_bar{
   display: grid;    

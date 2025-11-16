@@ -465,6 +465,20 @@
     </div>
     
     <!-- Comment_Modal -->
+
+    <div class="modal fade" id="commentListModal" tabindex="-1" role="dialog" aria-labelledby="commentListLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">            
+            <h5 class="modal-title" id="comment_title">잠시만 기다려 주세요</h5>
+            <button type="button" class="btn-close" onClick="history.back()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="comment_list"></div>
+          <div class="modal-footer" id="writeBox"></div>
+        </div>
+      </div>
+    </div>    
+    
     <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -691,6 +705,9 @@
     var recent_search = []
 
     var filter_ui = false
+
+    let detail_complex = "";
+    let detail_searchCode = "";
 
     function dateReturn(n) {
       return n < 10 ? "0" + n : n;
@@ -992,20 +1009,8 @@
 
         initSlider_sPrice()
         initSlider_area()
-      }
+      }      
 
-      /*
-      $("div.modal").on("show.bs.modal", function () {
-        var modal = this;
-        var hash = modal.id;
-        window.location.hash = hash;
-        window.onhashchange = function () {
-          if (!location.hash) {
-            $(modal).modal("hide");
-          }
-        };
-      });
-      */
       $("#linkToAptrank_bottom").css({'width' : '100%'})
       if(regionName != "Korea"){
         $("#dataList_wrapper").css({'height' : window.innerHeight-$("#linkToAptrank_bottom").height()-$("#titleBar").height()-$("#selections").height()-90, 'margin-top':'170px'})      
@@ -1014,10 +1019,19 @@
         $("#dataList_wrapper").css({'height' : window.innerHeight-$("#linkToAptrank_bottom").height()-$("#titleBar").height(), 'margin-top':'97px'})
         $("#dataList_wrapper").css({'margin-top':'96px', 'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + 23 +$("#linkToAptrank_bottom").height() )})
       }
-      
+
+      $(".modal").on("show.bs.modal", function () {
+        const modalId = this.id;
+
+        if(modalId == "commentModifyModal" || modalId == "blogModal" || modalId == "commentModal" || modalId == "loginModal"){
+          $("#commentListModal").css({"z-index" : "1050"})
+          $(".modal-backdrop").css({"z-index" : "1050"})
+        }
+        
+      });      
 
       $('.modal').on('hidden.bs.modal', function () {
-        const modalId = this.id;        
+        const modalId = this.id;
 
         if(modalId == "baseModal"){
           changeMetaTagToDefault();
@@ -1029,11 +1043,12 @@
           $("#baseModal").css({"z-index" : "1055"})
           $(".modal-backdrop").css({"z-index" : "1000"})
         }
+        /*
         if(modalId == "blogModal"){
-          $("#baseModal").css({"z-index" : "1055"})
-          $(".modal-backdrop").css({"z-index" : "1000"})
+          $("#baseModal").css({"z-index" : "1055"})          
           $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
         }
+          */
         if(modalId == "compareModal"){
           $("#baseModal").css({"z-index" : "1055"})
           $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
@@ -1041,16 +1056,27 @@
         if(modalId == "toggleModal1"){
           $("#baseModal").css({"z-index" : "1055"})
           $(".modal-backdrop").css({"z-index" : "1000"})
-        }        
+        }
+        if(modalId == "commentListModal"){
+          $("#baseModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
+        }
+        if(modalId == "commentModifyModal" || modalId == "blogModal" || modalId == "commentModal" || modalId == "loginModal"){
+          $("#commentListModal").css({"z-index" : "1055"})
+          $(".modal-backdrop").css({"z-index" : "1050"})
+        }
+        /*
         // 모달 닫힐 때 스택에서 제거
         const idx = modalStack.lastIndexOf(modalId);
         if (idx !== -1) {
           modalStack.splice(idx, 1);
         }
+          */
         // 히스토리도 자동으로 맞추기
         if (history.state?.modal === modalId) {
           history.back();
         }
+        
       });
 
       if ($.cookie("popCookie") != "202511" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
@@ -1067,12 +1093,7 @@
       
       currentMenu = "aptrank"  //offcanvas  
       setOffcanvasMenu() //offcanvas
-
-      /*     
-      if(!login_status){
-        $('#sort').attr("data-bs-target", "#loginModal")
-      }
-        */
+      
       setBottomMenu()
       //if(selectedComplex == ""){
         setAppDownloadModal();
@@ -1522,7 +1543,7 @@
       $("#localSearch").html(localSearchText + " 검색");      
 
       if (selectedSubRegion != "1000000000_Korea") {
-        //$("#commentWrapper").show()       
+        $("#commentWrapper").show()       
         if (selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300" || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300") {
           //로딩
           $("#gradeSelector").hide()
@@ -1543,16 +1564,6 @@
 
           updateTable(selectedMonth, selectedSubRegion);
         }
-        comment_html = "<div><i class='fa-solid fa-comment'></i>" + " #" + "개의 " + localSearchText + " 이야기</div>"
-        comment_html += "<div></div>"
-        docRef = comment_db.collection("realrankus_comment").doc(selectedSubRegion)
-        
-        if(login_status == true){
-          setWriteBox()
-          read_comment("end")
-        }
-
-        $("#recent_comment_num").html(comment_html)
       } else {
         //$("#commentWrapper").hide()
         $("#map_banner2").hide()
@@ -2256,9 +2267,18 @@
       var last_sales = aptData.data[index]["last_sales"].split(",");
       var last_sales_date = last_sales[0].toString();
       var last_sales_price = last_sales[1].toString();
-      var last_sales_area = last_sales[2];      
-      
+      var last_sales_area = last_sales[2];
+
+      detail_complex = aptName;
+      detail_searchCode = searchCode;      
       realrankus_visit(searchCode, $("#sido option:selected").text(), short_name, short_name + " " + dong_name)
+
+      //firebase database comment path
+      docRef = comment_db.collection("realrankus_comment").doc(selectedSubRegion).collection("complex").doc(searchCode);
+      //if(login_status == true){
+        setWriteBox()
+        read_comment("top")
+      //}
 
       if (Number(selectedMonth) > 202207) {
         var rent_info = aptData.data[index]["rent_info"];
@@ -2363,7 +2383,8 @@
         detailHtml += "</div>"        
       detailHtml += "</div>"
 
-      //임장기
+      /*
+      //리얼포스팅
       detailHtml += "<div class='card'>";
       detailHtml += "<div class='card-header'>";
       detailHtml += "<div class='popTitle' id='blog_popTitle'><div><i class='fa-solid fa-tags'></i>&nbsp 리얼포스팅</div>";
@@ -2372,6 +2393,17 @@
       detailHtml += "<div class='card-body' id='blog_list_area'><div class='spinner-border' role='status' style='opacity:0.2'></div>";
       detailHtml += "</div>";
       detailHtml += "</div>";
+      */
+
+      //단지이야기
+      detailHtml += "<div class='card' onClick='showCommentWindow(\"" + searchCode + "\")'>";
+      detailHtml += "<div class='card-header'>";
+      detailHtml += "<div class='popTitle' id='comment_popTitle'><div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + "#개의 우리 단지 이야기</div>";      
+      detailHtml += "<div></div>";
+      detailHtml += "</div></div>";
+      detailHtml += "<div class='card-body' id='comment_sample'></div>";
+      detailHtml += "</div>";
+      detailHtml += "</div>";      
 
       //총점,순위
       detailHtml += "<div class='card'>";
@@ -3158,6 +3190,9 @@
       $("#baseModalLabel").html(titleHtml);
       $("#aptDetail").html(detailHtml);
       $("#footer").html(footerHtml);
+
+      let randomIndex = Math.floor(Math.random() * default_comment.length);
+      $('#comment_sample').html("<div>" + default_comment[randomIndex] + "</div>");
 
       //임장기 로딩해서 넣는 함수
       setTimeout(function(){
