@@ -1101,13 +1101,17 @@ function read_comment(scroll_pos){
 				});
 				var index = 0
 
+				limit_count = 0
+				if(isMobile){
+					limit_count = 20
+				}
+				else{
+					limit_count = 35
+				}
+				
 				//doc_list의 [1]['show'] 값이 normal인 것 중 [1]['comment'] 최상단 10개를 배열에 저장				
 				for(var i = 0 ; i < doc_list.length ; i++){
-					if(doc_list[i][1]['show'] == 'normal'){
-						limit_count = 35
-						if(isMobile){
-							limit_count = 20
-						}
+					if(doc_list[i][1]['show'] == 'normal'){												
 						//doc_list[i][1]['comment']에서 앞의 20글자만 잘라서 normal_comments 배열에 저장, 20글자가 넘어가는 경우 ... 추가
 						if(doc_list[i][1]['comment'].length > limit_count){
 							normal_comments.push(doc_list[i][1]['comment'].substring(0, limit_count) + "...");
@@ -1117,6 +1121,7 @@ function read_comment(scroll_pos){
 						}
 					}
 				}
+				$('#comment_sample').html("<div>" + normal_comments[0] + "</div>");
 
 				//다른 setInterval이 겹치지 않도록 기존의 것을 제거
 				clearInterval(window.commentSampleInterval);
