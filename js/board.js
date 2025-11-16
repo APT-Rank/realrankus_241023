@@ -161,7 +161,7 @@ non_blog_html = ""
 non_blog_html += "<div class='blog_list' onClick='showBlogWindow()'>"
 //non_blog_html += "<div class='blog_img_box'><img src=\"./apt-rank-512x512.png\" width='100px'/></div>"
 non_blog_html += "<div class='blog_list_blank'>"
-non_blog_html += "<div class='blog_title'>단지 임장기를 등록해 주세요!</div>"
+non_blog_html += "<div class='blog_title'>단지 블로그를 등록해 주세요!</div>"
 non_blog_html += "<div class='blog_sub'>실제 찾아가 눈으로 보고 분석한 소중한 경험을 알려주세요</div>"
 non_blog_html += "<div class='blog_sub2'>by 리얼랭커스</div>"
 non_blog_html += "</div>"
@@ -495,7 +495,7 @@ function sendBlog(complex_id){
 	})
 }
 
-function complex_blog(complex_id, aptName){
+function complex_blog(complex_id, aptName){	
 	var current_region_id = selectedSubRegion
 	//console.log("POSTING!!")
 	firebase.database().ref().child("realrankus_blog").child(current_region_id).child("complex_" + complex_id).child("blog_list").get()
@@ -1160,7 +1160,7 @@ function read_comment(scroll_pos){
 				user_id = doc[1]['uid']                
 				
 				written_timestamp = doc[1]['written'].toDate()
-				written_date = written_timestamp.getFullYear() + "년 " + (written_timestamp.getMonth()+1) + "월 " + written_timestamp.getDate() + "일"
+				written_date = written_timestamp.getFullYear() + "-" + (written_timestamp.getMonth()+1) + "-" + written_timestamp.getDate()
 				written_time = written_timestamp.getHours() + ":" + (dateReturn(written_timestamp.getMinutes()))
 
 				comment_content_original = doc[1]['comment']
@@ -1334,9 +1334,12 @@ function read_comment(scroll_pos){
 		}
 
 		$('#comment_list').html(comment_html)
+		$("#blog_list_area").html(non_blog_html)
+
 		comment_list_height = $('#comment_list').height()
 		var inHeight = window.innerHeight
-		var blog_list_height = $('#blog_list_area').height()		
+		var blog_list_height = $('#blog_list_area').height()
+		var write_box_height = $('#writeBox').height()		
 
 		/*
 		comment_db.collection("realrankus_comment").doc(selectedSubRegion).collection(temp_uid).where('like', '==', true).get().then((querySnapshot) => {
@@ -1364,12 +1367,13 @@ function read_comment(scroll_pos){
 
 		//console.log(scroll_pos)
 		if(isMobile){
-			$('#no_comment').css({'height': (inHeight-160-150-blog_list_height)+'px', 'overflow-y' : 'auto'})
+			$('#no_comment').css({'height': (inHeight-blog_list_height-write_box_height-220)+'px', 'overflow-y' : 'auto'})
+			$('#comment_list').css({'height': (inHeight)+'px', 'overflow-y' : 'auto'})
 		}
 		else{
-			$('#no_comment').css({'height': (inHeight-160-150-blog_list_height-150)+'px', 'overflow-y' : 'auto'})
-		}		
-		$('#comment_list').css({'height': (inHeight-160-50)+'px', 'overflow-y' : 'auto'})
+			$('#no_comment').css({'height': (inHeight-160-50-blog_list_height-150)+'px', 'overflow-y' : 'auto'})
+			$('#comment_list').css({'height': (inHeight-160-50)+'px', 'overflow-y' : 'auto'})
+		}
 
 		if(isMobile){
 			$('.comment_reply_list').css({'grid-template-columns' : '0px 1fr'})

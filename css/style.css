@@ -1908,8 +1908,9 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
   display: grid;
   align-items: center;
   justify-items: center;    
-  padding: 5px;
+  padding: 0px;
   height: 85px;
+  border-bottom: 1px solid #ddd;
   width: auto;
 }
 .complex_compare_search_bar{
