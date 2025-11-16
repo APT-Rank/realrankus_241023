@@ -1187,7 +1187,8 @@ function read_comment(scroll_pos){
                       comment_html += "<div id=\'like_num_" + comment_id + "\'>" + doc[1]['likeit'] + "</div>"
                     comment_html += "</div>"
 
-					comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"
+					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"
+					share_comment_content = share_comment_title + "\n\n" + comment_content_original + "\n\n" + shareURL
 					
 					if(temp_email == doc[1]['email']){
 						comment_html += "<div class='comment_addon_button'>"
@@ -1199,7 +1200,7 @@ function read_comment(scroll_pos){
 							comment_html += "<div><button class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</button></div>"
 						}
 						comment_html += "<div><button class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</button></div>"
-						comment_html += "<div><button class='btn_del' onClick='share(\"" + comment_title + "\", \"" + comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
+						comment_html += "<div><button class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
 						comment_html += "</div>"
 					}
 					else{
