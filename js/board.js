@@ -71,11 +71,15 @@ function sendTelegram_message(comment){
 	  var w_email = comment_arr[0][1]['email']
 	  var w_comment = comment_arr[0][1]['comment']
 	  var w_date = comment_arr[0][1]['written']
+	  var w_complex_name = comment_arr[0][1]['complex_name']
+	  var w_complex_code = comment_arr[0][1]['complex_code']
 	}
 	else{
 	  var w_email = comment['email']
 	  var w_comment = comment['comment']
 	  var w_date = comment['written']
+	  var w_complex_name = comment['complex_name']
+	  var w_complex_code = comment['complex_code']
 	}
 	var w_date_set = new Date(w_date)
 	var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth()+1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
@@ -85,9 +89,9 @@ function sendTelegram_message(comment){
 	w_comment = w_comment.replaceAll("<br>", "%0A")      
 
 	tlgm_msg += "ㆍ " + w_email + "%0A"
-	tlgm_msg += "ㆍ " + w_comment + "%0A"
-	tlgm_msg += "ㆍ " + detail_complex + "%0A"
-	tlgm_msg += "ㆍ " + detail_searchCode + "%0A"
+	tlgm_msg += "ㆍ " + w_complex_name + "%0A"
+	tlgm_msg += "ㆍ " + w_complex_code + "%0A"
+	tlgm_msg += "ㆍ " + w_comment + "%0A"	
 	tlgm_msg += "ㆍ " + w_date_str
 
 	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
@@ -1552,7 +1556,9 @@ function write_comment(){
 			comment: written_comment,
 			written: now,
 			likeit : 0,
-			show: "normal"
+			show: "normal",
+			complex_name: detail_complex,
+			complex_code: detail_searchCode
 		}
 	};
 	docRef.get().then((doc) => {
@@ -1670,7 +1676,9 @@ function reply_comment(comment_id){
 			comment: written_comment,
 			written: now,
 			likeit : 0,
-			show: "normal"
+			show: "normal",
+			complex_name: detail_complex,
+			complex_code: detail_searchCode
 		};
 		
 		docRef.update({
