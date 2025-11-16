@@ -520,6 +520,8 @@ function setGrade(score){
 }
 
 function share(shareTitle, shareText, shareURL){
+  shareText = shareText.replaceAll('<br>', '\n')
+
   if (navigator.share) {
     navigator.share({
       title: shareTitle,

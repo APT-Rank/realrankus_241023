@@ -1105,7 +1105,7 @@ function read_comment(scroll_pos){
 
 				limit_count = 0
 				if(isMobile){
-					limit_count = 20
+					limit_count = 28
 				}
 				else{
 					limit_count = 35
@@ -1190,7 +1190,8 @@ function read_comment(scroll_pos){
                     comment_html += "</div>"
 
 					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"
-					share_comment_content = share_comment_title + "\n\n" + comment_content_original + "\n\n" + shareURL
+					share_comment = comment_content_original.replaceAll("\n", "<br>")
+					share_comment_content = share_comment_title + "<br><br>" + share_comment + "<br><br>"+ shareURL
 					
 					if(temp_email == doc[1]['email']){
 						comment_html += "<div class='comment_addon_button'>"
@@ -1210,7 +1211,7 @@ function read_comment(scroll_pos){
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
-						comment_html += "<div><button class='btn_del' onClick='share(\"" + comment_title + "\", \"" + comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
+						comment_html += "<div><button class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
 						comment_html += "</div>"
 
 					}
