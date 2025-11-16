@@ -1101,9 +1101,13 @@ function read_comment(scroll_pos){
 				console.log(doc_list)
 				for(var i = 0 ; i < doc_list.length ; i++){
 					if(doc_list[i][1]['show'] == 'normal'){
+						limit_count = 35
+						if(isMobile){
+							limit_count = 20
+						}
 						//doc_list[i][1]['comment']에서 앞의 20글자만 잘라서 normal_comments 배열에 저장, 20글자가 넘어가는 경우 ... 추가
-						if(doc_list[i][1]['comment'].length > 20){
-							normal_comments.push(doc_list[i][1]['comment'].substring(0, 35) + "...");
+						if(doc_list[i][1]['comment'].length > limit_count){
+							normal_comments.push(doc_list[i][1]['comment'].substring(0, limit_count) + "...");
 						}
 						else{
 							normal_comments.push(doc_list[i][1]['comment']);
@@ -1351,8 +1355,12 @@ function read_comment(scroll_pos){
 		}
 
 		//console.log(scroll_pos)
-
-		$('#no_comment').css({'height': (inHeight-160-150-blog_list_height-150)+'px', 'overflow-y' : 'auto'})
+		if(isMobile){
+			$('#no_comment').css({'height': (inHeight-160-150-blog_list_height)+'px', 'overflow-y' : 'auto'})
+		}
+		else{
+			$('#no_comment').css({'height': (inHeight-160-150-blog_list_height-150)+'px', 'overflow-y' : 'auto'})
+		}		
 		$('#comment_list').css({'height': (inHeight-160-50)+'px', 'overflow-y' : 'auto'})
 
 		if(isMobile){
