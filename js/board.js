@@ -1201,9 +1201,15 @@ function read_comment(scroll_pos){
                       comment_html += "<div id=\'like_num_" + comment_id + "\'>" + doc[1]['likeit'] + "</div>"
                     comment_html += "</div>"
 
-					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"
-					share_comment = comment_content_original.replaceAll("\n", "<br>")
-					share_comment_content = "TEST" //share_comment_title + "<br><br>" + share_comment + "<br><br>"+ shareURL
+					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"					
+					share_comment_content = share_comment_title + "\n\n" + comment_content_original + "\n\n"+ shareURL
+
+					share_comment_dict = {
+						'title': share_comment_title,
+						'content': comment_content_original,
+						'url': shareURL,
+						'all_content' : share_comment_content
+					}
 					
 					if(temp_email == doc[1]['email']){
 						comment_html += "<div class='comment_addon_button'>"
@@ -1215,7 +1221,7 @@ function read_comment(scroll_pos){
 							comment_html += "<div class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</div>"
 						}
 						comment_html += "<div class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</div>"
-						comment_html += "<div class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+						comment_html += "<div class='btn_del' onClick='share_dict(" + JSON.stringify(share_comment_dict) + ")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
 						comment_html += "</div>"
 					}
 					else{
@@ -1223,7 +1229,7 @@ function read_comment(scroll_pos){
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
-						comment_html += "<div class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+						comment_html += "<div class='btn_del' onClick='share_dict(" + JSON.stringify(share_comment_dict) + ")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
 						comment_html += "</div>"
 
 					}

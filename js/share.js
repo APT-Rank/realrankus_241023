@@ -519,6 +519,27 @@ function setGrade(score){
   return complex_grade
 }
 
+function share_dict(share_dict){
+  this_titlse = share_dict['title']
+  this_text = share_dict['content']  
+  this_url = share_dict['url']
+  this_text_all = share_dict['all_content']
+
+ if (navigator.share) {
+    navigator.share({
+      title: this_titlse,
+      text: this_text_all,
+      url: this_url
+    }).then(() => {
+      console.log('Thanks for sharing!');
+    })
+    .catch(console.error);
+  } else {
+    // fallback
+    shareDialog.classList.add('is-open');
+  } 
+}
+
 function share(shareTitle, shareText, shareURL){
   shareText = shareText.replaceAll('<br>', '\n')
 
