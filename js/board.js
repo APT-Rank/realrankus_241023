@@ -1203,7 +1203,7 @@ function read_comment(scroll_pos){
 
 					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"
 					share_comment = comment_content_original.replaceAll("\n", "<br>")
-					share_comment_content = share_comment_title + "<br><br>" + share_comment + "<br><br>"+ shareURL
+					share_comment_content = "TEST" //share_comment_title + "<br><br>" + share_comment + "<br><br>"+ shareURL
 					
 					if(temp_email == doc[1]['email']){
 						comment_html += "<div class='comment_addon_button'>"
