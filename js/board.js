@@ -1094,7 +1094,7 @@ function read_comment(scroll_pos){
 				window.commentSampleInterval = setInterval(() => {
 					let randomIndex = Math.floor(Math.random() * default_comment.length);
 					$('#comment_sample').html("<div>" + default_comment[randomIndex] + "</div>");
-				}, 5000);
+				}, 3000);
 
 				if(login_status){
 					comment_html += "<div>"
@@ -1136,6 +1136,15 @@ function read_comment(scroll_pos){
 					}
 				}
 				$('#comment_sample').html("<div>" + normal_comments[0] + "</div>");
+
+				//normal_comments의 길이가 5 이하인 경우, default_comment에서 랜덤하게 추출하여 총 5개가 되도록 채우기
+				if(normal_comments.length < 5){
+					var needed = 5 - normal_comments.length
+					for(var j = 0 ; j < needed ; j++){
+						let randomIndex = Math.floor(Math.random() * default_comment.length);
+						normal_comments.push(default_comment[randomIndex]);
+					}
+				}
 
 				//다른 setInterval이 겹치지 않도록 기존의 것을 제거
 				clearInterval(window.commentSampleInterval);
