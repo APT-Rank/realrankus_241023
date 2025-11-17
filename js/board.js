@@ -1024,7 +1024,7 @@ function setWriteBox(){
 		else{
 			writebox_html += "<div id='writeWrapper' onclick='write_comment_modal()'>"
 			writebox_html += "<div id='writing_id'></div>"
-			writebox_html += "<div id='comment_input_wrap_none'>우리 단지 이야기를 남겨보세요</div>"
+			writebox_html += "<div id='comment_input_wrap_none'>우리 단지 랭커스톡을 남겨보세요</div>"
 			writebox_html += "</div>"
 		}
 	}
@@ -1073,7 +1073,7 @@ function retryOnce(promiseFunc, delay = 300) {
 function read_comment(scroll_pos){
 	var normal_comments = [];
 	var comment_html = ""
-	$("#comment_title").html(detail_complex + " 이야기")
+	$("#comment_title").html(detail_complex + " 랭커스톡")
 
 	//리얼포스팅	
 	comment_html += "<div class='card-body' id='blog_list_area'></div>";
@@ -1084,10 +1084,10 @@ function read_comment(scroll_pos){
 			comment_num = doc_list.length
 			localSearchText = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
 			if(comment_num == 0){
-				$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 이야기</div>")
+				$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 랭커스톡</div>")
 			}
 			else{
-				$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 이야기</div>")
+				$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 랭커스톡</div>")
 			}			
 			if(doc_list.length == 0){
 				clearInterval(window.commentSampleInterval);
@@ -1098,14 +1098,14 @@ function read_comment(scroll_pos){
 
 				if(login_status){
 					comment_html += "<div>"
-						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
-						comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 이야기 쓰기</button></div>"
+						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
+						comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 랭커스톡 쓰기</button></div>"
 					comment_html += "</div>"
 				}
 				else{
 					comment_html += "<div>"
-						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
-						comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 이야기 쓰기</button></div>"
+						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
+						comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 랭커스톡 쓰기</button></div>"
 					comment_html += "</div>"
 				}
 			}
@@ -1201,7 +1201,8 @@ function read_comment(scroll_pos){
                       comment_html += "<div id=\'like_num_" + comment_id + "\'>" + doc[1]['likeit'] + "</div>"
                     comment_html += "</div>"
 
-					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석의 표준"					
+					share_comment_title = detail_complex + "의 랭커스톡 | 입지분석은 리얼랭커스"
+					share_comment_kakao_content = share_comment_title + "\n\n" + comment_content_original
 					share_comment_content = share_comment_title + "\n\n" + comment_content_original + "\n\n"+ shareURL
 
 					share_comment_dict = {
@@ -1221,15 +1222,17 @@ function read_comment(scroll_pos){
 							comment_html += "<div class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</div>"
 						}
 						comment_html += "<div class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</div>"
-						comment_html += "<div class='btn_del' onClick='share_dict(" + JSON.stringify(share_comment_dict) + ")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+						comment_html += "<div class='btn_del' onClick='kakaoShare(share_comment_title, share_comment_kakao_content, shareURL)'><img src = './kakao_icon.png' height='20px'></div>"
+						comment_html += "<div class='btn_del' onClick='CopyToClipboard(share_comment_content, popMsg)'><i class='fa-regular fa-copy'></i></div>"
 						comment_html += "</div>"
 					}
 					else{
 						comment_html += "<div class='comment_addon_button'>"
 						comment_html += "<div></div>"
-						comment_html += "<div></div>"
-						comment_html += "<div></div>"
-						comment_html += "<div class='btn_del' onClick='share_dict(" + JSON.stringify(share_comment_dict) + ")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+						comment_html += "<div class='btn_del'></div>"
+						comment_html += "<div class='btn_del'></div>"
+						comment_html += "<div class='btn_del' onClick='kakaoShare(share_comment_title, share_comment_kakao_content, shareURL)'><img src = './kakao_icon.png' height='20px'></div>"
+						comment_html += "<div class='btn_del' onClick='CopyToClipboard(share_comment_content, popMsg)'><i class='fa-regular fa-copy'></i></div>"
 						comment_html += "</div>"
 
 					}
@@ -1346,7 +1349,7 @@ function read_comment(scroll_pos){
 		}
 		else {
 			console.log("No comment")			
-			$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i> 0개의 우리 단지 이야기</div>")		
+			$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i> 0개의 우리 단지 랭커스톡</div>")		
 			
 			clearInterval(window.commentSampleInterval);
 			window.commentSampleInterval = setInterval(() => {
@@ -1356,14 +1359,14 @@ function read_comment(scroll_pos){
 
 			if(login_status){
 				comment_html += "<div>"
-					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
-					comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 글 작성하기</button></div>"
+					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
+					comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 랭커스톡 작성하기</button></div>"
 				comment_html += "</div>"
 			}
 			else{
 				comment_html += "<div>"
-					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 이야기의 주인공이 되어주세요!"
-					comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 댓글 쓰기</button></div>"
+					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
+					comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 랭커스톡 쓰기</button></div>"
 				comment_html += "</div>"
 			}
 		}
@@ -1586,7 +1589,7 @@ function write_comment(){
 	written_checker = written_checker.replaceAll("\n", "")
 
 	if(written_checker === ''){
-	alert("단지 이야기 작성 후 등록해 주세요!")
+	alert("랭커스톡 작성 후 등록해 주세요!")
 	$('#comment_input').val("")
 	}
 	else if(written_comment.length > 1000){

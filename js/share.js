@@ -520,14 +520,14 @@ function setGrade(score){
 }
 
 function share_dict(share_dict){
-  this_titlse = share_dict['title']
+  this_title = share_dict['title']
   this_text = share_dict['content']  
   this_url = share_dict['url']
   this_text_all = share_dict['all_content']
 
  if (navigator.share) {
     navigator.share({
-      title: this_titlse,
+      title: this_titl,
       text: this_text_all,
       url: this_url
     }).then(() => {
@@ -558,8 +558,38 @@ function share(shareTitle, shareText, shareURL){
   }
 }
 
-function kakaoShare(shareTitle, shareText, shareURL) {  
-  console.log(shareURL)
+function kakaoShare_dict(share_dict) {
+  this_title = share_dict['title']
+  this_text = share_dict['content']  
+  this_url = share_dict['url']
+  this_text_all = share_dict['all_content']
+
+  Kakao.Share.sendDefault({    
+    objectType: 'text',
+    text: this_text,    
+    link: {
+      mobileWebUrl: this_url,
+      webUrl: this_url,
+    },    
+    buttons: [
+      {
+        title: '자세히 보기',
+        link: {
+          mobileWebUrl: this_url,
+          webUrl: this_url,
+        },
+      },
+      {
+        title: '앱으로 이동',
+        link: {
+          androidExecutionParams: 'https://play.google.com/store/apps/details?id=com.aptrank.app'          
+        },
+      },
+    ]    
+  });
+}
+
+function kakaoShare(shareTitle, shareText, shareURL) {
   Kakao.Share.sendDefault({    
     objectType: 'text',
     text: shareText,    
