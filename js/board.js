@@ -1209,13 +1209,13 @@ function read_comment(scroll_pos){
 						comment_html += "<div class='comment_addon_button'>"
 						comment_html += "<div></div>"						
 						if(blocked == 'true'){
-							comment_html += "<div><button class='btn_del' style='color:#ccc'>수정</button></div>"
+							comment_html += "<div class='btn_del' style='color:#ccc'>수정</div>"
 						}
 						else{
-							comment_html += "<div><button class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</button></div>"
+							comment_html += "<div class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</div>"
 						}
-						comment_html += "<div><button class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</button></div>"
-						comment_html += "<div><button class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
+						comment_html += "<div class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</div>"
+						comment_html += "<div class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
 						comment_html += "</div>"
 					}
 					else{
@@ -1223,7 +1223,7 @@ function read_comment(scroll_pos){
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
 						comment_html += "<div></div>"
-						comment_html += "<div><button class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></button></div>"
+						comment_html += "<div class='btn_del' onClick='share(\"" + share_comment_title + "\", \"" + share_comment_content + "\", \""+ shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
 						comment_html += "</div>"
 
 					}
