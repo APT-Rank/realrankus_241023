@@ -1073,8 +1073,7 @@ function return_MoneyFlow_time(obj_val, duration){
   return return_arr_val
 }
 
-function return_MoneyFlow_arr(obj_val, duration){
-  console.log(obj_val)
+function return_MoneyFlow_arr(obj_val, duration){  
   //obj_val이 undefined 이면, 빈 배열 반환
   if(!obj_val){
     return []
@@ -2100,7 +2099,7 @@ FRED_time_monthly_arr = Object.assign({}, FRED_time_monthly_arr)
 FRED_interest_arr = return_1year_monthly_arr(FRED_interest_monthly_arr, FRED_time_monthly_arr)
 FRED_interest_val_arr = FRED_interest_arr[1]
 
-console.log(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
+//console.log(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
 FRED_interest_val_arr.push(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
 
 addon_html += "<div class='graph_item'>"
@@ -4112,8 +4111,8 @@ function redraw_graph(obj, duration){
                           mf_us_nas, mf_us_dow, mf_us_snp, mf_ko_kospi, mf_ko_kosdaq, mf_ko_kospi_kosdaq, mf_currency_USDKRW, mf_currency_JPYKRW, mf_coin_btc,
                           mf_housing_apt_price_metro, mf_housing_apt_price_urban, mf_housing_apt_price_seoul, mf_housing_apt_price_kkd, mf_housing_apt_price_largecity6]
 
-    console.log(mf_time_arr)
-    console.log(moneyflow_dataset)
+    //console.log(mf_time_arr)
+    //console.log(moneyflow_dataset)
     myMoneyFlow_Chart.destroy()
     drawMoneyFlowChart(mf_time_arr, moneyflow_dataset, "MoneyFlow_Chart")
   }
