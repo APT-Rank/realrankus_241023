@@ -1193,6 +1193,13 @@ function read_comment(scroll_pos){
 					comment_content = comment_content.replaceAll(restrict_words[p], "***")
 				}
 
+				//comment_content에서 URL을 인식하여 <a> 태그로 감싸기
+				comment_content = linkifyHtml(comment_content, {
+					defaultProtocol: 'https', // http:// 없이 썼을 때 붙일 프로토콜
+					target: '_blank'
+				});
+
+
 				comment_html += "<div class='comment_wapper'>"
 					comment_html += "<div class='comment_line1'>"
 					comment_html += "<div><i class='fa-solid fa-user-pen'></i>&nbsp;&nbsp;" + user_email + "</div>"
