@@ -2624,28 +2624,33 @@
       avgLivingScore = Math.round((livingSum / itemNum) * 100) / 100;
 
       if (Number(selectedMonth) > 202207 && apt_type != "분양(예정)") {
-        //층간소음
-        detailHtml += "<div class='card'>";
-        detailHtml += "<div class='card-header'>";
-        detailHtml += "<div class='popTitle'><i class='fa-solid fa-bell-slash'></i>&nbsp&nbsp층간소음</div>";
-        detailHtml += "</div>";
-        detailHtml += "<div class='card-body' style='padding-top: 5px'>";
-        detailHtml += "<div id='popLiving'>";
-        detailHtml += "<div class='popTable'>";
-
-        noise_level = "";
-
-        if (floor_noise == "좋음" || floor_noise == "우수") {
-          noise_level = "<span style='color:#148523'><i class='fa-solid fa-face-laugh'></i>" + "우수" + "</span>";
-        } else if (floor_noise == "보통") {
-          noise_level = "<span style='color:#148185'><i class='fa-solid fa-face-smile'></i>" + floor_noise + "</span>";
-        } else {
-          noise_level = "<span style='color:black'>" + "정보 없음" + "</span>";
+        if(floor_noise == "NA"){
+          //층간소음 정보 미제공
         }
+        else{
+          //층간소음
+          detailHtml += "<div class='card'>";
+          detailHtml += "<div class='card-header'>";
+          detailHtml += "<div class='popTitle'><i class='fa-solid fa-bell-slash'></i>&nbsp&nbsp층간소음</div>";
+          detailHtml += "</div>";
+          detailHtml += "<div class='card-body' style='padding-top: 5px'>";
+          detailHtml += "<div id='popLiving'>";
+          detailHtml += "<div class='popTable'>";
 
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "층간소음 관리" + "</div>" + "<div class='popResult'>" + noise_level + "</div></div>";
-        detailHtml += "<div class='comment2' style='font-size: 0.7em'>층간소음 관리 정보는 층간소음 전문 연구소 <span style='color:#4542f5; font-weight:600'>주거문화개선연구소/층간소음에 안전한 아파트(앱)</span>에서 제공됩니다.</div>";
-        detailHtml += "</div></div></div></div>";
+          noise_level = "";
+
+          if (floor_noise == "좋음" || floor_noise == "우수") {
+            noise_level = "<span style='color:#148523'><i class='fa-solid fa-face-laugh'></i>" + "우수" + "</span>";
+          } else if (floor_noise == "보통") {
+            noise_level = "<span style='color:#148185'><i class='fa-solid fa-face-smile'></i>" + floor_noise + "</span>";
+          } else {
+            noise_level = "<span style='color:black'>" + "정보 없음" + "</span>";
+          }
+
+          detailHtml += "<div class='popSubTable'><div class='popContent'>" + "층간소음 관리" + "</div>" + "<div class='popResult'>" + noise_level + "</div></div>";
+          detailHtml += "<div class='comment2' style='font-size: 0.7em'>층간소음 관리 정보는 층간소음 전문 연구소 <span style='color:#4542f5; font-weight:600'>주거문화개선연구소/층간소음에 안전한 아파트(앱)</span>에서 제공됩니다.</div>";
+          detailHtml += "</div></div></div></div>";
+        }
       }
 
       if (isNaN(transportScore) == false) {
