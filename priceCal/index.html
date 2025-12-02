@@ -385,7 +385,7 @@
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedTheme = "under100M";
-    var currentMonth = "202511"; //수정
+    var currentMonth = "202512"; //수정
 
     var pageName = "aptrank_PriceCal" //20231020    
 
@@ -576,7 +576,7 @@
 
     //20230514
     function Korea_region_monthly_ratio() {
-      url2 = "https://www.realrankus.com/priceCal/Apt_sales_price_monthly.json"; //파일수정
+      url2 = "https://www.realrankus.com/priceCal/Apt_sales_price_monthly.json"; //파일변경
       $.getJSON(url2, function (json) {
         KoreaRegionBase = json;
         currentRegion =
@@ -1096,7 +1096,7 @@
           }
           if (j == 2025) {
             //수정
-            if (k <= 11) {
+            if (k <= 12) {
               //수정
               baseDate += "<option value='" + dateVal + "'>" + dateTxt + "</option>";
             }
