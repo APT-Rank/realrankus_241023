@@ -2608,8 +2608,10 @@
       detailHtml += "</div></div></div></div>";
       avgLivingScore = Math.round((livingSum / itemNum) * 100) / 100;
 
+      console.log("floor_noise: " + floor_noise);
+
       if (Number(selectedMonth) > 202207 && apt_type != "분양(예정)") {
-        if(floor_noise == "NA"){
+        if(floor_noise == "NA" || floor_noise == "" || floor_noise == null || floor_noise == undefined){
           //층간소음 정보 미제공
         }
         else{
