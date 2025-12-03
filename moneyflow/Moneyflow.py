@@ -20,7 +20,7 @@ import random
 path = os.path.dirname(os.path.abspath(__file__))
 temp_path = path.split("\\")
 
-utcnow = datetime.datetime.utcnow()
+utcnow = datetime.datetime.now(datetime.UTC)
 now = utcnow + datetime.timedelta(hours=9)
 
 def get_normalized_data(original_df, std_val):
@@ -62,8 +62,8 @@ r2 = requests.get(mf_daily_url)
 r2.encoding = "utf-8-sig"
 mf_daily=json.loads(r2.text)
 df_daily = pd.DataFrame(mf_daily)
-df_daily = df_daily.fillna(method='ffill')
-df_daily = df_daily.fillna(method='bfill')
+df_daily = df_daily.ffill()
+df_daily = df_daily.bfill()
 df_daily.set_index('TIME', inplace = True)
 
 mf_monthly_url = "https://www.realrankus.com/moneyflow/market_monthly_info.json"
@@ -71,8 +71,8 @@ r3 = requests.get(mf_monthly_url)
 r3.encoding = "utf-8-sig"
 mf_monthly=json.loads(r3.text)
 df_monthly = pd.DataFrame(mf_monthly)
-df_monthly = df_monthly.fillna(method='ffill')
-df_monthly = df_monthly.fillna(method='bfill')
+df_monthly = df_monthly.ffill()
+df_monthly = df_monthly.bfill()
 df_monthly.set_index('TIME', inplace = True)
 
 mf_apt_price_url = "https://www.realrankus.com/priceCal/Apt_sales_price_monthly.json"
@@ -88,10 +88,18 @@ df_apt_price = df_apt_price.reset_index()
 df_apt_price.rename(columns = {'index':'TIME'}, inplace=True)
 df_apt_price['TIME'] = df_apt_price['TIME'].str[0:4] + "-" + df_apt_price['TIME'].str[4:6] + "-01"
 df_apt_price.set_index('TIME', inplace = True)
-df_apt_price = df_apt_price['전국']
+
+#df_monthly의 인덱스를 기준으로 df_apt_price 재정렬
+df_apt_price = df_apt_price.reindex(df_monthly.index)
+
+df_apt_price_all = df_apt_price['전국']
+df_apt_price_metropolitan = df_apt_price['수도권']
+df_apt_price_urban = df_apt_price['지방권']
+df_apt_price_seoul = df_apt_price['서울시']
+df_apt_price_kyungkido = df_apt_price['경기도']
+df_apt_price_largecity6 = df_apt_price['6대광역시']
 
 df_MoneyFlow = pd.concat([df_monthly, df_daily], axis=1, join='inner')
-df_cut_length = len(df_MoneyFlow)
 
 #한국부동산원 아파트가격 추가
 #df_kor_apt_price = get_KOR_apt_price()
@@ -102,8 +110,8 @@ sr_sum_kospi_kosdaq = df_MoneyFlow['yf_KOSPI'] + df_MoneyFlow['yf_KOSDAQ']
 df_sum_kospi_kosdaq = sr_sum_kospi_kosdaq.to_frame()
 df_sum_kospi_kosdaq.rename(columns = {0:'yf_KOSPI_KOSDAQ'}, inplace=True)
 
-df_MoneyFlow = pd.concat([df_MoneyFlow, df_sum_kospi_kosdaq, df_apt_price], axis=1, join='outer')
-df_MoneyFlow.rename(columns = {'전국':'KOR_APT_PRICE'}, inplace=True)
+df_MoneyFlow = pd.concat([df_MoneyFlow, df_sum_kospi_kosdaq, df_apt_price_all, df_apt_price_metropolitan, df_apt_price_urban, df_apt_price_seoul, df_apt_price_kyungkido, df_apt_price_largecity6], axis=1, join='inner')
+df_MoneyFlow.rename(columns = {'전국':'KOR_APT_PRICE', '수도권':'KOR_APT_PRICE_METROPOLITAN', '지방권':'KOR_APT_PRICE_URBAN', '서울시':'KOR_APT_PRICE_SEOUL', '경기도':'KOR_APT_PRICE_KYUNGKIDO', '6대광역시':'KOR_APT_PRICE_LARGECITY6'}, inplace=True)
 
 #print([df_MoneyFlow.columns])
 df_MoneyFlow.drop(['GENERATE'], axis=1, inplace=True)
@@ -119,8 +127,5 @@ for i in range( len(df_MoneyFlow.columns) ):
 df_MoneyFlow['GENERATE'] = str(now)
 df_MoneyFlow = df_MoneyFlow.reset_index()
 
-#df_MoneyFlow를 df_cut_length만큼 자름
-df_MoneyFlow = df_MoneyFlow.iloc[:df_cut_length]
-
-#df_MoneyFlow.to_csv(path + "/market_MoneyFlow.csv", encoding='cp949')
+df_MoneyFlow.to_csv(path + "/market_MoneyFlow.csv", encoding='cp949')
 df_MoneyFlow.to_json(path + "/market_moneyflow.json", force_ascii=False, indent=4)
