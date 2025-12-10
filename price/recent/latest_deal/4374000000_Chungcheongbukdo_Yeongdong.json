@@ -6,6 +6,10 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"동",
                 "type":"number"
             },
@@ -138,10 +142,6 @@
                 "type":"number"
             },
             {
-                "name":"type",
-                "type":"string"
-            },
-            {
                 "name":"일련번호",
                 "type":"string"
             },
@@ -198,6 +198,7 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "동":null,
             "아파트":"금강",
             "건축년도":1994.0,
@@ -458,7 +459,6 @@
             "rank_info":"[14.0, 7.0, 24.0322]",
             "sURL":"https:\/\/www.realrankus.com?cpx=cbydbk006",
             "usingArea":80.0,
-            "type":"TRADE",
             "일련번호":null,
             "법정동본번코드":null,
             "법정동부번코드":null,
