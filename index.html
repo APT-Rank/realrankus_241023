@@ -1569,6 +1569,7 @@
       hide_list = []
       for (i in aptData.data){
         list_id = "aptSelect_" + aptData.data[i]["검색코드"]
+        console.log(list_id)
 
         area_arr = (aptData.data[i]['area_info']).split(",")
         sales_arr = (aptData.data[i]['sales_info']).split(",")
@@ -1649,8 +1650,12 @@
           $("#" + list_id).hide()
           hide_list.push(list_id)
         }
+
+        if(aptData.data[i] == undefined){
+          continue
+        }
               
-        if(aptData.data[i]['매매타입'] == "분양(예정)" || aptData.data[i]['매매타입'] == "분양"){
+        if(aptData.data[i]['매매타입'] == "분양(예정)" || aptData.data[i]['매매타입'] == "분양"){          
           $("#aptSelect_" + aptData.data[i]['검색코드']).show()
           show_list.push("aptSelect_" + aptData.data[i]['검색코드'])
         }
