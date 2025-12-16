@@ -1219,6 +1219,8 @@ function show_daily_info(){
   mf_coin_btc = return_MoneyFlow_arr( moneyflow_market['yf_BTCUSD_NOR'], "5Y" )
 
   mf_time_arr.push("현재")
+  mf_us_total_asset.push( return_last_value_rate(moneyflow_market['FRED_Total_Asset'], US_totalasset[0], value_index) )
+  mf_ko_total_asset.push( return_last_value_rate(moneyflow_market['BOK_Total_Asset'], KOR_totalasset[0], value_index) )
   mf_oil_wti.push( return_last_value_rate(moneyflow_market['FRED_WTI'], hourly_market['WTI']['value'], value_index) )
   mf_oil_dubai.push( return_last_value_rate(moneyflow_market['FRED_Dubai'], hourly_market['Dubai']['value'], value_index) )
   Gold_hourly_val = (hourly_market['YF_Gold']['value']).replaceAll(",", "")
@@ -4092,6 +4094,8 @@ function redraw_graph(obj, duration){
     value_index = value_arr.indexOf('2019-06-01')
   
     mf_time_arr.push("현재")
+    mf_us_total_asset.push( return_last_value_rate(moneyflow_market['FRED_Total_Asset'], US_totalasset[0], value_index) )
+    mf_ko_total_asset.push( return_last_value_rate(moneyflow_market['BOK_Total_Asset'], KOR_totalasset[0], value_index) )
     mf_oil_wti.push( return_last_value_rate(moneyflow_market['FRED_WTI'], hourly_market['WTI']['value'], value_index) )
     mf_oil_dubai.push( return_last_value_rate(moneyflow_market['FRED_Dubai'], hourly_market['Dubai']['value'], value_index) )
     Gold_hourly_val = (hourly_market['YF_Gold']['value']).replaceAll(",", "") 
