@@ -250,6 +250,7 @@
     grid-template-columns: 100px 1fr;
     border-top: 1px solid #ddd;
     margin-top: 5px;
+    width: 90%;
   }
   .report_apt{
     margin-bottom: 20px;
@@ -259,6 +260,8 @@
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
+    page-break-inside: avoid;
+    break-inside: avoid
   }
   .report_apt_info{    
     display: grid;
@@ -883,6 +886,45 @@
   .form-check-input:active{
     background-color: #162235;
     border-color:  #162235;
+  }
+
+  /* 리포트 전체 영역 고정 */
+  #report_area {
+      width: 210mm; /* A4 너비 고정 */
+      background-color: #ffffff;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;      
+      background-color: inherit; /* 혹은 구체적인 컬러값 명시 */
+  }
+
+  /* 각 페이지 단위 설정 */
+  .print_page {
+      width: 210mm;
+      min-height: 297mm; /* A4 높이 보장 */
+      padding: 0mm;
+      box-sizing: border-box;
+      page-break-after: always; /* 페이지 강제 종료 */
+      break-after: always;
+      position: relative;
+      overflow: hidden; /* 영역 밖으로 밀림 방지 */
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      background-color: inherit; /* 혹은 구체적인 컬러값 명시 */
+  }
+
+  /* 지도나 차트가 페이지 중간에 잘리는 것 방지 */
+  
+  #consulting_note_wrapper{
+    page-break-after: always;
+    break-after: always;
+  }
+  #cover_page{
+    page-break-after: always;
+    break-after: always;
+  }
+  #end_of_document{
+    page-break-before: always;
+    break-before: always;
   }
   
   @media only screen and (max-width: 576px){
