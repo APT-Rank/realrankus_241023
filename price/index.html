@@ -355,11 +355,12 @@
 
   var today = new Date()
   var prev_date = new Date()
- 
+
   //var today = new Date('2023-10-30')
   var today_day = dateReturn( today.getDate() );
   if (today_day == 1){    
     today = new Date(today.setDate(today.getDate() - 1))
+    prev_date.setMonth( prev_date.getMonth() - 2 );
   }
   var today_year = today.getFullYear();
   var today_month = dateReturn( (today.getMonth() + 1))
@@ -367,8 +368,6 @@
   var today_str = today_year + "-" + today_month + "-" + today_day
   var today_short_str = (today.getMonth() + 1) + "/" + today.getDate()
   var this_month = "" + (today_year) + today_month
-
-  prev_date = prev_date.setMonth(today.getMonth()-1)
   
   var monthago = new Date(prev_date)
   //var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() + 1))
@@ -376,12 +375,6 @@
   
   if(prev_month == this_month){
     prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() ) )
-  }
-
-  if (today_day == 1){    
-    if(monthago.getFullYear() != today.getFullYear()){
-      var prev_month = "" + (today.getFullYear()-1) + dateReturn( (monthago.getMonth()+1 ) )
-    }
   }
 
   var start_date_str = (today.getMonth() + 1) + "/1"
