@@ -360,7 +360,7 @@
   var today_day = dateReturn( today.getDate() );
   if (today_day == 1){    
     today = new Date(today.setDate(today.getDate() - 1))
-    prev_date.setMonth( prev_date.getMonth() - 2 );
+    prev_date.setMonth( prev_date.getMonth() - 1 );
   }
   var today_year = today.getFullYear();
   var today_month = dateReturn( (today.getMonth() + 1))
@@ -370,12 +370,8 @@
   var this_month = "" + (today_year) + today_month
   
   var monthago = new Date(prev_date)
-  //var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() + 1))
-  var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth()+1 ) )
-  
-  if(prev_month == this_month){
-    prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() ) )
-  }
+  monthago.setMonth( monthago.getMonth() - 1 );  
+  prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth()+1 ) )  
 
   var start_date_str = (today.getMonth() + 1) + "/1"
   var end_date_str = (today.getMonth() + 1) + "/" + today.getDate()
@@ -1877,7 +1873,7 @@ function updateTable(region){
                     addon_html += "<div class='compare_volume_sub'>"
                       if(selectedMonth == "latest_deal"){
                         str_prev_month = Number(prev_month.slice(-2)) + "월"
-                        str_this_month = Number(this_month.slice(-2)) + "월"                        
+                        str_this_month = Number(this_month.slice(-2)) + "월"
                         
                         addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
                         addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
