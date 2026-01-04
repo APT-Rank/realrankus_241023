@@ -856,7 +856,7 @@ function reportTempLoad(){
   temp_report_obj = JSON.parse(temp_report_str)
   //console.log(temp_report_obj)
 
-  $("#customer_name").val(temp_report_obj.name)  
+  $("#customer_name").val(temp_report_obj.name)
   $("#customer_email").val(temp_report_obj.email)
 
   $("#customer_email_domain option[value = " + temp_report_obj.domain + "]").prop('selected', true)
@@ -1129,7 +1129,12 @@ function submitReportRequest(){
       priority_living: report_obj.priority_living,
       priority_trans: report_obj.priority_trans,
       priority_infra: report_obj.priority_infra,
-      priority_edu: report_obj.priority_edu
+      priority_edu: report_obj.priority_edu,
+
+      requestDateStr: report_obj.requestDateStr,
+      requestDate: report_obj.requestDate,
+      paid: report_obj.paid,
+      progress: report_obj.progress
   }
 
   //requestData의 모든 하위 항목에 undefined 값이 있으면 빈 문자열로 변경

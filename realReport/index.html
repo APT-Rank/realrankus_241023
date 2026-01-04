@@ -117,11 +117,11 @@
       <!-- <div id="rearrange" class="position-relative" onClick='showRearrangeBar(this)'><i class="fa-solid fa-arrow-down-wide-short"></i></div> -->
       <div></div>
       <!--타이틀 표시-->
-      <div id="title" onClick="window.location.reload()"> 리얼랭커스<span id="themeLogo">GUIDER</span></div>
+      <div id="title" onClick="window.location.reload()"> REAL<span id="themeLogo">REPORT</span></div>
       <div id="footer_text">
         <div></div>
         <div id="report"></div>
-        <div id="memo" onClick='commentPop()'><i class="fa-regular fa-pen-to-square"></i> NOTE</div>
+        <div id="request_list" onClick='load_request_list()'><i class="fa-solid fa-list"></i> LIST</div>
       </div>
       <!--공유 버튼-->
       <!-- <div id='tripGuide' data-bs-toggle='modal' data-bs-target='#toggleModal1' id='myModal' onClick='showDistance(routeArray)'><i class="fa-solid fa-route"></i></div> -->
@@ -228,7 +228,7 @@
 
               <div class="budget_input">
                 <div class="step1Title">대출 가능 금액</div>
-                <div><input class='number_input' type="text" placeholder="0" oninput="changeNumberFormat(2, this)" onfocus="numInputFocusBlur(2, 'focus')" onblur="numInputFocusBlur(2, 'blur')"/></div>
+                <div><input class='number_input'  id='budget_loan' type="text" placeholder="0" oninput="changeNumberFormat(2, this)" onfocus="numInputFocusBlur(2, 'focus')" onblur="numInputFocusBlur(2, 'blur')"/></div>
                 <div class='number_input_sub' id='number_input_won2'>원</div>
                 <div id="budget_kor2">0 원</div>
               </div>
@@ -401,14 +401,14 @@
   <!-- Vertically centered scrollable modal -->
   <!-- Button trigger modal -->
   <!-- Modal -->
-  <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+  <div class="modal fade" id="requestListModal" tabindex="-1" aria-labelledby="requestListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" id="requestListModalDialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="reportModalLabel"></h5>
+          <h5 class="modal-title" id="requestListModalLabel"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id="reportDetail"></div>
+        <div class="modal-body" id="reportDetail" style="padding-top:0"></div>
         <div class="modal-footer" id="reportFooter"></div>
       </div>
     </div>
@@ -449,17 +449,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>  
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script> 
 
     <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8WjR8LIu9KRjhriMxKl018OaUzFQY1FM&callback=initMap"></script>    
-    
-    <script type="module" src="../js/con_counter.js"></script>
-    <script src="../js/apple.js" type="text/javascript"></script>
-    <script src="../js/login_240308.js" type="text/javascript"></script>
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1&submodules=geocoder"></script>
+
+    <script src="../js/con_counter_js.js"></script>
+    <script src="../js/apple.js" type="text/javascript"></script>
+    <script src="../js/login_240308.js" type="text/javascript"></script>
 
   </body>
   <script>
@@ -553,39 +555,7 @@
     $(document).ready(function () {
         Kakao.init(kakaoKey);
 
-        var option = "";
-        for (i = 1; i < regions.length; i++) {
-          option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
-        }
-        $("#sido1").html(option);
-        $("#sido2").html(option);
-        $("#sido3").html(option);
-        $("#sido4").html(option);
-
-        var subOption = ""
-        for (var i = 0; i < inSeoul.length; i++) {
-          subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";        
-        }
-        $("#gungu1").html(subOption);
-        $("#gungu2").html(subOption);
-        $("#gungu3").html(subOption);
-        $("#gungu4").html(subOption);
-
-        $("#add_region3").hide()
-        $("#add_region4").hide()
-        $("#fav_region2").hide()
-        $("#fav_region3").hide()
-        $("#fav_region4").hide()
-
-        $("#fav_remove2").hide()
-        $("#fav_remove3").hide()
-        $("#fav_remove4").hide()
-
-        fav_point_x = 127.0473774
-        fav_point_y = 37.51733193
-        wanted_region = [["Seoul","1168000000_Seoul_Gangnam"]]
-
-        showMap(37.51733193, 127.0473774)
+        pageInitialize()
 
         $("#list_filter").hide()
         
@@ -603,9 +573,6 @@
       currentMenu = "aptrank_Guider"  //offcanvas
       //$("#footer_text").html("")
 
-      changeAge( $("#customer_age option:selected").val() )
-      
-      $("#result_list").html("<div style='display:grid; align-content: center; height: 100%; font-size:1.2em; font-weight:600; text-align:center'>따뜻한 상담 정보를 채워주시고,<br>'결과보기'를 누르시면 추천 단지를 보여드려요!</div>")
       setOffcanvasMenu() //offcanvas
       //login_checker() //LOGIN
 
@@ -614,7 +581,7 @@
 
       if(window.innerHeight <= 950){
         $("#linkToAptrank_bottom").hide()
-      }        
+      }
     });
 
     var commentWin
@@ -818,7 +785,7 @@
       }
     }    
 
-    function changeNumberFormat(index, obj){      
+    function changeNumberFormat(index, obj){
       obj.value = obj.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');      
       if(obj.value > 999999999999){
         obj.value = 999999999999

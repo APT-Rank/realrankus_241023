@@ -8,6 +8,99 @@ var age_description = [
   "노후, 후대양성",
 ]
 
+function pageInitialize(){
+  regionName = "";
+
+  linked = "";
+  regionValue = "";
+
+  budget_cash = 0
+  budget_loan = 0
+
+  movingMethod = 'public'
+
+  priority_living = 100
+  priority_trans = 100
+  priority_infra = 100
+  priority_edu = 100
+
+  apt_result = ""
+
+  wanted_region = []
+  hide_complex = []
+
+  var option = "";
+  for (i = 1; i < regions.length; i++) {
+    option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
+  }
+  $("#sido1").html(option);
+  $("#sido2").html(option);
+  $("#sido3").html(option);
+  $("#sido4").html(option);
+
+  var subOption = ""
+  for (var i = 0; i < inSeoul.length; i++) {
+    subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";        
+  }
+  $("#gungu1").html(subOption);
+  $("#gungu2").html(subOption);
+  $("#gungu3").html(subOption);
+  $("#gungu4").html(subOption);
+
+  $("#add_region3").hide()
+  $("#add_region4").hide()
+  $("#fav_region2").hide()
+  $("#fav_region3").hide()
+  $("#fav_region4").hide()
+
+  $("#fav_remove2").hide()
+  $("#fav_remove3").hide()
+  $("#fav_remove4").hide()  
+
+  $("#list_filter").hide()
+  $("#customer_age option[value = 2]").prop('selected', true)
+  changeAge( $("#customer_age option:selected").val() )
+
+  $("#customer_family option[value = 3]").prop('selected', true)
+  $("#customer_children option[value = 1]").prop('selected', true)
+  $("#customer_children_type option[value = 1]").prop('selected', true)
+
+  $("#budget_cash").val(0)
+  $("#budget_loan").val(0)
+  changeNumberFormat(1, $("#budget_cash")[0])
+  changeNumberFormat(2, $("#budget_loan")[0])
+
+  $("#movingPublic").prop("checked", true)
+
+  fav_point_x = 127.0473774
+  fav_point_y = 37.51733193
+  showMap(37.51733193, 127.0473774)
+
+  wanted_region = [["Seoul","1168000000_Seoul_Gangnam"]]
+  for(var i=1; i<=wanted_region.length; i++){
+    $("#sido" + i + " option[value='" + wanted_region[i-1][0] + "']").prop('selected', true)
+    optionChange(i)     
+    $("#gungu" + i + " option[value='" + wanted_region[i-1][1] + "']").prop('selected', true)
+    if(i > 1){
+      regionOn(i)
+    }
+  }
+
+  $("#range_living").val(priority_living)
+  $("#range_living_val").html(priority_living)
+  
+  $("#range_trans").val(priority_trans)
+  $("#range_trans_val").html(priority_trans)
+  
+  $("#range_infra").val(priority_infra)
+  $("#range_infra_val").html(priority_infra)
+  
+  $("#range_edu").val(priority_edu)
+  $("#range_edu_val").html(priority_edu)  
+  
+  $("#result_list").html("<div style='display:grid; align-content: center; height: 100%; font-size:1.2em; font-weight:600; text-align:center'>따뜻한 상담 정보를 채워주시고,<br>'결과보기'를 누르시면 추천 단지를 보여드려요!</div>")
+}
+
 function changeAge(val){  
   $("#ageDescription").html(age_description[val])
 }
@@ -23,6 +116,163 @@ function changeFamily(val){
     $("#customer_children").prop('disabled', false)
     $("#customer_children_type").prop('disabled', false)
   }
+}
+
+function load_request_list(){
+  //requestReport_db.database()의 모든 데이터 불러오기
+  request_list_html = `
+    <div id="requestListTableHeader">
+      <div>INDEX</div>
+      <div>요청일</div>
+      <div>이름</div>
+      <div>이메일</div>
+      <div>연령대</div>
+      <div>자녀수(유형)</div>
+      <div>가족수</div>
+      <div>가구소득</div>      
+      <div>희망지역</div>
+      <div>지불현황</div>
+      <div>진행상황</div>
+    </div>    
+    `
+
+  requestReport_db.database().ref().once('value').then(function(snapshot) {
+    console.log(snapshot.val())
+    snapshot.forEach(function(childSnapshot) {
+      var key = childSnapshot.key;
+      var childData = childSnapshot.val();
+      var childData_str = JSON.stringify(childData)      
+      //request_list_html에 Table Row 형식으로 추가
+      //key 값에서 뒤에서 두 번째 언더바(_) 찾아 index 값 추출 후, key에서 해당 index에 해당하는 값을 " "로 변경
+      index_find = key.substring(key.lastIndexOf("_", key.lastIndexOf("_") - 1) + 1)
+      index_val = key.replace("_" + index_find, " ")
+      index_val = index_val + " " + index_find
+
+      console.log(childData["budget_cash"])
+      console.log(childData["budget_loan"])
+
+      paid_html = ""
+      if(childData['paid']){
+        paid_html = "<span style='color: green;'>입금완료</span>"
+      }
+      else{
+        paid_html = "<span style='color: red;'>미입금</span>"
+      }
+
+      progress_html = ""
+      if(childData['progress'] == "Pending"){
+        progress_html = "<span style='color: orange;'>대기중</span>"
+      }
+      else{
+        progress_html = "<span style='color: green;'>완료</span>"
+      }
+
+      dataInput_html = "고객정보 입력"
+      if((childData['paid']) && (childData['progress'] == "Pending")){
+        dataInput_html = `<div><button id="btn_inputData" onClick="inputCustomerData('${key}')">데이터 입력</button></div>`
+      }
+      else{
+        //dataInput_html = `<div><button id="btn_inputData_disabled">데이터 입력 불가</button></div>`
+        dataInput_html = `<div><button id="btn_inputData" onClick="inputCustomerData('${key}')">데이터 입력</button></div>`
+        console.log(childData)
+      }
+
+      request_list_html += `
+        <div class="requestListTable">
+          <div>` + index_val + ` </div>
+          <div>` + childData['requestDateStr'] + `</div>
+          <div>` + childData['name_val'] + `</div>
+          <div>` + childData['email_full'] + `</div>
+          <div>` + childData['age_txt'] + `</div>
+          <div>` + childData['children_txt'] + `(` + childData['children_type_txt'] + `)</div>
+          <div>` + childData['family_txt'] + `</div>
+          <div>` + childData['income_txt'] + `</div>        
+          <div>` + childData['wanted_region_str'] + `</div>
+          <div>` + paid_html + `</div>
+          <div>` + progress_html + `</div>
+          <div>` + dataInput_html + `</div>
+        </div>
+      `          
+    });
+    request_list_html += "</div>"    
+    
+    $("#requestListModalLabel").html("고객 요청서 목록")
+    $("#requestListModal .modal-body").html(request_list_html)
+    $('#requestListModal').modal("show")
+  });  
+}
+
+function inputCustomerData(key){
+  pageInitialize()
+
+  requestReport_db.database().ref(key).once('value').then(snapshot => {
+    const childData = snapshot.val();
+    if(!childData) return;
+    console.log(childData)
+
+    //데이터를 각 입력란에 채우기
+    $("#customer_name").val(childData.name_val)
+
+    $("#customer_age option[value = " + childData.age_val + "]").prop('selected', true)
+    changeAge(childData.age_val)
+    
+    $("#customer_family option[value = " + childData.family_val + "]").prop('selected', true)
+    changeFamily(childData.family_val)
+    
+    $("#customer_children option[value = " + childData.children_val + "]").prop('selected', true)
+    $("#customer_children_type option[value = " + childData.children_type_val + "]").prop('selected', true)
+    $("#customer_income option[value = " + childData.income_val + "]").prop('selected', true)
+
+    budget_cash_loaded = Number(childData.budget_cash)
+    budget_loan_loaded = Number(childData.budget_loan)
+
+    console.log("Budget Cash: " + budget_cash_loaded)
+    console.log("Budget Loan: " + budget_loan_loaded)
+    $("#budget_cash").val(budget_cash_loaded.toLocaleString('ko-KR'))
+    $("#budget_loan").val(budget_loan_loaded.toLocaleString('ko-KR'))
+
+    changeNumberFormat(1, $("#budget_cash")[0])
+    changeNumberFormat(2, $("#budget_loan")[0])
+
+    movingMethod = childData.trans_method
+    if(movingMethod == 'public'){
+      $("#movingPublic").prop("checked", true)
+    }
+    else{
+      $("#movingDriving").prop("checked", true)
+    }
+
+    fav_point_x = childData.fav_point_x
+    fav_point_y = childData.fav_point_y
+    fav_point_address = childData.fav_point_address
+    detailMarker.setPosition(new naver.maps.LatLng(Number(fav_point_y), Number(fav_point_x)));
+    detailMap.setCenter(new naver.maps.LatLng(Number(fav_point_y), Number(fav_point_x)));
+
+    wanted_region_load = childData.wanted_region
+
+    for(var i=1; i<=wanted_region_load.length; i++){
+      $("#sido" + i + " option[value='" + wanted_region_load[i-1][0] + "']").prop('selected', true)
+      optionChange(i)     
+      $("#gungu" + i + " option[value='" + wanted_region_load[i-1][1] + "']").prop('selected', true)
+
+      if(i > 1){
+        regionOn(i)
+      }
+    }
+
+    $("#range_living").val(childData.priority_living)
+    $("#range_living_val").html(childData.priority_living)
+    priority_living = childData.priority_living
+    $("#range_trans").val(childData.priority_trans)
+    $("#range_trans_val").html(childData.priority_trans)
+    priority_trans = childData.priority_trans
+    $("#range_infra").val(childData.priority_infra)
+    $("#range_infra_val").html(childData.priority_infra)
+    priority_infra = childData.priority_infra
+    $("#range_edu").val(childData.priority_edu)
+    $("#range_edu_val").html(childData.priority_edu)
+    priority_edu = childData.priority_edu    
+  });  
 }
 
 var report_text = ""

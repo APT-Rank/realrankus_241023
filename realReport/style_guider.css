@@ -887,6 +887,51 @@
     background-color: #162235;
     border-color:  #162235;
   }
+  #requestListTableHeader, .requestListTable{
+    font-size: 0.85em;
+    display: grid;
+    grid-template-columns: 150px 100px 80px 150px 80px 100px 60px 150px 150px 80px 80px 1fr;
+    align-items: center;    
+    text-align: center;
+    column-gap: 5px;
+  }
+  #requestListTableHeader{
+    position: sticky;
+    top: 0;
+    background-color: #eee;
+    font-weight:600;
+  }
+  .requestListTable{
+    border-bottom: 1px solid #ddd;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .requestListTable > div{
+    /*자동 줄바꿈 적용*/
+    word-wrap: break-word;    
+  }
+  #requestListModalDialog{
+    max-width: 80% !important;
+  }
+  #btn_inputData{
+    width: 80%;    
+    border-radius: 15px;    
+    color: #fff;
+    background-color: #162235;
+    border: none;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  }
+  #btn_inputData_disabled{
+    width: 80%;    
+    border-radius: 15px;    
+    color: #fff;
+    background-color: #ddd;
+    border: none;
+    padding-top: 3px;
+    padding-bottom: 3px;    
+  }  
 
   /* 리포트 전체 영역 고정 */
   #report_area {
