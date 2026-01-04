@@ -34,6 +34,10 @@ const sub06_db = firebase.initializeApp({
   databaseURL: "https://realrankus-sub06.firebaseio.com/"
 }, 'sub06_db');
 
+const requestReport_db = firebase.initializeApp({
+  databaseURL: "https://realrankus-report.firebaseio.com/"
+}, 'requestReport_db');
+
 var db_list = [sub01_db, sub02_db, sub03_db, sub04_db, sub05_db]
 
 var comment_db = firebase.firestore()

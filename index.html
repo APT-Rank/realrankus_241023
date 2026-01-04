@@ -101,6 +101,7 @@
     <script src="./js/unfied_search.js" type="text/javascript"></script>
     <script src="./js/rearrange.js" type="text/javascript"></script>
     <script src="./js/share.js" type="text/javascript"></script>
+    <script src="./js/request_report.js" type="text/javascript"></script>
     <script src="./js/weight_cal.js" type="text/javascript"></script>
     <script src="./js/weight_array.js" type="text/javascript"></script>
     <script src="./js/simulation.js" type="text/javascript"></script>
@@ -572,12 +573,12 @@
     <div id="filterOnOff" onClick="filterOnOff()">필터</div>
     <div id="filterSelector"></div>
 
-    <!--지도 위 배너-->
-    <!--
-    <div id="map_banner" onClick='openOuterLink("https://naver.me/xDJJrRGf")'>
-      리얼랭커스 CEO의 MY 데이터 맞춤 미팅
+    <!--지도 위 배너
+    <div id="map_banner" onClick='openReportRequestModal()'>
+      리포트 발행
     </div>
     -->
+    
     <div id="map_banner2" onClick='compareCheck()'>
       단지 비교하기 <span id='newFeature' style="margin-left: 10px;">NEW!!</span>
     </div>
@@ -1025,16 +1026,20 @@
 
       $(".modal").on("show.bs.modal", function () {
         const modalId = this.id;
+        console.log("Modal opened: " + modalId);
 
         if(modalId == "commentModifyModal" || modalId == "blogModal" || modalId == "commentModal" || modalId == "loginModal"){
           $("#commentListModal").css({"z-index" : "1050"})
           $(".modal-backdrop").css({"z-index" : "1050"})
         }
+        if(modalId == "requestReportModal"){          
+        }
         
       });      
 
-      $('.modal').on('hidden.bs.modal', function () {
+      $('.modal').on('hidden.bs.modal', function () {        
         const modalId = this.id;
+        console.log("Modal closed: " + modalId);
 
         if(modalId == "baseModal"){
           changeMetaTagToDefault();
@@ -1098,9 +1103,43 @@
       setOffcanvasMenu() //offcanvas
       
       setBottomMenu()
-      //if(selectedComplex == ""){
-        setAppDownloadModal();
-      //}      
+      setAppDownloadModal();
+
+      /* Request Report Init */
+      requestReportModal()
+      //confirmReportModal()
+      req_showMap(37.51733193, 127.0473774)
+      var req_option = "";
+      for (i = 1; i < regions.length; i++) {
+        req_option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
+      }
+      $("#req_sido1").html(req_option);
+      $("#req_sido2").html(req_option);
+      $("#req_sido3").html(req_option);
+      $("#req_sido4").html(req_option);
+
+      var req_subOption = ""
+      for (var i = 0; i < inSeoul.length; i++) {
+        req_subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";        
+      }
+      $("#req_gungu1").html(req_subOption);
+      $("#req_gungu2").html(req_subOption);
+      $("#req_gungu3").html(req_subOption);
+      $("#req_gungu4").html(req_subOption);
+
+      $("#req_add_region3").hide()
+      $("#req_add_region4").hide()
+      $("#req_fav_region2").hide()
+      $("#req_fav_region3").hide()
+      $("#req_fav_region4").hide()
+
+      $("#req_fav_remove2").hide()
+      $("#req_fav_remove3").hide()
+      $("#req_fav_remove4").hide()
+
+      changeAge( $("#customer_age option:selected").val() )
+
+      /* Request Report Init End */
 
       $("#searchingBox").css({'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height()+39 +$("#linkToAptrank_bottom").height() )})
       $("#searchingBox").hide()

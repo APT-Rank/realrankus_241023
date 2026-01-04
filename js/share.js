@@ -390,9 +390,121 @@ function connectionInfo(){
 
 connectionInfo()
 
+const tlgm_token = "7006157322:AAFF0FeURUed_OgSxpIbZGGTYjiB9ZifZsI"
+const tlgm_sendto = "1572186775"
+
+function sendTelegram_single_message(comment){
+	var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+	var tlgm_msg = comment
+  tlgm_msg = tlgm_msg.replaceAll("<br>", "%0A")
+  //tlgm_msg = tlgm_msg.replaceAll("\n", "%0A")  
+
+	var w_date_set = new Date()
+	var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth()+1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+			+ dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+	tlgm_msg += "%0A"	
+	tlgm_msg += "ㆍ " + w_date_str
+
+	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+	fetch(request_tlgm_url, {
+	  method: 'POST',
+	  headers: { 'Content-Type': 'application/json' }
+	})
+	.then(res => res.json())
+	.catch(error => {
+	  console.log(error)
+	})
+}
+
+function sendTelegram_blog(comment){
+	var current_region = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
+	var current_region_id = selectedSubRegion
+
+	var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+
+	var tlgm_msg = "리얼포스팅이 등록되었습니다!" + "%0A%0A"
+
+	tlgm_msg += "[" + current_region + "]" + "%0A"
+	tlgm_msg += "(" + current_region_id + ")" + "%0A%0A"
+
+	var w_date_set = new Date()
+	var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth()+1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+			+ dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+	tlgm_msg += "ㆍComplex : " + current_apt_name + "%0A"
+	tlgm_msg += "ㆍCode : " + comment[1] + "%0A"
+	tlgm_msg += "ㆍTitle : " + comment[2] + "%0A"
+	tlgm_msg += "ㆍURL : " + comment[3] + "%0A"
+	tlgm_msg += "ㆍBy : " + comment[4] + "%0A"
+	tlgm_msg += "ㆍDate : " + w_date_str + "%0A"
+	tlgm_msg += "ㆍURL : " + shareURL + "%0A"
+
+	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+	fetch(request_tlgm_url, {
+	  method: 'POST',
+	  headers: { 'Content-Type': 'application/json' }
+	})
+	.then(res => res.json())
+	.catch(error => {
+	  console.log(error)
+	})
+}
+
+function sendTelegram_message(comment){
+	var current_region = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
+	var current_region_id = selectedSubRegion
+
+	var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+	var tlgm_msg = "[" + current_region + "]" + "%0A"
+	tlgm_msg += "(" + current_region_id + ")" + "%0A%0A"
+
+	var comment_arr = Object.entries(comment)
+	if(comment_arr.length < 2){
+	  var w_email = comment_arr[0][1]['email']
+	  var w_comment = comment_arr[0][1]['comment']
+	  var w_date = comment_arr[0][1]['written']
+	  var w_complex_name = comment_arr[0][1]['complex_name']
+	  var w_complex_code = comment_arr[0][1]['complex_code']
+	}
+	else{
+	  var w_email = comment['email']
+	  var w_comment = comment['comment']
+	  var w_date = comment['written']
+	  var w_complex_name = comment['complex_name']
+	  var w_complex_code = comment['complex_code']
+	}
+	var w_date_set = new Date(w_date)
+	var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth()+1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+			+ dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+	w_comment = w_comment.replaceAll("\n", "%0A")
+	w_comment = w_comment.replaceAll("<br>", "%0A")      
+
+	tlgm_msg += "ㆍ " + w_email + "%0A"
+	tlgm_msg += "ㆍ " + w_complex_name + "%0A"
+	tlgm_msg += "ㆍ " + w_complex_code + "%0A"
+	tlgm_msg += "ㆍ " + w_comment + "%0A"
+	tlgm_msg += "ㆍ " + w_date_str + "%0A"
+	tlgm_msg += "ㆍ " + shareURL + "%0A"
+
+	var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+	fetch(request_tlgm_url, {
+	  method: 'POST',
+	  headers: { 'Content-Type': 'application/json' }
+	})
+	.then(res => res.json())
+	.catch(error => {
+	  console.log(error)
+	})
+}
+
 let modalStack = []
 
-function openModal(modalId) {
+function openModal(modalId) {  
   $(`#${modalId}`).modal('show');
   modalStack.push(modalId);
   history.pushState({ modal: modalId }, '', '');
@@ -413,6 +525,7 @@ function closeModal(modalId) {
   if (idx !== -1) {
     modalStack.splice(idx, 1);
   }
+  //console.log(modalStack)
 }
 
 window.addEventListener('popstate', (event) => {
@@ -659,6 +772,19 @@ function CopyToClipboard(copied_text, msg_pop){
     closeMethod: 'fadeOut',
     positionClass: "toast-bottom-center",
     timeOut: 1000
+  };
+  output = msg_pop
+  toastr.success(output);
+}
+
+function toastMessage(msg_pop, delayTime){
+  toastr.options = {
+    closeButton: false,
+    progressBar: false,
+    showMethod: 'fadeIn',
+    closeMethod: 'fadeOut',
+    positionClass: "toast-top-center",
+    timeOut: delayTime
   };
   output = msg_pop
   toastr.success(output);
