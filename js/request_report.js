@@ -271,7 +271,7 @@ function requestReportModal(){
         <div class="modal-header" id="requestReportModalHeader">
           <div>
             <h5 class="modal-title" id="requestReportModalLabel">맞춤형 리포트 요청</h5>
-            <div onClick='openOuterLink("https://drive.google.com/file/d/1ms6OE9k2fwqhDPVtkNNTqpMXaqNd_bRX/view?usp=sharing")'><a href="#">리포트 샘플 : 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
+            <div onClick='openOuterLink("https://drive.google.com/file/d/1I3Ld69J1p9iVTZEtfoqr-E7Xwo7D63fh/view?usp=sharing")'><a href="#">리포트 샘플 : 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
           </div>
           <div style="text-align:center;">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
