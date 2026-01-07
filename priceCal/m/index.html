@@ -373,7 +373,7 @@
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedTheme = "under100M";
-    var currentMonth = "202512"; //수정 
+    var currentMonth = "202601"; //수정 
 
     var pageName = "aptrank_PriceCal" //20231020    
 
@@ -1134,7 +1134,7 @@
       var pyListOPtion = "<option value='" + "-1" + "'>" + "---" + "</option>";
 
       var baseDate = "";
-      for (j = 2010; j <= 2025; j++) {
+      for (j = 2010; j <= 2026; j++) {
         for (k = 1; k <= 12; k++) {
           if (k < 10) {
             dateVal = j.toString() + "0" + k.toString();
@@ -1143,9 +1143,9 @@
             dateVal = j.toString() + k.toString();
             dateTxt = j.toString() + "-" + k.toString();
           }
-          if (j == 2025) {
+          if (j == 2026) {
             //수정
-            if (k <= 12) {
+            if (k <= 1) {
               //수정
               baseDate += "<option value='" + dateVal + "'>" + dateTxt + "</option>";
             }

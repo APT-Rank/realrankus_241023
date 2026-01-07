@@ -1,3 +1,12 @@
+var notice_202601 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 1월 업데이트 안내 (2026-01-07)</div>"
++"<ul>"
++"<li><div class='notice'>지역별 소득 정보 업데이트 했습니다.(공공데이터 제공)</div></li>"
++"<li><div class='notice'>2030년 까지 수도권 개통 예정역 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>전국 하나로마트 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202512 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 12월 업데이트 안내 (2025-12-02)</div>"
 +"<ul>"
