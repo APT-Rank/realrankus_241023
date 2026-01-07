@@ -1278,29 +1278,16 @@ function setOffcanvasMenu(){
   offcanvas_info_html = `
     <div id="offcanvas_company_long">
       <div id="company_info_detail">
-        <div class="company_info_text">상호</div>
-        <div onClick="openOuterLink('https://naver.me/xDJJrRGf')"><img src="https://www.realrankus.com/image/company_CI.png" height='20'></div>
-
-        <div class="company_info_text">대표이사</div>
-        <div>한승훈</div>
-
-        <div class="company_info_text">사업자등록번호</div>
-        <div>725-86-02829</div>
-
-        <div class="company_info_text">통신판매업신고</div>
-        <div>제2023-서울강남-05016호</div>
+        <div class="company_info_text">서비스명</div>
+        <div>리얼랭커스</div>
 
         <div class="company_info_text">제휴문의</div>
-        <div><a href="mailto:quenam38@naver.com" style='text-decoration:none; color: #888;'>quenam38@naver.com</a></div>
+        <div style='text-decoration:none; color: #888;' onClick='openOuterLink("mailto:aptranking@gmail.com")'>aptranking@gmail.com</div>
 
-        <div class="company_info_text">본사</div>
-        <div onClick="openOuterLink('https://naver.me/FiOAp7R4')">서울특별시 강남구 테헤란로77길 11-9 7F 에이113호</div>
       </div>
       <hr>
-      <div id='company_CI'>        
-        <div onClick="openOuterLink('https://ccei.creativekorea.or.kr/')"><img src="https://www.realrankus.com/image/support_01.png" height='30'><span style='font-size: 0.8em'><br> 보육기업 (2023-08-30)</span></div>
-        <hr>
-        <div style='margin-bottom:5px'>ⓒ Copyright 2022. Imjinsa Inc. All Rights Reserved.</div>        
+      <div id='company_CI'>
+        <div style='margin-bottom:5px'>ⓒ Copyright 2022. RealRankus All Rights Reserved.</div>        
       </div>
     </div>
   `
@@ -1309,13 +1296,13 @@ function setOffcanvasMenu(){
     <div id="offcanvas_company_long">
       <div id="company_info_detail">
         <div class="company_info_text">Company</div>
-        <div onClick="openOuterLink('https://naver.me/xDJJrRGf')">임장에진심인사람들</div>
+        <div onClick="openOuterLink('')">리얼랭커스</div>
 
         <div class="company_info_text">CEO</div>
-        <div>한승훈</div>
+        <div>김선우</div>
 
         <div class="company_info_text">Strategic Planner</div>
-        <div>Holym Han</div>
+        <div>원문정</div>
 
         <div class="company_info_text">Biz Registration No.</div>
         <div>725-86-02829</div>
@@ -1324,19 +1311,18 @@ function setOffcanvasMenu(){
         <div>Je2023-SeoulGangnam-05016ho</div>
 
         <div class="company_info_text">Contact</div>
-        <div><a href="mailto:quenam38@naver.com" style='text-decoration:none; color: #888;'>quenam38@naver.com</a></div>
+        <div style='text-decoration:none; color: #888;' onClick='openOuterLink("mailto:aptranking@gmail.com")'>aptranking@gmail.com</div>
 
         <div class="company_info_text">Head Office</div>
         <div onClick="openOuterLink('https://naver.me/FiOAp7R4')">7F A113, 11-9, Teheran-ro 77-gil, Gangnam-gu, Seoul</div>
       </div>
       <hr>
       <div id='company_CI'>        
-        <div onClick="openOuterLink('https://ccei.creativekorea.or.kr/')"><img src="https://www.realrankus.com/image/support_01.png" height='30'><span style='font-size: 0.8em'><br> 보육기업 (2023-08-30)</span></div>
-        <hr>
-        <div style='margin-bottom:5px'>ⓒ Copyright 2022. Imjinsa Inc. All Rights Reserved.</div>        
+        <div style='margin-bottom:5px'>ⓒ Copyright 2022. RealRankus All Rights Reserved.</div>        
       </div>
     </div>
-  `  
+  `    
+
   $(".offcanvas-body").html(offcanvas_html)
   //$(".offcanvas-body").append(offcanvas_info_html)
   //connectionOS가 "Android"이고 connectionWebApp가 "Web"이면 구글 플레이스토어 링크 표시
@@ -1349,7 +1335,7 @@ function setOffcanvasMenu(){
 
   $(".offcanvas-body").append(offcanvas_footer_html)  
 
-  $(".offcanvas-body").append(offcanvas_info_html_eng)
+  $(".offcanvas-body").append(offcanvas_info_html)
   setupOffcanvas(currentMenu)
 }
 
