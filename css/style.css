@@ -153,6 +153,7 @@
     position: absolute;
     display: grid;
     justify-content: center;
+    word-break: keep-all;
     font-size: 0.85em;
     width: 260px;
     font-weight: 600;
@@ -2298,6 +2299,8 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
       margin-top: 1px;
     }
     #map_banner{
+      text-align: center;
+      word-break: keep-all;
       width: 300px;
       font-size: 1em;
       padding-top: 5px;

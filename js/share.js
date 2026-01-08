@@ -328,6 +328,11 @@ var monthMap = [
   ['a', '01'], ['b', '02'], ['c', '03'], ['d', '04'], ['e', '05'], ['f', '06'], ['g', '07'], ['h', '08'], ['i', '09'], ['j', '10'], ['k', '11'], ['l', '12']  
 ]
 
+//2022년 2월 1일부터 현재까지의 년차 계산
+var launchDate = new Date(2022, 1, 1);
+var currentDate = new Date();
+var yearsDifference = currentDate.getFullYear() - launchDate.getFullYear();
+
 String.prototype.phoneNoRep = function()
 {
     const str   = this;
@@ -1115,7 +1120,7 @@ function setAppDownloadModal(){
   `
   
   $('body').append(appDownload_html)  
-  $("#appDownloadModaloutline").css({'bottom': (-1)*window.innerHeight/3})
+  $("#appDownloadModaloutline").css({'bottom': (-1)*window.innerHeight/3 + 100 + 'px'})
   //350ms 후에 모달이 올라오도록 설정
   setTimeout(function() {
     openModal("appDownloadModal")
@@ -1277,6 +1282,12 @@ function setOffcanvasMenu(){
 
   offcanvas_info_html = `
     <div id="offcanvas_company_long">
+      <div style='font-size: 1.2em; font-weight: 400; margin-bottom: 10px;'>
+        <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>"${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스"</div>      
+        <div class='notice'><strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong></div>
+        <div class='notice' onClick='openOuterLink(\"https://open.kakao.com/me/realrankus\")'>커피챗 : <a href=\"#\">https://open.kakao.com/me/realrankus </a></div>
+      </div>
+      <hr>
       <div id="company_info_detail">
         <div class="company_info_text">서비스명</div>
         <div>리얼랭커스</div>

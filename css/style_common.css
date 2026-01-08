@@ -406,7 +406,8 @@
   display: grid;
   grid-template-columns: 110px 200px 200px;
   column-gap: 20px;
-  margin-bottom: 10px;    
+  margin-bottom: 10px;
+  align-items: center;
 }
 .req_budget_input{
   display: grid;
@@ -559,6 +560,7 @@
   background-color: #b61313;
 }
 .req_priority_range{
+  font-size: 0.85em;
   display: grid;
   grid-template-columns: 80px 3fr 50px;
   margin-top: 8px;
@@ -618,14 +620,38 @@
   display: grid;
   grid-template-columns: 1fr !important;
 }
-.black-backdrop{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index : 1059
+
+#req_receipt_option{
+  display: grid;
+  grid-template-columns: 0.2fr 1fr;
+  font-size: 0.85em;
+  column-gap: 10px;
+  margin-top: 5px;
+  margin-left: 30px
+}
+#receiptNo, #receiptYes{
+  margin-right: 5px;  
+} 
+#receipt_phone{  
+  font-size: 0.85em;
+  border: none;
+  border-bottom: 1px solid #aaa;
+  text-align: center;    
+  padding-left: 10px;
+}
+.report_banner{    
+    display: grid;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    justify-content: center;
+    word-break: keep-all;
+    background: #8E2DE2;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */              
+    color: #fff;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
 /*

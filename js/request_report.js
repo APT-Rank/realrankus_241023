@@ -25,6 +25,36 @@ var priority_edu = 100
 var wanted_region = [["Seoul","1168000000_Seoul_Gangnam"]]
 var wanted_region_str = ["서울시 강남구"]
 
+var report_banner_text = [
+  "나의 소득과 예산에 딱 맞는 단지, 맞춤형 리포트로 확인하세요.",
+  "내 생애주기를 분석해 최적의 아파트를 추천하는 1:1 전용 보고서",
+  "\"현금 8억, 대출 4억\" 내 자금 상황에서 갈 수 있는 최선의 단지는?",
+  "나를 위한, 나에게만 최적화된 단지 추천 리스트를 받아보세요",
+  "가족 구성과 연소득을 분석해 도출한 우리 가족 최적의 입지 분석",
+  "남들의 추천 말고, 당신의 라이프스타일에 맞춘 아파트 추천 리포트",
+  "커리어 상승기, 당신의 생애주기에 최적화된 단지를 골라드립니다",
+  "예산 12억 원으로 매수 가능한 '최고 등급 단지', 리포트로 정리해 드립니다",
+  "주거·교통·인프라·교육, 당신의 우선순위에 맞춘 단지 성적표 발행",
+  "내가 원하는 지역에서 예산에 딱 맞는 아파트 10곳을 추천해 드립니다",
+  "단순 순위가 아닌, 당신의 예산을 반영한 '예상 도달 가격' 분석 리포트",
+  "2,000세대 대단지부터 초품아까지, 당신의 조건으로 필터링한 결과 보고서",
+  "당신의 정보를 데이터 파이프라인으로 분석한 정밀 단지 추천 리포트",
+  "\"어디 살아야 할까?\" 고민된다면, 당신의 상황을 반영한 리포트를 발행해 보세요",
+  "수천 개의 단지 중 당신의 예산과 생애주기에 맞는 곳만 골라 담았습니다",
+  "리얼랭커스 AI가 당신의 데이터를 분석해 작성한 1:1 주거 전략 보고서",
+  "내 집 마련의 막막함, 내 조건을 반영한 맞춤형 보고서로 해결하세요",
+  "가용 예산 내에서 누릴 수 있는 최고의 입지를 리포트로 제안합니다",
+  "지금 내 상황에 맞는 '아파트 추천 리포트' 발행하기",
+  "나만의 조건 입력하고 1:1 맞춤형 단지 분석 보고서 받기",
+  "당신만을 위한 '리얼랭커스 추천 보고서'를 지금 바로 확인해 보세요",
+  "복잡한 부동산 고민, 당신의 정보를 반영한 단 한 권의 리포트로 끝내세요",
+  "내 가족의 미래를 위한 현명한 선택, 맞춤형 추천 리포트로 확인하세요",
+  "내 예산에 맞는 최고 등급 단지 추천 리포트",
+  "당신의 정보를 분석한 1:1 아파트 성적표",
+  "상황 맞춤형 단지 큐레이션 리포트 서비스",
+  "예산과 생애주기에 최적화된 아파트 보고서",  
+]
+
 var age_description = [
   "사회초년, 결혼준비",
   "신혼, 자녀출산",
@@ -36,17 +66,32 @@ var age_description = [
 ]
 /* Report Data Variables End*/
 
+var report_banner_html = ""
+function reportBannerHtml(){
+  random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
+
+  report_banner_html = `
+  <div class="report_banner" onClick="openReportRequestModal()">
+      ${random_banner_text}
+  </div>
+  `
+}
+
 function requestReportModal(){
+  reportBannerHtml()
   //console.log("requestReport called")
   var request_html = `
   <div id="reqReportBox">
           <div id="req_step0">
             <div class="req_stepInfo">① 고객 정보</div>
             <div class='req_description'>고객님의 부동산 맞춤 리포트를 작성하기 위해 아래 정보를 입력해 주세요.
-            <br/> 고객님의 이름은 리포트 발행 전, 입금 계좌 일치 여부 확인에 사용되며, 이메일 주소는 발행되는 리포트를 받는 데 사용됩니다.</div>
+            <br/> 고객님의 이름은 리포트 발행 전, 입금 계좌 일치 여부 확인에 사용되며, 이메일 주소는 발행되는 리포트를 받는 데 사용됩니다.
+            <br/> 리포트 발행 비용은 29,900원이며, 입금 확인 후 24시간 이내에 리포트가 발행되어 이메일로 전송됩니다.
+            </div>
             <div class="req_customer_input">
               <div class="req_step1Title">고객이름</div>
-              <div><input class='req_text_input' id='customer_name' type="text" placeholder=""></div>
+              <div id="div_customer_name"><input class='req_text_input' id='customer_name' type="text" placeholder=""></div>
+              <div></div>
             </div>
 
             <div class="req_customer_input">              
@@ -89,7 +134,7 @@ function requestReportModal(){
 
             <div class="req_customer_input">
               <div class="req_step1Title">가족구성</div>
-              <div>
+              <div id="div_customer_family">
                 <select class='req_gungu' id="customer_family" onChange="changeFamily(this.value)">
                   <option value=1>1인</option>
                   <option value=2>2인</option>
@@ -124,7 +169,7 @@ function requestReportModal(){
 
             <div class="req_customer_input">
               <div class="req_step1Title">가족연소득</div>
-              <div>
+              <div id="div_customer_income">
                 <select class='req_gungu' id="customer_income" onChange="">
                   <option value='income_00'>2,000만원 이하</option>
                   <option value='income_01'>2,001만원 ~ 3,000만원</option>
@@ -163,13 +208,6 @@ function requestReportModal(){
                 <div class='req_number_input_sub' id='req_number_input_won2'>원</div>
                 <div id="req_budget_kor2">0 원</div>
               </div>
-
-              <div id="CPISelection"></div>
-
-              <div></div>
-
-              <div></div>
-
             </div>
           </div>
 
@@ -264,14 +302,15 @@ function requestReportModal(){
           </div>          
         </div>
   `
+
   var request_modal_html = `
   <div class="modal fade" id="requestReportModal" tabindex="-1" aria-labelledby="requestReportModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content" id="requestReportModalContent">
         <div class="modal-header" id="requestReportModalHeader">
           <div>
             <h5 class="modal-title" id="requestReportModalLabel">맞춤형 리포트 요청</h5>
-            <div onClick='openOuterLink("https://drive.google.com/file/d/1I3Ld69J1p9iVTZEtfoqr-E7Xwo7D63fh/view?usp=sharing")'><a href="#">리포트 샘플 : 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
+            <div id='reportSample' onClick='openOuterLink("https://drive.google.com/file/d/1I3Ld69J1p9iVTZEtfoqr-E7Xwo7D63fh/view?usp=sharing")'><a href="#">리포트 샘플 : 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
           </div>
           <div style="text-align:center;">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -298,10 +337,22 @@ function requestReportModal(){
         <div class="modal-footer" id="requestReportFinalConfirmModalFooter">
         <div class='req_description_notice' style="text-align:left; font-size: 1em; font-weight:600;">
           <ul>
-            <li onClick="CopyToClipboard('신협 123456789', '계좌번호가 복사되었습니다.')">계좌번호 : 신협 123-456-789 <span style='color:#aaa'>[복사하기]</span></li>
-            <li>예금주 : 홍길동</li>
-            <li>가격 : 29,900원</li>
+            <li onClick="CopyToClipboard('신협 137015668232', '계좌번호가 복사되었습니다.')">계좌번호 : 신협 137-015-668232 <span style='color:#aaa'>[복사하기]</span></li>
+            <li>예금주 : 원ㅇ정</li>
+            <li>가격 : 29,900원</li>            
           </ul>
+        </div>
+
+        <div class='req_description_notice' style="text-align:left; font-size: 1em; font-weight:600;">
+          <div id="req_receipt_request">
+            <ul> <li>현금영수증</li> </ul>
+            <div id="req_receipt_option">            
+              <div><input class="form-check-input" type="radio" name="btnReceipt" autocomplete="off" id="receiptNo" value="no" onChange="receiptOptionChanged()" checked><label for="receiptNo"> 미발행</label></div>
+              <div><input class="form-check-input" type="radio" name="btnReceipt" autocomplete="off" id="receiptYes" value="yes" onChange="receiptOptionChanged()"/><label for="receiptYes"> 발행 (</label>
+              휴대폰번호 : 
+              <input id='receipt_phone' type="tel" placeholder="01012345678" disabled> )</div>            
+            </div>
+          </div>
         </div>
         <div style='display:grid; grid-template-columns:1fr 3fr 1fr; column-gap:10px; padding-top:10px;'>          
           <div class="generate"><button id="req_btn_final_cancel" onClick="reportBack()"><i class="fa-solid fa-angle-left"></i> 이전</button></div>          
@@ -314,7 +365,30 @@ function requestReportModal(){
   </div>
   `
   $("body").append(request_modal_html)  
-  $("#requestReportConfirmModalContent").hide()  
+  $("#requestReportConfirmModalContent").hide()
+
+  if(isMobile){
+    $("#mobile_map_list").css({"bottom":"120px"})
+    $("#map_banner2").hide()
+    $("#map_banner").css({"bottom":"60px"})
+
+    $("#reportSample").css({"font-size":"0.8em"})
+
+    $("#req_step0, #req_step1, #req_step2, #req_step3, #req_step4").css({"padding-left":"10px", "padding-right":"10px"})
+    $(".req_customer_input, .req_budget_input").css({"grid-template-columns":"70px 1fr 1fr", "column-gap":"5px"})
+    $("#req_step0 > div:nth-child(6)").css({"grid-template-columns":"70px 0.6fr 1fr", "column-gap":"10px"})
+    $("#div_customer_name, #div_customer_family, #div_customer_income").css({"grid-column":"2/4"})    
+
+    $("#req_step1Content").css({"grid-template-columns":"1fr", "row-gap":"10px"})
+    $(".req_budget_input").css({"grid-template-columns":"100px 1fr"})
+    $("#req_map").css({"width":"none"})
+
+    $("#req_fav_regions").css({"grid-template-columns":"1fr", "row-gap":"10px"})
+    $(".req_fav_region").css({"grid-template-columns":"120px 1fr auto", "column-gap":"5px"})
+
+    $("#requestReportModalFooter").css({"font-size":"0.85em"})
+    $("#req_btn_temp_load").text("불러오기")
+  }
 }
 
 function confirmReportModal(){  
@@ -384,7 +458,17 @@ function update_range_val(category, obj){
     $("#range_edu_val").html(obj.value)
     priority_edu = obj.value
   }
-}    
+}
+
+function receiptOptionChanged(){
+  if($("#receiptYes").is(":checked")){
+    $("#receipt_phone").prop('disabled', false)
+  }
+  else{
+    $("#receipt_phone").prop('disabled', true)
+  }
+}
+
 
 function changeNumberFormat(index, obj){      
   obj.value = obj.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');      
@@ -446,7 +530,17 @@ function req_regionOff(index){
 
 function req_showMap(coord_y, coord_x){
   dh = 300
-  dw = dh * 7.2 / 3
+
+  //현재 브라우저 창 너비 구하기  
+  var window_width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  
+  if(isMobile){
+    dw = window_width - 60
+  }
+  else{
+    dw = dh * 7.2 / 3
+  }
+  
   var req_detailMapOptions = {
       center: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
       size: new naver.maps.Size(dw, 300),
@@ -1082,6 +1176,10 @@ function submitReportRequest(){
 
   db_domain_txt = report_obj.email_full.replace("@", "_").replace(".", "_")
 
+  //현금영수증 발급 여부
+  var receipt_requested = $("#receiptYes").is(":checked") ? true : false
+  var receipt_phone = $("#receipt_phone").val()
+
   //Firebase Realtime Database에 저장할 데이터 형식으로 변환
   var requestData = {
       name_val: report_obj.name_val,
@@ -1131,6 +1229,9 @@ function submitReportRequest(){
       priority_infra: report_obj.priority_infra,
       priority_edu: report_obj.priority_edu,
 
+      receipt_requested: receipt_requested,
+      receipt_phone: receipt_phone,
+
       requestDateStr: report_obj.requestDateStr,
       requestDate: report_obj.requestDate,
       paid: report_obj.paid,
@@ -1142,6 +1243,12 @@ function submitReportRequest(){
     if (requestData[key] === undefined) {
       requestData[key] = "";
     }
+  }
+
+  //현금영수증을 요청했으나, 전화번호가 비어있으면 오류 메시지 출력 후 함수 종료
+  if(receipt_requested && (receipt_phone == "" || receipt_phone == null)){
+    toastMessage("현금영수증 발급을 위해 휴대폰번호 또는 사업자등록번호를 입력해 주세요!", 2000)
+    return
   }
 
   requestReport_db.database().ref(db_domain_txt + "_" + str_now).set(requestData)
