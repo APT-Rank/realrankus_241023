@@ -192,7 +192,7 @@ function requestReportModal(){
             <div class="req_stepInfo">② 예산 설정</div>
             <div class='req_description'>
             '사용 가능 예산'은 고객님이 실제로 사용할 수 있는 예산을 의미하고, '대출 가능 금액'은 고객님이 대출을 통해 추가로 사용할 수 있는 금액을 의미합니다.            
-            예를 들어, 고객님의 사용 가능 예산이 3억원이고, 대출 가능 금액이 2억원인 경우, 총 5억원의 예산으로 부동산을 검색할 수 있습니다.
+            예를 들어, 고객님의 사용 가능 예산이 3억원이고, 대출 가능 금액이 2억원인 경우, 총 5억원의 예산으로 부동산이 추천됩니다.
             </div>
             <div id="req_step1Content">
               <div class="req_budget_input">
@@ -371,6 +371,8 @@ function requestReportModal(){
     $("#mobile_map_list").css({"bottom":"120px"})
     $("#map_banner2").hide()
     $("#map_banner").css({"bottom":"60px"})
+
+    $(".req_description").css({"font-size":"0.75em"})
 
     $("#reportSample").css({"font-size":"0.8em"})
 
