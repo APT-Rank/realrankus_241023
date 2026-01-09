@@ -367,6 +367,40 @@ function requestReportModal(){
   $("body").append(request_modal_html)  
   $("#requestReportConfirmModalContent").hide()
 
+      //confirmReportModal()
+      req_showMap(37.51733193, 127.0473774)
+      var req_option = "";
+      for (i = 1; i < regions.length; i++) {
+        req_option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
+      }
+      $("#req_sido1").html(req_option);
+      $("#req_sido2").html(req_option);
+      $("#req_sido3").html(req_option);
+      $("#req_sido4").html(req_option);
+
+      var req_subOption = ""
+      for (var i = 0; i < inSeoul.length; i++) {
+        req_subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";        
+      }
+      $("#req_gungu1").html(req_subOption);
+      $("#req_gungu2").html(req_subOption);
+      $("#req_gungu3").html(req_subOption);
+      $("#req_gungu4").html(req_subOption);
+
+      $("#req_add_region3").hide()
+      $("#req_add_region4").hide()
+      $("#req_fav_region2").hide()
+      $("#req_fav_region3").hide()
+      $("#req_fav_region4").hide()
+
+      $("#req_fav_remove2").hide()
+      $("#req_fav_remove3").hide()
+      $("#req_fav_remove4").hide()
+
+      changeAge( $("#customer_age option:selected").val() )
+
+      /* Request Report Init End */
+
   if(isMobile){
     $("#mobile_map_list").css({"bottom":"120px"})
     $("#map_banner2").hide()
