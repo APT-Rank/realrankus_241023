@@ -377,9 +377,15 @@ function requestReportModal(){
   $("#req_sido3").html(req_option);
   $("#req_sido4").html(req_option);
 
+  start_num = 0
+  console.log(currentMenu)
+  if(currentMenu == "aptrank_price"){
+     start_num = 1
+  }
+
   var req_subOption = ""
-  for (var i = 0; i < inSeoul.length; i++) {
-    req_subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";        
+  for (var i = start_num; i < inSeoul.length; i++) {
+    req_subOption += "<option value='" + inSeoul[i][1] + "'>" + inSeoul[i][0] + "</option>";    
   }
   $("#req_gungu1").html(req_subOption);
   $("#req_gungu2").html(req_subOption);
@@ -755,14 +761,18 @@ function req_optionChange(index) {
   }
   $("#req_gungu" + index).empty();
 
-  for (var i = 0; i < req_changeItem.length; i++) {
+  start_num = 0
+  if(currentMenu == "aptrank_price"){
+     start_num = 1
+  }
+
+  for (var i = start_num; i < req_changeItem.length; i++) {
     var subOption = $("<option value='" + req_changeItem[i][1] + "'>" + req_changeItem[i][0] + "</option>" );
+    console.log(subOption)
     $("#req_gungu" + index).append(subOption);
   }
 
   wanted_region[index-1] = [$("#req_sido" + index + " option:selected").val(), $("#req_gungu" + index + " option:selected").val()]
-
-
 }
 
 function changeMovingMethod(type){
