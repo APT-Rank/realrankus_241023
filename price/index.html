@@ -945,7 +945,6 @@ function updateTable(region){
           addon_html = ""
 
           if(i == 3){ $('#dataList').append(report_banner_html); }
-          console.log(report_banner_html)
           
           deal_count = itemNum
           for(var j = 0; j < sep_array.length ; j++){
@@ -1939,7 +1938,7 @@ function updateTable(region){
             }
           }
           else{
-            if(regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){              
+            if(regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){
             //if((regCode.split("_")).length > 2 && regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){
               var addon_html = "<div class='listBox'>";
 
@@ -2072,9 +2071,10 @@ function updateTable(region){
               //shareText += "https://www.realrankus.com/price" + "?preg=" + regSido + "&psub=" + regCode + "&pmon=" + selectedMonth + "\n\n"
               shareText +=  reg_sURL + "\n\n"
 
-              popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."              
+              popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
               
               $('#dataList').append(addon_html);
+              if((regCode.split("_")).length == 2){ $('#dataList').append(report_banner_html); }
             }            
           }
         }

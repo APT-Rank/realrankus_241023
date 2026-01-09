@@ -642,10 +642,12 @@
 .report_banner{
     text-align: center;
     display: grid;
-    font-size: 0.9em;
+    font-size: 0.85em;
     font-weight: 600;
     padding-top: 10px;
     padding-bottom: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
     justify-content: center;
     word-break: keep-all;
     background: #8E2DE2;  /* fallback for old browsers */

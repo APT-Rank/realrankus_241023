@@ -70,6 +70,16 @@ var report_banner_html = ""
 function reportBannerHtml(){
   random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
 
+  if(isMobile && random_banner_text.length > 30){
+    //random_banner_text를 두 줄로 나누기
+    var mid_index = Math.floor(random_banner_text.length / 2)
+    var split_index = random_banner_text.indexOf(" ", mid_index)
+    if(split_index == -1){
+      split_index = mid_index
+    }
+    random_banner_text = random_banner_text.substring(0, split_index) + "<br/>" + random_banner_text.substring(split_index + 1)
+  }
+
   report_banner_html = `
   <div class="report_banner" onClick="openReportRequestModal()">
       ${random_banner_text}
@@ -309,7 +319,7 @@ function requestReportModal(){
       <div class="modal-content" id="requestReportModalContent">
         <div class="modal-header" id="requestReportModalHeader">
           <div>
-            <h5 class="modal-title" id="requestReportModalLabel">맞춤형 리포트 요청</h5>
+            <h5 class="modal-title" id="requestReportModalLabel">리얼리포트 요청</h5>
             <div id='reportSample' onClick='openOuterLink("https://drive.google.com/file/d/1I3Ld69J1p9iVTZEtfoqr-E7Xwo7D63fh/view?usp=sharing")'><a href="#">리포트 샘플 : 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
           </div>
           <div style="text-align:center;">
@@ -328,7 +338,7 @@ function requestReportModal(){
 
       <div class="modal-content" id="requestReportConfirmModalContent">
         <div class="modal-header" id="requestReportFinalConfirmModalHeader">
-          <h5 class="modal-title" id="requestReportFinalConfirmModalLabel" onClick="reportBack()"><i class="fa-solid fa-angle-left"></i> 맞춤형 리포트 요청 정보 확인</h5>
+          <h5 class="modal-title" id="requestReportFinalConfirmModalLabel" onClick="reportBack()"><i class="fa-solid fa-angle-left"></i> 리얼리포트 요청 정보 확인</h5>
           <div style="text-align:center;">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -406,12 +416,21 @@ function requestReportModal(){
 
   /* Request Report Init End */
 
+  //report_banner의 텍스트 5초 간격으로 텍스트만 변경
+  /*
+  setInterval(function(){
+    random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
+    $(".report_banner").html(random_banner_text)    
+  },5000);
+  */  
+
   if(isMobile){
     $("#mobile_map_list").css({"bottom":"120px"})
     $("#map_banner2").hide()
     $("#map_banner").css({"bottom":"60px"})
 
     $(".req_description").css({"font-size":"0.75em"})
+    $("#req_description_notice").css({"font-size":"0.75em"})
 
     $("#reportSample").css({"font-size":"0.8em"})
 
@@ -427,6 +446,8 @@ function requestReportModal(){
     $("#req_fav_regions").css({"grid-template-columns":"1fr", "row-gap":"10px"})
     $(".req_fav_region").css({"grid-template-columns":"120px 1fr auto", "column-gap":"5px"})
 
+    $("#req_receipt_option").css({"grid-template-columns":"1fr", "row-gap":"5px"})
+
     $("#requestReportModalFooter").css({"font-size":"0.85em"})
     $("#req_btn_temp_load").text("불러오기")
   }
@@ -438,7 +459,7 @@ function confirmReportModal(){
     <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header" id="requestReportFinalConfirmModalHeader">
-          <h5 class="modal-title" id="requestReportFinalConfirmModalLabel">맞춤형 리포트 요청 정보 확인</h5>
+          <h5 class="modal-title" id="requestReportFinalConfirmModalLabel">리얼리포트 요청 정보 확인</h5>
           <div style="text-align:center;">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -1119,7 +1140,7 @@ function loadReportFinalConfirmModal(report_obj){
   customer_priority_edu = report_obj.priority_edu
 
   var confirm_html = `
-    <div class='req_description_notice' style='margin-bottom:15px'>
+    <div class='req_description_notice' id='req_description_notice' style='margin-bottom:15px'>
       <ul>
         <li>고객님의 입력 정보를 최종 확인 후, '리포트 요청하기' 버튼을 누르시면 리포트 요청이 완료됩니다.</li>
         <li>리포트 요청 완료 후, 입금이 확인되면 리포트 제작이 시작되며, 24시간 이내에 이메일로 리포트가 발송됩니다.</li>
