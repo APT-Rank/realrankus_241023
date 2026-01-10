@@ -739,7 +739,9 @@
     regionName = $("#sido option:selected").text()
     //saveLocalStorage()
   }
-  function updateRegion(){    
+  function updateRegion(){
+    reportBannerHtml()
+
     selectedRegion = $("#sido option:selected").val()
     selectedSubRegion = $("#gungu option:selected").val()
     
@@ -944,7 +946,7 @@ function updateTable(region){
         for(var i = 0 ; i < itemNum ; i++){
           addon_html = ""
 
-          if(i == 3){ $('#dataList').append(report_banner_html); }
+          if(i == 1){ $('#dataList').append(report_banner_html); }
           
           deal_count = itemNum
           for(var j = 0; j < sep_array.length ; j++){

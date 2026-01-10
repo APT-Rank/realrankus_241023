@@ -1108,8 +1108,6 @@
       /* Request Report Init */
       requestReportModal()
       /* Request Report Init End */
-      
-      $("#map_banner").html(report_banner_text[Math.floor(Math.random() * report_banner_text.length)])      
 
       $("#searchingBox").css({'height': window.innerHeight - ( $("#titleBar").height() + $("#selections").height() + $("#weight").height()+39 +$("#linkToAptrank_bottom").height() )})
       $("#searchingBox").hide()
@@ -1418,7 +1416,7 @@
       $("html, body").animate({ scrollTop: 0 }, 50);
     }
 
-    function optionChange(subRegion, upperReion) {
+    function optionChange(subRegion, upperReion) {      
       selectedSubRegion = subRegion;
       if(upperReion == null || upperReion == "" || upperReion == undefined){
         regionName = $("#sido option:selected").val();
@@ -1529,6 +1527,8 @@
       }
     }
     function updateRegion() {
+      reportBannerHtml()
+      
       $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>지역 정보를 불러오고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")
       minValue = 0;
       maxValue = 60;
@@ -1900,7 +1900,7 @@
           complex_grade = setGrade(aptValue)
           internalSearching[i] = {"아파트명" : aptName, "법정동주소":aptAddress2, "검색코드":searchCode, "시도":selectedRegion, "군구":selectedSubRegion}
 
-          if(i == 3){            
+          if(i == 3){
             $("#dataList").append(report_banner_html);
           }
 

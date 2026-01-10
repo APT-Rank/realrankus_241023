@@ -577,7 +577,8 @@
   padding: 5px;
   background-color: #f5f5f5;
 }
-.req_description_notice{
+.req_description_notice, #req_description_notice{
+  word-break: keep-all;
   font-size: 0.85em;  
   background-color: #f5f5f5;
   padding-top : 5px;

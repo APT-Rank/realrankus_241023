@@ -34,13 +34,13 @@ var report_banner_text = [
   "남들의 추천 말고, 당신의 라이프스타일에 맞춘 아파트 추천 리포트",
   "커리어 상승기, 당신의 생애주기에 최적화된 단지를 골라드립니다",
   "예산 12억 원으로 매수 가능한 '최고 등급 단지', 리포트로 정리해 드립니다",
-  "주거·교통·인프라·교육, 당신의 우선순위에 맞춘 단지 성적표 발행",
+  "주거·교통·인프라·교육, 당신의 중심에 맞춘 단지 추천 리포트",
   "내가 원하는 지역에서 예산에 딱 맞는 아파트 10곳을 추천해 드립니다",
   "단순 순위가 아닌, 당신의 예산을 반영한 '예상 도달 가격' 분석 리포트",
   "2,000세대 대단지부터 초품아까지, 당신의 조건으로 필터링한 결과 보고서",
   "당신의 정보를 데이터 파이프라인으로 분석한 정밀 단지 추천 리포트",
   "\"어디 살아야 할까?\" 고민된다면, 당신의 상황을 반영한 리포트를 발행해 보세요",
-  "수천 개의 단지 중 당신의 예산과 생애주기에 맞는 곳만 골라 담았습니다",
+  "당신의 예산과 생애주기에 맞는 단지만 추천하는 리포트",
   "리얼랭커스 AI가 당신의 데이터를 분석해 작성한 1:1 주거 전략 보고서",
   "내 집 마련의 막막함, 내 조건을 반영한 맞춤형 보고서로 해결하세요",
   "가용 예산 내에서 누릴 수 있는 최고의 입지를 리포트로 제안합니다",
@@ -50,7 +50,7 @@ var report_banner_text = [
   "복잡한 부동산 고민, 당신의 정보를 반영한 단 한 권의 리포트로 끝내세요",
   "내 가족의 미래를 위한 현명한 선택, 맞춤형 추천 리포트로 확인하세요",
   "내 예산에 맞는 최고 등급 단지 추천 리포트",
-  "당신의 정보를 분석한 1:1 아파트 성적표",
+  "당신의 정보를 분석한 1:1 아파트 보고서",
   "상황 맞춤형 단지 큐레이션 리포트 서비스",
   "예산과 생애주기에 최적화된 아파트 보고서",  
 ]
@@ -69,6 +69,7 @@ var age_description = [
 var report_banner_html = ""
 function reportBannerHtml(){
   random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
+  random_banner_text_map = random_banner_text
 
   if(isMobile && random_banner_text.length > 30){
     //random_banner_text를 두 줄로 나누기
@@ -85,6 +86,18 @@ function reportBannerHtml(){
       ${random_banner_text}
   </div>
   `
+
+  if(isMobile && random_banner_text_map.length > 18){
+    //random_banner_text를 두 줄로 나누기
+    var mid_index = Math.floor(random_banner_text_map.length / 2)
+    var split_index = random_banner_text_map.indexOf(" ", mid_index)
+    if(split_index == -1){
+      split_index = mid_index
+    }
+    random_banner_text_map = random_banner_text_map.substring(0, split_index) + "<br/>" + random_banner_text_map.substring(split_index + 1)
+  }  
+
+  $("#map_banner").html(random_banner_text_map)
 }
 
 function requestReportModal(){
@@ -320,7 +333,7 @@ function requestReportModal(){
         <div class="modal-header" id="requestReportModalHeader">
           <div>
             <h5 class="modal-title" id="requestReportModalLabel">리얼리포트 요청</h5>
-            <div id='reportSample' onClick='openOuterLink("https://drive.google.com/file/d/1I3Ld69J1p9iVTZEtfoqr-E7Xwo7D63fh/view?usp=sharing")'><a href="#">리포트 샘플 : 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
+            <div id='reportSample' onClick='openOuterLink("https://drive.google.com/file/d/1I3Ld69J1p9iVTZEtfoqr-E7Xwo7D63fh/view?usp=sharing")'><a href="#">샘플보기: 홍길동님을 위한 리얼랭커스 추천 보고서.pdf</a></div>
           </div>
           <div style="text-align:center;">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -388,7 +401,6 @@ function requestReportModal(){
   $("#req_sido4").html(req_option);
 
   start_num = 0
-  console.log(currentMenu)
   if(currentMenu == "aptrank_price"){
      start_num = 1
   }
@@ -422,12 +434,14 @@ function requestReportModal(){
     random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
     $(".report_banner").html(random_banner_text)    
   },5000);
-  */  
+  */
+
+  $("#requestReportFinalConfirmModalFooter").css({"background-color":"#ddd", "border-top":"1px solid #aaa"})
 
   if(isMobile){
     $("#mobile_map_list").css({"bottom":"120px"})
     $("#map_banner2").hide()
-    $("#map_banner").css({"bottom":"60px"})
+    $("#map_banner").css({"bottom":"60px", "font-size":"0.8em"})
 
     $(".req_description").css({"font-size":"0.75em"})
     $("#req_description_notice").css({"font-size":"0.75em"})
@@ -788,8 +802,7 @@ function req_optionChange(index) {
   }
 
   for (var i = start_num; i < req_changeItem.length; i++) {
-    var subOption = $("<option value='" + req_changeItem[i][1] + "'>" + req_changeItem[i][0] + "</option>" );
-    console.log(subOption)
+    var subOption = $("<option value='" + req_changeItem[i][1] + "'>" + req_changeItem[i][0] + "</option>" );    
     $("#req_gungu" + index).append(subOption);
   }
 
@@ -1140,7 +1153,7 @@ function loadReportFinalConfirmModal(report_obj){
   customer_priority_edu = report_obj.priority_edu
 
   var confirm_html = `
-    <div class='req_description_notice' id='req_description_notice' style='margin-bottom:15px'>
+    <div id='req_description_notice' style='margin-bottom:15px'>
       <ul>
         <li>고객님의 입력 정보를 최종 확인 후, '리포트 요청하기' 버튼을 누르시면 리포트 요청이 완료됩니다.</li>
         <li>리포트 요청 완료 후, 입금이 확인되면 리포트 제작이 시작되며, 24시간 이내에 이메일로 리포트가 발송됩니다.</li>
@@ -1209,6 +1222,10 @@ function loadReportFinalConfirmModal(report_obj){
   $("#requestReportModalContent").hide()
   $("#requestReportConfirmModalContent").show()
   //openModal("requestReportFinalConfirmModal")
+
+  if(isMobile){
+    $("#req_description_notice").css("font-size", "0.75em")
+  }
 }
 
 function submitReportRequest(){
