@@ -97,6 +97,7 @@ function reportBannerHtml(){
 
   if(isMobile && random_banner_text_map.length > 18){
     //random_banner_text를 두 줄로 나누기
+    random_banner_text_map = random_banner_text_map.replace(" (29,900원)", "")
     var mid_index = Math.floor(random_banner_text_map.length / 2)
     var split_index = random_banner_text_map.indexOf(" ", mid_index)
     if(split_index == -1){
