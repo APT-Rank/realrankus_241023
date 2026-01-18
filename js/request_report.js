@@ -68,7 +68,15 @@ var age_description = [
 
 var report_banner_html = ""
 function reportBannerHtml(){
-  random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
+  var short_region_name = $("#gungu option:selected").text();
+  //short_region_name이 2 단어 이상인 경우, 마지막 단어만 추출
+  if(short_region_name.indexOf(" ") != -1){
+    var name_parts = short_region_name.split(" ");
+    short_region_name = name_parts[name_parts.length - 1];
+  }
+
+  //random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
+  random_banner_text = "내 예산에 맞는 " + short_region_name + " 최선의 선택, '가격'이 아닌 '가치'로 분석한 입지 가이드"
   random_banner_text_map = random_banner_text
 
   if(isMobile && random_banner_text.length > 30){
