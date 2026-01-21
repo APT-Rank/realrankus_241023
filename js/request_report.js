@@ -611,6 +611,7 @@ function req_regionOff(index){
   $("#req_fav_region" + (index)).hide()
 
   wanted_region.splice(index-1, 1);
+  wanted_region_str.splice(index-1, 1);
 }
 
 function req_showMap(coord_y, coord_x){
@@ -739,6 +740,7 @@ function searchFindKey(e){
 
 function req_gunguChange(index) {
   wanted_region[index-1] = [$("#req_sido" + index + " option:selected").val(), $("#req_gungu" + index + " option:selected").val()]
+  wanted_region_str[index-1] = $("#req_sido" + index + " option:selected").text() + " " + $("#req_gungu" + index + " option:selected").text()
 }
 
 function req_sidoChange(index) {
@@ -816,6 +818,7 @@ function req_optionChange(index) {
   }
 
   wanted_region[index-1] = [$("#req_sido" + index + " option:selected").val(), $("#req_gungu" + index + " option:selected").val()]
+  wanted_region_str[index-1] = $("#req_sido" + index + " option:selected").text() + " " + $("#req_gungu" + index + " option:selected").text()
 }
 
 function changeMovingMethod(type){
@@ -1254,23 +1257,26 @@ function submitReportRequest(){
   report_obj.paid = false
   report_obj.progress = "Pending"
 
-  telegram_message = `[리얼리포트 요청 알림]<br>
+  //현금영수증 발급 요청 여부 및 전화/사업자번호    
+  var receipt_requested = $("#receiptYes").is(":checked") ? true : false
+  var receipt_phone = $("#receipt_phone").val()
+
+  //텔레그램 메시지 작성
+  var telegram_message = `[리얼리포트 요청 알림]<br>
  ㆍ이름 : ` + report_obj.name_val + `<br>
  ㆍ이메일 : ` + report_obj.email_full + `<br>
+ ㆍ연령 : ` + report_obj.age_txt + `<br>
  ㆍ요청일시 : ` + report_obj.requestDateStr + `<br>
  ㆍ예산 : 현금 ` + numberToKorean(report_obj.budget_cash) + `원, 대출 ` + numberToKorean(report_obj.budget_loan) + `원<br>
  ㆍ선호 위치 : ` + report_obj.fav_point_address + `<br>
  ㆍ원하는 지역 : ` + (report_obj.wanted_region_str).join(", ") + `<br>
  ㆍ중요도 - 주거 : ` + report_obj.priority_living + `, 교통: ` + report_obj.priority_trans + `, 인프라: ` + report_obj.priority_infra + `, 교육: ` + report_obj.priority_edu + `<br>
+ ㆍ현금영수증 발급 요청 : ` + (receipt_requested ? "예 (전화/사업자번호: " + receipt_phone + ")" : "아니오") + `<br>
  ----------------------------------------`
 
   //sendTelegram_single_message(telegram_message)
 
   db_domain_txt = report_obj.email_full.replace("@", "_").replace(".", "_")
-
-  //현금영수증 발급 여부
-  var receipt_requested = $("#receiptYes").is(":checked") ? true : false
-  var receipt_phone = $("#receipt_phone").val()
 
   //Firebase Realtime Database에 저장할 데이터 형식으로 변환
   var requestData = {
