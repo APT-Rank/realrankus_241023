@@ -350,11 +350,11 @@ def save_crypto_currency_info(symbol):
     current_price = ubt.get_current_price(symbol)
     df_history = ubt.get_ohlcv(symbol, interval="day", count=3)
     df_last = df_history.tail(1)
-    last_price = df_last['open'][0]
+    last_price = df_last['open'].iloc[0]
     price_gap = current_price - last_price
     price_percentage = (1-last_price/current_price) * 100
 
-    return round(current_price, 2), round(price_gap, 2), round(price_percentage, 2), symbol
+    return round(current_price, 2), float(round(price_gap, 2)), float(round(price_percentage, 2)), symbol
 
 def save_YF_realtime_Bond(symbol):
     if symbol == "^FVX":
