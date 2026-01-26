@@ -378,10 +378,12 @@ def save_BOK_Trade_info():
     url_TRADE = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/301Y013/M/' + str_date_10years_ago_m + '/' + str_now_m + '/000000'
 
     #수출금액(천달러)
-    url_TRADE_OUT = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/901Y011/M/' + str_date_10years_ago_m + '/' + str_now_m + '/FIEE'
+    #url_TRADE_OUT = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/901Y011/M/' + str_date_10years_ago_m + '/' + str_now_m + '/FIEE'
+    url_TRADE_OUT = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/901Y118/M/' + str_date_10years_ago_m + '/' + str_now_m + '/T002'
 
     #수입금액(천달러)
-    url_TRADE_IN = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/901Y012/M/' + str_date_10years_ago_m + '/' + str_now_m + '/FIEF'
+    #url_TRADE_IN = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/901Y012/M/' + str_date_10years_ago_m + '/' + str_now_m + '/FIEF'
+    url_TRADE_IN = 'https://ecos.bok.or.kr/api/StatisticSearch/' + bok_key + '/json/kr/1/5000/901Y118/M/' + str_date_10years_ago_m + '/' + str_now_m + '/T004'
 
     response_TRADE = requests.get(url_TRADE)    
     result_TRADE = json.loads(response_TRADE.text)
