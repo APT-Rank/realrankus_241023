@@ -109,6 +109,10 @@ var codeMap = [
   ['ggpc', 'Gyeonggi', '4165000000_Gyeonggi_Pocheon'],
   ['gghn', 'Gyeonggi', '4145000000_Gyeonggi_Hanam'],
   ['gghs', 'Gyeonggi', '4159000000_Gyeonggi_Hwaseong'],
+  ['gghm', 'Gyeonggi', '4159100000_Gyeonggi_Hwaseong_manse'],
+  ['gghh', 'Gyeonggi', '4159300000_Gyeonggi_Hwaseong_hyohaeng'],
+  ['gghb', 'Gyeonggi', '4159500000_Gyeonggi_Hwaseong_byungjeom'],
+  ['gghd', 'Gyeonggi', '4159700000_Gyeonggi_Hwaseong_dongtan'],
 
   ['intp', 'Korea', '2800000000_Incheon'],
   ['ingh', 'Incheon', '2871000000_Incheon_Ganghwa'],
