@@ -619,7 +619,7 @@
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
     var searchType = "global";
-    var update_ver = "?v=1.0";    
+    var update_ver = "?v=1.2";    
 
     var pageName = "aptrank" //20231020
 
@@ -837,7 +837,7 @@
       $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>단지별 랭크를 계산하고 있어요!<br><br><div id='loading_reload' onClick='resetReload()'>로딩이 길다면 여기를 눌러 다시 불러오기!!</div></div></div>")     
 
       searching_url = "./" + selectedMonth + "/Searching_list.json" + update_ver;
-      region_url = "./" + selectedMonth + "/region_map.json";
+      region_url = "./" + selectedMonth + "/region_map.json" + update_ver;
 
       const request = indexedDB.open(DB_Date);      // 1. DB 열기
       request.onerror =(e)=> console.log("ERROR : ", e.target.errorCode);
@@ -850,7 +850,7 @@
             //지도서비스추가
             request.result.close();
             writeIdxedDB(searchingData.data)
-            region_url = "./" + selectedMonth + "/region_map.json";
+            region_url = "./" + selectedMonth + "/region_map.json" + update_ver;
             $.getJSON(region_url, function (json) {        
               //console.log(json);
               regionMapData = json.data;            
