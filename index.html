@@ -93,7 +93,7 @@
     <!-- <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pwacompat/2.0.17/pwacompat.min.js" integrity="sha512-4Dg9Iq0/VM+AW4tfM+/LLLX+Yopudo7SEsMyfTJzG/x7brKQ+NAMELrhA517cA2wFVOHo0m+n06XWCdE70Qsew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
     
-    <script src="./js/menu_select_box.js" type="text/javascript"></script>
+    <script src="./js/menu_select_box.js?ver=1.2" type="text/javascript"></script>
     <script src="./js/draw_chart.js" type="text/javascript"></script>
     <script src="./js/doubleSlider.js" type="text/javascript"></script>
     <script src="./js/sort.js" type="text/javascript"></script>
@@ -614,7 +614,7 @@
   <script>
     var thisMonth = "202602"; //수정
     var selectedMonth = "202602"; //수정
-    var DB_Date = "202602_01"; //수정
+    var DB_Date = "202602_02"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -1196,6 +1196,7 @@
       window.indexedDB.deleteDatabase('202512_02')
       window.indexedDB.deleteDatabase('202601_01')
       window.indexedDB.deleteDatabase('202601_02')
+      window.indexedDB.deleteDatabase('202602_01')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date

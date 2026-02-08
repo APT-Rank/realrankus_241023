@@ -73,7 +73,7 @@
   <script src="../js/search.js" type="text/javascript"></script>  
   <script src="../js/share.js" type="text/javascript"></script>
   <script src="../js/distance.js" type="text/javascript"></script>
-  <script src="../js/svg_region_Bucheon_added.js" type="text/javascript"></script>
+  <script src="../js/svg_region_Dongtan_added.js" type="text/javascript"></script>
   <script src="../js/BIZ_guide.js" type="text/javascript"></script>
   <script src="./ad_aptrank_biz.js" type="text/javascript"></script>
 
@@ -744,7 +744,10 @@ function go_Korea(){
   }
   else if(selectedSubRegion == "4119400000_Gyeonggi_Bucheon_Sosa" || selectedSubRegion == "4119600000_Gyeonggi_Bucheon_Ojeong" || selectedSubRegion == "4119200000_Gyeonggi_Bucheon_Wonmi"){
     goRegion = "4119000000_Gyeonggi_Bucheon"
-  }  
+  }
+  else if(selectedSubRegion == "4159100000_Gyeonggi_Hwaseong_manse" || selectedSubRegion == "4159300000_Gyeonggi_Hwaseong_hyohaeng" || selectedSubRegion == "4159500000_Gyeonggi_Hwaseong_byungjeom" || selectedSubRegion == "4159700000_Gyeonggi_Hwaseong_dongtan"){
+    goRegion = "4159000000_Gyeonggi_Hwaseong"
+  }
   else {      
     goRegion = "Korea"
   }
@@ -777,7 +780,8 @@ function region_coloring(regionData){
        || selectedSubRegion == "4127300000_Gyeonggi_Ansan_Danwon" || selectedSubRegion == "4127100000_Gyeonggi_Ansan_Sangnok" 
        || selectedSubRegion == "4117300000_Gyeonggi_Anyang_Dongan" || selectedSubRegion == "4117100000_Gyeonggi_Anyang_Manan" 
        || selectedSubRegion == "4146300000_Gyeonggi_Yongin_Giheung" || selectedSubRegion == "4146500000_Gyeonggi_Yongin_Suji" || selectedSubRegion == "4146100000_Gyeonggi_Yongin_Cheoin" 
-       || selectedSubRegion == "4119400000_Gyeonggi_Bucheon_Sosa" || selectedSubRegion == "4119600000_Gyeonggi_Bucheon_Ojeong" || selectedSubRegion == "4119200000_Gyeonggi_Bucheon_Wonmi" ){
+       || selectedSubRegion == "4119400000_Gyeonggi_Bucheon_Sosa" || selectedSubRegion == "4119600000_Gyeonggi_Bucheon_Ojeong" || selectedSubRegion == "4119200000_Gyeonggi_Bucheon_Wonmi" 
+       || selectedSubRegion == "4159100000_Gyeonggi_Hwaseong_manse" || selectedSubRegion == "4159300000_Gyeonggi_Hwaseong_hyohaeng" || selectedSubRegion == "4159500000_Gyeonggi_Hwaseong_byungjeom" || selectedSubRegion == "4159700000_Gyeonggi_Hwaseong_dongtan"){
         $('#svg_map').html(svg_Gyeonggi_detail)
     }
     else{
@@ -900,7 +904,7 @@ function region_coloring(regionData){
           else{
             if(selectedSubRegion == "4113000000_Gyeonggi_Seongnam" || selectedSubRegion == "4128000000_Gyeonggi_Goyang" || selectedSubRegion == "4111000000_Gyeonggi_Suwon"
                 || selectedSubRegion == "4127000000_Gyeonggi_Ansan" || selectedSubRegion == "4117000000_Gyeonggi_Anyang" || selectedSubRegion == "4146000000_Gyeonggi_Yongin"
-                || selectedSubRegion == "4119000000_Gyeonggi_Bucheon"){
+                || selectedSubRegion == "4119000000_Gyeonggi_Bucheon"|| selectedSubRegion == "4159000000_Gyeonggi_Hwaseong"){
                 $(finds).hover(function(){            
                 $(this).css("fill-opacity", "1");
               }, function(){            
@@ -914,6 +918,7 @@ function region_coloring(regionData){
                 if(selectedSubRegion == "4117000000_Gyeonggi_Anyang"){ changeRegion('4117300000_Gyeonggi_Anyang_Dongan') }
                 if(selectedSubRegion == "4146000000_Gyeonggi_Yongin"){ changeRegion('4146500000_Gyeonggi_Yongin_Suji') }
                 if(selectedSubRegion == "4119000000_Gyeonggi_Bucheon"){ changeRegion('4119200000_Gyeonggi_Bucheon_Wonmi') }
+                if(selectedSubRegion == "4159000000_Gyeonggi_Hwaseong"){ changeRegion('4159700000_Gyeonggi_Hwaseong_dongtan') }
               })
 
               let svg = document.querySelector("svg");
@@ -2107,6 +2112,7 @@ function showNotice(info){
     if(selectedSubRegion == "4117000000_Gyeonggi_Anyang"){ to_subRegion = "4117300000_Gyeonggi_Anyang_Dongan" }
     if(selectedSubRegion == "4146000000_Gyeonggi_Yongin"){ to_subRegion = "4146500000_Gyeonggi_Yongin_Suji" }
     if(selectedSubRegion == "4119000000_Gyeonggi_Bucheon"){ to_subRegion = "4119200000_Gyeonggi_Bucheon_Wonmi" }
+    if(selectedSubRegion == "4159000000_Gyeonggi_Hwaseong"){ to_subRegion = "4159700000_Gyeonggi_Hwaseong_Dongtan" }
 
     if(selectedSubRegion == "Seoul"){ to_subRegion = "1168000000_Seoul_Gangnam"}
     if(selectedSubRegion == "Busan"){ to_subRegion = "2650000000_Busan_Suyeong" }
