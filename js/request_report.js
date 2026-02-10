@@ -76,7 +76,7 @@ function reportBannerHtml(){
   }
 
   //random_banner_text = report_banner_text[Math.floor(Math.random() * report_banner_text.length)]
-  random_banner_text = "내 예산에 맞는 " + short_region_name + " 최선의 선택, '가격'이 아닌 '가치'로 분석한 리포트 (29,900원)"
+  random_banner_text = short_region_name + "에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트 (29,900원)"
   random_banner_text_map = random_banner_text
 
   if(isMobile && random_banner_text.length > 30){
