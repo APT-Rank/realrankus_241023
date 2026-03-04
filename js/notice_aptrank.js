@@ -1,3 +1,13 @@
+var notice_202603 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 3월 업데이트 안내 (2026-03-04)</div>"
++"<ul>"
++"<li><div class='notice'>경기도 화성시 행정구역 개편으로 인한 만세구, 효행구, 병점구, 동탄구 분할 적용했습니다.</div></li>"
++"<li><div class='notice'>전국 시군구별 일자리 수 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>전국 주요 거점역 이동 시간 재계산 반영했습니다. (T-MAP 정보 사용)</div></li>"
++"<li><div class='notice'>2026년 2월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202602 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 2월 업데이트 안내 (2026-02-03)</div>"
 +"<ul>"

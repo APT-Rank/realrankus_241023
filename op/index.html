@@ -119,7 +119,8 @@
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <!-- 수정 -->
-            <option value="202602" selected>2026년 02월</option>
+            <option value="202603" selected>2026년 03월</option>
+            <option value="202602">2026년 02월</option>
             <option value="202601">2026년 01월</option>
             <option value="202512">2025년 12월</option>
             <!--
@@ -358,7 +359,7 @@
 </body>
 
 <script>
-  var selectedMonth = "202602" //수정
+  var selectedMonth = "202603" //수정
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
   var update_ver = "?v=1.0"
@@ -533,7 +534,7 @@
       }
     })
 
-    if($.cookie('popCookie') != "202602"){ //수정
+    if($.cookie('popCookie') != "202603"){ //수정
       startNotice = true
       showNotice()
       //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당      
@@ -2107,7 +2108,7 @@
     } 
     $('.modal-footer').css({"padding-top" : "3px"})
 
-    if($.cookie('popCookie') != '202602'){ //수정
+    if($.cookie('popCookie') != '202603'){ //수정
       $('#flexCheckDefault').prop("checked", false)
     }
     else{
@@ -2117,7 +2118,7 @@
     $('#flexCheckDefault').change(function(){
       if($(this).is(':checked')){
         //console.log("CHECKED!!")
-        $.cookie('popCookie', '202602', { expires: 30, path: '/' }); //수정
+        $.cookie('popCookie', '202603', { expires: 30, path: '/' }); //수정
         //console.log($.cookie('popCookie'))
       }
       else{

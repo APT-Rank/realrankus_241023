@@ -105,12 +105,13 @@
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <!-- 수정 -->
-            <option value="202602" selected>2026년 02월</option>
+            <option value="202603" selected>2026년 03월</option>
+            <option value="202602">2026년 02월</option>
             <option value="202601">2026년 01월</option>
             <option value="202512">2025년 12월</option>
-            <option value="202511">2025년 11월</option>
-            <option value="202510">2025년 10월</option>
             <!--
+            <option value="202511">2025년 11월</option>
+            <option value="202510">2025년 10월</option>            
             <option value="202509">2025년 09월</option>            
             <option value="202508">2025년 08월</option>            
             <option value="202507">2025년 07월</option>
@@ -195,7 +196,7 @@
 
 
 <script>
-  var selectedMonth = "202602" //수정
+  var selectedMonth = "202603" //수정
   var thisMonth = selectedMonth //수정
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
@@ -219,18 +220,18 @@
   
   //수정
   var prev_month_update =`
-  [26년 1월 업데이트 요약]
-  - 2030년 까지 개통 예정역 정보 업데이트
-  - 지역별 소득 정보 업데이트
-  - 전국 하나로마트 업데이트
-  `
-  //수정
-  var this_month_update =`
   [26년 2월 업데이트 요약]
   - 병원 정보 업데이트
   - 전국 초등학교 및 초등학교군 업데이트
   - 전국 중학교 및 중학교군 업데이트
   - 유흥주점, 단란주점 업데이트 (교육감점)
+  `
+  //수정
+  var this_month_update =`
+  [26년 3월 업데이트 요약]
+  - 경기도 화성시 행정구역 개편 반영
+  - 전국 시군구 일자리 수 업데이트
+  - 전국 주요 거점역 이동 시간 재계산 (T-MAP)
   `
   $(document).ready(function(){
     //document.cookie = "safeCookie1=foo; SameSite=Lax";

@@ -166,15 +166,16 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202602" selected>2026년 02월</option>
+              <option value="202603" selected>2026년 03월</option>
+              <option value="202602">2026년 02월</option>
               <option value="202601">2026년 01월</option>
               <option value="202512">2025년 12월</option>
               <option value="202511">2025년 11월</option>
               <option value="202510">2025년 10월</option>
+              <!--
               <option value="202509">2025년 09월</option>
               <option value="202508">2025년 08월</option>
-              <option value="202507">2025년 07월</option>
-              <!--
+              <option value="202507">2025년 07월</option>              
               <option value="202506">2025년 06월</option>              
               <option value="202505">2025년 05월</option>              
               <option value="202504">2025년 04월</option>
@@ -612,9 +613,9 @@
 
   </body>
   <script>
-    var thisMonth = "202602"; //수정
-    var selectedMonth = "202602"; //수정
-    var DB_Date = "202602_03"; //수정
+    var thisMonth = "202603"; //수정
+    var selectedMonth = "202603"; //수정
+    var DB_Date = "202603_01"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -1088,7 +1089,7 @@
         
       });
 
-      if ($.cookie("popCookie") != "202602" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202603" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -1187,8 +1188,8 @@
       //window.indexedDB.deleteDatabase('202509_02')
       //window.indexedDB.deleteDatabase('202509_03')
       //window.indexedDB.deleteDatabase('202509_04')
-      window.indexedDB.deleteDatabase('202510_01')
-      window.indexedDB.deleteDatabase('202510_02')
+      //window.indexedDB.deleteDatabase('202510_01')
+      //window.indexedDB.deleteDatabase('202510_02')
       window.indexedDB.deleteDatabase('202510_03')
       window.indexedDB.deleteDatabase('202511_01')
       window.indexedDB.deleteDatabase('202511_02')
@@ -1198,6 +1199,7 @@
       window.indexedDB.deleteDatabase('202601_02')
       window.indexedDB.deleteDatabase('202602_01')
       window.indexedDB.deleteDatabase('202602_02')
+      window.indexedDB.deleteDatabase('202602_03')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -4664,8 +4666,7 @@
       }
       if (selectedMonth == "202506") {
         detailHtml += notice_202506;
-      }
-      */
+      }      
       if (selectedMonth == "202507") {
         detailHtml += notice_202507;
       }
@@ -4678,6 +4679,7 @@
       if (selectedMonth == "202510") {
         detailHtml += notice_202510;
       }
+      */
       if (selectedMonth == "202511") {
         detailHtml += notice_202511;
       }
@@ -4689,6 +4691,9 @@
       }
       if (selectedMonth == "202602") {
         detailHtml += notice_202602;
+      }
+      if (selectedMonth == "202603") {
+        detailHtml += notice_202603;
       }
  
       detailHtml += `<div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>"${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스"</div>`;      
@@ -4743,7 +4748,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202602") {
+      if ($.cookie("popCookie") != "202603") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4751,7 +4756,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202602", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202603", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
