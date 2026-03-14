@@ -2132,6 +2132,74 @@ input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider
   transform: translateX(-2px);
 }
 
+/* 1. 캐러셀 전체에 하단 여백 추가 (인디케이터가 들어갈 공간) */
+#regionCarousel {
+    padding-bottom: 60px; 
+    background-color: #1a1a1a; /* 배경색을 어둡게 하면 인디케이터가 더 잘 보입니다 */
+}
+
+/* 2. 인디케이터 위치 조정 (이미지 밖 여백 영역으로 이동) */
+#regionCarousel .carousel-indicators {
+    bottom: 10px !important; /* 바닥에서 약간 띄움 */
+    margin-bottom: 0;
+}
+
+/* 3. 인디케이터 색상 및 크기 최적화 (선택사항) */
+#regionCarousel .carousel-indicators [data-bs-target] {
+    background-color: #ffffff; /* 하얀색 점 */
+}
+
+#regionCarousel .carousel-indicators .active {
+    opacity: 1;
+    background-color: #ff3e3e; /* 현재 페이지는 리얼랭커스 포인트 컬러로 강조 */
+}
+
+/* 4. 이미지 영역이 하단 여백을 침범하지 않도록 설정 */
+#regionCarousel .carousel-inner {
+    height: auto;
+}
+
+/* 캐러셀 슬라이드 이동 속도 커스텀 */
+#regionCarousel .carousel-item {
+    /* 0.6s(기본) -> 1.2s(부드럽게) 또는 0.3s(빠르게) */
+    transition: transform 0.5s ease-in-out; 
+}
+
+#graphButton {
+    /* 1. 기본 상태 (Normal) */
+    background-color: #212529; /* 기본 배경색 */
+    border-color: #212529;
+    color: #ffffff;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out; /* 부드러운 전환 효과 */
+    padding: 5px 30px;
+    border-radius: 8px;
+}
+
+#graphButton:hover {
+    /* 2. 마우스를 올렸을 때 (Hover) */
+    background-color: #42474b; /* 약간 더 어두운 톤 */
+    border-color: #42474b;
+    color: #ffffff;
+}
+
+#graphButton:focus, #graphButton.focus {
+    /* 3. 클릭 직후/탭 이동 시 (Focus) */
+    background-color: #212529;
+    border-color: #212529;
+    color: #ffffff;
+    /* 부트스트랩 특유의 푸른 잔상(Glow) 제거 혹은 변경 */
+    box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.25); 
+    outline: none;
+}
+
+#graphButton:active, #graphButton.active {
+    /* 4. 마우스로 누르고 있을 때 (Active) */
+    background-color: rgba(33, 37, 41, 0.8) !important; /* 가장 어두운 톤 */
+    border-color: rgba(33, 37, 41, 0.8) !important;
+    transform: scale(0.98); /* 살짝 눌리는 입체감 효과 */
+}
+
   @media screen and (min-width: 800px){
     body.modal-open {
       overflow: visible !important;      
