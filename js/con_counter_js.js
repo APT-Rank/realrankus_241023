@@ -45,12 +45,12 @@ var database = firebase.database()
 var dbRef = firebase.database().ref();
 var docRef = ""
 
-var today = new Date()
-var today_year = today.getFullYear();
-var today_month = dateReturn( (today.getMonth() + 1))
-var today_day = dateReturn( today.getDate() );
-var today_num = Number("" + today_year + today_month + today_day)
-var today_str = today_year + "-" + today_month + "-" + today_day
+//var today = new Date()
+//var today_year = today.getFullYear();
+//var today_month = dateReturn( (today.getMonth() + 1))
+//var today_day = dateReturn( today.getDate() );
+//var today_num = Number("" + today_year + today_month + today_day)
+//var today_str = today_year + "-" + today_month + "-" + today_day
 
 function dateReturn(n){
   return n<10 ? "0"+n : n
