@@ -801,7 +801,8 @@
     })
 
     if( regData == undefined || regData == "" ){
-      url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
       $.getJSON(url, function(json) {        
           regData = json;
           regSortData = regData;        
@@ -862,7 +863,8 @@ function updateTable(region){
       shareText_all = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
     }
 
-    url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    url = "./recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
     $.getJSON(url, function(json) {
         aptData = json;
         //sortData = json;
@@ -1692,8 +1694,8 @@ function updateTable(region){
     }
     //shareURL = "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + $("#gungu option:selected").val() + "&pmon=" + selectedMonth
 
-    url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-
+    //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+    url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
     $('#dataList').html("");
 
     count_Korea = 0
@@ -1795,7 +1797,7 @@ function updateTable(region){
     $.getJSON(url, function(json) {
         regData = json;
         regSortData = regData;
-        itemNum = json.data.length;        
+        itemNum = json.data.length;
 
         shareURL = get_sURL($("#gungu option:selected").val())
 
@@ -1884,12 +1886,12 @@ function updateTable(region){
                         str_prev_month = Number(prev_month.slice(-2)) + "월"
                         str_this_month = Number(this_month.slice(-2)) + "월"
                         
-                        addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
-                        addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                        addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition).toFixed(0).toLocaleString() + "건</div>"
+                        addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition).toFixed(0).toLocaleString() + "건</div>"
                       }
 
                       if(selectedMonth == this_month || selectedMonth == prev_month){
-                        addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                        addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition).toFixed(0).toLocaleString() + "건</div>"
                       }
 
                       if(reg_ratio_yoy > 0){ reg_ratio_yoy_tag = "<span style='color:#eb5050'>▲" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
@@ -2025,12 +2027,12 @@ function updateTable(region){
                       str_prev_month = Number(prev_month.slice(-2)) + "월"
                       str_this_month = Number(this_month.slice(-2)) + "월"                        
                       
-                      addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
-                      addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                      addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition).toFixed(0).toLocaleString() + "건</div>"
+                      addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition).toFixed(0).toLocaleString() + "건</div>"
                     }
 
                     if( selectedMonth == this_month || selectedMonth == prev_month){
-                      addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                      addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition).toFixed(0).toLocaleString() + "건</div>"
                     }
 
                     if(reg_ratio_yoy > 0){ reg_ratio_yoy_tag = "<span style='color:#eb5050'>▲" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
