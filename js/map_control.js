@@ -223,6 +223,8 @@ function defineMarkerList(nearby_region){
     return show_up_complexs.indexOf(element) === index;
   });
 
+  console.log("show_up_complexs:", filtered_complexs)
+
   return filtered_complexs
 }
 
@@ -914,8 +916,7 @@ function createLargeMarker(markers){
   for (var k in markers){    
     if(mapBounds.hasLatLng(markers[k])){      
       var aptValue = Math.round(markers[k]["가치 총점"] * 100) / 100;
-      complex_grade = setGrade(aptValue)  
-
+      complex_grade = setGrade(aptValue)
       coordi_x = markers[k]['lng']
       coordi_y = markers[k]['lat']
 
@@ -940,21 +941,21 @@ function createLargeMarker(markers){
           last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
           last_sales_area_kor = last_sales_area
         }
-      }      
+      }
 
       var svg_color = "#CC0000"
       var grade = ""
-      if(aptValue >= 70){
+      if(aptValue >= 78.6962){
         svg_color = "#a70000"
         //svg_color = "#5f0bbf"
         grade = "gradeS"
       }
-      else if(aptValue < 70 && aptValue >= 55){
+      else if(aptValue < 78.6962 && aptValue >= 53.3691){
         svg_color = "#F72020"
         //svg_color = "#CC0000"
         grade = "gradeA"
       }
-      else if(aptValue < 55 && aptValue >= 40){
+      else if(aptValue < 53.3691 && aptValue >= 31.9721){
         svg_color = "#F36637"
         grade = "gradeB"
       }
@@ -1106,28 +1107,22 @@ function createSmallMarker(markers){
     var svg_color = "#a70000"
     var stroke_color = "#a70000"
     var grade = ""
-    if(aptValue >= 70){
+    if(aptValue >= 78.6962){
       svg_color = "#a70000"
-      stroke_color = "#820000"
       //svg_color = "#5f0bbf"
-      //stroke_color = "#2c0559"
       grade = "gradeS"
     }
-    else if(aptValue < 70 && aptValue >= 55){
+    else if(aptValue < 78.6962 && aptValue >= 53.3691){
       svg_color = "#F72020"
-      stroke_color = "#C50707"
       //svg_color = "#CC0000"
-      //stroke_color = "#8F0000"
       grade = "gradeA"
     }
-    else if(aptValue < 55 && aptValue >= 40){
+    else if(aptValue < 53.3691 && aptValue >= 31.9721){
       svg_color = "#F36637"
-      stroke_color = "#D43E0C"
       grade = "gradeB"
     }
     else{
       svg_color = "#ED8618"
-      stroke_color = "#AB5E0D"
       grade = "gradeC"
     }
     
