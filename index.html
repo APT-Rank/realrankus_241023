@@ -1516,6 +1516,7 @@
 
       for (var i = 0; i < changeItem.length; i++) {
         var subOption = $( "<option value='" + changeItem[i][1] + "'>" + changeItem[i][0] + "</option>" );
+        console.log(subOption)
         $("#gungu").append(subOption);
       }
 
@@ -1822,9 +1823,6 @@
               dong_name = split_addr[3]
             }
           }
-          if(split_addr[0] == "세종시" && selectedMonth >= 202604){
-            dong_name = split_addr[1]
-          }
           dongDB.push(dong_name)
 
           //동 이름 중복 제거
@@ -1911,11 +1909,7 @@
               || split_addr2[1] == "천안시" || split_addr2[1] == "청주시" || split_addr2[1] == "전주시" || split_addr2[1] == "포항시" || split_addr2[1] == "창원시"){
               compare_dong_name = split_addr2[3]
           }
-          if(split_addr2[0] == "세종시" && selectedMonth >= 202604){
-            compare_dong_name = split_addr2[1]
-          }
-          
-          
+         
           valueSum += aptData.data[i]["가치 총점"];
           livingSum += aptData.data[i]["주거총점"];
           transportSum += aptData.data[i]["교통총점"];
@@ -3606,31 +3600,15 @@
         }
       }
 
-      main_title =
-        "'" +
-        dong_name +
-        " " +
-        aptName +
-        "'" +
-        " 입지분석, 시세, 실거래가 | 표준화된 리얼랭커스 입지분석";
+      main_title = "'" + dong_name + " " + aptName + "'" + " 입지분석, 시세, 실거래가 | 표준화된 리얼랭커스 입지분석";
       $(document).attr("title", main_title);
 
-      meta_title =
-        "'" +
-        aptName +
-        "'" +
-        "의 입지 점수는 " +
-        aptValue +
-        "점 | 표준화된 리얼랭커스 입지분석";
+      meta_title = "'" + aptName + "'" + "의 입지 점수는 " + aptValue + "점 | 표준화된 리얼랭커스 입지분석"
       $("meta[property='og\\:title']").attr("content", main_title);
 
       $("meta[property='og\\:url']").attr("content", url);
 
-      meta_description =
-        "'" +
-        aptName +
-        "'" +
-        "의 주거, 교통, 인프라, 교육 환경 분석 정보를 데이터로 확인하세요.";
+      meta_description = "'" + aptName + "'" + "의 주거, 교통, 인프라, 교육 환경 분석 정보를 데이터로 확인하세요.";
       $("meta[property='og\\:description']").attr("content", meta_description);
 
       $("meta[property='og\\:site_name']").attr("content", "리얼랭커스");
