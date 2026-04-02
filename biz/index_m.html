@@ -423,9 +423,9 @@
     $('#bizShare').html(shareHtml)
 
     currentMenu = "aptrank_biz"  //offcanvas  
-    //setOffcanvasMenu() //offcanvas
+    setOffcanvasMenu() //offcanvas
     //login_checker() //LOGIN    
-    login_status = true
+    //login_status = true
 
     if(!login_status){
       $('#svg_map').hide()
@@ -880,17 +880,29 @@ function region_coloring(regionData){
       for (j = 0 ; j < regionData.length ; j++){
         if(searching_region == regionData[j]['Link']){
           score = regionData[j]['총점'][0][0]
+          decision = regionData[j]['총점'][0][1]
+
           if(score == null || score == undefined){
             score = -10
           }
           //score = Math.floor(Math.random() * 101)
-          finds = "#svg_map #" + searching_region          
-          if(score >= very_bad['min'] && score <= very_bad['max']){ $(finds).css("fill", "#c70e0e"); $(finds).css("fill-opacity", "0.6") }
-          else if(score > bad['min'] && score <= bad['max']){ $(finds).css("fill", "#F08080"); $(finds).css("fill-opacity", "0.6") }
-          else if(score > normal['min'] && score <= normal['max']){ $(finds).css("fill", "#fcba03"); $(finds).css("fill-opacity", "0.6") }
-          else if(score > good['min'] && score <= good['max']){ $(finds).css("fill", "#66d488"); $(finds).css("fill-opacity", "0.6")  }
-          else if(score > very_good['min'] && score <= very_good['max']){ $(finds).css("fill", "#13a140"); $(finds).css("fill-opacity", "0.6")  }
-          else {$(finds).css("fill", "#f2c666"); $(finds).css("fill-opacity", "0.6")}
+          finds = "#svg_map #" + searching_region
+
+          if(login_status){
+            //if(score >= very_bad['min'] && score <= very_bad['max']){ $(finds).css("fill", "#c70e0e"); $(finds).css("fill-opacity", "0.6") }
+            //else if(score > bad['min'] && score <= bad['max']){ $(finds).css("fill", "#F08080"); $(finds).css("fill-opacity", "0.6") }
+            //else if(score > normal['min'] && score <= normal['max']){ $(finds).css("fill", "#fcba03"); $(finds).css("fill-opacity", "0.6") }
+            //else if(score > good['min'] && score <= good['max']){ $(finds).css("fill", "#66d488"); $(finds).css("fill-opacity", "0.6")  }
+            //else if(score > very_good['min'] && score <= very_good['max']){ $(finds).css("fill", "#13a140"); $(finds).css("fill-opacity", "0.6")  }
+            //else {$(finds).css("fill", "#f2c666"); $(finds).css("fill-opacity", "0.6")}
+
+            if(decision == "매우나쁨"){ $(finds).css("fill", "#c70e0e"); $(finds).css("fill-opacity", "0.6") }
+            else if(decision == "나쁨"){ $(finds).css("fill", "#F08080"); $(finds).css("fill-opacity", "0.6") }
+            else if(decision == "보통"){ $(finds).css("fill", "#fcba03"); $(finds).css("fill-opacity", "0.6") }
+            else if(decision == "좋음"){ $(finds).css("fill", "#66d488"); $(finds).css("fill-opacity", "0.6")  }
+            else if(decision == "매우좋음"){ $(finds).css("fill", "#13a140"); $(finds).css("fill-opacity", "0.6")  }
+            else {$(finds).css("fill", "#f2c666"); $(finds).css("fill-opacity", "0.6")}
+          }
 
           find_text = "#svg_map #txt_" + searching_region
           $(find_text).css("fill", "#000")
@@ -984,8 +996,9 @@ function set_text_color(txt){
   return color_code
 }
 
-function set_color(score){
+function set_color(score, status){
   color_code = ""
+  /*
   if(score > very_good['min']){
     color_code = "#13a140"
   }
@@ -999,6 +1012,26 @@ function set_color(score){
     color_code = "#F08080"
   }
   else if (score <= very_bad['max'] && score >= very_bad['min']){
+    color_code = "#c70e0e"
+  }
+  else{
+    color_code ="#f2c666"
+  }
+  */
+
+  if(status == "매우좋음"){
+    color_code = "#13a140"
+  }
+  else if (status == "좋음"){
+    color_code = "#66d488"
+  }
+  else if (status == "보통"){
+    color_code = "#fcba03"
+  }
+  else if (status == "나쁨"){
+    color_code = "#F08080"
+  }
+  else if (status == "매우나쁨"){
     color_code = "#c70e0e"
   }
   else{
@@ -1139,7 +1172,7 @@ function ListUp(listData){
                 pop_rate_3y = Number(pop_rate[4]).toFixed(2)
                 if(pop_rate_3y < 0){ pop_rate_3y = "<span style='color:#1d57a3'>-" + (pop_rate_3y)*-1 + "% </span>" } else{ pop_rate_3y = "<span style='color:#c70e0e'>+" + (pop_rate_3y) + "% </span>" }
 
-                addon_html += "<div class='region_name' style='border-right: 1px solid #ddd;'>" + "<span style='color:" + set_color(total_score[0][0]) +"'>●</span>" + " " + region_name + "</div>"
+                addon_html += "<div class='region_name' style='border-right: 1px solid #ddd;'>" + "<span style='color:" + set_color(total_score[0][0], total_score[0][1]) +"'>●</span>" + " " + region_name + "</div>"
                 shareTextSum += "ㆍ " + region_name + " : " + set_status(total_score[0][0]) + " (" + total_score[0][0].toFixed(2) + "점)\n"
 
                 //인구
@@ -1283,7 +1316,7 @@ function ListUp(listData){
             addon_html += "<div id='subRegion_line1'>"
               addon_html += "<div id='region_eval_table'>"
                 addon_html += "<div style='border-right: 1px solid #aaa'>"
-                  addon_html += "<div style='color:" + set_color(total_score[0][0]) +"; font-size: 2rem; line-height:1.3em'>●</div>"
+                  addon_html += "<div style='color:" + set_color(total_score[0][0], total_score[0][1]) +"; font-size: 2rem; line-height:1.3em'>●</div>"
                   addon_html += "<div style='line-height: 1em; font-weight: 600'>" + total_score[0][1] + "</div>"
                   if(total_score[0][0] < 0){
                     addon_html += "<div style='font-size: 0.8em; font-weight: 600'>(--.--)</div>"
@@ -1439,7 +1472,7 @@ function ListUp(listData){
             addon_html += "<div class='subRegion_info'>"
               addon_html += "<div class='subRegion_title'>"
                 if(login_status){
-                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(pop_score[0][0]) +"'>●</span>" + " 인구<span style='font-size: 0.8em'> (" + pop_score[0][0].toFixed(2) + "점 / " + pop_score[0][1] + ")</span></div>"
+                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(pop_score[0][0], pop_score[0][1]) +"'>●</span>" + " 인구<span style='font-size: 0.8em'> (" + pop_score[0][0].toFixed(2) + "점 / " + pop_score[0][1] + ")</span></div>"
                   addon_html += "<div class='subRegion_qna' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice(\"pop\")'><i class='fa-solid fa-circle-question'></i></div>"
                 }
                 else{
@@ -1519,7 +1552,7 @@ function ListUp(listData){
 
               addon_html += "<div class='subRegion_title'>"
                 if(login_status){
-                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(sales_score[1][0]) +"'>●</span>" + " 매매가격<span style='font-size: 0.8em'> (" + sales_score[1][0].toFixed(2) + "점 / " + sales_score[1][1] + ")</span></div>"
+                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(sales_score[1][0], sales_score[1][1]) +"'>●</span>" + " 매매가격<span style='font-size: 0.8em'> (" + sales_score[1][0].toFixed(2) + "점 / " + sales_score[1][1] + ")</span></div>"
                   addon_html += "<div class='subRegion_qna' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice(\"price\")'><i class='fa-solid fa-circle-question'></i></div>"
                 }
                 else{
@@ -1612,7 +1645,7 @@ function ListUp(listData){
 
               addon_html += "<div class='subRegion_title'>"
                 if(login_status){
-                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(deal_score[0][0]) +"'>●</span>" + " 거래량<span style='font-size: 0.8em'> (" + deal_score[0][0].toFixed(2) + "점 / " + deal_score[0][1] + ")</span></div>"
+                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(deal_score[0][0], deal_score[0][1]) +"'>●</span>" + " 거래량<span style='font-size: 0.8em'> (" + deal_score[0][0].toFixed(2) + "점 / " + deal_score[0][1] + ")</span></div>"
                   addon_html += "<div class='subRegion_qna' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice(\"deal\")'><i class='fa-solid fa-circle-question'></i></div>"
                 }
                 else{
@@ -1683,7 +1716,7 @@ function ListUp(listData){
 
               addon_html += "<div class='subRegion_title'>"
                 if(login_status){
-                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(rent_score[0][0]) +"'>●</span>" + " 전세가율<span style='font-size: 0.8em'> (" + rent_score[0][0].toFixed(2) + "점 / " + rent_score[0][1] + ")</span></div>"
+                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(rent_score[0][0], rent_score[0][1]) +"'>●</span>" + " 전세가율<span style='font-size: 0.8em'> (" + rent_score[0][0].toFixed(2) + "점 / " + rent_score[0][1] + ")</span></div>"
                   addon_html += "<div class='subRegion_qna' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice(\"rent\")'><i class='fa-solid fa-circle-question'></i></div>"
                 }
                 else{
@@ -1731,7 +1764,7 @@ function ListUp(listData){
 
               addon_html += "<div class='subRegion_title'>"
                 if(login_status){
-                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(supply_score[0]) +"'>●</span>" + " 공급물량<span style='font-size: 0.8em'> (" + supply_score[0].toFixed(2) + "점 / " + supply_status + ")</span></div>"
+                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(supply_score[0], supply_score[1]) +"'>●</span>" + " 공급물량<span style='font-size: 0.8em'> (" + supply_score[0].toFixed(2) + "점 / " + supply_status + ")</span></div>"
                   addon_html += "<div class='subRegion_qna' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice(\"supply\")'><i class='fa-solid fa-circle-question'></i></div>"
                 }
                 else{
@@ -1778,11 +1811,7 @@ function ListUp(listData){
             //미분양
             addon_html += "<div class='subRegion_info'>"              
 
-              if(non_sales[0] == '6개월 미분양위험'){ non_sales_score = 0; non_sales_status = non_sales[0] }
-              else if(non_sales[0] == '5개월 미분양위험'){ non_sales_score = 15; non_sales_status = non_sales[0] }
-              else if(non_sales[0] == '4개월 미분양위험'){ non_sales_score = 30; non_sales_status = non_sales[0] }
-              else if(non_sales[0] == '3개월 미분양위험'){ non_sales_score = 30; non_sales_status = non_sales[0] }
-              else if(non_sales[0] == '미분양 급증'){ non_sales_score = 15; non_sales_status = non_sales[0] }
+              if(non_sales[0] == '연속 미분양 위험'){ non_sales_score = 0; non_sales_status = non_sales[0] }
               else {non_sales_score = 100; non_sales_status = "위험 없음"}
 
               find_name = selectedSubRegion.split("_")
@@ -1802,7 +1831,7 @@ function ListUp(listData){
 
               addon_html += "<div class='subRegion_title'>"
                 if(login_status){
-                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(non_sales_score) +"'>●</span>" + " 미분양" + non_sales_add_text + "<span style='font-size: 0.8em'> (" + non_sales_score.toFixed(2) + "점)</span></div>"
+                  addon_html += "<div class='subRegion_name'>" + "<span style='color:" + set_color(non_sales_score, non_sales_status) +"'>●</span>" + " 미분양" + non_sales_add_text + "<span style='font-size: 0.8em'> (" + non_sales_score.toFixed(2) + "점)</span></div>"
                   addon_html += "<div class='subRegion_qna' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showNotice(\"non_sales\")'><i class='fa-solid fa-circle-question'></i></div>"
                 }
                 else{
