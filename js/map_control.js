@@ -223,8 +223,6 @@ function defineMarkerList(nearby_region){
     return show_up_complexs.indexOf(element) === index;
   });
 
-  console.log("show_up_complexs:", filtered_complexs)
-
   return filtered_complexs
 }
 
