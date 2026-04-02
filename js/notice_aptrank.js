@@ -1,3 +1,18 @@
+var notice_202604 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 4월 업데이트 안내 (2026-04-03)</div>"
++"<ul>"
++"<li><div class='notice'>리얼랭커스 알고리즘 GLI 2.0 적용했습니다.</div></li>"
++ "<div class='notice'>GLI(Global Location Index) 2.0은 기존 GLI 1.0에서 사용된 지표들을 개선하고, 정교화하여 정확성과 신뢰성을 높였습니다.</div>"
++ "<div class='notice'>  - 지난 4년간의 데이터를 기반으로 지역별 특성화 분석을 적용했습니다.</div>"
++ "<div class='notice'>  - 지표별 접근성 분석을 강화하여, 사용자에게 보다 정확한 정보를 제공합니다.</div>"
++"<li><div class='notice'>'가치 대비 가격 괴리도 진단' 기능을 추가했습니다.</div></li>"
++"<li><div class='notice'>전국 공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>전국 은행 정보 업데이트 했습니다. (전국은행연합회 제공)</div></li>"
++"<li><div class='notice'>전국 모텔 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>2026년 3월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202603 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 3월 업데이트 안내 (2026-03-04)</div>"
 +"<ul>"

@@ -168,13 +168,14 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202603" selected>2026년 03월</option>
+              <option value="202604" selected>2026년 04월</option>
+              <option value="202603">2026년 03월</option>
               <option value="202602">2026년 02월</option>
               <option value="202601">2026년 01월</option>
               <option value="202512">2025년 12월</option>
               <option value="202511">2025년 11월</option>
-              <option value="202510">2025년 10월</option>
               <!--
+              <option value="202510">2025년 10월</option>              
               <option value="202509">2025년 09월</option>
               <option value="202508">2025년 08월</option>
               <option value="202507">2025년 07월</option>
@@ -501,16 +502,15 @@
       </div>
     </div>
 
-    <!--화면 중앙 상단 고정 영역에 "그래프 보기" 버튼
+    <!--화면 중앙 상단 고정 영역에 "그래프 보기" 버튼-->
     <div id="graphButtonContainer" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 900;">
-      <button id="graphButton" class="btn" onClick="showGraphCarousel()">가치 대비 가격 괴리도 진단</button>
+      <button id="graphButton" class="btn" onClick="showGraphCarousel()">동별 고·저평가 아파트 분석</button>
     </div>
-    -->    
-
+    
     <!-- Graph Modal -->
     <div class="modal fade" id="graphModal" tabindex="-1" aria-labelledby="graphModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered"> <div class="modal-content bg-dark"> <div class="modal-header border-0">
-                    <h5 class="modal-title text-white" id="graphModalLabel">가치 대비 가격 괴리도 진단</h5>
+                    <h5 class="modal-title text-white" id="graphModalLabel">동별 고·저평가 아파트 분석</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">
@@ -619,9 +619,9 @@
 
   </body>
   <script>
-    var thisMonth = "202603"; //수정
-    var selectedMonth = "202603"; //수정
-    var DB_Date = "202603_03"; //수정
+    var thisMonth = "202604"; //수정
+    var selectedMonth = "202604"; //수정
+    var DB_Date = "202604_01"; //수정
     var selectedRegion = "Seoul";
     var selectedSubRegion = "1168000000_Seoul_Gangnam";
     var selectedComplex = "";
@@ -1095,7 +1095,7 @@
         
       });
 
-      if ($.cookie("popCookie") != "202603" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202604" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -1146,6 +1146,10 @@
           $("#filterSelector").hide()
           $("#gradeSelector").hide()
         }
+
+        //가치대비가격괴리도진단 버튼 크기 조정
+        $("#graphButtonContainer").css({'top': '123px', 'left': '24%'})
+        $("#graphButton").css({'padding': '0.375em 0.75em', 'font-size': '0.875em'})
       }
 
       //창 크기 조정 완료 시
@@ -1208,6 +1212,7 @@
       window.indexedDB.deleteDatabase('202602_03')
       window.indexedDB.deleteDatabase('202603_01')
       window.indexedDB.deleteDatabase('202603_02')
+      window.indexedDB.deleteDatabase('202603_03')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -1817,6 +1822,9 @@
               dong_name = split_addr[3]
             }
           }
+          if(split_addr[0] == "세종시" && selectedMonth >= 202604){
+            dong_name = split_addr[1]
+          }
           dongDB.push(dong_name)
 
           //동 이름 중복 제거
@@ -1898,12 +1906,16 @@
           last_sales_date_short = last_sales_date.substr(2);
 
           var split_addr2 = aptAddress2.split(" ")
-          var compare_dong_name = split_addr2[2]          
+          var compare_dong_name = split_addr2[2]
           if(split_addr2[1] == "고양시" || split_addr2[1] == "안양시" || split_addr2[1] == "안산시" || split_addr2[1] == "수원시" || split_addr2[1] == "용인시" || split_addr2[1] == "성남시" || split_addr2[1] == "부천시" || split_addr2[1] == "화성시"
               || split_addr2[1] == "천안시" || split_addr2[1] == "청주시" || split_addr2[1] == "전주시" || split_addr2[1] == "포항시" || split_addr2[1] == "창원시"){
               compare_dong_name = split_addr2[3]
           }
-
+          if(split_addr2[0] == "세종시" && selectedMonth >= 202604){
+            compare_dong_name = split_addr2[1]
+          }
+          
+          
           valueSum += aptData.data[i]["가치 총점"];
           livingSum += aptData.data[i]["주거총점"];
           transportSum += aptData.data[i]["교통총점"];
@@ -4601,6 +4613,9 @@
       if (selectedMonth == "202603") {
         detailHtml += notice_202603;
       }
+      if (selectedMonth == "202604") {
+        detailHtml += notice_202604;
+      }
  
       detailHtml += `<div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>"${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스"</div>`;      
       detailHtml += "<div class='notice'><strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong></div>";
@@ -4654,7 +4669,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202603") {
+      if ($.cookie("popCookie") != "202604") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4662,7 +4677,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202603", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202604", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
@@ -4854,12 +4869,15 @@
 
         // 2. 모달 띄우기
         openModal("graphModal");
-        $(".modal-backdrop").css({"width" : "100%"})
+        $('#graphModal').css("z-index", "1056"); // 모달의 z-index를 backdrop보다 높게 설정
+        $(".modal-backdrop").css({"width" : "100%", "z-index" : "1055"})
 
         // 3. (선택사항) 모달이 닫힐 때 캐러셀 초기화
         $('#graphModal').on('hidden.bs.modal', function () {
             $inner.empty();
-            $indicators.empty()
+            $indicators.empty();
+            $("#baseModal").css({"z-index" : "1055"})
+            $(".modal-backdrop").css({"z-index" : "1000", "width" : "600px"})
         });
       })
        .fail(function() {

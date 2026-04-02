@@ -584,61 +584,49 @@ function regionCountUp(pageName, regionName) {
   firebase.database().ref().update(updates);
 } 
 
-function setGrade(score){
-  complex_grade = ""
-  if(login_status){
-    if(score >= 75){
-      complex_grade = "S+"
+function setGrade(score) {
+  let complex_grade = "";
+  
+  if (login_status) {
+    // 세분화된 등급 (로그인 유저)
+    if (score >= 87.9769) {
+      complex_grade = "S+";
+    } else if (score >= 78.6962) {
+      complex_grade = "S";
+    } else if (score >= 68.6018) {
+      complex_grade = "A+";
+    } else if (score >= 62.3136) {
+      complex_grade = "A";
+    } else if (score >= 53.3691) {
+      complex_grade = "A-";
+    } else if (score >= 46.7447) {
+      complex_grade = "B+";
+    } else if (score >= 38.6711) {
+      complex_grade = "B";
+    } else if (score >= 31.9721) {
+      complex_grade = "B-";
+    } else if (score >= 25.5973) {
+      complex_grade = "C+";
+    } else if (score >= 17.8501) {
+      complex_grade = "C";
+    } else {
+      complex_grade = "C-";
     }
-    else if(score < 75 && score >= 70){
-      complex_grade = "S"
-    }
-    else if(score < 70 && score >= 65){
-      complex_grade = "A+"
-    }
-    else if(score < 65 && score >= 60){
-      complex_grade = "A"
-    }
-    else if(score < 60 && score >= 55){
-      complex_grade = "A-"
-    }
-    else if(score < 55 && score >= 50){
-      complex_grade = "B+"
-    }
-    else if(score < 50 && score >= 45){
-      complex_grade = "B"
-    }
-    else if(score < 45 && score >= 40){
-      complex_grade = "B-"
-    }
-    else if(score < 40 && score >= 35){
-      complex_grade = "C+"
-    } 
-    else if(score < 35 && score >= 30){
-      complex_grade = "C"
-    }                    
-    else{
-      complex_grade = "C-"
-    }
-  }
-  else{
-    if(score >= 75){
-      complex_grade = "S"
-    }
-    else if(score < 75 && score >= 70){
-      complex_grade = "S"
-    }
-    else if(score < 70 && score >= 55){
-      complex_grade = "A"
-    }
-    else if(score < 55 && score >= 40){
-      complex_grade = "B"
-    }
-    else{
-      complex_grade = "C"
+  } else {
+    // 포괄적 등급 (비로그인 유저)
+    // 기존 로직의 기준점(S, A-, B- 컷오프)을 동일하게 적용
+    if (score >= 78.6962) {
+      complex_grade = "S";
+    } else if (score >= 53.3691) {
+      complex_grade = "A";
+    } else if (score >= 31.9721) {
+      complex_grade = "B";
+    } else {
+      complex_grade = "C";
     }
   }
-  return complex_grade
+  
+  return complex_grade;
 }
 
 function share_dict(share_dict){
