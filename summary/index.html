@@ -225,6 +225,7 @@
   - 경기도 화성시 행정구역 개편 반영
   - 전국 시군구 일자리 수 업데이트
   - 전국 주요 거점역 이동 시간 재계산 (T-MAP)
+  \n
   `
   //수정
   var this_month_update =`
@@ -234,6 +235,7 @@
     - 지표별 접근성 분석 강화로 보다 정확한 정보 제공
   - '가치 대비 가격 괴리도 진단' 기능 추가
   - 전국 공원, 은행, 모텔 정보 업데이트 했습니다. (공공데이터 제공)
+  \n
   `
 
   $(document).ready(function(){
@@ -843,15 +845,15 @@ function allShare(){
 }
 
 function shareToCafe(){
-  var shareTitle = "[리얼랭커스] "
-  shareTitle += selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)).toString() + "월, " + balanced[0]["region"] + " 아파트 입지분석 | 순위 | 브랜드\n\n"
+  //var shareTitle = "[리얼랭커스] "
+  //shareTitle += selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)).toString() + "월, " + balanced[0]["region"] + " 아파트 입지분석 | 순위 | 브랜드\n\n"
 
-  var total_list = living.length
+  var total_list = balanced.length
   if(total_list >= 15){
     total_list = 15
   }  
     
-  let shareText = "『균형잡힌 입지 조건 아파트』\n"
+  let shareText = ""
   for(var i = 0 ; i < total_list ; i++){
     shareText += "#" + balanced[i]["name"]
     if(balanced[i]["apt_type"] == "아파트"){
@@ -967,8 +969,8 @@ function shareToCafe(){
       shareText += prev_month_update
     }   
 
-    shareText += "※ 리얼랭커스는 계산된 참조자료 입니다. 실제 임장, 현지 거주 의견, 부동산 조언 등 현장 정보가 가장 정확합니다.\n"  
-    shareText += "※ 응원, 문의, 제안, 버그제보는 리얼랭커스 카카오톡 1:1 문의하기로 남겨주시면 적극 반영 검토하겠습니다.\n    https://pf.kakao.com/_vESNb/chat\n\n"
+    //shareText += "※ 리얼랭커스는 계산된 참조자료 입니다. 실제 임장, 현지 거주 의견, 부동산 조언 등 현장 정보가 가장 정확합니다.\n"  
+    //shareText += "※ 응원, 문의, 제안, 버그제보는 리얼랭커스 카카오톡 1:1 문의하기로 남겨주시면 적극 반영 검토하겠습니다.\n    https://pf.kakao.com/_vESNb/chat\n\n"
 
     //shareText += "\n아래 링크를 누르시면 통해 다른 아파트의 랭크를 확인할 수 있습니다."
     shareText += "[리얼랭커스 입지 점수 항목]\n"
@@ -986,8 +988,8 @@ function shareToCafe(){
     shareText += "▶ 리얼랭커스 (" + balanced[0]["region"] + ")\n"
     shareText += balanced[0]["shorten_url"] + "\n\n"
 
-    shareText += "▶ 실거래가 (리얼랭커스PRICE)\n"
-    shareText += "www.realrankus.com/price\n\n"
+    //shareText += "▶ 실거래가 (리얼랭커스PRICE)\n"
+    //shareText += "www.realrankus.com/price\n\n"
 
     shareText += "▶ 시장분석 (리얼랭커스BIZ)\n"
     shareText += "www.realrankus.com/biz\n\n"        
@@ -1034,16 +1036,15 @@ function shareToCafe(){
     }
 
     shareText += "#아파트 #리얼랭커스 #아파트입지 #아파트순위 #부동산 #부동산순위 #부동산입지 #입지분석 #아파트추천 #부동산추천"
-    shareText += hash_10 + hash_11 + hash_12 + hash_13 + hash_14 + hash_15
-    shareText += hash_20 + hash_21 + hash_22 + hash_23 + hash_24 + hash_25
-    shareText += hash_30 + hash_31 + hash_32 + hash_33 + hash_34 + hash_35
+    //shareText += hash_10 + hash_11 + hash_12 + hash_13 + hash_14 + hash_15
+    //shareText += hash_20 + hash_21 + hash_22 + hash_23 + hash_24 + hash_25
+    //shareText += hash_30 + hash_31 + hash_32 + hash_33 + hash_34 + hash_35
     
     //shareURL = "https://www.realrankus.com" + "?reg=" + balanced[0]["region_code"] +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
     //shareURL = balanced[0]["shorten_url"]
     shareURL = "https://www.realrankus.com"    
 
-    clipboard_txt = shareTitle + shareText// + "\n" + shareURL
-    console.log(clipboard_txt)
+    clipboard_txt = shareTitle + shareText// + "\n" + shareURL    
 
     CopyToClipboard(clipboard_txt, "\"" + shareTitle + "\"<br>카페 텍스트를 복사했어요!")
 
