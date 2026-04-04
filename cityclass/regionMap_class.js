@@ -314,10 +314,10 @@ function showHideMarker(zoom){
   removeMarkers()
 
   if(menuSelection == "menu_select_price"){
-    drawDataMap_price(region_class.data, zoom)    
+    drawDataMap_price(region_class, zoom)    
   }
   else{
-    drawDataMap(region_class.data, zoom)    
+    drawDataMap(region_class, zoom)    
   }
   
   //setGradeFilter()
@@ -345,7 +345,9 @@ function last_zoom_control(zoom){
     $(".price_marker").css({"width": "60px", "padding-top": "1px", "padding-bottom": "1px"})
     $(".price_marker_dong_name").css({"font-size": "0.65em"})
     $(".price_marker_price").css({"font-size": "0.65em"})
-    $(".price_marker_price").hide()
+    if(menuSelection == "menu_select_price"){
+      $(".price_marker_price").hide()
+    }
     $(".price_marker_percentage").css({"border-bottom": "none"});
     $(".price_marker_percentage").css({"font-size": "0.65em"})
     $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});
@@ -359,11 +361,16 @@ function last_zoom_control(zoom){
     //$(".price_marker_dong_name").css({"border-bottom": "none"});
     //$(".price_marker_percentage").css({"border-bottom": "none"});
     $(".price_marker").css({"width": "45px", "padding-top": "1px", "padding-bottom": "1px"})
-    $(".price_marker_dong_name").hide()
-    $(".price_marker_price").hide()
     $(".price_marker_percentage").css({"font-size": "0.6em"})
     $(".price_marker_percentage").css({"border-bottom": "none"});
-    $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});    
+    $(".price_marker_dong_name").css({"border-bottom": "1px solid rgba(255, 255, 255, 0.4)"});
+    $(".price_marker_dong_name").hide()
+    if(menuSelection == "menu_select_price"){
+      $(".price_marker_price").hide()      
+    }
+    else{
+      $(".price_marker_price").css({"font-size": "0.6em"})
+    }
     console.log("current_zoom 12", zoom)
   }
   else if(zoom == 11){

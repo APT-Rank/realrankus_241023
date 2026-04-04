@@ -6,7 +6,7 @@ var regions = [
 
 var searchingDB = []
 
-function getUniqueList(jsonArrray, finding){
+function getUniqueList(jsonArrray, finding){  
   const unique = jsonArrray.map(function (val, index) {
     return val[finding];
   }).filter(function (val, index, arr) {
@@ -67,37 +67,37 @@ function change_menu(menu){
     //drawTable(price_index, sido_list, gungu_list); 
     setTimeout(() => drawTable(price_index, sido_list, gungu_list), 300);
     removeMarkers()
-    setTimeout(() => drawDataMap_price(region_class.data, current_zoom), 300);
+    setTimeout(() => drawDataMap_price(region_class, current_zoom), 300);
   }
   if(menu_name == "menu_select_balanced"){
     //drawTable(balanced_index, sido_list, gungu_list)
     setTimeout(() => drawTable(balanced_index, sido_list, gungu_list), 300);
     removeMarkers()
-    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
+    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
   }
   if(menu_name == "menu_select_edu"){
     //drawTable(edu_index, sido_list, gungu_list)
     setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 300);
     removeMarkers()
-    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
+    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
   }
   if(menu_name == "menu_select_living"){
     //drawTable(living_index, sido_list, gungu_list)
     setTimeout(() => drawTable(living_index, sido_list, gungu_list), 300);
     removeMarkers()
-    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
+    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
   }
   if(menu_name == "menu_select_infra"){
     //drawTable(infra_index, sido_list, gungu_list)
     setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 300);
     removeMarkers()
-    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
+    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
   }
   if(menu_name == "menu_select_trans"){
     //drawTable(trans_index, sido_list, gungu_list)
     setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 300);
     removeMarkers()
-    setTimeout(() => drawDataMap(region_class.data, current_zoom), 300);
+    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
   }
 }
 
@@ -263,6 +263,8 @@ function drawDataTable_price(indexData, sido_list, gungu_list, cl){
   var dataArr = Object.values(indexList)
   var dataArr_length = 0
 
+  console.log(indexList)
+
   for(var checker = 0 ; checker < dataArr.length ; checker++){
     if(dataArr[checker] == null || dataArr[checker] == undefined || dataArr[checker] == 0){
       dataArr_length = checker
@@ -293,7 +295,7 @@ function drawDataTable_price(indexData, sido_list, gungu_list, cl){
 
           for (var k = 0 ; k < findings.length ; k++){            
             id_name = "dong_" + findings[k][2]
-            price_per = region_class.data[findings[k][2]]["평단가"]
+            price_per = region_class[findings[k][2]]["평단가"]
             price_per_floor = ( Number(price_per.toFixed(0)) ).toLocaleString() + "만원"
             tableHtml += "<div class='matched_dong' id='" + id_name  + "' onClick='showRegionInfo(" + findings[k][2] + ")'><div>" + findings[k][1] + "</div><div class='price_per'>" + price_per_floor + "</div></div>"            
             searchingDB.push([findings[k][0] + " " + findings[k][1], findings[k][2]])
@@ -428,43 +430,43 @@ var shareURL = "https://www.realrankus.com/cityclass"
 var popMsg = ""
 
 function showRegionInfo(index){
-  var sido = region_class.data[index]["시도"]
-  var gungu = region_class.data[index]["군구"]
-  var dong = region_class.data[index]["읍면동"] 
+  var sido = region_class[index]["시도"]
+  var gungu = region_class[index]["군구"]
+  var dong = region_class[index]["읍면동"] 
   
   if(menuSelection == "menu_select_price"){
-    var percentile = region_class.data[index]["평단가_백분률"]
+    var percentile = region_class[index]["평단가_백분률"]
   }
   if(menuSelection == "menu_select_balanced"){
-    var percentile = region_class.data[index]["가치_백분률"]
-    var score = region_class.data[index]["가치총점"]
+    var percentile = region_class[index]["가치_백분률"]
+    var score = region_class[index]["가치총점"]
     var selection = "균형"
   }  
   if(menuSelection == "menu_select_edu"){
-    var percentile = region_class.data[index]["교육_백분률"]
-    var score = region_class.data[index]["교육총점"]
+    var percentile = region_class[index]["교육_백분률"]
+    var score = region_class[index]["교육총점"]
     var selection = "교육"
   }
   if(menuSelection == "menu_select_living"){
-    var percentile = region_class.data[index]["주거_백분률"]
-    var score = region_class.data[index]["주거총점"]
+    var percentile = region_class[index]["주거_백분률"]
+    var score = region_class[index]["주거총점"]
     var selection = "주거"
   }
   if(menuSelection == "menu_select_infra"){
-    var percentile = region_class.data[index]["인프라_백분률"]
-    var score = region_class.data[index]["인프라총점"]
+    var percentile = region_class[index]["인프라_백분률"]
+    var score = region_class[index]["인프라총점"]
     var selection = "인프라"
   }
   if(menuSelection == "menu_select_trans"){
-    var percentile = region_class.data[index]["교통_백분률"]
-    var score = region_class.data[index]["교통총점"]
+    var percentile = region_class[index]["교통_백분률"]
+    var score = region_class[index]["교통총점"]
     var selection = "교통"
   }
 
-  var complex_num = region_class.data[index]["단지수"]
-  var house_num = region_class.data[index]["세대수"]
-  var pyeong_price = region_class.data[index]["평단가"]
-  var total_amount = region_class.data[index]["총액"]
+  var complex_num = region_class[index]["단지수"]
+  var house_num = region_class[index]["세대수"]
+  var pyeong_price = region_class[index]["평단가"]
+  var total_amount = region_class[index]["총액"]
   cleared_total_amount = Math.round(total_amount) * 100000000
 
   title = "<span style='font-weight: 600'>" + sido + " " + gungu + " " + dong + "</span>"
@@ -531,8 +533,8 @@ function showRegionInfo(index){
   bodyHtml += "<div></div><div id='share1'></div><div id='share2'></div>"
   bodyHtml += "</div>"
 
-  var sidoLink = region_class.data[index]["sido_link"]
-  var gunguLink = region_class.data[index]["gungu_link"]
+  var sidoLink = region_class[index]["sido_link"]
+  var gunguLink = region_class[index]["gungu_link"]
   var RealRankusLink = "https://www.realrankus.com?reg=" + sidoLink + "&sub=" + gunguLink + "&mon=" + currentMonth
   if(isMobile){
     var RealRankusBizLink = "https://www.realrankus.com/biz/index_m.html?reg=" + sidoLink + "&sub=" + gunguLink
@@ -682,8 +684,8 @@ function goPosition(index){
   }  
 }
 function goMapPosition(index){
-  posY = region_class.data[index]["lat"]
-  posX = region_class.data[index]["lng"]
+  posY = region_class[index]["lat"]
+  posX = region_class[index]["lng"]
 
   var newPosition = new naver.maps.LatLng(posY, posX);
   defaultMap.setCenter(newPosition)

@@ -421,10 +421,11 @@ function draw(){
   cost_treemap_url = "https://www.realrankus.com/cityclass/" + currentMonth + "/treemap_" + currentMonth + ".json"
     $.getJSON(class_url, function(json) {
         region_class = json;
-        sido_list = getUniqueList(region_class.data, "시도")
+        console.log(region_class)
+        sido_list = getUniqueList(region_class, "시도")
         gungu_list = []
         for(var i = 0 ; i < sido_list.length ;  i++){
-          searched_gungu = region_class.data.filter(function (object){
+          searched_gungu = region_class.filter(function (object){
             return object["시도"] === sido_list[i]          
           })
           gungu_unique_list = getUniqueList(searched_gungu, "군구")
@@ -432,7 +433,7 @@ function draw(){
         }
     })
     .then(()=>{
-        $("#update_info").html("업데이트 : " + region_class.data[0]['updated'])
+        $("#update_info").html("업데이트 : " + region_class[0]['updated'])
         //$("#update_info").css({'font-size':'0.7em', 'text-align' : 'right'})
         $.getJSON(index_url_balanced, function(json) {
           balanced_index = json;          
@@ -463,7 +464,7 @@ function draw(){
                       //console.log(price_index)
                       setTreeMap()
                       drawTable(price_index, sido_list, gungu_list)
-                      drawMap(region_class.data, sido_list, gungu_list)
+                      drawMap(region_class, sido_list, gungu_list)
                   })
                 })
               })
