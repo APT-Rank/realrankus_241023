@@ -75,6 +75,32 @@ const executeShare = async (pswp) => {
     }
 };
 
+// 헬퍼 함수: 클립보드에 이미지 복사
+const executeCopy = async (pswp) => {
+    const currSlide = pswp.currSlide;
+    if (!currSlide || !currSlide.data.src) return;
+
+    const imgUrl = currSlide.data.src;
+
+    try {
+        // 1. 이미지 데이터를 가져와 Blob으로 변환
+        const response = await fetch(imgUrl);
+        const blob = await response.blob();
+
+        // 2. Clipboard API를 사용하여 이미지 복사
+        // 이미지 타입은 보통 image/png 또는 image/jpeg여야 합니다.
+        const item = new ClipboardItem({ [blob.type]: blob });
+        await navigator.clipboard.write([item]);
+
+        //alert("이미지가 클립보드에 복사되었습니다.\n원하는 곳에 붙여넣기 하세요.");
+        toastMessage("이미지가 클립보드에 복사되었습니다.\n원하는 곳에 붙여넣기 하세요.", 500)
+    } catch (err) {
+        console.error('복사 실패:', err);
+        // 에러 시 차선책으로 이미지 새 창 열기
+        window.open(imgUrl, '_blank');
+    }
+};
+
 // 4. 메인 초기화 함수
 window.initPhotoSwipe = function() {
     if (window.pswpLightbox) {
@@ -95,12 +121,12 @@ window.initPhotoSwipe = function() {
         const config = {
             name: isApp ? 'pswp-share-button' : 'pswp-download-button',
             // 앱이면 공유 아이콘, 웹이면 다운로드 아이콘
-            html: isApp 
-                ? '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M21 19a3.9 3.9 0 0 0-3.1 1.5l-6.2-3.3a4 4 0 0 0 0-2.4l6.2-3.3a4 4 0 1 0-.9-2.3l-6.4 3.4a4 4 0 1 0 0 4.8l6.4 3.4A4 4 0 1 0 21 19Z" fill="#fff"/></svg>'
-                : '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z" fill="#fff"/></svg>',
+        html: isApp 
+            ? '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M22 6h-4.2c-.4-1.2-1.5-2-2.8-2s-2.4.8-2.8 2H8c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7 0c0-.6.4-1 1-1s1 .4 1 1-.4 1-1 1-1-.4-1-1zm7 18H8V8h2v3h12V8h2v16z" fill="#fff"/></svg>'
+            : '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32" width="32" height="32"><path d="M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z" fill="#fff"/></svg>',
             onClick: (event, el, pswp) => {
                 if (isApp) {
-                    executeShare(pswp);
+                    executeCopy(pswp);
                 } else {
                     executeDownload(pswp);
                 }
