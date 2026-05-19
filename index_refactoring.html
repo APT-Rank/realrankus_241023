@@ -166,7 +166,8 @@
           <div id="month_selection">
             <!-- 수정 -->
             <select id="month" onChange="updateMonth()">
-              <option value="202604" selected>2026년 04월</option>
+              <option value="202605" selected>2026년 05월</option>
+              <option value="202604">2026년 04월</option>
               <option value="202603">2026년 03월</option>
               <option value="202602">2026년 02월</option>
               <option value="202601">2026년 01월</option>
@@ -600,7 +601,7 @@
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
     <script src="./js/con_counter_js.js"></script>
     <script src="./js/apple.js" type="text/javascript"></script>
-    <script src="./js/login_240308.js" type="text/javascript"></script>
+    <script src="./js/login_260327.js" type="text/javascript"></script>
     <script src="./js/board.js" type="text/javascript"></script>    
     <script src="./js/complex_compare.js" type="text/javascript"></script>
 
@@ -611,9 +612,9 @@
     </script>
   </body>
   <script>
-    const thisMonth = "202604"; //수정
-    let selectedMonth = "202604"; //수정
-    const DB_Date = "202604_05"; //수정
+    const thisMonth = "202605"; //수정
+    let selectedMonth = "202605"; //수정
+    const DB_Date = "202605_03"; //수정
     let selectedRegion = "Seoul";
     let selectedSubRegion = "1168000000_Seoul_Gangnam";
     let selectedComplex = "";
@@ -1095,7 +1096,7 @@
         
       });
 
-      if ($.cookie("popCookie") != "202604" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+      if ($.cookie("popCookie") != "202605" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
         startNotice = true;
         showNotice();
         //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -1200,11 +1201,11 @@
       //window.indexedDB.deleteDatabase('202509_04')
       //window.indexedDB.deleteDatabase('202510_01')
       //window.indexedDB.deleteDatabase('202510_02')
-      window.indexedDB.deleteDatabase('202510_03')
-      window.indexedDB.deleteDatabase('202511_01')
-      window.indexedDB.deleteDatabase('202511_02')
-      window.indexedDB.deleteDatabase('202512_01')
-      window.indexedDB.deleteDatabase('202512_02')
+      //window.indexedDB.deleteDatabase('202510_03')
+      //window.indexedDB.deleteDatabase('202511_01')
+      //window.indexedDB.deleteDatabase('202511_02')
+      //window.indexedDB.deleteDatabase('202512_01')
+      //window.indexedDB.deleteDatabase('202512_02')
       window.indexedDB.deleteDatabase('202601_01')
       window.indexedDB.deleteDatabase('202601_02')
       window.indexedDB.deleteDatabase('202602_01')
@@ -1217,6 +1218,9 @@
       window.indexedDB.deleteDatabase('202604_02')
       window.indexedDB.deleteDatabase('202604_03')
       window.indexedDB.deleteDatabase('202604_04')
+      window.indexedDB.deleteDatabase('202604_05')
+      window.indexedDB.deleteDatabase('202605_01')
+      window.indexedDB.deleteDatabase('202605_02')
       window.indexedDB.deleteDatabase(DB_Date)
      
       const dbName = DB_Date
@@ -2004,7 +2008,7 @@
             }
 
             if (house_num == null) {
-              addon_html += `<div class='apt_info'>" + "세대수 미정 / <span class='aptPrice'>거래 정보 없음</span></div>`;
+              addon_html += `<div class='apt_info'>세대수 미정 / <span class='aptPrice'>거래 정보 없음</span></div>`;
             } else {
               if (last_sales_date == "1800-01-01") {
                 addon_html += `<div class='apt_info'>${house_num.toLocaleString()}세대 / <span class='aptPrice'>거래 정보 없음</span></div>`;
@@ -2455,7 +2459,7 @@
       detailHtml += `
         <div class='card' onClick='showCommentWindow("${searchCode}")'>
         <div class='card-header'>
-        <div class='popTitle' id='comment_popTitle'><div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + "#개의 우리 단지 랭커스톡</div>
+        <div class='popTitle' id='comment_popTitle'><div><i class='fa-regular fa-comment'></i>&nbsp&nbsp#개의 우리 단지 랭커스톡</div>
         <div></div>
         </div></div>
         <div class='card-body' id='comment_sample'></div>
@@ -2624,16 +2628,16 @@
       }      
       detailHtml += `<div class='popTable'>`;
       if (Number(selectedMonth) > 202205 && aptData.data[index]["한강"] > 0) {
-        detailHtml += `<div class='popSubTable'><div class='popContent'>" + "한강 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>`;
+        detailHtml += `<div class='popSubTable'><div class='popContent'>한강 프리미엄</div><div class='popResult'>적용</div></div>`;
       }
       if (Number(selectedMonth) > 202205 && aptData.data[index]["해운대"] > 0) {
-        detailHtml += `<div class='popSubTable'><div class='popContent'>" + "해운대 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>`;
+        detailHtml += `<div class='popSubTable'><div class='popContent'>해운대 프리미엄</div><div class='popResult'>적용</div></div>`;
       }
 
       if (house_num != null) {
         detailHtml += `<div class='popSubTable'><div class='popContent'>세대수</div><div class='popResult'>${house_num.toLocaleString()}세대</div></div>`;
       } else {
-        detailHtml += `<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>`;
+        detailHtml += `<div class='popSubTable'><div class='popContent'>세대수</div><div class='popResult'>미정</div></div>`;
       }
 
       if (Number(selectedMonth) > 202203) {
@@ -2676,9 +2680,9 @@
             "<thead class='table-light' style='position:sticky ;top: 0'>";
           detailHtml += `
             <tr>
-            <th scope='col'>" + "평형" + "</th>
-            <th scope='col'>" + "방수/욕실수" + "</th>
-            <th scope='col'>" + "평균 관리비" + "</th>
+            <th scope='col'>평형</th>
+            <th scope='col'>방수/욕실수</th>
+            <th scope='col'>평균 관리비</th>
             </tr>
             </thead>
           `;
@@ -2691,7 +2695,7 @@
               <td>${parseInt(rooms_array[k])} / ${parseInt(baths_array[k])}</td>
             `;
             if (isNaN(maintainance_array[k]) == true) {
-              detailHtml += `<td>" + "---" + "</td>`;
+              detailHtml += `<td>---</td>`;
             } else {
               detailHtml += `<td>${Number(maintainance_array[k]).toLocaleString()}원</td>`;
             }
@@ -2733,11 +2737,11 @@
           noise_level = "";
 
           if (floor_noise == "좋음" || floor_noise == "우수") {
-            noise_level = "<span style='color:#148523'><i class='fa-solid fa-face-laugh'></i>" + "우수" + "</span>";
+            noise_level = "<span style='color:#148523'><i class='fa-solid fa-face-laugh'></i>우수</span>";
           } else if (floor_noise == "보통") {
             noise_level = `<span style='color:#148185'><i class='fa-solid fa-face-smile'></i>${floor_noise}</span>`;
           } else {
-            noise_level = "<span style='color:black'>" + "정보 없음" + "</span>";
+            noise_level = "<span style='color:black'>정보 없음</span>";
           }
 
           detailHtml += `
@@ -2816,7 +2820,7 @@
       `;
       if (Number(selectedMonth) > 202204) {
         if (aptData.data[index]["300m이내상권"] == "0") {
-          detailHtml += `<div class='popSubTable' style='grid-template-columns:1fr 1fr'><div class='popContent'>" + "300m 이내 상권" + "</div>" + "<div class='popResult'>0개</div></div>`;
+          detailHtml += `<div class='popSubTable' style='grid-template-columns:1fr 1fr'><div class='popContent'>300m 이내 상권</div><div class='popResult'>0개</div></div>`;
         } else {
           detailHtml += `<div class='popSubTable' style='grid-template-columns:1fr 1fr'><div class='popContent'>300m 이내 상권</div><div class='popResult'>${market_infra}</div></div>`;
         }
@@ -2963,15 +2967,15 @@
         `;
         if (Number(selectedMonth) > 202207) {
           detailHtml += `
-            <th scope='col' style='line-height: 2.9em;'>" + "평형" + "</th>
-            <th scope='col'>" + "매매 실거래가<br>전세 실거래가" + "</th>
-            <th scope='col'>" + "평단가<br>전세가율" + "</th>
+            <th scope='col' style='line-height: 2.9em;'>평형</th>
+            <th scope='col'>매매 실거래가<br>전세 실거래가</th>
+            <th scope='col'>평단가<br>전세가율</th>
           `;
         } else {
           detailHtml += `
-            <th scope='col'>" + "평형" + "</th>
-            <th scope='col'>" + "실거래가" + "</th>
-            <th scope='col'>" + "평단가" + "</th>
+            <th scope='col'>평형</th>
+            <th scope='col'>실거래가</th>
+            <th scope='col'>평단가</th>
           `;
         }
         detailHtml += `
@@ -2986,7 +2990,7 @@
             if (Number(selectedMonth) > 202207) {
               detailHtml += `
                 <td>${area_array[k]}</td>
-                <td>" + "거래 정보 없음" + "<br>
+                <td>거래 정보 없음<br>
               `;
               if (rent_ratio_array[k] == "정보 없음") {
                 detailHtml += `거래 정보 없음</td>`;
@@ -2994,7 +2998,7 @@
             } else {
               detailHtml += `
                 <td>${area_array[k]}</td>
-                <td>" + "거래 정보 없음" + "</td>
+                <td>거래 정보 없음</td>
               `;
             }
           } else {
@@ -3058,7 +3062,7 @@
 
           if (Number(selectedMonth) > 202207) {
             if (price_per_array[k] == "nan" || price_per_array[k] == 0) {
-              detailHtml += `<td>" + "---" + "<br>`;
+              detailHtml += `<td>--<br>`;
             } else {
               price_per = Math.floor(price_per_array[k])
               if (compare_date > start_date) {
@@ -3069,7 +3073,7 @@
             }
 
             if (rent_ratio_array[k] == "정보 없음") {
-              detailHtml += `---" + "</td>`;
+              detailHtml += `---</td>`;
             } else {
               if (compare_rent_date > start_date) {
                 detailHtml +=
@@ -3081,7 +3085,7 @@
             }
           } else {
             if (price_per_array[k] == "nan") {
-              detailHtml += `<td>" + "---" + "</td>`;
+              detailHtml += `<td>---</td>`;
             } else {
               if (compare_date > start_date) {
                 detailHtml +=
@@ -3158,7 +3162,7 @@
             `;
           } else {
             detailHtml += `
-              <div class='priceResult' style='text-align: right; padding-right: 4px'>거래 정보 없음" + "</div>
+              <div class='priceResult' style='text-align: right; padding-right: 4px'>거래 정보 없음</div>
               <div class='priceResult' style='text-align: right; padding-right: 8px'>( --- , --- )</div>
             `;
           }
@@ -4669,6 +4673,9 @@
       if (selectedMonth == "202604") {
         detailHtml += notice_202604;
       }
+      if (selectedMonth == "202605") {
+        detailHtml += notice_202605;
+      }
  
       detailHtml += `
         <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>"${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스"</div>
@@ -4728,7 +4735,7 @@
       }
       $(".modal-footer").css({ "padding-top": "3px" });
 
-      if ($.cookie("popCookie") != "202604") {
+      if ($.cookie("popCookie") != "202605") {
         $("#flexCheckDefault").prop("checked", false);
       } else {
         $("#flexCheckDefault").prop("checked", true);
@@ -4736,7 +4743,7 @@
 
       $("#flexCheckDefault").change(function () {
         if ($(this).is(":checked")) {
-          $.cookie("popCookie", "202604", { expires: 30, path: "/" });
+          $.cookie("popCookie", "202605", { expires: 30, path: "/" });
           console.log($.cookie("popCookie"));
         } else {
           $.removeCookie("popCookie", null, { path: "/" });
