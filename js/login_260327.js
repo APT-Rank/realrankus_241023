@@ -292,7 +292,7 @@ naverLogin.init();
 window.addEventListener('load', function () {
 	naverLogin.getLoginStatus(function (status) {
 		if (status) {
-			/* (6) 로그인 상태가 "true" 인 경우 로그인 버튼을 없애고 사용자 정보를 출력합니다. 
+			// (6) 로그인 상태가 "true" 인 경우 로그인 버튼을 없애고 사용자 정보를 출력합니다.
 			//login_status = status
 			naver_login_status = status			
 			setLoginStatus();
@@ -462,13 +462,14 @@ function set_user_stat(fb_uid){
 		block_start = user_stat['block_start']
 		block_end = user_stat['block_end']		
 	})
-	.then(()=>{
+	.then(()=>{	
 		if(pageName == "aptrank"){
 			setWriteBox()
 			read_comment()
 		}
 	})
 	.catch((error) => {
+		setLogoutStatus()
 		console.log(error.message)
 	})
 }
@@ -478,12 +479,11 @@ function login_checker() {
   const profile = window.localStorage.getItem("profile");
   
   if (NID) {
-    // 🚨 여기서 미리 login_status = true 를 하지 않습니다.
     if (profile) {
       const profile_obj = JSON.parse(profile);
       const userName = profile_obj.user_name || "정보 없음";
       const userNickName = profile_obj.user_nick_name || "랭커스" + Math.floor(Math.random() * 10000);
-      const userEmail = profile_obj.email || `${NID[0]}@realrankus.com`; // 이메일 누락 시 고유 가상 이메일 생성
+      const userEmail = profile_obj.email || `${NID[0]}@realrankus.com`;
       const userAge = profile_obj.age || "정보 없음";
       const userBirthday = profile_obj.birthday || "정보 없음";
       const userBirthyear = profile_obj.birthyear || "정보 없음";
@@ -493,8 +493,8 @@ function login_checker() {
 
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          // Firebase 인증이 최종 확인된 이 시점에 로그인 상태를 확정합니다.
-          login_status = true; 
+          // Firebase 인증이 최종 확인된 시점에 로그인 상태 확정
+          login_status = true;
           set_user_stat(user.uid);
         } else {
           setFirebaseID(userEmail, NID[0].toString(), userName, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider);
@@ -509,15 +509,17 @@ function login_checker() {
       loadData(NID[0], NID[1]);
     }
   } else {
-    // NID가 없을 때의 기존 로직 유지
+    // 1. 상태를 초기화하되, 비동기 검증이 끝날 때까지 UI 변동(setLogoutStatus)은 보류합니다.
+    login_status = false; 
+
     naverLogin.getLoginStatus(function (status) {
       if (status) {
         const info_id = naverLogin.user.getId();
-        const info_email = naverLogin.user.getEmail() || `${info_id}@realrankus.com`; // 가상 이메일 보정
+        const info_email = naverLogin.user.getEmail() || `${info_id}@realrankus.com`;
         const info_name = naverLogin.user.getName() || "정보 없음";
         const info_nickname = naverLogin.user.getNickName() || "랭커스" + Math.floor(Math.random() * 10000);
         
-        login_status = true;
+        login_status = true; // 네이버 로그인 성공
         setItemWithExpireTime('nLOG', info_id, expireTime, "NAVER");
         setNaverLoginStatus(info_name, info_nickname, info_email);
         writeUserData(info_id, info_name, info_email, naverLogin.user.getAge(), naverLogin.user.getBirthday(), naverLogin.user.getBirthyear(), naverLogin.user.getGender(), naverLogin.user.getMobile(), info_nickname, "NAVER");
@@ -527,15 +529,19 @@ function login_checker() {
         Kakao.Auth.setAccessToken(kToken);
         Kakao.Auth.getStatusInfo(function (status) {
           if (status.status === "connected") {
-            login_status = true;
+            login_status = true; // 카카오 로그인 성공
             getkakaouserinfo();
           } else {
             const AppleLogging = localStorage.getItem("AppleLogging");
             if (AppleLogging) {
               showLoginLoading();
               localStorage.removeItem('AppleLogging');
+              appleSignInRedirectResult(); 
+            } else {
+              // 2. 네이버, 카카오, 애플(진행 중 아님) 인증이 모두 실패한 이 시점이 명확한 '로그아웃' 상태입니다.
+              setLogoutStatus(); 
+              appleSignInRedirectResult();
             }
-            appleSignInRedirectResult();
           }
         });
       }

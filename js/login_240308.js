@@ -492,7 +492,8 @@ function login_checker(){
 
 			firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
-					set_user_stat(user.uid)					
+					set_user_stat(user.uid)
+					login_status = true
 				}
 				else{
 					setFirebaseID(userEmail, NID[0].toString(), userName, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider)
