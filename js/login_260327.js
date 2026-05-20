@@ -456,8 +456,18 @@ function login_checker() {
           login_status = true;
           set_user_stat(user.uid);
         } else {
-          // 백그라운드 검증 실패 시: 강제 로그인(setFirebaseID)이 아니라 캐시 파기 및 로그아웃 처리
-          setLogoutStatus(); 
+          // 2. Firebase 세션만 끊어진 경우 (캐시는 존재함)
+          // 무작정 로그아웃(setLogoutStatus) 시키지 않고, NID를 비밀번호로 사용하여 조용히 재로그인 시도
+          firebase.auth().signInWithEmailAndPassword(userEmail, NID[0].toString())
+            .then((userCredential) => {
+                login_status = true;
+                set_user_stat(userCredential.user.uid);
+            })
+            .catch((error) => {
+                // 재로그인마저 실패한 경우에만 (예: 비밀번호 변경, 계정 삭제 등) 진짜 로그아웃 처리
+                console.log("Background Auth Sync Failed: ", error.message);
+                setLogoutStatus(false); 
+            });
         }
         // 핵심: 최초 1회 확인 후 리스너를 해제하여, 이후 사용자의 로그아웃 동작 시 오작동을 방지합니다.
         unsubscribe(); 
