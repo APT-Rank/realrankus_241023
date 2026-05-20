@@ -141,110 +141,61 @@ function writeUserData(userID, name, email, age, birthday, birthyear, gender, mo
 }
 
 function loadData(userID, provider){
-	firebase.auth().onAuthStateChanged((user) => {
-		if (user) {
-			set_user_stat(user.uid)
-			firebase.database().ref().child("users_moved").child(user.uid).child("profile").get().then((snapshot) => {
-				if (snapshot.exists()) {
-					profile = snapshot.val()
-					if(profile.user_name == null || profile.user_name == undefined){
-						userName = "정보 없음"
-					}
-					else{
-						userName = profile.user_name
-					}
+    // [수정] unsubscribe 변수 선언을 정확히 매핑하여 리스너를 해제합니다.
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            set_user_stat(user.uid)
+            firebase.database().ref().child("users_moved").child(user.uid).child("profile").get().then((snapshot) => {
+                if (snapshot.exists()) {
+                    var profile = snapshot.val()
+                    var userName = profile.user_name || "정보 없음";
+                    var userNickName = profile.user_nick_name || "랭커스" + (Math.floor(Math.random() * 10000)).toString();
+                    var userEmail = user.email || profile.email || "정보 없음";
+                    var userAge = profile.age || "정보 없음";
+                    var userBirthday = profile.birthday || "정보 없음";
+                    var userBirthyear = profile.birthyear || "정보 없음";
+                    var userGender = profile.gender || "정보 없음";
+                    var userMobile = profile.mobile || "정보 없음";             
 
-					if(profile.user_nick_name == null || profile.user_nick_name == undefined){
-						userNickName = "랭커스" + (Math.floor(Math.random() * 10000)).toString();
-					}
-					else{
-						userNickName = profile.user_nick_name
-					}
+                    login_status = true
 
-					if(profile.email == null || profile.email == undefined){
-						userEmail = "정보 없음"
-					}
-					else{
-						userEmail = user.email
-					}
+                    const user_obj = {
+                        user_name: userName,
+                        user_nick_name : userNickName,
+                        email: userEmail,
+                        age: userAge,
+                        birthday : userBirthday,
+                        birthyear : userBirthyear,
+                        gender : userGender,
+                        mobile : userMobile,
+                        provider : provider
+                    }
+                    const userObjString = JSON.stringify(user_obj);
+                    window.localStorage.setItem("profile", userObjString);
 
-					if(profile.age == null || profile.age == undefined){
-						userAge = "정보 없음"
-					}
-					else{
-						userAge = user.age
-					}
-
-					if(profile.birthday == null || profile.birthday == undefined){
-						userBirthday = "정보 없음"
-					}
-					else{
-						userBirthday = profile.birthday
-					}
-
-					if(user.birthyear == null || profile.birthyear == undefined){
-						userBirthyear = "정보 없음"
-					}
-					else{
-						userBirthyear = profile.birthyear
-					}
-
-					if(profile.gender == null || profile.gender == undefined){
-						userGender = "정보 없음"
-					}
-					else{
-						userGender = profile.gender
-					}
-
-					if(profile.mobile == null || profile.mobile == undefined){
-						userMobile = "정보 없음"
-					}
-					else{
-						userMobile = profile.mobile
-					}				
-
-					login_status = true
-
-					// setItem
-					//if (broswerInfo.indexOf("inApp") > -1) {
-						const user_obj = {
-							user_name: userName,
-							user_nick_name : userNickName,
-							email: userEmail,
-							age: userAge,
-							birthday : userBirthday,
-							birthyear : userBirthyear,
-							gender : userGender,
-							mobile : userMobile,
-							provider : provider
-						}
-						// 객체를 JSON 문자열로 변환
-						const userObjString = JSON.stringify(user_obj);
-						window.localStorage.setItem("profile", userObjString);
-					//}
-
-					if(provider == "NAVER"){
-						setNaverLoginStatus(userName, userNickName, userEmail);
-					}
-					if(provider == "KAKAO"){
-						setKakaoLoginStatus(userName, userNickName, userEmail);
-					}
-					if(provider == "APPLE"){
-						setAppleLoginStatus(userName, userNickName, userEmail);
-					}
-					setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider)
-				}
-				else{
-				}
-			})
-			.catch((error) => {
-				console.error(error);
-			});			
-		}
-		else{
-			setFirebaseID(userEmail, NID[0].toString(), userName, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider)
-		}
-	})	
+                    if(provider == "NAVER"){
+                        setNaverLoginStatus(userName, userNickName, userEmail);
+                    }
+                    if(provider == "KAKAO"){
+                        setKakaoLoginStatus(userName, userNickName, userEmail);
+                    }
+                    if(provider == "APPLE"){
+                        setAppleLoginStatus(userName, userNickName, userEmail);
+                    }
+                    setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider)
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });         
+        }
+        else{
+            // [수정] 복구 불가능한 유실 상태이므로 안전하게 로그아웃 상태로 회귀시킵니다. (루프 없음)
+            setLogoutStatus(false);
+        }
+        
+        unsubscribe(); // [수정] 이제 정상적으로 리스너가 작동 후 해제됩니다.
+    })  
 }
 
 /* 미사용
@@ -443,35 +394,43 @@ function setFirebaseID(userEmail, userID, userName, userAge, userBirthday, userB
     })
 }
 
-function set_user_stat(fb_uid){
-	firebase.database().ref().child("users_moved").child(fb_uid).get().then((snapshot) => {
-		if (snapshot.exists()) {
-			stat = snapshot.val()          
-			user_stat = stat['status']
-			user_obj = stat['profile']
-			const userObjString = JSON.stringify(user_obj);
-			window.localStorage.setItem("profile", userObjString);
-		}
-	})
-	.then(() => {
-		temp_uid = fb_uid
-		temp_email = user_obj['email']
-		temp_email_sep = (temp_email.split("@"))[0]
-		shown_email = temp_email_sep.substr(0, 1) + "*****" + temp_email_sep.substr(-1, 1)		
-		blocked = user_stat['blocked']
-		block_start = user_stat['block_start']
-		block_end = user_stat['block_end']		
-	})
-	.then(()=>{	
-		if(pageName == "aptrank"){
-			setWriteBox()
-			read_comment()
-		}
-	})
-	.catch((error) => {
-		setLogoutStatus()
-		console.log(error.message)
-	})
+function set_user_stat(fb_uid) {
+    firebase.database().ref().child("users_moved").child(fb_uid).get().then((snapshot) => {
+        if (snapshot.exists()) {
+            var stat = snapshot.val();
+            var user_stat = stat['status'];
+            var user_obj = stat['profile'];
+            
+            const userObjString = JSON.stringify(user_obj);
+            window.localStorage.setItem("profile", userObjString);
+            
+            // 데이터를 성공적으로 가져온 이 시점에서 후속 작업을 진행해야 안전합니다.
+            temp_uid = fb_uid;
+            var temp_email = user_obj['email'] || "";
+            var temp_email_sep = temp_email.includes("@") ? (temp_email.split("@"))[0] : temp_email;
+            
+            // 이메일 마스킹 처리 안정화
+            shown_email = temp_email_sep.length > 2 
+                          ? temp_email_sep.substr(0, 1) + "*****" + temp_email_sep.substr(-1, 1) 
+                          : "*****";
+            
+            var blocked = user_stat['blocked'];
+            var block_start = user_stat['block_start'];
+            var block_end = user_stat['block_end'];
+            
+            if (pageName == "aptrank") {
+                setWriteBox();
+                read_comment();
+            }
+        } else {
+            // 데이터베이스에 유저 정보가 없으면 비정상 상태로 간주하고 세션 초기화
+            throw new Error("User profile not found in database.");
+        }
+    })
+    .catch((error) => {
+        console.log("set_user_stat error: ", error.message);
+        setLogoutStatus(false); 
+    });
 }
 
 function login_checker() {
@@ -491,14 +450,17 @@ function login_checker() {
       const userMobile = profile_obj.mobile || "정보 없음";
       const provider = profile_obj.provider;
 
-      firebase.auth().onAuthStateChanged((user) => {
+      // [수정된 부분] 1회성 검증 및 로그아웃 유도
+      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          // Firebase 인증이 최종 확인된 시점에 로그인 상태 확정
           login_status = true;
           set_user_stat(user.uid);
         } else {
-          setFirebaseID(userEmail, NID[0].toString(), userName, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider);
+          // 백그라운드 검증 실패 시: 강제 로그인(setFirebaseID)이 아니라 캐시 파기 및 로그아웃 처리
+          setLogoutStatus(); 
         }
+        // 핵심: 최초 1회 확인 후 리스너를 해제하여, 이후 사용자의 로그아웃 동작 시 오작동을 방지합니다.
+        unsubscribe(); 
       });
 
       if (provider === "NAVER") setNaverLoginStatus(userName, userNickName, userEmail);
@@ -549,7 +511,7 @@ function login_checker() {
   }
 }
 
-function setLogoutStatus(){
+function setLogoutStatus(needRedirect = false) {
 	//naver_login_status = false
 	//kakao_login_status = false
 	//apple_login_status = false
@@ -563,18 +525,25 @@ function setLogoutStatus(){
 	//localStorage.removeItem('aName')
 	//localStorage.removeItem('kToken')
 	//localStorage.removeItem('krToken')
-	localStorage.removeItem('kToken')
-	localStorage.removeItem('nLOG')
-	localStorage.removeItem('profile')
-	
-	if(login_status){
-		login_status = false
-		firebase.auth().signOut()
-		//location.reload()
-		var redirect = setLogoutDest(pageName)
-		//var redirect = "http://127.0.0.1:5500"
-		window.location.replace(redirect);
-	} 	
+	localStorage.removeItem('kToken');
+    localStorage.removeItem('nLOG');
+    localStorage.removeItem('profile');
+    
+    login_status = false;
+    
+    firebase.auth().signOut().then(() => {
+        // 명시적인 로그아웃(버튼 클릭 등)이나 접근 권한이 없는 페이지일 때만 리다이렉트 수행
+        if(needRedirect) {
+            var redirect = setLogoutDest(pageName);
+            window.location.replace(redirect);
+        }
+    }).catch((error) => {
+        console.error("Sign-out error:", error);
+        if(needRedirect) {
+            var redirect = setLogoutDest(pageName);
+            window.location.replace(redirect);
+        }
+    }); 	
 }
 
 /* (6) 로그인 상태가 "true" 인 경우 로그인 버튼을 없애고 사용자 정보를 출력합니다. */
@@ -889,7 +858,7 @@ function kakaoLogout() {
 
 			firebase.database().ref('users_moved/' + fb_uid).set({
 				profile: user_profile_obj,
-				status: user_status_ojb
+				status: user_status_obj
 			})			
 		})
 		.catch((error) => {
