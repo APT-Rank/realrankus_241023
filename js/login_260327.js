@@ -438,6 +438,7 @@ function login_checker() {
   const profile = window.localStorage.getItem("profile");
   
   if (NID) {
+	login_status = true;
     if (profile) {
       const profile_obj = JSON.parse(profile);
       const userName = profile_obj.user_name || "정보 없음";
@@ -452,8 +453,7 @@ function login_checker() {
 
       // [수정된 부분] 1회성 검증 및 로그아웃 유도
       const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          login_status = true;
+        if (user) {          
           set_user_stat(user.uid);
         } else {
           // 2. Firebase 세션만 끊어진 경우 (캐시는 존재함)
