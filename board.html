@@ -199,6 +199,10 @@
     }
 
     function read_comment(){
+      if (!docRef || typeof docRef.get !== 'function') {
+        console.warn("read_comment: docRef is not initialized or invalid. Skipping comment fetch.");
+        return;
+      }
       var comment_html = ""
       docRef.get().then((comment_list) => {
           if (comment_list.exists) {

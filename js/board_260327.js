@@ -899,6 +899,10 @@ function retryOnce(promiseFunc, delay = 300) {
 
 
 function read_comment(scroll_pos) {
+  if (!docRef || typeof docRef.get !== 'function') {
+    console.warn("read_comment: docRef is not initialized or invalid. Skipping comment fetch.");
+    return;
+  }
   let normal_comments = [];
   let comment_html = "";
   

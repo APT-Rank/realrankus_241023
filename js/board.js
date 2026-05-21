@@ -961,6 +961,10 @@ function retryOnce(promiseFunc, delay = 300) {
 
 
 function read_comment(scroll_pos){
+	if (!docRef || typeof docRef.get !== 'function') {
+		console.warn("read_comment: docRef is not initialized or invalid. Skipping comment fetch.");
+		return;
+	}
 	var normal_comments = [];
 	var comment_html = ""
 	$("#comment_title").html(detail_complex + " 랭커스톡")

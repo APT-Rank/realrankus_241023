@@ -402,6 +402,7 @@ function setFirebaseID(userEmail, userID, userName, userAge, userBirthday, userB
 }
 
 function set_user_stat(fb_uid) {
+	console.log("set_user_stat called with fb_uid: ", fb_uid);
     firebase.database().ref().child("users_moved").child(fb_uid).get().then((snapshot) => {
         if (snapshot.exists()) {
             var stat = snapshot.val();
@@ -464,7 +465,8 @@ function login_checker() {
       // [수정된 부분] 1회성 검증 및 로그아웃 유도
       let unsubscribe;
       unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-        if (user) {          
+        if (user) {
+		  console.log("Firebase session valid for user: ", user);
           set_user_stat(user.uid);
         } else {
           // 2. Firebase 세션만 끊어진 경우 (캐시는 존재함)
@@ -472,6 +474,7 @@ function login_checker() {
           firebase.auth().signInWithEmailAndPassword(userEmail, NID[0].toString())
             .then((userCredential) => {
                 login_status = true;
+				console.log("Background Auth Sync Success: ", userCredential.user);
                 set_user_stat(userCredential.user.uid);
             })
             .catch((error) => {
