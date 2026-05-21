@@ -142,7 +142,8 @@ function writeUserData(userID, name, email, age, birthday, birthyear, gender, mo
 
 function loadData(userID, provider){
     // [수정] unsubscribe 변수 선언을 정확히 매핑하여 리스너를 해제합니다.
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    let unsubscribe;
+    unsubscribe = firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             set_user_stat(user.uid)
             firebase.database().ref().child("users_moved").child(user.uid).child("profile").get().then((snapshot) => {
@@ -194,7 +195,13 @@ function loadData(userID, provider){
             setLogoutStatus(false);
         }
         
-        unsubscribe(); // [수정] 이제 정상적으로 리스너가 작동 후 해제됩니다.
+        if (unsubscribe) {
+            unsubscribe();
+        } else {
+            setTimeout(() => {
+                if (unsubscribe) unsubscribe();
+            }, 0);
+        }
     })  
 }
 
@@ -444,6 +451,9 @@ function login_checker() {
       const userName = profile_obj.user_name || "정보 없음";
       const userNickName = profile_obj.user_nick_name || "랭커스" + Math.floor(Math.random() * 10000);
       const userEmail = profile_obj.email || `${NID[0]}@realrankus.com`;
+      if (!profile_obj.email) {
+        console.warn("login_checker: Profile has no email. Falling back to default ID-based email:", userEmail);
+      }
       const userAge = profile_obj.age || "정보 없음";
       const userBirthday = profile_obj.birthday || "정보 없음";
       const userBirthyear = profile_obj.birthyear || "정보 없음";
@@ -452,7 +462,8 @@ function login_checker() {
       const provider = profile_obj.provider;
 
       // [수정된 부분] 1회성 검증 및 로그아웃 유도
-      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      let unsubscribe;
+      unsubscribe = firebase.auth().onAuthStateChanged((user) => {
         if (user) {          
           set_user_stat(user.uid);
         } else {
@@ -470,7 +481,13 @@ function login_checker() {
             });
         }
         // 핵심: 최초 1회 확인 후 리스너를 해제하여, 이후 사용자의 로그아웃 동작 시 오작동을 방지합니다.
-        unsubscribe(); 
+        if (unsubscribe) {
+          unsubscribe();
+        } else {
+          setTimeout(() => {
+            if (unsubscribe) unsubscribe();
+          }, 0);
+        }
       });
 
       if (provider === "NAVER") setNaverLoginStatus(userName, userNickName, userEmail);
