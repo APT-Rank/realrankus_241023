@@ -477,7 +477,7 @@ function showLogin() {
  * @param {string} fb_uid - Firebase 고유 사용자 UID
  */
 function set_user_stat(fb_uid) {
-	console.log("set_user_stat 호출 UID: ", fb_uid);
+	//console.log("set_user_stat 호출 UID: ", fb_uid);
 	firebase.database().ref().child("users_moved").child(fb_uid).get().then((snapshot) => {
 		if (snapshot.exists()) {
 			var stat = snapshot.val();
@@ -563,7 +563,7 @@ function login_checker() {
 				}, 0);
 
 				if (user) {
-					console.log("Firebase 세션 복구/체크 완료 유저: ", user.uid);
+					//console.log("Firebase 세션 복구/체크 완료 유저: ", user.uid);
 					set_user_stat(user.uid);
 				} else {
 					// Firebase Auth 측에 연동 세션이 끊겨있을 경우 백그라운드 무중단 조용한 재로그인 기동
