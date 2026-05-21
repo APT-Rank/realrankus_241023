@@ -437,7 +437,7 @@ function set_user_stat(fb_uid) {
     })
     .catch((error) => {
         console.log("set_user_stat error: ", error.message);
-        setLogoutStatus(false); 
+        //setLogoutStatus(false); 
     });
 }
 
