@@ -471,17 +471,14 @@
 
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
-      console.log(urlParams);
 
       if (urlParams.has("reg")) {
-        console.log(urlParams.get("reg"));
         selectedRegion = urlParams.get("reg");
       } else if (lastRegion != null) {
         selectedRegion = lastRegion;
       }
 
       if (urlParams.has("sub")) {
-        console.log(urlParams.get("sub"));
         selectedSubRegion = urlParams.get("sub");
       } else if (lastSubRegion != null) {
         selectedSubRegion = lastSubRegion;

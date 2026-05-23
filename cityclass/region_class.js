@@ -263,8 +263,6 @@ function drawDataTable_price(indexData, sido_list, gungu_list, cl){
   var dataArr = Object.values(indexList)
   var dataArr_length = 0
 
-  console.log(indexList)
-
   for(var checker = 0 ; checker < dataArr.length ; checker++){
     if(dataArr[checker] == null || dataArr[checker] == undefined || dataArr[checker] == 0){
       dataArr_length = checker
@@ -1002,8 +1000,6 @@ function drawTreeMap(data){
   data_list = []
   region_name_list = []
 
-  console.log(data)
-
   for(var i = 0 ; i < data.length; i++){
     data_list.push(data[i]['Sum'])
     region_name_list.push(data[i]['Region'])
@@ -1029,7 +1025,6 @@ function drawTreeMap(data){
               if (ctx.type !== 'data') {``
                 return;
               }
-              console.log(ctx.raw)              
               total_amount = Math.round(ctx.raw.v)*100000000
               
               total_amount_delta = Math.round(ctx.raw._data.Sum_delta)*100000000

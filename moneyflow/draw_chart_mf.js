@@ -8,7 +8,6 @@ var trendline_set = {
 }
 
 function drawKOSPIChart(chartDate, chartData, id_name){
-  console.log(interaction_mode)
   var totalDuration = 300;
   var delayBetweenPoints = totalDuration / chartData.length;
   var ctx = document.getElementById(id_name).getContext('2d');

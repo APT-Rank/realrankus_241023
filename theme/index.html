@@ -387,10 +387,8 @@
 
     const url = new URL(window.location.href)
     const urlParams = url.searchParams
-    console.log(urlParams)
 
     if(urlParams.has('reg')){
-      console.log(urlParams.get('reg'))
       selectedRegion = urlParams.get('reg')
     }
     else if(lastRegion != null){
@@ -398,7 +396,6 @@
     }
 
     if(urlParams.has('sub')){
-      console.log(urlParams.get('sub'))
       selectedSubRegion = urlParams.get('sub')
     }
     else if(lastSubRegion != null){
@@ -411,7 +408,6 @@
     }    
 
     if(urlParams.has('theme')){
-      console.log(urlParams.get('theme'))
       selectedTheme = urlParams.get('theme')
     }
     else if(lastTheme != null){
@@ -1611,7 +1607,6 @@
 
   function showGuide(dong){
     distance_check = []
-    console.log(dong)
     for(var i = 0 ; i < aptData.data.length ; i++){
       var aptName = aptData.data[i]["아파트명"]
       var apt_m = aptData.data[i]["전용면적(m2)"]

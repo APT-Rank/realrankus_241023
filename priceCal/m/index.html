@@ -464,17 +464,14 @@
 
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
-      console.log(urlParams);
 
       if (urlParams.has("reg")) {
-        console.log(urlParams.get("reg"));
         selectedRegion = urlParams.get("reg");
       } else if (lastRegion != null) {
         selectedRegion = lastRegion;
       }
 
       if (urlParams.has("sub")) {
-        console.log(urlParams.get("sub"));
         selectedSubRegion = urlParams.get("sub");
       } else if (lastSubRegion != null) {
         selectedSubRegion = lastSubRegion;
@@ -926,8 +923,6 @@
           if(selectedSubRegion == nearby_findings[i][1]){
             selected_point_y = nearby_findings[i][2][0]
             selected_point_x = nearby_findings[i][2][1]
-            console.log(selected_point_y)
-            console.log(selected_point_x)
             break;
           }
         }

@@ -420,8 +420,7 @@ function draw(){
   index_url_edu = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_edu_" + currentMonth + ".json"
   cost_treemap_url = "https://www.realrankus.com/cityclass/" + currentMonth + "/treemap_" + currentMonth + ".json"
     $.getJSON(class_url, function(json) {
-        region_class = json;
-        console.log(region_class)
+        region_class = json;        
         sido_list = getUniqueList(region_class, "시도")
         gungu_list = []
         for(var i = 0 ; i < sido_list.length ;  i++){

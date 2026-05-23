@@ -1931,7 +1931,6 @@ FRED_time_monthly_arr = Object.assign({}, FRED_time_monthly_arr)
 FRED_interest_arr = return_1year_monthly_arr(FRED_interest_monthly_arr, FRED_time_monthly_arr)
 FRED_interest_val_arr = FRED_interest_arr[1]
 
-console.log(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
 FRED_interest_val_arr.push(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
 
 addon_html += "<div class='graph_item'>"
