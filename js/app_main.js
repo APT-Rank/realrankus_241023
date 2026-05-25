@@ -486,12 +486,19 @@ $(document).ready(function () {
         `;
 
     $("#filterSelector").html(filterHtml);
-    $("#filterOnOff").css({
+    if(isMobile){
+      filter_ui = false;
+    }
+    else{
+      filter_ui = true;
+      $("#filterOnOff").css({
         color: "#fff",
         "background-color": "#940c23",
         border: "2px solid #940c23",
-    })
-    filter_ui = true;
+      })
+    }
+    
+    
 
     initSlider_sPrice();
     initSlider_area();
