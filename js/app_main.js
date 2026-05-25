@@ -486,6 +486,12 @@ $(document).ready(function () {
         `;
 
     $("#filterSelector").html(filterHtml);
+    $("#filterOnOff").css({
+        color: "#fff",
+        "background-color": "#940c23",
+        border: "2px solid #940c23",
+    })
+    filter_ui = true;
 
     initSlider_sPrice();
     initSlider_area();
@@ -2731,37 +2737,21 @@ function showDetail(index) {
 
   if (Number(selectedMonth) > 202203) {
     if (apt_type >= "재건축") {
-      shareText += `
-            \nㆍ용적률 : ${floor_rate}
-            \nㆍ건폐율 : ${cover_rate}
-          `;
+      shareText += `\nㆍ용적률 : ${floor_rate}\nㆍ건폐율 : ${cover_rate}`;
     } else {
-      shareText += `
-            \nㆍ세대수 : ${house_num.toLocaleString()}세대
-            \nㆍ주차 : ${parking}
-          `;
+      shareText += `\nㆍ세대수 : ${house_num.toLocaleString()}세대\nㆍ주차 : ${parking}`;
     }
   } else {
     if (aptDuration >= 30) {
-      shareText += `
-            \nㆍ용적률 : ${floor_rate}
-            \nㆍ건폐율 : ${cover_rate}
-          `;
+      shareText += `\nㆍ용적률 : ${floor_rate}\nㆍ건폐율 : ${cover_rate}`;
     } else {
-      shareText += `
-            \nㆍ세대수 : ${house_num.toLocaleString()}세대
-            \nㆍ주차 : ${parking}
-          `;
+      shareText += `\nㆍ세대수 : ${house_num.toLocaleString()}세대\nㆍ주차 : ${parking}`;
     }
   }
 
   //  shareText += "\nㆍ가장 가까운 역 : " + nearestStation
   //}
-  shareText += `
-        \nㆍ5km 이내 대형병원 : ${bigHospital_5km}
-        \nㆍ중학교 보통 학력 이상 : ${mSchool_edu}
-        \n
-      `;
+  shareText += `\nㆍ5km 이내 대형병원 : ${bigHospital_5km}\nㆍ중학교 보통 학력 이상 : ${mSchool_edu} `;
 
   shareText += `\n${shareURL}`;
 
@@ -3795,13 +3785,7 @@ function showRegionDetail(index) {
   shareTitle += `${selectedMonth.substr(2, 2)}년 ${Number(selectedMonth.substr(4, 2)).toString()}월]\n\n`;
   shareText = "『" + regName + "』";
   //shareText += "\nㆍ순위 : " + regRank + " (" + regValue + "점)";
-  shareText += `
-        \nㆍ투자등급 : Rank ${region_grade}
-        \nㆍ인구수 : ${regPop.toLocaleString()}명
-        \nㆍ공급량 : ${Math.round(regSupplyUpDown).toLocaleString()}세대 ${regSupplyLevel}
-        \nㆍ일자리 : ${regJob.toLocaleString()}개
-        \n\n
-      `;
+  shareText += `ㆍ투자등급 : Rank ${region_grade}\nㆍ인구수 : ${regPop.toLocaleString()}명\nㆍ공급량 : ${Math.round(regSupplyUpDown).toLocaleString()}세대 ${regSupplyLevel}\nㆍ일자리 : ${regJob.toLocaleString()}개\n\n`;
   shareURL = "https://www.realrankus.com" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion + "&mon=" + selectedMonth;
 
   footerHtml += `<div class='modal-footer'>`;
