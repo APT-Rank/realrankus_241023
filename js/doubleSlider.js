@@ -1,3 +1,35 @@
+var tSafe = function(key, fallback) {
+  return (typeof t === 'function') ? t(key, fallback) : fallback;
+};
+
+function formatPriceText(minVal, maxVal, fMin, fMax) {
+  var isEn = (typeof window.LANG !== 'undefined' && window.LANG === 'en');
+  if (minVal == fMin && maxVal == fMax) {
+    return tSafe('ui.price_all', '가격 전체');
+  }
+  if (minVal == fMin) {
+    return isEn ? ((maxVal * 100).toFixed(0) + "M KRW or under") : (Number(maxVal).toFixed(1) + "억 이하");
+  }
+  if (maxVal == fMax) {
+    return isEn ? ((minVal * 100).toFixed(0) + "M KRW or over") : (Number(minVal).toFixed(1) + "억 이상");
+  }
+  return isEn ? ((minVal * 100).toFixed(0) + "M ~ " + (maxVal * 100).toFixed(0) + "M KRW") : (Number(minVal).toFixed(1) + "억 ~ " + Number(maxVal).toFixed(1) + "억");
+}
+
+function formatAreaText(minVal, maxVal, fMin, fMax) {
+  var isEn = (typeof window.LANG !== 'undefined' && window.LANG === 'en');
+  if (minVal == fMin && maxVal == fMax) {
+    return tSafe('ui.area_all', '평형 전체');
+  }
+  if (minVal == fMin) {
+    return isEn ? (Number(maxVal) + " py or under") : (Number(maxVal) + "평 이하");
+  }
+  if (maxVal == fMax) {
+    return isEn ? (Number(minVal) + " py or over") : (Number(minVal) + "평 이상");
+  }
+  return isEn ? (Number(minVal) + " ~ " + Number(maxVal) + " py") : (Number(minVal) + "평 ~ " + Number(maxVal) + "평");
+}
+
 var sliders = "<div slider id='slider-distance'>"
 sliders += "<div>"
 sliders += "<div inverse-left class='leftBar' style='width:100%;'></div>"
@@ -18,22 +50,7 @@ var sPrice_max = 40;
 var sPrice_step = 0.5;
 
 function initSlider_sPrice(){
-  if(sPrice_min == f_sales_price_min){
-    if(sPrice_max == f_sales_price_max){
-      $("#filterName_sPrice").html("가격 전체")      
-    }
-    else{
-      $("#filterName_sPrice").html(Number(sPrice_max).toFixed(1)+"억 이하")
-    }
-  }
-  else{
-    if(sPrice_max == f_sales_price_max){      
-      $("#filterName_sPrice").html(Number(sPrice_min).toFixed(1)+"억 이상")      
-    }
-    else{      
-      $("#filterName_sPrice").html(Number(sPrice_min).toFixed(1)+"억" + "~" + Number(sPrice_max).toFixed(1) +"억")
-    }
-  }
+  $("#filterName_sPrice").html(formatPriceText(sPrice_min, sPrice_max, f_sales_price_min, f_sales_price_max));
 
   $( "#sPrice_slider" ).slider({
     range: true,
@@ -44,26 +61,10 @@ function initSlider_sPrice(){
     slide : function( event, ui ) {
       sPrice_min = ui.values[ 0 ]
       sPrice_max = ui.values[ 1 ]
-      if(sPrice_min == f_sales_price_min){
-        if(sPrice_max == f_sales_price_max){
-          $("#filterName_sPrice").html("가격 전체")
-        }
-        else{
-          $("#filterName_sPrice").html(Number(sPrice_max).toFixed(1)+"억 이하")
-        }
-      }
-      else{
-        if(sPrice_max == f_sales_price_max){      
-          $("#filterName_sPrice").html(Number(sPrice_min).toFixed(1)+"억 이상")      
-        }
-        else{      
-          $("#filterName_sPrice").html(Number(sPrice_min).toFixed(1)+"억" + "~" + Number(sPrice_max).toFixed(1) +"억")
-        }
-      }
+      $("#filterName_sPrice").html(formatPriceText(sPrice_min, sPrice_max, f_sales_price_min, f_sales_price_max));
       checkFiltered()
     },
     change : function (event, ui){
-      //$("#baseModal").modal("hide");
       closeModal("baseModal")
       showHide_filtered_marker(onMap_list, onMap_markers)
     }
@@ -77,22 +78,7 @@ var area_max = 80;
 var area_step = 1;
 
 function initSlider_area(){
-  if(area_min == f_area_min){
-    if(area_max == f_area_max){
-      $("#filterName_area").html("평형 전체")      
-    }
-    else{
-      $("#filterName_area").html(Number(area_max)+"평 이하")
-    }
-  }
-  else{
-    if(area_max == f_area_max){      
-      $("#filterName_area").html(Number(area_min)+"평 이상")      
-    }
-    else{      
-      $("#filterName_area").html(Number(area_min)+"평" + "~" + Number(area_max) +"평")
-    }
-  }
+  $("#filterName_area").html(formatAreaText(area_min, area_max, f_area_min, f_area_max));
 
   $( "#area_slider" ).slider({
     range: true,
@@ -103,27 +89,10 @@ function initSlider_area(){
     slide : function( event, ui ) {
       area_min = ui.values[ 0 ]
       area_max = ui.values[ 1 ]
-
-      if(area_min == f_area_min){
-        if(area_max == f_area_max){
-          $("#filterName_area").html("평형 전체")      
-        }
-        else{
-          $("#filterName_area").html(Number(area_max)+"평 이하")
-        }
-      }
-      else{
-        if(area_max == f_area_max){      
-          $("#filterName_area").html(Number(area_min)+"평 이상")      
-        }
-        else{      
-          $("#filterName_area").html(Number(area_min)+"평" + "~" + Number(area_max) +"평")
-        }
-      }
+      $("#filterName_area").html(formatAreaText(area_min, area_max, f_area_min, f_area_max));
       checkFiltered()
     },
     change : function (event, ui){
-      //$("#baseModal").modal("hide");
       closeModal("baseModal")
       showHide_filtered_marker(onMap_list, onMap_markers)
     }
@@ -136,17 +105,16 @@ function checkFiltered(){
     sPrice_min == f_sales_price_min && sPrice_max == f_sales_price_max &&
     area_min == f_area_min && area_max == f_area_max
   ){
-    $("#filterOnOff").html("필터")
-    $("#filterOnOff").css({"border":"2px solid #940c23"})    
+    $("#filterOnOff").html(tSafe('ui.filter', '필터'))
+    $("#filterOnOff").css({"border":"2px solid #940c23"})
     filtered = false
   }
   else{    
-    $("#filterOnOff").html("<i class='fa-solid fa-check'></i>&nbsp필터")
+    $("#filterOnOff").html("<i class='fa-solid fa-check'></i>&nbsp" + tSafe('ui.filter', '필터'))
     $("#filterOnOff").css({"border":"2px solid #940c23"})
     filtered = true
   }
 }
-
 
 function initSlide_sPrice(){
   $("#sPrice_rangeBar").css('left', 100/f_sales_price_max*(sPrice_min)-(100/f_sales_price_max)+'%')
@@ -158,79 +126,40 @@ function initSlide_sPrice(){
   $("#sPrice_minRange").prop('value', sPrice_min)
   $("#sPrice_maxRange").prop('value', sPrice_max)
 
-  $("#sPrice_minVal").html(Number(sPrice_min).toFixed(1)+"억")
-  $("#sPrice_maxVal").html(Number(sPrice_max).toFixed(1)+"억")
+  var isEn = (typeof window.LANG !== 'undefined' && window.LANG === 'en');
+  var minDisplay = isEn ? ((sPrice_min * 100).toFixed(0) + "M") : (Number(sPrice_min).toFixed(1) + "억");
+  var maxDisplay = isEn ? ((sPrice_max * 100).toFixed(0) + "M") : (Number(sPrice_max).toFixed(1) + "억");
 
-  if(sPrice_min == f_sales_price_min){
-    if(sPrice_max == f_sales_price_max){
-      $("#filterName_sPrice").html("가격 전체")      
-    }
-    else{      
-      $("#filterName_sPrice").html((Number(sPrice_max).toFixed(1))+"억 이하")
-    }
-  }
-  else{
-    if(sPrice_max == f_sales_price_max){      
-      $("#filterName_sPrice").html((Number(sPrice_min).toFixed(1))+"억 이상")
-    }
-    else{
-      $("#filterName_sPrice").html((Number(sPrice_min).toFixed(1))+"억" + "~" + (Number(sPrice_max).toFixed(1))+"억")      
-    }
-  }
+  $("#sPrice_minVal").html(minDisplay)
+  $("#sPrice_maxVal").html(maxDisplay)
+
+  $("#filterName_sPrice").html(formatPriceText(sPrice_min, sPrice_max, f_sales_price_min, f_sales_price_max));
 }
 
 function sPrice_slideMin(e){  
   e.value=Math.min(e.value, e.parentNode.childNodes[2].value-sPrice_step);
   var value=(100/(parseInt(e.max)-parseInt(e.min)))*parseInt(e.value)-(100/(parseInt(e.max)-parseInt(e.min)))*parseInt(e.min);
   sPrice_min = e.value;
-  //$(".leftBar").css('width', value+'%')
   $("#sPrice_rangeBar").css('left', value+'%')
   $("#sPrice_leftThumb").css('left', value+'%')  
-  $("#sPrice_minVal").html(Number(sPrice_min).toFixed(1)+"억")
+  
+  var isEn = (typeof window.LANG !== 'undefined' && window.LANG === 'en');
+  var minDisplay = isEn ? ((sPrice_min * 100).toFixed(0) + "M") : (Number(sPrice_min).toFixed(1) + "억");
+  $("#sPrice_minVal").html(minDisplay)
 
-  if(sPrice_min == f_sales_price_min){
-    if(sPrice_max == f_sales_price_max){
-      $("#filterName_sPrice").html("가격 전체")      
-      $("#sPrice_maxVal").html(Number(sPrice_max).toFixed(1)+"억")
-    }
-    else{
-      $("#filterName_sPrice").html(Number(sPrice_max).toFixed(1)+"억 이하")
-    }
-  }
-  else{
-    if(sPrice_max == f_sales_price_max){      
-      $("#filterName_sPrice").html(Number(e.value).toFixed(1)+"억 이상")      
-    }
-    else{      
-      $("#filterName_sPrice").html(Number(e.value).toFixed(1)+"억" + "~" + Number(sPrice_max).toFixed(1) +"억")
-    }
-  }
+  $("#filterName_sPrice").html(formatPriceText(sPrice_min, sPrice_max, f_sales_price_min, f_sales_price_max));
 }
 
 function sPrice_slideMax(e){  
   e.value=Math.max(e.value, e.parentNode.childNodes[1].value-(-sPrice_step));
   var value=(100/(parseInt(e.max)-parseInt(e.min)))*parseInt(e.value)-(100/(parseInt(e.max)-parseInt(e.min)))*parseInt(e.min);  
   sPrice_max = e.value;
-  //$(".rightBar").css('width', 100-value+'%')
   $("#sPrice_rangeBar").css('right', 100-value+'%')
   $("#sPrice_rightThumb").css('left', value+'%')  
-  $("#sPrice_maxVal").html(Number(e.value).toFixed(1)+"억")
 
-  if(sPrice_min == f_sales_price_min){
-    if(sPrice_max == f_sales_price_max){
-      $("#filterName_sPrice").html("가격 전체")
-      $("#sPrice_minVal").html(Number(sPrice_min).toFixed(1)+"억")      
-    }
-    else{
-      $("#filterName_sPrice").html(Number(e.value).toFixed(1)+"억 이하")      
-    }
-  }
-  else{
-    if(sPrice_max == f_sales_price_max){
-      $("#filterName_sPrice").html(Number(sPrice_min).toFixed(1)+"억 이상")      
-    }
-    else{      
-      $("#filterName_sPrice").html(Number(sPrice_min).toFixed(1)+"억" + "~" + Number(e.value).toFixed(1)+"억")
-    }
-  }
+  var isEn = (typeof window.LANG !== 'undefined' && window.LANG === 'en');
+  var maxDisplay = isEn ? ((sPrice_max * 100).toFixed(0) + "M") : (Number(sPrice_max).toFixed(1) + "억");
+  $("#sPrice_maxVal").html(maxDisplay)
+
+  $("#filterName_sPrice").html(formatPriceText(sPrice_min, sPrice_max, f_sales_price_min, f_sales_price_max));
 }

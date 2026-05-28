@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <script>window.LANG='en';</script>
+  <!-- Google Tag Manager -->
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
+      j.async = true;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, "script", "dataLayer", "GTM-KNL2VQN");
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TEV7JMPP7S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-TEV7JMPP7S");
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("../serviceWorker.js").then((reg) => {
+        //console.log('Service Worker Registered!', reg);
+      });
+    }
+  </script>
+
+  <title>Realrankus - The Standard of Location Analysis | Apartment Real Transaction Prices</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Realrankus" />
+  <meta property="og:description" content="The Standard of Location Analysis | Apartment Real Transaction Prices in South Korea" />
+  <meta property="og:image" content="https://www.realrankus.com/thumbnail_5.jpg" />
+  <meta property="og:url" content="https://www.realrankus.com/en/" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:url" content="https://www.realrankus.com/en/" />
+  <meta name="twitter:title" content="Realrankus" />
+  <meta name="twitter:description" content="Data-driven apartment location analysis in South Korea. Check real transaction prices, living, transport, infrastructure, and education scores on Realrankus." />
+
+  <meta name="keyword"
+    content="Realrankus, apartment ranking, real estate Korea, apartment, location analysis, ranking, apartment prices, market value, transaction prices, sale, lease, rent" />
+  <meta name="description" content="Data-driven apartment location analysis in South Korea. Check real transaction prices, living, transport, infrastructure, and education scores on Realrankus." />
+  <meta name="author" content="Realrankus" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover" />
+  <meta charset="utf-8" />
+
+  <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <!-- 상태 바의 스타일을 지정 -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#fff" />
+  <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+  <meta name="apple-mobile-web-app-title" content="Realrankus" />
+  <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+  <link rel="apple-touch-icon" href="https://www.realrankus.com/apt-rank-152x152.png" />
+  <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+  <link rel="manifest" href="../manifest.json" />
+
+  <link rel="canonical" href="https://www.realrankus.com/en/" />
+  <link rel="alternate" hreflang="ko" href="https://www.realrankus.com/" />
+  <link rel="alternate" hreflang="en" href="https://www.realrankus.com/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.realrankus.com/" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+  <link rel="shortcut icon" href="https://www.realrankus.com/apr-rank.png" />
+
+  <link rel="preconnect" href="https://code.jquery.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="preconnect" href="https://developers.kakao.com" />
+  <link rel="preconnect" href="https://static.nid.naver.com" />
+  <link rel="preconnect" href="https://oapi.map.naver.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/css/SpoqaHanSansNeo.min.css" rel="stylesheet"
+    type="text/css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script defer src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"
+    integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"
+    integrity="sha512-0bEtK0USNd96MnO4XhH8jhv3nyRF0eK87pJke6pkYf3cM0uDIhNJy9ltuzqgypoIFXw3JSuiy04tVk4AjpZdZw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"
+    crossorigin="anonymous"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script defer src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script defer src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/linkifyjs@4.3.2/dist/linkify.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/linkify-html@4.3.2/dist/linkify-html.min.js"></script>
+  <!-- <script defer src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script> -->
+  <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pwacompat/2.0.17/pwacompat.min.js" integrity="sha512-4Dg9Iq0/VM+AW4tfM+/LLLX+Yopudo7SEsMyfTJzG/x7brKQ+NAMELrhA517cA2wFVOHo0m+n06XWCdE70Qsew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+  <script defer src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.min.css" />
+
+  <script defer src="../js/menu_select_box.js?ver=1.2" type="text/javascript"></script>
+  <script defer src="../js/draw_chart.js" type="text/javascript"></script>
+  <script defer src="../js/doubleSlider.js?v=20260524_2" type="text/javascript"></script>
+  <script defer src="../js/sort.js" type="text/javascript"></script>
+  <script defer src="../js/search.js" type="text/javascript"></script>
+  <script defer src="../js/unfied_search.js" type="text/javascript"></script>
+  <script defer src="../js/rearrange.js" type="text/javascript"></script>
+  <script defer src="../js/share.js?v=20260524_2" type="text/javascript"></script>
+  <script defer src="../js/request_report.js?v=20260524_2" type="text/javascript"></script>
+  <script defer src="../js/weight_cal.js" type="text/javascript"></script>
+  <script defer src="../js/weight_array.js" type="text/javascript"></script>
+  <script defer src="../js/simulation.js" type="text/javascript"></script>
+  <script defer src="../js/top300.js" type="text/javascript"></script>
+  <script defer src="../js/kakao_sendtome.js" type="text/javascript"></script>
+  <script defer src="../js/notice_aptrank.js" type="text/javascript"></script>
+  <script defer src="../js/ad_aptrank.js" type="text/javascript"></script>
+  <script defer src="../js/restrict_words.js" type="text/javascript"></script>
+  <script defer src="../js/map_control.js" type="text/javascript"></script>
+  <script defer src="../js/distance.js" type="text/javascript"></script>
+
+  <link href="../css/style_common.css" rel="stylesheet" />
+  <link href="../css/style.css" rel="stylesheet" />
+  <link href="../css/slider.css" rel="stylesheet" />
+  <link href="../css/style_board.css" rel="stylesheet" />
+  <link href="../css/jquery-ui.css" rel="stylesheet" />
+</head>
+<style></style>
+
+<body ontouchstart="">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KNL2VQN" height="0" width="0"
+      style="display: none; visibility: hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="container">
+    <div id="centerBox">
+      <div id="titleBar">
+        <!--검색 버튼 표시-->
+        <div id="search" onClick="showSearchBar(this)">
+          <i class="fas fa-search"></i>
+        </div>
+        <!--재정렬 버튼 표시-->
+        <div id="rearrange" class="position-relative" onClick="showRearrangeBar(this)">
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+        <!--타이틀 표시-->
+        <!-- <div id="title" onClick="scrollUp()"> -->
+        <!-- <div id="title" onClick="location.reload()"><img src="../apt-rank_blank2.png" height="32px" /></div> -->
+        <div id="title_div" onClick="location.reload()">
+          <div id="title_logo">
+            <img src="../apt-rank_blank2.png" height="26px" />
+          </div>
+          <div id="title_text">Realrankus</div>
+        </div>
+        <!--공유 버튼-->
+        <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
+        <!--단지 가중치 설정 버튼 표시-->
+        <div id="sort" onClick="showSorting()">
+          <i class="fa-solid fa-sliders"></i>
+        </div>
+        <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right"
+          aria-controls="offcanvasRight">
+          <i class="fa-solid fa-ellipsis"></i>
+        </div>
+      </div>
+
+      <div id="selections">
+        <div id="sido_selection">
+          <select id="sido" onChange="sidoChange()"></select>
+        </div>
+        <div id="gungu_selection">
+          <select id="gungu" onChange="updateRegion()"></select>
+        </div>
+        <div id="month_selection">
+          <!-- 수정 -->
+          <select id="month" onChange="updateMonth()">
+            <option value="202605" selected>May, 2026</option>
+            <option value="202604">April, 2026</option>
+            <option value="202603">March, 2026</option>
+            <option value="202602">February, 2026</option>
+            <option value="202601">January, 2026</option>
+            <option value="202512">December, 2025</option>
+            <!--
+              <option value="202511">November, 2025</option>              
+              <option value="202510">October, 2025</option>              
+              <option value="202509">September, 2025</option>
+              <option value="202508">August, 2025</option>
+              <option value="202507">July, 2025</option>
+              <option value="202506">June, 2025</option>
+              <option value="202505">May, 2025</option>
+              <option value="202504">April, 2025</option>
+              <option value="202503">March, 2025</option>
+              <option value="202502">February, 2025</option>
+              <option value="202501">January, 2025</option>
+              -->
+          </select>
+        </div>
+      </div>
+
+      <!--단지 가중치 표시창-->
+      <!-- <div id="weight" data-bs-toggle='modal' data-bs-target='#baseModal' onClick='showSorting()'></div> -->
+      <div id="weight"></div>
+
+      <!--단지 검색창-->
+      <div id="searchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="searchGuide">
+          <div id="searchNotice"></div>
+          <div id="inputBox">
+            <input id="inputSearch" type="text" placeholder="Which complex are you looking for?" onkeyup="aptSearch()" />
+          </div>
+          <div id="searchExample">e.g.) Gangnam Raemian, Hillstate, Jugong</div>
+        </div>
+        <div id="closeSearch" onClick="closeSearch()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--통합 검색창-->
+      <div id="unifiedSearchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="unifiedSearchGuide">
+          <div id="unifiedSearchNotice">
+            <div>
+              <label>
+                <input type="radio" class="searchRadio" name="options" id="option1" autocomplete="off" value="global"
+                  checked onchange="radioActive(this.value)" />
+                <span style="padding-left: 5px; vertical-align: middle">Nationwide</span>
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="radio" class="searchRadio" name="options" id="option2" autocomplete="off" value="local"
+                  onchange="radioActive(this.value)" />
+                <span id="localSearch" style="padding-left: 5px; vertical-align: middle">Local</span>
+              </label>
+            </div>
+          </div>
+          <div id="unifiedInputBox">
+            <input id="inputUnifiedSearch" type="text" placeholder="Enter at least 2 characters" onkeyup="goSearchBySearchType()" />
+          </div>
+          <div id="unifiedSearchExample">e.g.) Gangnam Raemian, Raemian Hillstate, Jugong</div>
+        </div>
+        <div id="closeUnifiedSearch" onClick="closeUnifiedSearch()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--시군구 검색창-->
+      <div id="regionSearchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="regionSearchGuide">
+          <div id="regionSearchNotice">Search by city/district name.</div>
+          <div id="regionInputBox">
+            <input id="regionInputSearch" type="text" placeholder="Which district are you looking for?" onkeyup="regionSearch()" />
+          </div>
+          <div id="regionSearchExample">e.g.) Seoul, Changwon, Gangnam, Seo-gu</div>
+        </div>
+        <div id="closeRegionSearch" onClick="closeRegionSearch()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--단지 정렬창-->
+      <div id="rearrangeCard">
+        <div id="iconRearrange">
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+        <div id="rearrangeContatiner">
+          <div id="rearrangeNotice"></div>
+          <div class="rearrangeArea">
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeScore"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeScore">By Grade</label></div>
+
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangePrice"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangePrice">By Price</label></div>
+                
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeNew"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger" for="rearrangeNew">By Newest</label>
+            </div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeHouse"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeHouse">By Units</label></div>
+          </div>
+        </div>
+        <div id="closeRearrange" onClick="closeRearrange()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--시군구 정렬창-->
+      <div id="rearrangeRegionCard">
+        <div id="iconRearrange">
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+        <div id="rearrangeContatiner">
+          <div id="rearrangeRegionNotice"></div>
+          <div class="rearrangeArea">
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionScore"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionScore">By Total Score</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionRank"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionRank">By Rank Change</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionPop"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionPop">By Population</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off"
+                id="rearrangeRegionPopUpDown" onClick="rearrangeRegionList(this)" /><label
+                class="btn btn-outline-danger" for="rearrangeRegionPopUpDown">By Pop. Change</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionJob"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionJob">By Jobs</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionIncome"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionIncome">By Income</label></div>
+          </div>
+        </div>
+        <div id="closeRegionRearrange" onClick="closeRegionRearrange()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <!--리스트 데이터 붙여넣는 영역-->
+      <div id="dataList_wrapper">
+        <div id="dataList"></div>
+      </div>
+      <div id="dataMap"></div>
+
+      <!--댓글서비스창
+        <div id="commentBack" onClick="commentbox_animate()"></div>
+        <div id="commentWrapper" style='display:none'>
+          <div id="commentBox">
+            <div id="comment_head" onClick="commentbox_animate()">
+              <div id="comment_light"></div>
+              <div id="comment_title">
+                <div id="recent_comment_num"></div>
+              </div>
+            </div>
+            <div id="comment_list"></div>
+            <div id="writeBox"></div>
+          </div>
+        </div>
+        -->
+
+      <!--리얼랭커스 연결-->
+      <div id="linkToAptrank_bottom"></div>
+
+      <!--단지 검색창 닫기 플로팅 버튼-->
+      <div id="closeSearch_floating" onClick="closeSearch()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">Close Search</div>
+        </div>
+      </div>
+      <!--통합 검색창 닫기 플로팅 버튼-->
+      <div id="closeUnifiedSearch_floating" onClick="closeUnifiedSearch()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">Close Search</div>
+        </div>
+      </div>
+      <!--시군구 검색창 닫기 플로팅 버튼-->
+      <div id="closeRegionSearch_floating" onClick="closeRegionSearch()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">Close Search</div>
+        </div>
+      </div>
+      <!--단지 재정렬창 닫기 플로팅 버튼-->
+      <div id="closeRearrange_floating" onClick="closeRearrange()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">Close Sort</div>
+        </div>
+      </div>
+      <!--지역 재정렬창 닫기 플로팅 버튼-->
+      <div id="closeRegionRearrange_floating" onClick="closeRegionRearrange()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">Close Sort</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--단지비교 검색창-->
+  <div id="complex_compare_search">
+    <div id="close_compare1_modal" onClick="closeComplexSearch(1, '')">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div id="close_compare2_modal" onClick="closeComplexSearch(2, '')">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="complex_compare_search_bar">
+      <div><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div id="compareSearchInputBox">
+        <input id="compareInputSearch1" type="text" placeholder="Search complexes nationwide" onkeyup="compareSearch(1)" />
+        <input id="compareInputSearch2" type="text" placeholder="Search complexes nationwide" onkeyup="compareSearch(2)" />
+      </div>
+      <div id="close_compare1_search" onClick="clearInput(1)">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </div>
+      <div id="close_compare2_search" onClick="clearInput(2)">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </div>
+    </div>
+    <div id="complex_compare_search_list_wrapper">
+      <div id="complex_compare1_search_list"></div>
+      <div id="complex_compare2_search_list"></div>
+    </div>
+  </div>
+
+  <!-- Compare modal -->
+  <div class="modal fade" id="compareModal" tabindex="-1" aria-labelledby="compareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div id="compareModal_close">
+        <a class="compareModalclose" data-bs-dismiss="modal" data-keyboard="false" aria-label="Close"><i
+            class="fa-solid fa-xmark"></i></a>
+      </div>
+      <div class="modal-content">
+        <div class="modal-body" id="compareDetail"></div>
+        <div id="compareFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="baseModal" tabindex="-1" aria-labelledby="baseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="baseModalLabel">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="aptDetail"></div>
+        <div id="footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="toggleModal1" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabel">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="simulDetail"></div>
+        <div id="toggle1footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="toggleModal2" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabe2">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="simulResult"></div>
+        <div id="toggle2footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment_Modal -->
+  <div class="modal fade" id="commentListModal" tabindex="-1" role="dialog" aria-labelledby="commentListLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="comment_title">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="comment_list"></div>
+        <div class="modal-footer" id="writeBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="commentModalLabel"></div>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="commentModifyModal" tabindex="-1" role="dialog" aria-labelledby="commentModifyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="commentModifyModalLabel"></div>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="noticeModal" tabindex="-1" aria-labelledby="noticeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" id="noticeModaloutline">
+        <div class="modal-header">
+          <h5 class="modal-title" id="noticeModalLabel">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="noticeDetail"></div>
+        <div id="noticeFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="blogModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" id="blogModaloutline">
+        <div class="modal-header">
+          <h5 class="modal-title" id="blogModalLabel">Please wait...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="blogDetail"></div>
+        <div id="blogFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!--화면 중앙 상단 고정 영역에 "그래프 보기" 버튼-->
+  <div id="graphButtonContainer"
+    style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 900">
+    <button id="graphButton" class="btn" onClick="showGraphCarousel()">Overvalued / Undervalued Apartment Analysis</button>
+  </div>
+
+  <!-- Graph Modal -->
+  <div class="modal fade" id="graphModal" tabindex="-1" aria-labelledby="graphModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content bg-dark">
+        <div class="modal-header border-0">
+          <h5 class="modal-title text-white" id="graphModalLabel">Overvalued / Undervalued Apartment Analysis</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-0">
+          <div id="regionCarousel" class="carousel carousel-dark slide" data-bs-interval="false">
+            <div class="carousel-inner" id="carouselItems"></div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#regionCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#regionCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offcanvas Right -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">MENU</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!-- Offcanvas Profile -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel"></h5>
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!--모바일 지도/리스트 변환 버튼-->
+  <div id="mobile_map_list" onClick="mapListModeChange()">
+    <div id="mobile_map_list_wraper">
+      <div id="mobile_map_list_icon"></div>
+      <div id="mobile_map_list_text"></div>
+    </div>
+  </div>
+
+  <!--검색 결과 표시해 주는 리스트-->
+  <div id="searchingBox"></div>
+
+  <!--지도에 등급 표시 필터-->
+  <div id="gradeSelector">
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_S" value="S"
+        checked onChange="setGradeFilter()" /><label id="check_grade_S_text" for="check_grade_S">S</label></div>
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_A" value="A"
+        checked onChange="setGradeFilter()" /><label id="check_grade_A_text" for="check_grade_A">A</label></div>
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_B" value="B"
+        checked onChange="setGradeFilter()" /><label id="check_grade_B_text" for="check_grade_B">B</label></div>
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_C" value="C"
+        checked onChange="setGradeFilter()" /><label id="check_grade_C_text" for="check_grade_C">C</label></div>
+  </div>
+
+  <!--지도에 필터 표시 -->
+  <div id="filterOnOff" onClick="filterOnOff()">Filter</div>
+  <div id="filterSelector"></div>
+
+  <!--지도 위 배너-->
+  <div id="map_banner" onClick="openReportRequestModal()">Publish Report</div>
+
+  <div id="map_banner2" onClick="compareCheck()">Compare Complexes</div>
+
+  <div id="radar-container"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0); z-index: 1500">
+    <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none; visibility: hidden"></iframe>
+  </div>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+
+  <script type="text/javascript" defer src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1&language=en"></script>
+  <script defer src="../js/con_counter_js.js"></script>
+  <script defer src="../js/apple.js" type="text/javascript"></script>
+  <script defer src="../js/login_260522.js" type="text/javascript"></script>
+  <script defer src="../js/board.js" type="text/javascript"></script>
+  <script defer src="../js/complex_compare.js" type="text/javascript"></script>
+
+  <script type="module" defer src="../js/pswp-init.js"></script>
+  <script>
+    if (typeof lightbox !== "undefined") {
+      lightbox.init();
+      window.pswpLightbox = lightbox;
+    }
+  </script>
+  <script src="../js/i18n.js?v=20260524_2"></script>
+  <script defer src="../js/app_main_lang.js?v=20260524_2"></script>
+</body>
+
+</html>

@@ -908,20 +908,20 @@ function setWriteBox(){
 		if(blocked == 'true'){
 			writebox_html += "<div id='writeWrapper_none' onclick=''>"
 			writebox_html += "<div id='writing_id'></div>"
-			writebox_html += "<div id='comment_input_wrap_none'>신고에 의해 댓글 사용이 제한되었습니다</div>"
+			writebox_html += "<div id='comment_input_wrap_none'>" + tSafe("ui.report.comment_restricted", "신고에 의해 댓글 사용이 제한되었습니다") + "</div>"
 			writebox_html += "</div>"      
 		}
 		else{
 			writebox_html += "<div id='writeWrapper' onclick='write_comment_modal()'>"
 			writebox_html += "<div id='writing_id'></div>"
-			writebox_html += "<div id='comment_input_wrap_none'>우리 단지 랭커스톡을 남겨보세요</div>"
+			writebox_html += "<div id='comment_input_wrap_none'>" + tSafe("ui.report.comment_placeholder", "우리 단지 랭커스톡을 남겨보세요") + "</div>"
 			writebox_html += "</div>"
 		}
 	}
 	else{
 		writebox_html += "<div id='writeWrapper' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>"
 		writebox_html += "<div id='writing_id'></div>"
-		writebox_html += "<div id='comment_input_wrap_none'>로그인 후 댓글을 작성할 수 있어요</div>"
+		writebox_html += "<div id='comment_input_wrap_none'>" + tSafe("ui.report.comment_login_required", "로그인 후 댓글을 작성할 수 있어요") + "</div>"
 		writebox_html += "</div>"
 	}
 
@@ -930,22 +930,22 @@ function setWriteBox(){
 }
 
 default_comment = [
-	"단지에 대해 어떻게 생각하시나요?",
-	"단지의 장점은 무엇인가요?",	
-	"단지에 살면서 가장 만족스러운 점은 무엇인가요?",	
-	"아파트 주변의 교통 편의성은 어떤가요?",
-	"주변 교육 환경에 대해 어떻게 생각하시나요?",
-	"단지의 커뮤니티 시설은 만족스러운가요?",
-	"아파트의 보안 시스템에 대해 어떻게 생각하시나요?",
-	"단지의 관리 상태는 어떤가요?",
-	"아파트의 이웃들은 어떤 분들인가요?",
-	"아파트의 가격 대비 가치에 대해 어떻게 생각하시나요?",
-	"단지의 자연 환경은 어떤가요?",
-	"아파트의 주차 시설은 만족스러운가요?",
-	"단지의 소음 수준은 어떤가요?",	
-	"단지의 편의 시설은 만족스러운가요?",		
-	"단지의 위치는 생활에 편리한가요?",
-	"아파트의 디자인과 건축 품질에 대해 어떻게 생각하시나요?"
+	tSafe("ui.report.default_comment_1", "단지에 대해 어떻게 생각하시나요?"),
+	tSafe("ui.report.default_comment_2", "단지의 장점은 무엇인가요?"),	
+	tSafe("ui.report.default_comment_3", "단지에 살면서 가장 만족스러운 점은 무엇인가요?"),	
+	tSafe("ui.report.default_comment_4", "아파트 주변의 교통 편의성은 어떤가요?"),
+	tSafe("ui.report.default_comment_5", "주변 교육 환경에 대해 어떻게 생각하시나요?"),
+	tSafe("ui.report.default_comment_6", "단지의 커뮤니티 시설은 만족스러운가요?"),
+	tSafe("ui.report.default_comment_7", "아파트의 보안 시스템에 대해 어떻게 생각하시나요?"),
+	tSafe("ui.report.default_comment_8", "단지의 관리 상태는 어떤가요?"),
+	tSafe("ui.report.default_comment_9", "아파트의 이웃들은 어떤 분들인가요?"),
+	tSafe("ui.report.default_comment_10", "아파트의 가격 대비 가치에 대해 어떻게 생각하시나요?"),
+	tSafe("ui.report.default_comment_11", "단지의 자연 환경은 어떤가요?"),
+	tSafe("ui.report.default_comment_12", "아파트의 주차 시설은 만족스러운가요?"),
+	tSafe("ui.report.default_comment_13", "단지의 소음 수준은 어떤가요?"),	
+	tSafe("ui.report.default_comment_14", "단지의 편의 시설은 만족스러운가요?"),		
+	tSafe("ui.report.default_comment_15", "단지의 위치는 생활에 편리한가요?"),
+	tSafe("ui.report.default_comment_16", "아파트의 디자인과 건축 품질에 대해 어떻게 생각하시나요?")
 ]
 
 function retryOnce(promiseFunc, delay = 300) {
@@ -978,10 +978,10 @@ function read_comment(scroll_pos){
 			comment_num = doc_list.length
 			localSearchText = shortRegionName( $("#sido option:selected").text() + " " + $("#gungu option:selected").text() );
 			if(comment_num == 0){
-				$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 랭커스톡</div>")
+				$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i>&nbsp&nbsp" + tSafe('ui.report.comment_pop_title', '{count}개의 우리 단지 랭커스톡').replace('{count}', comment_num) + "</div>")
 			}
 			else{
-				$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i>&nbsp&nbsp" + comment_num + "개의 우리 단지 랭커스톡</div>")
+				$('#comment_popTitle').html("<div><i class='fa-solid fa-comment'></i>&nbsp&nbsp" + tSafe('ui.report.comment_pop_title', '{count}개의 우리 단지 랭커스톡').replace('{count}', comment_num) + "</div>")
 			}			
 			if(doc_list.length == 0){
 				clearInterval(window.commentSampleInterval);
@@ -992,14 +992,14 @@ function read_comment(scroll_pos){
 
 				if(login_status){
 					comment_html += "<div>"
-						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
-						comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 랭커스톡 쓰기</button></div>"
+						comment_html += "<div id='no_comment' style='text-align:center'>" + tSafe("ui.report.comment_be_first", "첫 번째 랭커스톡의 주인공이 되어주세요!")
+						comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>" + tSafe("ui.report.comment_write_first", "첫 번째 랭커스톡 쓰기") + "</button></div>"
 					comment_html += "</div>"
 				}
 				else{
 					comment_html += "<div>"
-						comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
-						comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 랭커스톡 쓰기</button></div>"
+						comment_html += "<div id='no_comment' style='text-align:center'>" + tSafe("ui.report.comment_be_first", "첫 번째 랭커스톡의 주인공이 되어주세요!")
+						comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>" + tSafe("ui.report.comment_login_write", "로그인 하고 랭커스톡 쓰기") + "</button></div>"
 					comment_html += "</div>"
 				}
 			}
@@ -1056,10 +1056,10 @@ function read_comment(scroll_pos){
 					return
 					}
 					else if(showhide == 'accused'){
-					restriction_text = "신고에 의해 가리기 처리된 글입니다."
+					restriction_text = tSafe("ui.report.comment_hidden_accused", "신고에 의해 가리기 처리된 글입니다.")
 					}
 					else if(showhide == 'restricted_word'){
-					restriction_text = "부적절한 표현으로 가리기 처리된 글입니다."
+					restriction_text = tSafe("ui.report.comment_hidden_restricted", "부적절한 표현으로 가리기 처리된 글입니다.")
 					}
 					comment_html += "<div class='comment_wapper'>"
 					comment_html += "<div class='comment_line2'>"
@@ -1079,26 +1079,26 @@ function read_comment(scroll_pos){
 				written_timestamp = doc[1]['written'].toDate()
 				written_date = written_timestamp.getFullYear() + "-" + (written_timestamp.getMonth()+1) + "-" + written_timestamp.getDate()
 				written_time = written_timestamp.getHours() + ":" + (dateReturn(written_timestamp.getMinutes()))
-
+ 
 				comment_content_original = doc[1]['comment']
 				comment_content = comment_content_original.replaceAll("\n", "<br>")
-
+ 
 				for(var p = 0 ; p < restrict_words.length; p++){
 					comment_content = comment_content.replaceAll(restrict_words[p], "***")
 				}
-
+ 
 				//comment_content에서 URL을 인식하여 <a> 태그로 감싸기
 				comment_content = linkifyHtml(comment_content, {
 					defaultProtocol: 'https', // http:// 없이 썼을 때 붙일 프로토콜
 					target: '_blank'
 				});
-
-
+ 
+ 
 				comment_html += "<div class='comment_wapper'>"
 					comment_html += "<div class='comment_line1'>"
 					comment_html += "<div><i class='fa-solid fa-user-pen'></i>&nbsp;&nbsp;" + user_email + "</div>"
 					comment_html += "<div style='text-align:right'>" + written_date + ", " + written_time + "</div>"
-					comment_html += "<div style='text-align:right; color:#aaa' onClick='accuse_modal(\"" + comment_id + "\", \"" + user_email + "\", " + index + ", \"" + user_id + "\")'>[신고하기]</div>"
+					comment_html += "<div style='text-align:right; color:#aaa' onClick='accuse_modal(\"" + comment_id + "\", \"" + user_email + "\", " + index + ", \"" + user_id + "\")'>" + tSafe("ui.report.comment_report_abuse", "[신고하기]") + "</div>"
 					comment_html += "</div>"
 
 					comment_html += "<div class='comment_line2'>"
@@ -1126,12 +1126,12 @@ function read_comment(scroll_pos){
 						comment_html += "<div class='comment_addon_button'>"
 						comment_html += "<div></div>"						
 						if(blocked == 'true'){
-							comment_html += "<div class='btn_del' style='color:#ccc'>수정</div>"
+							comment_html += "<div class='btn_del' style='color:#ccc'>" + tSafe("ui.report.comment_edit", "수정") + "</div>"
 						}
 						else{
-							comment_html += "<div class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>수정</div>"
+							comment_html += "<div class='btn_del' onClick='modify_comment_modal(\"" + comment_id + "\", \""+ comment_content + "\")'>" + tSafe("ui.report.comment_edit", "수정") + "</div>"
 						}
-						comment_html += "<div class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>삭제</div>"
+						comment_html += "<div class='btn_del' onClick='delete_comment_question(\"" + comment_id + "\")'>" + tSafe("ui.report.comment_delete", "삭제") + "</div>"
 						comment_html += "<div class='btn_del' onClick='kakaoShare(share_comment_title, share_comment_kakao_content, shareURL)'><img src = './kakao_icon.png' height='20px'></div>"
 						comment_html += "<div class='btn_del' onClick='CopyToClipboard(share_comment_content, popMsg)'><i class='fa-regular fa-copy'></i></div>"
 						comment_html += "</div>"
@@ -1176,10 +1176,10 @@ function read_comment(scroll_pos){
 							}
 							else{
 							if(replied_showhide == 'accused'){
-								restriction_text = "신고에 의해 가리기 처리된 글입니다."
+								restriction_text = tSafe("ui.report.comment_hidden_accused", "신고에 의해 가리기 처리된 글입니다.")
 							}
 							else if(replied_showhide == 'restricted_word'){
-								restriction_text = "부적절한 표현으로 가리기 처리된 글입니다."
+								restriction_text = tSafe("ui.report.comment_hidden_restricted", "부적절한 표현으로 가리기 처리된 글입니다.")
 							}
 							comment_html += "<div class='comment_reply_list'>"
 								comment_html += "<div class='blank_div'></div>"
@@ -1196,17 +1196,17 @@ function read_comment(scroll_pos){
 							comment_html += "<div class='comment_reply_list'>"
 							comment_html += "<div class='blank_div'></div>"
 							comment_html += "<div>"
-
+ 
 								comment_html += "<div class='comment_line1' style='padding-right: 5px; padding-bottom: 0px; border-top: 1px solid #ddd'>"
 								comment_html += "<div>by " + user_email + "</div>"
 								comment_html += "<div style='text-align:right'>" + replied_date + ", " + replied_time + "</div>"
-								comment_html += "<div style='text-align:right; color:#aaa' onClick='accuse_reply_modal(\"" + comment_id + "\", \"" + replied_id + "\", \"" + user_email + "\", \"" + replied_user_id + "\")'>[신고하기]</div>"
+								comment_html += "<div style='text-align:right; color:#aaa' onClick='accuse_reply_modal(\"" + comment_id + "\", \"" + replied_id + "\", \"" + user_email + "\", \"" + replied_user_id + "\")'>" + tSafe("ui.report.comment_report_abuse", "[신고하기]") + "</div>"
 								comment_html += "</div>"
-
+ 
 								comment_html += "<div class='comment_line2' style='padding-right: 0px; margin-right:0px; padding-top: 5px; padding-bottom: 5px'>"
 								comment_html += "<div class='comment_content' id=\'" + comment_id + "__" + replied_id + "\'>" + replied_comment + "</div>"
 								comment_html += "</div>"
-
+ 
 								comment_html += "<div class='comment_line3' style='padding-right: 5px; padding-top: 0px'>"
                                 comment_html += "<div class='comment_options' id=\'like_" + replied_id + "\' onClick='reply_likeit(\"" + comment_id + "\" , \"" + replied_id + "\" , \"" + user_id + "\", " + replied_likeit + ")'>"
                                   comment_html += "<div><i class='fa-solid fa-heart'></i></div>"
@@ -1216,12 +1216,12 @@ function read_comment(scroll_pos){
 									comment_html += "<div class='comment_addon_button'>"
 									comment_html += "<div></div>"
 									if(blocked == 'true'){
-										comment_html += "<div><button class='btn_del' style='color:#aaa; background:#ccc'>수정</button></div>"
+										comment_html += "<div><button class='btn_del' style='color:#aaa; background:#ccc'>" + tSafe("ui.report.comment_edit", "수정") + "</button></div>"
 									}
 									else{
-										comment_html += "<div><button class='btn_del' onClick='modify_reply_modal(\"" + comment_id + "\", \"" + replied_id + "\")'>수정</button></div>"
+										comment_html += "<div><button class='btn_del' onClick='modify_reply_modal(\"" + comment_id + "\", \"" + replied_id + "\")'>" + tSafe("ui.report.comment_edit", "수정") + "</button></div>"
 									}
-									comment_html += "<div><button class='btn_del' onClick='delete_reply_question(\"" + comment_id + "\", \"" + replied_id + "\")'>삭제</button></div>"
+									comment_html += "<div><button class='btn_del' onClick='delete_reply_question(\"" + comment_id + "\", \"" + replied_id + "\")'>" + tSafe("ui.report.comment_delete", "삭제") + "</button></div>"
 									comment_html += "</div>"
 								}
 								comment_html += "</div>"
@@ -1247,7 +1247,7 @@ function read_comment(scroll_pos){
 						comment_html += "<div class='blank_div'></div>"
 						comment_html += "<div class='reply_user'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + shown_email + "</div>"
 						comment_html += "<div class='reply_icon'><i class='fa-solid fa-turn-up'></i></div>"
-						comment_html += "<div class='comment_input_reply'>댓글 남기기</div>"
+						comment_html += "<div class='comment_input_reply'>" + tSafe("ui.report.comment_reply_leave", "댓글 남기기") + "</div>"
 					comment_html += "</div>"
 					comment_html += "</div>"
 
@@ -1259,7 +1259,7 @@ function read_comment(scroll_pos){
 		}
 		else {
 			console.log("No comment")			
-			$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i> 0개의 우리 단지 랭커스톡</div>")		
+			$('#comment_popTitle').html("<div><i class='fa-regular fa-comment'></i> " + tSafe('ui.report.comment_pop_title', '{count}개의 우리 단지 랭커스톡').replace('{count}', '0') + "</div>")		
 			
 			clearInterval(window.commentSampleInterval);
 			window.commentSampleInterval = setInterval(() => {
@@ -1269,14 +1269,14 @@ function read_comment(scroll_pos){
 
 			if(login_status){
 				comment_html += "<div>"
-					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
-					comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>첫 번째 랭커스톡 작성하기</button></div>"
+					comment_html += "<div id='no_comment' style='text-align:center'>" + tSafe("ui.report.comment_be_first", "첫 번째 랭커스톡의 주인공이 되어주세요!")
+					comment_html += "<br><button id='btn_no_comment' onClick='write_comment_modal()'>" + tSafe("ui.report.comment_write_first", "첫 번째 랭커스톡 작성하기") + "</button></div>"
 				comment_html += "</div>"
 			}
 			else{
 				comment_html += "<div>"
-					comment_html += "<div id='no_comment' style='text-align:center'>첫 번째 랭커스톡의 주인공이 되어주세요!"
-					comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>로그인 하고 랭커스톡 쓰기</button></div>"
+					comment_html += "<div id='no_comment' style='text-align:center'>" + tSafe("ui.report.comment_be_first", "첫 번째 랭커스톡의 주인공이 되어주세요!")
+					comment_html += "<br><button id='btn_no_comment' data-bs-toggle='modal' data-bs-target='#loginModal' onclick='showLogin()'>" + tSafe("ui.report.comment_login_write", "로그인 하고 랭커스톡 쓰기") + "</button></div>"
 				comment_html += "</div>"
 			}
 		}
@@ -1301,11 +1301,11 @@ function read_comment(scroll_pos){
 			*/
 
 		if(!login_status){
-			$(".comment_input_reply").html("로그인 후 댓글을 작성할 수 있어요")
+			$(".comment_input_reply").html(tSafe("ui.report.comment_login_required", "로그인 후 댓글을 작성할 수 있어요"))
 		}
 
 		if(blocked == 'true'){
-			$(".comment_input_reply").html("신고에 의해 댓글 사용이 제한되었습니다")
+			$(".comment_input_reply").html(tSafe("ui.report.comment_restricted", "신고에 의해 댓글 사용이 제한되었습니다"))
 			$('.comment_input_reply').css('border', '1px solid #ddd')
 			$(".reply_user").css('color', '#bbb')
 			$(".reply_icon").css('color', '#bbb')            
@@ -1437,17 +1437,17 @@ function likeit(comment_id, user_id, like_num){
   }   
 
 function write_comment_modal(){
-	title_html = "<div>우리단지 랭커스톡 작성</div>" //"우리동네"를 지역변수로 수정
+	title_html = "<div>" + tSafe("ui.report.comment_write_title", "우리단지 랭커스톡 작성") + "</div>"
 
 	comment_html = "<div>"        
 	comment_html += "<div id='comment_write_notice'>"
 		comment_html +=
 		`
-		<div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
+		<div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>` + tSafe("ui.report.comment_notice_header", "건강한 랭커스톡을 만들어주세요!") + `</div>
 		<div>
 		<ul class='write_notice'>
-			<li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
-			<li>영리 목적의 게시글은 임의로 삭제됩니다.</li>			
+			<li>` + tSafe("ui.report.comment_notice_item1", "다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.") + `</li>              
+			<li>` + tSafe("ui.report.comment_notice_item2", "영리 목적의 게시글은 임의로 삭제됩니다.") + `</li>			
 		</ul>
 		</div>
 		`
@@ -1458,8 +1458,8 @@ function write_comment_modal(){
 	comment_html += "<div id='writing_counter'>0/1000</div>"
 	comment_html += "</div>"
 
-	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
-	yesno_html += "<div><button class='btn_yes' onClick='write_comment()'>등록</button></div>"
+	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_cancel", "취소") + "</button></div>"
+	yesno_html += "<div><button class='btn_yes' onClick='write_comment()'>" + tSafe("ui.report.comment_submit", "등록") + "</button></div>"
 
 	$('#commentModifyModalLabel').html(title_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
@@ -1499,11 +1499,11 @@ function write_comment(){
 	written_checker = written_checker.replaceAll("\n", "")
 
 	if(written_checker === ''){
-	alert("랭커스톡 작성 후 등록해 주세요!")
+	alert(tSafe("ui.report.comment_validation_empty", "랭커스톡 작성 후 등록해 주세요!"))
 	$('#comment_input').val("")
 	}
 	else if(written_comment.length > 1000){
-	alert("최대 1000글자 까지 등록할 수 있어요!")        
+	alert(tSafe("ui.report.comment_validation_length_1000", "최대 1000글자 까지 등록할 수 있어요!"))        
 	}
 	else{
 	docData = {
@@ -1559,17 +1559,17 @@ function setData(doc){
 }
 
 function reply_modal(comment_id){
-	title_html = "<div>댓글 작성</div>" //"우리동네"를 지역변수로 수정
+	title_html = "<div>" + tSafe("ui.report.comment_reply_title", "댓글 작성") + "</div>"
 
 	comment_html = "<div>"        
 	comment_html += "<div id='comment_write_notice'>"
 		comment_html +=
 		`
-		<div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
+		<div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>` + tSafe("ui.report.comment_notice_header", "건강한 랭커스톡을 만들어주세요!") + `</div>
 		<div>
 		<ul class='write_notice'>
-			<li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
-			<li>영리 목적의 게시글은 임의로 삭제됩니다.</li>			
+			<li>` + tSafe("ui.report.comment_notice_item1", "다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.") + `</li>              
+			<li>` + tSafe("ui.report.comment_notice_item2", "영리 목적의 게시글은 임의로 삭제됩니다.") + `</li>			
 		</ul>
 		</div>
 		`
@@ -1580,8 +1580,8 @@ function reply_modal(comment_id){
 	comment_html += "<div id='writing_counter'>0/500</div>"
 	comment_html += "</div>"
 
-	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
-	yesno_html += "<div><button class='btn_yes' onClick='reply_comment(\"" + comment_id + "\")'>등록</button></div>"
+	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_cancel", "취소") + "</button></div>"
+	yesno_html += "<div><button class='btn_yes' onClick='reply_comment(\"" + comment_id + "\")'>" + tSafe("ui.report.comment_submit", "등록") + "</button></div>"
 
 	$('#commentModifyModalLabel').html(title_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
@@ -1620,11 +1620,11 @@ function reply_comment(comment_id){
 	written_checker = written_checker.replaceAll("\n", "")
 	
 	if(written_checker === ''){
-		alert("댓글 작성 후 등록해 주세요!")
+		alert(tSafe("ui.report.comment_validation_reply_empty", "댓글 작성 후 등록해 주세요!"))
 		$('#comment_input').val("")
 		}
 		else if(written_comment.length > 500){
-		alert("최대 500글자 까지 등록할 수 있어요!")        
+		alert(tSafe("ui.report.comment_validation_length_500", "최대 500글자 까지 등록할 수 있어요!"))        
 		}
 	else{
 		docData = {            
@@ -1658,15 +1658,15 @@ function modify_reply_modal(parent_id, reply_id){
 	comment = $("#" + parent_id + "__" + reply_id).html()
 	comment = comment.replaceAll("<br>", "\n")
 
-	title_html = "<div>우리동네 랭커스톡 댓글 수정</div>" //"우리동네"를 지역변수로 수정
+	title_html = "<div>" + tSafe("ui.report.comment_edit_reply_title", "우리동네 랭커스톡 댓글 수정") + "</div>" //"우리동네"를 지역변수로 수정
 
 	modify_html = "<div>"
 	modify_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + shown_email + "</div>"
 	modify_html += "<div><textarea id='comment_modify_input' rows=5 warp='on' resize='none'></textarea></div>"
 	modify_html += "</div>"
 
-	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
-	yesno_html += "<div><button class='btn_yes' onClick='modify_reply_comment(\"" + parent_id + "\", \"" + reply_id + "\")'>수정</button></div>"
+	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_cancel", "취소") + "</button></div>"
+	yesno_html += "<div><button class='btn_yes' onClick='modify_reply_comment(\"" + parent_id + "\", \"" + reply_id + "\")'>" + tSafe("ui.report.comment_edit", "수정") + "</button></div>"
 
 	$('#commentModifyModalLabel').html(title_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(modify_html)
@@ -1703,11 +1703,11 @@ function modify_reply_comment(parent_id, reply_id){
 function delete_reply_question(parent_id, reply_id){
 	$('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
 	$('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
-	$('#commentModal > .modal-dialog > .modal-content> .modal-body').html("정말 삭제할까요?")      
+	$('#commentModal > .modal-dialog > .modal-content> .modal-body').html(tSafe("ui.report.comment_delete_confirm", "정말 삭제할까요?"))      
 
 	//yesno_html = "<div class='confirm_question'>"
-	yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>아니요</button></div>"
-	yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_reply(\"" + parent_id + "\", \"" + reply_id + "\")'>예</button></div>"
+	yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_no", "아니요") + "</button></div>"
+	yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_reply(\"" + parent_id + "\", \"" + reply_id + "\")'>" + tSafe("ui.report.comment_yes", "예") + "</button></div>"
 	//yesno_html += "</div>"
 
 	$('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
@@ -1731,15 +1731,15 @@ function delete_reply(parent_id, reply_id){
 function modify_comment_modal(comment_id, comment){
 	comment = comment.replaceAll("<br>", "\n")
 
-	title_html = "<div>우리 단지 랭커스톡 수정</div>" //"우리동네"를 지역변수로 수정
+	title_html = "<div>" + tSafe("ui.report.comment_edit_title", "우리 단지 랭커스톡 수정") + "</div>" //"우리동네"를 지역변수로 수정
 
 	modify_html = "<div>"
 	modify_html += "<div class='writing_id'>_<i class='fa-solid fa-pen'></i>&nbsp;&nbsp;" + shown_email + "</div>"
 	modify_html += "<div><textarea id='comment_modify_input' rows=5 warp='on' resize='none'></textarea></div>"
 	modify_html += "</div>"
 
-	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
-	yesno_html += "<div><button class='btn_yes' onClick='modify_comment(\"" + comment_id + "\")'>수정</button></div>"
+	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_cancel", "취소") + "</button></div>"
+	yesno_html += "<div><button class='btn_yes' onClick='modify_comment(\"" + comment_id + "\")'>" + tSafe("ui.report.comment_edit", "수정") + "</button></div>"
 
 	$('#commentModifyModalLabel').html(title_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(modify_html)
@@ -1776,11 +1776,11 @@ function modify_comment(comment_id){
 function delete_comment_question(comment_id){
 	$('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
 	$('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
-	$('#commentModal > .modal-dialog > .modal-content> .modal-body').html("정말 삭제할까요?")      
+	$('#commentModal > .modal-dialog > .modal-content> .modal-body').html(tSafe("ui.report.comment_delete_confirm", "정말 삭제할까요?"))      
 
 	//yesno_html = "<div class='confirm_question'>"
-	yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>아니요</button></div>"
-	yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_comment(\"" + comment_id + "\")'>예</button></div>"
+	yesno_html = "<div class='footer_button'><button class='btn_no' onClick='$(\"#commentModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_no", "아니요") + "</button></div>"
+	yesno_html += "<div class='footer_button'><button class='btn_yes' onClick='delete_comment(\"" + comment_id + "\")'>" + tSafe("ui.report.comment_yes", "예") + "</button></div>"
 	//yesno_html += "</div>"
 
 	$('#commentModal > .modal-dialog > .modal-content> .modal-footer').html(yesno_html);
@@ -1802,24 +1802,24 @@ function delete_comment(comment_id){
 }
 
 function accuse_modal(comment_id, user_email, comment_index, user_id){
-	title_html = "<div>랭커스톡 신고하기</div>"
+	title_html = "<div>" + tSafe("ui.report.comment_report_title", "랭커스톡 신고하기") + "</div>"
 
 	comment_html = "<div>"
-	comment_html += "<div class='writing_id'><i class='fa-solid fa-triangle-exclamation'></i>&nbsp;&nbsp;" + user_email + "님의 랭커스톡을 신고합니다.</div>"
+	comment_html += "<div class='writing_id'><i class='fa-solid fa-triangle-exclamation'></i>&nbsp;&nbsp;" + tSafe("ui.report.comment_report_target_desc", "{email}님의 랭커스톡을 신고합니다.").replace("{email}", user_email) + "</div>"
 	comment_html += `
 	<div id='accuse_selection'>
-		<div><input type="radio" class='form-check-input' id="accuse_01" name="accuse" value="욕설 / 비방" checked><label for="accuse_01">&nbsp;&nbsp;욕설 / 비방</label></div>
-		<div><input type="radio" class='form-check-input' id="accuse_02" name="accuse" value="홍보성"><label for="accuse_02">&nbsp;&nbsp;홍보성</label></div>
-		<div><input type="radio" class='form-check-input' id="accuse_03" name="accuse" value="음란물 / 선정성"><label for="accuse_03">&nbsp;&nbsp;음란물 / 선정성</label></div>
-		<div><input type="radio" class='form-check-input' id="accuse_04" name="accuse" value="같은 내용 반복"><label for="accuse_04">&nbsp;&nbsp;같은 내용 반복</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_01" name="accuse" value="욕설 / 비방" checked><label for="accuse_01">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_abuse", "욕설 / 비방") + `</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_02" name="accuse" value="홍보성"><label for="accuse_02">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_promo", "홍보성") + `</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_03" name="accuse" value="음란물 / 선정성"><label for="accuse_03">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_porn", "음란물 / 선정성") + `</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_04" name="accuse" value="같은 내용 반복"><label for="accuse_04">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_spam", "같은 내용 반복") + `</label></div>
 		<div>
-		<input type="radio" class='form-check-input' id="accuse_05" name="accuse" value="기타"><label for="accuse_05">&nbsp;&nbsp;기타</label>
+		<input type="radio" class='form-check-input' id="accuse_05" name="accuse" value="기타"><label for="accuse_05">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_other", "기타") + `</label>
 		<div><textarea id='accuse_input' rows=3 warp='on' resize='none' disabled></textarea></div>
 		</div>          
 	</div>
 	`
-	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
-	yesno_html += "<div><button class='btn_yes' onClick='accuse_comment(\"" + comment_id + "\", \"" + user_email + "\", " + comment_index + ", \"" + user_id + "\")'>신고</button></div>"
+	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_cancel", "취소") + "</button></div>"
+	yesno_html += "<div><button class='btn_yes' onClick='accuse_comment(\"" + comment_id + "\", \"" + user_email + "\", " + comment_index + ", \"" + user_id + "\")'>" + tSafe("ui.report.comment_accuse_btn", "신고") + "</button></div>"
 
 	$('#commentModifyModalLabel').html(title_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
@@ -1853,7 +1853,7 @@ function accuse_comment(comment_id, user_email, comment_index, user_id){
 	written_checker = written_checker.replaceAll("\n", "")
 	
 	if(accuse_type === "기타" && written_checker === ''){
-	alert("기타 신고 이유를 작성해 주세요.")
+	alert(tSafe("ui.report.comment_report_reason_other_placeholder", "기타 신고 이유를 작성해 주세요."))
 	$('#accuse_input').val("")
 	return
 	}      
@@ -1889,11 +1889,11 @@ function accuse_comment(comment_id, user_email, comment_index, user_id){
 
 		$('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
 		$('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
-		meg_html = "<div>" + user_email + "님의 랭커스톡이 신고되었습니다. <br> 운영정책 위배 여부 확인 후, 조치 예정입니다."
+		meg_html = "<div>" + tSafe("ui.report.comment_report_success", "{email}님의 랭커스톡이 신고되었습니다. <br> 운영정책 위배 여부 확인 후, 조치 예정입니다.").replace("{email}", user_email) + "</div>"
 		$('#commentModal > .modal-dialog > .modal-content> .modal-body').html(meg_html)
 
 		//yesno_html = "<div class='confirm_question'>"
-		confirm_html = "<div class='footer_button'><button class='btn_yes' onClick='$(\"#commentModal\").modal(\"hide\")'>확인</button></div>"        
+		confirm_html = "<div class='footer_button'><button class='btn_yes' onClick='$(\"#commentModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_report_confirm", "확인") + "</button></div>"        
 		//yesno_html += "</div>"
 
 		$('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'grid-template-columns' : '1fr', 'justify-items' :'center'})
@@ -1906,24 +1906,24 @@ function accuse_comment(comment_id, user_email, comment_index, user_id){
 }
 
 function accuse_reply_modal(parent_id, reply_id, user_email, user_id){
-	title_html = "<div>랭커스톡 댓글 신고하기</div>"
+	title_html = "<div>" + tSafe("ui.report.comment_report_reply_title", "랭커스톡 댓글 신고하기") + "</div>"
 
 	comment_html = "<div>"
-	comment_html += "<div class='writing_id'><i class='fa-solid fa-triangle-exclamation'></i>&nbsp;&nbsp;" + user_email + "님의 랭커스톡 댓글을 신고합니다.</div>"
+	comment_html += "<div class='writing_id'><i class='fa-solid fa-triangle-exclamation'></i>&nbsp;&nbsp;" + tSafe("ui.report.comment_report_reply_target_desc", "{email}님의 랭커스톡 댓글을 신고합니다.").replace("{email}", user_email) + "</div>"
 	comment_html += `
 	<div id='accuse_selection'>
-		<div><input type="radio" class='form-check-input' id="accuse_01" name="accuse" value="욕설 / 비방" checked><label for="accuse_01">&nbsp;&nbsp;욕설 / 비방</label></div>
-		<div><input type="radio" class='form-check-input' id="accuse_02" name="accuse" value="홍보성"><label for="accuse_02">&nbsp;&nbsp;홍보성</label></div>
-		<div><input type="radio" class='form-check-input' id="accuse_03" name="accuse" value="음란물 / 선정성"><label for="accuse_03">&nbsp;&nbsp;음란물 / 선정성</label></div>
-		<div><input type="radio" class='form-check-input' id="accuse_04" name="accuse" value="같은 내용 반복"><label for="accuse_04">&nbsp;&nbsp;같은 내용 반복</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_01" name="accuse" value="욕설 / 비방" checked><label for="accuse_01">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_abuse", "욕설 / 비방") + `</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_02" name="accuse" value="홍보성"><label for="accuse_02">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_promo", "홍보성") + `</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_03" name="accuse" value="음란물 / 선정성"><label for="accuse_03">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_porn", "음란물 / 선정성") + `</label></div>
+		<div><input type="radio" class='form-check-input' id="accuse_04" name="accuse" value="같은 내용 반복"><label for="accuse_04">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_spam", "같은 내용 반복") + `</label></div>
 		<div>
-		<input type="radio" class='form-check-input' id="accuse_05" name="accuse" value="기타"><label for="accuse_05">&nbsp;&nbsp;기타</label>
+		<input type="radio" class='form-check-input' id="accuse_05" name="accuse" value="기타"><label for="accuse_05">&nbsp;&nbsp;` + tSafe("ui.report.comment_report_reason_other", "기타") + `</label>
 		<div><textarea id='accuse_input' rows=3 warp='on' resize='none' disabled></textarea></div>
 		</div>          
 	</div>
 	`
-	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>취소</button></div>"
-	yesno_html += "<div><button class='btn_yes' onClick='accuse_reply(\"" + parent_id + "\", \"" + reply_id + "\", \"" + user_email + "\", \"" + user_id + "\")'>신고</button></div>"
+	yesno_html = "<div><button class='btn_no' onClick='$(\"#commentModifyModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_cancel", "취소") + "</button></div>"
+	yesno_html += "<div><button class='btn_yes' onClick='accuse_reply(\"" + parent_id + "\", \"" + reply_id + "\", \"" + user_email + "\", \"" + user_id + "\")'>" + tSafe("ui.report.comment_accuse_btn", "신고") + "</button></div>"
 
 	$('#commentModifyModalLabel').html(title_html);
 	$('#commentModifyModal > .modal-dialog > .modal-content > .modal-body').html(comment_html)
@@ -1955,7 +1955,7 @@ function accuse_reply(parent_id, reply_id, user_email, user_id){
 	written_checker = written_checker.replaceAll("\n", "")
 	
 	if(accuse_type === "기타" && written_checker === ''){
-	alert("기타 신고 이유를 작성해 주세요.")
+	alert(tSafe("ui.report.comment_report_reason_other_placeholder", "기타 신고 이유를 작성해 주세요."))
 	$('#accuse_input').val("")
 	return
 	}      
@@ -1988,11 +1988,11 @@ function accuse_reply(parent_id, reply_id, user_email, user_id){
 
 		$('#commentModal > .modal-dialog > .modal-content> .modal-header').hide();
 		$('#commentModal > .modal-dialog > .modal-content> .modal-body').css({'text-align' : 'center', 'height' : '6em', 'display':'grid', 'align-content':'center'})
-		meg_html = "<div>" + user_email + "님의 랭커스톡이 신고되었습니다. <br> 운영정책 위배 여부 확인 후, 조치 예정입니다."
+		meg_html = "<div>" + tSafe("ui.report.comment_report_success", "{email}님의 랭커스톡이 신고되었습니다. <br> 운영정책 위배 여부 확인 후, 조치 예정입니다.").replace("{email}", user_email) + "</div>"
 		$('#commentModal > .modal-dialog > .modal-content> .modal-body').html(meg_html)
 
 		//yesno_html = "<div class='confirm_question'>"
-		confirm_html = "<div class='footer_button'><button class='btn_yes' onClick='$(\"#commentModal\").modal(\"hide\")'>확인</button></div>"        
+		confirm_html = "<div class='footer_button'><button class='btn_yes' onClick='$(\"#commentModal\").modal(\"hide\")'>" + tSafe("ui.report.comment_report_confirm", "확인") + "</button></div>"        
 		//yesno_html += "</div>"
 
 		$('#commentModal > .modal-dialog > .modal-content> .modal-footer').css({'grid-template-columns' : '1fr', 'justify-items' :'center'})
