@@ -248,7 +248,7 @@ function showSearchBar(){
                 for(var j = 0 ; j < dongDB.length ; j++){
                   if(aptAddress2.indexOf(dongDB[j][0]) > -1){
                     var dongClass = "dong_" + dongDB[j][1]
-                    var addon_html = "<div class='listBox2 " + dongClass + "' data-bs-toggle='modal' data-bs-target='#baseModal' id='myModal' onClick='showDetail(" + i + ")'>";
+                    var addon_html = "<div class='listBox2 " + dongClass + "' id='myModal' onClick='showDetail(" + i + ")'>";
                     break
                   }
                 }
@@ -415,7 +415,7 @@ function showSearchBar(){
         var searchName = sortData.data[i]["아파트명"] + " " + sortData.data[i]["법정동주소"]       
 
         if(searchName.indexOf(input) >= 0){
-            var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#baseModal' id='myModal' onClick='showTopDetail(" + i + ")'>";
+            var addon_html = "<div class='listBox' id='myModal' onClick='showTopDetail(" + i + ")'>";
 
             addon_html += "<div class='rank_content'>"
             addon_html += "<div class='ranksame'> TOP </div>"

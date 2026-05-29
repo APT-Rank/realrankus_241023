@@ -369,7 +369,20 @@ function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){
 
   removeMarkers()
   defaultMap.setZoom(17)
-  showDetail(index)
+
+  var actualIndex = -1;
+  var dataToSearch = sortData.data;
+  for (var p = 0; p < dataToSearch.length; p++) {
+    if (dataToSearch[p]["검색코드"] == code || dataToSearch[p]["코드"] == code) {
+      actualIndex = p;
+      break;
+    }
+  }
+  if (actualIndex === -1) {
+    actualIndex = Number(index);
+  }
+
+  showDetail(actualIndex)
   closeUnifiedSearch()  
   
   /*

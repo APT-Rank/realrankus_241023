@@ -697,7 +697,11 @@ function background_update(current_region_id, complex_id) {
 
 function setComplexLike(complexCode, aptName){
 	const current_region_id = selectedSubRegion
-	const complex_like_db = comment_db.collection("realrankus_complex_like").doc(current_region_id).collection(complexCode).doc(temp_uid)
+	const has_valid_user = (login_status && temp_uid && temp_uid !== "" && temp_uid !== "abcdefghijklmnopqrstuvwxyz");
+	let complex_like_db = null;
+	if (has_valid_user) {
+		complex_like_db = comment_db.collection("realrankus_complex_like").doc(current_region_id).collection(complexCode).doc(temp_uid);
+	}
 
 	//complex_like_db.get().then((querySnapshot) => {
 	firebase.database().ref().child("realrankus_complex_like_total").child(current_region_id).child("complex_" + complexCode).get().then((snapshot) => {
@@ -749,7 +753,12 @@ function setComplexLike(complexCode, aptName){
 				$("#complex_like_num_edu_" + complexCode).html(edu_count)
 			}
 
-			comment_db.collection("realrankus_complex_like").doc(current_region_id).collection(complexCode).doc(temp_uid).get()
+			if (!has_valid_user) {
+				detail_loading = false;
+				return;
+			}
+
+			complex_like_db.get()
 			.then((like_list) => {
 				if(like_list.exists){
 					const living_like = Number( (like_list.data())['Living'] )
@@ -787,6 +796,10 @@ function setComplexLike(complexCode, aptName){
 				'blog' : ""
 			})
 			.then(() => {
+				if (!has_valid_user) {
+					detail_loading = false;
+					return;
+				}
 				complex_like_db.set({
 					'Complex' : aptName,
 					'Living' : 0,
@@ -817,6 +830,10 @@ function setComplexLike(complexCode, aptName){
 			'Edu' : 0,						
 		})
 		.then(() => {
+			if (!has_valid_user) {
+				detail_loading = false;
+				return;
+			}
 			complex_like_db.set({
 				'Complex' : aptName,
 				'Living' : 0,
@@ -1206,6 +1223,14 @@ function read_comment(scroll_pos) {
 }
 
 function likeit(comment_id, user_id, like_num){
+  if(!login_status || !temp_uid || temp_uid == "" || temp_uid == "abcdefghijklmnopqrstuvwxyz"){
+    showLogin()
+    $("#loginModalLabel>.popupTitle").html("로그인 후에 공감(좋아요)을 해 주세요!")		
+    closeModal("commentListModal")
+    openModal("loginModal")
+    $(".modal-backdrop").css({"width":"100%"})
+    return;
+  }
   const docRef2 = comment_db.collection("realrankus_comment").doc(selectedSubRegion);
   
   docRef2.collection(temp_uid).doc(comment_id).get().then((field) => {        
@@ -1239,6 +1264,14 @@ function likeit(comment_id, user_id, like_num){
 }
 
 function reply_likeit(comment_id, reply_id, user_id, like_num) {
+  if(!login_status || !temp_uid || temp_uid == "" || temp_uid == "abcdefghijklmnopqrstuvwxyz"){
+    showLogin()
+    $("#loginModalLabel>.popupTitle").html("로그인 후에 공감(좋아요)을 해 주세요!")		
+    closeModal("commentListModal")
+    openModal("loginModal")
+    $(".modal-backdrop").css({"width":"100%"})
+    return;
+  }
   const docRef2 = comment_db.collection("realrankus_comment").doc(selectedSubRegion);
   
   docRef2.collection(temp_uid).doc(reply_id).get().then((field) => {        

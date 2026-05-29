@@ -126,10 +126,10 @@ function updateTopTable(month, region){
             //console.log(valueSum)
             if(selectedSubRegion == "Trans_Top300" && i == 0){
               var addon_html = "<div class='content' style='background-color: #ffdfde; border-bottom: 1px solid gray; padding-top: 0.5em; padding-bottom: 0.5em; margin-top: 5px'><div class='apt_name' style='text-align:center; font-size: 0.75em;'> '출퇴근 교통'은 지하철이 있는 수도권과 광역시만 선정하고 있어요.</div></div>"
-              addon_html += "<div class='listBox' data-bs-toggle='modal' data-bs-target='#baseModal' id='aptSelect_" + i + "' onClick='showTopDetail(" + i + ")'>";
+              addon_html += "<div class='listBox' id='aptSelect_" + i + "' onClick='showTopDetail(" + i + ")'>";
             }
             else{
-              var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#baseModal' id='aptSelect_" + i + "' onClick='showTopDetail(" + i + ")'>";
+              var addon_html = "<div class='listBox' id='aptSelect_" + i + "' onClick='showTopDetail(" + i + ")'>";
             }
             addon_html += "<div class='rank_content'>"
             addon_html += "<div class='ranksame'> TOP </div>"
@@ -701,8 +701,10 @@ function showTopDetail(index){
     else if(current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]){      
       marker_obj = window["top_marker_obj_" + searchCode]
     }
-    marker_obj.setZIndex(marker_z_depth += 1)
-    animateMarker(marker_obj)  
+    if (marker_obj) {
+      marker_obj.setZIndex(marker_z_depth += 1)
+      animateMarker(marker_obj)  
+    }
   }
   else{
     defaultMap.setCenter(target_position)        
@@ -712,8 +714,10 @@ function showTopDetail(index){
     else if(current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]){      
       marker_obj = window["top_marker_obj_" + searchCode]
     }
-    marker_obj.setZIndex(marker_z_depth += 1)
-    animateMarker(marker_obj)        
+    if (marker_obj) {
+      marker_obj.setZIndex(marker_z_depth += 1)
+      animateMarker(marker_obj)        
+    }
   }
   prev_selection = current_selection
   current_selection = searchCode

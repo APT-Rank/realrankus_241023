@@ -1544,7 +1544,7 @@ function updateTable(month, region) {
 
             if (compare_dong_name == dong_compare) {
               var dongClass = "dong_" + dongDB[j][1];
-              var addon_html = "<div class='listBox2 " + dongClass + "' data-bs-toggle='modal' data-bs-target='#baseModal' id='" + list_id + "' onClick='showDetail(" + i + ")' value=" + i + ">";
+              var addon_html = "<div class='listBox2 " + dongClass + "' id='" + list_id + "' onClick='showDetail(" + i + ")' value=" + i + ">";
               break;
             }
           }
@@ -2517,6 +2517,7 @@ function showDetail(index) {
 
     detailHtml += `<tbody>`;
     for (var k = 0; k < area_array.length; k++) {
+      var compare_rent_date = null;
       detailHtml += `<tr>`;
       if (sales_info_array[k] == "거래 정보 없음") {
         if (Number(selectedMonth) > 202207) {
@@ -2547,7 +2548,7 @@ function showDetail(index) {
             var compare_rent_year = Number(rent_info_split[1].substr(2, 4));
             var compare_rent_month = Number(rent_info_split[1].substr(7, 2) - 1);
             var compare_rent_day = Number(rent_info_split[1].substr(10, 2));
-            var compare_rent_date = new Date(compare_rent_year, compare_rent_month, compare_rent_day);
+            compare_rent_date = new Date(compare_rent_year, compare_rent_month, compare_rent_day);
           }
 
           if (compare_date > start_date) {
@@ -3056,8 +3057,10 @@ function showDetail(index) {
     } else if (current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]) {
       marker_obj = window["small_marker_obj_" + searchCode];
     }
-    marker_obj.setZIndex((marker_z_depth += 1));
-    animateMarker(marker_obj, visit_obj);
+    if (marker_obj) {
+      marker_obj.setZIndex((marker_z_depth += 1));
+      animateMarker(marker_obj, visit_obj);
+    }
   } else {
     defaultMap.setCenter(target_position);
     if (current_zoom >= zoom_levels[0]) {
@@ -3066,8 +3069,10 @@ function showDetail(index) {
     } else if (current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]) {
       marker_obj = window["small_marker_obj_" + searchCode];
     }
-    marker_obj.setZIndex((marker_z_depth += 1));
-    animateMarker(marker_obj, visit_obj);
+    if (marker_obj) {
+      marker_obj.setZIndex((marker_z_depth += 1));
+      animateMarker(marker_obj, visit_obj);
+    }
   }
 
   if (current_zoom < zoom_levels[1]) {
@@ -3459,7 +3464,7 @@ function updateRegionTable(month, region) {
       regPopSum += regData.data[i]["인구총점"];
       regJobSum += regData.data[i]["일자리총점"];
 
-      var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#baseModal' id='myModal' onClick='showRegionDetail(" + i + ")'>";
+      var addon_html = "<div class='listBox' id='myModal' onClick='showRegionDetail(" + i + ")'>";
 
       region_grade = "";
 

@@ -28,7 +28,7 @@ var getGunguText = (name, val) => {
     if (korParts.length >= 2) {
       var cityEng = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
       var distEng = parts[3].charAt(0).toUpperCase() + parts[3].slice(1);
-      
+
       var citySuffix = '';
       if (korParts[0].endsWith('시')) citySuffix = '-si';
       else if (korParts[0].endsWith('군')) citySuffix = '-gun';
@@ -58,6 +58,8 @@ var getGunguText = (name, val) => {
   }
   return engBase;
 };
+
+var exchange_rate = 1500; // 1억 KRW 당 USD 환산값 (예시: 1500M KRW = 1M USD)
 
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
 var thisMonth = "202605"; //수정
@@ -553,17 +555,17 @@ $(document).ready(function () {
         `;
 
     $("#filterSelector").html(filterHtml);
-    if(isMobile){
+    if (isMobile) {
       filter_ui = false;
     }
-    else{
+    else {
       filter_ui = true;
       $("#filterOnOff").css({
         color: "#fff",
         "background-color": "#940c23",
         border: "2px solid #940c23",
       })
-    } 
+    }
 
     initSlider_sPrice();
     initSlider_area();
@@ -1205,7 +1207,7 @@ function updateRegion() {
       $("#filterOnOff").show();
       if (filter_ui) {
         $("#gradeSelector").show();
-        $("#filterSelector").show();       
+        $("#filterSelector").show();
       }
       $("#dataList").html("");
 
@@ -1464,9 +1466,18 @@ function updateTable(month, region) {
       //동 DB 만들기
       dongDB = [];
       $("#dataList").append("<div class='dong_selector'><div id='dong_list'></div></div>");
+      var dong_name = "";
       for (var j = 0; j < itemNum; j++) {
         var split_addr = aptData.data[j]["법정동주소"].split(" ");
-        var dong_name = split_addr[2];
+        var split_addr_en = aptData.data[j]["Law_Addr_EN"].split(" ");
+
+        if (isEn) {
+          dong_name = split_addr_en[2];
+        }
+        else {
+          dong_name = split_addr[2];
+        }
+
         if (split_addr[0] == "경기도" || split_addr[0] == "충청남도" || split_addr[0] == "충청북도" || split_addr[0] == "전북도" || split_addr[0] == "전라북도" || split_addr[0] == "경상북도" || split_addr[0] == "경상남도") {
           if (
             split_addr[1] == "고양시" ||
@@ -1483,7 +1494,12 @@ function updateTable(month, region) {
             split_addr[1] == "포항시" ||
             split_addr[1] == "창원시"
           ) {
-            dong_name = split_addr[3];
+            if (isEn) {
+              dong_name = split_addr_en[3];
+            }
+            else {
+              dong_name = split_addr[3];
+            }
           }
         }
         dongDB.push(dong_name);
@@ -1494,7 +1510,11 @@ function updateTable(month, region) {
         });
         filtered_dongDB = filtered_dongDB.sort();
         filtered_dongDB.unshift(" <i class='fa-regular fa-thumbs-up'></i>");
-        filtered_dongDB.unshift("전체");
+        if (isEn) {
+          filtered_dongDB.unshift("All");
+        } else {
+          filtered_dongDB.unshift("전체");
+        }
       }
       dongDB = [];
       //동DB에 인덱스 포함해서 저장
@@ -1510,6 +1530,7 @@ function updateTable(month, region) {
       }
 
       var columns = "repeat(" + dongDB.length + ", " + dong_cell_width + "px)";
+
       $("#dong_list").css({ "grid-template-columns": columns });
 
       var dong_list_html = "";
@@ -1551,13 +1572,17 @@ function updateTable(month, region) {
 
       for (var i = 0; i < itemNum; i++) {
         var aptName = aptData.data[i]["아파트명"];
+        var aptName_en = aptData.data[i]["APT_Name_EN"];
         var apt_m = aptData.data[i]["전용면적(m2)"];
         var apt_p = aptData.data[i]["전용면적(평)"];
 
         var apt_type = aptData.data[i]["매매타입"];
 
-        var aptAddress = aptData.data[i]["도로명주소"];
-        var aptAddress2 = aptData.data[i]["법정동주소"];
+        var aptAddress = aptData.data[i]["법정동주소"];
+        var aptAddress2 = aptData.data[i]["도로명주소"];
+        var aptAddress_en = aptData.data[i]["Law_Addr_EN"];
+        var aptAddress2_en = aptData.data[i]["Road_Addr_EN"];
+
         var aptValue = Math.round(aptData.data[i]["가치 총점"] * 100) / 100;
         var house_num = aptData.data[i]["세대수"];
         var rank = aptData.data[i]["rank"].toFixed();
@@ -1567,24 +1592,54 @@ function updateTable(month, region) {
         var last_sales_area = last_sales[2];
         last_sales_date_short = last_sales_date.substr(2);
 
-        var split_addr2 = aptAddress2.split(" ");
-        var compare_dong_name = split_addr2[2];
+        var split_addr = aptAddress.split(" ");
+        var split_addr_en = aptAddress_en.split(" ");
+
+        var compare_dong_name = split_addr[2];
+        var compare_dong_name_en = split_addr_en[2];
+
+        var str_last_sales_price = last_sales_price;
+
+        if (isEn) {
+          compare_dong_name = split_addr_en[2];
+          last_sales_area = last_sales_area.replace("평", "py");
+          //str_last_sales_price를 달러로 환산하여 표기
+          str_last_sales_price = `${Math.round((last_sales_price * exchange_rate) / 10000) / 100}M$`;
+
+          //str_last_sales_date를 영어권 국가에서 일반적으로 사용하는 날짜 포맷인 "MMM DD YYYY"로 변환하여 표기 (예: "Mar 2023")
+          var dateObj = new Date(last_sales_date);
+          if (isNaN(dateObj.getTime())) {
+            str_last_sales_date = last_sales_date;
+          } else {
+            var options = { year: "numeric", month: "short", day: "numeric" };
+            str_last_sales_date = dateObj.toLocaleDateString("en-US", options);
+          }
+
+        } else {
+          compare_dong_name = split_addr[2];
+          str_last_sales_price = Math.round(last_sales_price / 100) / 100 + "억";
+          str_last_sales_date = last_sales_date_short;
+        }
         if (
-          split_addr2[1] == "고양시" ||
-          split_addr2[1] == "안양시" ||
-          split_addr2[1] == "안산시" ||
-          split_addr2[1] == "수원시" ||
-          split_addr2[1] == "용인시" ||
-          split_addr2[1] == "성남시" ||
-          split_addr2[1] == "부천시" ||
-          split_addr2[1] == "화성시" ||
-          split_addr2[1] == "천안시" ||
-          split_addr2[1] == "청주시" ||
-          split_addr2[1] == "전주시" ||
-          split_addr2[1] == "포항시" ||
-          split_addr2[1] == "창원시"
+          split_addr[1] == "고양시" ||
+          split_addr[1] == "안양시" ||
+          split_addr[1] == "안산시" ||
+          split_addr[1] == "수원시" ||
+          split_addr[1] == "용인시" ||
+          split_addr[1] == "성남시" ||
+          split_addr[1] == "부천시" ||
+          split_addr[1] == "화성시" ||
+          split_addr[1] == "천안시" ||
+          split_addr[1] == "청주시" ||
+          split_addr[1] == "전주시" ||
+          split_addr[1] == "포항시" ||
+          split_addr[1] == "창원시"
         ) {
-          compare_dong_name = split_addr2[3];
+          if (isEn) {
+            compare_dong_name = split_addr_en[3];
+          } else {
+            compare_dong_name = split_addr[3];
+          }
         }
 
         valueSum += aptData.data[i]["가치 총점"];
@@ -1612,12 +1667,10 @@ function updateTable(month, region) {
         if (checkPrice(last_sales[1])) {
           for (var j = 0; j < dongDB.length; j++) {
             var dong_compare = dongDB[j][0];
-
             list_id = "aptSelect_" + searchCode;
-
             if (compare_dong_name == dong_compare) {
               var dongClass = "dong_" + dongDB[j][1];
-              var addon_html = "<div class='listBox2 " + dongClass + "' data-bs-toggle='modal' data-bs-target='#baseModal' id='" + list_id + "' onClick='showDetail(" + i + ")' value=" + i + ">";
+              var addon_html = "<div class='listBox2 " + dongClass + "' id='" + list_id + "' onClick='showDetail(" + i + ")' value=" + i + ">";
               break;
             }
           }
@@ -1633,39 +1686,72 @@ function updateTable(month, region) {
           addon_html += `<div class='content'>`;
           //addon_html += "<div class='apt_name'>" + aptName + " " + apt_p + "(" + apt_m + ")</div>";
 
+
+          if (isEn) {
+            aptName = aptName_en
+          }
+          str_years = tSafe("ui.build_year_unit", "년차");
+          str_reconstruction = tSafe("ui.reconstruction", "재건축");
+          str_pre_sale = tSafe("ui.report.presale", "분양권");
+          str_pre_sale_planned = tSafe("ui.report.presale_scheduled", "분양예정");
+          str_expected = tSafe("ui.report.presale_expected", "예정");
+          str_unknown_house_num = tSafe("ui.report.unknown_house_num", "세대수 미정");
+          str_no_sales_info = tSafe("ui.report.no_sales_info", "거래 정보 없음");
+          str_house_num = tSafe("ui.report.house_num_unit", "세대");
+
+          if (isEn) {
+            var dateObj = new Date(aptData.data[i]["준공년월"]);
+            if (isNaN(dateObj.getTime())) {
+              str_expected_month = aptData.data[i]["준공년월"];
+            } else {
+              str_expected_month = dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+            }
+          }
+          else {
+            str_expected_month = aptData.data[i]["준공년월"].substr(0, 7)
+          }
+
           addon_html += `<div class='apt_name'>${aptName}`;
 
           if (Number(selectedMonth) > 202203) {
             if (apt_type == "아파트") {
-              addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}년차)</span></div>`;
+              addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}${str_years})</span></div>`;
             }
             if (apt_type == "재건축") {
-              addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}년차, 재건축)</span></div>`;
+              addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}${str_years}, ${str_reconstruction})</span></div>`;
             }
             if (apt_type == "분양권") {
-              addon_html += `<span class='aptYear'> (분양권, ${aptData.data[i]["준공년월"].substr(0, 7)} 예정)</span></div>`;
+              addon_html += `<span class='aptYear'> (${str_pre_sale}, ${str_expected_month} ${str_expected})</span></div>`;
             }
             if (apt_type == "분양(예정)") {
-              addon_html += `<span class='aptYear'> (분양예정)</span></div>`;
+              addon_html += `<span class='aptYear'> (${str_pre_sale_planned})</span></div>`;
             }
           } else {
-            addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}년차)</span></div>`;
+            addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}${str_years})</span></div>`;
           }
 
           if (house_num == null) {
-            addon_html += `<div class='apt_info'>세대수 미정 / <span class='aptPrice'>거래 정보 없음</span></div>`;
+            addon_html += `<div class='apt_info'>${str_unknown_house_num} / <span class='aptPrice'>${str_no_sales_info}</span></div>`;
           } else {
             if (last_sales_date == "1800-01-01") {
-              addon_html += `<div class='apt_info'>${house_num.toLocaleString()}세대 / <span class='aptPrice'>거래 정보 없음</span></div>`;
+              addon_html += `<div class='apt_info'>${house_num.toLocaleString()}${str_house_num} / <span class='aptPrice'>${str_no_sales_info}</span></div>`;
             } else {
-              addon_html += `<div class='apt_info'>${house_num.toLocaleString()}세대 / <span class='aptPrice'>${Math.round(last_sales_price / 100) / 100}억, ${last_sales_area}, ${last_sales_date_short}</span></div>`;
+              addon_html += `<div class='apt_info'>${house_num.toLocaleString()}${str_house_num} / <span class='aptPrice'>${str_last_sales_price}, ${last_sales_area}, ${str_last_sales_date}</span></div>`;
             }
           }
 
+          shown_address = "";
+          if (isEn) {
+            shown_address = aptAddress_en;
+          }
+          else {
+            shown_address = aptAddress;
+          }
+
           if (Number(selectedMonth) > 202203 && (apt_type == "분양권" || apt_type == "분양(예정)")) {
-            addon_html += `<div class='apt_address'>${aptData.data[i]["법정동주소"]}</div>`;
+            addon_html += `<div class='apt_address'>${shown_address}</div>`;
           } else {
-            addon_html += `<div class='apt_address'>${aptAddress2}</div>`;
+            addon_html += `<div class='apt_address'>${shown_address}</div>`;
           }
 
           addon_html += `
@@ -1838,7 +1924,6 @@ function showDetail(index) {
   titleHtml = "";
   detailHtml = "";
   footerHtml = "";
-
 
   aptData = sortData;
 
@@ -2642,6 +2727,8 @@ function showDetail(index) {
         rowArea = rowArea.replace(/평/g, " py");
       }
 
+      var compare_rent_date = null;
+
       detailHtml += `<tr>`;
       if (sales_info_array[k] == "거래 정보 없음") {
         if (Number(selectedMonth) > 202207) {
@@ -2679,7 +2766,7 @@ function showDetail(index) {
             var compare_rent_year = Number(rent_info_split[1].substr(2, 4));
             var compare_rent_month = Number(rent_info_split[1].substr(7, 2) - 1);
             var compare_rent_day = Number(rent_info_split[1].substr(10, 2));
-            var compare_rent_date = new Date(compare_rent_year, compare_rent_month, compare_rent_day);
+            compare_rent_date = new Date(compare_rent_year, compare_rent_month, compare_rent_day);
           }
 
           if (compare_date > start_date) {
@@ -3229,8 +3316,10 @@ function showDetail(index) {
     } else if (current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]) {
       marker_obj = window["small_marker_obj_" + searchCode];
     }
-    marker_obj.setZIndex((marker_z_depth += 1));
-    animateMarker(marker_obj, visit_obj);
+    if (marker_obj) {
+      marker_obj.setZIndex((marker_z_depth += 1));
+      animateMarker(marker_obj, visit_obj);
+    }
   } else {
     defaultMap.setCenter(target_position);
     if (current_zoom >= zoom_levels[0]) {
@@ -3239,8 +3328,10 @@ function showDetail(index) {
     } else if (current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]) {
       marker_obj = window["small_marker_obj_" + searchCode];
     }
-    marker_obj.setZIndex((marker_z_depth += 1));
-    animateMarker(marker_obj, visit_obj);
+    if (marker_obj) {
+      marker_obj.setZIndex((marker_z_depth += 1));
+      animateMarker(marker_obj, visit_obj);
+    }
   }
 
   if (current_zoom < zoom_levels[1]) {
@@ -3632,7 +3723,7 @@ function updateRegionTable(month, region) {
       regPopSum += regData.data[i]["인구총점"];
       regJobSum += regData.data[i]["일자리총점"];
 
-      var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#baseModal' id='myModal' onClick='showRegionDetail(" + i + ")'>";
+      var addon_html = "<div class='listBox' id='myModal' onClick='showRegionDetail(" + i + ")'>";
 
       region_grade = "";
 
@@ -4480,7 +4571,7 @@ function showGraphCarousel() {
 
 // Intercept rearrange notice update
 var originalShowAPTRearrangeBar = showAPTRearrangeBar;
-showAPTRearrangeBar = function() {
+showAPTRearrangeBar = function () {
   if (typeof originalShowAPTRearrangeBar === 'function') {
     originalShowAPTRearrangeBar();
     var sidoText = $('#sido option:selected').text();
@@ -4491,7 +4582,7 @@ showAPTRearrangeBar = function() {
 };
 
 var originalShowRegionRearrangeBar = showRegionRearrangeBar;
-showRegionRearrangeBar = function() {
+showRegionRearrangeBar = function () {
   if (typeof originalShowRegionRearrangeBar === 'function') {
     originalShowRegionRearrangeBar();
     var noticeHtml = isEn ? tSafe("ui.report.rearrange_region_notice", "Sorting within districts nationwide") : tSafe("ui.report.rearrange_region_notice", "전국 시군구 내에서 정렬합니다");
@@ -4501,7 +4592,7 @@ showRegionRearrangeBar = function() {
 
 // Intercept search notice update
 var originalShowAptSearchBar = showAptSearchBar;
-showAptSearchBar = function() {
+showAptSearchBar = function () {
   if (typeof originalShowAptSearchBar === 'function') {
     originalShowAptSearchBar();
     var sidoText = $('#sido option:selected').text();
@@ -4517,8 +4608,8 @@ function formatRecentSearchDate(dateStr) {
   return d + " (Searched)";
 }
 
-showUnifiedAptSearchBar = function() {
-  $("#baseModal").css({'width' : '600px'})
+showUnifiedAptSearchBar = function () {
+  $("#baseModal").css({ 'width': '600px' })
   $("#unifiedSearchCard").animate({
     opacity: 1.0,
     top: '0'
@@ -4537,14 +4628,14 @@ showUnifiedAptSearchBar = function() {
   var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>" + noticeText + "<br></div>"
   addon_html += "<div id='recent_search_box'>" + recentHeader + "</div>"
 
-  if(recent_search.length > 0){    
-    for(var i = 0 ; i < recent_search.length ; i++){
+  if (recent_search.length > 0) {
+    for (var i = 0; i < recent_search.length; i++) {
       var dateHtml = formatRecentSearchDate(recent_search[i][5]);
       addon_html += "<div class='recentListBox'>";
       addon_html += "<div class='recentListBox_complex' onClick='searchingUpdate(\"" + recent_search[i][0] + "\",\"" + recent_search[i][1] + "\",\"" + recent_search[i][2] + "\",\"" + recent_search[i][3] + "\",\"" + recent_search[i][4] + "\")'>"
-        addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
-        addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
-        addon_html += "<div class='searched_apt_date'>" + dateHtml + "</div>"
+      addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
+      addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
+      addon_html += "<div class='searched_apt_date'>" + dateHtml + "</div>"
       addon_html += "</div>"
       addon_html += "<div class='deleteRecent' onClick='removeRecent(" + i + ")'><i class='fa-solid fa-circle-xmark'></i></div>"
       addon_html += "</div>"
@@ -4556,7 +4647,7 @@ showUnifiedAptSearchBar = function() {
   $("#searchingBox").show()
 };
 
-removeRecent = function(index) {
+removeRecent = function (index) {
   recent_search.splice(index, 1)
   save_recent_to_LocalStorage(recent_search)
 
@@ -4566,14 +4657,14 @@ removeRecent = function(index) {
   var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>" + noticeText + "<br></div>"
   addon_html += "<div id='recent_search_box'>" + recentHeader + "</div>"
 
-  if(recent_search.length > 0){    
-    for(var i = 0 ; i < recent_search.length ; i++){
+  if (recent_search.length > 0) {
+    for (var i = 0; i < recent_search.length; i++) {
       var dateHtml = formatRecentSearchDate(recent_search[i][5]);
       addon_html += "<div class='recentListBox'>";
       addon_html += "<div class='recentListBox_complex'  onClick='searchingUpdate(\"" + recent_search[i][0] + "\",\"" + recent_search[i][1] + "\",\"" + recent_search[i][2] + "\",\"" + recent_search[i][3] + "\",\"" + recent_search[i][4] + "\")'>"
-        addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
-        addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
-        addon_html += "<div class='searched_apt_date'>" + dateHtml + "</div>"
+      addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
+      addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
+      addon_html += "<div class='searched_apt_date'>" + dateHtml + "</div>"
       addon_html += "</div>"
       addon_html += "<div class='deleteRecent' onClick='removeRecent(" + i + ")'><i class='fa-solid fa-circle-xmark'></i></div>"
       addon_html += "</div>"
@@ -4586,125 +4677,125 @@ removeRecent = function(index) {
 };
 
 var unifiedInput = "";
-unifiedAptSearch = function() {
+unifiedAptSearch = function () {
   $('#searchingBox').html("");
   var unifiedInput_base = $('#inputUnifiedSearch').val()
   unifiedInput = unifiedInput_base.trim()
 
   var unifiedInput_arr = []
   var unifiedInput_arr_base = unifiedInput.split(" ")
-  
-  if(unifiedInput_arr_base.length == 1){
+
+  if (unifiedInput_arr_base.length == 1) {
     unifiedInput_arr[0] = unifiedInput_arr_base[0]
   }
-  else if(unifiedInput_arr_base.length == 2){
+  else if (unifiedInput_arr_base.length == 2) {
     unifiedInput_arr[0] = unifiedInput_arr_base[0]
     unifiedInput_arr[1] = unifiedInput_arr_base[1]
   }
-  else{    
+  else {
     var inputStr = ""
-    for(var k = 1; k < unifiedInput_arr_base.length ; k++){
+    for (var k = 1; k < unifiedInput_arr_base.length; k++) {
       inputStr += unifiedInput_arr_base[k]
     }
     unifiedInput_arr[0] = unifiedInput_arr_base[0]
-    unifiedInput_arr[1] = inputStr    
+    unifiedInput_arr[1] = inputStr
   }
 
-  if(unifiedInput.length >= 2){
-      if(unifiedInput_arr.length == 1){
-        for(var i = 0 ; i < searchingData.data.length ; i++){
+  if (unifiedInput.length >= 2) {
+    if (unifiedInput_arr.length == 1) {
+      for (var i = 0; i < searchingData.data.length; i++) {
+        var aptName = searchingData.data[i]["아파트명"]
+        var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+
+        if (searchName.indexOf(unifiedInput) >= 0) {
           var aptName = searchingData.data[i]["아파트명"]
-          var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+          var aptAddress = searchingData.data[i]["법정동주소"]
+          var code = searchingData.data[i]["검색코드"]
+          var sido = searchingData.data[i]["sido"]
+          var gungu = searchingData.data[i]["gungu"]
 
-          if(searchName.indexOf(unifiedInput) >= 0){
-            var aptName = searchingData.data[i]["아파트명"]
-            var aptAddress = searchingData.data[i]["법정동주소"]
-            var code = searchingData.data[i]["검색코드"]
-            var sido = searchingData.data[i]["sido"]
-            var gungu = searchingData.data[i]["gungu"]
+          var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";
+          addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
+          addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
+          addon_html += "</div>"
 
-            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";
-            addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
-            addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
-            addon_html += "</div>"
-
-            $('#searchingBox').append(addon_html);
-            $('#searchingBox').show()
-          }
+          $('#searchingBox').append(addon_html);
+          $('#searchingBox').show()
         }
-        $(".searched_apt_name:contains('" + unifiedInput + "')").each(function(){
-          var regex = new RegExp(unifiedInput, 'gi')
-          $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+unifiedInput+"</span>") );
-        })
-        $(".searched_apt_info:contains('" + unifiedInput + "')").each(function(){
-          var regex2 = new RegExp(unifiedInput, 'gi')
-          $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+unifiedInput+"</span>") );
-        })
       }
-      else{
-        for(var i = 0 ; i < searchingData.data.length ; i++){
+      $(".searched_apt_name:contains('" + unifiedInput + "')").each(function () {
+        var regex = new RegExp(unifiedInput, 'gi')
+        $(this).html($(this).text().replace(regex, "<span class='colorTxt'>" + unifiedInput + "</span>"));
+      })
+      $(".searched_apt_info:contains('" + unifiedInput + "')").each(function () {
+        var regex2 = new RegExp(unifiedInput, 'gi')
+        $(this).html($(this).text().replace(regex2, "<span class='colorTxt'>" + unifiedInput + "</span>"));
+      })
+    }
+    else {
+      for (var i = 0; i < searchingData.data.length; i++) {
+        var aptName = searchingData.data[i]["아파트명"]
+        var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+
+        if (searchName.indexOf(unifiedInput_arr[0]) >= 0 && searchName.indexOf(unifiedInput_arr[1]) >= 0) {
+
           var aptName = searchingData.data[i]["아파트명"]
-          var searchName = searchingData.data[i]["아파트명"] + " " + searchingData.data[i]["법정동주소"]
+          var aptAddress = searchingData.data[i]["법정동주소"]
+          var code = searchingData.data[i]["검색코드"]
+          var sido = searchingData.data[i]["sido"]
+          var gungu = searchingData.data[i]["gungu"]
 
-          if(searchName.indexOf(unifiedInput_arr[0]) >= 0 && searchName.indexOf(unifiedInput_arr[1]) >= 0){
-            
-            var aptName = searchingData.data[i]["아파트명"]
-            var aptAddress = searchingData.data[i]["법정동주소"]
-            var code = searchingData.data[i]["검색코드"]
-            var sido = searchingData.data[i]["sido"]
-            var gungu = searchingData.data[i]["gungu"]            
+          var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";
+          addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
+          addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
+          addon_html += "</div>"
 
-            var addon_html = "<div class='searchedListBox' onClick='searchingUpdate(\"" + code + "\",\"" + sido + "\",\"" + gungu + "\",\"" + aptName + "\",\"" + aptAddress + "\")'>";
-            addon_html += "<div class='searched_apt_name'>" + aptName + "</div>"
-            addon_html += "<div class='searched_apt_info'>" + aptAddress + "</div>";
-            addon_html += "</div>"
-
-            $('#searchingBox').append(addon_html);
-            $('#searchingBox').show()
-          }
+          $('#searchingBox').append(addon_html);
+          $('#searchingBox').show()
         }
-
-        $(".searched_apt_name:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_name:contains('" + unifiedInput_arr[1] + "')").each(function(){
-          var regex3 = new RegExp(unifiedInput_arr[0], 'gi')
-          var regex4 = new RegExp(unifiedInput_arr[1], 'gi')          
-          $(this).html( $(this).text().replace(regex3, "<span class='colorTxt'>"+unifiedInput_arr[0]+"</span>").replace(regex4, "<span class='colorTxt'>"+unifiedInput_arr[1]+"</span>"))          
-        })
-
-        $(".searched_apt_info:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_info:contains('" + unifiedInput_arr[1] + "')").each(function(){
-          var regex5 = new RegExp(unifiedInput_arr[0], 'gi')
-          var regex6 = new RegExp(unifiedInput_arr[1], 'gi')
-          $(this).html( $(this).text().replace(regex5, "<span class='colorTxt2'>"+unifiedInput_arr[0]+"</span>").replace(regex6, "<span class='colorTxt2'>"+unifiedInput_arr[1]+"</span>"))
-        })
       }
+
+      $(".searched_apt_name:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_name:contains('" + unifiedInput_arr[1] + "')").each(function () {
+        var regex3 = new RegExp(unifiedInput_arr[0], 'gi')
+        var regex4 = new RegExp(unifiedInput_arr[1], 'gi')
+        $(this).html($(this).text().replace(regex3, "<span class='colorTxt'>" + unifiedInput_arr[0] + "</span>").replace(regex4, "<span class='colorTxt'>" + unifiedInput_arr[1] + "</span>"))
+      })
+
+      $(".searched_apt_info:contains('" + unifiedInput_arr[0] + "')" + "," + ".searched_apt_info:contains('" + unifiedInput_arr[1] + "')").each(function () {
+        var regex5 = new RegExp(unifiedInput_arr[0], 'gi')
+        var regex6 = new RegExp(unifiedInput_arr[1], 'gi')
+        $(this).html($(this).text().replace(regex5, "<span class='colorTxt2'>" + unifiedInput_arr[0] + "</span>").replace(regex6, "<span class='colorTxt2'>" + unifiedInput_arr[1] + "</span>"))
+      })
+    }
     $('#searchingBox').append("<div style='height: 3em'></div>");
 
   }
-  else{      
+  else {
     var noticeText = tSafe("ui.report.unified_search_notice", "빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!");
     var recentHeader = tSafe("ui.report.recent_search", "최근검색");
 
     var addon_html = "<div style='font-size: 0.9em; font-weight: 600; text-align:center; padding-top: 30px'>" + noticeText + "<br></div>"
     addon_html += "<div id='recent_search_box'>" + recentHeader + "</div>"
 
-    if(recent_search.length > 0){    
-      for(var i = 0 ; i < recent_search.length ; i++){
+    if (recent_search.length > 0) {
+      for (var i = 0; i < recent_search.length; i++) {
         var dateHtml = formatRecentSearchDate(recent_search[i][5]);
         addon_html += "<div class='recentListBox'>";
         addon_html += "<div class='recentListBox_complex'  onClick='searchingUpdate(\"" + recent_search[i][0] + "\",\"" + recent_search[i][1] + "\",\"" + recent_search[i][2] + "\",\"" + recent_search[i][3] + "\",\"" + recent_search[i][4] + "\")'>"
-          addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
-          addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
-          addon_html += "<div class='searched_apt_date'>" + dateHtml + "</div>"
+        addon_html += "<div class='searched_apt_name'>" + recent_search[i][3] + "</div>"
+        addon_html += "<div class='searched_apt_info'>" + recent_search[i][4] + "</div>"
+        addon_html += "<div class='searched_apt_date'>" + dateHtml + "</div>"
         addon_html += "</div>"
         addon_html += "<div class='deleteRecent' onClick='removeRecent(" + i + ")'><i class='fa-solid fa-circle-xmark'></i></div>"
         addon_html += "</div>"
       }
     }
     $('#searchingBox').html("");
-    $('#searchingBox').append(addon_html);  
+    $('#searchingBox').append(addon_html);
   }
 };
 
-showSearchBar = function() {
+showSearchBar = function () {
   if (selectedRegion == "Korea" && selectedSubRegion == "1000000000_Korea" && searchType == "local") {
     $("#unifiedSearchExample").html(tSafe("ui.search_example_korea_local", "예) 강남, 분당, 수지, 해운대"));
   } else {
