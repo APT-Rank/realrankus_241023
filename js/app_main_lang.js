@@ -1469,7 +1469,7 @@ function updateTable(month, region) {
       var dong_name = "";
       for (var j = 0; j < itemNum; j++) {
         var split_addr = aptData.data[j]["법정동주소"].split(" ");
-        var split_addr_en = aptData.data[j]["Law_Addr_EN"].split(" ");
+        //var split_addr_en = aptData.data[j]["Law_Addr_EN"].split(" ");
 
         if (isEn) {
           dong_name = split_addr_en[2];
@@ -1593,10 +1593,10 @@ function updateTable(month, region) {
         last_sales_date_short = last_sales_date.substr(2);
 
         var split_addr = aptAddress.split(" ");
-        var split_addr_en = aptAddress_en.split(" ");
+        //var split_addr_en = aptAddress_en.split(" ");
 
         var compare_dong_name = split_addr[2];
-        var compare_dong_name_en = split_addr_en[2];
+        //var compare_dong_name_en = split_addr_en[2];
 
         var str_last_sales_price = last_sales_price;
 
@@ -2497,7 +2497,7 @@ function showDetail(index) {
     //교통
     detailHtml += `
           <div class='card'>
-          <div class='card-header'>
+          <div class='card-header'>f
           <div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp${tSafe("ui.report.transport", "교통")}</div>
           </div>
           <div class='card-body'>
