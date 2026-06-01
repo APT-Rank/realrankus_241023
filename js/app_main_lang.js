@@ -1469,7 +1469,11 @@ function updateTable(month, region) {
       var dong_name = "";
       for (var j = 0; j < itemNum; j++) {
         var split_addr = aptData.data[j]["법정동주소"].split(" ");
-        //var split_addr_en = aptData.data[j]["Law_Addr_EN"].split(" ");
+        law_addr_en = aptData.data[j]["Law_Addr_EN"];
+        if(law_addr_en == undefined){
+          law_addr_en = "";
+        }
+        var split_addr_en = law_addr_en.split(" ");
 
         if (isEn) {
           dong_name = split_addr_en[2];
@@ -1592,11 +1596,15 @@ function updateTable(month, region) {
         var last_sales_area = last_sales[2];
         last_sales_date_short = last_sales_date.substr(2);
 
+        if(aptAddress_en == undefined || aptAddress_en == null){
+          aptAddress_en = "";
+        }
+
         var split_addr = aptAddress.split(" ");
-        //var split_addr_en = aptAddress_en.split(" ");
+        var split_addr_en = aptAddress_en.split(" ");
 
         var compare_dong_name = split_addr[2];
-        //var compare_dong_name_en = split_addr_en[2];
+        var compare_dong_name_en = split_addr_en[2];
 
         var str_last_sales_price = last_sales_price;
 
@@ -2076,14 +2084,12 @@ function showDetail(index) {
   read_comment("top");
   //}
 
-  if (Number(selectedMonth) > 202207) {
-    var rent_info = aptData.data[index]["rent_info"];
-    var rent_ratio = aptData.data[index]["rent_ratio"];
-    var last_rent = aptData.data[index]["last_rent"].split(",");
-    var last_rent_date = last_rent[0].toString();
-    var last_rent_price = last_rent[1].toString();
-    var last_rent_area = last_rent[2];
-  }
+  var rent_info = aptData.data[index]["rent_info"];
+  var rent_ratio = aptData.data[index]["rent_ratio"];
+  var last_rent = aptData.data[index]["last_rent"].split(",");
+  var last_rent_date = last_rent[0].toString();
+  var last_rent_price = last_rent[1].toString();
+  var last_rent_area = last_rent[2];
 
   var floor_rate = aptData.data[index]["용적률"];
   if (floor_rate == "0" || floor_rate == 0 || floor_rate == undefined || isNaN(floor_rate)) {
@@ -2102,15 +2108,8 @@ function showDetail(index) {
   var populationScore = Math.round(aptData.data[index]["인구총점"] * 100) / 100;
   var jobScore = Math.round(aptData.data[index]["일자리총점"] * 100) / 100;
 
-  if (Number(selectedMonth) > 202211) {
-    shareURL = aptData.data[index]["sURL"];
-    kakaoShareURL = "https://www.realrankus.com" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "&complex=" + index + "&sort=" + sortSelection + "&apt=" + short_name + " " + aptName;
-  } else {
-    shareURL = "https://www.realrankus.com" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "&complex=" + index + "&sort=" + sortSelection + "&apt=" + short_name + " " + aptName;
-    kakaoShareURL = "https://www.realrankus.com" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "&complex=" + index + "&sort=" + sortSelection + "&apt=" + short_name + " " + aptName;
-
-    //https://www.realrankus.com/?reg=Gyeonggi&sub=4146500000_Gyeonggi_Yongin_Suji&mon=202407&complex=0&sort=sortDefault&apt=%EC%83%81%ED%98%84%EB%8F%99%20%EA%B4%91%EA%B5%90%EC%9E%90%EC%9D%B4%EB%8D%94%ED%81%B4%EB%9E%98%EC%8A%A4
-  }
+  shareURL = aptData.data[index]["sURL"];
+  kakaoShareURL = "https://www.realrankus.com" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "&complex=" + index + "&sort=" + sortSelection + "&apt=" + short_name + " " + aptName;
 
   //타이틀
   //titleHtml += "<div class='popupTitle'>" + aptName + " " + apt_p + "(" + apt_m + ")</div>";
@@ -2125,7 +2124,7 @@ function showDetail(index) {
     aptAddress = "--";
   }
 
-  if (Number(selectedMonth) > 202203 && (apt_type == "분양권" || apt_type == "분양(예정)")) {
+  if (apt_type == "분양권" || apt_type == "분양(예정)") {
     titleHtml += `<div class='popupSubtitle'>${aptData.data[index]["법정동주소"]}</div>`;
   } else {
     titleHtml += `
@@ -2152,7 +2151,7 @@ function showDetail(index) {
               </div>
             `;
 
-  if (isNaN(transportScore) == false) {
+  if (stationArea != "NA") {
     detailHtml += `
                 <div class='complex_like_category'>
                 <div class='complex_like_trans' onclick='complex_like_updown("trans", "${searchCode}", "${aptName}")'>
@@ -2385,29 +2384,18 @@ function showDetail(index) {
     detailHtml += `<div class='popSubTable'><div class='popContent'>${tHouseNumLabel}</div><div class='popResult'>${tUndetermined}</div></div>`;
   }
 
-  if (Number(selectedMonth) > 202203) {
-    if (apt_type >= "재건축") {
-      detailHtml += `
-            <div class='popSubTable'><div class='popContent'>${tFloorRateLabel}</div><div class='popResult'>${floor_rate}</div></div>
-            <div class='popSubTable'><div class='popContent'>${tCoverRateLabel}</div><div class='popResult'>${cover_rate}</div></div>
-          `;
-    }
-  } else {
-    if (aptDuration >= 30) {
-      detailHtml += `
-            <div class='popSubTable'><div class='popContent'>${tFloorRateLabel}</div><div class='popResult'>${floor_rate}</div></div>
-            <div class='popSubTable'><div class='popContent'>${tCoverRateLabel}</div><div class='popResult'>${cover_rate}</div></div>
-          `;
-    }
-  }
-  if (Number(selectedMonth) > 202203) {
+  if (apt_type >= "재건축") {
     detailHtml += `
-          <div class='popSubTable' id='popSubStation'><div class='popContent'>${tParkingLabel}</div><div class='popResult'>${parking}</div></div>
-          <div class='popSubTable'><div class='popContent'>${tHeatingLabel}</div><div class='popResult'>${heating}</div></div>
-          <div class='popSubTable'><div class='popContent'>${tEntranceLabel}</div><div class='popResult'>${entrance}</div></div>
+          <div class='popSubTable'><div class='popContent'>${tFloorRateLabel}</div><div class='popResult'>${floor_rate}</div></div>
+          <div class='popSubTable'><div class='popContent'>${tCoverRateLabel}</div><div class='popResult'>${cover_rate}</div></div>
         `;
   }
 
+  detailHtml += `
+        <div class='popSubTable' id='popSubStation'><div class='popContent'>${tParkingLabel}</div><div class='popResult'>${parking}</div></div>
+        <div class='popSubTable'><div class='popContent'>${tHeatingLabel}</div><div class='popResult'>${heating}</div></div>
+        <div class='popSubTable'><div class='popContent'>${tEntranceLabel}</div><div class='popResult'>${entrance}</div></div>
+      `;
 
   if (apt_type == "분양(예정)") {
   } else {
@@ -2493,7 +2481,7 @@ function showDetail(index) {
     }
   }
 
-  if (isNaN(transportScore) == false) {
+  if (stationArea != "NA") {
     //교통
     detailHtml += `
           <div class='card'>
@@ -3223,7 +3211,7 @@ function showDetail(index) {
     }
   }
 
-  if (isNaN(transportScore) == false) {
+  if (stationArea != "NA") {
     $(".complex_like").css({
       "grid-template-columns": "1fr 1fr 1fr 1fr",
     });

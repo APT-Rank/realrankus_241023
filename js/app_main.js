@@ -2964,10 +2964,8 @@ function showDetail(index) {
     }
   }
 
-  if (isNaN(transportScore) == false) {
-    $(".complex_like").css({
-      "grid-template-columns": "1fr 1fr 1fr 1fr",
-    });
+  if (stationArea != "NA") {
+    $(".complex_like").css({ "grid-template-columns" : "1fr 1fr 1fr 1fr"});
   } else {
     $(".complex_like").css({ "grid-template-columns": "1fr 1fr 1fr" });
   }
