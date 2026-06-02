@@ -198,7 +198,7 @@
           <div id="sido_selection"><select id="sido" onChange="sidoChange()"></select></div>
           <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"></select></div>          
           <div></div>
-          <div id="update_info" style="text-align: right; padding-right: 20px">업데이트 : 2025-03-06 <br> (2025년 1월 데이터 기준) </div> <!-- 수정 -->
+          <div id="update_info" style="text-align: right; padding-right: 20px">업데이트 : 2026-06-03 <br> (2026년 4월 데이터 기준) </div> <!-- 수정 -->
           <div class='appointment' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showAppointmentResult()'><button type='button' class='goApt' style='font-size: 0.9em'>주간 아파트 청약 결과</button></div>
           <div id='bizCal' onClick="openURL('./priceCal/index.html')"><button type='button' class='goApt' style='font-size: 0.9em'><i class="fa-solid fa-calculator"></i> 분양가 산정기</button></div>
         </div>
@@ -237,7 +237,7 @@
   var selectedRegion = "Korea"
   var selectedSubRegion = "1000000000_Korea"
   var selectedTheme = "under100M"
-  var currentMonth = "202503"  //수정
+  var currentMonth = "202606"  //수정
 
   var pageName = "aptrankBIZ_DS" //20231020
 
@@ -532,7 +532,7 @@
     
     //url = "https://www.realrankus.com/biz/" + region + ".json"
     //url = "https://www.realrankus.com/biz/Location_Build_Valuated.json"
-    url = "https://www.realrankus.com/doosanenc.marketing/BIZ_Valuated_Doosan_202501.json" //수정
+    url = "./BIZ_Valuated_Doosan_202604.json" //수정
 
     $.getJSON(url, function(json) {
         //console.log(json);

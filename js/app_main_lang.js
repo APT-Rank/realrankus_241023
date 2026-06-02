@@ -62,11 +62,11 @@ var getGunguText = (name, val) => {
 var exchange_rate = 1500; // 1억 KRW 당 USD 환산값 (예시: 1500M KRW = 1M USD)
 
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
-var thisMonth = "202605"; //수정
+var thisMonth = "202606"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
-var selectedMonth = "202605"; //수정
+var selectedMonth = "202606"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202605_04"; //수정
+var DB_Date = "202606_01"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
@@ -590,7 +590,7 @@ $(document).ready(function () {
 
   $(".modal").on("show.bs.modal", function () {
     const modalId = this.id;
-    console.log("Modal opened: " + modalId);
+    //console.log("Modal opened: " + modalId);
 
     if (modalId == "commentModifyModal" || modalId == "blogModal" || modalId == "commentModal" || modalId == "loginModal") {
       $("#commentListModal").css({ "z-index": "1050" });
@@ -602,7 +602,7 @@ $(document).ready(function () {
 
   $(".modal").on("hidden.bs.modal", function () {
     const modalId = this.id;
-    console.log("Modal closed: " + modalId);
+    //console.log("Modal closed: " + modalId);
 
     if (modalId == "baseModal") {
       changeMetaTagToDefault();
@@ -638,7 +638,7 @@ $(document).ready(function () {
     }
   });
 
-  if ($.cookie("popCookie") != "202605" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+  if ($.cookie("popCookie") != "202606" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
     startNotice = true;
     showNotice();
     //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -758,6 +758,7 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202605_01");
   window.indexedDB.deleteDatabase("202605_02");
   window.indexedDB.deleteDatabase("202605_03");
+  window.indexedDB.deleteDatabase("202605_04");
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;
@@ -2446,8 +2447,6 @@ function showDetail(index) {
   detailHtml += `</div></div></div></div>`;
   avgLivingScore = Math.round((livingSum / itemNum) * 100) / 100;
 
-  console.log("floor_noise: " + floor_noise);
-
   if (Number(selectedMonth) > 202207 && apt_type != "분양(예정)") {
     if (floor_noise == "NA" || floor_noise == "" || floor_noise == null || floor_noise == undefined) {
       //층간소음 정보 미제공
@@ -2662,7 +2661,7 @@ function showDetail(index) {
         `;
 
     var start_date = new Date();
-    start_date.setMonth(today.getMonth() - 1);
+    start_date.setMonth(start_date.getMonth() - 1);
 
     if (isNaN(last_sales_price)) {
       detailHtml += `<div class='popResult'>${tNoSalesInfo}</div></div>`;
@@ -2678,7 +2677,7 @@ function showDetail(index) {
       }
       var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M KRW") : ((Math.round(last_sales_price / 100) / 100) + "억");
 
-      if (compare_date > today) {
+      if (compare_date > start_date) {
         detailHtml += `<div class='popResult' style='color: #fe4040'>${areaText}, ${formattedLastSalesPrice}, ${last_sales_date.substr(2)}</div></div>`;
       } else {
         detailHtml += `<div class='popResult'>${areaText}, ${formattedLastSalesPrice}, ${last_sales_date.substr(2)}</div></div>`;
@@ -2719,19 +2718,14 @@ function showDetail(index) {
 
       detailHtml += `<tr>`;
       if (sales_info_array[k] == "거래 정보 없음") {
-        if (Number(selectedMonth) > 202207) {
-          detailHtml += `
-                <td>${rowArea}</td>
-                <td>${tNoSalesInfo}<br>
-              `;
-          if (rent_ratio_array[k] == "정보 없음") {
-            detailHtml += `${tNoSalesInfo}</td>`;
-          }
+        detailHtml += `
+              <td>${rowArea}</td>
+              <td>${tNoSalesInfo}<br>
+            `;
+        if (rent_ratio_array[k] == "정보 없음") {
+          detailHtml += `${tNoSalesInfo}</td>`;
         } else {
-          detailHtml += `
-                <td>${rowArea}</td>
-                <td>${tNoSalesInfo}</td>
-              `;
+          detailHtml += `${(Math.round(rent_ratio_array[k] * 100) / 100).toFixed(2)}%</td>`;
         }
       } else {
         var sales_info_split = sales_info_array[k].split("억");
@@ -4279,6 +4273,9 @@ function showNotice() {
   if (selectedMonth == "202605") {
     detailHtml += `${notice_202605}`;
   }
+  if (selectedMonth == "202606") {
+    detailHtml += `${notice_202606}`;
+  }
 
   detailHtml += `
         <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스</div>
@@ -4339,7 +4336,7 @@ function showNotice() {
   }
   $(".modal-footer").css({ "padding-top": "3px" });
 
-  if ($.cookie("popCookie") != "202605") {
+  if ($.cookie("popCookie") != "202606") {
     $("#flexCheckDefault").prop("checked", false);
   } else {
     $("#flexCheckDefault").prop("checked", true);
@@ -4347,7 +4344,7 @@ function showNotice() {
 
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
-      $.cookie("popCookie", "202605", { expires: 30, path: "/" });
+      $.cookie("popCookie", "202606", { expires: 30, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });
@@ -4416,8 +4413,7 @@ function openRadarMap(searchCode) {
     .get()
     .then((snapshot) => {
       if (snapshot.exists()) {
-        complex_info = snapshot.val();
-        console.log(complex_info);
+        complex_info = snapshot.val();        
         if (complex_info == null) {
           alert("불러오기 실패했어요. 다시 시도해 주세요.");
         } else {

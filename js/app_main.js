@@ -1,9 +1,9 @@
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
-var thisMonth = "202605"; //수정
+var thisMonth = "202606"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
-var selectedMonth = "202605"; //수정
+var selectedMonth = "202606"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202605_04"; //수정
+var DB_Date = "202606_01"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
@@ -569,7 +569,7 @@ $(document).ready(function () {
     }
   });
 
-  if ($.cookie("popCookie") != "202605" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+  if ($.cookie("popCookie") != "202606" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
     startNotice = true;
     showNotice();
     //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -689,6 +689,7 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202605_01");
   window.indexedDB.deleteDatabase("202605_02");
   window.indexedDB.deleteDatabase("202605_03");
+  window.indexedDB.deleteDatabase("202605_04");
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;
@@ -4024,6 +4025,9 @@ function showNotice() {
   if (selectedMonth == "202605") {
     detailHtml += `${notice_202605}`;
   }
+  if (selectedMonth == "202606") {
+    detailHtml += `${notice_202606}`;
+  }
 
   detailHtml += `
         <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스</div>
@@ -4084,7 +4088,7 @@ function showNotice() {
   }
   $(".modal-footer").css({ "padding-top": "3px" });
 
-  if ($.cookie("popCookie") != "202605") {
+  if ($.cookie("popCookie") != "202606") {
     $("#flexCheckDefault").prop("checked", false);
   } else {
     $("#flexCheckDefault").prop("checked", true);
@@ -4092,7 +4096,7 @@ function showNotice() {
 
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
-      $.cookie("popCookie", "202605", { expires: 30, path: "/" });
+      $.cookie("popCookie", "202606", { expires: 30, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });

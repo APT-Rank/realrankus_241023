@@ -316,7 +316,7 @@
   var selectedRegion = "Korea"
   var selectedSubRegion = "1000000000_Korea"
   var selectedTheme = "under100M"
-  var currentMonth = "202605" //수정
+  var currentMonth = "202606" //수정
 
   var pageName = "cityclass" //20231020  
 
@@ -411,14 +411,14 @@ var gungu_list = ""
 var cost_treemap = ""
 
 function draw(){
-  class_url = "https://www.realrankus.com/cityclass/" + currentMonth + "/regional_class_" + currentMonth + ".json"
-  index_url_price = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_price_" + currentMonth + ".json"
-  index_url_balanced = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_value_" + currentMonth + ".json"
-  index_url_living = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_living_" + currentMonth + ".json"
-  index_url_infra = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_infra_" + currentMonth + ".json"
-  index_url_trans = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_trans_" + currentMonth + ".json"
-  index_url_edu = "https://www.realrankus.com/cityclass/" + currentMonth + "/cityclass_indexer_edu_" + currentMonth + ".json"
-  cost_treemap_url = "https://www.realrankus.com/cityclass/" + currentMonth + "/treemap_" + currentMonth + ".json"
+  class_url = "./" + currentMonth + "/regional_class_" + currentMonth + ".json"
+  index_url_price = "./" + currentMonth + "/cityclass_indexer_price_" + currentMonth + ".json"
+  index_url_balanced = "./" + currentMonth + "/cityclass_indexer_value_" + currentMonth + ".json"
+  index_url_living = "./" + currentMonth + "/cityclass_indexer_living_" + currentMonth + ".json"
+  index_url_infra = "./" + currentMonth + "/cityclass_indexer_infra_" + currentMonth + ".json"
+  index_url_trans = "./" + currentMonth + "/cityclass_indexer_trans_" + currentMonth + ".json"
+  index_url_edu = "./" + currentMonth + "/cityclass_indexer_edu_" + currentMonth + ".json"
+  cost_treemap_url = "./" + currentMonth + "/treemap_" + currentMonth + ".json"
     $.getJSON(class_url, function(json) {
         region_class = json;        
         sido_list = getUniqueList(region_class, "시도")
