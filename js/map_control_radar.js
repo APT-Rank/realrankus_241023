@@ -728,8 +728,7 @@ function createAPTMarker(markers){
   //naver.maps.Event.addListener(radar_apt_marker, 'mouseover', showUpInfo(radar_apt_marker));
 }
 
-function createMetroMarker(aptData){
-  console.log(aptData)
+function createMetroMarker(aptData){  
     coordi_x = aptData["역지점좌표"][1]
     coordi_y = aptData["역지점좌표"][0]
     metro_name = aptData["가까운역이름"]
@@ -1621,8 +1620,7 @@ function createEduMarker(aptData){
   mSchool_arr = aptData["중학교정보"]
 
   for (var k in mSchool_arr){
-    if (mSchool_arr.hasOwnProperty('distance')){
-      console.log("AAAAAA")
+    if (mSchool_arr.hasOwnProperty('distance')){      
       mSchool_name = mSchool_arr['name']
       coordi_x = mSchool_arr['yx'][1]
       coordi_y = mSchool_arr['yx'][0]
