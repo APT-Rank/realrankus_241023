@@ -12,15 +12,15 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
       data = [aptValue, livingScore, transportScore, infraScore]        
     }
     */
-    var label = ["주거", "교통", "인프라", "교육"]
+    var label = (typeof isEn !== 'undefined' && isEn) ? ["Living", "Transport", "Infra", "Education"] : ["주거", "교통", "인프라", "교육"]
     var data = [livingScore, transportScore, infraScore, eduScore]    
 
     if(isNaN(transportScore) || transportScore == 0){
-      label = ["주거", "인프라", "교육"]
+      label = (typeof isEn !== 'undefined' && isEn) ? ["Living", "Infra", "Education"] : ["주거", "인프라", "교육"]
       data = [livingScore, infraScore, eduScore]        
     }
     if(eduScore == "region"){
-      label = ["공급필요", "인구수", "일자리수"]
+      label = (typeof isEn !== 'undefined' && isEn) ? ["Supply", "Population", "Jobs"] : ["공급필요", "인구수", "일자리수"]
       data = [livingScore, transportScore, infraScore]        
     }
 
@@ -114,17 +114,17 @@ function drawChart_op(aptValue, transportScore, infraScore, livingScore, eduScor
   }
   */
 
-  var label = ["교통", "인프라", "주거", "교육"]
+  var label = (typeof isEn !== 'undefined' && isEn) ? ["Transport", "Infra", "Living", "Education"] : ["교통", "인프라", "주거", "교육"]
   var data = [transportScore, infraScore, livingScore, eduScore]      
   var color = 'white'
   var align = 'start'
 
   if(isNaN(transportScore)){
-    label = ["인프라", "주거", "교육"]
+    label = (typeof isEn !== 'undefined' && isEn) ? ["Infra", "Living", "Education"] : ["인프라", "주거", "교육"]
     data = [infraScore, livingScore, eduScore]        
   }
   if(eduScore == "region"){
-    label = ["공급필요", "인구수", "일자리수"]
+    label = (typeof isEn !== 'undefined' && isEn) ? ["Supply", "Population", "Jobs"] : ["공급필요", "인구수", "일자리수"]
     data = [livingScore, transportScore, infraScore]        
   }
 
@@ -532,7 +532,7 @@ function drawPriceRateChart(dateArray, salesArray, rentArray){
       labels: label,
       datasets:[
       {
-        label: "매매지수",
+        label: (window.LANG === 'en' || sessionStorage.getItem('LANG') === 'en') ? "Sales Index" : "매매지수",
         data: salesData,        
         borderColor: "#ff3d38",
         borderWidth: 1,
@@ -540,7 +540,7 @@ function drawPriceRateChart(dateArray, salesArray, rentArray){
         pointRadius: 1
       },
       {
-        label: "전세지수",
+        label: (window.LANG === 'en' || sessionStorage.getItem('LANG') === 'en') ? "Jeonse Index" : "전세지수",
         data: rentData,
         borderColor: "#5589c9",
         borderWidth: 1,

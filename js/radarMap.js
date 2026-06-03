@@ -1,5 +1,24 @@
-var origin_x = 0
-var origin_y = 0
+var isEn = (window.parent && window.parent.LANG === 'en') || (window.opener && window.opener.LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
+
+var formatOptionDate = (dateStr) => {
+  if (!dateStr || dateStr.length < 6) return dateStr;
+  var year = dateStr.substr(2, 2);
+  var monthNum = dateStr.substr(4, 2);
+  var months = {
+    "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+    "05": "May", "06": "Jun", "07": "Jul", "08": "Aug",
+    "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+  };
+  if (isEn) {
+    var monthName = months[monthNum] || monthNum;
+    return monthName + " '" + year;
+  } else {
+    return "'" + year + "." + monthNum;
+  }
+};
+
+var origin_x = 0;
+var origin_y = 0;
 var origin_yx
 
 /*
@@ -989,10 +1008,12 @@ function showRadarDetail(aptDataFull) {
   price_sOption = "";
   price_eOption = "";
   for (w = 0; w < sales_history_date.length - 1; w++) {
-    price_sOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+    var dateLabel = formatOptionDate(sales_history_date[w]);
+    price_sOption += "<option value='" + w + "'>" + dateLabel + "</option>";
   }
   for (w = 1; w < sales_history_date.length; w++) {
-    price_eOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+    var dateLabel = formatOptionDate(sales_history_date[w]);
+    price_eOption += "<option value='" + w + "'>" + dateLabel + "</option>";
   }
   $("#pStart_radar").html(price_sOption);
   $("#pStart_radar").val(30).prop("selected", true);

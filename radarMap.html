@@ -90,6 +90,12 @@
     <!-- <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pwacompat/2.0.17/pwacompat.min.js" integrity="sha512-4Dg9Iq0/VM+AW4tfM+/LLLX+Yopudo7SEsMyfTJzG/x7brKQ+NAMELrhA517cA2wFVOHo0m+n06XWCdE70Qsew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
+    <script type="text/javascript">
+      var isEn = (window.parent && window.parent.LANG === 'en') || (window.opener && window.opener.LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
+      window.LANG = isEn ? 'en' : 'ko';
+      window.BASE_PATH = './';
+    </script>
+    <script src="./js/i18n.js?v=20260603" type="text/javascript"></script>
     <script src="./js/menu_select_box.js" type="text/javascript"></script>
     <script src="./js/draw_chart.js" type="text/javascript"></script>
     <script src="./js/doubleSlider.js" type="text/javascript"></script>
@@ -230,7 +236,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
     
-    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1&language=ko"></script>
     <script src="./js/con_counter_js.js"></script>
     <script src="./js/board.js" type="text/javascript"></script>
     <script src="./js/complex_compare.js" type="text/javascript"></script>    
@@ -278,6 +284,23 @@
     var origin_y = 0
     var origin_yx
     login_status = true
+    var isEn = (window.parent && window.parent.LANG === 'en') || (window.opener && window.opener.LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
+    function formatOptionDate(dateStr) {
+      if (!dateStr || dateStr.length < 6) return dateStr;
+      var year = dateStr.substr(2, 2);
+      var monthNum = dateStr.substr(4, 2);
+      var months = {
+        "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+        "05": "May", "06": "Jun", "07": "Jul", "08": "Aug",
+        "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+      };
+      if (isEn) {
+        var monthName = months[monthNum] || monthNum;
+        return monthName + " '" + year;
+      } else {
+        return "'" + year + "." + monthNum;
+      }
+    }
 
     var selectedSubRegion = ""
 
@@ -408,7 +431,8 @@
       var apt_m = aptData["전용면적(m2)"];
       var apt_p = aptData["전용면적(평)"];
       var apt_type = aptData["매매타입"];
-      var aptAddress = aptData["도로명주소"];
+      var law_Address = aptData["법정동주소"];
+      var road_Address = aptData["도로명주소"];
       var aptValue = Math.round(aptData["가치 총점"] * 100) / 100;
       var aptDuration = aptData["준공년차"];
       var aptYear = "";
@@ -422,31 +446,43 @@
         event_label: aptName + "(" + short_name + ")",
       });
 
-      if (apt_type == "아파트") { aptYear =   aptData["준공년월"] + " (" + aptDuration + "년차)"; }
-      if (apt_type == "재건축") { aptYear =   aptData["준공년월"] +   " (" +   aptDuration +   "년차, 재건축)"; }
-      if (apt_type == "분양권") { aptYear =   "(분양권, " +   aptData["준공년월"].substr(0, 7) +   " 예정)"; }
-      if (apt_type == "분양(예정)") { aptYear = "(분양예정)"; }
+      var tReconstruction = t("ui.report.reconstruction", "재건축");
+      var tExpected = t("ui.report.presale_expected", "예정");
+      var tPresaleScheduled = t("ui.report.presale_scheduled", "분양예정");
+      var tYearsSuffix = t("ui.report.years_suffix", "년차");
 
-      var nearestStation = aptData["가까운역이름"] + "역" + "(" + ( Math.round(aptData["가까운역거리"] * 100) / 100 ).toFixed() + "m)";
+      var aptYear_val = aptData["준공년월"];
+      if (isEn && aptYear_val) {
+        aptYear_val = new Date(aptYear_val).toLocaleString("en-US", { month: "short", year: "numeric" });
+      }
+
+      if (apt_type == "아파트") { aptYear = aptYear_val + " (" + aptDuration + tYearsSuffix + ")"; }
+      if (apt_type == "재건축") { aptYear = aptYear_val + " (" + aptDuration + tYearsSuffix + ", " + tReconstruction + ")"; }
+      if (apt_type == "분양권") { aptYear = "(" + (isEn ? "Pre-sale" : "분양권") + ", " + aptYear_val + " " + tExpected + ")"; }
+      if (apt_type == "분양(예정)") { aptYear = "(" + tPresaleScheduled + ")"; }
+
+      var nearestStation = isEn ? (aptData["closest_station"] + " (" + (Math.round(aptData["가까운역거리"] * 100) / 100).toFixed() + "m)") : (aptData["가까운역이름"] + "역(" + ( Math.round(aptData["가까운역거리"] * 100) / 100 ).toFixed() + "m)");
       var stationArea = aptData["역세권여부"];
       var stationPoint_30m = aptData["30분이내주요거점역"];
       var stationPoint_1h = aptData["1시간이내주요거점역"];
-      var departmentStore_3km = aptData["3km이내백화점수"] + "개";
-      var OutletMall_5km = aptData["5km이내아울렛몰수"] + "개";
-      var bigMart_1km = aptData["1km이내대형먀트수"] + "개";
-      var bank_500m = aptData["500m이내은행수"] + "개";
-      var hospital_500m = aptData["500m이내병원수"] + "개";
-      var bigHospital_5km = aptData["5km이내대형병원수"] + "개";
-      var park_500m = aptData["500m이내공원수"] + "개";
-      var big_park_1km = aptData["800m이내대형공원수"] + "개";
-      var harmful_3km = aptData["3km이내혐오시설수"] + "개";
+      
+      var tCountSuffix = isEn ? "" : "개";
+      var departmentStore_3km = aptData["3km이내백화점수"] + tCountSuffix;
+      var OutletMall_5km = aptData["5km이내아울렛몰수"] + tCountSuffix;
+      var bigMart_1km = aptData["1km이내대형먀트수"] + tCountSuffix;
+      var bank_500m = aptData["500m이내은행수"] + tCountSuffix;
+      var hospital_500m = aptData["500m이내병원수"] + tCountSuffix;
+      var bigHospital_5km = aptData["5km이내대형병원수"] + tCountSuffix;
+      var park_500m = aptData["500m이내공원수"] + tCountSuffix;
+      var big_park_1km = aptData["800m이내대형공원수"] + tCountSuffix;
+      var harmful_3km = aptData["3km이내혐오시설수"] + tCountSuffix;
       var pSchool_edu = aptData["초등학교학업성취도"];
       var pSchool_distance = aptData["초등학교거리"];
       var mSchool_edu = aptData["중학교학업성취도"]
       mSchool_edu = Number(mSchool_edu).toFixed(1) + "%"
-      var academy_edu = aptData["500m이내학원가"] + "개" + "(총 " + aptData["500m이내학원수"] + "개 학원)";
-      var academy_edu_long = aptData["1km이내학원가"] + "개" + "(총 " + aptData["1km이내학원수"] + "개 학원)";
-      var market_infra = aptData["300m이내상권"] + "개" + "(총 " + aptData["300m이내점포수"] + "개 지점)";
+      var academy_edu = isEn ? (aptData["500m이내학원가"] + " area(s) (" + aptData["500m이내학원수"] + " in total)") : (aptData["500m이내학원가"] + "개" + "(총 " + aptData["500m이내학원수"] + "개 학원)");
+      var academy_edu_long = isEn ? (aptData["1km이내학원가"] + " area(s) (" + aptData["1km이내학원수"] + " in total)") : (aptData["1km이내학원가"] + "개" + "(총 " + aptData["1km이내학원수"] + "개 학원)");
+      var market_infra = isEn ? (aptData["300m이내상권"] + " area(s) (" + aptData["300m이내점포수"] + " in total)") : (aptData["300m이내상권"] + "개" + "(총 " + aptData["300m이내점포수"] + "개 지점)");
       var livingScore = ( Math.round(aptData["주거총점"] * 100) / 100 ).toFixed(2);
       var transportScore = ( Math.round(aptData["교통총점"] * 100) / 100 ).toFixed(2);
       var infraScore = ( Math.round(aptData["인프라총점"] * 100) / 100 ).toFixed(2);
@@ -500,6 +536,40 @@
         cover_rate = Number(aptData["건폐율"]).toFixed(0) + "%";
       }
 
+      if(isEn){
+        aptName = aptData["APT_Name_EN"] || aptData["아파트명"];
+        road_Address = aptData["Road_Addr_EN"] || aptData["도로명주소"];
+        law_Address = aptData["Law_Addr_EN"] || aptData["법정동주소"];
+        if (parking && typeof parking === 'string') {
+          //parking에 데이터가 없으면 "TBD"로 표기
+          if (parking == "" || parking == null || parking == undefined || parking == "미정") {
+            parking = "TBD";
+          }
+          else {
+            parking = parking.replace("세대당 ", "").replace("대", " per household");
+          }
+        }
+        if (heating && typeof heating === 'string') {
+          var heatingDict = {
+            "개별난방": "Individual",
+            "지역난방": "District",
+            "중앙난방": "Central",
+            "도시가스": "City Gas",
+            "미정": "TBD"
+          };
+          heating = heatingDict[heating] || heating;
+        }
+        if (entrance && typeof entrance === 'string') {
+          var entranceDict = {
+            "계단식": "Staircase",
+            "복도식": "Corridor",
+            "복합식": "Mixed",
+            "미정": "TBD"
+          };
+          entrance = entranceDict[entrance] || entrance;
+        }
+      }
+
       //아파트 정보
       if(isMobile){
         detailHtml_mobile += "<div class='card' id='apt_info_mobile' style='box-shadow:none; border:none; padding-top:0px; padding-bottom:0px' onClick='location.reload()'>";
@@ -511,9 +581,9 @@
               detailHtml_mobile += "<div class='popContent'>" + aptYear + "</div>";
               if (apt_type == "분양권" || apt_type == "분양(예정)")
               {
-                detailHtml_mobile += "<div class='popContent' style='font-size: 0.8em'>" + aptData["법정동주소"] + "</div>";
+                detailHtml_mobile += "<div class='popContent' style='font-size: 0.8em'>" + road_Address + "</div>";
               } else {
-                detailHtml_mobile += "<div class='popContent' style='font-size: 0.8em'>" + aptAddress + "</div>";
+                detailHtml_mobile += "<div class='popContent' style='font-size: 0.8em'>" + law_Address + "</div>";
               }
             detailHtml_mobile += "</div>"
           detailHtml_mobile += "</div>"
@@ -524,13 +594,13 @@
         detailHtml += "<div class='card-body' id='info_check_card'>"          
           detailHtml += "<div id='info_check_div'>"
             if (isNaN(transportScore) == false){
-              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>교통</div>"
-              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>인프라</div>"
-              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>교육</div>"
+              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>" + t("ui.transport_score_label", "교통") + "</div>"
+              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.infra_score_label", "인프라") + "</div>"
+              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>"
             }
             else{
-              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>인프라</div>"
-              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>교육</div>"
+              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.infra_score_label", "인프라") + "</div>"
+              detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>"
               detailHtml += "<div></div>"
             }
             detailHtml += "<div id='info_OnOff' onClick='moveInfoWindow()'><i class='fa-solid fa-chevron-down'></i></div>"
@@ -545,10 +615,12 @@
             detailHtml += "<div class='popContent'>" + aptYear + "</div>";
             if (apt_type == "분양권" || apt_type == "분양(예정)")
             {
-              detailHtml += "<div class='popContent' style='font-size: 0.8em'>" + aptData["법정동주소"] + "</div>";
+              detailHtml += "<div class='popContent' style='font-size: 0.8em'>" + law_Address + "</div>";
             } else {
-              detailHtml += "<div class='popContent' style='font-size: 0.8em'>(신) " + aptAddress + "</div>";
-              detailHtml += "<div class='popContent' style='font-size: 0.8em'>(구) " + aptData["법정동주소"] + "</div>";
+              detailHtml += `
+                        <div class='popupSubtitle' style='font-size: 0.8em'>${isEn ? "(Road)" : "(신)"} ${road_Address}</div>
+                        <div class='popupSubtitle' style='font-size: 0.8em'>${isEn ? "(Jibun)" : "(구)"} ${law_Address}</div>
+                        `
             }          
           detailHtml += "</div>"
         detailHtml += "</div>"
@@ -564,7 +636,7 @@
 
             detailHtml += "<div class='complex_like_category'>";
               detailHtml += "<div class='complex_like_living' onclick='complex_like_updown(\"living\", \"" + searchCode + "\", \"" + aptName + "\")'>";
-                detailHtml += "<div class='complex_like_name'>주거</div>";
+                detailHtml += "<div class='complex_like_name'>" + t("ui.report.living", "주거") + "</div>";
                 detailHtml += "<div class='complex_like_num' id='complex_like_living_" + searchCode + "\'>";
                   detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
                   detailHtml += "<div id='complex_like_num_living_" + searchCode + "\'>##</div>";
@@ -575,7 +647,7 @@
             if (isNaN(transportScore) == false) {
               detailHtml += "<div class='complex_like_category'>";
                 detailHtml += "<div class='complex_like_trans' onclick='complex_like_updown(\"trans\", \"" + searchCode + "\", \"" + aptName + "\")'>";
-                  detailHtml += "<div class='complex_like_name'>교통</div>";
+                  detailHtml += "<div class='complex_like_name'>" + t("ui.report.transport", "교통") + "</div>";
                   detailHtml += "<div class='complex_like_num' id='complex_like_trans_" + searchCode + "\'>";
                     detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
                     detailHtml += "<div id='complex_like_num_trans_" + searchCode + "\'>##</div>";
@@ -586,7 +658,7 @@
             
             detailHtml += "<div class='complex_like_category'>";
               detailHtml += "<div class='complex_like_infra' onclick='complex_like_updown(\"infra\", \"" + searchCode + "\", \"" + aptName + "\")'>";
-                detailHtml += "<div class='complex_like_name'>인프라</div>";
+                detailHtml += "<div class='complex_like_name'>" + t("ui.report.infra", "인프라") + "</div>";
                 detailHtml += "<div class='complex_like_num' id='complex_like_infra_" + searchCode + "\'>";
                   detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
                   detailHtml += "<div id='complex_like_num_infra_" + searchCode + "\'>##</div>";
@@ -596,7 +668,7 @@
             
             detailHtml += "<div class='complex_like_category'>";
               detailHtml += "<div class='complex_like_edu' onclick='complex_like_updown(\"edu\", \"" + searchCode + "\", \"" + aptName + "\")'>";
-                detailHtml += "<div class='complex_like_name'>교육</div>";
+                detailHtml += "<div class='complex_like_name'>" + t("ui.report.education", "교육") + "</div>";
                 detailHtml += "<div class='complex_like_num' id='complex_like_edu_" + searchCode + "\'>";
                   detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
                   detailHtml += "<div id='complex_like_num_edu_" + searchCode + "\'>##</div>";
@@ -629,12 +701,12 @@
         if(isMobile){
           detailHtml += "<div class='popTitle_mobile'>"
           detailHtml += "<div><i class='fas fa-bus'></i></div>"
-          detailHtml += "<div>교통</div>";
+          detailHtml += "<div>" + t("ui.report.transport", "교통") + "</div>";
           detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='transportChart'></canvas></div>";          
           detailHtml += "</div>"
         }
         else{
-          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>교통</div>";
+          detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>" + t("ui.report.transport", "교통") + "</div>";
         }        
         detailHtml += "</div>";
         detailHtml += "<div class='card-body'>";
@@ -648,28 +720,28 @@
             <div>
               <input class='form-check-input check-facility check_trans_child' type='checkbox' id='check_nearestStation' checked>
             </div>
-            <div class='popContent'>가장 가까운 역</div>
+            <div class='popContent'>${t("ui.report.nearest_station_label", "가장 가까운 역")}</div>
             <div class='popResult'>${nearestStation}</div>
           </div>
         `;
-        var subway_line = aptData["역노선"];
+        var subway_line = isEn && aptData["Line_EN"] ? aptData["Line_EN"] : aptData["역노선"];
         subway_line = subway_line.replace("[", "").replace("]", "").replace(/\'/g, "");
         detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + subway_line + "</div></div>";
 
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "30분 이내 도착 가능 주요역" + "</div>" + "<div class='popResult'>" + stationPoint_30m + "개</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.station_30m_label", "30분 이내 도착 가능 주요역") + "</div>" + "<div class='popResult'>" + stationPoint_30m + tCountSuffix + "</div></div>";
         if (stationPoint_30m != 0) {
-          var stations_30m = aptData["30분거점역이름"];
+          var stations_30m = isEn && aptData["Key_stations_30m"] ? aptData["Key_stations_30m"] : aptData["30분거점역이름"];
           stations_30m = stations_30m.replace("[", "").replace("]", "").replace(/\'/g, "");
           detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_30m + "</div></div>";
         }
 
-        detailHtml += "<div class='popSubTable' id='stationTable'><div class='popContent'>" + "1시간 이내 도착 가능 주요역" + "</div>" + "<div class='popResult'>" + stationPoint_1h + "개</div></div>";
+        detailHtml += "<div class='popSubTable' id='stationTable'><div class='popContent'>" + t("ui.report.station_1h_label", "1시간 이내 도착 가능 주요역") + "</div>" + "<div class='popResult'>" + stationPoint_1h + tCountSuffix + "</div></div>";
         if (stationPoint_1h != 0) {
-          var stations_1h = aptData["1시간거점역이름"];
+          var stations_1h = isEn && aptData["Key_stations_1h"] ? aptData["Key_stations_1h"] : aptData["1시간거점역이름"];
           stations_1h = stations_1h.replace("[", "").replace("]", "").replace(/\'/g, "");
           detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_1h + "</div></div><hr style='margin-top: 2px'>";
         }
-        detailHtml += "<div class='comment2'>가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.</div>";
+        detailHtml += "<div class='comment2'>" + t("ui.report.transport_guide_tmap", "가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.") + "</div>";
         detailHtml += "</div></div></div></div>";        
       }
 
@@ -679,12 +751,12 @@
       if(isMobile){
         detailHtml += "<div class='popTitle_mobile'>"
         detailHtml += "<div><i class='fas fa-hospital-user'></i></div>"
-        detailHtml += "<div>인프라</div>";
+        detailHtml += "<div>" + t("ui.report.infra", "인프라") + "</div>";
         detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='infraChart'></canvas></div>";
         detailHtml += "</div>"
       }
       else{
-        detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>인프라</div>";
+        detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.report.infra", "인프라") + "</div>";
       }      
       detailHtml += "</div>";
       detailHtml += "<div class='card-body'>";
@@ -700,7 +772,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_departmentStore' checked>
             </div>
-            <div class='popContent'>3km 이내 백화점</div>
+            <div class='popContent'>${t("ui.report.dept_store_3km_label", "3km 이내 백화점")}</div>
             <div class='popResult'>${departmentStore_3km}</div>
           </div>
         `;
@@ -711,7 +783,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_mall' checked>
             </div>
-            <div class='popContent'>5km 이내 아울렛/몰</div>
+            <div class='popContent'>${t("ui.report.outlet_5km_label", "5km 이내 아울렛/몰")}</div>
             <div class='popResult'>${OutletMall_5km}</div>
           </div>
         `;
@@ -722,7 +794,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_mart' checked>
             </div>
-            <div class='popContent'>1km 이내 대형마트</div>
+            <div class='popContent'>${t("ui.report.mart_1km_label", "1km 이내 대형마트")}</div>
             <div class='popResult'>${bigMart_1km}</div>
           </div>
         `;
@@ -733,7 +805,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_market' checked>
             </div>
-            <div class='popContent'>300m 이내 상권</div>
+            <div class='popContent'>${t("ui.report.market_300m_label", "300m 이내 상권")}</div>
             <div class='popResult'>${market_infra}</div>
           </div>
         `;
@@ -743,7 +815,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_market' checked>
             </div>
-            <div class='popContent'>300m 이내 상권</div>
+            <div class='popContent'>${t("ui.report.market_300m_label", "300m 이내 상권")}</div>
             <div class='popResult'>${market_infra}</div>
           </div>
         `;
@@ -755,7 +827,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_bank'>
             </div>
-            <div class='popContent'>500m 이내 은행</div>
+            <div class='popContent'>${t("ui.report.bank_500m_label", "500m 이내 은행")}</div>
             <div class='popResult'>${bank_500m}</div>
           </div>
         `;
@@ -766,7 +838,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_hospital'>
             </div>
-            <div class='popContent'>500m 이내 병원</div>
+            <div class='popContent'>${t("ui.report.hospital_500m_label", "500m 이내 병원")}</div>
             <div class='popResult'>${hospital_500m}</div>
           </div>
         `;
@@ -777,7 +849,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_big_hospital' checked>
             </div>
-            <div class='popContent'>5km 이내 대형병원</div>
+            <div class='popContent'>${t("ui.report.big_hospital_5km_label", "5km 이내 대형병원")}</div>
             <div class='popResult'>${bigHospital_5km}</div>
           </div>
         `;
@@ -788,7 +860,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_park'>
             </div>
-            <div class='popContent'>500m 이내 공원</div>
+            <div class='popContent'>${t("ui.report.park_500m_label", "500m 이내 공원")}</div>
             <div class='popResult'>${park_500m}</div>
           </div>
         `;
@@ -799,7 +871,7 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_big_park' checked>
             </div>
-            <div class='popContent'>1km 이내 대형공원</div>
+            <div class='popContent'>${t("ui.report.big_park_1km_label", "1km 이내 대형공원")}</div>
             <div class='popResult'>${big_park_1km}</div>
           </div>
         `;
@@ -810,11 +882,11 @@
             <div>
               <input class='form-check-input check-facility check_infra_child' type='checkbox' id='check_harmful'>
             </div>
-            <div class='popContent'>3km 이내 혐오시설</div>
+            <div class='popContent'>${t("ui.report.harmful_3km_label", "3km 이내 혐오시설")}</div>
             <div class='popResult'>${harmful_3km}</div>
           </div>
         `;        
-      detailHtml += "<div class='comment2'>인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정되며, 상권은 호갱노노 정보를 사용합니다.</div>";
+      detailHtml += "<div class='comment2'>" + t("ui.report.infra_guide_with_market", "인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정되며, 상권은 호갱노노 정보를 사용합니다.") + "</div>";
       detailHtml += "</div></div></div></div>";      
 
       //교육
@@ -824,12 +896,12 @@
       if(isMobile){
         detailHtml += "<div class='popTitle_mobile'>"
         detailHtml += "<div><i class='fas fa-graduation-cap'></i></div>"
-        detailHtml += "<div>교육</div>";
+        detailHtml += "<div>" + t("ui.report.education", "교육") + "</div>";
         detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='eduChart'></canvas></div>";
         detailHtml += "</div>"
       }
       else{
-        detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>교육</div>";
+        detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.report.education", "교육") + "</div>";
       }      
       detailHtml += "</div>";
       detailHtml += "<div class='card-body'>";
@@ -851,30 +923,30 @@
             <div>
               <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_pSchool' checked>
             </div>
-            <div class='popContent'>초등학교 거리</div>
+            <div class='popContent'>${t("ui.report.pSchool_distance_label", "초등학교 거리")}</div>
             <div class='popResult'>${minDistance.toLocaleString() + "~" + maxDistance.toLocaleString()}m</div>
           </div>
         `;  
 
       if (pSchool_edu > 95 && pSchool_edu <= 100) {
-        pSchool_edu_result = "많은 전입";
+        pSchool_edu_result = t("ui.report.transfer_in_heavy", "많은 전입");
       } else if (pSchool_edu >= 92 && pSchool_edu <= 95) {
-        pSchool_edu_result = "적은 전입";
+        pSchool_edu_result = t("ui.report.transfer_in_light", "적은 전입");
       } else if (pSchool_edu >= 88 && pSchool_edu < 92) {
-        pSchool_edu_result = "전입/전출 적음";
+        pSchool_edu_result = t("ui.report.transfer_neutral", "전입/전출 적음");
       } else if (pSchool_edu >= 85 && pSchool_edu < 88) {
-        pSchool_edu_result = "적은 전출";
+        pSchool_edu_result = t("ui.report.transfer_out_light", "적은 전출");
       } else {
-        pSchool_edu_result = "많은 전출";
+        pSchool_edu_result = t("ui.report.transfer_out_heavy", "많은 전출");
       }
-      detailHtml += "<div class='popSubTableRadar'><div></div><div class='popContent'>" + "초등학교 학생증감" + "</div>" + "<div class='popResult'>" + pSchool_edu_result + "</div></div>";
+      detailHtml += "<div class='popSubTableRadar'><div></div><div class='popContent'>" + t("ui.report.pSchool_change_label", "초등학교 학생증감") + "</div>" + "<div class='popResult'>" + pSchool_edu_result + "</div></div>";
       
       detailHtml += `
           <div class='popSubTableRadar'>
             <div>
               <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_mSchool' checked>
             </div>
-            <div class='popContent'>중학교 보통 학력 이상</div>
+            <div class='popContent'>${t("ui.report.mSchool_achievement_label", "중학교 보통 학력 이상")}</div>
             <div class='popResult'>${mSchool_edu}</div>
           </div>
         `;
@@ -884,23 +956,23 @@
             <div>
               <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_academy' checked>
             </div>
-            <div class='popContent'>300m 이내 학원가</div>
+            <div class='popContent'>${t("ui.academies_300m", "300m 이내 학원가")}</div>
             <div class='popResult'>${academy_edu}</div>
           </div>
         `;
-      detailHtml += "<div class='popSubTableRadar'><div></div><div class='popContent'>" + "1km 이내 학원가" + "</div>" + "<div class='popResult'>" + academy_edu_long + "</div></div>";
+      detailHtml += "<div class='popSubTableRadar'><div></div><div class='popContent'>" + t("ui.academies_1km", "1km 이내 학원가") + "</div>" + "<div class='popResult'>" + academy_edu_long + "</div></div>";
 
       detailHtml += `
           <div class='popSubTableRadar'>
             <div>
               <input class='form-check-input check-facility check_edu_child' type='checkbox' id='check_drink'>
             </div>
-            <div class='popContent'>300m 이내 유흥시설/모텔</div>
-            <div class='popResult'>${drink_pub + daran_pub + motel}개</div>
+            <div class='popContent'>${t("ui.harmful_facility_300m", "300m 이내 유흥시설/모텔")}</div>
+            <div class='popResult'>${(drink_pub + daran_pub + motel) + tCountSuffix}</div>
           </div>
         `;
 
-      detailHtml += "<div class='comment2'>교육 정보는 교육통계서비스 정보를 기반으로 산정되며,<br>학원가는 호갱노노의 정보를 사용합니다.<br>초등학교까지의 거리는 직선거리로 계산됩니다.<br>유흥시설과 모텔정보는 교육 감점요소로 적용됩니다.</div>";      
+      detailHtml += "<div class='comment2'>" + t("ui.report.edu_guide_with_academy_and_harmful", "교육 정보는 교육통계서비스 정보를 기반으로 산정되며,<br>학원가는 호갱노노의 정보를 사용합니다.<br>초등학교까지의 거리는 직선거리로 계산됩니다.<br>유흥시설과 모텔정보는 교육 감점요소로 적용됩니다.") + "</div>";      
       detailHtml += "</div></div></div></div>";
 
       //주거
@@ -909,12 +981,12 @@
       if(isMobile){
         detailHtml += "<div class='popTitle_mobile'>"
         detailHtml += "<div><i class='fas fa-home'></i></div>"
-        detailHtml += "<div>주거</div>";
+        detailHtml += "<div>" + t("ui.report.living", "주거") + "</div>";
         detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='livingChart'></canvas></div>";
         detailHtml += "</div>"
       }
       else{
-        detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거</div>";
+        detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp" + t("ui.report.living", "주거") + "</div>";
       }      
       detailHtml += "</div>";
       detailHtml += "<div class='card-body'>";
@@ -924,37 +996,45 @@
         detailHtml += "<div class='graph' style='height: 80px'> <canvas id='livingChart'></canvas></div>";
       }      
       if(apt_type == "분양(예정)"){
-        detailHtml += "<div class='comment'>\'미정\' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.</div><hr>";          
+        detailHtml += "<div class='comment'>" + t("ui.report.pending_comment", "'미정' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.") + "</div><hr>";          
       }
       if(apt_type == "재건축"){
-        detailHtml += "<div class='comment'>재건축의 경우, 향후 신축이 될 가능성을 고려하여<br>용적률과 건폐율로 주거 점수를 계산합니다.</div><hr>";      }        
+        detailHtml += "<div class='comment'>" + t("ui.report.rebuild_comment", "재건축의 경우, 향후 신축이 될 가능성을 고려하여<br>용적률과 건폐율로 주거 점수를 계산합니다.") + "</div><hr>";      }        
      
       detailHtml += "<div class='popTable'>";
       if (aptData["한강"] > 0) {
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "한강 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + (isEn ? "Han River Premium" : "한강 프리미엄") + "</div>" + "<div class='popResult'>" + t("ui.report.premium_applied", "적용") + "</div></div>";
       }
       if (aptData["해운대"] > 0) {
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "해운대 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + (isEn ? "Haeundae Premium" : "해운대 프리미엄") + "</div>" + "<div class='popResult'>" + t("ui.report.premium_applied", "적용") + "</div></div>";
       }
 
       if (house_num != null) {
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + "세대</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.house_num_label", "세대수") + "</div>" + "<div class='popResult'>" + house_num.toLocaleString() + t("ui.report.house_num_unit", "세대") + "</div></div>";
       } else {
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>미정</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.house_num_label", "세대수") + "</div>" + "<div class='popResult'>" + t("ui.report.undetermined", "미정") + "</div></div>";
       }
       if (apt_type >= "재건축") {
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "용적률" + "</div>" + "<div class='popResult'>" + floor_rate + "</div></div>";
-        detailHtml += "<div class='popSubTable'><div class='popContent'>" + "건폐율" + "</div>" + "<div class='popResult'>" + cover_rate + "</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.floor_rate_label", "용적률") + "</div>" + "<div class='popResult'>" + floor_rate + "</div></div>";
+        detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.cover_rate_label", "건폐율") + "</div>" + "<div class='popResult'>" + cover_rate + "</div></div>";
       }    
-      detailHtml += "<div class='popSubTable' id='popSubStation'><div class='popContent'>" + "주차" + "</div>" + "<div class='popResult'>" + parking + "</div></div>";
-      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "난방방식" + "</div>" + "<div class='popResult'>" + heating + "</div></div>";
-      detailHtml += "<div class='popSubTable'><div class='popContent'>" + "현관구조" + "</div>" + "<div class='popResult'>" + entrance + "</div></div>";      
+      detailHtml += "<div class='popSubTable' id='popSubStation'><div class='popContent'>" + t("ui.report.parking_label", "주차") + "</div>" + "<div class='popResult'>" + parking + "</div></div>";
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.heating_label", "난방방식") + "</div>" + "<div class='popResult'>" + heating + "</div></div>";
+      detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.entrance_label", "현관구조") + "</div>" + "<div class='popResult'>" + entrance + "</div></div>";      
 
+      var maintainance_array = [];
 
       if (apt_type == "분양(예정)") { }
       else {
         var area_array = area_info.split(",");
-        var maintainance_array = maintainance.split(",");
+        if(maintainance == null || maintainance == undefined){
+          for(var k=0; k<area_array.length; k++){
+            maintainance_array.push("");
+          }
+        } else {
+          maintainance_array = maintainance.split(",");
+        }
+
         var rooms_array = rooms.split(",");
         var baths_array = baths.split(",");
         detailHtml +=
@@ -964,30 +1044,37 @@
         detailHtml +=
           "<thead class='table-light' style='position:sticky ;top: 0'>";
         detailHtml += "<tr>";
-        detailHtml += "<th scope='col'>" + "평형" + "</th>";
-        detailHtml += "<th scope='col'>" + "방수/욕실수" + "</th>";
-        detailHtml += "<th scope='col'>" + "평균 관리비" + "</th>";
+        detailHtml += "<th scope='col'>" + t("ui.report.area_label", "평형") + "</th>";
+        detailHtml += "<th scope='col'>" + t("ui.report.rooms_baths_label", "방수/욕실수") + "</th>";
+        detailHtml += "<th scope='col'>" + t("ui.report.maintenance_label", "평균 관리비") + "</th>";
         detailHtml += "</tr>";
         detailHtml += "</thead>";
 
         detailHtml += "<tbody>";
         for (var k = 0; k < area_array.length; k++) {
           detailHtml += "<tr>";
-          detailHtml += "<td>" + area_array[k] + "</td>";
+          var areaVal = area_array[k];
+          if (isEn && areaVal) {
+            areaVal = areaVal.replace(/평/g, "py");
+          }
+          detailHtml += "<td>" + areaVal + "</td>";
           detailHtml += "<td>" + parseInt(rooms_array[k]) + " / " + parseInt(baths_array[k]) + "</td>";
-          if (isNaN(maintainance_array[k]) == true) {
+
+          console.log("maintainance_array[k]: " + maintainance_array);
+
+          if (isNaN(maintainance_array[k]) == true || maintainance_array[k] == "" || maintainance_array[k] == null || maintainance_array[k] == undefined) {
             detailHtml += "<td>" + "---" + "</td>";
           } else {
-            detailHtml += "<td>" + Number(maintainance_array[k]).toLocaleString() + "원" + "</td>";
+            detailHtml += "<td>" + Number(maintainance_array[k]).toLocaleString() + t("ui.report.won_unit", "원") + "</td>";
           }
           detailHtml += "</tr>";
         }
-        detailHtml += "</tbody>";
+        detailHtml += "<tbody>";
         detailHtml += "</table>";
         detailHtml += "</div>";
       }
-      detailHtml += "<div class='comment2'>주거총점 계산을 위한 정보는 네이버 부동산으로 취득하며, 세대수/평형/난방방식 등의 항목을 상대점수로 산정합니다.</div>";      
-      detailHtml += "</div></div></div></div>";       
+      detailHtml += "<div class='comment2'>" + t("ui.report.living_score_guide", "주거총점 계산을 위한 정보는 네이버 부동산으로 취득하며, 세대수/평형/난방방식 등의 항목을 상대점수로 산정합니다.") + "</div>";      
+      detailHtml += "</div></div></div></div>";
 
       //실거래가
       var rent_info_array = rent_info.split(",");
@@ -1000,7 +1087,7 @@
         detailHtml += "<div class='card mobile_card'>";
         detailHtml += "<div class='card-header'>";
         detailHtml +=
-          "<div class='popTitle'><i class='fa-solid fa-coins'></i>&nbsp&nbsp실거래가 <span style='font-size: 0.7em; color:#fe4040'> (최근 1개월내 실거래는 빨간색으로 표시)</span> </div>";
+          "<div class='popTitle'><i class='fa-solid fa-coins'></i>&nbsp&nbsp" + t("ui.report.actual_price_label", "실거래가") + "<span style='font-size: 0.7em; color:#fe4040'>" + t("ui.report.recent_sales_alert", " (최근 1개월내 실거래는 빨간색으로 표시)") + "</span> </div>";
         detailHtml += "</div>";
         detailHtml +=
           "<div class='card-body' style='padding-left: 5px ; padding-right: 5px; padding-top: 5px;'>";
@@ -1008,23 +1095,29 @@
         detailHtml += "<div class='popTable'>";
         detailHtml +=
           "<div id='popSubStation' style='grid-template-columns: 0.3fr 1fr; margin-left: 5px ; margin-right: 5px; margin-top: 10px;'>";
-        detailHtml += "<div class='popContent'>최근 매매</div>";
+        detailHtml += "<div class='popContent'>" + t("ui.report.recent_sales_label", "최근 매매") + "</div>";
 
         var start_date = new Date();
         start_date.setMonth(today.getMonth() - 1);
 
         if (isNaN(last_sales_price)) {
-          detailHtml += "<div class='popResult'>거래 정보 없음</div></div>";
+          detailHtml += "<div class='popResult'>" + t("ui.no_sales_info", "거래 정보 없음") + "</div></div>";
         } else {
           var compare_year = Number(last_sales_date.substr(0, 4));
           var compare_month = Number(last_sales_date.substr(5, 2) - 1);
           var compare_day = Number(last_sales_date.substr(8, 2));
           var compare_date = new Date(compare_year, compare_month, compare_day);
 
-          if (compare_date > today) {
-            detailHtml += "<div class='popResult' style='color: #fe4040'>" + last_sales_area + ", " + Math.round(last_sales_price / 100) / 100 + "억, " + last_sales_date.substr(2) + "</div></div>";
+          var areaText = last_sales_area;
+          if (isEn && areaText) {
+            areaText = areaText.replace("평", "py");
+          }
+          var formattedLastSalesPrice = isEn ? ((Math.round(Number(last_sales_price) / 100)).toLocaleString() + "M KRW") : ((Math.round(Number(last_sales_price) / 100) / 100) + "억");
+
+          if (compare_date > start_date) {
+            detailHtml += "<div class='popResult' style='color: #fe4040'>" + areaText + ", " + formattedLastSalesPrice + ", " + last_sales_date.substr(2) + "</div></div>";
           } else {
-            detailHtml += "<div class='popResult'>" + last_sales_area + ", " + Math.round(last_sales_price / 100) / 100 + "억, " + last_sales_date.substr(2) + "</div></div>";
+            detailHtml += "<div class='popResult'>" + areaText + ", " + formattedLastSalesPrice + ", " + last_sales_date.substr(2) + "</div></div>";
           }
         }
         detailHtml += "<hr>";
@@ -1032,9 +1125,9 @@
         detailHtml += "<thead class='table-light'>";
         detailHtml += "<tr>";
 
-        detailHtml += "<th scope='col' style='line-height: 2.9em;'>" + "평형" + "</th>";
-        detailHtml += "<th scope='col'>" + "매매 실거래가<br>전세 실거래가" + "</th>";
-        detailHtml += "<th scope='col'>" + "평단가<br>전세가율" + "</th>";
+        detailHtml += "<th scope='col' style='line-height: 2.9em;'>" + t("ui.report.area_label", "평형") + "</th>";
+        detailHtml += "<th scope='col'>" + t("ui.report.sales_price_label", "매매 실거래가") + "<br>" + t("ui.report.rent_price_label", "전세 실거래가") + "</th>";
+        detailHtml += "<th scope='col'>" + t("ui.report.price_per_py_label", "평단가") + "<br>" + t("ui.report.rent_ratio_label", "전세가율") + "</th>";
 
         detailHtml += "</tr>";
         detailHtml += "</thead>";
@@ -1042,11 +1135,17 @@
         detailHtml += "<tbody>";
         for (var k = 0; k < area_array.length; k++) {
           detailHtml += "<tr>";
+          
+          var rowArea = area_array[k];
+          if (isEn && rowArea) {
+            rowArea = rowArea.replace("평", "py");
+          }
+
           if (sales_info_array[k] == "거래 정보 없음") {
-              detailHtml += "<td>" + area_array[k] + "</td>";
-              detailHtml += "<td>" + "거래 정보 없음" + "<br>";
+              detailHtml += "<td>" + rowArea + "</td>";
+              detailHtml += "<td>" + t("ui.report.no_sales_info", "거래 정보 없음") + "<br>";
               if (rent_ratio_array[k] == "정보 없음") {
-                detailHtml += "거래 정보 없음</td>";
+                detailHtml += t("ui.report.no_sales_info", "거래 정보 없음") + "</td>";
               }
           } else {
             var sales_info_split = sales_info_array[k].split("억");
@@ -1063,29 +1162,43 @@
               var compare_rent_date = new Date( compare_rent_year, compare_rent_month, compare_rent_day );
             }
 
-            if (compare_date > start_date) {
-              detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + area_array[k] + "</span></td>";
-              detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + (Math.round(sales_info_split[0] * 100) / 100).toFixed(2)+ "억"
-                + "<span style='font-size: 0.85em'>" + sales_info_split[1] + "</span></span><br>";
-            } else {
-              detailHtml += "<td>" + area_array[k] + "</td>";
-              detailHtml += "<td>" + (Math.round(sales_info_split[0] * 100) / 100).toFixed(2) + "억" +
-                "<span style='font-size: 0.85em'>" + sales_info_split[1] + "</span><br>";
+            var salesDetails = sales_info_split[1] || "";
+            if (isEn && salesDetails) {
+              salesDetails = salesDetails.replace(/층/g, "F");
             }
+            var salesPriceVal = Number(sales_info_split[0]);
+            var formattedSalesPrice = isEn ? ((salesPriceVal * 100).toLocaleString() + "M KRW") : ((Math.round(salesPriceVal * 100) / 100).toFixed(2) + "억");
+
+            if (compare_date > start_date) {
+              detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + rowArea + "</span></td>";
+              detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + formattedSalesPrice
+                + "<span style='font-size: 0.85em'>" + salesDetails + "</span></span><br>";
+            } else {
+              detailHtml += "<td>" + rowArea + "</td>";
+              detailHtml += "<td>" + formattedSalesPrice +
+                "<span style='font-size: 0.85em'>" + salesDetails + "</span><br>";
+            }
+
+            var rentDetails = rent_info_split[1] || "";
+            if (isEn && rentDetails) {
+              rentDetails = rentDetails.replace(/층/g, "F");
+            }
+            var rentPriceVal = Number(rent_info_split[0]);
+            var formattedRentPrice = isEn ? ((rentPriceVal * 100).toLocaleString() + "M KRW") : ((Math.round(rentPriceVal * 100) / 100).toFixed(2) + "억");
 
             if (compare_rent_date > start_date) {
               if (rent_info_split[0] == "거래 정보 없음") {
-                detailHtml += "거래 정보 없음</td>";
+                detailHtml += t("ui.report.no_sales_info", "거래 정보 없음") + "</td>";
               } else {
-                detailHtml += "<span style='color:#fe4040; font-weight:600'>" + (Math.round(rent_info_split[0] * 100) / 100).toFixed(2) + "억" +
-                  "<span style='font-size: 0.85em'>" + rent_info_split[1] + "</span></span></td>";
+                detailHtml += "<span style='color:#fe4040; font-weight:600'>" + formattedRentPrice +
+                  "<span style='font-size: 0.85em'>" + rentDetails + "</span></span></td>";
               }
             } else {
               if (rent_info_split[0] == "거래 정보 없음") {
-                detailHtml += "거래 정보 없음</td>";
+                detailHtml += t("ui.report.no_sales_info", "거래 정보 없음") + "</td>";
               } else {
-                detailHtml += "" + (Math.round(rent_info_split[0] * 100) / 100).toFixed(2) + "억" +
-                  "<span style='font-size: 0.85em'>" + rent_info_split[1] + "</span></td>";
+                detailHtml += "" + formattedRentPrice +
+                  "<span style='font-size: 0.85em'>" + rentDetails + "</span></td>";
               }
             }            
           }
@@ -1093,13 +1206,13 @@
           if (price_per_array[k] == "nan" || price_per_array[k] == 0) {
             detailHtml += "<td>" + "---" + "<br>";
           } else {
-            //price_per_array[k]를 정수로 변환하여 천단위 콤마 추가
-            intPricePer = parseInt(price_per_array[k]);
+            var intPricePer = parseInt(price_per_array[k]);
+            var formattedPricePer = isEn ? ((intPricePer * 10).toLocaleString() + "K KRW") : (intPricePer.toLocaleString() + "만원");
             
             if (compare_date > start_date) {              
-              detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + intPricePer.toLocaleString() + "만원" + "</span><br>";
+              detailHtml += "<td><span style='color:#fe4040; font-weight:600'>" + formattedPricePer + "</span><br>";
             } else {
-              detailHtml += "<td>" + intPricePer.toLocaleString() + "만원<br>";
+              detailHtml += "<td>" + formattedPricePer + "<br>";
             }
           }
 
@@ -1117,7 +1230,7 @@
         }
         detailHtml += "</tbody>";
         detailHtml += "</table>";
-        detailHtml += "<div class='comment2'>&nbsp&nbsp실거래가 정보는 네이버 부동산으로 취득합니다.</div>";
+        detailHtml += "<div class='comment2'>&nbsp&nbsp" + t("ui.sales_info_guide", "실거래가 정보는 네이버 부동산으로 취득합니다.") + "</div>";
         detailHtml += "</div></div></div></div>";
       }
 
@@ -1125,7 +1238,7 @@
         //매매 실거래가
         detailHtml += "<div class='card mobile_card'>";
         detailHtml += "<div class='card-header'>";
-        detailHtml += "<div class='popPriceTitle'><i class='fa-solid fa-chart-line'></i>&nbsp&nbsp매매가변동<span id='themeLogo'>BETA</span></div>";
+        detailHtml += "<div class='popPriceTitle'><i class='fa-solid fa-chart-line'></i>&nbsp&nbsp" + t("ui.price_change_label", "매매가변동") + "<span id='themeLogo'>BETA</span></div>";
         detailHtml += "</div>";
 
         detailHtml += "<div class='card-body' style='padding-top: 5px; padding-left: 5px; padding-right: 5px;'>";
@@ -1136,7 +1249,7 @@
         else{
           detailHtml += "<div style='text-align:left; padding-left:10px'><input type='checkbox' id='showGraph' onChange='graphShowHide(this)' style='width: 0.8em; height: 0.8em' checked>";
         }
-        detailHtml += "<label for='showGraph' style='font-size: 0.85em; padding-left: 3px'>그래프보기</label></input></div>";
+        detailHtml += "<label for='showGraph' style='font-size: 0.85em; padding-left: 3px'>" + t("ui.show_graph_label", "그래프보기") + "</label></input></div>";
         detailHtml += "<div style='text-align: right'><select id='pStart' onChange='price_sDateChange(this.value)'></select> - <select id='pEnd' onChange='price_eDateChange(this.value)'></select></div>";
         detailHtml += "</div>";
         detailHtml += "<div id='popEducation'>";
@@ -1178,7 +1291,7 @@
             detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 4px'><span id=" + generated_priceID + "></span>" + "</div>";
             detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 8px'><span id=" + generated_ratioID + "></span>" + "</div>";
           } else {
-            detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 4px'>거래 정보 없음" + "</div>";
+            detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 4px'>" + t("ui.no_sales_info", "거래 정보 없음") + "</div>";
             detailHtml += "<div class='priceResult' style='text-align: right; padding-right: 8px'>( --- , --- )</div>";
           }
           detailHtml += "</div>";
@@ -1202,12 +1315,12 @@
           footerHtml +=
             "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" +
             searchCode +
-            "\")'>호갱노노 보기</button></div>";
+            "\")'>" + t("ui.view_hogangnono", "호갱노노 보기") + "</button></div>";
         } else {
           footerHtml +=
             "<div><button type='button' class='goLink' onclick='openNaver(" +
             searchCode +
-            ")'>네이버 부동산 보기</button></div>";
+            ")'>" + t("ui.view_naver", "네이버 부동산 보기") + "</button></div>";
         }
 
         if (checkMobile() == "ios") {
@@ -1225,12 +1338,12 @@
           footerHtml +=
             "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" +
             searchCode +
-            "\")'>호갱노노 보기</button></div>";
+            "\")'>" + t("ui.view_hogangnono", "호갱노노 보기") + "</button></div>";
         } else {
           footerHtml +=
             "<div><button type='button' class='goLink' onclick='openNaver(\"" +
             searchCode +
-            "\")'>네이버 부동산 보기</button></div>";
+            "\")'>" + t("ui.view_naver", "네이버 부동산 보기") + "</button></div>";
         }
 
         if (checkMobile() == "ios") {
@@ -1278,10 +1391,12 @@
       price_sOption = "";
       price_eOption = "";
       for (w = 0; w < sales_history_date.length - 1; w++) {
-        price_sOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+        var dateLabel = formatOptionDate(sales_history_date[w]);
+        price_sOption += "<option value='" + w + "'>" + dateLabel + "</option>";
       }
       for (w = 1; w < sales_history_date.length; w++) {
-        price_eOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+        var dateLabel = formatOptionDate(sales_history_date[w]);
+        price_eOption += "<option value='" + w + "'>" + dateLabel + "</option>";
       }
       $("#pStart").html(price_sOption);
       $("#pStart").val(30).prop("selected", true);
@@ -1297,20 +1412,20 @@
       setTimeout(function(){
         setComplexLike(searchCode.toString(), aptName)
         if(isMobile){
-          drawRadarChart_mobile( livingScore, "주거총점", "#fe4040", "livingChart" );
+          drawRadarChart_mobile( livingScore, t("ui.living_score_label", "주거총점"), "#fe4040", "livingChart" );
           if (isNaN(transportScore) == false) {
-            drawRadarChart_mobile( transportScore, "교통총점", "#fe4040", "transportChart" );
+            drawRadarChart_mobile( transportScore, t("ui.transport_score_label", "교통총점"), "#fe4040", "transportChart" );
           }
-          drawRadarChart_mobile( infraScore, "인프라총점", "#fe4040", "infraChart" );
-          drawRadarChart_mobile( eduScore, "교육총점", "#fe4040", "eduChart" );
+          drawRadarChart_mobile( infraScore, t("ui.infra_score_label", "인프라총점"), "#fe4040", "infraChart" );
+          drawRadarChart_mobile( eduScore, t("ui.edu_score_label", "교육총점"), "#fe4040", "eduChart" );
         }
         else{
-          drawRadarChart( livingScore, "주거총점", "#fe4040", "livingChart" );
+          drawRadarChart( livingScore, t("ui.living_score_label", "주거총점"), "#fe4040", "livingChart" );
           if (isNaN(transportScore) == false) {
-            drawRadarChart( transportScore, "교통총점", "#fe4040", "transportChart" );
+            drawRadarChart( transportScore, t("ui.transport_score_label", "교통총점"), "#fe4040", "transportChart" );
           }
-          drawRadarChart( infraScore, "인프라총점", "#fe4040", "infraChart" );
-          drawRadarChart( eduScore, "교육총점", "#fe4040", "eduChart" );
+          drawRadarChart( infraScore, t("ui.infra_score_label", "인프라총점"), "#fe4040", "infraChart" );
+          drawRadarChart( eduScore, t("ui.edu_score_label", "교육총점"), "#fe4040", "eduChart" );
         }
         
         if (apt_type != "분양(예정)") {
@@ -1324,44 +1439,54 @@
     function changeMetaTag(aptName, addr, rank, short_name, url, aptValue) {
       dong_name = "";
       split_addr = addr.split(" ");
-      if (split_addr[1].slice(-1) == "구") {
-        dong_name = split_addr[2];
+      if (isEn) {
+        dong_name = split_addr[2] || split_addr[1] || split_addr[0] || "";
+        dong_name = dong_name.replace(/,/g, "");
       } else {
-        if (split_addr[2].slice(-1) == "구") {
-          dong_name = split_addr[3];
-        } else {
+        if (split_addr[1].slice(-1) == "구") {
           dong_name = split_addr[2];
+        } else {
+          if (split_addr[2].slice(-1) == "구") {
+            dong_name = split_addr[3];
+          } else {
+            dong_name = split_addr[2];
+          }
         }
       }
 
-      main_title =
-        "'" +
-        dong_name +
-        " " +
-        aptName +
-        "'" +
-        " 입지분석, 시세, 실거래가 | 표준화된 리얼랭커스 입지분석";
+      if (isEn) {
+        main_title = `'${dong_name} ${aptName}' Location Analysis, Price, Sales History | Standardized RealRankus Location Analysis`;
+        meta_title = `'${aptName}' Location Score is ${aptValue} | Standardized RealRankus Location Analysis`;
+        meta_description = `Check analysis data of '${aptName}' on Living, Transport, Infra, and Education environments.`;
+        var site_name = "RealRankus";
+      } else {
+        main_title =
+          "'" +
+          dong_name +
+          " " +
+          aptName +
+          "'" +
+          " 입지분석, 시세, 실거래가 | 표준화된 리얼랭커스 입지분석";
+        meta_title =
+          "'" +
+          aptName +
+          "'" +
+          "의 입지 점수는 " +
+          aptValue +
+          "점 | 표준화된 리얼랭커스 입지분석";
+        meta_description =
+          "'" +
+          aptName +
+          "'" +
+          "의 주거, 교통, 인프라, 교육 환경 분석 정보를 데이터로 확인하세요.";
+        var site_name = "리얼랭커스";
+      }
       $(document).attr("title", main_title);
 
-      meta_title =
-        "'" +
-        aptName +
-        "'" +
-        "의 입지 점수는 " +
-        aptValue +
-        "점 | 표준화된 리얼랭커스 입지분석";
       $("meta[property='og\\:title']").attr("content", main_title);
-
       $("meta[property='og\\:url']").attr("content", url);
-
-      meta_description =
-        "'" +
-        aptName +
-        "'" +
-        "의 주거, 교통, 인프라, 교육 환경 분석 정보를 데이터로 확인하세요.";
       $("meta[property='og\\:description']").attr("content", meta_description);
-
-      $("meta[property='og\\:site_name']").attr("content", "리얼랭커스");
+      $("meta[property='og\\:site_name']").attr("content", site_name);
 
       $("meta[name='twitter\\:card']").attr("content", "summary");
       $("meta[name='twitter\\:url']").attr("content", url);
@@ -1372,18 +1497,23 @@
     }
 
     function changeMetaTagToDefault() {
-      main_title = "리얼랭커스 - 데이터로 분석된 아파트 입지 순위";
+      if (isEn) {
+        main_title = "RealRankus - Data-driven Apartment Location Rankings";
+        meta_title = "Objective and Standardized Apartment Location Analysis | RealRankus";
+        meta_description = "Korea Apartment Location Rankings Analyzed by Data";
+        var site_name = "RealRankus";
+      } else {
+        main_title = "리얼랭커스 - 데이터로 분석된 아파트 입지 순위";
+        meta_title = "객관적이고 표준화된 아파트 입지분석 | 리얼랭커스";
+        meta_description = "데이터로 분석된 대한민국 아파트 입지";
+        var site_name = "리얼랭커스";
+      }
       $(document).attr("title", main_title);
 
-      meta_title = "객관적이고 표준화된 아파트 입지분석 | 리얼랭커스";
       $("meta[property='og\\:title']").attr("content", main_title);
-
       $("meta[property='og\\:url']").attr("content", "https://www.realrankus.com/");
-
-      meta_description = "데이터로 분석된 대한민국 아파트 입지";
       $("meta[property='og\\:description']").attr("content", meta_description);
-
-      $("meta[property='og\\:site_name']").attr("content", "리얼랭커스");
+      $("meta[property='og\\:site_name']").attr("content", site_name);
 
       $("meta[name='twitter\\:card']").attr("content", "summary");
       $("meta[name='twitter\\:url']").attr(
@@ -1416,7 +1546,8 @@
 
       eDateOption = "";
       for (var w = startVal; w < sales_history_date.length; w++) {
-        eDateOption += "<option value='" + w + "'>" + "'" + sales_history_date[w].substr(2, 2) + "." + sales_history_date[w].substr(4, 2) + "</option>";
+        var dateLabel = formatOptionDate(sales_history_date[w]);
+        eDateOption += "<option value='" + w + "'>" + dateLabel + "</option>";
       }
       $("#pEnd").html(eDateOption);
 
@@ -1450,46 +1581,29 @@
         sales_dHistory.push("");
 
         for (var y = 0; y < sales_history_date.length; y++) {
+          var rawVal = sales_history_price[p][y];
+          var chartVal = 0;
+          if (rawVal != 0) {
+            chartVal = isEn ? Math.round(rawVal / 100) : Number((rawVal / 10000).toFixed(1));
+          }
+          
           if (y < sVal) {
-            if (sales_history_price[p][y] == 0) {
-              sales_grayHistory1.push(0);
-            } else {
-              sales_grayHistory1.push(
-                (sales_history_price[p][y] / 10000).toFixed(1)
-              );
-            }
+            sales_grayHistory1.push(chartVal);
             sales_pHistory.push(null);
             sales_grayHistory2.push(null);
           }
           if (y >= sVal && y <= eVal) {
             sales_grayHistory1.push(null);
-            if (sales_history_price[p][y] == 0) {
-              sales_pHistory.push(0);
-            } else {
-              sales_pHistory.push(
-                (sales_history_price[p][y] / 10000).toFixed(1)
-              );
-            }
+            sales_pHistory.push(chartVal);
             sales_grayHistory2.push(null);
           }
           if (y > eVal) {
             sales_grayHistory1.push(null);
             sales_pHistory.push(null);
-            if (sales_history_price[p][y] == 0) {
-              sales_grayHistory2.push(0);
-            } else {
-              sales_grayHistory2.push(
-                (sales_history_price[p][y] / 10000).toFixed(1)
-              );
-            }
+            sales_grayHistory2.push(chartVal);
           }
-          //sales_pHistory.push( (sales_history_price[p][y]/10000).toFixed(1) )
-          sales_dHistory.push(
-            "'" +
-              sales_history_date[y].substr(2, 2) +
-              "." +
-              sales_history_date[y].substr(4, 2)
-          );
+          var dateLabel = formatOptionDate(sales_history_date[y]);
+          sales_dHistory.push(dateLabel);
         }
         sales_pHistory.push(null);
         sales_grayHistory1.push(null);
@@ -1503,35 +1617,51 @@
 
         sPrice = sales_history_price[p][sVal];
         ePrice = sales_history_price[p][eVal - 1];
-        priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
         priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
 
-        priceChangeText = "";
-        priceChangeText +=
-          (sPrice / 10000).toFixed(2) +
-          " → " +
-          (ePrice / 10000).toFixed(2) +
-          "억";
-
-        priceRatioText = "";
-        if (sPrice == 0) {
-          priceRatioText += " ( --- , --- )";
-        } else {
-          if (priceGap >= 0) {
-            priceRatioText += " (+" + priceGap + "억, ";
+        var priceChangeText, priceRatioText;
+        if (isEn) {
+          var sPriceM = Math.round(sPrice / 100).toLocaleString();
+          var ePriceM = Math.round(ePrice / 100).toLocaleString();
+          var priceGapM = Math.round((ePrice - sPrice) / 100).toLocaleString();
+          
+          priceChangeText = `${sPriceM}M → ${ePriceM}M`;
+          priceRatioText = "";
+          if (sPrice == 0) {
+            priceRatioText += ` ( --- , --- )`;
           } else {
-            priceRatioText += " (" + priceGap + "억, ";
+            if (ePrice - sPrice >= 0) {
+              priceRatioText += ` (+${priceGapM}M, `;
+            } else {
+              priceRatioText += ` (${priceGapM}M, `;
+            }
+            if (priceRatio > 0) {
+              priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+            } else if (priceRatio == 0) {
+              priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+            } else {
+              priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+            }
           }
-
-          if (priceRatio > 0) {
-            priceRatioText +=
-              "<span style='color:#fe4040'>▲" + priceRatio + "%</span>)";
-          } else if (priceRatio == 0) {
-            priceRatioText +=
-              "<span style='color:#000'>" + priceRatio + "%</span>)";
+        } else {
+          var priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+          priceChangeText = `${(sPrice / 10000).toFixed(2)} → ${(ePrice / 10000).toFixed(2)}억`;
+          priceRatioText = "";
+          if (sPrice == 0) {
+            priceRatioText += ` ( --- , --- )`;
           } else {
-            priceRatioText +=
-              "<span style='color:blue'>▼" + priceRatio * -1 + "%</span>)";
+            if (priceGap >= 0) {
+              priceRatioText += ` (+${priceGap}억, `;
+            } else {
+              priceRatioText += ` (${priceGap}억, `;
+            }
+            if (priceRatio > 0) {
+              priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+            } else if (priceRatio == 0) {
+              priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+            } else {
+              priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+            }
           }
         }
         $("#pChange" + p).html(priceChangeText);
@@ -1559,46 +1689,29 @@
         sales_dHistory.push("");
 
         for (var y = 0; y < sales_history_date.length; y++) {
+          var rawVal = sales_history_price[p][y];
+          var chartVal = 0;
+          if (rawVal != 0) {
+            chartVal = isEn ? Math.round(rawVal / 100) : Number((rawVal / 10000).toFixed(1));
+          }
+          
           if (y < sVal) {
-            if (sales_history_price[p][y] == 0) {
-              sales_grayHistory1.push(0);
-            } else {
-              sales_grayHistory1.push(
-                (sales_history_price[p][y] / 10000).toFixed(1)
-              );
-            }
+            sales_grayHistory1.push(chartVal);
             sales_pHistory.push(null);
             sales_grayHistory2.push(null);
           }
           if (y >= sVal && y <= eVal) {
             sales_grayHistory1.push(null);
-            if (sales_history_price[p][y] == 0) {
-              sales_pHistory.push(0);
-            } else {
-              sales_pHistory.push(
-                (sales_history_price[p][y] / 10000).toFixed(1)
-              );
-            }
+            sales_pHistory.push(chartVal);
             sales_grayHistory2.push(null);
           }
           if (y > eVal) {
             sales_grayHistory1.push(null);
             sales_pHistory.push(null);
-            if (sales_history_price[p][y] == 0) {
-              sales_grayHistory2.push(0);
-            } else {
-              sales_grayHistory2.push(
-                (sales_history_price[p][y] / 10000).toFixed(1)
-              );
-            }
+            sales_grayHistory2.push(chartVal);
           }
-          //sales_pHistory.push( (sales_history_price[p][y]/10000).toFixed(1) )
-          sales_dHistory.push(
-            "'" +
-              sales_history_date[y].substr(2, 2) +
-              "." +
-              sales_history_date[y].substr(4, 2)
-          );
+          var dateLabel = formatOptionDate(sales_history_date[y]);
+          sales_dHistory.push(dateLabel);
         }
         sales_pHistory.push(null);
         sales_grayHistory1.push(null);
@@ -1610,36 +1723,51 @@
 
         sPrice = sales_history_price[p][sVal];
         ePrice = sales_history_price[p][eVal - 1];
-        priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
         priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
 
-        sPrice = sales_history_price[p][sVal];
-        ePrice = sales_history_price[p][eVal - 1];
-        priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
-        priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
-
-        priceChangeText = "";
-        priceChangeText += (sPrice / 10000).toFixed(2) + " → " + (ePrice / 10000).toFixed(2) + "억";
-
-        priceRatioText = "";
-        if (sPrice == 0) {
-          priceRatioText += " ( --- , --- )";
-        } else {
-          if (priceGap >= 0) {
-            priceRatioText += " (+" + priceGap + "억, ";
+        var priceChangeText, priceRatioText;
+        if (isEn) {
+          var sPriceM = Math.round(sPrice / 100).toLocaleString();
+          var ePriceM = Math.round(ePrice / 100).toLocaleString();
+          var priceGapM = Math.round((ePrice - sPrice) / 100).toLocaleString();
+          
+          priceChangeText = `${sPriceM}M → ${ePriceM}M`;
+          priceRatioText = "";
+          if (sPrice == 0) {
+            priceRatioText += ` ( --- , --- )`;
           } else {
-            priceRatioText += " (" + priceGap + "억, ";
+            if (ePrice - sPrice >= 0) {
+              priceRatioText += ` (+${priceGapM}M, `;
+            } else {
+              priceRatioText += ` (${priceGapM}M, `;
+            }
+            if (priceRatio > 0) {
+              priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+            } else if (priceRatio == 0) {
+              priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+            } else {
+              priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+            }
           }
-
-          if (priceRatio > 0) {
-            priceRatioText +=
-              "<span style='color:#fe4040'>▲" + priceRatio + "%</span>)";
-          } else if (priceRatio == 0) {
-            priceRatioText +=
-              "<span style='color:#000'>" + priceRatio + "%</span>)";
+        } else {
+          var priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+          priceChangeText = `${(sPrice / 10000).toFixed(2)} → ${(ePrice / 10000).toFixed(2)}억`;
+          priceRatioText = "";
+          if (sPrice == 0) {
+            priceRatioText += ` ( --- , --- )`;
           } else {
-            priceRatioText +=
-              "<span style='color:blue'>▼" + priceRatio * -1 + "%</span>)";
+            if (priceGap >= 0) {
+              priceRatioText += ` (+${priceGap}억, `;
+            } else {
+              priceRatioText += ` (${priceGap}억, `;
+            }
+            if (priceRatio > 0) {
+              priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+            } else if (priceRatio == 0) {
+              priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+            } else {
+              priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+            }
           }
         }
         $("#pChange" + p).html(priceChangeText);

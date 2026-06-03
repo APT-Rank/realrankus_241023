@@ -13,7 +13,7 @@
 window.LANG = window.LANG || 'ko';
 
 // 기본 경로 접두사 (en/ 하위에서는 '../', 루트에서는 './')
-window.BASE_PATH = (window.LANG === 'ko') ? './' : '../';
+window.BASE_PATH = window.BASE_PATH || ((window.LANG === 'ko') ? './' : '../');
 
 // 번역 데이터 저장소
 window.I18N = {};

@@ -1,3 +1,5 @@
+//var isEn = (window.LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
+
 var level0_markers = []
 var level0_loc = []
 
@@ -209,9 +211,15 @@ function animateMarker(marker, visit_marker){
 
 function defineMarkerList(nearby_region){
   for (var j in searchingData.data){
-    address = searchingData.data[j]['법정동주소']      
+    address = searchingData.data[j]['법정동주소']
     for(var k in nearby_region){
-      searching_address = nearby_region[k]['법정동명']
+      if(isEn){
+        searching_address = nearby_region[k]['Law_Addr_EN']
+      }
+      else{
+        searching_address = nearby_region[k]['법정동명']
+      }
+      
       if (address.includes(searching_address)){
         show_up_complexs.push(searchingData.data[j])        
         continue
@@ -355,15 +363,17 @@ function showHide_filtered_marker(onMap_list, onMap_markers){
         
         if(filtered){
           if(last_sales_raw == "BYG"){
-            sPrice_last = "분양"
+            sPrice_last = isEn ? "Presale" : "분양"
             area_last = ""
           }
           else{
             sPrice_last_arr = ( filtered_list[j]['sprice'] ).split(",")
-            sPrice_last = sPrice_last_arr[sPrice_last_arr.length-1] + "억"
+            var rawPriceVal = Number(sPrice_last_arr[sPrice_last_arr.length-1]);
+            sPrice_last = isEn ? (Math.round(rawPriceVal * 100).toLocaleString() + "M") : (rawPriceVal + "억");
 
             area_last_arr = ( filtered_list[j]['area'] ).split(",")
-            area_last = area_last_arr[area_last_arr.length-1] + "평"
+            var rawAreaVal = area_last_arr[area_last_arr.length-1];
+            area_last = isEn ? (rawAreaVal + "py") : (rawAreaVal + "평");
           }
 
           $("#sPrice_" + onMap_markers[i]['code']).html(sPrice_last)
@@ -371,7 +381,7 @@ function showHide_filtered_marker(onMap_list, onMap_markers){
         }
         else{
           if(last_sales_raw == "BYG"){
-            last_sales_price_kor = "분양"
+            last_sales_price_kor = isEn ? "Presale" : "분양"
             last_sales_area_kor = ""
           }
           else{
@@ -381,11 +391,16 @@ function showHide_filtered_marker(onMap_list, onMap_markers){
             var last_sales_area = last_sales[2];
             
             if (isNaN(last_sales_price)) {
-              last_sales_price_kor = "정보없음"
+              last_sales_price_kor = isEn ? "No Info" : "정보없음"
               last_sales_area_kor = "--"
             } else {
-              last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-              last_sales_area_kor = last_sales_area
+              if (isEn) {
+                last_sales_price_kor = Math.round(last_sales_price / 100).toLocaleString() + "M"
+                last_sales_area_kor = last_sales_area ? last_sales_area.toString().replace("평", "py") : "--"
+              } else {
+                last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+                last_sales_area_kor = last_sales_area
+              }
             }
           }
 
@@ -559,7 +574,7 @@ function showVisitInfo_test(visits){
         if(visit_count >= min_visit){
           visit_id = 'visit_'+ snapshot.key          
           //visit_count = 99
-          $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
+          $("#" + visit_id).html(visit_count.toLocaleString() + (isEn ? " visits" : "명 방문"))          
           $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
           
           if(visit_count < 1000){
@@ -615,7 +630,7 @@ function showVisitInfo(visits, visit_check_count){
         if(visit_count >= min_visit){
           visit_id = 'visit_' + visits[visit_check_count]
           //visit_count = 99
-          $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
+          $("#" + visit_id).html(visit_count.toLocaleString() + (isEn ? " visits" : "명 방문"))          
           $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 250);
           
           if(visit_count < 1000){
@@ -706,7 +721,7 @@ function showVisitInfo_lv1_lv2(visits, visit_check_count){
         if(visit_count >= min_visit){
           visit_id = 'visit_' + visits[visit_check_count]
           //visit_count = 9999
-          $("#" + visit_id).html(visit_count.toLocaleString() + "명 방문")          
+          $("#" + visit_id).html(visit_count.toLocaleString() + (isEn ? " visits" : "명 방문"))          
           $("#" + visit_id).animate({opacity: '1', marginTop:'0px'}, 500);
 
           if(visit_count < 1000){
@@ -921,9 +936,10 @@ function createLargeMarker(markers){
       marker_code = markers[k]['검색코드']
 
       var last_sales_raw = markers[k]["last_sales"]
+      //var isEn = (window.LANG === 'en');
 
       if(last_sales_raw == "BYG"){
-        last_sales_price_kor = "분양"
+        last_sales_price_kor = isEn ? "Presale" : "분양"
         last_sales_area_kor = ""
       }
       else{
@@ -933,11 +949,16 @@ function createLargeMarker(markers){
         var last_sales_area = last_sales[2];
         
         if (isNaN(last_sales_price)) {
-          last_sales_price_kor = "정보없음"
+          last_sales_price_kor = isEn ? "No Info" : "정보없음"
           last_sales_area_kor = "--"
         } else {
-          last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-          last_sales_area_kor = last_sales_area
+          if (isEn) {
+            last_sales_price_kor = Math.round(last_sales_price / 100).toLocaleString() + "M"
+            last_sales_area_kor = last_sales_area ? last_sales_area.toString().replace("평", "py") : "--"
+          } else {
+            last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+            last_sales_area_kor = last_sales_area
+          }
         }
       }
 
@@ -1024,11 +1045,11 @@ function createLargeMarker(markers){
         },
         zIndex: 100 + Number(k),
         map: defaultMap,
-        apt_name : markers[k]['아파트명'],
+        apt_name : isEn ? (markers[k]['아파트명'] || markers[k]['APT_Name_EN']) : markers[k]['아파트명'],
         code : marker_code,
         gungu : markers[k]['gungu'],
         sido : markers[k]['sido'],
-        address : markers[k]['법정동주소']
+        address : isEn ? (markers[k]['Road_Addr_EN'] || markers[k]['Law_Addr_EN'] || markers[k]['법정동주소']) : markers[k]['법정동주소']
       });
 
       var visit_large_id = 'visit_complex_' + marker_code
@@ -1082,9 +1103,10 @@ function createSmallMarker(markers){
     marker_code = markers[k]['검색코드']
 
     var last_sales_raw = markers[k]["last_sales"]
+    //var isEn = (window.LANG === 'en');
 
     if(last_sales_raw == "BYG"){
-      last_sales_price_kor = "분양"
+      last_sales_price_kor = isEn ? "Presale" : "분양"
       last_sales_area_kor = "--"
     }
     else{
@@ -1094,11 +1116,16 @@ function createSmallMarker(markers){
       var last_sales_area = last_sales[2];
       
       if (isNaN(last_sales_price)) {
-        last_sales_price_kor = "정보없음"
+        last_sales_price_kor = isEn ? "No Info" : "정보없음"
         last_sales_area_kor = "--"
       } else {
-        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-        last_sales_area_kor = last_sales_area
+        if (isEn) {
+          last_sales_price_kor = Math.round(last_sales_price / 100).toLocaleString() + "M"
+          last_sales_area_kor = last_sales_area ? last_sales_area.toString().replace("평", "py") : "--"
+        } else {
+          last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+          last_sales_area_kor = last_sales_area
+        }
       }
     }
 
@@ -1152,11 +1179,11 @@ function createSmallMarker(markers){
       },
       zIndex: 100,
       map: defaultMap,
-      apt_name : markers[k]['아파트명'],
+      apt_name : isEn ? (markers[k]['APT_Name_EN'] || markers[k]['아파트명']) : markers[k]['아파트명'],
       code : markers[k]['검색코드'],
       gungu : markers[k]['gungu'],
       sido : markers[k]['sido'],
-      address : markers[k]['법정동주소']
+      address : isEn ? (markers[k]['Road_Addr_EN'] || markers[k]['Law_Addr_EN'] || markers[k]['법정동주소']) : markers[k]['법정동주소']
     });
     complex_small_markers.push(window["small_marker_obj_" + marker_code])
     all_markers.push(window["small_marker_obj_" + marker_code])
@@ -1188,12 +1215,26 @@ function createLevel2Marker(markers){
     find_subRegion = markers[i]['find_link'] + "_" + markers[i]['name_en']
     name_en = markers[i]['name_en']
     
+    if (isEn && name_en) {
+      var name_en_array = name_en.split("_");
+      dong_name = name_en_array[name_en_array.length - 1];
+    }
+    
     if(mapBounds.hasLatLng(markers[i])){
 
       var marker_lv2_id = 'large_marker_' + markers[i]['name_en']
-      var avg_price = ( Number(markers[i]['avg_price'])/10000 ).toFixed(2) + "억"
-      if( avg_price == "0.00억"){
-        avg_price = "--"
+      var raw_avg_price = Number(markers[i]['avg_price']);
+      var avg_price = "";
+      if (isEn) {
+        avg_price = Math.round(raw_avg_price / 100).toLocaleString() + "M";
+        if (avg_price == "0M") {
+          avg_price = "--";
+        }
+      } else {
+        avg_price = ( raw_avg_price/10000 ).toFixed(2) + "억";
+        if (avg_price == "0.00억") {
+          avg_price = "--";
+        }
       }
       var region_grade = setGrade ( Number(markers[i]['avg_value']) )
       var lv2_marker_html = `
@@ -1271,11 +1312,25 @@ function createLevel1Marker(markers){
     find_subRegion = markers[i]['find_link'] + "_" + markers[i]['name_en']
     name_en = markers[i]['name_en']
 
+    if (isEn && name_en) {
+      var name_en_array = name_en.split("_");
+      dong_name = name_en_array[name_en_array.length - 1];
+    }
+
     if(mapBounds.hasLatLng(markers[i])){
       var marker_lv1_id = 'large_marker_' + markers[i]['name_en']
-      var avg_price = ( Number(markers[i]['avg_price'])/10000 ).toFixed(2) + "억"
-      if( avg_price == "0.00억"){
-        avg_price = "--"
+      var raw_avg_price = Number(markers[i]['avg_price']);
+      var avg_price = "";
+      if (isEn) {
+        avg_price = Math.round(raw_avg_price / 100).toLocaleString() + "M";
+        if (avg_price == "0M") {
+          avg_price = "--";
+        }
+      } else {
+        avg_price = ( raw_avg_price/10000 ).toFixed(2) + "억";
+        if (avg_price == "0.00억") {
+          avg_price = "--";
+        }
       }
       var region_grade = setGrade ( Number(markers[i]['avg_value']) )
 
@@ -1345,11 +1400,24 @@ function createLevel0Marker(markers){
     full_name = markers[i]['법정동명']
     find_sido = markers[i]['name_en']    
 
+    if (isEn && find_sido) {
+      full_name = find_sido;
+    }
+
     if(mapBounds.hasLatLng(markers[i])){
       var marker_lv0_id = 'large_marker_' + markers[i]['name_en']
-      var avg_price = ( Number(markers[i]['avg_price'])/10000 ).toFixed(2) + "억"
-      if( avg_price == "0.00억"){
-        avg_price = "--"
+      var raw_avg_price = Number(markers[i]['avg_price']);
+      var avg_price = "";
+      if (isEn) {
+        avg_price = Math.round(raw_avg_price / 100).toLocaleString() + "M";
+        if (avg_price == "0M") {
+          avg_price = "--";
+        }
+      } else {
+        avg_price = ( raw_avg_price/10000 ).toFixed(2) + "억";
+        if (avg_price == "0.00억") {
+          avg_price = "--";
+        }
       }
       var region_grade = setGrade ( Number(markers[i]['avg_value']) )
 
@@ -1427,9 +1495,10 @@ function createTopMarker(markers){
       marker_code = markers[k]['검색코드']
       
       var last_sales_raw = markers[k]["last_sales"]
+      //var isEn = (window.LANG === 'en');
 
       if(last_sales_raw == "BYG"){
-        last_sales_price_kor = "분양"
+        last_sales_price_kor = isEn ? "Presale" : "분양"
         last_sales_area_kor = "--"
       }
       else{
@@ -1439,11 +1508,16 @@ function createTopMarker(markers){
         var last_sales_area = last_sales[2];
         
         if (isNaN(last_sales_price)) {
-          last_sales_price_kor = "정보없음"
+          last_sales_price_kor = isEn ? "No Info" : "정보없음"
           last_sales_area_kor = "--"
         } else {
-          last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
-          last_sales_area_kor = last_sales_area
+          if (isEn) {
+            last_sales_price_kor = Math.round(last_sales_price / 100).toLocaleString() + "M"
+            last_sales_area_kor = last_sales_area ? last_sales_area.toString().replace("평", "py") : "--"
+          } else {
+            last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
+            last_sales_area_kor = last_sales_area
+          }
         }
       }
 
@@ -1485,10 +1559,10 @@ function createTopMarker(markers){
         },
         zIndex: 100 + Number(k),
         map: defaultMap,
-        apt_name : markers[k]['아파트명'],
+        apt_name : isEn ? (markers[k]['APT_Name_EN'] || markers[k]['아파트명']) : markers[k]['아파트명'],
         code : marker_code,
         rank : rank,
-        address : markers[k]['법정동주소']
+        address : isEn ? (markers[k]['Road_Addr_EN'] || markers[k]['Law_Addr_EN'] || markers[k]['법정동주소']) : markers[k]['법정동주소']
       });
       complex_top_markers.push(window["top_marker_obj_" + marker_code])
       all_markers.push(window["top_marker_obj_" + marker_code])      
@@ -1509,7 +1583,7 @@ function mapListModeChange(){
     $("#rearrange").css({'visibility' : 'visible'})    
     
     $("#mobile_map_list_icon").html("<i class='fa-solid fa-map'></i>")
-    $("#mobile_map_list_text").html("지도보기")
+    $("#mobile_map_list_text").html(isEn ? "Show Map" : "지도보기")
 
     $("#filterOnOff").hide()
     $("#gradeSelector").hide()
@@ -1523,7 +1597,7 @@ function mapListModeChange(){
     $("#rearrange").css({'visibility' : 'hidden'})
 
     $("#mobile_map_list_icon").html("<i class='fa-solid fa-list'></i>")
-    $("#mobile_map_list_text").html("목록보기")
+    $("#mobile_map_list_text").html(isEn ? "Show List" : "목록보기")
 
     $("#filterOnOff").show()    
     if(filter_ui){

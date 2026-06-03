@@ -1420,7 +1420,7 @@ function showSimulResult(resultValue, arr, length){
 
   //타이틀
   //titleHtml += "<div class='popupTitle'>" + aptName + " " + apt_p + "(" + apt_m + ")</div>";
-  titleHtml += "<div class='popupTitle' style='color: #fe4040; font-size: 0.6em; text-align: center; border-bottom: 1px solid #fe4040; border-top: 1px solid #fe4040;margin-bottom: 3px'>랭크 시뮬레이션 결과</div>";
+  titleHtml += "<div class='popupTitle' style='color: #fe4040; font-size: 0.6em; text-align: center; border-bottom: 1px solid #fe4040; border-top: 1px solid #fe4040;margin-bottom: 3px'>" + t("ui.simul_result_title", "랭크 시뮬레이션 결과") + "</div>";
   titleHtml += "<div class='popupTitle' style='text-align: center'>" + arr["아파트명"] + "</div>";
   titleHtml += "<div class='popupSubtitle' style='font-size: 0.6em; text-align: center'>" + arr["법정동주소"] + "</div>";
 
@@ -1428,7 +1428,7 @@ function showSimulResult(resultValue, arr, length){
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";  
   //detailHtml += "<div class='popTitle'><i class='fas fa-trophy'></i>&nbsp&nbsp종합 " + resultValue[0][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div></div>"
-  detailHtml += "<div class='popTitle'><i class='fas fa-trophy'></i>&nbsp&nbsp종합 " + setGrade(resultValue[0][0]) + " 예상</div></div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-trophy'></i>&nbsp&nbsp" + t("ui.balanced_score_label", "종합") + " " + setGrade(resultValue[0][0]) + " " + t("ui.expected_grade", "예상") + "</div></div>"
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div class='graph' style='height: 120px'> <canvas id='simulBalancedChart'></canvas></div>"
   detailHtml += "</div></div>";
@@ -1437,19 +1437,19 @@ function showSimulResult(resultValue, arr, length){
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";
   //detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거 " + resultValue[1][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
-  detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp주거 " + setGrade(resultValue[1][0]) + " 예상</div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp" + t("ui.living", "주거") + " " + setGrade(resultValue[1][0]) + " " + t("ui.expected_grade", "예상") + "</div>"
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popLiving'>"  
   detailHtml += "<div class='popTable'>"
   detailHtml += "<div class='graph' style='height: 120px'> <canvas id='simulLivingChart'></canvas></div>"
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "조망 프리미엄" + "</div>" + "<div class='popResult'>" + simul_living_score[0][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "연차" + "</div>" + "<div class='popResult'>" + simul_living_score[1][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대수" + "</div>" + "<div class='popResult'>" + simul_living_score[2][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "세대당 주차수" + "</div>" + "<div class='popResult'>" + simul_living_score[3][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "난방방식" + "</div>" + "<div class='popResult'>" + simul_living_score[4][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "현관구조" + "</div>" + "<div class='popResult'>" + simul_living_score[5][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "내맘대로 주거 가점" + "</div>" + "<div class='popResult'>" + simul_living_score[6][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.view_premium_label", "조망 프리미엄") + "</div>" + "<div class='popResult'>" + simul_living_score[0][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.age_label", "연차") + "</div>" + "<div class='popResult'>" + simul_living_score[1][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.house_num_label", "세대수") + "</div>" + "<div class='popResult'>" + simul_living_score[2][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.parking_per_house", "세대당 주차수") + "</div>" + "<div class='popResult'>" + simul_living_score[3][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.heating_label", "난방방식") + "</div>" + "<div class='popResult'>" + simul_living_score[4][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.entrance_label", "현관구조") + "</div>" + "<div class='popResult'>" + simul_living_score[5][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.custom_living_bonus", "내맘대로 주거 가점") + "</div>" + "<div class='popResult'>" + simul_living_score[6][0] + "</div></div>";
   detailHtml += "</div></div></div></div>";
 
   if(resultValue[2][0] != 0){
@@ -1457,16 +1457,16 @@ function showSimulResult(resultValue, arr, length){
     detailHtml += "<div class='card'>";
     detailHtml += "<div class='card-header'>";
     //detailHtml += "<div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp교통 " + resultValue[2][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
-    detailHtml += "<div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp교통 " + setGrade(resultValue[2][0]) + " 예상</div>"
+    detailHtml += "<div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp" + t("ui.transport", "교통") + " " + setGrade(resultValue[2][0]) + " " + t("ui.expected_grade", "예상") + "</div>"
     detailHtml += "</div>";
     detailHtml += "<div class='card-body'>";
     detailHtml += "<div id='popTransport'>"    
     detailHtml += "<div class='popTable'>"
     detailHtml += "<div class='graph' style='height: 120px'> <canvas id='simulTransChart'></canvas></div>"
-    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "가장 가까운 역 거리" + "</div>" + "<div class='popResult'>" + simul_trans_score[0][0] + "</div></div>";
-    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "30분 이내 도착 가능 주요역" + "</div>" + "<div class='popResult'>" + simul_trans_score[1][0] + "개</div></div>";
-    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "1시간 이내 도착 가능 주요역" + "</div>" + "<div class='popResult'>" + simul_trans_score[2][0] + "개</div></div>";
-    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "내맘대로 교통 가점" + "</div>" + "<div class='popResult'>" + simul_trans_score[3][0] + "</div></div>";
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.nearest_station_dist", "가장 가까운 역 거리") + "</div>" + "<div class='popResult'>" + simul_trans_score[0][0] + "</div></div>";
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.major_stations_30m", "30분 이내 도착 가능 주요역") + "</div>" + "<div class='popResult'>" + simul_trans_score[1][0] + (isEn ? "" : "개") + "</div></div>";
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.major_stations_1h", "1시간 이내 도착 가능 주요역") + "</div>" + "<div class='popResult'>" + simul_trans_score[2][0] + (isEn ? "" : "개") + "</div></div>";
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.custom_trans_bonus", "내맘대로 교통 가점") + "</div>" + "<div class='popResult'>" + simul_trans_score[3][0] + "</div></div>";
     detailHtml += "</div></div></div></div>";
   }
 
@@ -1474,42 +1474,42 @@ function showSimulResult(resultValue, arr, length){
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";
   //detailHtml += "<div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp인프라 " + resultValue[3][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
-  detailHtml += "<div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp인프라 " + setGrade(resultValue[3][0]) + " 예상</div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp" + t("ui.infra", "인프라") + " " + setGrade(resultValue[3][0]) + " " + t("ui.expected_grade", "예상") + "</div>"
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popInfra'>"  
   detailHtml += "<div class='popTable'>"
   detailHtml += "<div class='graph' style='height: 120px'> <canvas id='simulInfraChart'></canvas></div>"
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "3km 이내 백화점" + "</div>" + "<div class='popResult'>" + simul_infra_score[0][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "5km 이내 아울렛/몰" + "</div>" + "<div class='popResult'>" + simul_infra_score[1][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "1km 이내 대형마트" + "</div>" + "<div class='popResult'>" + simul_infra_score[2][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "300m 이내 상점" + "</div>" + "<div class='popResult'> " + simul_infra_score[3][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "500m 이내 은행" + "</div>" + "<div class='popResult'>" + simul_infra_score[4][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "500m 이내 병원" + "</div>" + "<div class='popResult'>" + simul_infra_score[5][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "5km 이내 대형병원" + "</div>" + "<div class='popResult'>" + simul_infra_score[6][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "500m 이내 공원" + "</div>" + "<div class='popResult'>" + simul_infra_score[7][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "1km 이내 대형공원" + "</div>" + "<div class='popResult'>" + simul_infra_score[8][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "3km 이내 혐오시설" + "</div>" + "<div class='popResult'>" + simul_infra_score[9][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "내맘대로 인프라 가점" + "</div>" + "<div class='popResult'>" + simul_infra_score[10][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.dept_store_3km", "3km 이내 백화점") + "</div>" + "<div class='popResult'>" + simul_infra_score[0][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.outlet_mall_5km", "5km 이내 아울렛/몰") + "</div>" + "<div class='popResult'>" + simul_infra_score[1][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.mart_1km", "1km 이내 대형마트") + "</div>" + "<div class='popResult'>" + simul_infra_score[2][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.stores_300m", "300m 이내 상점") + "</div>" + "<div class='popResult'> " + simul_infra_score[3][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.banks_500m", "500m 이내 은행") + "</div>" + "<div class='popResult'>" + simul_infra_score[4][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.hospitals_500m", "500m 이내 병원") + "</div>" + "<div class='popResult'>" + simul_infra_score[5][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.large_hospitals_5km", "5km 이내 대형병원") + "</div>" + "<div class='popResult'>" + simul_infra_score[6][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.parks_500m", "500m 이내 공원") + "</div>" + "<div class='popResult'>" + simul_infra_score[7][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.large_parks_1km", "1km 이내 대형공원") + "</div>" + "<div class='popResult'>" + simul_infra_score[8][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.harmful_facility_3km", "3km 이내 혐오시설") + "</div>" + "<div class='popResult'>" + simul_infra_score[9][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.custom_infra_bonus", "내맘대로 인프라 가점") + "</div>" + "<div class='popResult'>" + simul_infra_score[10][0] + "</div></div>";
   detailHtml += "</div></div></div></div>"  
 
   //교육
   detailHtml += "<div class='card'>";
   detailHtml += "<div class='card-header'>";
   //detailHtml += "<div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp교육 " + resultValue[4][1] + "위 예상 <span style='font-size:0.7em'>(전체 " + length + "개 단지 중)</span></div>"
-  detailHtml += "<div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp교육 " + setGrade(resultValue[4][0]) + " 예상</div>"
+  detailHtml += "<div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp" + t("ui.edu", "교육") + " " + setGrade(resultValue[4][0]) + " " + t("ui.expected_grade", "예상") + "</div>"
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popEducation'>"  
   detailHtml += "<div class='popTable'>"
   detailHtml += "<div class='graph' style='height: 120px'> <canvas id='simulEduChart'></canvas></div>"
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "초등학교 거리" + "</div>" + "<div class='popResult'>" + simul_edu_score[0][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "초등학교 학생증감" + "</div>" + "<div class='popResult'>" + simul_edu_score[1][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "중학교 학업성취도" + "</div>" + "<div class='popResult'>" + simul_edu_score[2][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "300m 이내 학원" + "</div>" + "<div class='popResult'>" + simul_edu_score[3][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "1km 이내 학원" + "</div>" + "<div class='popResult'>" + simul_edu_score[4][0] + "</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "300m 유흥시설/모텔" + "</div>" + "<div class='popResult'>" + simul_edu_score[5][0] + "개</div></div>";
-  detailHtml += "<div class='popSubTable'><div class='popContent'>" + "내맘대로 교육 가점" + "</div>" + "<div class='popResult'>" + simul_edu_score[6][0] + "</div></div>";  
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.elem_school_dist", "초등학교 거리") + "</div>" + "<div class='popResult'>" + simul_edu_score[0][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.elem_school_student_change", "초등학교 학생증감") + "</div>" + "<div class='popResult'>" + simul_edu_score[1][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.elem_school_achievement", "중학교 학업성취도") + "</div>" + "<div class='popResult'>" + simul_edu_score[2][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.academies_300m", "300m 이내 학원") + "</div>" + "<div class='popResult'>" + simul_edu_score[3][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.academies_1km", "1km 이내 학원") + "</div>" + "<div class='popResult'>" + simul_edu_score[4][0] + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.harmful_facility_300m", "300m 유흥시설/모텔") + "</div>" + "<div class='popResult'>" + simul_edu_score[5][0] + (isEn ? "" : "개") + "</div></div>";
+  detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.custom_edu_bonus", "내맘대로 교육 가점") + "</div>" + "<div class='popResult'>" + simul_edu_score[6][0] + "</div></div>";  
   detailHtml += "</div></div></div></div>"
 
   $('#toggleModalLabe2').html(titleHtml);
@@ -1518,13 +1518,13 @@ function showSimulResult(resultValue, arr, length){
 
 //  $('.popContent').css({"line-height" : "2.4em"})  
   $('.modal-title').css({"width" : "100%"})
-  drawSimulSubChart(resultValue[0][0].toFixed(2), arr["가치 총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulBalancedChart")
-  drawSimulSubChart(resultValue[1][0].toFixed(2), arr["주거총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulLivingChart")
+  drawSimulSubChart(resultValue[0][0].toFixed(2), arr["가치 총점"].toFixed(2), t("ui.simulation_label", "시뮬레이션"), t("ui.existing_label", "기존"), "#fe4040", "#9f9f9f", "simulBalancedChart")
+  drawSimulSubChart(resultValue[1][0].toFixed(2), arr["주거총점"].toFixed(2), t("ui.simulation_label", "시뮬레이션"), t("ui.existing_label", "기존"), "#fe4040", "#9f9f9f", "simulLivingChart")
   if(resultValue[2][0] != 0){
-    drawSimulSubChart(resultValue[2][0].toFixed(2), arr["교통총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulTransChart")
+    drawSimulSubChart(resultValue[2][0].toFixed(2), arr["교통총점"].toFixed(2), t("ui.simulation_label", "시뮬레이션"), t("ui.existing_label", "기존"), "#fe4040", "#9f9f9f", "simulTransChart")
   }
-  drawSimulSubChart(resultValue[3][0].toFixed(2), arr["인프라총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulInfraChart")
-  drawSimulSubChart(resultValue[4][0].toFixed(2), arr["학군총점"].toFixed(2), "시뮬레이션", "기존", "#fe4040", "#9f9f9f", "simulEduChart")
+  drawSimulSubChart(resultValue[3][0].toFixed(2), arr["인프라총점"].toFixed(2), t("ui.simulation_label", "시뮬레이션"), t("ui.existing_label", "기존"), "#fe4040", "#9f9f9f", "simulInfraChart")
+  drawSimulSubChart(resultValue[4][0].toFixed(2), arr["학군총점"].toFixed(2), t("ui.simulation_label", "시뮬레이션"), t("ui.existing_label", "기존"), "#fe4040", "#9f9f9f", "simulEduChart")
   
   //$('#toggleModal2').modal("show");
   openModal("toggleModal2")

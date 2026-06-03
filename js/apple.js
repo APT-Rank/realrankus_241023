@@ -441,7 +441,7 @@ function appleLogout(){
 
 function setAppleLoginStatus(info_name, info_nickname, info_email){
   
-	$('#offcanvasRightLabel').html(info_email + "<br><span style='font-size:0.8em'>모든 서비스를 이용할 수 있어요</span>")
+	$('#offcanvasRightLabel').html(t('ui.menu.welcome_msg_email').replace('{email}', info_email))
 	$('#offcanvasRightLabel').css({'font-size':'1.0em'})
   $("#offcanvasRight > .offcanvas-header > #offcanvasRightLabel").attr({"data-bs-toggle":"offcanvas", "data-bs-target" : "#offcanvasProfile", "aria-controls" : "offcanvasRight"})
 	
@@ -449,14 +449,14 @@ function setAppleLoginStatus(info_name, info_nickname, info_email){
 
   var offcanvas_footer_html = `
 	<div class="offcanvas_footer_icon"><i class="fa-solid fa-list-ol"></i></div>
-	<div id="offcanvas_footer6" onClick="openOuterLink('https://www.realrankus.com/common/policy.html')">이용약관</div>          
+	<div id="offcanvas_footer6" onClick="openOuterLink('https://www.realrankus.com/common/policy.html')">` + t('ui.menu.policy') + `</div>          
 
 	<div class="offcanvas_footer_icon"><i class="fa-solid fa-user-shield"></i></div>
-	<div id="offcanvas_footer7" onClick="openOuterLink('https://www.realrankus.com/common/privacy.html')">개인정보처리방침</div>
+	<div id="offcanvas_footer7" onClick="openOuterLink('https://www.realrankus.com/common/privacy.html')">` + t('ui.menu.privacy') + `</div>
 
 	<div></div><div></div>
 	<div class='offcanvas_footer_icon'><i class='fa-solid fa-right-from-bracket'></i></div>
-	<div id='apple_logout'>Apple 로그아웃</div>
+	<div id='apple_logout'>` + t('ui.menu.apple_logout') + `</div>
 	`
   $("#offcanvas_footer").html(offcanvas_footer_html)
 	$("#apple_logout").attr("href", "#");	
@@ -465,8 +465,8 @@ function setAppleLoginStatus(info_name, info_nickname, info_email){
     localStorage.removeItem('nLOG')
     localStorage.removeItem('profile')
 	  e.preventDefault()	  	  
-	  var offcanvas_login_msg = "<div id='loginPopup'>리얼랭커스의 모든 서비스를 이용하세요</div>"
-	  offcanvas_login_msg += "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>리얼랭커스 로그인</div>"    
+	  var offcanvas_login_msg = "<div id='loginPopup'>" + t('ui.menu.login_popup') + "</div>"
+	  offcanvas_login_msg += "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>" + t('ui.menu.login_btn') + "</div>"    
 	  $('#offcanvasRightLabel').html(offcanvas_login_msg)
 	  $('#loginPopup').css({"font-size":"0.8em", "margin-bottom":"10px"})
 	  $('#aptrankLoginButton').css({"font-size" : "0.9em", "width":"auto", "border":"1px solid white"})

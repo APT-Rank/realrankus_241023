@@ -1,5 +1,23 @@
 const isEn = window.location.pathname.includes('/en/');
 const pathPrefix = isEn ? "../" : "./";
+
+var formatOptionDate = (dateStr) => {
+  if (!dateStr || dateStr.length < 6) return dateStr;
+  var year = dateStr.substr(2, 2);
+  var monthNum = dateStr.substr(4, 2);
+  var months = {
+    "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+    "05": "May", "06": "Jun", "07": "Jul", "08": "Aug",
+    "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+  };
+  if (isEn) {
+    var monthName = months[monthNum] || monthNum;
+    return monthName + " '" + year;
+  } else {
+    return "'" + year + "." + monthNum;
+  }
+};
+
 var tSafe = (key, fallback) => {
   if (typeof window.t === 'function') {
     var val = window.t(key);
@@ -375,7 +393,12 @@ $(document).ready(function () {
     `<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>${tSafe("ui.loading_rank", "단지별 랭크를 계산하고 있어요!")}<br><br><div id='loading_reload' onClick='resetReload()'>${tSafe("ui.loading_retry", "로딩이 길다면 여기를 눌러 다시 불러오기!!")}</div></div></div>`,
   );
 
-  searching_url = pathPrefix + selectedMonth + "/Searching_list.json" + update_ver;
+  if (isEn) {    
+    searching_url = pathPrefix + selectedMonth + "/Searching_list_EN.json" + update_ver;
+    DB_Date = DB_Date + "_EN";
+  } else {
+    searching_url = pathPrefix + selectedMonth + "/searching_list.json" + update_ver;
+  }
   region_url = pathPrefix + selectedMonth + "/region_map.json" + update_ver;
 
   const request = indexedDB.open(DB_Date); // 1. DB 열기
@@ -514,7 +537,7 @@ $(document).ready(function () {
       if (i == 0) {
         filterHtml += `<div class='sPrice_index'>0</div>`;
       } else {
-        var areaTick = isEn ? `${i * 10} py` : `${i * 10}평`;
+        var areaTick = isEn ? `${i * 10}py` : `${i * 10}평`;
         filterHtml += `<div class='sPrice_index'>${areaTick}</div>`;
       }
     }
@@ -1590,7 +1613,7 @@ function updateTable(month, region) {
         var aptAddress2_en = aptData.data[i]["Road_Addr_EN"];
 
         var aptValue = Math.round(aptData.data[i]["가치 총점"] * 100) / 100;
-        var house_num = aptData.data[i]["세대수"];
+        var house_num = aptData.data[i]["세대수"];        
         var rank = aptData.data[i]["rank"].toFixed();
         var last_sales = aptData.data[i]["last_sales"].split(",");
         var last_sales_date = last_sales[0].toString();
@@ -1700,8 +1723,8 @@ function updateTable(month, region) {
           if (isEn) {
             aptName = aptName_en
           }
-          str_years = tSafe("ui.build_year_unit", "년차");
-          str_reconstruction = tSafe("ui.reconstruction", "재건축");
+          str_years = tSafe("ui.report.years_suffix", "년차");
+          str_reconstruction = tSafe("ui.report.reconstruction", "재건축");
           str_pre_sale = tSafe("ui.report.presale", "분양권");
           str_pre_sale_planned = tSafe("ui.report.presale_scheduled", "분양예정");
           str_expected = tSafe("ui.report.presale_expected", "예정");
@@ -1740,7 +1763,7 @@ function updateTable(month, region) {
             addon_html += `<span class='aptYear'> (${aptData.data[i]["준공년차"]}${str_years})</span></div>`;
           }
 
-          if (house_num == null) {
+          if (house_num == null || house_num == undefined || house_num == "") {
             addon_html += `<div class='apt_info'>${str_unknown_house_num} / <span class='aptPrice'>${str_no_sales_info}</span></div>`;
           } else {
             if (last_sales_date == "1800-01-01") {
@@ -1939,11 +1962,24 @@ function showDetail(index) {
   aptData = sortData;
 
   var aptName = aptData.data[index]["아파트명"];
+  if(isEn){
+    aptName = aptData.data[index]["APT_Name_EN"];
+  }  
   var rank = aptData.data[index]["rank"].toFixed();
   var apt_m = aptData.data[index]["전용면적(m2)"];
   var apt_p = aptData.data[index]["전용면적(평)"];
   var apt_type = aptData.data[index]["매매타입"];
+  var sidoVal = $("#sido option:selected").val();
+  var gunguVal = $("#gungu option:selected").val();  
   var aptAddress = aptData.data[index]["도로명주소"];
+  if(isEn){
+    aptAddress = aptData.data[index]["Road_Addr_EN"];
+  }
+  var legalAddress = aptData.data[index]["법정동주소"];
+  if(isEn){
+    legalAddress = aptData.data[index]["Law_Addr_EN"];
+  }
+
   var aptValue = Math.round(aptData.data[index]["가치 총점"] * 100) / 100;
   var aptDuration = aptData.data[index]["준공년차"];
   var aptYear = "";
@@ -1953,7 +1989,7 @@ function showDetail(index) {
 
   complex_grade = setGrade(aptValue);
 
-  changeMetaTag(aptName, aptData.data[index]["법정동주소"], rank, $("#gungu option:selected").text(), kakaoShareURL, aptValue);
+  changeMetaTag(aptName, legalAddress, rank, $("#gungu option:selected").text(), kakaoShareURL, aptValue);
 
   //post(aptName, log_date, short_name)
 
@@ -1977,34 +2013,36 @@ function showDetail(index) {
   var tReconstruction = tSafe("ui.report.reconstruction", "재건축");
   var tExpected = tSafe("ui.report.presale_expected", "예정");
   var tPresaleScheduled = tSafe("ui.report.presale_scheduled", "분양예정");
-  var tReconstructionEligible = tSafe("ui.report.reconstruction_eligible", "재건축 대상");
+  var tReconstructionEligible = tSafe("ui.report.reconstruction_eligible", "재건축");
   var tYearsSuffix = tSafe("ui.report.years_suffix", "년차");
 
-  if (Number(selectedMonth) > 202203) {
-    if (apt_type == "아파트") {
-      aptYear = aptData.data[index]["준공년월"] + " (" + aptDuration + tYearsSuffix + ")";
-    }
-    if (apt_type == "재건축") {
-      aptYear = aptData.data[index]["준공년월"] + " (" + aptDuration + tYearsSuffix + ", " + tReconstruction + ")";
-    }
-    if (apt_type == "분양권") {
-      aptYear = "(" + (isEn ? "Pre-sale" : "분양권") + ", " + aptData.data[index]["준공년월"].substr(0, 7) + " " + tExpected + ")";
-    }
-    if (apt_type == "분양(예정)") {
-      aptYear = "(" + tPresaleScheduled + ")";
-    }
-  } else {
-    if (aptDuration >= 30) {
-      aptYear = aptData.data[index]["준공년월"] + " (" + aptDuration + tYearsSuffix + ", " + tReconstructionEligible + ")";
-    } else {
-      aptYear = aptData.data[index]["준공년월"] + " (" + aptDuration + tYearsSuffix + ")";
-    }
+  //aptData.data[index]["준공년월"]을 영어표기법으로 변환하여 aptYear_en에 저장 (예: "Mar 2023")
+  aptYear = aptData.data[index]["준공년월"]
+  aptYear_en = new Date(aptData.data[index]["준공년월"]).toLocaleString("en-US", { month: "short", year: "numeric" });
+  if(isEn){
+    aptYear = aptYear_en
+  }
+  
+  if (apt_type == "아파트") {
+    aptYear = aptYear + " (" + aptDuration + tYearsSuffix + ")";
+  }
+  if (apt_type == "재건축") {
+    aptYear = aptYear + " (" + aptDuration + tYearsSuffix + ", " + tReconstruction + ")";
+  }
+  if (apt_type == "분양권") {
+    aptYear = "(" + (isEn ? "Pre-sale" : "분양권") + ", " + aptYear + " " + tExpected + ")";
+  }
+  if (apt_type == "분양(예정)") {
+    aptYear = "(" + tPresaleScheduled + ")";
   }
 
   var tStationSuffix = tSafe("ui.report.station_suffix", "역");
   var tCountSuffix = isEn ? "" : "개";
 
   var nearestStation = aptData.data[index]["가까운역이름"] + tStationSuffix + "(" + (Math.round(aptData.data[index]["가까운역거리"] * 100) / 100).toFixed() + "m)";
+  if(isEn){
+    nearestStation = aptData.data[index]["closest_station"] + " (" + (Math.round(aptData.data[index]["가까운역거리"] * 100) / 100).toFixed() + "m)";
+  }
   var stationArea = aptData.data[index]["역세권여부"];
   var stationPoint_30m = aptData.data[index]["30분이내주요거점역"];
   var stationPoint_1h = aptData.data[index]["1시간이내주요거점역"];
@@ -2053,9 +2091,42 @@ function showDetail(index) {
   var rooms = aptData.data[index]["room"];
   var baths = aptData.data[index]["bath"];
   var house_num = aptData.data[index]["세대수"];
+  if (house_num == null || house_num == undefined || house_num == "") {
+    house_num = "--";
+  }
   var parking = aptData.data[index]["주차"];
   var heating = aptData.data[index]["난방"];
   var entrance = aptData.data[index]["현관구조"];
+  if (isEn) {
+    if (parking && typeof parking === 'string') {
+      //parking에 데이터가 없으면 "TBD"로 표기
+      if (parking == "" || parking == null || parking == undefined || parking == "미정") {
+        parking = "TBD";
+      }
+      else {
+        parking = parking.replace("세대당 ", "").replace("대", " per household");
+      }
+    }
+    if (heating && typeof heating === 'string') {
+      var heatingDict = {
+        "개별난방": "Individual",
+        "지역난방": "District",
+        "중앙난방": "Central",
+        "도시가스": "City Gas",
+        "미정": "TBD"
+      };
+      heating = heatingDict[heating] || heating;
+    }
+    if (entrance && typeof entrance === 'string') {
+      var entranceDict = {
+        "계단식": "Staircase",
+        "복도식": "Corridor",
+        "복합식": "Mixed",
+        "미정": "TBD"
+      };
+      entrance = entranceDict[entrance] || entrance;
+    }
+  }
   var sales_info = aptData.data[index]["sales_info"];
   var price_per = aptData.data[index]["price_per"];
   var floor_noise = aptData.data[index]["층간소음"];
@@ -2128,11 +2199,11 @@ function showDetail(index) {
   }
 
   if (apt_type == "분양권" || apt_type == "분양(예정)") {
-    titleHtml += `<div class='popupSubtitle'>${aptData.data[index]["법정동주소"]}</div>`;
+    titleHtml += `<div class='popupSubtitle'>${legalAddress}</div>`;
   } else {
     titleHtml += `
           <div class='popupSubtitle' style='font-size: 0.6em'>${isEn ? "(Road)" : "(신)"} ${aptAddress}</div>
-          <div class='popupSubtitle' style='font-size: 0.6em'>${isEn ? "(Jibun)" : "(구)"} ${aptData.data[index]["법정동주소"]}</div>
+          <div class='popupSubtitle' style='font-size: 0.6em'>${isEn ? "(Jibun)" : "(구)"} ${legalAddress}</div>
         `;
   }
   detailHtml += `
@@ -2381,13 +2452,13 @@ function showDetail(index) {
     detailHtml += `<div class='popSubTable'><div class='popContent'>${isEn ? "Haeundae Premium" : "해운대 프리미엄"}</div><div class='popResult'>${tPremiumApplied}</div></div>`;
   }
 
-  if (house_num != null) {
+  if (house_num != null && house_num != undefined && house_num != "") {
     detailHtml += `<div class='popSubTable'><div class='popContent'>${tHouseNumLabel}</div><div class='popResult'>${house_num.toLocaleString()}${tHouseNumUnit}</div></div>`;
   } else {
     detailHtml += `<div class='popSubTable'><div class='popContent'>${tHouseNumLabel}</div><div class='popResult'>${tUndetermined}</div></div>`;
   }
 
-  if (apt_type >= "재건축") {
+  if (apt_type == "재건축") {
     detailHtml += `
           <div class='popSubTable'><div class='popContent'>${tFloorRateLabel}</div><div class='popResult'>${floor_rate}</div></div>
           <div class='popSubTable'><div class='popContent'>${tCoverRateLabel}</div><div class='popResult'>${cover_rate}</div></div>
@@ -2422,14 +2493,14 @@ function showDetail(index) {
     for (var k = 0; k < area_array.length; k++) {
       var areaVal = area_array[k];
       if (isEn) {
-        areaVal = areaVal.replace(/평/g, " py");
+        areaVal = areaVal.replace(/평/g, "py");
       }
       detailHtml += `
             <tr>
             <td>${areaVal}</td>
             <td>${parseInt(rooms_array[k])} / ${parseInt(baths_array[k])}</td>
           `;
-      if (isNaN(maintainance_array[k]) == true) {
+      if (isNaN(maintainance_array[k]) == true || maintainance_array[k] == "" || maintainance_array[k] == null || maintainance_array[k] == undefined) {
         detailHtml += `<td>---</td>`;
       } else {
         detailHtml += `<td>${Number(maintainance_array[k]).toLocaleString()}${tSafe("ui.report.won_unit", "원")}</td>`;
@@ -2486,7 +2557,7 @@ function showDetail(index) {
     //교통
     detailHtml += `
           <div class='card'>
-          <div class='card-header'>f
+          <div class='card-header'>
           <div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp${tSafe("ui.report.transport", "교통")}</div>
           </div>
           <div class='card-body'>
@@ -2501,12 +2572,18 @@ function showDetail(index) {
         `;
     if (Number(selectedMonth) > 202211) {
       var subway_line = aptData.data[index]["역노선"];
+      if(isEn){
+        subway_line = aptData.data[index]["Line_EN"];
+      }
       detailHtml += `<div class='stationList'><div></div><div class='stationText'>${subway_line}</div></div>`;
     }
 
     detailHtml += `<div class='popSubTable'><div class='popContent'>${tSafe("ui.report.station_30m_label", "30분 이내 도착 가능 주요역")}</div><div class='popResult'>${stationPoint_30m}${isEn ? "" : "개"}</div></div>`;
     if (stationPoint_30m != 0 && selectedMonth != "202201") {
       var stations_30m = aptData.data[index]["30분거점역이름"];
+      if(isEn){
+        stations_30m = stations_30m = aptData.data[index]["Key_stations_30m"];   
+      }
       stations_30m = stations_30m.replace("[", "").replace("]", "").replace(/\'/g, "");
       detailHtml += `<div class='stationList'><div></div><div class='stationText'>${stations_30m}</div></div>`;
     }
@@ -2514,6 +2591,9 @@ function showDetail(index) {
     detailHtml += `<div class='popSubTable' id='stationTable'><div class='popContent'>${tSafe("ui.report.station_1h_label", "1시간 이내 도착 가능 주요역")}</div><div class='popResult'>${stationPoint_1h}${isEn ? "" : "개"}</div></div>`;
     if (stationPoint_1h != 0 && selectedMonth != "202201") {
       var stations_1h = aptData.data[index]["1시간거점역이름"];
+      if(isEn){
+        stations_1h = stations_1h = aptData.data[index]["Key_stations_1h"];   
+      }
       stations_1h = stations_1h.replace("[", "").replace("]", "").replace(/\'/g, "");
       detailHtml += `<div class='stationList'><div></div><div class='stationText'>${stations_1h}</div></div><hr style='margin-top: 2px'>`;
     }
@@ -2675,7 +2755,7 @@ function showDetail(index) {
 
       var areaText = last_sales_area;
       if (isEn && areaText) {
-        areaText = areaText.replace(/평/g, " py");
+        areaText = areaText.replace(/평/g, "py");
       }
       var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M KRW") : ((Math.round(last_sales_price / 100) / 100) + "억");
 
@@ -2713,7 +2793,7 @@ function showDetail(index) {
     for (var k = 0; k < area_array.length; k++) {
       var rowArea = area_array[k];
       if (isEn && rowArea) {
-        rowArea = rowArea.replace(/평/g, " py");
+        rowArea = rowArea.replace(/평/g, "py");
       }
 
       var compare_rent_date = null;
@@ -2876,7 +2956,7 @@ function showDetail(index) {
 
       var pArea = area_array[p];
       if (isEn && pArea) {
-        pArea = pArea.replace(/평/g, " py");
+        pArea = pArea.replace(/평/g, "py");
       }
 
       detailHtml += `
@@ -2959,7 +3039,7 @@ function showDetail(index) {
   } else {
     var areaText = last_sales_area;
     if (isEn && areaText) {
-      areaText = areaText.replace(/평/g, " py");
+      areaText = areaText.replace(/평/g, "py");
     }
     var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M KRW") : ((Math.round(last_sales_price / 100) / 100) + "억");
     shareText += `\nㆍ${isEn ? "Recent Sales" : "최근실거래"}\n    : ${areaText}, ${formattedLastSalesPrice}, ${last_sales_date.substr(2)}`;
@@ -3009,13 +3089,13 @@ function showDetail(index) {
     if (apt_type == "분양(예정)") {
       footerHtml += `<div><button type='button' class='goLink_HGNN' onclick='openHGNN("${searchCode}")'>${tShowHogangnono}</button></div>`;
     } else {
-      footerHtml += `<div><button type='button' class='goLink' onclick='openNaver(${searchCode})'>${tShowNaverLand}</button></div>`;
+      footerHtml += `<div><button type='button' class='goLink' onclick='openNaver("${searchCode}")'>${tShowNaverLand}</button></div>`;
     }
 
     if (checkMobile() == "ios") {
       footerHtml += `<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>`;
     } else {
-      footerHtml += `<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>`;
+      footerHtml += `<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = ${isEn ? '../kakao_icon.png' : './kakao_icon.png'} height='32px'></div>`;
     }
 
     footerHtml += `<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>`;
@@ -3029,7 +3109,7 @@ function showDetail(index) {
     if (checkMobile() == "ios") {
       footerHtml += `<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>`;
     } else {
-      footerHtml += `<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = './kakao_icon.png' height='32px'></div>`;
+      footerHtml += `<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = ${isEn ? '../kakao_icon.png' : './kakao_icon.png'} height='32px'></div>`;
     }
 
     footerHtml += `<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>`;
@@ -3086,8 +3166,17 @@ function showDetail(index) {
       }
       last_sales_area_kor = "--";
     } else {
-      last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억";
-      last_sales_area_kor = last_sales_area;
+      if(isEn) {
+        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 * 100 + "M";
+      } else {
+        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억";
+      }
+
+      if(isEn) {
+        last_sales_area_kor = last_sales_area.replace("평", "py");
+      } else {
+        last_sales_area_kor = last_sales_area + "㎡";
+      }
     }
 
     var svg_color = "#a70000";
@@ -3261,10 +3350,12 @@ function showDetail(index) {
     price_sOption = "";
     price_eOption = "";
     for (w = 0; w < sales_history_date.length - 1; w++) {
-      price_sOption += `<option value='${w}'>'${sales_history_date[w].substr(2, 2)}.${sales_history_date[w].substr(4, 2)}</option>`;
+      var dateLabel = formatOptionDate(sales_history_date[w]);
+      price_sOption += `<option value='${w}'>${dateLabel}</option>`;
     }
     for (w = 1; w < sales_history_date.length; w++) {
-      price_eOption += `<option value='${w}'>'${sales_history_date[w].substr(2, 2)}.${sales_history_date[w].substr(4, 2)}</option>`;
+      var dateLabel = formatOptionDate(sales_history_date[w]);
+      price_eOption += `<option value='${w}'>${dateLabel}</option>`;
     }
     $("#pStart").html(price_sOption);
     $("#pStart").val(30).prop("selected", true);
@@ -3435,7 +3526,8 @@ function price_sDateChange(val) {
 
   eDateOption = "";
   for (var w = startVal; w < sales_history_date.length; w++) {
-    eDateOption += `<option value='${w}'>'${sales_history_date[w].substr(2, 2)}.${sales_history_date[w].substr(4, 2)}</option>`;
+    var dateLabel = formatOptionDate(sales_history_date[w]);
+    eDateOption += `<option value='${w}'>${dateLabel}</option>`;
   }
   $("#pEnd").html(eDateOption);
 
@@ -3484,34 +3576,29 @@ function priceChartUpdate(priceChart, sales_history_price, sales_history_date, s
     sales_dHistory.push("");
 
     for (var y = 0; y < sales_history_date.length; y++) {
+      var rawVal = sales_history_price[p][y];
+      var chartVal = 0;
+      if (rawVal != 0) {
+        chartVal = isEn ? Math.round(rawVal / 100) : Number((rawVal / 10000).toFixed(1));
+      }
+      
       if (y < sVal) {
-        if (sales_history_price[p][y] == 0) {
-          sales_grayHistory1.push(0);
-        } else {
-          sales_grayHistory1.push((sales_history_price[p][y] / 10000).toFixed(1));
-        }
+        sales_grayHistory1.push(chartVal);
         sales_pHistory.push(null);
         sales_grayHistory2.push(null);
       }
       if (y >= sVal && y <= eVal) {
         sales_grayHistory1.push(null);
-        if (sales_history_price[p][y] == 0) {
-          sales_pHistory.push(0);
-        } else {
-          sales_pHistory.push((sales_history_price[p][y] / 10000).toFixed(1));
-        }
+        sales_pHistory.push(chartVal);
         sales_grayHistory2.push(null);
       }
       if (y > eVal) {
         sales_grayHistory1.push(null);
         sales_pHistory.push(null);
-        if (sales_history_price[p][y] == 0) {
-          sales_grayHistory2.push(0);
-        } else {
-          sales_grayHistory2.push((sales_history_price[p][y] / 10000).toFixed(1));
-        }
+        sales_grayHistory2.push(chartVal);
       }
-      sales_dHistory.push("'" + sales_history_date[y].substr(2, 2) + "." + sales_history_date[y].substr(4, 2));
+      var dateLabel = formatOptionDate(sales_history_date[y]);
+      sales_dHistory.push(dateLabel);
     }
     sales_pHistory.push(null);
     sales_grayHistory1.push(null);
@@ -3525,28 +3612,51 @@ function priceChartUpdate(priceChart, sales_history_price, sales_history_date, s
 
     sPrice = sales_history_price[p][sVal];
     ePrice = sales_history_price[p][eVal - 1];
-    priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
     priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
 
-    priceChangeText = "";
-    priceChangeText += `${(sPrice / 10000).toFixed(2)} → ${(ePrice / 10000).toFixed(2)}억`;
-
-    priceRatioText = "";
-    if (sPrice == 0) {
-      priceRatioText += ` ( --- , --- )`;
-    } else {
-      if (priceGap >= 0) {
-        priceRatioText += ` (+${priceGap}억, `;
+    var priceChangeText, priceRatioText;
+    if (isEn) {
+      var sPriceM = Math.round(sPrice / 100).toLocaleString();
+      var ePriceM = Math.round(ePrice / 100).toLocaleString();
+      var priceGapM = Math.round((ePrice - sPrice) / 100).toLocaleString();
+      
+      priceChangeText = `${sPriceM}M → ${ePriceM}M`;
+      priceRatioText = "";
+      if (sPrice == 0) {
+        priceRatioText += ` ( --- , --- )`;
       } else {
-        priceRatioText += ` (${priceGap}억, `;
+        if (ePrice - sPrice >= 0) {
+          priceRatioText += ` (+${priceGapM}M, `;
+        } else {
+          priceRatioText += ` (${priceGapM}M, `;
+        }
+        if (priceRatio > 0) {
+          priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+        } else if (priceRatio == 0) {
+          priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+        } else {
+          priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+        }
       }
-
-      if (priceRatio > 0) {
-        priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
-      } else if (priceRatio == 0) {
-        priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+    } else {
+      var priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+      priceChangeText = `${(sPrice / 10000).toFixed(2)} → ${(ePrice / 10000).toFixed(2)}억`;
+      priceRatioText = "";
+      if (sPrice == 0) {
+        priceRatioText += ` ( --- , --- )`;
       } else {
-        priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+        if (priceGap >= 0) {
+          priceRatioText += ` (+${priceGap}억, `;
+        } else {
+          priceRatioText += ` (${priceGap}억, `;
+        }
+        if (priceRatio > 0) {
+          priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+        } else if (priceRatio == 0) {
+          priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+        } else {
+          priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+        }
       }
     }
     $("#pChange" + p).html(priceChangeText);
@@ -3577,34 +3687,29 @@ function priceChartDraw(priceChart, sales_history_price, sales_history_date, sVa
     sales_dHistory.push("");
 
     for (var y = 0; y < sales_history_date.length; y++) {
+      var rawVal = sales_history_price[p][y];
+      var chartVal = 0;
+      if (rawVal != 0) {
+        chartVal = isEn ? Math.round(rawVal / 100) : Number((rawVal / 10000).toFixed(1));
+      }
+      
       if (y < sVal) {
-        if (sales_history_price[p][y] == 0) {
-          sales_grayHistory1.push(0);
-        } else {
-          sales_grayHistory1.push((sales_history_price[p][y] / 10000).toFixed(1));
-        }
+        sales_grayHistory1.push(chartVal);
         sales_pHistory.push(null);
         sales_grayHistory2.push(null);
       }
       if (y >= sVal && y <= eVal) {
         sales_grayHistory1.push(null);
-        if (sales_history_price[p][y] == 0) {
-          sales_pHistory.push(0);
-        } else {
-          sales_pHistory.push((sales_history_price[p][y] / 10000).toFixed(1));
-        }
+        sales_pHistory.push(chartVal);
         sales_grayHistory2.push(null);
       }
       if (y > eVal) {
         sales_grayHistory1.push(null);
         sales_pHistory.push(null);
-        if (sales_history_price[p][y] == 0) {
-          sales_grayHistory2.push(0);
-        } else {
-          sales_grayHistory2.push((sales_history_price[p][y] / 10000).toFixed(1));
-        }
+        sales_grayHistory2.push(chartVal);
       }
-      sales_dHistory.push("'" + sales_history_date[y].substr(2, 2) + "." + sales_history_date[y].substr(4, 2));
+      var dateLabel = formatOptionDate(sales_history_date[y]);
+      sales_dHistory.push(dateLabel);
     }
     sales_pHistory.push(null);
     sales_grayHistory1.push(null);
@@ -3616,33 +3721,51 @@ function priceChartDraw(priceChart, sales_history_price, sales_history_date, sVa
 
     sPrice = sales_history_price[p][sVal];
     ePrice = sales_history_price[p][eVal - 1];
-    priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
     priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
 
-    sPrice = sales_history_price[p][sVal];
-    ePrice = sales_history_price[p][eVal - 1];
-    priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
-    priceRatio = ((ePrice / sPrice - 1) * 100).toFixed(1);
-
-    priceChangeText = "";
-    priceChangeText += `${(sPrice / 10000).toFixed(2)} → ${(ePrice / 10000).toFixed(2)}억`;
-
-    priceRatioText = "";
-    if (sPrice == 0) {
-      priceRatioText += ` ( --- , --- )`;
-    } else {
-      if (priceGap >= 0) {
-        priceRatioText += ` (+${priceGap}억, `;
+    var priceChangeText, priceRatioText;
+    if (isEn) {
+      var sPriceM = Math.round(sPrice / 100).toLocaleString();
+      var ePriceM = Math.round(ePrice / 100).toLocaleString();
+      var priceGapM = Math.round((ePrice - sPrice) / 100).toLocaleString();
+      
+      priceChangeText = `${sPriceM}M → ${ePriceM}M`;
+      priceRatioText = "";
+      if (sPrice == 0) {
+        priceRatioText += ` ( --- , --- )`;
       } else {
-        priceRatioText += ` (${priceGap}억, `;
+        if (ePrice - sPrice >= 0) {
+          priceRatioText += ` (+${priceGapM}M, `;
+        } else {
+          priceRatioText += ` (${priceGapM}M, `;
+        }
+        if (priceRatio > 0) {
+          priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+        } else if (priceRatio == 0) {
+          priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+        } else {
+          priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+        }
       }
-
-      if (priceRatio > 0) {
-        priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
-      } else if (priceRatio == 0) {
-        priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+    } else {
+      var priceGap = ((ePrice - sPrice) / 10000).toFixed(2);
+      priceChangeText = `${(sPrice / 10000).toFixed(2)} → ${(ePrice / 10000).toFixed(2)}억`;
+      priceRatioText = "";
+      if (sPrice == 0) {
+        priceRatioText += ` ( --- , --- )`;
       } else {
-        priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+        if (priceGap >= 0) {
+          priceRatioText += ` (+${priceGap}억, `;
+        } else {
+          priceRatioText += ` (${priceGap}억, `;
+        }
+        if (priceRatio > 0) {
+          priceRatioText += `<span style='color:#fe4040'>▲${priceRatio}%</span>)`;
+        } else if (priceRatio == 0) {
+          priceRatioText += `<span style='color:#000'>${priceRatio}%</span>)`;
+        } else {
+          priceRatioText += `<span style='color:blue'>▼${priceRatio * -1}%</span>)`;
+        }
       }
     }
     $("#pChange" + p).html(priceChangeText);
@@ -4396,8 +4519,6 @@ function dong_filter(selection) {
  * @param {string} searchCode - 단지 고유 검색 코드
  */
 function openRadarMap(searchCode) {
-
-
   // 새 창 열기
   if (isMobile) {
     $("body").append(
@@ -4432,14 +4553,24 @@ function openRadarMap(searchCode) {
             // iframe으로 열기
             const container = document.getElementById("radar-container");
             const iframe = document.getElementById("radar-iframe");
-            iframe.src = "./radarMap.html"; // 새로 로딩
+            if(isEn){
+              iframe.src = "../radarMap.html"; // 새로 로딩
+            }
+            else{
+              iframe.src = "./radarMap.html"; // 새로 로딩
+            }            
             iframe.style.visibility = "hidden";
             container.style.display = "block";
 
             // 뒤로가기를 감지할 히스토리 추가
             history.pushState({ radarOpen: true }, "", "");
           } else {
-            const radarMapWindow = window.open("./radarMap.html", "_blank");
+            if(isEn){
+              const radarMapWindow = window.open("../radarMap.html", "_blank");
+            }
+            else{
+              const radarMapWindow = window.open("./radarMap.html", "_blank");
+            }
           }
 
 

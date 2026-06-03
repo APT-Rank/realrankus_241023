@@ -1487,6 +1487,9 @@ function setupOffcanvas(currentMenu) {
 }
 
 function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider) {
+  var tSafe = function (key, fallback) {
+    return (typeof t === 'function') ? t(key, fallback) : fallback;
+  };
   temp_email = userEmail
   temp_uid = userID
 
@@ -1506,14 +1509,14 @@ function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday,
     displayProvider = `
     <div style='display:grid; align-content:center; justify-content:center; background:#03C75A; border-radius: 5px; margin-top: 5px'>
     <img src='https://www.realrankus.com/image/naver_CI.png' height='15'></div>
-    <div style='margin-left: 5px'; margin-top: 5px>네이버</div>
+    <div style='margin-left: 5px; margin-top: 5px'>${tSafe('ui.profile.naver', '네이버')}</div>
     `
   }
   if (provider == "KAKAO") {
     displayProvider = `
-    <div style='display:grid; align-content:center; justify-content:center; background:#FEE500; border-radius: 50%; margin-top: 5px''>
+    <div style='display:grid; align-content:center; justify-content:center; background:#FEE500; border-radius: 50%; margin-top: 5px'>
     <img src='https://www.realrankus.com/image/kakao_CI.png' height='15'></div>
-    <div style='margin-left: 5px; margin-top: 5px'>카카오</div>
+    <div style='margin-left: 5px; margin-top: 5px'>${tSafe('ui.profile.kakao', '카카오')}</div>
     `
   }
   if (provider == "APPLE") {
@@ -1548,7 +1551,7 @@ function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday,
     offcanvas_html += `    
       <div class='offcanvas_info'>        
         <div class="offcanvas_sub_menu">
-          <div class="offcanvas_sub_menu_description">이름</div>
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.name', '이름')}</div>
           <div class="offcanvas_sub_menu_title">${displayName}</div>
         </div>
       </div>
@@ -1560,7 +1563,7 @@ function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday,
     offcanvas_html += `
       <div class='offcanvas_info'>        
         <div class="offcanvas_sub_menu">
-          <div class="offcanvas_sub_menu_description">별명</div>
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.nickname', '별명')}</div>
           <div class="offcanvas_sub_menu_title">${userNickName}</div>
         </div>
       </div>
@@ -1570,25 +1573,11 @@ function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday,
   offcanvas_html += `
       <div class='offcanvas_info'>        
         <div class="offcanvas_sub_menu">
-          <div class="offcanvas_sub_menu_description">이메일</div>
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.email', '이메일')}</div>
           <div class="offcanvas_sub_menu_title">${userEmail}</div>
         </div>
       </div>
       `
-
-  /*
-  if(userAge == null || userAge == undefined || userAge == ""){ }
-  else{
-    offcanvas_html += `
-      <div class='offcanvas_info'>        
-        <div class="offcanvas_sub_menu">
-          <div class="offcanvas_sub_menu_description">연령</div>
-          <div class="offcanvas_sub_menu_title">${userAge}세</div>
-        </div>
-      </div>
-      `
-    }
-    */
 
   if (userBirthday == null || userBirthday == undefined || userBirthday == "") { }
   else {
@@ -1610,7 +1599,7 @@ function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday,
     offcanvas_html += `
         <div class='offcanvas_info'>          
           <div class="offcanvas_sub_menu">
-            <div class="offcanvas_sub_menu_description">생년월일</div>
+            <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.birthday', '생년월일')}</div>
             <div class="offcanvas_sub_menu_title">${displayBirth}</div>
           </div>
         </div>
@@ -1622,64 +1611,46 @@ function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday,
     var displayGender = ""
     if (provider == "NAVER") {
       if (userGender == "M") {
-        displayGender = "남성"
+        displayGender = tSafe('ui.profile.gender_m', '남성')
       }
       else if (userGender == "F") {
-        displayGender = "여성"
+        displayGender = tSafe('ui.profile.gender_f', '여성')
       }
       else {
-        displayGender = "제공 안 함"
+        displayGender = tSafe('ui.profile.gender_none', '제공 안 함')
       }
     }
     if (provider == "KAKAO") {
       if (userGender == "male") {
-        displayGender = "남성"
+        displayGender = tSafe('ui.profile.gender_m', '남성')
       }
       else if (userGender == "femail") {
-        displayGender = "여성"
+        displayGender = tSafe('ui.profile.gender_f', '여성')
       }
       else {
-        displayGender = "제공 안 함"
+        displayGender = tSafe('ui.profile.gender_none', '제공 안 함')
       }
     }
     offcanvas_html += `
       <div class='offcanvas_info'>        
         <div class="offcanvas_sub_menu">
-          <div class="offcanvas_sub_menu_description">성별</div>
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.gender', '성별')}</div>
           <div class="offcanvas_sub_menu_title">${displayGender}</div>
         </div>
       </div>
       `
   }
 
-  /*
-  var displayMobile = ""
-  if(userMobile == null || userMobile == undefined || userMobile == ""){
-    displayMobile = "제공 안 함"
-  }
-  else{
-    displayMobile = userMobile
-  }
-  offcanvas_html += `
-    <div class='offcanvas_info'>        
-      <div class="offcanvas_sub_menu">
-        <div class="offcanvas_sub_menu_description">휴대폰번호</div>
-        <div class="offcanvas_sub_menu_title">${displayMobile}</div>
-      </div>
-    </div>
-  `
-  */
-
   offcanvas_html += `
       <div class='offcanvas_info'>        
         <div class="offcanvas_sub_menu">
-          <div class="offcanvas_sub_menu_description">로그인 제공</div>
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.provider', '로그인 제공')}</div>
           <div class="offcanvas_sub_menu_title" style='display:grid; grid-template-columns:30px 1fr'>${displayProvider}</div>
         </div>
       </div>
     `
 
-  $("#offcanvasProfile > .offcanvas-header > #offcanvasRightLabel").html("사용자정보")
+  $("#offcanvasProfile > .offcanvas-header > #offcanvasRightLabel").html(tSafe('ui.profile.title', '사용자정보'))
   $("#offcanvasProfile > .offcanvas-body").html(offcanvas_html)
   $("#offcanvasProfile > .offcanvas-header").attr({ "data-bs-toggle": "offcanvas", "data-bs-target": "#offcanvasRight", "aria-controls": "offcanvasRight" })
 }

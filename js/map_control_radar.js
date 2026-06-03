@@ -132,6 +132,7 @@ function loadRadarMap(center_x, center_y, aptData){
     disableDoubleTapZoom: true,
     disableDoubleClickZoom: true,
     disableTwoFingerTapZoom: true,
+    language: "en"
   };
 
   defaultMap = new naver.maps.Map("dataMap", MapOptions);
@@ -633,6 +634,10 @@ function createAPTMarker(markers){
     } else {
       last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억"
       last_sales_area_kor = last_sales_area
+      if(isEn){
+        last_sales_price_kor = Math.round(last_sales_price / 100) + "M"
+        last_sales_area_kor = last_sales_area.replace("평", "py")
+      }
     }
   }      
 
@@ -724,9 +729,13 @@ function createAPTMarker(markers){
 }
 
 function createMetroMarker(aptData){
+  console.log(aptData)
     coordi_x = aptData["역지점좌표"][1]
     coordi_y = aptData["역지점좌표"][0]
     metro_name = aptData["가까운역이름"]
+    if(isEn){      
+      metro_name = aptData["closest_station"]
+    }
 
     var svg_color = colorCode['지하철역']
     var stroke_color = "#ffffffff"
@@ -758,14 +767,14 @@ function createMetroMarker(aptData){
       },
       zIndex: 190,
       map: defaultMap,
-      loc_name : metro_name + "역",
+      loc_name : metro_name + tSafe("ui.report.station_suffix", "역"),
     });
 
     //이름표시
     var overlay = new CustomOverlay({
       map: defaultMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
-      name: metro_name + "역",
+      name: metro_name + tSafe("ui.report.station_suffix", "역"),
       class: "trans_marker metro_station"
     });
 
@@ -831,6 +840,9 @@ function createInfraMarker(aptData){
 
   for (var k in department_store_arr){
     department_store_name = department_store_arr[k][0]
+    if(isEn){
+      department_store_name = department_store_name.replace("백화점", " Department Store")
+    }
     coordi_x = department_store_arr[k][1][1]
     coordi_y = department_store_arr[k][1][0]    
 
@@ -911,6 +923,9 @@ function createInfraMarker(aptData){
 
   for (var k in mall_arr){
     mall_name = mall_arr[k][0]
+    if(isEn){
+      mall_name = mall_name.replace("아울렛", " Outlet").replace("몰", " Mall")
+    }
     coordi_x = mall_arr[k][1][1]
     coordi_y = mall_arr[k][1][0]    
 
@@ -974,6 +989,9 @@ function createInfraMarker(aptData){
 
   for (var k in mart_arr){
     mart_name = mart_arr[k][0]
+    if(isEn){
+      mart_name = mart_name.replace("마트", " Mart")
+    }
     coordi_x = mart_arr[k][1][1]
     coordi_y = mart_arr[k][1][0]    
 
@@ -1038,7 +1056,8 @@ function createInfraMarker(aptData){
   market_area_arr = aptData["상권영역"]
 
   for (var k in market_arr){
-    loc_name = "상권"
+    loc_name = tSafe('ui.radar_map.commercial_district', '상권')
+    
     coordi_x = market_arr[k][1]
     coordi_y = market_arr[k][0]
     rawCoords = market_area_arr[k]
@@ -1109,6 +1128,9 @@ function createInfraMarker(aptData){
 
   for (var k in bank_arr){
     bank_name = bank_arr[k][0]
+    if(isEn){
+      bank_name = bank_name.replace("은행", " Bank")
+    }
     coordi_x = bank_arr[k][1][1]
     coordi_y = bank_arr[k][1][0]    
 
@@ -1174,6 +1196,9 @@ function createInfraMarker(aptData){
 
   for (var k in hospital_arr){
     hospital_name = hospital_arr[k][0]
+    if(isEn){
+      hospital_name = hospital_name.replace("병원", " Hospital")
+    }
     coordi_x = hospital_arr[k][1][1]
     coordi_y = hospital_arr[k][1][0]    
 
@@ -1236,6 +1261,9 @@ function createInfraMarker(aptData){
 
   for (var k in big_hospital_arr){
     big_hospital_name = big_hospital_arr[k][0]
+    if(isEn){
+      big_hospital_name = big_hospital_name.replace("병원", " Hospital")
+    }
     coordi_x = big_hospital_arr[k][1][1]
     coordi_y = big_hospital_arr[k][1][0]    
 
@@ -1299,6 +1327,9 @@ function createInfraMarker(aptData){
   for (var k in park_arr){
     park_name = park_arr[k][0]
     park_name.replace("공원", "") + "공원"
+    if(isEn){
+      park_name = park_name.replace("공원", " Park")
+    }
     coordi_x = park_arr[k][1][1]
     coordi_y = park_arr[k][1][0]    
 
@@ -1364,6 +1395,9 @@ function createInfraMarker(aptData){
   for (var k in big_park_arr){
     big_park_name = big_park_arr[k][0][0]
     big_park_name.replace("공원", "") + "공원"
+    if(isEn){
+      big_park_name = big_park_name.replace("공원", " Park")
+    }
     coordi_x = big_park_arr[k][1][1]
     coordi_y = big_park_arr[k][1][0]    
 
@@ -1427,6 +1461,11 @@ function createInfraMarker(aptData){
 
   for (var k in harmful_arr){
     harmful_name = harmful_arr[k][0]
+    if(isEn){
+      harmful_name = harmful_name.replace("소각", "Incineration")
+      harmful_name = harmful_name.replace("폐기물", "Waste")
+      harmful_name = harmful_name.replace("매립", "Landfill")
+    }
     coordi_x = harmful_arr[k][1][1]
     coordi_y = harmful_arr[k][1][0]    
 
@@ -1459,14 +1498,14 @@ function createInfraMarker(aptData){
       },
       zIndex: 120,
       map: defaultMap,
-      loc_name : harmful_name + "시설",      
+      loc_name : harmful_name + (isEn ? " Facility" : "시설"),      
     });
 
     //이름표시
     var overlay = new CustomOverlay({
       map: defaultMap,
       position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
-      name: harmful_name + "시설",
+      name: harmful_name + (isEn ? " Facility" : "시설"),
       class: "infra_marker harmful"
     });
 
@@ -1493,7 +1532,10 @@ function createEduMarker(aptData){
   //초등학교
   infra_department_store_markers = []
   pSchool_coord = aptData["초등학교좌표"]
-  pSchool_name = aptData["초등학교명"]  
+  pSchool_name = aptData["초등학교명"]
+  if(isEn){
+    pSchool_name = pSchool_name.replace("초등학교", " Elementary School")
+  }
 
   coordi_x = pSchool_coord[1]
   coordi_y = pSchool_coord[0]
@@ -1589,6 +1631,10 @@ function createEduMarker(aptData){
       mSchool_name = mSchool_arr[k]['중학교명']
       coordi_x = mSchool_arr[k]['x']
       coordi_y = mSchool_arr[k]['y']
+    }
+
+    if(isEn){
+      mSchool_name = mSchool_name.replace("중학교", " Middle School")
     }
 
     var svg_color = colorCode['중학교']
@@ -1696,7 +1742,7 @@ function createEduMarker(aptData){
   }    
 
   for (var k in academy_arr){
-    loc_name = "학원가"
+    loc_name = tSafe("ui.radar_map.academy_district", "학원가")
     coordi_x = academy_arr[k][1]
     coordi_y = academy_arr[k][0]
     
@@ -1777,7 +1823,7 @@ function createEduMarker(aptData){
   
 
   for (var k in drink_pub_arr){
-    loc_name = "주점"
+    loc_name = tSafe("ui.radar_map.drink_pub", "주점")
     coordi_x = drink_pub_arr[k][1][1]
     coordi_y = drink_pub_arr[k][1][0]    
 
@@ -1841,7 +1887,7 @@ function createEduMarker(aptData){
   motel_arr = aptData["모텔정보"]
 
   for (var k in motel_arr){
-    loc_name = "모텔"
+    loc_name = tSafe("ui.radar_map.motel", "모텔")
     coordi_x = motel_arr[k][1][1]
     coordi_y = motel_arr[k][1][0]    
 
