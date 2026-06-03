@@ -45,8 +45,20 @@ window.I18N = {};
       if (altXhr.status === 200) {
         window.I18N = JSON.parse(altXhr.responseText);
         //console.log('[i18n] Loaded ' + altLangFile);
-      } else {        
-        //console.warn('[i18n] Failed to load ' + langFile + ' (status: ' + xhr.status + ')');
+      } else {
+        // 로드 실패 시 현재 경로의 상위에서 다시 시도 (루트/하위 구조 모두 지원)
+        console.warn('[i18n] Failed to load both ' + langFile + ' and ' + altLangFile);
+        var alt2LangFile = (window.BASE_PATH === './') ? '../../i18n/' + window.LANG + '.json' : './i18n/' + window.LANG + '.json';
+        var alt2Xhr = new XMLHttpRequest();
+        alt2Xhr.open('GET', alt2LangFile, false);
+        alt2Xhr.send();
+        if (alt2Xhr.status === 200) {
+          window.I18N = JSON.parse(alt2Xhr.responseText);
+          //console.log('[i18n] Loaded ' + alt2LangFile);
+        } else {
+          // 로드 실패 시 현재 경로의 상위에서 다시 시도 (루트/하위 구조 모두 지원)
+          console.warn('[i18n] Failed to load ' + langFile + ', ' + altLangFile + ', and ' + alt2LangFile);
+        }
       }
     }
   } catch (e) {

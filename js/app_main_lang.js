@@ -3164,7 +3164,7 @@ function showDetail(index) {
       if(isEn) {
         last_sales_area_kor = last_sales_area.replace("평", "py");
       } else {
-        last_sales_area_kor = last_sales_area + "㎡";
+        last_sales_area_kor = last_sales_area;
       }
     }
 
