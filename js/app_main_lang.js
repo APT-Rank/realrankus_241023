@@ -3246,7 +3246,7 @@ function showDetail(index) {
     drawRankChart(rankMonth, rankData, 110);
   }
 
-  if (!login_status) {
+  if (login_status) {
     drawChart(aptValue.toFixed(2), livingScore, transportScore, infraScore, eduScore);
     drawSubChart(livingScore, avgLivingScore, "주거총점", "지역평균", "#fe4040", "#9f9f9f", "livingChart");
     if (isNaN(transportScore) == false) {
