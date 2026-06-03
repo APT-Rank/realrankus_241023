@@ -407,7 +407,7 @@ function agreementChecker() {
 		return true;
 	}
 	else {
-		alert(t('ui.menu.agree_required', '계속 진행하려면 필수 약관에 동의해 주세요'));
+		alert(tSafe('ui.menu.agree_required', '계속 진행하려면 필수 약관에 동의해 주세요'));
 		return false;
 	}
 }
@@ -428,21 +428,21 @@ function showLogin() {
 	$(".modal-backdrop").css({ "width": "100%" });
 	$("#baseModal").css({ "width": "100%" });
 
-	var titleHtml = "<div class='popupTitle'>" + t('ui.login_button') + "</div>";
+	var titleHtml = "<div class='popupTitle'>" + tSafe('ui.login_button') + "</div>";
 	var detailHtml = `
 	<div id='policy_box'>
-		<div style='margin-bottom: 10px; font-size: 0.85em; font-weight: 600; text-align:center'>` + t('ui.menu.agree_required', '계속 진행하려면 필수 약관에 동의해 주세요') + `</div>
+		<div style='margin-bottom: 10px; font-size: 0.85em; font-weight: 600; text-align:center'>` + tSafe('ui.menu.agree_required', '계속 진행하려면 필수 약관에 동의해 주세요') + `</div>
 		<div id='policy_agreement'>
-			<div><input type="checkbox" class='policy_checker' id='check_policy'><label for='check_policy'>` + t('ui.menu.policy') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/policy.html")'>` + t('ui.menu.view', '보기') + `</div>
-			<div><input type="checkbox" class='policy_checker' id='check_privacy'><label for='check_privacy'>` + t('ui.menu.privacy') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/privacy.html")'>` + t('ui.menu.view', '보기') + `</div>
-			<div><input type="checkbox" class='policy_checker' id='check_age'><label for='check_age'>` + t('ui.menu.age_confirm', '만 14세 이상 확인') + `</label></div> <div></div>
-			<div id='all_agree'><div id='all_agree_button' onClick='allAgree()'>` + t('ui.menu.agree_all', '전체 동의 하기') + `</div></div>
+			<div><input type="checkbox" class='policy_checker' id='check_policy'><label for='check_policy'>` + tSafe('ui.menu.policy') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/policy.html")'>` + tSafe('ui.menu.view', '보기') + `</div>
+			<div><input type="checkbox" class='policy_checker' id='check_privacy'><label for='check_privacy'>` + tSafe('ui.menu.privacy') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/privacy.html")'>` + tSafe('ui.menu.view', '보기') + `</div>
+			<div><input type="checkbox" class='policy_checker' id='check_age'><label for='check_age'>` + tSafe('ui.menu.age_confirm', '만 14세 이상 확인') + `</label></div> <div></div>
+			<div id='all_agree'><div id='all_agree_button' onClick='allAgree()'>` + tSafe('ui.menu.agree_all', '전체 동의 하기') + `</div></div>
 		</div>
 	</div>
-	  <div id="kakaoIdLogin" onclick="kakaoLogin()"><div class='loginCI'><img src="https://www.realrankus.com/image/kakao_CI.png" height='20'></div><div class='loginText'>` + t('ui.menu.kakao_continue', '카카오로 계속하기') + `</div></div>   	  
+	  <div id="kakaoIdLogin" onclick="kakaoLogin()"><div class='loginCI'><img src="https://www.realrankus.com/image/kakao_CI.png" height='20'></div><div class='loginText'>` + tSafe('ui.menu.kakao_continue', '카카오로 계속하기') + `</div></div>   	  
 	  <div id="naverIdLogin" style="display: none;"></div>	  
-   	  <div id="naverLogin"><div class='loginCI'><img src="https://www.realrankus.com/image/naver_CI.png" height='20'></div><div class='loginText' style='color:white'>` + t('ui.menu.naver_continue', '네이버로 계속하기') + `</div></div>
-	  <div id="appleIdLogin" onclick="appleProvider()"><div class='loginCI'><img src="https://www.realrankus.com/image/apple_CI.png" height='20'></div><div class='loginText' style='color:white'>` + t('ui.menu.apple_continue', 'Apple로 계속하기') + `</div></div>
+   	  <div id="naverLogin"><div class='loginCI'><img src="https://www.realrankus.com/image/naver_CI.png" height='20'></div><div class='loginText' style='color:white'>` + tSafe('ui.menu.naver_continue', '네이버로 계속하기') + `</div></div>
+	  <div id="appleIdLogin" onclick="appleProvider()"><div class='loginCI'><img src="https://www.realrankus.com/image/apple_CI.png" height='20'></div><div class='loginText' style='color:white'>` + tSafe('ui.menu.apple_continue', 'Apple로 계속하기') + `</div></div>
 	`;
 	var footerHtml = "";
 
@@ -664,8 +664,8 @@ function handleAppleLoginState() {
  * @param {boolean} needRedirect - 로그아웃 후 대상 페이지로 강제 리다이렉트 이동 여부 (기본값: false)
  */
 function setLogoutStatus(needRedirect = false) {
-	var offcanvas_login_msg = "<div id='loginPopup'>" + t('ui.menu.login_popup') + "</div>";
-	offcanvas_login_msg += "<div id='aptrankLoginButton2' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>" + t('ui.menu.login_btn') + "</div>";
+	var offcanvas_login_msg = "<div id='loginPopup'>" + tSafe('ui.menu.login_popup') + "</div>";
+	offcanvas_login_msg += "<div id='aptrankLoginButton2' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>" + tSafe('ui.menu.login_btn') + "</div>";
 
 	// GNB 레이아웃 원상 복구 및 스타일 설정
 	$('#offcanvasRightLabel').html(offcanvas_login_msg);
@@ -711,14 +711,14 @@ function setNaverLoginStatus(info_name, info_nickname, info_email) {
 	// 사이드바 하단 정보 갱신 및 네이버 로그아웃 바인딩 구현
 	var offcanvas_footer_html = `
 	<div class="offcanvas_footer_icon"><i class="fa-solid fa-list-ol"></i></div>
-	<div id="offcanvas_footer6" onClick="openOuterLink('https://www.realrankus.com/common/policy.html')">` + t('ui.menu.policy') + `</div>          
+	<div id="offcanvas_footer6" onClick="openOuterLink('https://www.realrankus.com/common/policy.html')">` + tSafe('ui.menu.policy') + `</div>          
 
 	<div class="offcanvas_footer_icon"><i class="fa-solid fa-user-shield"></i></div>
-	<div id="offcanvas_footer7" onClick="openOuterLink('https://www.realrankus.com/common/privacy.html')">` + t('ui.menu.privacy') + `</div>
+	<div id="offcanvas_footer7" onClick="openOuterLink('https://www.realrankus.com/common/privacy.html')">` + tSafe('ui.menu.privacy') + `</div>
 
 	<div></div><div></div>
 	<div class='offcanvas_footer_icon'><i class='fa-solid fa-right-from-bracket'></i></div>
-	<div id='gnbLogin'>` + t('ui.menu.naver_logout') + `</div>
+	<div id='gnbLogin'>` + tSafe('ui.menu.naver_logout') + `</div>
 	`;
 	$("#offcanvas_footer").html(offcanvas_footer_html);
 
@@ -735,7 +735,7 @@ function setNaverLoginStatus(info_name, info_nickname, info_email) {
 	});
 
 	// 환영 문구 및 오프캔버스 트리거 속성 변경
-	$('#offcanvasRightLabel').html(t('ui.menu.welcome_msg').replace('{nickname}', info_nickname));
+	$('#offcanvasRightLabel').html(tSafe('ui.menu.welcome_msg').replace('{nickname}', info_nickname));
 	$('#offcanvasRightLabel').css({ 'font-size': '1.0em' });
 	$("#offcanvasRight > .offcanvas-header > #offcanvasRightLabel").attr({ "data-bs-toggle": "offcanvas", "data-bs-target": "#offcanvasProfile", "aria-controls": "offcanvasRight" });
 }
@@ -858,14 +858,14 @@ function setKakaoLoginStatus(info_name, info_nickname, info_email) {
 
 	var offcanvas_footer_html = `
 	<div class="offcanvas_footer_icon"><i class="fa-solid fa-list-ol"></i></div>
-	<div id="offcanvas_footer6" onClick="openOuterLink('https://www.realrankus.com/common/policy.html')">` + t('ui.menu.policy') + `</div>          
+	<div id="offcanvas_footer6" onClick="openOuterLink('https://www.realrankus.com/common/policy.html')">` + tSafe('ui.menu.policy') + `</div>          
 
 	<div class="offcanvas_footer_icon"><i class="fa-solid fa-user-shield"></i></div>
-	<div id="offcanvas_footer7" onClick="openOuterLink('https://www.realrankus.com/common/privacy.html')">` + t('ui.menu.privacy') + `</div>
+	<div id="offcanvas_footer7" onClick="openOuterLink('https://www.realrankus.com/common/privacy.html')">` + tSafe('ui.menu.privacy') + `</div>
 
 	<div></div><div></div>
 	<div class='offcanvas_footer_icon'><i class='fa-solid fa-right-from-bracket'></i></div>
-	<div id='kakao_logout'>` + t('ui.menu.kakao_logout') + `</div>
+	<div id='kakao_logout'>` + tSafe('ui.menu.kakao_logout') + `</div>
 	`;
 	$("#offcanvas_footer").html(offcanvas_footer_html);
 
@@ -881,7 +881,7 @@ function setKakaoLoginStatus(info_name, info_nickname, info_email) {
 		window.location.replace(redirect);
 	});
 
-	$('#offcanvasRightLabel').html(t('ui.menu.welcome_msg').replace('{nickname}', info_nickname));
+	$('#offcanvasRightLabel').html(tSafe('ui.menu.welcome_msg').replace('{nickname}', info_nickname));
 	$('#offcanvasRightLabel').css({ 'font-size': '1.0em' });
 	$("#offcanvasRight > .offcanvas-header > #offcanvasRightLabel").attr({ "data-bs-toggle": "offcanvas", "data-bs-target": "#offcanvasProfile", "aria-controls": "offcanvasRight" });
 }
