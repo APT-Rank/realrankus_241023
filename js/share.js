@@ -429,6 +429,14 @@ function sendTelegram_single_message(comment) {
     })
 }
 
+var tSafe = (key, fallback) => {
+  if (typeof window.t === 'function') {
+    var val = window.t(key);
+    return val !== key ? val : fallback;
+  }
+  return fallback;
+};
+
 function sendTelegram_blog(comment) {
   var current_region = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());
   var current_region_id = selectedSubRegion

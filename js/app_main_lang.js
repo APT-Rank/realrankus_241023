@@ -18,14 +18,6 @@ var formatOptionDate = (dateStr) => {
   }
 };
 
-var tSafe = (key, fallback) => {
-  if (typeof window.t === 'function') {
-    var val = window.t(key);
-    return val !== key ? val : fallback;
-  }
-  return fallback;
-};
-
 var getGunguText = (name, val) => {
   if (val === "1000000000_Korea") return tSafe("ui.supply_pop_jobs", name);
   if (val === "Living_Top300") return tSafe("ui.top300_living", name);

@@ -428,13 +428,13 @@ function showLogin() {
 	$(".modal-backdrop").css({ "width": "100%" });
 	$("#baseModal").css({ "width": "100%" });
 
-	var titleHtml = "<div class='popupTitle'>" + tSafe('ui.login_button') + "</div>";
+	var titleHtml = "<div class='popupTitle'>" + tSafe('ui.login_button', '리얼랭커스 로그인') + "</div>";
 	var detailHtml = `
 	<div id='policy_box'>
 		<div style='margin-bottom: 10px; font-size: 0.85em; font-weight: 600; text-align:center'>` + tSafe('ui.menu.agree_required', '계속 진행하려면 필수 약관에 동의해 주세요') + `</div>
 		<div id='policy_agreement'>
-			<div><input type="checkbox" class='policy_checker' id='check_policy'><label for='check_policy'>` + tSafe('ui.menu.policy') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/policy.html")'>` + tSafe('ui.menu.view', '보기') + `</div>
-			<div><input type="checkbox" class='policy_checker' id='check_privacy'><label for='check_privacy'>` + tSafe('ui.menu.privacy') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/privacy.html")'>` + tSafe('ui.menu.view', '보기') + `</div>
+			<div><input type="checkbox" class='policy_checker' id='check_policy'><label for='check_policy'>` + tSafe('ui.menu.policy', '이용약관') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/policy.html")'>` + tSafe('ui.menu.view', '보기') + `</div>
+			<div><input type="checkbox" class='policy_checker' id='check_privacy'><label for='check_privacy'>` + tSafe('ui.menu.privacy', '개인정보처리방침') + `</label></div><div onClick='openOuterLink("https://www.realrankus.com/common/privacy.html")'>` + tSafe('ui.menu.view', '보기') + `</div>
 			<div><input type="checkbox" class='policy_checker' id='check_age'><label for='check_age'>` + tSafe('ui.menu.age_confirm', '만 14세 이상 확인') + `</label></div> <div></div>
 			<div id='all_agree'><div id='all_agree_button' onClick='allAgree()'>` + tSafe('ui.menu.agree_all', '전체 동의 하기') + `</div></div>
 		</div>
@@ -664,8 +664,8 @@ function handleAppleLoginState() {
  * @param {boolean} needRedirect - 로그아웃 후 대상 페이지로 강제 리다이렉트 이동 여부 (기본값: false)
  */
 function setLogoutStatus(needRedirect = false) {
-	var offcanvas_login_msg = "<div id='loginPopup'>" + tSafe('ui.menu.login_popup') + "</div>";
-	offcanvas_login_msg += "<div id='aptrankLoginButton2' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>" + tSafe('ui.menu.login_btn') + "</div>";
+	var offcanvas_login_msg = "<div id='loginPopup'>" + tSafe('ui.menu.login_popup', "리얼랭커스의 모든 서비스를 이용하세요") + "</div>";
+	offcanvas_login_msg += "<div id='aptrankLoginButton2' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>" + tSafe('ui.menu.login_btn', "리얼랭커스 로그인") + "</div>";
 
 	// GNB 레이아웃 원상 복구 및 스타일 설정
 	$('#offcanvasRightLabel').html(offcanvas_login_msg);

@@ -23,8 +23,14 @@ window.I18N = {};
  * 동기 로드를 사용하는 이유: 다른 JS 파일에서 t() 함수를 즉시 사용하기 위함.
  * 번역 JSON은 매우 작으므로 성능 영향 무시 가능.
  */
-(function loadI18N() {
+(function loadI18N() {  
   var langFile = window.BASE_PATH + 'i18n/' + window.LANG + '.json';
+  if(isEn){
+    langFile = window.BASE_PATH + 'i18n/en.json';
+  }
+  else{
+    langFile = window.BASE_PATH + 'i18n/ko.json';
+  }
 
   try {
     var xhr = new XMLHttpRequest();
