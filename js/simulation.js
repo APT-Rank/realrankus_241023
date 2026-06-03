@@ -45,6 +45,7 @@ function openSimulation(arr, index){
   titleHtml = "";
   detailHtml = "";
   footerHtml = "";
+  var avgTransportScore = 0;
 
   var aptName = arr[index]["아파트명"]
   var apt_m = arr[index]["전용면적(m2)"]

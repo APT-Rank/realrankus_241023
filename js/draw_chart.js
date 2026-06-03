@@ -202,7 +202,9 @@ function drawChart_op(aptValue, transportScore, infraScore, livingScore, eduScor
 }
 
 function drawSubChart(score, avgScore, label1, label2, color1, color2, className){
-    var ctx = document.getElementById(className).getContext('2d');
+    var element = document.getElementById(className);
+    if (!element) return;
+    var ctx = element.getContext('2d');
     var color = 'white'
     var align = 'start'
     var data = [score, avgScore]
@@ -273,7 +275,9 @@ function drawSubChart(score, avgScore, label1, label2, color1, color2, className
 }
 
 function drawSimulSubChart(score, avgScore, label1, label2, color1, color2, className){
-  var ctx = document.getElementById(className).getContext('2d');
+  var element = document.getElementById(className);
+  if (!element) return;
+  var ctx = element.getContext('2d');
   var color = 'white'
   var align = 'start'
   var data = [score, avgScore]
@@ -683,7 +687,9 @@ function drawPriceChart(duration, dataset_front, dataset, dataset_end, id_name, 
 }
 
 function drawRadarChart(score, label1, color1, className){
-    var ctx = document.getElementById(className).getContext('2d');
+    var element = document.getElementById(className);
+    if (!element) return;
+    var ctx = element.getContext('2d');
     var color = 'white'
     var align = 'start'
 
@@ -746,7 +752,9 @@ function drawRadarChart(score, label1, color1, className){
 }
 
 function drawRadarChart_mobile(score, label1, color1, className){
-    var ctx = document.getElementById(className).getContext('2d');
+    var element = document.getElementById(className);
+    if (!element) return;
+    var ctx = element.getContext('2d');
     var color = 'white'
     var align = 'start'
 

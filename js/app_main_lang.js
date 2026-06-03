@@ -1472,7 +1472,7 @@ function updateTable(month, region) {
       for (var j = 0; j < itemNum; j++) {
         var split_addr = aptData.data[j]["법정동주소"].split(" ");
         law_addr_en = aptData.data[j]["Law_Addr_EN"];
-        if(law_addr_en == undefined){
+        if (law_addr_en == undefined) {
           law_addr_en = "";
         }
         var split_addr_en = law_addr_en.split(" ");
@@ -1598,7 +1598,7 @@ function updateTable(month, region) {
         var last_sales_area = last_sales[2];
         last_sales_date_short = last_sales_date.substr(2);
 
-        if(aptAddress_en == undefined || aptAddress_en == null){
+        if (aptAddress_en == undefined || aptAddress_en == null) {
           aptAddress_en = "";
         }
 
@@ -1934,6 +1934,7 @@ function showDetail(index) {
   titleHtml = "";
   detailHtml = "";
   footerHtml = "";
+  var avgTransportScore = 0;
 
   aptData = sortData;
 
@@ -3245,7 +3246,7 @@ function showDetail(index) {
     drawRankChart(rankMonth, rankData, 110);
   }
 
-  if (login_status) {
+  if (!login_status) {
     drawChart(aptValue.toFixed(2), livingScore, transportScore, infraScore, eduScore);
     drawSubChart(livingScore, avgLivingScore, "주거총점", "지역평균", "#fe4040", "#9f9f9f", "livingChart");
     if (isNaN(transportScore) == false) {
@@ -4414,7 +4415,7 @@ function openRadarMap(searchCode) {
     .get()
     .then((snapshot) => {
       if (snapshot.exists()) {
-        complex_info = snapshot.val();        
+        complex_info = snapshot.val();
         if (complex_info == null) {
           alert("불러오기 실패했어요. 다시 시도해 주세요.");
         } else {

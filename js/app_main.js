@@ -1766,6 +1766,7 @@ function showDetail(index) {
   titleHtml = "";
   detailHtml = "";
   footerHtml = "";
+  var avgTransportScore = 0;
 
 
   aptData = sortData;

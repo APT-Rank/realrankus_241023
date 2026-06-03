@@ -242,6 +242,7 @@ function showTopDetail(index){
   titleHtml = "";
   detailHtml = "";
   footerHtml = "";
+  var avgTransportScore = 0;
 
   aptData = sortData
   var aptRank = "TOP " + aptData.data[index]['rank']
