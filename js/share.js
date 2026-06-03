@@ -1,5 +1,12 @@
-var tSafe = function (key, fallback) {
-  return (typeof t === 'function') ? t(key, fallback) : fallback;
+const isEn = window.location.pathname.includes('/en/');
+const pathPrefix = isEn ? "../" : "./";
+
+var tSafe = (key, fallback) => {
+  if (typeof window.t === 'function') {
+    var val = window.t(key);
+    return val !== key ? val : fallback;
+  }
+  return fallback;
 };
 
 var shareTitle = ""
@@ -428,14 +435,6 @@ function sendTelegram_single_message(comment) {
       console.log(error)
     })
 }
-
-var tSafe = (key, fallback) => {
-  if (typeof window.t === 'function') {
-    var val = window.t(key);
-    return val !== key ? val : fallback;
-  }
-  return fallback;
-};
 
 function sendTelegram_blog(comment) {
   var current_region = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());

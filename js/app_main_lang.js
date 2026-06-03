@@ -1,6 +1,3 @@
-const isEn = window.location.pathname.includes('/en/');
-const pathPrefix = isEn ? "../" : "./";
-
 var formatOptionDate = (dateStr) => {
   if (!dateStr || dateStr.length < 6) return dateStr;
   var year = dateStr.substr(2, 2);

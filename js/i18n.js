@@ -23,23 +23,31 @@ window.I18N = {};
  * 동기 로드를 사용하는 이유: 다른 JS 파일에서 t() 함수를 즉시 사용하기 위함.
  * 번역 JSON은 매우 작으므로 성능 영향 무시 가능.
  */
-(function loadI18N() {  
-  var langFile = window.BASE_PATH + 'i18n/' + window.LANG + '.json';
-  if(isEn){
-    langFile = window.BASE_PATH + 'i18n/en.json';
-  }
-  else{
-    langFile = window.BASE_PATH + 'i18n/ko.json';
-  }
-
+(function loadI18N() {
+  //현재 경로에 "en"이 포함되어 있으면 en.json 파일을 그렇지 않으면 ko.json으로 경로 설정
+  var langFile = window.BASE_PATH + 'i18n/' + window.LANG + '.json';  
+  
   try {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', langFile, false); // 동기 로드
     xhr.send();
-    if (xhr.status === 200) {
+    if (xhr.status === 200) {      
       window.I18N = JSON.parse(xhr.responseText);
+      //console.log('[i18n] Loaded ' + langFile);
     } else {
-      console.warn('[i18n] Failed to load ' + langFile + ' (status: ' + xhr.status + ')');
+      // 로드 실패 시 현재 경로의 상위에서 다시 시도 (루트/하위 구조 모두 지원)
+      //console.log('[i18n] Failed to load ' + langFile + ' (status: ' + xhr.status + ')');
+      
+      var altLangFile = (window.BASE_PATH === './') ? '../i18n/' + window.LANG + '.json' : './i18n/' + window.LANG + '.json';
+      var altXhr = new XMLHttpRequest();
+      altXhr.open('GET', altLangFile, false);
+      altXhr.send();
+      if (altXhr.status === 200) {
+        window.I18N = JSON.parse(altXhr.responseText);
+        //console.log('[i18n] Loaded ' + altLangFile);
+      } else {        
+        //console.warn('[i18n] Failed to load ' + langFile + ' (status: ' + xhr.status + ')');
+      }
     }
   } catch (e) {
     console.warn('[i18n] Error loading translation file:', e);
