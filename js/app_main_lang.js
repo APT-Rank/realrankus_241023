@@ -83,7 +83,7 @@ var selectedComplex = "";
 /** @type {string} 통합검색 시 적용되는 기본 검색 타입 ("global" 또는 "local") */
 var searchType = "global";
 /** @type {string} JSON 파일 변경 시 브라우저 캐싱을 무력화하기 위한 버전 쿼리 스트링 */
-var update_ver = "?v=1.21";
+var update_ver = "?v=1.22";
 
 /** @type {string} 접속 로그 측정을 위한 페이지 식별 명칭 */
 var pageName = "aptrank"; //20231020
