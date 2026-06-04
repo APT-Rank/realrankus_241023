@@ -662,14 +662,13 @@ $(document).ready(function () {
   $("#linkToAptrank").css("line-height", blank_height);
 
   currentMenu = "aptrank"; //offcanvas
+  
   setOffcanvasMenu(); //offcanvas
 
   setBottomMenu();
   setAppDownloadModal();
 
-
   requestReportModal();
-
 
   $("#searchingBox").css({
     height: window.innerHeight - ($("#titleBar").height() + $("#selections").height() + $("#weight").height() + 39 + $("#linkToAptrank_bottom").height()),

@@ -1,5 +1,5 @@
 function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
-    var label = ["총점"]
+    var label = (typeof isEn !== 'undefined' && isEn) ? ["Overall"] : ["총점"]
     var data = [aptValue]      
 
     var colorArray = []
@@ -76,17 +76,17 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
 }
 
 function drawChart_op(aptValue, transportScore, infraScore, livingScore, eduScore){
-  var label = ["총점", "교통", "인프라", "주거", "교육"]
+  var label = (typeof isEn !== 'undefined' && isEn) ? ["Overall", "Transport", "Infra", "Living", "Education"] : ["총점", "교통", "인프라", "주거", "교육"]
   var data = [aptValue, transportScore, infraScore, livingScore, eduScore]      
   var color = 'white'
   var align = 'start'
 
   if(isNaN(transportScore)){
-    label = ["총점", "인프라", "주거", "교육"]
+    label = (typeof isEn !== 'undefined' && isEn) ? ["Overall", "Infra", "Living", "Education"] : ["총점", "인프라", "주거", "교육"]
     data = [aptValue, infraScore, livingScore, eduScore]        
   }
   if(eduScore == "region"){
-    label = ["총점", "공급필요", "인구수", "일자리수"]
+    label = (typeof isEn !== 'undefined' && isEn) ? ["Overall", "Supply", "Population", "Jobs"] : ["총점", "공급필요", "인구수", "일자리수"]
     data = [aptValue, livingScore, transportScore, infraScore]        
   }
 
@@ -476,7 +476,7 @@ function drawPriceRateChart(dateArray, salesArray, rentArray){
       labels: label,
       datasets:[
       {
-        label: "매매지수",
+        label: (typeof isEn !== 'undefined' && isEn) ? "Sales Index" : "매매지수",
         data: salesData,        
         borderColor: "#ff3d38",
         borderWidth: 1,
@@ -484,7 +484,7 @@ function drawPriceRateChart(dateArray, salesArray, rentArray){
         pointRadius: 1
       },
       {
-        label: "전세지수",
+        label: (typeof isEn !== 'undefined' && isEn) ? "Jeonse Index" : "전세지수",
         data: rentData,
         borderColor: "#5589c9",
         borderWidth: 1,

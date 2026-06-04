@@ -137,6 +137,15 @@ ui.menu.biz_reg_title,사업자번호,Biz Registration No.
 ui.menu.ecommerce_title,통신판매번호,eCommerce License No.
 ui.menu.office_title,소재지,Head Office
 ui.menu.office_address,"서울시 강남구 테헤란로77길 11-9, A동 113호(삼성동)","7F A113, 11-9, Teheran-ro 77-gil, Gangnam-gu, Seoul"
+ui.menu.policy,이용약관,Terms of Use
+ui.menu.privacy,개인정보처리방침,Privacy Policy
+ui.menu.naver_logout,네이버 로그아웃,Naver Sign out
+ui.menu.kakao_logout,카카오 로그아웃,Kakao Sign out
+ui.menu.apple_logout,Apple 로그아웃,Apple Sign out
+ui.menu.login_popup,리얼랭커스의 모든 서비스를 이용하세요,Access all features on Realrankus
+ui.menu.login_btn,리얼랭커스 로그인,Sign in to Realrankus
+ui.menu.welcome_msg,{nickname}님 반갑습니다!<br><span style='font-size:0.8em'>모든 서비스를 이용할 수 있어요</span>,"Welcome, {nickname}!<br><span style='font-size:0.8em'>You can use all services</span>"
+ui.menu.welcome_msg_email,{email}<br><span style='font-size:0.8em'>모든 서비스를 이용할 수 있어요</span>,{email}<br><span style='font-size:0.8em'>You can use all services</span>
 ui.report.banner_template,"{region}에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트 (29,900원)","The standard for buying your first home in {region}, Real Report (29,900 KRW)"
 ui.report.banner_template_mobile,"{region}에서 처음 집 살 때 실패하지 않는 기준,<br/>리얼 리포트 (29,900원)","The standard for buying your first home in {region},<br/>Real Report (29,900 KRW)"
 ui.report.banner_map_template,"{region}에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트","The standard for buying your first home in {region}, Real Report"
@@ -279,6 +288,8 @@ ui.report.area_label,평형,Size
 ui.report.rooms_baths_label,방수/욕실수,Rooms / Baths
 ui.report.maintenance_label,평균 관리비,Avg. Maintenance Fee
 ui.report.won_unit,원, KRW
+ui.report.rebuild_comment,"재건축의 경우, 향후 신축이 될 가능성을 고려하여 용적률과 건폐율로 주거 점수를 계산합니다.","For reconstruction complexes, the living score is calculated using the floor area ratio (FAR) and building coverage, considering the redevelopment potential."
+ui.report.pending_comment,"'미정' 항목이 있는 경우 평균치로 대체되어 계산되며, 향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.","Any 'TBD' items are replaced with average values for calculation, and scores may change with future updates."
 ui.report.living_score_guide,"주거총점 계산을 위한 정보는 네이버 부동산으로 취득하며, 세대수/평형/난방방식 등의 항목을 상대점수로 산정합니다.","Information for living score is fetched from Naver Land. Households, size, heating style, etc. are calculated as relative scores."
 ui.report.floor_noise_label,층간소음,Floor Noise
 ui.report.floor_noise_mgmt_label,층간소음 관리,Floor Noise Management
@@ -293,18 +304,18 @@ ui.report.transport_guide_google,"가장 가까운 역은 직선거리로 계산
 ui.report.transport_guide_tmap,"가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.",Nearest station is calculated by straight line distance.<br>Key stations represent stations with high disembarking volume in weekday rush hours.<br>Travel times are based on T-MAP transit data.
 ui.report.dept_store_3km_label,3km 이내 백화점,Dept. Store within 3km
 ui.report.outlet_5km_label,5km 이내 아울렛/몰,Outlet/Mall within 5km
-ui.report.mart_1km_label,1km 이내 대형마트,Supermarket within 1km
-ui.report.market_300m_label,300m 이내 상권,Commercial District within 300m
+ui.report.mart_1km_label,1km 이내 대형마트,Big Mart within 1km
+ui.report.market_300m_label,300m 이내 상권,Commercial Dist within 300m
 ui.report.bank_500m_label,500m 이내 은행,Bank within 500m
 ui.report.hospital_500m_label,500m 이내 병원,Hospital within 500m
 ui.report.big_hospital_5km_label,5km 이내 대형병원,General Hospital within 5km
 ui.report.park_500m_label,500m 이내 공원,Park within 500m
 ui.report.big_park_1km_label,1km 이내 대형공원,Large Park within 1km
 ui.report.harmful_3km_label,3km 이내 혐오시설,Objectionable Facility within 3km
-ui.report.infra_guide_with_market,"인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정되며, 상권은 호갱노노 정보를 사용합니다.","Infra information is based on official homepages of department stores/marts, Korea Federation of Banks, Korea Resource Circulation Service, and Public Data Portal, and commercial district is based on Hogangnono."
+ui.report.infra_guide_with_market,"인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정되며, 상권은 호갱노노 정보를 사용합니다.","Infra information is based on official homepages of department stores/marts, Korea Federation of Banks, Korea Resource Circulation Service, and Public Data Portal, and commercial area is based on Hogangnono."
 ui.report.infra_guide_base,"인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정됩니다.","Infra information is based on official homepages of department stores/marts, Korea Federation of Banks, Korea Resource Circulation Service, and Public Data Portal."
-ui.report.pSchool_distance_label,초등학교 거리,Elementary School Distance
-ui.report.pSchool_change_label,초등학교 학생증감,Elementary School Enrollment Change
+ui.report.pSchool_distance_label,초등학교 거리,Elmtr School Distance
+ui.report.pSchool_change_label,초등학교 학생증감,Elmtr School Enrollment Change
 ui.report.transfer_in_heavy,많은 전입,Heavy Net In-migration
 ui.report.transfer_in_light,적은 전입,Light Net In-migration
 ui.report.transfer_neutral,전입/전출 적음,Stable Enrollment
@@ -413,4 +424,93 @@ ui.report.unified_search_notice,빠른 검색 속도를 위해 <br> 두 글자 �
 ui.report.recent_search,최근검색,Recent Search
 ui.report.searched_suffix,에 검색, (Searched)
 ui.report.rearrange_region_notice,전국 시군구 내에서 정렬합니다,Sorting within districts nationwide
+ui.sorting.map_only_balanced,지도에 표시되는 랭커 정보는 '균형잡힌' 정렬 방식으로만 보여져요!,Map ranks are only displayed in 'Balanced' sort mode!
+ui.sorting.map_notice,지도에 표시되는 랭커는 '균형잡힌' 정보로만 보여집니다.,Ranks shown on the map are based on 'Balanced' criteria.
+ui.sorting.title,랭크 설정,Rank Settings
+ui.sorting.desc,"각 항목별 점수는 변하지 않으며, 가중치에 따라 총점을 다시 계산합니다.","Individual scores remain the same, only the total score is recalculated based on weights."
+ui.sorting.living,주거,Living
+ui.sorting.transport,교통,Transport
+ui.sorting.infra,인프라,Infra
+ui.sorting.edu,교육,Edu
+ui.sorting.hide_on_change,지역 변경 시 표시하지 않기,Do not show on region change
+ui.sorting.close,닫기,Close
+ui.sorting.apply,적용,Apply
+ui.profile.title,사용자정보,User Profile
+ui.profile.name,이름,Name
+ui.profile.nickname,별명,Nickname
+ui.profile.email,이메일,Email
+ui.profile.birthday,생년월일,Birthday
+ui.profile.gender,성별,Gender
+ui.profile.gender_m,남성,Male
+ui.profile.gender_f,여성,Female
+ui.profile.gender_none,제공 안 함,Not provided
+ui.profile.provider,로그인 제공,Login provider
+ui.profile.naver,네이버,Naver
+ui.profile.kakao,카카오,Kakao
+ui.profile.apple,Apple,Apple
+ui.map.visits,{count}명 방문,{count} visits
+ui.map.price_unit,억,M
+ui.map.area_unit,평,py
+ui.radar_map.commercial_district,상권,Commercial Area
+ui.radar_map.academy_district,학원가,Academy Area
+ui.radar_map.department_store,백화점,Department Store
+ui.radar_map.park,공원,Park
+ui.radar_map.elementary_school,초등학교,Elementary School
+ui.radar_map.middle_school,중학교,Middle School
+ui.radar_map.bank,은행,Bank
+ui.radar_map.drink_pub,주점,Drink/Pub
+ui.radar_map.motel,모텔,Motel
+ui.simul_result_title,랭크 시뮬레이션 결과,Rank Simulation Result
+ui.balanced_score_label,종합,Overall
+ui.expected_grade,예상,Expected
+ui.view_premium_label,조망 프리미엄,View Premium
+ui.age_label,연차,Building Age
+ui.parking_per_house,세대당 주차수,Parking spaces per Household
+ui.custom_living_bonus,내맘대로 주거 가점,Custom Living Bonus
+ui.nearest_station_dist,가장 가까운 역 거리,Distance to nearest station
+ui.major_stations_30m,30분 이내 도착 가능 주요역,Major stations within 30 min
+ui.major_stations_1h,1시간 이내 도착 가능 주요역,Major stations within 1 hour
+ui.custom_trans_bonus,내맘대로 교통 가점,Custom Transport Bonus
+ui.dept_store_3km,3km 이내 백화점,Department stores within 3km
+ui.outlet_mall_5km,5km 이내 아울렛/몰,Outlets/Malls within 5km
+ui.mart_1km,1km 이내 대형마트,Hypermarkets within 1km
+ui.stores_300m,300m 이내 상점,Convenience stores within 300m
+ui.banks_500m,500m 이내 은행,Banks within 500m
+ui.hospitals_500m,500m 이내 병원,Hospitals within 500m
+ui.large_hospitals_5km,5km 이내 대형병원,General hospitals within 5km
+ui.parks_500m,500m 이내 공원,Parks within 500m
+ui.large_parks_1km,1km 이내 대형공원,Large parks within 1km
+ui.harmful_facility_3km,3km 이내 혐오시설,Unwanted facilities within 3km
+ui.custom_infra_bonus,내맘대로 인프라 가점,Custom Infra Bonus
+ui.elem_school_dist,초등학교 거리,Distance to primary school
+ui.elem_school_student_change,초등학교 학생증감,Primary school student trend
+ui.elem_school_achievement,중학교 학업성취도,Middle school achievement
+ui.academies_300m,300m 이내 학원,Academies within 300m
+ui.academies_1km,1km 이내 학원,Academies within 1km
+ui.harmful_facility_300m,300m 유흥시설/모텔,Nightlife/Motels within 300m
+ui.custom_edu_bonus,내맘대로 교육 가점,Custom Education Bonus
+ui.simulation_label,시뮬레이션,Simulation
+ui.existing_label,기존,Current
+ui.living,주거,Living
+ui.transport,교통,Transport
+ui.infra,인프라,Infra
+ui.edu,교육,Education
+ui.living_score_label,주거총점,Living Score
+ui.transport_score_label,교통총점,Transport Score
+ui.infra_score_label,인프라총점,Infra Score
+ui.edu_score_label,교육총점,Education Score
+ui.house_num_label,세대수,No. of Households
+ui.heating_label,난방방식,Heating System
+ui.entrance_label,현관구조,Entrance Type
+ui.price_change_label,매매가변동,Price Change
+ui.show_graph_label,그래프보기,Show Graph
+ui.no_sales_info,거래 정보 없음,No transaction data
+ui.give_custom_living_bonus,내맘대로 주거 가점 주기,Give Custom Living Bonus
+ui.give_custom_trans_bonus,내맘대로 교통 가점 주기,Give Custom Transport Bonus
+ui.give_custom_infra_bonus,내맘대로 인프라 가점 주기,Give Custom Infra Bonus
+ui.give_custom_edu_bonus,내맘대로 교육 가점 주기,Give Custom Education Bonus
+ui.view_result,결과 보기,View Results
+ui.analyzing,열심히 분석 중이예요!,Analyzing...
+ui.station_area_label,역세권 여부,Station Area Status
+ui.rank_simulation,랭크 시뮬레이션,Rank Simulation
 ui.build_year_unit,,yrs
