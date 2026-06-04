@@ -3037,39 +3037,15 @@ function showDetail(index) {
     house_num = 0;
   }
 
-  if (Number(selectedMonth) > 202203) {
-    if (apt_type >= "재건축") {
-      shareText += `
-            \nㆍ${isEn ? "FAR" : "용적률"} : ${floor_rate}
-            \nㆍ${isEn ? "BCR" : "건폐율"} : ${cover_rate}
-          `;
-    } else {
-      shareText += `
-            \nㆍ${isEn ? "Households" : "세대수"} : ${house_num.toLocaleString()}${isEn ? " households" : "세대"}
-            \nㆍ${isEn ? "Parking" : "주차"} : ${parking}
-          `;
-    }
+  if (apt_type == "재건축") {
+    shareText += `\nㆍ${isEn ? "FAR" : "용적률"} : ${floor_rate} \nㆍ${isEn ? "BCR" : "건폐율"} : ${cover_rate}`;
   } else {
-    if (aptDuration >= 30) {
-      shareText += `
-            \nㆍ${isEn ? "FAR" : "용적률"} : ${floor_rate}
-            \nㆍ${isEn ? "BCR" : "건폐율"} : ${cover_rate}
-          `;
-    } else {
-      shareText += `
-            \nㆍ${isEn ? "Households" : "세대수"} : ${house_num.toLocaleString()}${isEn ? " households" : "세대"}
-            \nㆍ${isEn ? "Parking" : "주차"} : ${parking}
-          `;
-    }
+    shareText += `\nㆍ${isEn ? "Households" : "세대수"} : ${house_num.toLocaleString()}${isEn ? " households" : "세대"}\nㆍ${isEn ? "Parking" : "주차"} : ${parking}`;
   }
 
-  shareText += `
-        \nㆍ${isEn ? "General Hospitals within 5km" : "5km 이내 대형병원"} : ${bigHospital_5km}
-        \nㆍ${isEn ? "Middle School Achievement Rate" : "중학교 보통 학력 이상"} : ${mSchool_edu}
-        \n
-      `;
+  shareText += `\nㆍ${isEn ? "General Hospitals within 5km" : "5km 이내 대형병원"} : ${bigHospital_5km}\nㆍ${isEn ? "Middle School Achievement Rate" : "중학교 보통 학력 이상"} : ${mSchool_edu}`;
 
-  shareText += `\n${shareURL}`;
+  shareText += `\n\n${shareURL}`;
 
   var tShowHogangnono = tSafe("ui.report.show_hogangnono", "호갱노노 보기");
   var tShowNaverLand = tSafe("ui.report.show_naver_land", "네이버 부동산 보기");
