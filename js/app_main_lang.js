@@ -386,7 +386,7 @@ $(document).ready(function () {
     searching_url = pathPrefix + selectedMonth + "/Searching_list_EN.json" + update_ver;
     DB_Date = DB_Date + "_EN";
   } else {
-    searching_url = pathPrefix + selectedMonth + "/searching_list.json" + update_ver;
+    searching_url = pathPrefix + selectedMonth + "/Searching_list.json" + update_ver;
   }
   region_url = pathPrefix + selectedMonth + "/region_map.json" + update_ver;
 
