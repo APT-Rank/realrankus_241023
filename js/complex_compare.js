@@ -759,7 +759,7 @@ function loadComplex2(compareNum, val){
       firebase.database().ref().child("complex_info").child(search_region).child(search_val).get()
       .then((snapshot) => {
         if(snapshot.exists()){			  
-          complex_info = snapshot.val()
+          complex_info = snapshot.val()          
           tlgm_txt = $("#compare1_complex option:selected").text() + " vs " + $("#compare2_complex option:selected").text()
           tlgm_txt += "%0A"
           tlgm_txt += "(Loaded Complex 1 = " + complex_info['아파트명'] + ")"
@@ -777,6 +777,7 @@ function loadComplex2(compareNum, val){
           }
         }
         else{
+          console.log("BBBBBBBBBB")
           alert("불러오기 실패했어요. 다시 시도해 주세요.")
         }
       })
@@ -890,12 +891,12 @@ function drawComplex(complexInfo, compareNum){
   var stationPoint_1h = "--";
   var stations_1h = "--"
 
-  if(complexInfo["교통총점"] == "NA" || complexInfo["교통총점"] ==undefined){
+  if(complexInfo["교통총점"] == "NA" || complexInfo["교통총점"] == undefined || complexInfo["교통총점"] == 0 || complexInfo["교통총점"] == null){
     $(selectedCompare +  "trans_nearest_station").html(nearestStation)    
   }
   else{
     nearestStation = complexInfo["가까운역이름"] + "역" + "(" + ( Math.round(complexInfo["가까운역거리"] * 100) / 100 ).toFixed() + "m)";
-    subway_line = complexInfo["역노선"];  
+    subway_line = complexInfo["역노선"];
     try{
       subway_line = subway_line.replace("[", "")
       subway_line = subway_line.replace("]", "")
@@ -907,7 +908,7 @@ function drawComplex(complexInfo, compareNum){
     $(selectedCompare +  "trans_nearest_station").html(nearestStation + "<div class='compareStations'>" + subway_line + "</div>")
   }  
 
-  if(complexInfo["교통총점"] == "NA" || complexInfo["교통총점"] == undefined){    
+  if(complexInfo["교통총점"] == "NA" || complexInfo["교통총점"] == undefined || complexInfo["교통총점"] == 0 || complexInfo["교통총점"] == null){    
     $(selectedCompare +  "trans_within30m").html("--")
   }
   else{
@@ -921,7 +922,7 @@ function drawComplex(complexInfo, compareNum){
     $(selectedCompare +  "trans_within30m").append("<div class='compareStations'>" + stations_30m + "</div>")
   }
 
-  if(complexInfo["교통총점"] == "NA" || complexInfo["교통총점"] == undefined){
+  if(complexInfo["교통총점"] == "NA" || complexInfo["교통총점"] == undefined || complexInfo["교통총점"] == 0 || complexInfo["교통총점"] == null){
     $(selectedCompare +  "trans_within1h").html("--")    
   }
   else{
@@ -958,7 +959,7 @@ function drawComplex(complexInfo, compareNum){
   $(selectedCompare +  "infra_park").html(park_500m)
 
   var big_park_1km = complexInfo["800m이내대형공원수"] + "개";
-  $(selectedCompare +  "infra_big_park").html(park_500m)
+  $(selectedCompare +  "infra_big_park").html(big_park_1km)
 
   var harmful_3km = complexInfo["3km이내혐오시설수"] + "개";
   $(selectedCompare +  "infra_harmful").html(harmful_3km)
@@ -1189,9 +1190,9 @@ function drawCompareTotalChart(livingScore, transportScore, infraScore, eduScore
   var min = 0
   var max = 100
   var anchor = 'end'
-  var animationFrom = 0  
+  var animationFrom = 0
 
-  if(transportScore == "NA"){
+  if(transportScore == "NA" || transportScore == undefined || transportScore == 0 || transportScore == null){
     label = ["주거", "교통", "인프라", "교육"]
     data = [livingScore, 0, infraScore, eduScore]        
   }  
@@ -1284,7 +1285,7 @@ function drawCompareTotalChart(livingScore, transportScore, infraScore, eduScore
             weight: 'bold'
           },
           formatter: function(value, ctx){
-            if(transportScore == "NA" && ctx.dataIndex == 1){
+            if((transportScore == "NA" || transportScore == undefined || transportScore == 0 || transportScore == null) && ctx.dataIndex == 1){
               return "해당없음"
             }
             if(compareNum == 1){
