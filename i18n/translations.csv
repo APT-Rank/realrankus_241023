@@ -424,6 +424,52 @@ ui.report.unified_search_notice,빠른 검색 속도를 위해 <br> 두 글자 �
 ui.report.recent_search,최근검색,Recent Search
 ui.report.searched_suffix,에 검색, (Searched)
 ui.report.rearrange_region_notice,전국 시군구 내에서 정렬합니다,Sorting within districts nationwide
+ui.compare.sido,시/도,Province/City
+ui.compare.gungu,시/군/구,District
+ui.compare.complex,단지명,Complex
+ui.compare.address,주소,Address
+ui.compare.years,년차,Years
+ui.compare.house_num,세대수,Households
+ui.compare.parking,주차,Parking
+ui.compare.heating,난방,Heating
+ui.compare.entrance,현관구조,Entrance
+ui.compare.floor_rate,용적률,FAR
+ui.compare.cover_rate,건폐율,Coverage
+ui.compare.rebuild_comment,"재건축 아파트의 경우 용적률 및 건폐율이 낮아 사업성이 좋을 수 있으므로, 대지지분을 함께 고려해 주거 가치 점수를 산정합니다.","For reconstruction complexes, the living score is calculated using the floor area ratio (FAR) and building coverage, considering the redevelopment potential."
+ui.compare.nearest_station,가장 가까운 역,Nearest Station
+ui.compare.within_30m,30분 이내 주요역,Within 30m
+ui.compare.within_1h,1시간 이내 주요역,Within 1h
+ui.compare.transport_comment,가장 가까운 역은 직선거리 기준입니다.<br>주요 거점역은 주중 출퇴근 시간 하차 인원이 많은 역 기준입니다.<br>이동시간은 구글 교통정보 대중교통 기준입니다.,The nearest station is calculated by straight-line distance.<br>Key stations represent stations with high disembarking volume in weekday rush hours.<br>Travel times are based on Google transit data.
+ui.compare.dept_store,백화점 (3km),Dept. Store (3km)
+ui.compare.outlet,아울렛/몰 (5km),Outlet/Mall (5km)
+ui.compare.mart,대형마트 (1km),Big Mart (1km)
+ui.compare.market_300m,상권 (300m),Commercial (300m)
+ui.compare.bank,은행 (500m),Bank (500m)
+ui.compare.hospital,병원 (500m),Hospital (500m)
+ui.compare.big_hospital,대형병원 (5km),General Hosp (5km)
+ui.compare.park,공원 (500m),Park (500m)
+ui.compare.big_park,대형공원 (1km),Large Park (1km)
+ui.compare.harmful,혐오시설 (3km),Objectionable (3km)
+ui.compare.pSchool_distance,초등학교 거리,Elmtr Distance
+ui.compare.pSchool_change,학생 전입/전출,Enrollment Change
+ui.compare.mSchool_achievement,중학교 학업성취도,Middle School Achv
+ui.compare.mSchool_achievement_mobile,중학교<br>학업성취도,Middle School<br>Achv
+ui.compare.academy_300m,학원가 (300m),Academy (300m)
+ui.compare.academy_1km,학원가 (1km),Academy (1km)
+ui.compare.edu_harmful,유흥주점/모텔 (300m),Nightlife/Motel (300m)
+ui.compare.latest_sales,최근 매매 실거래가,Recent Sales
+ui.compare.table_sales_rent,매매 / 전세,Sales / Lease
+ui.compare.table_size,평형,Size
+ui.compare.no_deal_history,거래 이력 없음,No transaction history
+ui.compare.no_info,정보 없음,No Info
+ui.compare.not_applicable,해당없음,N/A
+ui.compare.load_failed,불러오기 실패했어요. 다시 시도해 주세요.,Failed to load data. Please try again.
+ui.compare.search_min_length_notice,빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br>,"To ensure fast search speed, <br> please search with at least 2 characters!<br>"
+ui.compare.real_price,실거래가,Actual Price
+ui.compare.recent_deal,최근거래,Recent Deal
+ui.compare.price_by_size,평형별 시세,Deals by Size
+ui.compare.rank,RANK,RANK
+ui.build_year_unit,년차,yrs
 ui.sorting.map_only_balanced,지도에 표시되는 랭커 정보는 '균형잡힌' 정렬 방식으로만 보여져요!,Map ranks are only displayed in 'Balanced' sort mode!
 ui.sorting.map_notice,지도에 표시되는 랭커는 '균형잡힌' 정보로만 보여집니다.,Ranks shown on the map are based on 'Balanced' criteria.
 ui.sorting.title,랭크 설정,Rank Settings
@@ -513,4 +559,3 @@ ui.view_result,결과 보기,View Results
 ui.analyzing,열심히 분석 중이예요!,Analyzing...
 ui.station_area_label,역세권 여부,Station Area Status
 ui.rank_simulation,랭크 시뮬레이션,Rank Simulation
-ui.build_year_unit,,yrs
