@@ -1231,7 +1231,13 @@ function setOffcanvasMenu() {
               <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.op', '오피스텔분석')}</div>
               <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.op_desc', '대한민국 오피스텔 입지, 오피스텔랭크')}</div>
             </div>
-          </div>          
+          </div>
+        </div>
+
+        <div id="offcanvas_footer_link">
+          <div class="offcanvas_footer_icon"><i class="fa-solid fa-earth-asia"></i></div>
+          <div id="offcanvas_footer1" onClick="switchLanguage()">${tSafe('ui.menu.lang_switch_desc', 'English / 한국어')}</div>
+        </div>          
 
         </div>
         <div id="offcanvas_footer_link">
@@ -1354,6 +1360,21 @@ function setOffcanvasMenu() {
     $(".offcanvas-body").append(offcanvas_info_html)
   }
   setupOffcanvas(currentMenu)
+}
+
+/**
+ * @function switchLanguage
+ * @description Preserves the current page query parameters (state) and redirects to the alternative language index.html.
+ */
+function switchLanguage() {
+  const currentParams = window.location.search;
+  if (window.LANG === 'en') {
+    localStorage.setItem('selectedLanguage', 'ko');
+    window.location.href = '../index.html' + currentParams;
+  } else {
+    localStorage.setItem('selectedLanguage', 'en');
+    window.location.href = './en/index.html' + currentParams;
+  }
 }
 
 window.name = 'opener';

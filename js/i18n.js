@@ -12,6 +12,13 @@
 // 언어 결정 (기본값: ko)
 window.LANG = window.LANG || 'ko';
 
+// 현재 로드된 언어를 localStorage에 동기화
+try {
+  localStorage.setItem('selectedLanguage', window.LANG);
+} catch (e) {
+  console.warn('[i18n] Failed to sync language to localStorage:', e);
+}
+
 // 기본 경로 접두사 (en/ 하위에서는 '../', 루트에서는 './')
 window.BASE_PATH = window.BASE_PATH || ((window.LANG === 'ko') ? './' : '../');
 

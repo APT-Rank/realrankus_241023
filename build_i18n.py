@@ -158,6 +158,16 @@ def build_en_index(html, meta, ui):
             html, count=1
         )
 
+    # 14.5. 리다이렉트 스크립트 영어용 경로로 치환
+    html = html.replace(
+        "window.location.replace('./en/index.html' + currentParams);",
+        "window.location.replace('../index.html' + currentParams);"
+    )
+    html = html.replace(
+        "if (savedLang === 'en') {",
+        "if (savedLang === 'ko') {"
+    )
+
     # 15. window.LANG='en' 스크립트 삽입 (첫 번째 <script> 태그 앞에)
     lang_script = "  <script>window.LANG='en';</script>\n"
     # GTM script 바로 앞에 삽입

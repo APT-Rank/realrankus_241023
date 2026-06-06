@@ -2,6 +2,15 @@
 <html lang="ko">
 
 <head>
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('selectedLanguage');
+      if (savedLang === 'en') {
+        var currentParams = window.location.search;
+        window.location.replace('./en/index.html' + currentParams);
+      }
+    })();
+  </script>
   <!-- Google Tag Manager -->
   <script>
     (function (w, d, s, l, i) {

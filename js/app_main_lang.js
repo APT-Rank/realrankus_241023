@@ -73,7 +73,7 @@ var thisMonth = "202606"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
 var selectedMonth = "202606"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202606_02"; //수정
+var DB_Date = "202606_03"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
@@ -771,6 +771,8 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202605_03");
   window.indexedDB.deleteDatabase("202605_04");
   window.indexedDB.deleteDatabase("202606_01");
+  window.indexedDB.deleteDatabase("202606_02");
+  window.indexedDB.deleteDatabase("202606_02_EN");
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;
@@ -4337,7 +4339,7 @@ function showNotice() {
   $(".offcanvas").offcanvas("hide"); //offcanvas
 
   noticePop = true;
-  var titleHtml = "<div class='popupTitle'> 리얼랭커스에서 알려드립니다 </div>";
+  var titleHtml = "<div class='popupTitle'> " + t('ui.notice.title', '리얼랭커스에서 알려드립니다') + " </div>";
   var footerHtml = "";
   var detailHtml = "";
 
@@ -4366,50 +4368,56 @@ function showNotice() {
     detailHtml += `${notice_202606}`;
   }
 
+  var coffeeChatTitle = t('ui.notice.coffeechat_title', '{years}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스')
+    .replace('{years}', yearsDifference);
+
   detailHtml += `
-        <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스</div>
-        <div class='notice'><strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong></div>
-        <div class='notice' onClick='openOuterLink("https://open.kakao.com/me/realrankus")'>커피챗 : <a href="#">https://open.kakao.com/me/realrankus </a></div>
+        <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>${coffeeChatTitle}</div>
+        <div class='notice'>${t('ui.notice.coffeechat_desc', '<strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong>')}</div>
+        <div class='notice' onClick='openOuterLink("https://open.kakao.com/me/realrankus")'>${t('ui.notice.coffeechat_label', '커피챗 : ')}<a href="#">https://open.kakao.com/me/realrankus </a></div>
         <hr>
       `;
 
+  var connectionStatus = t('ui.notice.connection_status', '{os} {app}으로 접속되었습니다.')
+    .replace('{os}', connectionOS)
+    .replace('{app}', connectionWebApp);
+
   detailHtml += `
-        <div class='popupTitle' style='text-align: center; padding-bottom: 1em'>리얼랭커스란?</div>
-        <div class='notice'>리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.</div>
-        <div class='notice'>리얼랭커스의 점수는 '가격' 및 '지형고도'를 제외하고 산정되며, 그 결과는 생각하시는 순위와 크게 다를 수 있습니다.</div>
-        <div class='notice'><strong> 리얼랭커스의 점수는 투자지표가 아님을 말씀드리며, 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.</strong></div>
-        <div class='notice'>업데이트 알림은 <a href='http://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>을 통해 전달됩니다.</div>
+        <div class='popupTitle' style='text-align: center; padding-bottom: 1em'>${t('ui.notice.what_is_realrankus', '리얼랭커스란?')}</div>
+        <div class='notice'>${t('ui.notice.intro_desc1', "리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.")}</div>
+        <div class='notice'>${t('ui.notice.intro_desc2', '리얼랭커스의 점수는 \'가격\' 및 \'지형고도\'를 제외하고 산정되며, 그 결과는 생각하시는 순위와 크게 다를 수 있습니다.')}</div>
+        <div class='notice'>${t('ui.notice.intro_warning', '<strong> 리얼랭커스의 점수는 투자지표가 아님을 말씀드리며, 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.</strong>')}</div>
+        <div class='notice'>${t('ui.notice.kakao_channel_alert', "업데이트 알림은 <a href='http://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>을 통해 전달됩니다.")}</div>
         <hr>
         <ul>
-        <li><div class='notice'>리얼랭커스의 점수는 투자지표가 아님을 말씀드립니다. 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.</div></li>
-        <li><div class='notice'>모든 점수는 환경 요소를 분석한 AI가 선정하며, 일체의 임의적 조작을 가하지 않습니다.</div></li>
-        <li><div class='notice'>점수는 해당 지역구의 상대 점수이며, 다른 지역구의 동일 점수와 같은 가치를 나타내지 않습니다.</div></li>
-        <li><div class='notice'>80세대 이하의 단지는 통계에서 제외됩니다.</div></li>
-        <li><div class='notice'>재건축 단지의 경우, 용적률과 건폐율로 주거 점수를 산정합니다.</div></li>
-        <li><div class='notice'>수도권 교통 정보는 지하철역 위치 정보를 기반으로 산정됩니다.</div></li>
-        <li><div class='notice'>인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정됩니다.</div></li>
-        <li><div class='notice'>교육 정보는 교육통계서비스 정보를 기반으로 산정됩니다.</div></li>
-        <li><div class='notice'>지역구 정보는 공공데이터포탈 정보를 기반으로 산정됩니다.</div></li>
-        <li><div class='notice'>모든 정보는 월 1회 업데이트 예정이며, 각 기반 정보의 업데이트 시점에 따라 변동 가능성이 있습니다.</div></li>
-        <li><div class='notice'>문의사항, 오류수정, 개선제안은 이메일 또는 카카오톡을 통해 문의해 주세요.</div></li>
-        <li><div class='notice'>${connectionOS} ${connectionWebApp}으로 접속되었습니다.</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_1', '리얼랭커스의 점수는 투자지표가 아님을 말씀드립니다. 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_2', '모든 점수는 환경 요소를 분석한 AI가 선정하며, 일체의 임의적 조작을 가하지 않습니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_3', '점수는 해당 지역구의 상대 점수이며, 다른 지역구의 동일 점수와 같은 가치를 나타내지 않습니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_4', '80세대 이하의 단지는 통계에서 제외됩니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_5', '재건축 단지의 경우, 용적률과 건폐율로 주거 점수를 산정합니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_6', '수도권 교통 정보는 지하철역 위치 정보를 기반으로 산정됩니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_7', '인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정됩니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_8', '교육 정보는 교육통계서비스 정보를 기반으로 산정됩니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_9', '지역구 정보는 공공데이터포탈 정보를 기반으로 산정됩니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_10', '모든 정보는 월 1회 업데이트 예정이며, 각 기반 정보의 업데이트 시점에 따라 변동 가능성이 있습니다.')}</div></li>
+        <li><div class='notice'>${t('ui.notice.bullet_11', '문의사항, 오류수정, 개선제안은 이메일 또는 카카오톡을 통해 문의해 주세요.')}</div></li>
+        <li><div class='notice'>${connectionStatus}</div></li>
         </ul>
       `;
 
   footerHtml += `
         <div class='modal-footer'>
-        <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>다음 업데이트까지 보지 않기</span></label></div>
+        <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>${t('ui.notice.cookie_checkbox', '다음 업데이트까지 보지 않기')}</span></label></div>
       `;
   if (checkMobile() == "ios") {
-    footerHtml += ` <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink("https://apps.apple.com/kr/app/id6448044104")'>iOS 앱 설치</button></div>`;
+    footerHtml += ` <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink("https://apps.apple.com/kr/app/id6448044104")'>${t('ui.notice.ios_install', 'iOS 앱 설치')}</button></div>`;
   } else {
-    footerHtml += ` <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink("https://play.google.com/store/apps/details?id=com.aptrank.app")'>Android 앱 설치</button></div>`;
-    //footerHtml += " <div><a href='https://open.kakao.com/o/sPYY0LZd' target='_blank'><button type='button' class='gokakao'>카카오톡 문의하기</button></a></div>"
-    footerHtml += ` <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink("https://apps.apple.com/kr/app/id6448044104")'>iOS 앱 설치</button></div>`;
+    footerHtml += ` <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink("https://play.google.com/store/apps/details?id=com.aptrank.app")'>${t('ui.notice.android_install', 'Android 앱 설치')}</button></div>`;
+    footerHtml += ` <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink("https://apps.apple.com/kr/app/id6448044104")'>${t('ui.notice.ios_install', 'iOS 앱 설치')}</button></div>`;
   }
   footerHtml += `
-        <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink("https://pf.kakao.com/_vESNb")'>카카오톡 채널</button></div>
-        <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink("https://pf.kakao.com/_vESNb/chat")'>카카오톡 1:1 문의</button></div>
+        <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink("https://pf.kakao.com/_vESNb")'>${t('ui.notice.kakao_channel', '카카오톡 채널')}</button></div>
+        <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink("https://pf.kakao.com/_vESNb/chat")'>${t('ui.notice.kakao_chat', '카카오톡 1:1 문의')}</button></div>
         </div>
       `;
 
