@@ -9,8 +9,8 @@
  *   - JS 코드에서 t('ui.loading_rank', '기본값') 으로 호출
  */
 
-// 언어 결정 (기본값: ko)
-window.LANG = window.LANG || 'ko';
+// 언어 결정 (localStorage에 저장된 selectedLanguage가 있으면 사용하고, 없으면 기본값 'ko')
+window.LANG = window.LANG || localStorage.getItem('selectedLanguage') || 'ko';
 
 // 현재 로드된 언어를 localStorage에 동기화
 try {
@@ -32,19 +32,19 @@ window.I18N = {};
  */
 (function loadI18N() {
   //현재 경로에 "en"이 포함되어 있으면 en.json 파일을 그렇지 않으면 ko.json으로 경로 설정
-  var langFile = window.BASE_PATH + 'i18n/' + window.LANG + '.json';  
-  
+  var langFile = window.BASE_PATH + 'i18n/' + window.LANG + '.json';
+
   try {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', langFile, false); // 동기 로드
     xhr.send();
-    if (xhr.status === 200) {      
+    if (xhr.status === 200) {
       window.I18N = JSON.parse(xhr.responseText);
       //console.log('[i18n] Loaded ' + langFile);
     } else {
       // 로드 실패 시 현재 경로의 상위에서 다시 시도 (루트/하위 구조 모두 지원)
       //console.log('[i18n] Failed to load ' + langFile + ' (status: ' + xhr.status + ')');
-      
+
       var altLangFile = (window.BASE_PATH === './') ? '../i18n/' + window.LANG + '.json' : './i18n/' + window.LANG + '.json';
       var altXhr = new XMLHttpRequest();
       altXhr.open('GET', altLangFile, false);
@@ -145,7 +145,7 @@ function tDistrict(districtCode, koreanName) {
       if (korParts.length >= 2) {
         var cityEng = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
         var distEng = parts[3].charAt(0).toUpperCase() + parts[3].slice(1);
-        
+
         var citySuffix = '';
         if (korParts[0].endsWith('시')) citySuffix = '-si';
         else if (korParts[0].endsWith('군')) citySuffix = '-gun';
@@ -300,7 +300,7 @@ function translateMonthOptions() {
     '09': 'September', '10': 'October', '11': 'November', '12': 'December'
   };
 
-  monthSelect.find('option').each(function() {
+  monthSelect.find('option').each(function () {
     var val = $(this).val();
     if (val && val.length === 6) {
       var year = val.substring(0, 4);
@@ -316,7 +316,7 @@ function translateMonthOptions() {
 }
 
 // 문서 로드 완료 시 번역 실행
-$(document).ready(function() {
+$(document).ready(function () {
   translateStaticHTML();
 });
 

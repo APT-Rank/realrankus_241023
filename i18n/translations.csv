@@ -1,4 +1,4 @@
-key,ko,en
+﻿key,ko,en
 meta.lang,ko,en
 meta.title,리얼랭커스 - 입지 분석의 표준 | 아파트 실거래가,Realrankus - The Standard of Location Analysis | Apartment Real Transaction Prices
 meta.description,"입지 분석의 표준 | 숫자로 보는 아파트 입지 분석, 리얼랭커스 | 아파트 실거래가","Data-driven apartment location analysis in South Korea. Check real transaction prices, living, transport, infrastructure, and education scores on Realrankus."
@@ -25,8 +25,8 @@ ui.loading_retry,로딩이 길다면 여기를 눌러 다시 불러오기!!,Taki
 ui.copied,클립보드에 복사되었습니다.,Copied to clipboard.
 ui.close_search,검색닫기,Close Search
 ui.close_sort,정렬닫기,Close Sort
-ui.list_view,목록보기,List View
-ui.map_view,지도보기,Map View
+ui.list_view,목록보기,List
+ui.map_view,지도보기,Map
 ui.sort_grade,등급순,By Grade
 ui.sort_price,실거래가순,By Price
 ui.sort_newest,신축순,By Newest
@@ -100,25 +100,26 @@ ui.view_naver,네이버 부동산 보기,Naver Real Estate
 ui.view_hogangnono,호갱노노 보기,Hogangnono
 ui.view_apartment,{name} 아파트 보기,View {name}
 ui.menu.aptrank,아파트분석,Analysis
-ui.menu.aptrank_desc,"대한민국 아파트 입지, 리얼랭커스","Korea Apartment Analysis, Realrankus"
-ui.menu.price,실거래가,Transactions
-ui.menu.price_desc,"보기 편한 실거래가, 리얼랭커스PRICE","User-Friendly Transactions, Realrankus PRICE"
+ui.menu.aptrank_desc,"대한민국 아파트 입지, 리얼랭커스",Korea Apartment Analysis
+ui.menu.price,실거래가,Realtime Prices
+ui.menu.price_desc,"보기 편한 실거래가, 리얼랭커스PRICE",User-Friendly Realtime Prices
 ui.menu.biz,지역분석,Regional
-ui.menu.biz_desc,"지역단위 부동산 시장 현황, 리얼랭커스BIZ","Regional Real Estate Market Status, Realrankus BIZ"
+ui.menu.biz_desc,"지역단위 부동산 시장 현황, 리얼랭커스BIZ",Regional Real Estate Market Status
 ui.menu.cityclass,급지표,Tier List
-ui.menu.cityclass_desc,"전국의 도시별 백분위표, City Class","National City percentile table, City Class"
+ui.menu.cityclass_desc,"전국의 도시별 백분위표, City Class",National City percentile table
 ui.menu.moneyflow,시장지표,Indicators
-ui.menu.moneyflow_desc,"하루 한 번 시장 지표를 읽는 습관, Money Flow","Daily habit of reading market indicators, Money Flow"
+ui.menu.moneyflow_desc,"하루 한 번 시장 지표를 읽는 습관, Money Flow",Daily habit of reading market indicators
 ui.menu.theme,테마검색,Themes
-ui.menu.theme_desc,"공시 1억, 5층 이하 / 분양권 / 재건축 모아보기","Tax 100M, under 5 floors / Pre-sales / Reconstruction"
+ui.menu.theme_desc,"공시 1억, 5층 이하 / 분양권 / 재건축 모아보기",Under 5 floors / Pre-sales / Reconstruction
 ui.menu.newsinfo,뉴스,News
-ui.menu.newsinfo_desc,"부동산, 금융, 경제 뉴스 모아보기, 리얼랭커스 NEWS","Real estate, finance, economic news, Realrankus NEWS"
+ui.menu.newsinfo_desc,"부동산, 금융, 경제 뉴스 모아보기, 리얼랭커스 NEWS","Real estate, finance, economic news"
 ui.menu.priceCal,분양가계산,Calculator
-ui.menu.priceCal_desc,"적정 분양가의 합리적 계산, 분양가 GENERATOR","Reasonable calculation of pre-sale price, Pre-sale Generator"
+ui.menu.priceCal_desc,"적정 분양가의 합리적 계산, 분양가 GENERATOR",Reasonable calculation of pre-sale price
 ui.menu.op,오피스텔분석,Officetels
-ui.menu.op_desc,"대한민국 오피스텔 입지, 오피스텔랭크","Korea Officetel Location Analysis, Officetel Rank"
+ui.menu.op_desc,"대한민국 오피스텔 입지, 오피스텔랭크",Korea Officetel Location Analysis
 ui.menu.notice,공지사항 / 업데이트,Notice / Updates
 ui.menu.cafe,네이버 카페,Naver Cafe
+ui.menu.lang_switch_desc,Korean(한국어) → English(영어),영어(English) → 한국어(Korean)
 ui.menu.youtube,유튜브: @realrankus,YouTube: @realrankus
 ui.menu.instagram,인스타그램: @realrankus,Instagram: @realrankus
 ui.menu.facebook,페이스북,Facebook
@@ -146,10 +147,10 @@ ui.menu.login_popup,리얼랭커스의 모든 서비스를 이용하세요,Acces
 ui.menu.login_btn,리얼랭커스 로그인,Sign in to Realrankus
 ui.menu.welcome_msg,{nickname}님 반갑습니다!<br><span style='font-size:0.8em'>모든 서비스를 이용할 수 있어요</span>,"Welcome, {nickname}!<br><span style='font-size:0.8em'>You can use all services</span>"
 ui.menu.welcome_msg_email,{email}<br><span style='font-size:0.8em'>모든 서비스를 이용할 수 있어요</span>,{email}<br><span style='font-size:0.8em'>You can use all services</span>
-ui.report.banner_template,"{region}에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트 (29,900원)","The standard for buying your first home in {region}, Real Report (29,900 KRW)"
-ui.report.banner_template_mobile,"{region}에서 처음 집 살 때 실패하지 않는 기준,<br/>리얼 리포트 (29,900원)","The standard for buying your first home in {region},<br/>Real Report (29,900 KRW)"
-ui.report.banner_map_template,"{region}에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트","The standard for buying your first home in {region}, Real Report"
-ui.report.banner_map_template_mobile,"{region}에서 처음 집 살 때 실패하지 않는 기준,<br/>리얼 리포트","The standard for buying your first home in {region},<br/>Real Report"
+ui.report.banner_template,"{region}에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트 (29,900원)","The report for buying your first home in {region}, Real Report (29,900 KRW)"
+ui.report.banner_template_mobile,"{region}에서 처음 집 살 때 실패하지 않는 기준,<br/>리얼 리포트 (29,900원)","The report for buying your first home in {region},<br/>Real Report (29,900 KRW)"
+ui.report.banner_map_template,"{region}에서 처음 집 살 때 실패하지 않는 기준, 리얼 리포트","The report for buying your first home in {region}, Real Report"
+ui.report.banner_map_template_mobile,"{region}에서 처음 집 살 때 실패하지 않는 기준,<br/>리얼 리포트","The report for buying your first home in {region}, Real Report"
 ui.report.age_descriptions.0,"사회초년, 결혼준비","Early career, marriage prep"
 ui.report.age_descriptions.1,"신혼, 자녀출산","Newlyweds, childbirth"
 ui.report.age_descriptions.2,"커리어상승, 자녀양육","Career growth, parenting"
@@ -424,7 +425,7 @@ ui.report.unified_search_notice,빠른 검색 속도를 위해 <br> 두 글자 �
 ui.report.recent_search,최근검색,Recent Search
 ui.report.searched_suffix,에 검색, (Searched)
 ui.report.rearrange_region_notice,전국 시군구 내에서 정렬합니다,Sorting within districts nationwide
-ui.compare.sido,시도,Province/City
+ui.compare.sido,시도,City/Province
 ui.compare.gungu,시군,District
 ui.compare.complex,단지,Complex
 ui.compare.address,주소,Address
@@ -436,7 +437,7 @@ ui.compare.entrance,현관,Entrance
 ui.compare.floor_rate,용적률,FAR
 ui.compare.cover_rate,건폐율,Coverage
 ui.compare.rebuild_comment,"재건축 아파트의 경우 용적률 및 건폐율이 낮아 사업성이 좋을 수 있으므로, 대지지분을 함께 고려해 주거 가치 점수를 산정합니다.","For reconstruction complexes, the living score is calculated using the floor area ratio (FAR) and building coverage, considering the redevelopment potential."
-ui.compare.nearest_station,가까운,Nearest Station
+ui.compare.nearest_station,가까운역,Nearest Station
 ui.compare.within_30m,30분이내,Within 30m
 ui.compare.within_1h,1시간이내,Within 1h
 ui.compare.transport_comment,가장 가까운 역은 직선거리 기준입니다.<br>주요 거점역은 주중 출퇴근 시간 하차 인원이 많은 역 기준입니다.<br>이동시간은 구글 교통정보 대중교통 기준입니다.,The nearest station is calculated by straight-line distance.<br>Key stations represent stations with high disembarking volume in weekday rush hours.<br>Travel times are based on Google transit data.
@@ -457,13 +458,13 @@ ui.compare.mSchool_achievement_mobile,중등성취도,Middle School<br>Achv
 ui.compare.academy_300m,학원가(300m),Academy (300m)
 ui.compare.academy_1km,학원가(1km),Academy (1km)
 ui.compare.edu_harmful,유흥/모텔(300m),Nightlife/Motel (300m)
-ui.compare.latest_sales,최근거래,Recent
-ui.compare.table_sales_rent,매매 / 전세,Sales / Lease
+ui.compare.latest_sales,최근거래,Recent Sales
+ui.compare.table_sales_rent,매매/전세,Sales / Lease
 ui.compare.table_size,평형,Size
-ui.compare.no_deal_history,거래 이력 없음,No transaction history
-ui.compare.no_info,정보 없음,No Info
+ui.compare.no_deal_history,거래이력없음,No deals
+ui.compare.no_info,정보없음,No Info
 ui.compare.not_applicable,해당없음,N/A
-ui.compare.load_failed,불러오기 실패했어요. 다시 시도해 주세요.,Failed to load data. Please try again.
+ui.compare.load_failed,불러오기 실패했어요. 다시 시도해 주세요.,Failed to load. Try again.
 ui.compare.search_min_length_notice,빠른 검색 속도를 위해 <br> 두 글자 이상부터 검색할 수 있도록 해 두었어요!<br>,"To ensure fast search speed, <br> please search with at least 2 characters!<br>"
 ui.compare.real_price,실거래가,Actual Price
 ui.compare.recent_deal,최근거래,Recent Deal
@@ -501,6 +502,7 @@ ui.radar_map.commercial_district,상권,Commercial Area
 ui.radar_map.academy_district,학원가,Academy Area
 ui.radar_map.department_store,백화점,Department Store
 ui.radar_map.park,공원,Park
+ui.radar_map.presale,분양,Presale
 ui.radar_map.elementary_school,초등학교,Elementary School
 ui.radar_map.middle_school,중학교,Middle School
 ui.radar_map.bank,은행,Bank
@@ -560,15 +562,15 @@ ui.analyzing,열심히 분석 중이예요!,Analyzing...
 ui.station_area_label,역세권 여부,Station Area Status
 ui.rank_simulation,랭크 시뮬레이션,Rank Simulation
 ui.notice.title,리얼랭커스에서 알려드립니다,Notice from Realrankus
-ui.notice.coffeechat_title,"{years}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스","Celebrating {years} Years of Sustainable AI Service | Realrankus"
-ui.notice.coffeechat_desc,"<strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong>","<strong>Since launching in 2022 as a solopreneur, I have built market trust through continuous data updates and refinement. I welcome light coffee chat proposals regarding the service's future vision or collaboration.</strong>"
+ui.notice.coffeechat_title,"{years}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스",Celebrating {years} Years of Sustainable AI Service | Realrankus
+ui.notice.coffeechat_desc,<strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong>,"<strong>Since launching in 2022 as a solopreneur, I have built market trust through continuous data updates and refinement. I welcome light coffee chat proposals regarding the service's future vision or collaboration.</strong>"
 ui.notice.coffeechat_label,커피챗 : ,Coffee Chat: 
 ui.notice.what_is_realrankus,리얼랭커스란?,What is Realrankus?
 ui.notice.intro_desc1,"리얼랭커스는 '주거', '인프라', '교통', '교육환경'을 AI로 분석하여 점수로 계산하여 입지 정보를 제공하는 서비스 입니다.","Realrankus is an AI-powered service that evaluates location data for 'Living', 'Transit', 'Infra', and 'Edu' to calculate scores and rankings."
 ui.notice.intro_desc2,"리얼랭커스의 점수는 '가격' 및 '지형고도'를 제외하고 산정되며, 그 결과는 생각하시는 순위와 크게 다를 수 있습니다.","Realrankus scores exclude 'Price' and 'Topographic Elevation', which means the results may differ significantly from your expectations."
 ui.notice.intro_warning,"<strong> 리얼랭커스의 점수는 투자지표가 아님을 말씀드리며, 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.</strong>","<strong>Please note that Realrankus scores are not investment indicators, and all responsibility for investment decisions lies with the investor.</strong>"
-ui.notice.kakao_channel_alert,"업데이트 알림은 <a href='http://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>을 통해 전달됩니다.","Update notifications are delivered via our <a href='http://pf.kakao.com/_vESNb' target='_blank'>KakaoTalk Channel</a>."
-ui.notice.bullet_1,"리얼랭커스의 점수는 투자지표가 아님을 말씀드립니다. 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.","Please note that Realrankus scores are not investment indicators. All responsibility for investment decisions lies with the investor."
+ui.notice.kakao_channel_alert,업데이트 알림은 <a href='http://pf.kakao.com/_vESNb' target='_blank'>카카오톡 채널</a>을 통해 전달됩니다.,Update notifications are delivered via our <a href='http://pf.kakao.com/_vESNb' target='_blank'>KakaoTalk Channel</a>.
+ui.notice.bullet_1,리얼랭커스의 점수는 투자지표가 아님을 말씀드립니다. 투자 판단에 대한 모든 책임은 투자자 본인에게 있습니다.,Please note that Realrankus scores are not investment indicators. All responsibility for investment decisions lies with the investor.
 ui.notice.bullet_2,"모든 점수는 환경 요소를 분석한 AI가 선정하며, 일체의 임의적 조작을 가하지 않습니다.","All scores are determined by AI analyzing environmental factors, with no manual manipulation whatsoever."
 ui.notice.bullet_3,"점수는 해당 지역구의 상대 점수이며, 다른 지역구의 동일 점수와 같은 가치를 나타내지 않습니다.","Scores are relative values within the respective district, and a score does not represent the same value in other districts."
 ui.notice.bullet_4,80세대 이하의 단지는 통계에서 제외됩니다.,Complexes with 80 units or fewer are excluded from statistics.
@@ -585,4 +587,3 @@ ui.notice.ios_install,iOS 앱 설치,Install iOS App
 ui.notice.android_install,Android 앱 설치,Install Android App
 ui.notice.kakao_channel,카카오톡 채널,KakaoTalk Channel
 ui.notice.kakao_chat,카카오톡 1:1 문의,KakaoTalk 1:1 Inquiry
-

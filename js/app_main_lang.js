@@ -987,11 +987,11 @@ function showWeight() {
     if (minValue == 0 && maxValue == 60) {
       priceRange = isEn ? "All Prices" : "가격 전체";
     } else if (minValue == 0 && maxValue != 60) {
-      priceRange = isEn ? ("Price " + (maxValue / 2 * 100).toFixed(0) + "M KRW or under") : ("가격 " + maxValue / 2 + "억 이하");
+      priceRange = isEn ? ("Price " + (maxValue / 2 * 100).toFixed(0) + "M or under") : ("가격 " + maxValue / 2 + "억 이하");
     } else if (minValue != 0 && maxValue == 60) {
-      priceRange = isEn ? ("Price " + (minValue / 2 * 100).toFixed(0) + "M KRW or over") : ("가격 " + minValue / 2 + "억 이상");
+      priceRange = isEn ? ("Price " + (minValue / 2 * 100).toFixed(0) + "M or over") : ("가격 " + minValue / 2 + "억 이상");
     } else {
-      priceRange = isEn ? ("Price " + (minValue / 2 * 100).toFixed(0) + "M ~ " + (maxValue / 2 * 100).toFixed(0) + "M KRW") : ("가격 " + minValue / 2 + "억~" + maxValue / 2 + "억");
+      priceRange = isEn ? ("Price " + (minValue / 2 * 100).toFixed(0) + "M ~ " + (maxValue / 2 * 100).toFixed(0) + "M") : ("가격 " + minValue / 2 + "억~" + maxValue / 2 + "억");
     }
 
     var weightInfo = "";
@@ -2773,7 +2773,7 @@ function showDetail(index) {
       if (isEn && areaText) {
         areaText = areaText.replace(/평/g, "py");
       }
-      var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M KRW") : ((Math.round(last_sales_price / 100) / 100) + "억");
+      var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M") : ((Math.round(last_sales_price / 100) / 100) + "억");
 
       if (compare_date > start_date) {
         detailHtml += `<div class='popResult' style='color: #fe4040'>${areaText}, ${formattedLastSalesPrice}, ${last_sales_date.substr(2)}</div></div>`;
@@ -2837,7 +2837,7 @@ function showDetail(index) {
           salesDetails = salesDetails.replace(/층/g, "F");
         }
         var salesPriceVal = Number(sales_info_split[0]);
-        var formattedSalesPrice = isEn ? ((salesPriceVal * 100).toLocaleString() + "M KRW") : ((Math.round(salesPriceVal * 100) / 100).toFixed(2) + "억");
+        var formattedSalesPrice = isEn ? ((salesPriceVal * 100).toLocaleString() + "M") : ((Math.round(salesPriceVal * 100) / 100).toFixed(2) + "억");
 
         if (Number(selectedMonth) > 202207) {
           var rent_info_split = rent_info_array[k].split("억");
@@ -2866,7 +2866,7 @@ function showDetail(index) {
             rentDetails = rentDetails.replace(/층/g, "F");
           }
           var rentPriceVal = Number(rent_info_split[0]);
-          var formattedRentPrice = isEn ? ((rentPriceVal * 100).toLocaleString() + "M KRW") : ((Math.round(rentPriceVal * 100) / 100).toFixed(2) + "억");
+          var formattedRentPrice = isEn ? ((rentPriceVal * 100).toLocaleString() + "M") : ((Math.round(rentPriceVal * 100) / 100).toFixed(2) + "억");
 
           if (compare_rent_date > start_date) {
             if (rent_info_split[0] == "거래 정보 없음") {
@@ -2900,7 +2900,7 @@ function showDetail(index) {
         detailHtml += `<td>---<br>`;
       } else {
         price_per = Math.floor(price_per_array[k]);
-        var formattedPricePer = isEn ? ((price_per * 10).toLocaleString() + "K KRW") : (price_per.toLocaleString() + "만원");
+        var formattedPricePer = isEn ? ((price_per * 10).toLocaleString() + "K") : (price_per.toLocaleString() + "만원");
         if (compare_date > start_date) {
           detailHtml += `<td><span style='color:#fe4040; font-weight:600'>${formattedPricePer}</span><br>`;
         } else {
@@ -3057,7 +3057,7 @@ function showDetail(index) {
     if (isEn && areaText) {
       areaText = areaText.replace(/평/g, "py");
     }
-    var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M KRW") : ((Math.round(last_sales_price / 100) / 100) + "억");
+    var formattedLastSalesPrice = isEn ? ((Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M") : ((Math.round(last_sales_price / 100) / 100) + "억");
     shareText += `\nㆍ${isEn ? "Recent Sales" : "최근실거래"}\n    : ${areaText}, ${formattedLastSalesPrice}, ${last_sales_date.substr(2)}`;
   }
   if (house_num == null) {

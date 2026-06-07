@@ -1,4 +1,5 @@
-const isEn = window.location.pathname.includes('/en/');
+currentLanguage = localStorage.getItem('selectedLanguage')
+const isEn = currentLanguage === 'en';
 const pathPrefix = isEn ? "../" : "./";
 
 var tSafe = (key, fallback) => {
@@ -1354,7 +1355,7 @@ function setOffcanvasMenu() {
 
   $(".offcanvas-body").append(offcanvas_footer_html)
 
-  if (window.LANG === 'en') {
+  if (isEn) {
     $(".offcanvas-body").append(offcanvas_info_html)
   } else {
     $(".offcanvas-body").append(offcanvas_info_html)
@@ -1367,8 +1368,8 @@ function setOffcanvasMenu() {
  * @description Preserves the current page query parameters (state) and redirects to the alternative language index.html.
  */
 function switchLanguage() {
-  const currentParams = window.location.search;
-  if (window.LANG === 'en') {
+  const currentParams = window.location.search;  
+  if (isEn) {
     localStorage.setItem('selectedLanguage', 'ko');
     window.location.href = '../index.html' + currentParams;
   } else {
@@ -2014,7 +2015,7 @@ function realrankus_visit(complex, sido, gungu, dong) {
                   visit_count += visit_obj[i]
                 }
               }
-              var isEn = (window.LANG === 'en');
+              //var isEn = (window.LANG === 'en');
               var visitSuffix = isEn ? " visits" : "명 방문";
               if (visit_count == 1) {
                 $("#visit_complex_" + complex).html(visit_count.toLocaleString() + (isEn ? " visit" : "명 방문"))
