@@ -521,7 +521,12 @@ function requestReportModal(){
   if(isMobile){
     $("#mobile_map_list").css({"bottom":"120px"})
     $("#map_banner2").hide()
-    $("#map_banner").css({"bottom":"60px", "font-size":"0.8em", "padding-left":"5px", "padding-right":"5px"})
+    if(isEn){
+      $("#map_banner").css({"bottom":"60px", "font-size":"0.8em"})
+    }
+    else{
+      $("#map_banner").css({"bottom":"60px", "font-size":"0.8em", "padding-left":"5px", "padding-right":"5px"})
+    }    
 
     $(".req_description").css({"font-size":"0.75em"})
     $("#req_description_notice").css({"font-size":"0.75em"})

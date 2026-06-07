@@ -698,7 +698,7 @@ $(document).ready(function () {
     $("#commentBox").css({ bottom: -commentBox_height + 92 + "px" });
     $("#rearrange").css({ visibility: "hidden" });
     $("#mobile_map_list_icon").html("<i class='fa-solid fa-list'></i>");
-    $("#mobile_map_list_text").html("목록보기");
+    $("#mobile_map_list_text").html(tSafe("ui.list_view", "목록"));
 
     filterSelector_width = window.innerWidth - 80;
     $("#filterSelector").css({ width: filterSelector_width + "px" });
@@ -708,7 +708,12 @@ $(document).ready(function () {
     }
 
     //가치대비가격괴리도진단 버튼 크기 조정
-    $("#graphButtonContainer").css({ top: "123px", left: "24%" });
+    if(isEn){
+      $("#graphButtonContainer").css({ top: "123px", left: "33%" });
+    }
+    else{
+      $("#graphButtonContainer").css({ top: "123px", left: "24%" });
+    }
     $("#graphButton").css({
       padding: "0.375em 0.75em",
       "font-size": "0.875em",
@@ -1543,13 +1548,25 @@ function updateTable(month, region) {
         dongDB.push([filtered_dongDB[dongIndex], dongIndex]);
       }
 
+      let devide_num = 4;
+      let dong_cell_width_tunning = 10;
       if (window.innerWidth <= 800) {
-        dong_cell_width = (window.innerWidth / 4) * (7 / 8);
-        btn_width = dong_cell_width - 10 + "px";
+        if(isEn){
+          devide_num = 3;
+          dong_cell_width_tunning = 0
+        }
+        dong_cell_width = (window.innerWidth / devide_num) * (7 / 8);
+        btn_width = dong_cell_width - dong_cell_width_tunning + "px";
       } else {
         dong_cell_width = 90;
+        btn_width = 90
+        if(isEn){
+          dong_cell_width = 130;
+          btn_width = 120
+        }        
       }
 
+      //var columns = "repeat(" + dongDB.length + ", " + dong_cell_width + "px)";
       var columns = "repeat(" + dongDB.length + ", " + dong_cell_width + "px)";
 
       $("#dong_list").css({ "grid-template-columns": columns });
@@ -1557,7 +1574,13 @@ function updateTable(month, region) {
       var dong_list_html = "";
       for (var dongIndex = 0; dongIndex < dongDB.length; dongIndex++) {
         selection_id = "dong_" + dongDB[dongIndex][1];
-        dong_list_html += `<div><input type='radio' class='btnRadio_tab' name='dong_select' autocomplete='off' id=${selection_id} onClick='dong_filter(this)'><label class='btn btn-outline-danger' id='dong_select_${dongDB[dongIndex][1]}' for='${selection_id}'>#${dongDB[dongIndex][0]}</label></div>`;
+        dong_name = dongDB[dongIndex][0];
+        if(isEn && dongIndex > 1) {
+          //dong_name을 "-"기준으로 split해서 마지막 단어만 추출 (예: "Gaepo-dong" -> "Gaepo")
+          var dong_name_split = dong_name.split("-");
+          dong_name = dong_name_split[0];
+        }
+        dong_list_html += `<div><input type='radio' class='btnRadio_tab' name='dong_select' autocomplete='off' id=${selection_id} onClick='dong_filter(this)'><label class='btn btn-outline-danger' id='dong_select_${dongDB[dongIndex][1]}' for='${selection_id}'>#${dong_name}</label></div>`;
       }
       $("#dong_list").html(dong_list_html);
       $("#dong_0").prop("checked", true);
@@ -1569,6 +1592,7 @@ function updateTable(month, region) {
         $(".dong_selector").css({ height: "37px" });
         $(".btnRadio_tab+label").css({ width: btn_width });
       } else {
+        $(".btnRadio_tab+label").css({ width: btn_width });
         if (selector_width < inner_width) {
           $(".dong_selector").css({ height: "50px" });
         } else {
@@ -3128,16 +3152,16 @@ function showDetail(index) {
 
     if (isNaN(last_sales_price)) {
       if (apt_type == "분양(예정)" || apt_type == "분양권") {
-        last_sales_price_kor = "분양";
+        last_sales_price_kor = tSafe("ui.radar_map.presale", "분양");
       } else {
-        last_sales_price_kor = "정보없음";
+        last_sales_price_kor = tSafe("ui.report.no_info", "정보없음");
       }
       last_sales_area_kor = "--";
     } else {
       if(isEn) {
-        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 * 100 + "M";
+        last_sales_price_kor = (Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M";
       } else {
-        last_sales_price_kor = Math.round(last_sales_price / 100) / 100 + "억";
+        last_sales_price_kor = (Math.round(last_sales_price / 100) / 100).toLocaleString() + "억";
       }
 
       if(isEn) {

@@ -1583,7 +1583,7 @@ function mapListModeChange(){
     $("#rearrange").css({'visibility' : 'visible'})    
     
     $("#mobile_map_list_icon").html("<i class='fa-solid fa-map'></i>")
-    $("#mobile_map_list_text").html(isEn ? "Show Map" : "지도보기")
+    $("#mobile_map_list_text").html(tSafe("ui.map_view", "지도보기"))
 
     $("#filterOnOff").hide()
     $("#gradeSelector").hide()
@@ -1597,7 +1597,7 @@ function mapListModeChange(){
     $("#rearrange").css({'visibility' : 'hidden'})
 
     $("#mobile_map_list_icon").html("<i class='fa-solid fa-list'></i>")
-    $("#mobile_map_list_text").html(isEn ? "Show List" : "목록보기")
+    $("#mobile_map_list_text").html(tSafe("ui.list_view", "목록보기"))
 
     $("#filterOnOff").show()    
     if(filter_ui){
