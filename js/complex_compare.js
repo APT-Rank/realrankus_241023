@@ -111,7 +111,7 @@ function openCompare(complex_data) {
   compare_detail_html += "<div>" + tSafe('ui.living', '주거') + "</div>"
   compare_detail_html += "<div>" + tSafe('ui.transport', '교통') + "</div>"
   compare_detail_html += "<div>" + tSafe('ui.infra', '인프라') + "</div>"
-  compare_detail_html += "<div>" + tSafe('ui.education', '교육') + "</div>"
+  compare_detail_html += "<div>" + tSafe('ui.report.education', '교육') + "</div>"
   compare_detail_html += "</div>"
   compare_detail_html += "<div class='complex_compare_detail' id='compare2_complex_graph'><canvas id='compare2_complex_chart' style='width: 100%'></canvas></div>"
 

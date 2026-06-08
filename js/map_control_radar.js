@@ -639,21 +639,19 @@ function createAPTMarker(markers){
         last_sales_area_kor = last_sales_area.replace("평", "py")
       }
     }
-  }      
+  }
 
-  var svg_color = "#CC0000"
+  var svg_color = "#CC0000" 
   var grade = ""
-  if(aptValue >= 70){
+  if(aptValue >= 78.6962){
     svg_color = "#a70000"
-    //svg_color = "#5f0bbf"
     grade = "gradeS"
   }
-  else if(aptValue < 70 && aptValue >= 55){
+  else if(aptValue < 78.6962 && aptValue >= 53.3691){
     svg_color = "#F72020"
-    //svg_color = "#CC0000"
     grade = "gradeA"
   }
-  else if(aptValue < 55 && aptValue >= 40){
+  else if(aptValue < 53.3691 && aptValue >= 31.9721){
     svg_color = "#F36637"
     grade = "gradeB"
   }
