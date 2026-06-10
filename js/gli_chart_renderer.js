@@ -34,12 +34,127 @@
                 return;
             }
 
+            const isEn = options.isEn || false;
+
+            // CSS 스타일 동적 인젝션
+            const styleId = 'gli-chart-custom-styles';
+            if (!document.getElementById(styleId)) {
+                const style = document.createElement('style');
+                style.id = styleId;
+                style.innerHTML = `
+                    .gli-chart-legend {
+                        position: absolute;
+                        bottom: 52px;
+                        left: 70px;
+                        background: rgba(255, 255, 255, 0.95);
+                        border: 1px solid #ccc;                        
+                        padding: 10px 15px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                        z-index: 10;
+                        font-size: 11px;
+                        color: #333;
+                        pointer-events: none;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0px;
+                    }
+                    .gli-legend-item {
+                        display: flex;
+                        align-items: center;
+                    }
+                    .gli-legend-color-box {
+                        width: 16px;
+                        height: 10px;
+                        margin-right: 8px;
+                        border-radius: 2px;
+                    }
+                    .gli-legend-line {
+                        width: 16px;
+                        height: 0;
+                        border-top: 2px dashed;
+                        margin-right: 8px;
+                    }
+                    .gli-legend-circle {
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        margin-right: 12px;
+                        margin-left: 4px;
+                        border: 1.5px solid #1e272e;
+                    }
+                    .gli-chart-watermark {
+                        position: absolute;
+                        bottom: 60px;
+                        right: 40px;
+                        text-align: right;
+                        z-index: 10;
+                        pointer-events: none;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-end;
+                    }
+                    .gli-watermark-logo {
+                        height: 40px;
+                        margin-bottom: 2px;
+                        border-radius: 6px;
+                    }
+                    .gli-watermark-text {
+                        font-size: 0.85em;
+                        color: #777;
+                        line-height: 1.2;
+                    }
+                    @media screen and (max-width: 799px) {
+                        .gli-chart-legend {
+                            bottom: 35px;
+                            left: 10px;
+                            padding: 5px 8px;
+                            font-size: 8px;
+                            gap: 0;
+                        }
+                        .gli-legend-color-box {
+                            width: 12px;
+                            height: 7px;
+                            margin-right: 5px;
+                        }
+                        .gli-legend-line {
+                            width: 12px;
+                            margin-right: 5px;
+                        }
+                        .gli-legend-circle {
+                            width: 6px;
+                            height: 6px;
+                            margin-right: 8px;
+                            margin-left: 3px;
+                        }
+                        .gli-chart-watermark {
+                            bottom: 20px;
+                            right: 8px;
+                        }
+                        .gli-watermark-logo {
+                            height: 20px;
+                        }
+                        .gli-watermark-text {
+                            font-size: 0.5em;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
             // 기존 차트나 캔버스가 존재하면 제거 (중복 렌더링 방지)
             container.innerHTML = '';
+
+            // absolute 레이아웃을 위한 래퍼 생성
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.width = '100%';
+            wrapper.style.height = '100%';
+            container.appendChild(wrapper);
+
             const canvas = document.createElement('canvas');
             canvas.style.width = '100%';
             canvas.style.height = '100%';
-            container.appendChild(canvas);
+            wrapper.appendChild(canvas);
 
             const ctx = canvas.getContext('2d');
             const cb = dongData.chart_boundaries;
@@ -52,12 +167,15 @@
             const xMinLimit = gliMin - gliPadding;
             const xMaxLimit = gliMax + gliPadding;
 
+            // 모바일 감지
+            const isMobileView = window.innerWidth < 800;
+
             // 입주년차별 색상 정의
             const ageStyles = {
-                "신축 (5년미만)": { color: "#ff0000", label: "신축 (5년 미만)" },
-                "준신축 (5~10년)": { color: "#ff9900", label: "준신축 (5~10년)" },
-                "구축 (10~25년)": { color: "#0066cc", label: "구축 (10~25년)" },
-                "노후 (25년이상)": { color: "#808080", label: "노후 (25년 이상)" }
+                "신축 (5년미만)": { color: "#ff0000", label: isEn ? "New (Under 5yr)" : "신축 (5년 미만)" },
+                "준신축 (5~10년)": { color: "#ff9900", label: isEn ? "Semi-New (5~10yr)" : "준신축 (5~10년)" },
+                "구축 (10~25년)": { color: "#0066cc", label: isEn ? "Established (10~25yr)" : "구축 (10~25년)" },
+                "노후 (25년이상)": { color: "#808080", label: isEn ? "Old (Over 25yr)" : "노후 (25년 이상)" }
             };
 
             // 차트 Y축 범위 계산용 데이터 추출 (배경 채우기 및 축 제한용)
@@ -74,7 +192,7 @@
                 const p2 = lineData[1];
                 const slope = (p2.price - p1.price) / (p2.gli - p1.gli);
                 const intercept = p1.price - slope * p1.gli;
-                
+
                 return [
                     { x: xMinLimit, y: slope * xMinLimit + intercept },
                     { x: xMaxLimit, y: slope * xMaxLimit + intercept }
@@ -109,18 +227,40 @@
                     data: points,
                     backgroundColor: ageStyles[key].color,
                     borderColor: '#1e272e',
-                    borderWidth: 1.5,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    z: 10
+                    borderWidth: isMobileView ? 1 : 1.5,
+                    pointRadius: isMobileView ? 4 : 6,
+                    pointHoverRadius: isMobileView ? 6 : 8,
+                    order: 1,
+                    // 이 데이터셋에만 데이터레이블을 활성화하여 아파트 단지명을 위에 표기
+                    datalabels: {
+                        display: true,
+                        align: 'top',
+                        anchor: 'center',
+                        offset: isMobileView ? 2 : 4,
+                        formatter: function (value) {
+                            return value.name;
+                        },
+                        font: {
+                            size: isMobileView ? 9 : 12,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    }
                 };
             }).filter(ds => ds.data.length > 0); // 데이터가 존재하는 년차군만 범례에 표시
+
+            // 다국어 번역 레이블 정의
+            const labelOvervalued = isEn ? 'Overvalued Zone' : '고평가 영역';
+            const labelStable = isEn ? 'Stable Zone' : '안정적 영역';
+            const labelUndervalued = isEn ? 'Undervalued Zone' : '저평가 영역';
+            const labelSimpleTrend = isEn ? 'GLI Trendline' : 'GLI 가치추세선';
+            const labelCorrectedTrend = isEn ? 'Building Value Corrected Trendline' : '건물가치보정추세선';
 
             // 전체 데이터셋 목록 구성
             const datasets = [
                 // 1) 고평가 영역 (Red Zone: Upper Boundary 선 위쪽을 붉은색으로 채움)
                 {
-                    label: '고평가 영역',
+                    label: labelOvervalued,
                     type: 'line',
                     data: extendedUpper,
                     borderColor: 'rgba(255, 153, 153, 0.2)',
@@ -128,11 +268,11 @@
                     pointRadius: 0,
                     fill: 'end', // 차트 상단 영역 채우기
                     backgroundColor: 'rgba(255, 206, 206, 0.4)',
-                    z: 1
+                    order: 10
                 },
                 // 2) 안정적 영역 (Grey Zone: Lower Boundary와 Upper Boundary 사이를 회색으로 채움)
                 {
-                    label: '안정적 영역',
+                    label: labelStable,
                     type: 'line',
                     data: extendedLower,
                     borderColor: 'rgba(220, 220, 220, 0.3)',
@@ -140,11 +280,11 @@
                     pointRadius: 0,
                     fill: 0, // 인덱스 0번(stable_zone_upper)까지 채우기
                     backgroundColor: 'rgba(238, 238, 238, 0.5)',
-                    z: 2
+                    order: 11
                 },
                 // 3) 저평가 영역 (Blue Zone: Zero Baseline부터 Lower Boundary 사이를 푸른색으로 채움)
                 {
-                    label: '저평가 영역',
+                    label: labelUndervalued,
                     type: 'line',
                     data: extendedZero,
                     borderColor: 'transparent',
@@ -152,38 +292,49 @@
                     pointRadius: 0,
                     fill: 1, // 인덱스 1번(stable_zone_lower)까지 채우기
                     backgroundColor: 'rgba(195, 216, 255, 0.4)',
-                    z: 3
+                    order: 12
                 },
                 // 4) GLI 단순 추세선
                 {
-                    label: `GLI 가치추세선 (r = ${metrics.r_simple.toFixed(2)})`,
+                    label: `${labelSimpleTrend} (r = ${metrics.r_simple.toFixed(2)})`,
                     type: 'line',
                     data: extendedSimple,
                     borderColor: '#888888',
                     borderWidth: 1.5,
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    fill: false,
-                    z: 5
-                },
-                // 5) 건물가치 보정 추세선
-                {
-                    label: `건물가치보정추세선 (r = ${metrics.r_multi.toFixed(2)})`,
-                    type: 'line',
-                    data: extendedCorrected,
-                    borderColor: '#d63031',
-                    borderWidth: 2,
                     borderDash: [3, 3],
                     pointRadius: 0,
                     fill: false,
-                    z: 6
+                    order: 7
+                },
+                // 5) 건물가치 보정 추세선
+                {
+                    label: `${labelCorrectedTrend} (r = ${metrics.r_multi.toFixed(2)})`,
+                    type: 'line',
+                    data: extendedCorrected,
+                    borderColor: '#d63031',
+                    borderWidth: 1.5,
+                    borderDash: [3, 3],
+                    pointRadius: 0,
+                    fill: false,
+                    order: 6
                 },
                 // 6) 실거래 산점도 점들 추가
                 ...scatterDatasets
             ];
 
+            const xAxisTitle = isEn ? 'Value Score (GLI)' : '가치총점 (GLI)';
+            const yAxisTitle = isEn ? 'Average Price per Pyung (10k KRW)' : '단지 평균 평단가 (만원)';
+
             // 차트 객체 초기화 및 렌더링
+            const chartPlugins = [];
+            if (typeof ChartDataLabels !== 'undefined') {
+                chartPlugins.push(ChartDataLabels);
+            }
+            if (typeof ChartZoom !== 'undefined') {
+                chartPlugins.push(ChartZoom);
+            }
             new window.Chart(ctx, {
+                plugins: chartPlugins,
                 data: {
                     datasets: datasets
                 },
@@ -197,40 +348,48 @@
                         x: {
                             type: 'linear',
                             title: {
-                                display: true,
-                                text: '가치총점 (GLI)',
+                                display: !isMobileView,
+                                text: xAxisTitle,
                                 font: { size: 12, weight: 'bold' }
                             },
                             min: xMinLimit,
                             max: xMaxLimit,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { font: { size: isMobileView ? 9 : 12 } }
                         },
                         y: {
                             type: 'linear',
                             title: {
-                                display: true,
-                                text: '단지 평균 평단가 (만원)',
+                                display: !isMobileView,
+                                text: yAxisTitle,
                                 font: { size: 12, weight: 'bold' }
                             },
                             min: yMinLimit,
                             max: yMaxLimit,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: {
+                                font: { size: isMobileView ? 9 : 12 },
+                                callback: function (value) {
+                                    if (value >= 1000) return (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'K';
+                                    return value;
+                                }
+                            }
                         }
                     },
                     plugins: {
+                        // 기본 레전드는 비활성화
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 15,
-                                font: { size: 11 },
-                                // 배경 영역 정보와 추세선/산점도 설명만 남기도록 커스텀 필터링 적용 가능
-                                filter: function(item) {
-                                    return true; // 기본적으로 전체 범례 노출
-                                }
-                            }
+                            display: false
+                        },
+                        // 데이터레이블 기본값 설정 (산점도 외에는 그리지 않음)
+                        datalabels: {
+                            display: false
                         },
                         tooltip: {
+                            filter: function (tooltipItem) {
+                                // Only show tooltips for scatter points
+                                return tooltipItem.dataset.type === 'scatter';
+                            },
                             backgroundColor: 'rgba(45, 52, 54, 0.95)',
                             titleFont: { size: 13, weight: 'bold' },
                             bodyFont: { size: 12 },
@@ -242,21 +401,132 @@
                                 label: function (context) {
                                     const raw = context.raw;
                                     if (raw && raw.name) {
+                                        //raw.y의 소수점 제거하여 천 단위 구분 쉼표 추가 후 'k/py' 또는 '만원/평' 단위로 표시
+                                        py_price = raw.y.toLocaleString() + (isEn ? 'k/py' : '만원/평');
                                         return [
-                                            ` 단지명: ${raw.name}`,
-                                            ` 평단가: ${raw.y.toLocaleString()} 만원`,
-                                            ` 입지점수(GLI): ${raw.x.toFixed(2)}점`,
-                                            ` 경과년차: 준공 ${raw.age}년차 (${raw.category})`,
-                                            ` 세대수: ${raw.households.toLocaleString()}세대`
+                                            isEn ? ` ${raw.name}` : ` ${raw.name}`,
+                                            ` ${py_price}`,
+                                            //isEn ? ` Score (GLI): ${raw.x.toFixed(2)} pts` : ` 입지점수(GLI): ${raw.x.toFixed(2)}점`,
+                                            isEn ? ` Built ${raw.age} yrs` : ` ${raw.age}년차`,
+                                            isEn ? ` ${raw.households.toLocaleString()} units` : ` ${raw.households.toLocaleString()}세대`
                                         ];
                                     }
                                     return null; // 영역 경계선의 툴팁은 숨김
                                 }
                             }
+                        },
+                        // 핀치 줌 / 휠 줌 설정
+                        zoom: {
+                            zoom: {
+                                wheel: { enabled: true },
+                                pinch: { enabled: true },
+                                mode: 'xy'
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            },
+                            limits: {
+                                x: { min: xMinLimit, max: xMaxLimit },
+                                y: { min: yMinLimit, max: yMaxLimit }
+                            }
                         }
                     }
                 }
             });
+
+            // 1. 프리미엄 커스텀 HTML 레전드 렌더링
+            const legendDiv = document.createElement('div');
+            legendDiv.className = 'gli-chart-legend';
+
+            // 영역 목록
+            const zones = [
+                { color: 'rgba(255, 206, 206, 0.7)', label: labelOvervalued },
+                { color: 'rgba(238, 238, 238, 0.9)', label: labelStable },
+                { color: 'rgba(195, 216, 255, 0.7)', label: labelUndervalued }
+            ];
+            zones.forEach(z => {
+                const item = document.createElement('div');
+                item.className = 'gli-legend-item';
+                item.innerHTML = `<div class="gli-legend-color-box" style="background-color: ${z.color}; border: 1px solid rgba(0,0,0,0.15);"></div><span>${z.label}</span>`;
+                legendDiv.appendChild(item);
+            });
+
+            // 추세선 목록
+            const lines = [
+                { color: '#888888', label: `${labelSimpleTrend} (r = ${metrics.r_simple.toFixed(2)})` },
+                { color: '#d63031', label: `${labelCorrectedTrend} (r = ${metrics.r_multi.toFixed(2)})` }
+            ];
+            lines.forEach(l => {
+                const item = document.createElement('div');
+                item.className = 'gli-legend-item';
+                item.innerHTML = `<div class="gli-legend-line" style="border-top-color: ${l.color};"></div><span>${l.label}</span>`;
+                legendDiv.appendChild(item);
+            });
+
+            // 준공 년차 목록
+            Object.keys(ageStyles).forEach(key => {
+                const style = ageStyles[key];
+                const item = document.createElement('div');
+                item.className = 'gli-legend-item';
+                item.innerHTML = `<div class="gli-legend-circle" style="background-color: ${style.color};"></div><span>${style.label}</span>`;
+                legendDiv.appendChild(item);
+            });
+
+            // 모바일에서는 레전드를 표시하지 않음
+            if (!isMobileView) {
+                wrapper.appendChild(legendDiv);
+            }
+
+            // 2. 워터마크 렌더링
+            const watermarkDiv = document.createElement('div');
+            watermarkDiv.className = 'gli-chart-watermark';
+
+            //현재 언어가 영어이면 ../ 경로로, 아니면 ./ 경로로 설정
+            const prefix = isEn ? '../' : './';
+            const logoUrl = prefix + 'apr-rank.png';
+
+            const now = new Date();
+            const pad = (num) => String(num).padStart(2, '0');
+            const formattedDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+            watermarkDiv.innerHTML = `
+                <img src="${logoUrl}" class="gli-watermark-logo" alt="Realrankus" />
+                <div class="gli-watermark-text">powered by Realrankus</div>
+                <div class="gli-watermark-text">${formattedDate}</div>
+            `;
+            wrapper.appendChild(watermarkDiv);
+        });
+    };
+
+    /**
+     * chartWrapper 영역을 html2canvas로 캡처하여 PNG 이미지로 다운로드합니다.
+     * @param {string} wrapperId - 캡처할 래퍼 요소의 ID (기본: 'chartWrapper')
+     * @param {string} filename - 다운로드 파일명
+     */
+    GLIChartRenderer.downloadChartImage = function (wrapperId, filename) {
+        const wrapper = document.getElementById(wrapperId || 'chartWrapper');
+        if (!wrapper) {
+            console.error('캡처할 래퍼를 찾을 수 없습니다.');
+            return;
+        }
+        if (typeof html2canvas === 'undefined') {
+            alert('이미지 캡처 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+            return;
+        }
+        html2canvas(wrapper, {
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            scale: 2
+        }).then(function (canvas) {
+            var link = document.createElement('a');
+            link.download = filename || 'GLI_chart.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(function (err) {
+            console.error('이미지 캡처 실패:', err);
+            alert('이미지 다운로드에 실패했습니다.');
         });
     };
 

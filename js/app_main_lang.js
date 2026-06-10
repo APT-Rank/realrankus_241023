@@ -4837,6 +4837,99 @@ function showGraphCarousel() {
     });
 }
 
+/**
+ * @description 현재 설정된 지역의 분석 통계 그래프 데이터를 가져와 Chart.js와 GLIChartRenderer를 사용해 동별 시장 진단을 모달 팝업으로 렌더링합니다.
+ */
+function showGraphChart() {
+  const jsonUrl = pathPrefix + "regional_graph/" + selectedSubRegion + "_graph.json";
+
+  $.getJSON(jsonUrl, function (data) {
+    if (!data || !data.dongs) {
+      alert(isEn ? "No graph data available." : "표시할 그래프 데이터가 없습니다.");
+      return;
+    }
+
+    const dongs = Object.keys(data.dongs).sort(); // 가나다순 정렬
+    if (dongs.length === 0) {
+      alert(isEn ? "No graph data available." : "표시할 그래프 데이터가 없습니다.");
+      return;
+    }
+
+    let activeDong = dongs[0];
+
+    function renderDongChart(dongName) {
+      activeDong = dongName;
+      const dongData = data.dongs[dongName];
+
+      console.log(`Rendering chart for ${dongName}:`, dongData); // 디버깅 로그
+      
+      // 제목 설정
+      const titleText = isEn 
+        ? `'${dongName}' RealRankus GLI-Based Market Diagnosis` 
+        : `'${dongName}' 리얼랭커스 GLI 기반 시장 진단`;
+      $("#gliChartTitle").text(titleText);
+
+      // 그래프 렌더링
+      GLIChartRenderer.render("gliChartContainer", dongData, {
+        isEn: isEn,
+        pathPrefix: pathPrefix
+      });
+
+      // 버튼 활성화 스타일 업데이트
+      $("#dongSelectionMenu button").removeClass("active");
+      $(`#dong-btn-${dongs.indexOf(dongName)}`).addClass("active");
+    }
+
+    // 동 선택 그리드 메뉴 빌드
+    const $menu = $("#dongSelectionMenu");
+    $menu.empty();
+
+    dongs.forEach((dongName, idx) => {
+      const btn = document.createElement("button");
+      btn.id = `dong-btn-${idx}`;
+      btn.className = "gli-dong-btn";
+      btn.innerText = dongName;
+      btn.addEventListener("click", function () {
+        renderDongChart(dongName);
+      });
+      $menu.append(btn);
+    });
+
+    // 2. 모달 띄우기
+    openModal("graphModal");
+    $("#graphModal").css("z-index", "1056"); // 모달의 z-index를 backdrop보다 높게 설정
+    $(".modal-backdrop").css({ width: "100%", "z-index": "1055" });
+
+    // 첫 번째 동 기본 렌더링
+    renderDongChart(activeDong);
+
+    // 다운로드 버튼 이벤트 바인딩
+    $("#gliDownloadBtn").off("click").on("click", function () {
+      var now = new Date();
+      var pad = function(n) { return String(n).padStart(2, '0'); };
+      var dateStr = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate());
+      var filename = isEn
+        ? 'GLI_Analysis_' + activeDong + '_' + dateStr + '.png'
+        : 'GLI_분석_' + activeDong + '_' + dateStr + '.png';
+      GLIChartRenderer.downloadChartImage('chartWrapper', filename);
+    });
+
+    // 3. 모달이 닫힐 때 자원 및 이벤트 해제
+    $("#graphModal").off("hidden.bs.modal").on("hidden.bs.modal", function () {
+      $("#gliChartContainer").empty();
+      $("#gliChartTitle").empty();
+      $("#dongSelectionMenu").empty();
+      $("#gliDownloadBtn").off("click");
+      $("#baseModal").css({ "z-index": "1055" });
+      $(".modal-backdrop").css({ "z-index": "1000", width: "600px" });
+    });
+  })
+  .fail(function () {
+    console.error("그래프 데이터를 불러오는데 실패했습니다.");
+    alert(isEn ? "Failed to load graph data." : "그래프 데이터를 불러오는데 실패했습니다.");
+  });
+}
+
 // Intercept rearrange notice update
 var originalShowAPTRearrangeBar = showAPTRearrangeBar;
 showAPTRearrangeBar = function () {
