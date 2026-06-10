@@ -1,0 +1,104 @@
+{
+    "region_code": "4792000000",
+    "region_name": "Gyeongsangbukdo_Bonghwa",
+    "region_key": "4792000000_Gyeongsangbukdo_Bonghwa",
+    "supply_score": 50.0,
+    "dongs": {
+        "봉화읍": {
+            "summary_metrics": {
+                "r_simple": 0.0024609970294155598,
+                "r_multi": 0.8999943380186721,
+                "r_squared": "81.0%",
+                "price_per_gli_point": 0.3553725548733916,
+                "std_error": 114.13678278044758,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 22.8459481093,
+                "max_gli": 31.9165213949,
+                "simple_trendline": [
+                    {
+                        "gli": 22.8459481093,
+                        "price": 496.90786897431343
+                    },
+                    {
+                        "gli": 31.9165213949,
+                        "price": 498.07889665851565
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 22.8459481093,
+                        "price": 495.9869123184001
+                    },
+                    {
+                        "gli": 31.9165213949,
+                        "price": 499.2103451210701
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 22.8459481093,
+                        "price": 553.0553037086239
+                    },
+                    {
+                        "gli": 31.9165213949,
+                        "price": 556.2787365112939
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 22.8459481093,
+                        "price": 438.9185209281763
+                    },
+                    {
+                        "gli": 31.9165213949,
+                        "price": 442.1419537308463
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "가든목화",
+                    "gli_score": 22.8459481093,
+                    "price_per_pyung": 267.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 84
+                },
+                {
+                    "complex_name": "명성센시빌2차",
+                    "gli_score": 25.2072373157,
+                    "price_per_pyung": 801.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 80
+                },
+                {
+                    "complex_name": "명성장원",
+                    "gli_score": 24.1881369083,
+                    "price_per_pyung": 534.6666666666666,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 90
+                },
+                {
+                    "complex_name": "삼영주택",
+                    "gli_score": 30.4226666667,
+                    "price_per_pyung": 332.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 38,
+                    "household_count": 179
+                },
+                {
+                    "complex_name": "톱텍시티파크",
+                    "gli_score": 31.9165213949,
+                    "price_per_pyung": 552.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 87
+                }
+            ]
+        }
+    }
+}

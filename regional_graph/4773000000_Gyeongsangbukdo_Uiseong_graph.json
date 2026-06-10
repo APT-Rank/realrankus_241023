@@ -1,0 +1,128 @@
+{
+    "region_code": "4773000000",
+    "region_name": "Gyeongsangbukdo_Uiseong",
+    "region_key": "4773000000_Gyeongsangbukdo_Uiseong",
+    "supply_score": 50.0,
+    "dongs": {
+        "의성읍": {
+            "summary_metrics": {
+                "r_simple": 0.21992792787414422,
+                "r_multi": 0.9879517111514906,
+                "r_squared": "97.6%",
+                "price_per_gli_point": 1.627632736553656,
+                "std_error": 74.09672916828043,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 22.5663389583,
+                "max_gli": 48.5735626621,
+                "simple_trendline": [
+                    {
+                        "gli": 22.5663389583,
+                        "price": 512.2593456519885
+                    },
+                    {
+                        "gli": 48.5735626621,
+                        "price": 688.457672644498
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 22.5663389583,
+                        "price": 574.2030019137518
+                    },
+                    {
+                        "gli": 48.5735626621,
+                        "price": 531.8727932265728
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 22.5663389583,
+                        "price": 611.251366497892
+                    },
+                    {
+                        "gli": 48.5735626621,
+                        "price": 568.921157810713
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 22.5663389583,
+                        "price": 537.1546373296115
+                    },
+                    {
+                        "gli": 48.5735626621,
+                        "price": 494.8244286424325
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "경신",
+                    "gli_score": 23.0131061236,
+                    "price_per_pyung": 343.6,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 32,
+                    "household_count": 160
+                },
+                {
+                    "complex_name": "골든렉시움",
+                    "gli_score": 36.8548945139,
+                    "price_per_pyung": 1106.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 2,
+                    "household_count": 90
+                },
+                {
+                    "complex_name": "대동맨션2차",
+                    "gli_score": 27.2004658914,
+                    "price_per_pyung": 441.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 33,
+                    "household_count": 96
+                },
+                {
+                    "complex_name": "용마",
+                    "gli_score": 48.5735626621,
+                    "price_per_pyung": 334.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 83
+                },
+                {
+                    "complex_name": "우성",
+                    "gli_score": 22.5663389583,
+                    "price_per_pyung": 436.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 104
+                },
+                {
+                    "complex_name": "의성미진이지비아",
+                    "gli_score": 31.7902557123,
+                    "price_per_pyung": 860.2,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 12,
+                    "household_count": 201
+                },
+                {
+                    "complex_name": "의성청구제네스1단지",
+                    "gli_score": 26.1890106086,
+                    "price_per_pyung": 564.3333333333334,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 281
+                },
+                {
+                    "complex_name": "태평스카이맨션",
+                    "gli_score": 23.3187169833,
+                    "price_per_pyung": 411.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 35,
+                    "household_count": 155
+                }
+            ]
+        }
+    }
+}

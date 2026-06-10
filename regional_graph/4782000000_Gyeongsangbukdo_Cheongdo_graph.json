@@ -1,0 +1,88 @@
+{
+    "region_code": "4782000000",
+    "region_name": "Gyeongsangbukdo_Cheongdo",
+    "region_key": "4782000000_Gyeongsangbukdo_Cheongdo",
+    "supply_score": 50.0,
+    "dongs": {
+        "청도읍": {
+            "summary_metrics": {
+                "r_simple": 0.9293010241876686,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 6.482338490641283,
+                "std_error": 24.981583015109916,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 12.5404679167,
+                "max_gli": 29.8754679167,
+                "simple_trendline": [
+                    {
+                        "gli": 12.5404679167,
+                        "price": 170.12159529003338
+                    },
+                    {
+                        "gli": 29.8754679167,
+                        "price": 514.9287946966299
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 12.5404679167,
+                        "price": 278.51791747412955
+                    },
+                    {
+                        "gli": 29.8754679167,
+                        "price": 390.8892552093962
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 12.5404679167,
+                        "price": 291.0087089816845
+                    },
+                    {
+                        "gli": 29.8754679167,
+                        "price": 403.38004671695114
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 12.5404679167,
+                        "price": 266.0271259665746
+                    },
+                    {
+                        "gli": 29.8754679167,
+                        "price": 378.39846370184125
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "BS에코파크",
+                    "gli_score": 29.8754679167,
+                    "price_per_pyung": 546.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 114
+                },
+                {
+                    "complex_name": "대안",
+                    "gli_score": 12.5404679167,
+                    "price_per_pyung": 217.66666666666666,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 36,
+                    "household_count": 167
+                },
+                {
+                    "complex_name": "성조타운",
+                    "gli_score": 19.4579679167,
+                    "price_per_pyung": 228.6,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 31,
+                    "household_count": 293
+                }
+            ]
+        }
+    }
+}

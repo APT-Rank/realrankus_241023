@@ -1,0 +1,112 @@
+{
+    "region_code": "4884000000",
+    "region_name": "Gyeongsangnamdo_Namhae",
+    "region_key": "4884000000_Gyeongsangnamdo_Namhae",
+    "supply_score": 50.0,
+    "dongs": {
+        "남해읍": {
+            "summary_metrics": {
+                "r_simple": 0.9377363001942686,
+                "r_multi": 0.9759237234574117,
+                "r_squared": "95.2%",
+                "price_per_gli_point": 4.271688650873045,
+                "std_error": 56.00477834871672,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 15.3567001838,
+                "max_gli": 54.7227114575,
+                "simple_trendline": [
+                    {
+                        "gli": 15.3567001838,
+                        "price": 442.71636417850067
+                    },
+                    {
+                        "gli": 54.7227114575,
+                        "price": 963.6749753909456
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 15.3567001838,
+                        "price": 585.5442792068332
+                    },
+                    {
+                        "gli": 54.7227114575,
+                        "price": 753.7036227948378
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 15.3567001838,
+                        "price": 613.5466683811915
+                    },
+                    {
+                        "gli": 54.7227114575,
+                        "price": 781.7060119691961
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 15.3567001838,
+                        "price": 557.5418900324748
+                    },
+                    {
+                        "gli": 54.7227114575,
+                        "price": 725.7012336204795
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "남양",
+                    "gli_score": 15.3567001838,
+                    "price_per_pyung": 406.25,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 126
+                },
+                {
+                    "complex_name": "남해스타펠레스(주상복합)",
+                    "gli_score": 54.7227114575,
+                    "price_per_pyung": 910.8,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 84
+                },
+                {
+                    "complex_name": "남해신우보람",
+                    "gli_score": 22.6992692894,
+                    "price_per_pyung": 470.6,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 24,
+                    "household_count": 127
+                },
+                {
+                    "complex_name": "남해파크에비뉴",
+                    "gli_score": 42.0010090749,
+                    "price_per_pyung": 798.75,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 87
+                },
+                {
+                    "complex_name": "파크에비뉴2차",
+                    "gli_score": 33.3916391881,
+                    "price_per_pyung": 814.8333333333334,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 92
+                },
+                {
+                    "complex_name": "현대",
+                    "gli_score": 19.5909294785,
+                    "price_per_pyung": 520.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 186
+                }
+            ]
+        }
+    }
+}

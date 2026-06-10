@@ -1,0 +1,96 @@
+{
+    "region_code": "5180000000",
+    "region_name": "Gangwondo_Yanggu",
+    "region_key": "5180000000_Gangwondo_Yanggu",
+    "supply_score": 50.0,
+    "dongs": {
+        "양구읍": {
+            "summary_metrics": {
+                "r_simple": 0.9753247007148742,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 14.913442295434587,
+                "std_error": 57.315343616599634,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 27.5129228985,
+                "max_gli": 51.0806560926,
+                "simple_trendline": [
+                    {
+                        "gli": 27.5129228985,
+                        "price": 486.6964544270726
+                    },
+                    {
+                        "gli": 51.0806560926,
+                        "price": 941.243866579074
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 27.5129228985,
+                        "price": 519.583501739713
+                    },
+                    {
+                        "gli": 51.0806560926,
+                        "price": 871.0595307641217
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 27.5129228985,
+                        "price": 548.2411735480129
+                    },
+                    {
+                        "gli": 51.0806560926,
+                        "price": 899.7172025724216
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 27.5129228985,
+                        "price": 490.9258299314132
+                    },
+                    {
+                        "gli": 51.0806560926,
+                        "price": 842.4018589558219
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "경림",
+                    "gli_score": 30.5616950053,
+                    "price_per_pyung": 537.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 330
+                },
+                {
+                    "complex_name": "서희스타힐스",
+                    "gli_score": 51.0806560926,
+                    "price_per_pyung": 932.75,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 14,
+                    "household_count": 236
+                },
+                {
+                    "complex_name": "양구보배",
+                    "gli_score": 27.5129228985,
+                    "price_per_pyung": 438.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 160
+                },
+                {
+                    "complex_name": "양구석미모닝파크",
+                    "gli_score": 30.9755,
+                    "price_per_pyung": 618.3333333333334,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 16,
+                    "household_count": 226
+                }
+            ]
+        }
+    }
+}

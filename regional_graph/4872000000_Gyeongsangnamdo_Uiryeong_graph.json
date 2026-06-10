@@ -1,0 +1,88 @@
+{
+    "region_code": "4872000000",
+    "region_name": "Gyeongsangnamdo_Uiryeong",
+    "region_key": "4872000000_Gyeongsangnamdo_Uiryeong",
+    "supply_score": 50.0,
+    "dongs": {
+        "의령읍": {
+            "summary_metrics": {
+                "r_simple": 0.042177927403112714,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 24.623941872210892,
+                "std_error": 40.866798759094486,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 27.0225931684,
+                "max_gli": 33.6258635118,
+                "simple_trendline": [
+                    {
+                        "gli": 27.0225931684,
+                        "price": 553.9837375021206
+                    },
+                    {
+                        "gli": 33.6258635118,
+                        "price": 576.8322777930822
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 27.0225931684,
+                        "price": 674.0575634610387
+                    },
+                    {
+                        "gli": 33.6258635118,
+                        "price": 511.4590183586631
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 27.0225931684,
+                        "price": 694.490962840586
+                    },
+                    {
+                        "gli": 33.6258635118,
+                        "price": 531.8924177382104
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 27.0225931684,
+                        "price": 653.6241640814915
+                    },
+                    {
+                        "gli": 33.6258635118,
+                        "price": 491.02561897911585
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "삼영타운",
+                    "gli_score": 33.6258635118,
+                    "price_per_pyung": 282.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 102
+                },
+                {
+                    "complex_name": "서광",
+                    "gli_score": 27.0225931684,
+                    "price_per_pyung": 536.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 133
+                },
+                {
+                    "complex_name": "신우희가로",
+                    "gli_score": 33.245837714,
+                    "price_per_pyung": 888.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 8,
+                    "household_count": 322
+                }
+            ]
+        }
+    }
+}

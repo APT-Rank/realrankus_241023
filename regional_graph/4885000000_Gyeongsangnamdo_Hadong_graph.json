@@ -1,0 +1,104 @@
+{
+    "region_code": "4885000000",
+    "region_name": "Gyeongsangnamdo_Hadong",
+    "region_key": "4885000000_Gyeongsangnamdo_Hadong",
+    "supply_score": 50.0,
+    "dongs": {
+        "하동읍": {
+            "summary_metrics": {
+                "r_simple": 0.5815721465719748,
+                "r_multi": 0.9989563769126204,
+                "r_squared": "99.8%",
+                "price_per_gli_point": 2.837421218757882,
+                "std_error": 62.057685104711695,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 10.3968935417,
+                "max_gli": 33.3480775249,
+                "simple_trendline": [
+                    {
+                        "gli": 10.3968935417,
+                        "price": 275.4480656558404
+                    },
+                    {
+                        "gli": 33.3480775249,
+                        "price": 503.74392713587355
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 10.3968935417,
+                        "price": 354.6791060463513
+                    },
+                    {
+                        "gli": 33.3480775249,
+                        "price": 419.80128247589903
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 10.3968935417,
+                        "price": 385.70794859870716
+                    },
+                    {
+                        "gli": 33.3480775249,
+                        "price": 450.8301250282549
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 10.3968935417,
+                        "price": 323.65026349399545
+                    },
+                    {
+                        "gli": 33.3480775249,
+                        "price": 388.7724399235432
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "녹차마을",
+                    "gli_score": 26.6718935417,
+                    "price_per_pyung": 551.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 18,
+                    "household_count": 95
+                },
+                {
+                    "complex_name": "대경송림타운",
+                    "gli_score": 33.3480775249,
+                    "price_per_pyung": 390.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 199
+                },
+                {
+                    "complex_name": "대망파크맨션",
+                    "gli_score": 10.3968935417,
+                    "price_per_pyung": 198.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 35,
+                    "household_count": 80
+                },
+                {
+                    "complex_name": "송보파인빌",
+                    "gli_score": 19.1848935417,
+                    "price_per_pyung": 512.6666666666666,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 173
+                },
+                {
+                    "complex_name": "흥한로얄맨션",
+                    "gli_score": 18.1038935417,
+                    "price_per_pyung": 279.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 36,
+                    "household_count": 144
+                }
+            ]
+        }
+    }
+}

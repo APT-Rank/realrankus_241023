@@ -1,0 +1,176 @@
+{
+    "region_code": "4783000000",
+    "region_name": "Gyeongsangbukdo_Goryeong",
+    "region_key": "4783000000_Gyeongsangbukdo_Goryeong",
+    "supply_score": 50.0,
+    "dongs": {
+        "다산면": {
+            "summary_metrics": {
+                "r_simple": 0.9976958004225063,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 8.393544078705407,
+                "std_error": 65.53676969318965,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 21.8125466072,
+                "max_gli": 41.0833655479,
+                "simple_trendline": [
+                    {
+                        "gli": 21.8125466072,
+                        "price": 318.3025654598196
+                    },
+                    {
+                        "gli": 41.0833655479,
+                        "price": 855.2799257920958
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 21.8125466072,
+                        "price": 448.0052447059917
+                    },
+                    {
+                        "gli": 41.0833655479,
+                        "price": 609.7557129175082
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 21.8125466072,
+                        "price": 480.7736295525865
+                    },
+                    {
+                        "gli": 41.0833655479,
+                        "price": 642.524097764103
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 21.8125466072,
+                        "price": 415.2368598593969
+                    },
+                    {
+                        "gli": 41.0833655479,
+                        "price": 576.9873280709133
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "금류강남타운",
+                    "gli_score": 22.5254513843,
+                    "price_per_pyung": 359.25,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 31,
+                    "household_count": 656
+                },
+                {
+                    "complex_name": "금류강남타운2차",
+                    "gli_score": 21.8125466072,
+                    "price_per_pyung": 298.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 499
+                },
+                {
+                    "complex_name": "다산월드메르디앙",
+                    "gli_score": 41.0833655479,
+                    "price_per_pyung": 854.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 631
+                }
+            ]
+        },
+        "대가야읍": {
+            "summary_metrics": {
+                "r_simple": 0.1666316317817743,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 0.003148704364570827,
+                "std_error": 71.92989010772288,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 11.855878125,
+                "max_gli": 32.532128125,
+                "simple_trendline": [
+                    {
+                        "gli": 11.855878125,
+                        "price": 384.1222893750598
+                    },
+                    {
+                        "gli": 32.532128125,
+                        "price": 433.03004577292285
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 11.855878125,
+                        "price": 407.5937144442705
+                    },
+                    {
+                        "gli": 32.532128125,
+                        "price": 407.6588178428883
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 11.855878125,
+                        "price": 443.558659498132
+                    },
+                    {
+                        "gli": 32.532128125,
+                        "price": 443.6237628967498
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 11.855878125,
+                        "price": 371.62876939040905
+                    },
+                    {
+                        "gli": 32.532128125,
+                        "price": 371.69387278902684
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "궁전맨션",
+                    "gli_score": 26.6930401735,
+                    "price_per_pyung": 599.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 31,
+                    "household_count": 165
+                },
+                {
+                    "complex_name": "덕경인터빌",
+                    "gli_score": 11.855878125,
+                    "price_per_pyung": 325.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 25,
+                    "household_count": 298
+                },
+                {
+                    "complex_name": "수정",
+                    "gli_score": 32.532128125,
+                    "price_per_pyung": 302.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 37,
+                    "household_count": 95
+                },
+                {
+                    "complex_name": "해동디오팰리스",
+                    "gli_score": 16.086503125,
+                    "price_per_pyung": 404.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 375
+                }
+            ]
+        }
+    }
+}

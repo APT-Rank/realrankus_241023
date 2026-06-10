@@ -1,0 +1,88 @@
+{
+    "region_code": "4777000000",
+    "region_name": "Gyeongsangbukdo_Yeongdeok",
+    "region_key": "4777000000_Gyeongsangbukdo_Yeongdeok",
+    "supply_score": 50.0,
+    "dongs": {
+        "영덕읍": {
+            "summary_metrics": {
+                "r_simple": 0.7466553833866062,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 4.568436934104046,
+                "std_error": 43.575604821243616,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 30.4291411724,
+                "max_gli": 52.937225544,
+                "simple_trendline": [
+                    {
+                        "gli": 30.4291411724,
+                        "price": 383.3123247697831
+                    },
+                    {
+                        "gli": 52.937225544,
+                        "price": 729.9080188292869
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 30.4291411724,
+                        "price": 646.636913553399
+                    },
+                    {
+                        "gli": 52.937225544,
+                        "price": 543.8101495942515
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 30.4291411724,
+                        "price": 668.4247159640208
+                    },
+                    {
+                        "gli": 52.937225544,
+                        "price": 565.5979520048733
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 30.4291411724,
+                        "price": 624.8491111427772
+                    },
+                    {
+                        "gli": 52.937225544,
+                        "price": 522.0223471836297
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "마이다스빌",
+                    "gli_score": 30.4291411724,
+                    "price_per_pyung": 426.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 89
+                },
+                {
+                    "complex_name": "영덕우진센트럴하임",
+                    "gli_score": 52.937225544,
+                    "price_per_pyung": 865.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 11,
+                    "household_count": 250
+                },
+                {
+                    "complex_name": "혜광신세계타운",
+                    "gli_score": 47.4847142619,
+                    "price_per_pyung": 467.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 139
+                }
+            ]
+        }
+    }
+}

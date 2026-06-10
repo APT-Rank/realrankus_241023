@@ -1,0 +1,112 @@
+{
+    "region_code": "5277000000",
+    "region_name": "Jeollabukdo_Sunchang",
+    "region_key": "5277000000_Jeollabukdo_Sunchang",
+    "supply_score": 50.0,
+    "dongs": {
+        "순창읍": {
+            "summary_metrics": {
+                "r_simple": 0.2943928896488691,
+                "r_multi": 0.9769542406893866,
+                "r_squared": "95.4%",
+                "price_per_gli_point": 1.8571950289793586,
+                "std_error": 58.02814560768478,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 23.564522183,
+                "max_gli": 37.3701120092,
+                "simple_trendline": [
+                    {
+                        "gli": 23.564522183,
+                        "price": 534.8002431837548
+                    },
+                    {
+                        "gli": 37.3701120092,
+                        "price": 696.0904689284962
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 23.564522183,
+                        "price": 612.5302637300828
+                    },
+                    {
+                        "gli": 37.3701120092,
+                        "price": 638.1699365274294
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 23.564522183,
+                        "price": 641.5443365339252
+                    },
+                    {
+                        "gli": 37.3701120092,
+                        "price": 667.1840093312718
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 23.564522183,
+                        "price": 583.5161909262404
+                    },
+                    {
+                        "gli": 37.3701120092,
+                        "price": 609.155863723587
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "광명메이루즈",
+                    "gli_score": 31.5130227825,
+                    "price_per_pyung": 549.6666666666666,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 116
+                },
+                {
+                    "complex_name": "대석",
+                    "gli_score": 23.564522183,
+                    "price_per_pyung": 429.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 28,
+                    "household_count": 136
+                },
+                {
+                    "complex_name": "순창남양휴튼",
+                    "gli_score": 35.2944315257,
+                    "price_per_pyung": 906.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 378
+                },
+                {
+                    "complex_name": "온리뷰",
+                    "gli_score": 31.9213167828,
+                    "price_per_pyung": 763.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 9,
+                    "household_count": 165
+                },
+                {
+                    "complex_name": "온리뷰2차",
+                    "gli_score": 29.1887218393,
+                    "price_per_pyung": 687.6666666666666,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 7,
+                    "household_count": 125
+                },
+                {
+                    "complex_name": "해태",
+                    "gli_score": 37.3701120092,
+                    "price_per_pyung": 427.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 31,
+                    "household_count": 142
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,328 @@
+{
+    "region_code": "4728000000",
+    "region_name": "Gyeongsangbukdo_Mungyeong",
+    "region_key": "4728000000_Gyeongsangbukdo_Mungyeong",
+    "supply_score": 100.0,
+    "dongs": {
+        "모전동": {
+            "summary_metrics": {
+                "r_simple": 0.29838606390843747,
+                "r_multi": 0.9572547376156975,
+                "r_squared": "91.6%",
+                "price_per_gli_point": 33.568550109659185,
+                "std_error": 105.14422009660078,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 16.9394869857,
+                "max_gli": 42.709800165,
+                "simple_trendline": [
+                    {
+                        "gli": 16.9394869857,
+                        "price": 1073.786931619822
+                    },
+                    {
+                        "gli": 42.709800165,
+                        "price": 1308.936962089211
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 16.9394869857,
+                        "price": 1614.1075474158808
+                    },
+                    {
+                        "gli": 42.709800165,
+                        "price": 749.0354981149385
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 16.9394869857,
+                        "price": 1666.6796574641812
+                    },
+                    {
+                        "gli": 42.709800165,
+                        "price": 801.6076081632389
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 16.9394869857,
+                        "price": 1561.5354373675805
+                    },
+                    {
+                        "gli": 42.709800165,
+                        "price": 696.4633880666381
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "뉴글로벌시티",
+                    "gli_score": 30.2001178028,
+                    "price_per_pyung": 1065.1666666666667,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 84
+                },
+                {
+                    "complex_name": "대동타운",
+                    "gli_score": 24.2302731064,
+                    "price_per_pyung": 908.3333333333334,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 476
+                },
+                {
+                    "complex_name": "매봉주공",
+                    "gli_score": 42.709800165,
+                    "price_per_pyung": 660.6666666666666,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 928
+                },
+                {
+                    "complex_name": "모전주공",
+                    "gli_score": 24.9012848512,
+                    "price_per_pyung": 621.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 32,
+                    "household_count": 506
+                },
+                {
+                    "complex_name": "문경모전코아루노블36(주상복합)",
+                    "gli_score": 36.7568863,
+                    "price_per_pyung": 1218.6,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 166
+                },
+                {
+                    "complex_name": "문경신원아침도시",
+                    "gli_score": 28.5398646862,
+                    "price_per_pyung": 1094.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 18,
+                    "household_count": 343
+                },
+                {
+                    "complex_name": "문경영풍마드레빌",
+                    "gli_score": 25.5855327453,
+                    "price_per_pyung": 989.6666666666666,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 299
+                },
+                {
+                    "complex_name": "문경점촌코아루",
+                    "gli_score": 33.2398301108,
+                    "price_per_pyung": 1088.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 7,
+                    "household_count": 154
+                },
+                {
+                    "complex_name": "문경코아루",
+                    "gli_score": 33.635559,
+                    "price_per_pyung": 1183.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 450
+                },
+                {
+                    "complex_name": "브리티시에스(주상복합)",
+                    "gli_score": 32.1713763,
+                    "price_per_pyung": 1139.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 9,
+                    "household_count": 99
+                },
+                {
+                    "complex_name": "양지마을대원",
+                    "gli_score": 26.2338777483,
+                    "price_per_pyung": 814.3333333333334,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 24,
+                    "household_count": 255
+                },
+                {
+                    "complex_name": "현대",
+                    "gli_score": 16.9394869857,
+                    "price_per_pyung": 751.3333333333334,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 32,
+                    "household_count": 240
+                }
+            ]
+        },
+        "점촌동": {
+            "summary_metrics": {
+                "r_simple": 1.0,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 4.014897380058592,
+                "std_error": 38.243995316621636,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 19.7099677807,
+                "max_gli": 29.0941102755,
+                "simple_trendline": [
+                    {
+                        "gli": 19.7099677807,
+                        "price": 501.0379976583109
+                    },
+                    {
+                        "gli": 29.0941102755,
+                        "price": 766.7522833725966
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 19.7099677807,
+                        "price": 615.0569559572192
+                    },
+                    {
+                        "gli": 29.0941102755,
+                        "price": 652.7333250736882
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 19.7099677807,
+                        "price": 634.17895361553
+                    },
+                    {
+                        "gli": 29.0941102755,
+                        "price": 671.855322731999
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 19.7099677807,
+                        "price": 595.9349582989084
+                    },
+                    {
+                        "gli": 29.0941102755,
+                        "price": 633.6113274153774
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "거산으뜸",
+                    "gli_score": 19.7099677807,
+                    "price_per_pyung": 431.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 33,
+                    "household_count": 97
+                },
+                {
+                    "complex_name": "우진행복(주상복합)",
+                    "gli_score": 29.0941102755,
+                    "price_per_pyung": 696.7142857142857,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 99
+                }
+            ]
+        },
+        "흥덕동": {
+            "summary_metrics": {
+                "r_simple": 0.8134590435366282,
+                "r_multi": 0.8625726384256837,
+                "r_squared": "74.4%",
+                "price_per_gli_point": 71.25849301591525,
+                "std_error": 73.148946230919,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 18.3658914004,
+                "max_gli": 22.486204,
+                "simple_trendline": [
+                    {
+                        "gli": 18.3658914004,
+                        "price": 367.9337904369947
+                    },
+                    {
+                        "gli": 22.486204,
+                        "price": 594.1760307698773
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 18.3658914004,
+                        "price": 317.8897052253125
+                    },
+                    {
+                        "gli": 22.486204,
+                        "price": 611.4969718272969
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 18.3658914004,
+                        "price": 354.46417834077204
+                    },
+                    {
+                        "gli": 22.486204,
+                        "price": 648.0714449427563
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 18.3658914004,
+                        "price": 281.315232109853
+                    },
+                    {
+                        "gli": 22.486204,
+                        "price": 574.9224987118374
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "시영",
+                    "gli_score": 18.3658914004,
+                    "price_per_pyung": 194.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 180
+                },
+                {
+                    "complex_name": "주은우방",
+                    "gli_score": 22.0751678494,
+                    "price_per_pyung": 520.25,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 32,
+                    "household_count": 240
+                },
+                {
+                    "complex_name": "푸른숲",
+                    "gli_score": 21.9520138333,
+                    "price_per_pyung": 396.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 19,
+                    "household_count": 421
+                },
+                {
+                    "complex_name": "황제맨션",
+                    "gli_score": 22.486204,
+                    "price_per_pyung": 368.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 37,
+                    "household_count": 198
+                },
+                {
+                    "complex_name": "흥덕주공",
+                    "gli_score": 22.2546551231,
+                    "price_per_pyung": 377.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 43,
+                    "household_count": 200
+                }
+            ]
+        }
+    }
+}

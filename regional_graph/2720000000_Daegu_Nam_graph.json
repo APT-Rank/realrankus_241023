@@ -1,0 +1,592 @@
+{
+    "region_code": "2720000000",
+    "region_name": "Daegu_Nam",
+    "region_key": "2720000000_Daegu_Nam",
+    "supply_score": 0.0,
+    "dongs": {
+        "대명동": {
+            "summary_metrics": {
+                "r_simple": 0.9569420164359324,
+                "r_multi": 0.9739945099791466,
+                "r_squared": "94.9%",
+                "price_per_gli_point": 24.622303713834288,
+                "std_error": 177.37124364512957,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 13.176182117,
+                "max_gli": 60.0136509576,
+                "simple_trendline": [
+                    {
+                        "gli": 13.176182117,
+                        "price": 155.9125336934361
+                    },
+                    {
+                        "gli": 60.0136509576,
+                        "price": 1598.8627836758697
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 13.176182117,
+                        "price": 263.3950843081696
+                    },
+                    {
+                        "gli": 60.0136509576,
+                        "price": 1416.6414672886726
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 13.176182117,
+                        "price": 352.08070613073437
+                    },
+                    {
+                        "gli": 60.0136509576,
+                        "price": 1505.3270891112375
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 13.176182117,
+                        "price": 174.70946248560483
+                    },
+                    {
+                        "gli": 60.0136509576,
+                        "price": 1327.9558454661078
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "e편한세상명덕역퍼스트마크",
+                    "gli_score": 60.0136509576,
+                    "price_per_pyung": 2065.8,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 1,
+                    "household_count": 1758
+                },
+                {
+                    "complex_name": "가든맨션",
+                    "gli_score": 19.5446956253,
+                    "price_per_pyung": 607.6666666666666,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 43,
+                    "household_count": 110
+                },
+                {
+                    "complex_name": "개나리맨션",
+                    "gli_score": 18.4033320964,
+                    "price_per_pyung": 704.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 47,
+                    "household_count": 426
+                },
+                {
+                    "complex_name": "교대역동서프라임36.5",
+                    "gli_score": 29.3680538835,
+                    "price_per_pyung": 1125.6,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 9,
+                    "household_count": 268
+                },
+                {
+                    "complex_name": "교대역하늘채뉴센트원",
+                    "gli_score": 47.8133576884,
+                    "price_per_pyung": 1706.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 975
+                },
+                {
+                    "complex_name": "대명세광그린타운",
+                    "gli_score": 21.2433058026,
+                    "price_per_pyung": 592.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 114
+                },
+                {
+                    "complex_name": "대명역센트럴엘리프",
+                    "gli_score": 47.1541578206,
+                    "price_per_pyung": 1542.6666666666667,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 1051
+                },
+                {
+                    "complex_name": "대명자이그랜드시티",
+                    "gli_score": 55.5891835132,
+                    "price_per_pyung": 1620.875,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 1,
+                    "household_count": 2023
+                },
+                {
+                    "complex_name": "동신맨션",
+                    "gli_score": 14.0738645067,
+                    "price_per_pyung": 494.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 47,
+                    "household_count": 201
+                },
+                {
+                    "complex_name": "동아대덕",
+                    "gli_score": 16.5564463331,
+                    "price_per_pyung": 615.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 210
+                },
+                {
+                    "complex_name": "백작맨션",
+                    "gli_score": 18.8959207689,
+                    "price_per_pyung": 539.3333333333334,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 38,
+                    "household_count": 104
+                },
+                {
+                    "complex_name": "보성청록타운",
+                    "gli_score": 13.9600200592,
+                    "price_per_pyung": 623.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 28,
+                    "household_count": 347
+                },
+                {
+                    "complex_name": "삼두",
+                    "gli_score": 13.176182117,
+                    "price_per_pyung": 429.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 46,
+                    "household_count": 160
+                },
+                {
+                    "complex_name": "새한",
+                    "gli_score": 19.4297314088,
+                    "price_per_pyung": 879.8,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 48,
+                    "household_count": 149
+                },
+                {
+                    "complex_name": "세종맨션",
+                    "gli_score": 44.798718411,
+                    "price_per_pyung": 1229.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 47,
+                    "household_count": 119
+                },
+                {
+                    "complex_name": "용마맨션",
+                    "gli_score": 15.0853021915,
+                    "price_per_pyung": 666.1666666666666,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 47,
+                    "household_count": 162
+                },
+                {
+                    "complex_name": "우방뉴-코스모스",
+                    "gli_score": 36.249052515,
+                    "price_per_pyung": 1057.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 44,
+                    "household_count": 188
+                },
+                {
+                    "complex_name": "우방코스모스(1198-3)",
+                    "gli_score": 41.6848126973,
+                    "price_per_pyung": 1036.5714285714287,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 46,
+                    "household_count": 264
+                },
+                {
+                    "complex_name": "정우맨션",
+                    "gli_score": 19.6822551061,
+                    "price_per_pyung": 506.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 47,
+                    "household_count": 441
+                },
+                {
+                    "complex_name": "파크맨션",
+                    "gli_score": 20.6162780414,
+                    "price_per_pyung": 587.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 47,
+                    "household_count": 553
+                },
+                {
+                    "complex_name": "힐스테이트대명센트럴(주상복합)",
+                    "gli_score": 48.5994310682,
+                    "price_per_pyung": 1732.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 2,
+                    "household_count": 861
+                },
+                {
+                    "complex_name": "힐스테이트대명센트럴2차(주상복합)",
+                    "gli_score": 50.2342677618,
+                    "price_per_pyung": 1702.75,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 1,
+                    "household_count": 977
+                }
+            ]
+        },
+        "이천동": {
+            "summary_metrics": {
+                "r_simple": 0.7815439817088395,
+                "r_multi": 0.953582621011568,
+                "r_squared": "90.9%",
+                "price_per_gli_point": 28.492277421078104,
+                "std_error": 212.0533756740505,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 18.609546954,
+                "max_gli": 44.9402549715,
+                "simple_trendline": [
+                    {
+                        "gli": 18.609546954,
+                        "price": 295.41166165945765
+                    },
+                    {
+                        "gli": 44.9402549715,
+                        "price": 1122.64795438372
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 18.609546954,
+                        "price": 319.56215778521516
+                    },
+                    {
+                        "gli": 44.9402549715,
+                        "price": 1069.783995313231
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 18.609546954,
+                        "price": 425.5888456222404
+                    },
+                    {
+                        "gli": 44.9402549715,
+                        "price": 1175.8106831502562
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 18.609546954,
+                        "price": 213.53546994818993
+                    },
+                    {
+                        "gli": 44.9402549715,
+                        "price": 963.7573074762056
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "강변타운",
+                    "gli_score": 21.1759065628,
+                    "price_per_pyung": 795.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 32,
+                    "household_count": 480
+                },
+                {
+                    "complex_name": "교대역월드메르디앙",
+                    "gli_score": 25.5374522773,
+                    "price_per_pyung": 985.6,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 361
+                },
+                {
+                    "complex_name": "교대역푸르지오트레힐즈",
+                    "gli_score": 44.9402549715,
+                    "price_per_pyung": 1592.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 1,
+                    "household_count": 924
+                },
+                {
+                    "complex_name": "대봉교역금호어울림에듀리버",
+                    "gli_score": 33.3509722778,
+                    "price_per_pyung": 1484.4,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 433
+                },
+                {
+                    "complex_name": "대봉교역태왕아너스",
+                    "gli_score": 34.2465500345,
+                    "price_per_pyung": 1516.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 412
+                },
+                {
+                    "complex_name": "보성상아맨션",
+                    "gli_score": 25.5900428196,
+                    "price_per_pyung": 740.8,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 39,
+                    "household_count": 510
+                },
+                {
+                    "complex_name": "이천뜨란채2단지",
+                    "gli_score": 18.609546954,
+                    "price_per_pyung": 920.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 24,
+                    "household_count": 320
+                },
+                {
+                    "complex_name": "이천뜨란채3단지",
+                    "gli_score": 19.673833942,
+                    "price_per_pyung": 978.3333333333334,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 238
+                },
+                {
+                    "complex_name": "이천뜨란채4단지",
+                    "gli_score": 19.6859037439,
+                    "price_per_pyung": 958.6666666666666,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 193
+                },
+                {
+                    "complex_name": "이천주공1단지",
+                    "gli_score": 23.5324897099,
+                    "price_per_pyung": 810.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 28,
+                    "household_count": 576
+                },
+                {
+                    "complex_name": "희망교대성유니드",
+                    "gli_score": 29.1878213495,
+                    "price_per_pyung": 745.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 635
+                }
+            ]
+        },
+        "봉덕동": {
+            "summary_metrics": {
+                "r_simple": 0.7987730600579553,
+                "r_multi": 0.9501117720238109,
+                "r_squared": "90.3%",
+                "price_per_gli_point": 11.704496586758689,
+                "std_error": 148.6000722353795,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 14.3676339198,
+                "max_gli": 40.6511079225,
+                "simple_trendline": [
+                    {
+                        "gli": 14.3676339198,
+                        "price": 284.670467461028
+                    },
+                    {
+                        "gli": 40.6511079225,
+                        "price": 1173.6340992315545
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 14.3676339198,
+                        "price": 557.6365606895491
+                    },
+                    {
+                        "gli": 40.6511079225,
+                        "price": 865.2713924423122
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 14.3676339198,
+                        "price": 631.9365968072389
+                    },
+                    {
+                        "gli": 40.6511079225,
+                        "price": 939.5714285600019
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 14.3676339198,
+                        "price": 483.3365245718594
+                    },
+                    {
+                        "gli": 40.6511079225,
+                        "price": 790.9713563246224
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "강변코오롱하늘채",
+                    "gli_score": 28.8795717878,
+                    "price_per_pyung": 960.2,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 18,
+                    "household_count": 430
+                },
+                {
+                    "complex_name": "강변효성백년가약(주상복합)",
+                    "gli_score": 40.6511079225,
+                    "price_per_pyung": 1165.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 14,
+                    "household_count": 337
+                },
+                {
+                    "complex_name": "래미안웰리스트",
+                    "gli_score": 34.8219293777,
+                    "price_per_pyung": 1312.3333333333333,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 16,
+                    "household_count": 471
+                },
+                {
+                    "complex_name": "미리내",
+                    "gli_score": 16.129289365,
+                    "price_per_pyung": 509.75,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 44,
+                    "household_count": 408
+                },
+                {
+                    "complex_name": "반도",
+                    "gli_score": 14.5838896043,
+                    "price_per_pyung": 536.125,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 45,
+                    "household_count": 134
+                },
+                {
+                    "complex_name": "보성",
+                    "gli_score": 14.3676339198,
+                    "price_per_pyung": 547.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 42,
+                    "household_count": 360
+                },
+                {
+                    "complex_name": "보성대덕1차",
+                    "gli_score": 18.1722491731,
+                    "price_per_pyung": 650.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 36,
+                    "household_count": 528
+                },
+                {
+                    "complex_name": "보성대덕2차",
+                    "gli_score": 18.5703952988,
+                    "price_per_pyung": 524.25,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 35,
+                    "household_count": 550
+                },
+                {
+                    "complex_name": "봉덕2차화성파크드림",
+                    "gli_score": 37.7791690247,
+                    "price_per_pyung": 1478.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 499
+                },
+                {
+                    "complex_name": "봉덕한라하우젠트퍼스트",
+                    "gli_score": 26.9178893778,
+                    "price_per_pyung": 996.25,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 9,
+                    "household_count": 186
+                },
+                {
+                    "complex_name": "봉덕화성파크드림",
+                    "gli_score": 28.222883532,
+                    "price_per_pyung": 1253.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 7,
+                    "household_count": 332
+                },
+                {
+                    "complex_name": "앞산봉덕영무예다음",
+                    "gli_score": 31.6572398076,
+                    "price_per_pyung": 1220.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 622
+                },
+                {
+                    "complex_name": "앞산비스타동원",
+                    "gli_score": 29.6526837647,
+                    "price_per_pyung": 1399.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 431
+                },
+                {
+                    "complex_name": "앞산서한이다음",
+                    "gli_score": 24.0462919163,
+                    "price_per_pyung": 1058.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 9,
+                    "household_count": 128
+                },
+                {
+                    "complex_name": "앞산태왕아너스",
+                    "gli_score": 29.5644903944,
+                    "price_per_pyung": 1164.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 7,
+                    "household_count": 493
+                },
+                {
+                    "complex_name": "앞산힐스테이트",
+                    "gli_score": 34.7270197767,
+                    "price_per_pyung": 1055.25,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 19,
+                    "household_count": 425
+                },
+                {
+                    "complex_name": "태성맨션",
+                    "gli_score": 15.6315005866,
+                    "price_per_pyung": 622.75,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 31,
+                    "household_count": 198
+                },
+                {
+                    "complex_name": "효성타운",
+                    "gli_score": 32.7873158218,
+                    "price_per_pyung": 754.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 39,
+                    "household_count": 1162
+                },
+                {
+                    "complex_name": "힐스테이트앞산센트럴",
+                    "gli_score": 30.3119035991,
+                    "price_per_pyung": 1572.25,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 2,
+                    "household_count": 345
+                }
+            ]
+        }
+    }
+}

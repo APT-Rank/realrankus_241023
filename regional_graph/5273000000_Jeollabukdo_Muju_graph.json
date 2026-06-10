@@ -1,0 +1,88 @@
+{
+    "region_code": "5273000000",
+    "region_name": "Jeollabukdo_Muju",
+    "region_key": "5273000000_Jeollabukdo_Muju",
+    "supply_score": 50.0,
+    "dongs": {
+        "무주읍": {
+            "summary_metrics": {
+                "r_simple": 0.9955977200833509,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 9.998734976074884,
+                "std_error": 86.57314380184178,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 17.5747916667,
+                "max_gli": 49.3633875643,
+                "simple_trendline": [
+                    {
+                        "gli": 17.5747916667,
+                        "price": 288.8955055262922
+                    },
+                    {
+                        "gli": 49.3633875643,
+                        "price": 859.7266375889251
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 17.5747916667,
+                        "price": 407.36088953231535
+                    },
+                    {
+                        "gli": 49.3633875643,
+                        "price": 725.2066351739591
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 17.5747916667,
+                        "price": 450.64746143323623
+                    },
+                    {
+                        "gli": 49.3633875643,
+                        "price": 768.4932070748799
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 17.5747916667,
+                        "price": 364.0743176313945
+                    },
+                    {
+                        "gli": 49.3633875643,
+                        "price": 681.9200632730382
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "무주반딧불",
+                    "gli_score": 30.4431019244,
+                    "price_per_pyung": 551.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 26,
+                    "household_count": 300
+                },
+                {
+                    "complex_name": "상록",
+                    "gli_score": 17.5747916667,
+                    "price_per_pyung": 270.42857142857144,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 35,
+                    "household_count": 110
+                },
+                {
+                    "complex_name": "센트럴노블리안(주상복합)",
+                    "gli_score": 49.3633875643,
+                    "price_per_pyung": 847.1666666666666,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 99
+                }
+            ]
+        }
+    }
+}

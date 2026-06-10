@@ -1,0 +1,80 @@
+{
+    "region_code": "5274000000",
+    "region_name": "Jeollabukdo_Jangsu",
+    "region_key": "5274000000_Jeollabukdo_Jangsu",
+    "supply_score": 50.0,
+    "dongs": {
+        "장수읍": {
+            "summary_metrics": {
+                "r_simple": -1.0,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 2.0282252262124185,
+                "std_error": 44.44378471732578,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 16.39192591,
+                "max_gli": 22.4636876531,
+                "simple_trendline": [
+                    {
+                        "gli": 16.39192591,
+                        "price": 848.5
+                    },
+                    {
+                        "gli": 22.4636876531,
+                        "price": 827.5
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 16.39192591,
+                        "price": 844.1574501674534
+                    },
+                    {
+                        "gli": 22.4636876531,
+                        "price": 831.8425498325465
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 16.39192591,
+                        "price": 866.3793425261163
+                    },
+                    {
+                        "gli": 22.4636876531,
+                        "price": 854.0644421912094
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 16.39192591,
+                        "price": 821.9355578087905
+                    },
+                    {
+                        "gli": 22.4636876531,
+                        "price": 809.6206574738836
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "장수부경스카이",
+                    "gli_score": 16.39192591,
+                    "price_per_pyung": 848.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 8,
+                    "household_count": 90
+                },
+                {
+                    "complex_name": "장수타워팰리스",
+                    "gli_score": 22.4636876531,
+                    "price_per_pyung": 827.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 89
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,112 @@
+{
+    "region_code": "4671000000",
+    "region_name": "Jeollanamdo_Damyang",
+    "region_key": "4671000000_Jeollanamdo_Damyang",
+    "supply_score": 50.0,
+    "dongs": {
+        "담양읍": {
+            "summary_metrics": {
+                "r_simple": 0.7109242210369882,
+                "r_multi": 0.9589790537717275,
+                "r_squared": "92.0%",
+                "price_per_gli_point": 7.76942841801127,
+                "std_error": 76.69298555206264,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 7.9692991667,
+                "max_gli": 52.3265955593,
+                "simple_trendline": [
+                    {
+                        "gli": 7.9692991667,
+                        "price": 517.6153754516483
+                    },
+                    {
+                        "gli": 52.3265955593,
+                        "price": 1096.2355194785862
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 7.9692991667,
+                        "price": 618.8745084234715
+                    },
+                    {
+                        "gli": 52.3265955593,
+                        "price": 963.5053475622867
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 7.9692991667,
+                        "price": 657.2210011995029
+                    },
+                    {
+                        "gli": 52.3265955593,
+                        "price": 1001.8518403383181
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 7.9692991667,
+                        "price": 580.5280156474402
+                    },
+                    {
+                        "gli": 52.3265955593,
+                        "price": 925.1588547862553
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "남양휴튼센트럴파크",
+                    "gli_score": 52.3265955593,
+                    "price_per_pyung": 1196.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 2,
+                    "household_count": 224
+                },
+                {
+                    "complex_name": "담양금강",
+                    "gli_score": 35.8347517107,
+                    "price_per_pyung": 535.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 130
+                },
+                {
+                    "complex_name": "담양별해리",
+                    "gli_score": 19.5162991667,
+                    "price_per_pyung": 701.25,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 12,
+                    "household_count": 153
+                },
+                {
+                    "complex_name": "담양양우내안애퍼스트힐1단지",
+                    "gli_score": 23.5634333333,
+                    "price_per_pyung": 929.3333333333334,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 322
+                },
+                {
+                    "complex_name": "담양양우내안애퍼스트힐2단지",
+                    "gli_score": 23.7794333333,
+                    "price_per_pyung": 823.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 358
+                },
+                {
+                    "complex_name": "청전",
+                    "gli_score": 7.9692991667,
+                    "price_per_pyung": 423.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 288
+                }
+            ]
+        }
+    }
+}

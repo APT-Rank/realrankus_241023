@@ -1,0 +1,96 @@
+{
+    "region_code": "4889000000",
+    "region_name": "Gyeongsangnamdo_Hapcheon",
+    "region_key": "4889000000_Gyeongsangnamdo_Hapcheon",
+    "supply_score": 50.0,
+    "dongs": {
+        "합천읍": {
+            "summary_metrics": {
+                "r_simple": -0.7679972646013443,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 17.979001807028162,
+                "std_error": 50.86306314357147,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 25.772925,
+                "max_gli": 36.4294489842,
+                "simple_trendline": [
+                    {
+                        "gli": 25.772925,
+                        "price": 635.2295600606232
+                    },
+                    {
+                        "gli": 36.4294489842,
+                        "price": 354.3543362899902
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 25.772925,
+                        "price": 370.8399770283488
+                    },
+                    {
+                        "gli": 36.4294489842,
+                        "price": 562.4336409969196
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 25.772925,
+                        "price": 396.27150860013455
+                    },
+                    {
+                        "gli": 36.4294489842,
+                        "price": 587.8651725687054
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 25.772925,
+                        "price": 345.4084454565631
+                    },
+                    {
+                        "gli": 36.4294489842,
+                        "price": 537.0021094251339
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "성은강변타운",
+                    "gli_score": 31.5496028318,
+                    "price_per_pyung": 396.25,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 92
+                },
+                {
+                    "complex_name": "영창주공",
+                    "gli_score": 25.772925,
+                    "price_per_pyung": 699.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 22,
+                    "household_count": 182
+                },
+                {
+                    "complex_name": "한주그린파크(주상복합)",
+                    "gli_score": 33.192925,
+                    "price_per_pyung": 358.8,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 94
+                },
+                {
+                    "complex_name": "황강하이츠타운",
+                    "gli_score": 36.4294489842,
+                    "price_per_pyung": 457.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 108
+                }
+            ]
+        }
+    }
+}

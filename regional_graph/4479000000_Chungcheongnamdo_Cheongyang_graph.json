@@ -1,0 +1,96 @@
+{
+    "region_code": "4479000000",
+    "region_name": "Chungcheongnamdo_Cheongyang",
+    "region_key": "4479000000_Chungcheongnamdo_Cheongyang",
+    "supply_score": 50.0,
+    "dongs": {
+        "청양읍": {
+            "summary_metrics": {
+                "r_simple": 0.9057620997430521,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 266.0980173227996,
+                "std_error": 68.77807968116076,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 29.4015029167,
+                "max_gli": 30.7755029167,
+                "simple_trendline": [
+                    {
+                        "gli": 29.4015029167,
+                        "price": 350.0253990104093
+                    },
+                    {
+                        "gli": 30.7755029167,
+                        "price": 609.2284940615664
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 29.4015029167,
+                        "price": 289.92460522417423
+                    },
+                    {
+                        "gli": 30.7755029167,
+                        "price": 655.5432810257003
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 29.4015029167,
+                        "price": 324.3136450647546
+                    },
+                    {
+                        "gli": 30.7755029167,
+                        "price": 689.9323208662806
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 29.4015029167,
+                        "price": 255.53556538359385
+                    },
+                    {
+                        "gli": 30.7755029167,
+                        "price": 621.1542411851199
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "세아",
+                    "gli_score": 29.4015029167,
+                    "price_per_pyung": 381.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 108
+                },
+                {
+                    "complex_name": "장안",
+                    "gli_score": 30.2665029167,
+                    "price_per_pyung": 465.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 27,
+                    "household_count": 299
+                },
+                {
+                    "complex_name": "주공",
+                    "gli_score": 30.7755029167,
+                    "price_per_pyung": 663.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 25,
+                    "household_count": 372
+                },
+                {
+                    "complex_name": "천강",
+                    "gli_score": 30.2665029167,
+                    "price_per_pyung": 476.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 154
+                }
+            ]
+        }
+    }
+}

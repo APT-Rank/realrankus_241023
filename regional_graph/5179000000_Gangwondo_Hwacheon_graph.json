@@ -1,0 +1,160 @@
+{
+    "region_code": "5179000000",
+    "region_name": "Gangwondo_Hwacheon",
+    "region_key": "5179000000_Gangwondo_Hwacheon",
+    "supply_score": 50.0,
+    "dongs": {
+        "화천읍": {
+            "summary_metrics": {
+                "r_simple": 0.5909783537774368,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 1.7150679958266721,
+                "std_error": 82.4969696413147,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 22.3658779167,
+                "max_gli": 34.6308779167,
+                "simple_trendline": [
+                    {
+                        "gli": 22.3658779167,
+                        "price": 675.8497232825695
+                    },
+                    {
+                        "gli": 34.6308779167,
+                        "price": 847.1474572468195
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 22.3658779167,
+                        "price": 742.502569423069
+                    },
+                    {
+                        "gli": 34.6308779167,
+                        "price": 763.537878391883
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 22.3658779167,
+                        "price": 783.7510542437263
+                    },
+                    {
+                        "gli": 34.6308779167,
+                        "price": 804.7863632125404
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 22.3658779167,
+                        "price": 701.2540846024116
+                    },
+                    {
+                        "gli": 34.6308779167,
+                        "price": 722.2893935712257
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "낙원",
+                    "gli_score": 34.6308779167,
+                    "price_per_pyung": 802.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 90
+                },
+                {
+                    "complex_name": "신아",
+                    "gli_score": 22.3658779167,
+                    "price_per_pyung": 585.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 27,
+                    "household_count": 160
+                },
+                {
+                    "complex_name": "화천건영아모리움",
+                    "gli_score": 26.4222668056,
+                    "price_per_pyung": 867.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 145
+                }
+            ]
+        },
+        "하남면": {
+            "summary_metrics": {
+                "r_simple": 1.0,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 0.010279688307679308,
+                "std_error": 55.52176750308537,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 14.4768360936,
+                "max_gli": 19.1942544926,
+                "simple_trendline": [
+                    {
+                        "gli": 14.4768360936,
+                        "price": 932.0
+                    },
+                    {
+                        "gli": 19.1942544926,
+                        "price": 940.0
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 14.4768360936,
+                        "price": 935.9757532046207
+                    },
+                    {
+                        "gli": 19.1942544926,
+                        "price": 936.0242467953793
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 14.4768360936,
+                        "price": 963.7366369561634
+                    },
+                    {
+                        "gli": 19.1942544926,
+                        "price": 963.785130546922
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 14.4768360936,
+                        "price": 908.214869453078
+                    },
+                    {
+                        "gli": 19.1942544926,
+                        "price": 908.2633630438366
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "대양고운채",
+                    "gli_score": 14.4768360936,
+                    "price_per_pyung": 932.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 19,
+                    "household_count": 150
+                },
+                {
+                    "complex_name": "대양고운채2차",
+                    "gli_score": 19.1942544926,
+                    "price_per_pyung": 940.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 12,
+                    "household_count": 90
+                }
+            ]
+        }
+    }
+}

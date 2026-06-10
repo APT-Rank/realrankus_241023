@@ -1,0 +1,88 @@
+{
+    "region_code": "4672000000",
+    "region_name": "Jeollanamdo_Gokseong",
+    "region_key": "4672000000_Jeollanamdo_Gokseong",
+    "supply_score": 50.0,
+    "dongs": {
+        "곡성읍": {
+            "summary_metrics": {
+                "r_simple": 0.9581401246875241,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 4.207593271585014,
+                "std_error": 16.32555702709399,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 25.4389210417,
+                "max_gli": 31.9763689062,
+                "simple_trendline": [
+                    {
+                        "gli": 25.4389210417,
+                        "price": 431.06469733866396
+                    },
+                    {
+                        "gli": 31.9763689062,
+                        "price": 596.2682592925071
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 25.4389210417,
+                        "price": 496.393965768738
+                    },
+                    {
+                        "gli": 31.9763689062,
+                        "price": 523.9008874167461
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 25.4389210417,
+                        "price": 504.55674428228497
+                    },
+                    {
+                        "gli": 31.9763689062,
+                        "price": 532.063665930293
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 25.4389210417,
+                        "price": 488.231187255191
+                    },
+                    {
+                        "gli": 31.9763689062,
+                        "price": 515.7381089031991
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "곡성기차이에스아뜨리움",
+                    "gli_score": 31.9763689062,
+                    "price_per_pyung": 608.3333333333334,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 16,
+                    "household_count": 86
+                },
+                {
+                    "complex_name": "곡성한양파크빌",
+                    "gli_score": 28.2064210417,
+                    "price_per_pyung": 472.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 22,
+                    "household_count": 132
+                },
+                {
+                    "complex_name": "도림",
+                    "gli_score": 25.4389210417,
+                    "price_per_pyung": 447.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 100
+                }
+            ]
+        }
+    }
+}

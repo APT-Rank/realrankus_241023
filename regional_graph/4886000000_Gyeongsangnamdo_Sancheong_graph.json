@@ -1,0 +1,80 @@
+{
+    "region_code": "4886000000",
+    "region_name": "Gyeongsangnamdo_Sancheong",
+    "region_key": "4886000000_Gyeongsangnamdo_Sancheong",
+    "supply_score": 50.0,
+    "dongs": {
+        "산청읍": {
+            "summary_metrics": {
+                "r_simple": 1.0,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 0.12164514950113636,
+                "std_error": 40.400524547008914,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 32.3737966112,
+                "max_gli": 42.3403153631,
+                "simple_trendline": [
+                    {
+                        "gli": 32.3737966112,
+                        "price": 321.66666666666674
+                    },
+                    {
+                        "gli": 42.3403153631,
+                        "price": 764.25
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 32.3737966112,
+                        "price": 542.352144001543
+                    },
+                    {
+                        "gli": 42.3403153631,
+                        "price": 543.5645226651238
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 32.3737966112,
+                        "price": 562.5524062750475
+                    },
+                    {
+                        "gli": 42.3403153631,
+                        "price": 563.7647849386283
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 32.3737966112,
+                        "price": 522.1518817280386
+                    },
+                    {
+                        "gli": 42.3403153631,
+                        "price": 523.3642603916194
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "산청삼한사랑채",
+                    "gli_score": 42.3403153631,
+                    "price_per_pyung": 764.25,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 12,
+                    "household_count": 330
+                },
+                {
+                    "complex_name": "성우목화맨션",
+                    "gli_score": 32.3737966112,
+                    "price_per_pyung": 321.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 33,
+                    "household_count": 141
+                }
+            ]
+        }
+    }
+}
