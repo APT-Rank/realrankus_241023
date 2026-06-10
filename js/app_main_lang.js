@@ -4007,88 +4007,76 @@ function showRegionDetail(index) {
   var end_y = (Number(start_y) + 1).toString();
   var start_m = selectedMonth.substr(4, 2);
   var duration = "<span style='font-size:0.8em'> (" + start_y + "-" + start_m + " ~ " + end_y + "-" + start_m + ") </span>";
-  if (Number(selectedMonth) > 202208) {
-    detailHtml += `
-          <div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량${duration}</div>
-          <div class='comment2'>2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.</div>
-          <div class='comment2'>적정 공급량은 "인구 X 0.5%"로 계산됩니다.</div>
-        `;
-  } else {
-    detailHtml += `<div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량</div>`;
-  }
   detailHtml += `
+        <div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량${duration}</div>
+        <div class='comment2'>2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.</div>
+        <div class='comment2'>적정 공급량은 "인구 X 0.5%"로 계산됩니다.</div>
         </div>
+      `;
+  detailHtml += `        
         <div class='card-body'>
         <div id='popLiving'>
         <div class='popTable'>
       `;
   //detailHtml += "<div class='graph' style='height: 120px'> <canvas id='supplyChart'></canvas></div>"
-  if (Number(selectedMonth) < 202209) {
-    detailHtml += `
-          <div class='popSubTable'><div class='popContent'>총 공급량</div><div class='popResult'>${Math.round(regSupplyAll).toLocaleString()}세대</div></div>
-          <div class='popSubTable'><div class='popContent'>적정 공급량</div><div class='popResult'>${Math.round(regSupplyProper).toLocaleString()}세대</div></div>
-          <div class='popSubTable'><div class='popContent'>과부족</div><div class='popResult'>${Math.round(regSupplyUpDown).toLocaleString()}세대 ${regSupplyLevel}</div></div>
-          </div></div></div></div>
-        `;
-  } else {
-    detailHtml += `<div class='popSubTable'><div class='popContent'>총 공급량</div>`;
-    "<div class='popResult'>" + Math.round(regSupplyProper_nearby).toLocaleString() + "세대</div></div>";
-    detailHtml += `<div class='popSubTable'><div class='popContent'>적정 공급량</div>`;
-    "<div class='popResult'>" + Math.round(regSupplyAll_nearby).toLocaleString() + "세대</div></div>";
-    detailHtml += `<div class='popSubTable'><div class='popContent'>과부족</div>`;
-    "<div class='popResult'>" + Math.round(regSupplyUpDown_nearby).toLocaleString() + "세대 " + regSupplyLevel + "</div></div>";
+  detailHtml += `<div class='popSubTable'><div class='popContent'>총 공급량</div>`;
+  detailHtml += `<div class='popResult'>${Math.round(regSupplyProper_nearby).toLocaleString()}세대</div></div>`;
+  detailHtml += `<div class='popSubTable'><div class='popContent'>적정 공급량</div>`;
+  detailHtml += `<div class='popResult'>${Math.round(regSupplyAll_nearby).toLocaleString()}세대</div></div>`;
+  detailHtml += `<div class='popSubTable'><div class='popContent'>과부족</div>`;
+  detailHtml += `<div class='popResult'>${Math.round(regSupplyUpDown_nearby).toLocaleString()}세대 ${regSupplyLevel}</div></div>`;
+
+  detailHtml += `
+        <div class='column2'>
+        <div class='column_table'>
+        <div class='column_table_title'>${regName}</div>
+        <div class='column_table_content'>
+      `;
+  if (regData.data[index]["과부족수"] > 0) {
+    vol_info = "부족";
+  } else if (regData.data[index]["과부족수"] < 0) {
+    vol_info = "과다";
+  } else if (regData.data[index]["과부족수"] == 0) {
+    vol_info = "적정";
+  }
+  detailHtml += `
+        <div class='supplySubTable'><div class='supplyResult'>${regSupplyUpDown.toFixed()}세대 공급 ${vol_info}</div></div>
+        </div>
+        </div>
+      `;
+
+  for (var i = 0; i < nearby_info.length; i++) {
+    detailHtml += `<div class='column_table'>`;
+    region_name_array = nearby_info[i][0].split(" ");
+    short_region_name = "";
+    for (var k = 1; k < region_name_array.length; k++) {
+      short_region_name += `
+            ${region_name_array[k]}
+
+          `;
+    }
 
     detailHtml += `
-          <div class='column2'>
-          <div class='column_table'>
-          <div class='column_table_title'>${regName}</div>
+          <div class='column_table_title'>${short_region_name}<span style='font-size:0.9em'>(${nearby_info[i][5].toFixed(1)} km)</span>
+          </div>
           <div class='column_table_content'>
         `;
-    if (regData.data[index]["과부족수"] > 0) {
-      vol_info = "부족";
-    } else if (regData.data[index]["과부족수"] < 0) {
+    if (nearby_info[i][2] - nearby_info[i][3] > 0) {
       vol_info = "과다";
-    } else if (regData.data[index]["과부족수"] == 0) {
+    } else if (nearby_info[i][2] - nearby_info[i][3] < 0) {
+      vol_info = "부족";
+    } else if (nearby_info[i][2] - nearby_info[i][3] == 0) {
       vol_info = "적정";
     }
+    //detailHtml += "<div class='supplySubTable'><div class='supplyContent'>" + "" + "</div>" + "<div class='supplyResult'>" + (nearby_info[i][3].toFixed()).toLocaleString() + "세대 적정 공급</div></div>";
+    detailHtml += `<div class='supplySubTable'><div class='supplyResult'>${Math.abs(nearby_info[i][2] - nearby_info[i][3]).toFixed().toLocaleString()}세대 공급 ${vol_info}</div></div>`;
     detailHtml += `
-          <div class='supplySubTable'><div class='supplyResult'>${regSupplyUpDown.toFixed()}세대 공급 ${vol_info}</div></div>
           </div>
           </div>
         `;
-
-    for (var i = 0; i < nearby_info.length; i++) {
-      detailHtml += `<div class='column_table'>`;
-      region_name_array = nearby_info[i][0].split(" ");
-      short_region_name = "";
-      for (var k = 1; k < region_name_array.length; k++) {
-        short_region_name += `
-              ${region_name_array[k]}
-
-            `;
-      }
-
-      detailHtml += `
-            <div class='column_table_title'>${short_region_name}<span style='font-size:0.9em'>(${nearby_info[i][5].toFixed(1)} km)</span>
-            </div>
-            <div class='column_table_content'>
-          `;
-      if (nearby_info[i][2] - nearby_info[i][3] > 0) {
-        vol_info = "과다";
-      } else if (nearby_info[i][2] - nearby_info[i][3] < 0) {
-        vol_info = "부족";
-      } else if (nearby_info[i][2] - nearby_info[i][3] == 0) {
-        vol_info = "적정";
-      }
-      //detailHtml += "<div class='supplySubTable'><div class='supplyContent'>" + "" + "</div>" + "<div class='supplyResult'>" + (nearby_info[i][3].toFixed()).toLocaleString() + "세대 적정 공급</div></div>";
-      detailHtml += `<div class='supplySubTable'><div class='supplyResult'>${Math.abs(nearby_info[i][2] - nearby_info[i][3]).toFixed().toLocaleString()}세대 공급 ${vol_info}</div></div>`;
-      detailHtml += `
-            </div>
-            </div>
-          `;
-    }
-    detailHtml += `</div></div></div></div></div>`;
   }
+  detailHtml += `</div></div></div></div>`;
+
   avgSupplyScore = (Math.round((regSupplySum / itemNum) * 100) / 100).toFixed(2);
 
   //인구
