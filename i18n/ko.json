@@ -81,6 +81,48 @@
     "meta_apt_suffix": "입지분석, 시세, 실거래가 | 표준화된 리얼랭커스 입지분석",
     "meta_apt_desc_suffix": "의 주거, 교통, 인프라, 교육 환경 분석 정보를 데이터로 확인하세요.",
     "region_label": "지역",
+    "region_table": {
+      "supply_title": "아파트 공급량",
+      "supply_format": "아파트 공급량 <span style='font-weight:900; color:#0f0f0f'>{level}</span>",
+      "population": "인구 {pop}명",
+      "jobs": "일자리 {job}개",
+      "income": "소득 {income}원"
+    },
+    "region_detail": {
+      "score_comment": "(전국 모든 시군구에 대해 100점으로 환산한 상대 점수 입니다.)",
+      "supply_title": "<i class='fas fa-building'></i>&nbsp&nbsp공급량",
+      "supply_comment_1": "2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.",
+      "supply_comment_2": "적정 공급량은 \"인구 X 0.5%\"로 계산됩니다.",
+      "total_supply": "총 공급량",
+      "proper_supply": "적정 공급량",
+      "supply_status": "과부족",
+      "households_unit": "{count}세대",
+      "status_format_short": "{count}세대 공급 {status}",
+      "population_title": "<i class='fas fa-user-friends'></i>&nbsp&nbsp인구",
+      "pop_count": "인구수",
+      "pop_count_val": "{count}명",
+      "pop_change": "인구증가",
+      "pop_change_val": "{count}명",
+      "jobs_title": "<i class='fas fa-user-md'></i>&nbsp&nbsp일자리",
+      "jobs_count": "일자리수",
+      "job_count_val": "{count}개",
+      "avg_income": "평균소득",
+      "income_val": "{count}원",
+      "price_index_title": "<i class='fa-solid fa-chart-line'></i>&nbsp&nbsp매매/전세 가격 지수",
+      "price_index_comment": "매매/전세 가격 지수는 KB부동산 정보를 참조하며, 2022년 1월의 가격을 100.0으로 설정한 기준으로 산정됩니다. 100초과는 매수우위, 100미만은 매도우위를 의미합니다.",
+      "view_apartments_btn": "{shortName} 아파트 보기",
+      "share_title_format": "[리얼랭커스 {year}년 {month}월]\n\n",
+      "share_text_format": "『{regName}』\nㆍ투자등급 : Rank {grade}\nㆍ인구수 : {pop}명\nㆍ공급량 : {supply}세대 {level}\nㆍ일자리 : {job}개\n\n"
+    },
+    "supply_level": {
+      "shortage": "부족",
+      "excess": "과다",
+      "adequate": "적정"
+    },
+    "pop_change_dir": {
+      "increase": "증가",
+      "decrease": "감소"
+    },
     "regions": {
       "Korea": "전국",
       "Seoul": "서울시",

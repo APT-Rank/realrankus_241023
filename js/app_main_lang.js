@@ -66,6 +66,21 @@ var getGunguText = (name, val) => {
   return engBase;
 };
 
+/**
+ * @function getRegionNameFromLink
+ * @description 연결명(예: "1168000000_Seoul_Gangnam")을 "_"로 분할한 뒤 두 번째 단어부터 끝까지 공백(" ")으로 연결하여 반환합니다.
+ * @param {string} val - 연결명 코드
+ * @returns {string} 변환된 영문 지역명
+ */
+var getRegionNameFromLink = (val) => {
+  if (!val) return "";
+  var parts = val.split("_");
+  if (parts.length >= 2) {
+    return parts.slice(1).join(" ");
+  }
+  return val;
+};
+
 var exchange_rate = 1500; // 1억 KRW 당 USD 환산값 (예시: 1500M KRW = 1M USD)
 
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
@@ -382,7 +397,7 @@ $(document).ready(function () {
     `<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>${tSafe("ui.loading_rank", "단지별 랭크를 계산하고 있어요!")}<br><br><div id='loading_reload' onClick='resetReload()'>${tSafe("ui.loading_retry", "로딩이 길다면 여기를 눌러 다시 불러오기!!")}</div></div></div>`,
   );
 
-  if (isEn) {    
+  if (isEn) {
     searching_url = pathPrefix + selectedMonth + "/Searching_list_EN.json" + update_ver;
     DB_Date = DB_Date + "_EN";
   } else {
@@ -662,7 +677,7 @@ $(document).ready(function () {
   $("#linkToAptrank").css("line-height", blank_height);
 
   currentMenu = "aptrank"; //offcanvas
-  
+
   setOffcanvasMenu(); //offcanvas
 
   setBottomMenu();
@@ -708,10 +723,10 @@ $(document).ready(function () {
     }
 
     //가치대비가격괴리도진단 버튼 크기 조정
-    if(isEn){
+    if (isEn) {
       $("#graphButtonContainer").css({ top: "123px", left: "33%" });
     }
-    else{
+    else {
       $("#graphButtonContainer").css({ top: "123px", left: "24%" });
     }
     $("#graphButton").css({
@@ -1551,7 +1566,7 @@ function updateTable(month, region) {
       let devide_num = 4;
       let dong_cell_width_tunning = 10;
       if (window.innerWidth <= 800) {
-        if(isEn){
+        if (isEn) {
           devide_num = 3;
           dong_cell_width_tunning = 0
         }
@@ -1560,10 +1575,10 @@ function updateTable(month, region) {
       } else {
         dong_cell_width = 90;
         btn_width = 90
-        if(isEn){
+        if (isEn) {
           dong_cell_width = 130;
           btn_width = 120
-        }        
+        }
       }
 
       //var columns = "repeat(" + dongDB.length + ", " + dong_cell_width + "px)";
@@ -1575,7 +1590,7 @@ function updateTable(month, region) {
       for (var dongIndex = 0; dongIndex < dongDB.length; dongIndex++) {
         selection_id = "dong_" + dongDB[dongIndex][1];
         dong_name = dongDB[dongIndex][0];
-        if(isEn && dongIndex > 1) {
+        if (isEn && dongIndex > 1) {
           //dong_name을 "-"기준으로 split해서 마지막 단어만 추출 (예: "Gaepo-dong" -> "Gaepo")
           var dong_name_split = dong_name.split("-");
           dong_name = dong_name_split[0];
@@ -1629,7 +1644,7 @@ function updateTable(month, region) {
         var aptAddress2_en = aptData.data[i]["Road_Addr_EN"];
 
         var aptValue = Math.round(aptData.data[i]["가치 총점"] * 100) / 100;
-        var house_num = aptData.data[i]["세대수"];        
+        var house_num = aptData.data[i]["세대수"];
         var rank = aptData.data[i]["rank"].toFixed();
         var last_sales = aptData.data[i]["last_sales"].split(",");
         var last_sales_date = last_sales[0].toString();
@@ -1978,21 +1993,21 @@ function showDetail(index) {
   aptData = sortData;
 
   var aptName = aptData.data[index]["아파트명"];
-  if(isEn){
+  if (isEn) {
     aptName = aptData.data[index]["APT_Name_EN"];
-  }  
+  }
   var rank = aptData.data[index]["rank"].toFixed();
   var apt_m = aptData.data[index]["전용면적(m2)"];
   var apt_p = aptData.data[index]["전용면적(평)"];
   var apt_type = aptData.data[index]["매매타입"];
   var sidoVal = $("#sido option:selected").val();
-  var gunguVal = $("#gungu option:selected").val();  
+  var gunguVal = $("#gungu option:selected").val();
   var aptAddress = aptData.data[index]["도로명주소"];
-  if(isEn){
+  if (isEn) {
     aptAddress = aptData.data[index]["Road_Addr_EN"];
   }
   var legalAddress = aptData.data[index]["법정동주소"];
-  if(isEn){
+  if (isEn) {
     legalAddress = aptData.data[index]["Law_Addr_EN"];
   }
 
@@ -2035,10 +2050,10 @@ function showDetail(index) {
   //aptData.data[index]["준공년월"]을 영어표기법으로 변환하여 aptYear_en에 저장 (예: "Mar 2023")
   aptYear = aptData.data[index]["준공년월"]
   aptYear_en = new Date(aptData.data[index]["준공년월"]).toLocaleString("en-US", { month: "short", year: "numeric" });
-  if(isEn){
+  if (isEn) {
     aptYear = aptYear_en
   }
-  
+
   if (apt_type == "아파트") {
     aptYear = aptYear + " (" + aptDuration + tYearsSuffix + ")";
   }
@@ -2056,7 +2071,7 @@ function showDetail(index) {
   var tCountSuffix = isEn ? "" : "개";
 
   var nearestStation = aptData.data[index]["가까운역이름"] + tStationSuffix + "(" + (Math.round(aptData.data[index]["가까운역거리"] * 100) / 100).toFixed() + "m)";
-  if(isEn){
+  if (isEn) {
     nearestStation = aptData.data[index]["closest_station"] + " (" + (Math.round(aptData.data[index]["가까운역거리"] * 100) / 100).toFixed() + "m)";
   }
   var stationArea = aptData.data[index]["역세권여부"];
@@ -2588,7 +2603,7 @@ function showDetail(index) {
         `;
     if (Number(selectedMonth) > 202211) {
       var subway_line = aptData.data[index]["역노선"];
-      if(isEn){
+      if (isEn) {
         subway_line = aptData.data[index]["Line_EN"];
       }
       detailHtml += `<div class='stationList'><div></div><div class='stationText'>${subway_line}</div></div>`;
@@ -2597,8 +2612,8 @@ function showDetail(index) {
     detailHtml += `<div class='popSubTable'><div class='popContent'>${tSafe("ui.report.station_30m_label", "30분 이내 도착 가능 주요역")}</div><div class='popResult'>${stationPoint_30m}${isEn ? "" : "개"}</div></div>`;
     if (stationPoint_30m != 0 && selectedMonth != "202201") {
       var stations_30m = aptData.data[index]["30분거점역이름"];
-      if(isEn){
-        stations_30m = stations_30m = aptData.data[index]["Key_stations_30m"];   
+      if (isEn) {
+        stations_30m = stations_30m = aptData.data[index]["Key_stations_30m"];
       }
       stations_30m = stations_30m.replace("[", "").replace("]", "").replace(/\'/g, "");
       detailHtml += `<div class='stationList'><div></div><div class='stationText'>${stations_30m}</div></div>`;
@@ -2607,8 +2622,8 @@ function showDetail(index) {
     detailHtml += `<div class='popSubTable' id='stationTable'><div class='popContent'>${tSafe("ui.report.station_1h_label", "1시간 이내 도착 가능 주요역")}</div><div class='popResult'>${stationPoint_1h}${isEn ? "" : "개"}</div></div>`;
     if (stationPoint_1h != 0 && selectedMonth != "202201") {
       var stations_1h = aptData.data[index]["1시간거점역이름"];
-      if(isEn){
-        stations_1h = stations_1h = aptData.data[index]["Key_stations_1h"];   
+      if (isEn) {
+        stations_1h = stations_1h = aptData.data[index]["Key_stations_1h"];
       }
       stations_1h = stations_1h.replace("[", "").replace("]", "").replace(/\'/g, "");
       detailHtml += `<div class='stationList'><div></div><div class='stationText'>${stations_1h}</div></div><hr style='margin-top: 2px'>`;
@@ -3158,13 +3173,13 @@ function showDetail(index) {
       }
       last_sales_area_kor = "--";
     } else {
-      if(isEn) {
+      if (isEn) {
         last_sales_price_kor = (Math.round(last_sales_price / 100) / 100 * 100).toLocaleString() + "M";
       } else {
         last_sales_price_kor = (Math.round(last_sales_price / 100) / 100).toLocaleString() + "억";
       }
 
-      if(isEn) {
+      if (isEn) {
         last_sales_area_kor = last_sales_area.replace("평", "py");
       } else {
         last_sales_area_kor = last_sales_area;
@@ -3573,7 +3588,7 @@ function priceChartUpdate(priceChart, sales_history_price, sales_history_date, s
       if (rawVal != 0) {
         chartVal = isEn ? Math.round(rawVal / 100) : Number((rawVal / 10000).toFixed(1));
       }
-      
+
       if (y < sVal) {
         sales_grayHistory1.push(chartVal);
         sales_pHistory.push(null);
@@ -3611,7 +3626,7 @@ function priceChartUpdate(priceChart, sales_history_price, sales_history_date, s
       var sPriceM = Math.round(sPrice / 100).toLocaleString();
       var ePriceM = Math.round(ePrice / 100).toLocaleString();
       var priceGapM = Math.round((ePrice - sPrice) / 100).toLocaleString();
-      
+
       priceChangeText = `${sPriceM}M → ${ePriceM}M`;
       priceRatioText = "";
       if (sPrice == 0) {
@@ -3684,7 +3699,7 @@ function priceChartDraw(priceChart, sales_history_price, sales_history_date, sVa
       if (rawVal != 0) {
         chartVal = isEn ? Math.round(rawVal / 100) : Number((rawVal / 10000).toFixed(1));
       }
-      
+
       if (y < sVal) {
         sales_grayHistory1.push(chartVal);
         sales_pHistory.push(null);
@@ -3720,7 +3735,7 @@ function priceChartDraw(priceChart, sales_history_price, sales_history_date, sVa
       var sPriceM = Math.round(sPrice / 100).toLocaleString();
       var ePriceM = Math.round(ePrice / 100).toLocaleString();
       var priceGapM = Math.round((ePrice - sPrice) / 100).toLocaleString();
-      
+
       priceChangeText = `${sPriceM}M → ${ePriceM}M`;
       priceRatioText = "";
       if (sPrice == 0) {
@@ -3808,6 +3823,9 @@ function updateRegionTable(month, region) {
 
     for (var i = 0; i < itemNum; i++) {
       var regName = regData.data[i]["시도"];
+      if (isEn) {
+        regName = getRegionNameFromLink(regData.data[i]["연결명"]);
+      }
 
       var regSuplyLevel = regData.data[i]["공급수준"];
       var regPopChange = regData.data[i]["인구증감"];
@@ -3849,28 +3867,55 @@ function updateRegionTable(month, region) {
             <div class='reg_subTable'>
           `;
 
+      if(isEn){
+        if(regSuplyLevel == "부족"){
+          regSuplyLevel = "shortage";
+        }
+        else if(regSuplyLevel == "적정"){
+          regSuplyLevel = "proper";
+        }
+        else if(regSuplyLevel == "과다"){
+          regSuplyLevel = "excess";
+        }
+      }
+
+      var supplyLevelTrans = tSafe("ui.supply_level." + regSuplyLevel, regSuplyLevel);
+      var supplyText = tSafe("ui.region_table.supply_format", "아파트 공급량 <span style='font-weight:900; color:#0f0f0f'>{level}</span>")
+        .replace("{level}", supplyLevelTrans);
       addon_html += `
-            <div class='apt_address'>아파트 공급량 <span style='font-weight:900; color:#0f0f0f'>${regSuplyLevel}</span></div>
+            <div class='apt_address'>${supplyText}</div>
           `;
 
       var upDown = "";
       var popChange = "";
       if (regPopChange < 0) {
-        upDown = "감소";
+        upDown = tSafe("ui.pop_change_dir.decrease", "감소");
         popChange = "▼" + Math.abs(regPopChange).toLocaleString();
       } else {
-        upDown = "증가";
+        upDown = tSafe("ui.pop_change_dir.increase", "증가");
         popChange = "▲" + Math.abs(regPopChange).toLocaleString();
       }
-      addon_html += `<div class='apt_address'><span class='regionPop'>인구 ${Math.abs(regPop).toLocaleString()}명</span>`;
+
+      var popText = tSafe("ui.region_table.population", "인구 {pop}명")
+        .replace("{pop}", Math.abs(regPop).toLocaleString());
+      addon_html += `<div class='apt_address'><span class='regionPop'>${popText}</span>`;
       if (regPopChange >= 0) {
         addon_html += `<span class='regionPopUp'> (${popChange})</span></div>`;
       } else {
         addon_html += `<span class='regionPopDown'> (${popChange})</span></div>`;
       }
+
+      if(isEn){
+        regIncome = Math.round(regIncome / 1000000) + "M";
+      }
+
+      var jobText = tSafe("ui.region_table.jobs", "일자리 {job}개")
+        .replace("{job}", Number(Number(regJob).toFixed(0)).toLocaleString());
+      var incomeText = tSafe("ui.region_table.income", "소득 {income}원")
+        .replace("{income}", regIncome.toLocaleString());
       addon_html += `
-            <div class='apt_address'><span class='regionJob'>일자리 ${Number(Number(regJob).toFixed(0)).toLocaleString()}개</span></div>
-            <div class='apt_address'>소득 ${regIncome.toLocaleString()}원</div>
+            <div class='apt_address'><span class='regionJob'>${jobText}</span></div>
+            <div class='apt_address'>${incomeText}</div>
             </div></div>
           `;
       //addon_html += "<div class='value_score'>" + (Math.round(regValue * 100) / 100).toFixed(2) + "점</div>";
@@ -3928,20 +3973,26 @@ function showRegionDetail(index) {
   titleHtml = "";
   detailHtml = "";
   footerHtml = "";
-  var regRank = regData.data[index]["rank"] + "/" + regData.data[itemNum - 1]["rank"] + "위";
+  var rank_suffix = tSafe("ui.rank_suffix", "위");
+  var regRank = isEn
+    ? "Rank " + regData.data[index]["rank"] + " of " + regData.data[itemNum - 1]["rank"]
+    : regData.data[index]["rank"] + "/" + regData.data[itemNum - 1]["rank"] + rank_suffix;
+
   var regName = regData.data[index]["시도"];
+  var regName_ko = regData.data[index]["시도"];
+  if (isEn) {
+    regName = getRegionNameFromLink(regData.data[index]["연결명"]);
+  }
   var regValue = (Math.round(regData.data[index]["가치 총점"] * 100) / 100).toFixed(2);
 
   var regSupplyAll = regData.data[index]["총물량"];
   var regSupplyProper = regData.data[index]["적정입주물량"];
   var regSupplyUpDown = Math.abs(regData.data[index]["과부족수"]);
 
-  if (Number(selectedMonth) > 202208) {
-    var regSupplyAll_nearby = regData.data[index]["인근총합공급량"];
-    var regSupplyProper_nearby = regData.data[index]["총합적정공급량"];
-    var regSupplyUpDown_nearby = Math.abs(regData.data[index]["총합과부족수"]);
-    var nearby_info = regData.data[index]["인근지역정보"];
-  }
+  var regSupplyAll_nearby = regData.data[index]["인근총합공급량"];
+  var regSupplyProper_nearby = regData.data[index]["총합적정공급량"];
+  var regSupplyUpDown_nearby = Math.abs(regData.data[index]["총합과부족수"]);
+  var nearby_info = regData.data[index]["인근지역정보"];
 
   var regSupplyLevel = regData.data[index]["공급수준"];
   var regSupplyScore = (Math.round(regData.data[index]["지역구공급총점"] * 100) / 100).toFixed(2);
@@ -3991,7 +4042,7 @@ function showRegionDetail(index) {
   detailHtml += `
         <div class='card-body'>
         <div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>
-        <div class='comment'>(전국 모든 시군구에 대해 100점으로 환산한 상대 점수 입니다.)</div>
+        <div class='comment'>${tSafe("ui.region_detail.score_comment", "(전국 모든 시군구에 대해 100점으로 환산한 상대 점수 입니다.)")}</div>
       `;
 
 
@@ -4007,10 +4058,14 @@ function showRegionDetail(index) {
   var end_y = (Number(start_y) + 1).toString();
   var start_m = selectedMonth.substr(4, 2);
   var duration = "<span style='font-size:0.8em'> (" + start_y + "-" + start_m + " ~ " + end_y + "-" + start_m + ") </span>";
+  var supplyTitle = tSafe("ui.region_detail.supply_title", "<i class='fas fa-building'></i>&nbsp&nbsp공급량");
+  var supplyComment1 = tSafe("ui.region_detail.supply_comment_1", "2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.");
+  var supplyComment2 = tSafe("ui.region_detail.supply_comment_2", "적정 공급량은 \"인구 X 0.5%\"로 계산됩니다.");
+
   detailHtml += `
-        <div class='popTitle'><i class='fas fa-building'></i>&nbsp&nbsp공급량${duration}</div>
-        <div class='comment2'>2022년 9월 부터 인근 지역의 공급량 총합으로 과부족을 표시합니다.</div>
-        <div class='comment2'>적정 공급량은 "인구 X 0.5%"로 계산됩니다.</div>
+        <div class='popTitle'>${supplyTitle}${duration}</div>
+        <div class='comment2'>${supplyComment1}</div>
+        <div class='comment2'>${supplyComment2}</div>
         </div>
       `;
   detailHtml += `        
@@ -4019,12 +4074,45 @@ function showRegionDetail(index) {
         <div class='popTable'>
       `;
   //detailHtml += "<div class='graph' style='height: 120px'> <canvas id='supplyChart'></canvas></div>"
-  detailHtml += `<div class='popSubTable'><div class='popContent'>총 공급량</div>`;
-  detailHtml += `<div class='popResult'>${Math.round(regSupplyProper_nearby).toLocaleString()}세대</div></div>`;
-  detailHtml += `<div class='popSubTable'><div class='popContent'>적정 공급량</div>`;
-  detailHtml += `<div class='popResult'>${Math.round(regSupplyAll_nearby).toLocaleString()}세대</div></div>`;
-  detailHtml += `<div class='popSubTable'><div class='popContent'>과부족</div>`;
-  detailHtml += `<div class='popResult'>${Math.round(regSupplyUpDown_nearby).toLocaleString()}세대 ${regSupplyLevel}</div></div>`;
+
+  var totalSupplyLabel = tSafe("ui.region_detail.total_supply", "총 공급량");
+  var properSupplyLabel = tSafe("ui.region_detail.proper_supply", "적정 공급량");
+  var supplyStatusLabel = tSafe("ui.region_detail.supply_status", "과부족");
+
+  var totalSupplyVal = tSafe("ui.region_detail.households_unit", "{count}세대")
+    .replace("{count}", Math.round(regSupplyProper_nearby).toLocaleString());
+  var properSupplyVal = tSafe("ui.region_detail.households_unit", "{count}세대")
+    .replace("{count}", Math.round(regSupplyAll_nearby).toLocaleString());
+
+  if(isEn){
+    if(regSupplyLevel == "부족"){
+      regSupplyLevel = "shortage";
+    }
+    else if(regSupplyLevel == "적정"){
+      regSupplyLevel = "proper";
+    }
+    else if(regSupplyLevel == "과다"){
+      regSupplyLevel = "excess";
+    }
+  }    
+
+  var supplyLevelTrans = tSafe("ui.supply_level." + regSupplyLevel, regSupplyLevel);
+  var supplyStatusVal = tSafe("ui.region_detail.status_format_short", "{count}세대 공급 {status}")
+    .replace("{count}", Math.round(regSupplyUpDown_nearby).toLocaleString())
+    .replace("{status}", supplyLevelTrans);
+
+  detailHtml += `<div class='popSubTable'><div class='popContent'>${totalSupplyLabel}</div>`;
+  detailHtml += `<div class='popResult'>${totalSupplyVal}</div></div>`;
+  detailHtml += `<div class='popSubTable'><div class='popContent'>${properSupplyLabel}</div>`;
+  detailHtml += `<div class='popResult'>${properSupplyVal}</div></div>`;
+  detailHtml += `<div class='popSubTable' id='regionSupplyStatus'><div class='popContent'>${supplyStatusLabel}</div>`;
+  detailHtml += `<div class='popResult'>${supplyStatusVal}</div></div>`;
+
+  if(isEn){
+    //regName에 마지막 단어만 남기고 제거 (예: "Gyeonggi-do" -> "Gyeonggi")
+    var regNameParts = regName.split(" ");
+    regName = regNameParts[regNameParts.length - 1];
+  }
 
   detailHtml += `
         <div class='column2'>
@@ -4033,14 +4121,18 @@ function showRegionDetail(index) {
         <div class='column_table_content'>
       `;
   if (regData.data[index]["과부족수"] > 0) {
-    vol_info = "부족";
+    vol_info = "shortage";
   } else if (regData.data[index]["과부족수"] < 0) {
-    vol_info = "과다";
+    vol_info = "excess";
   } else if (regData.data[index]["과부족수"] == 0) {
-    vol_info = "적정";
+    vol_info = "proper";
   }
+  var volInfoTrans = tSafe("ui.supply_level." + vol_info, vol_info);
+  var supplyResultText = tSafe("ui.region_detail.status_format_short", "{count}세대 공급 {status}")
+    .replace("{count}", regSupplyUpDown.toFixed())
+    .replace("{status}", volInfoTrans);
   detailHtml += `
-        <div class='supplySubTable'><div class='supplyResult'>${regSupplyUpDown.toFixed()}세대 공급 ${vol_info}</div></div>
+        <div class='supplySubTable'><div class='supplyResult'>${supplyResultText}</div></div>
         </div>
         </div>
       `;
@@ -4048,12 +4140,26 @@ function showRegionDetail(index) {
   for (var i = 0; i < nearby_info.length; i++) {
     detailHtml += `<div class='column_table'>`;
     region_name_array = nearby_info[i][0].split(" ");
-    short_region_name = "";
-    for (var k = 1; k < region_name_array.length; k++) {
-      short_region_name += `
-            ${region_name_array[k]}
 
-          `;
+    var short_region_name = "";
+    if (isEn) {
+      var full_name = nearby_info[i][0];
+      var match_item = regData.data.find(item => item["시도"] === full_name);
+      if (match_item) {
+        short_region_name = getRegionNameFromLink(match_item["연결명"]);
+      } else {
+        short_region_name = region_name_array.slice(1).join(" ");
+      }
+    } else {
+      for (var k = 1; k < region_name_array.length; k++) {
+        short_region_name += region_name_array[k] + " ";
+      }
+      short_region_name = short_region_name.trim();
+    }
+    if(isEn){
+      //short_region_name에서 마지막 단어만 남기고 제거 (예: "Gyeonggi-do" -> "Gyeonggi")
+      var shortNameParts = short_region_name.split(" ");
+      short_region_name = shortNameParts[shortNameParts.length - 1];
     }
 
     detailHtml += `
@@ -4062,68 +4168,94 @@ function showRegionDetail(index) {
           <div class='column_table_content'>
         `;
     if (nearby_info[i][2] - nearby_info[i][3] > 0) {
-      vol_info = "과다";
+      vol_info = "excess";
     } else if (nearby_info[i][2] - nearby_info[i][3] < 0) {
-      vol_info = "부족";
+      vol_info = "shortage";
     } else if (nearby_info[i][2] - nearby_info[i][3] == 0) {
-      vol_info = "적정";
+      vol_info = "proper";
     }
-    //detailHtml += "<div class='supplySubTable'><div class='supplyContent'>" + "" + "</div>" + "<div class='supplyResult'>" + (nearby_info[i][3].toFixed()).toLocaleString() + "세대 적정 공급</div></div>";
-    detailHtml += `<div class='supplySubTable'><div class='supplyResult'>${Math.abs(nearby_info[i][2] - nearby_info[i][3]).toFixed().toLocaleString()}세대 공급 ${vol_info}</div></div>`;
+
+    var volInfoTransNearby = tSafe("ui.supply_level." + vol_info, vol_info);
+    var nearbySupplyText = tSafe("ui.region_detail.status_format_short", "{count}세대 공급 {status}")
+      .replace("{count}", Math.abs(nearby_info[i][2] - nearby_info[i][3]).toFixed().toLocaleString())
+      .replace("{status}", volInfoTransNearby);
+
+    detailHtml += `<div class='supplySubTable'><div class='supplyResult'>${nearbySupplyText}</div></div>`;
     detailHtml += `
           </div>
           </div>
         `;
   }
-  detailHtml += `</div></div></div></div>`;
+  detailHtml += `</div></div></div></div></div>`;
 
   avgSupplyScore = (Math.round((regSupplySum / itemNum) * 100) / 100).toFixed(2);
 
   //인구
+  var popTitleLabel = tSafe("ui.region_detail.population_title", "<i class='fas fa-user-friends'></i>&nbsp&nbsp인구");
+  var popCountLabel = tSafe("ui.region_detail.pop_count", "인구수");
+  var popChangeLabel = tSafe("ui.region_detail.pop_change", "인구증가");
+
+  var popCountVal = tSafe("ui.region_detail.pop_count_val", "{count}명")
+    .replace("{count}", regPop.toLocaleString());
+  var popChangeVal = tSafe("ui.region_detail.pop_change_val", "{count}명")
+    .replace("{count}", Math.round(regPopUpDown).toLocaleString());
+
   detailHtml += `
         <div class='card'>
         <div class='card-header'>
-        <div class='popTitle'><i class='fas fa-user-friends'></i>&nbsp&nbsp인구</div>
+        <div class='popTitle'>${popTitleLabel}</div>
         </div>
         <div class='card-body'>
         <div id='popInfra'>
         <div class='graph' style='height: 120px'> <canvas id='popChart'></canvas></div>
         <div class='popTable'>
-        <div class='popSubTable'><div class='popContent'>인구수</div><div class='popResult'>${regPop.toLocaleString()}명 </div></div>
-        <div class='popSubTable'><div class='popContent'>인구증가</div><div class='popResult'>${Math.round(regPopUpDown).toLocaleString()}명</div></div>
+        <div class='popSubTable'><div class='popContent'>${popCountLabel}</div><div class='popResult'>${popCountVal}</div></div>
+        <div class='popSubTable'><div class='popContent'>${popChangeLabel}</div><div class='popResult'>${popChangeVal}</div></div>
         </div></div></div></div>
       `;
   avgPopScore = (Math.round((regPopSum / itemNum) * 100) / 100).toFixed(2);
 
   //일자리
+  var jobsTitleLabel = tSafe("ui.region_detail.jobs_title", "<i class='fas fa-user-md'></i>&nbsp&nbsp일자리");
+  var jobsCountLabel = tSafe("ui.region_detail.jobs_count", "일자리수");
+  var avgIncomeLabel = tSafe("ui.region_detail.avg_income", "평균소득");
+
+  var jobCountVal = tSafe("ui.region_detail.job_count_val", "{count}개")
+    .replace("{count}", regJob.toLocaleString());
+  var incomeVal = tSafe("ui.region_detail.income_val", "{count}원")
+    .replace("{count}", regIncome.toLocaleString());
+
   detailHtml += `
         <div class='card'>
         <div class='card-header'>
-        <div class='popTitle'><i class='fas fa-user-md'></i></i>&nbsp&nbsp일자리</div>
+        <div class='popTitle'>${jobsTitleLabel}</div>
         </div>
         <div class='card-body'>
         <div id='popEducation'>
         <div class='graph' style='height: 120px'> <canvas id='jobChart'></canvas></div>
         <div class='popTable'>
-        <div class='popSubTable'><div class='popContent'>일자리수</div><div class='popResult'>${regJob.toLocaleString()}개</div></div>
-        <div class='popSubTable'><div class='popContent'>평균소득</div><div class='popResult'>${regIncome.toLocaleString()}원</div></div>
+        <div class='popSubTable'><div class='popContent'>${jobsCountLabel}</div><div class='popResult'>${jobCountVal}</div></div>
+        <div class='popSubTable'><div class='popContent'>${avgIncomeLabel}</div><div class='popResult'>${incomeVal}</div></div>
         </div></div></div></div>
       `;
   avgJobScore = (Math.round((regJobSum / itemNum) * 100) / 100).toFixed(2);
 
   //매매, 전세가격지수
-  if (rateExist.includes(regName) && Number(selectedMonth) > 202203) {
-    url = "https://www.realrankus.com/" + selectedMonth + "/Price_Rate/" + regName + ".json" + update_ver;
+  if (rateExist.includes(regName_ko)) {
+    url = "https://www.realrankus.com/" + selectedMonth + "/Price_Rate/" + regName_ko + ".json" + update_ver;
+
+    var priceIndexTitle = tSafe("ui.region_detail.price_index_title", "<i class='fa-solid fa-chart-line'></i>&nbsp&nbsp매매/전세 가격 지수");
+    var priceIndexComment = tSafe("ui.region_detail.price_index_comment", "매매/전세 가격 지수는 KB부동산 정보를 참조하며, 2022년 1월의 가격을 100.0으로 설정한 기준으로 산정됩니다. 100초과는 매수우위, 100미만은 매도우위를 의미합니다.");
 
     detailHtml += `
           <div class='card'>
           <div class='card-header'>
-          <div class='popTitle'><i class='fa-solid fa-chart-line'></i>&nbsp&nbsp매매/전세 가격 지수</div>
+          <div class='popTitle'>${priceIndexTitle}</div>
           </div>
           <div class='card-body'>
           <div id='popEducation'>
           <div class='graph' style='height: 200px;'> <canvas id='priceRateChart'></canvas></div>
-          <hr><div class='comment2'>매매/전세 가격 지수는 KB부동산 정보를 참조하며, 2022년 1월의 가격을 100.0으로 설정한 기준으로 산정됩니다. 100초과는 매수우위, 100미만은 매도우위를 의미합니다.</div>
+          <hr><div class='comment2'>${priceIndexComment}</div>
           </div></div></div>
         `;
   }
@@ -4138,24 +4270,49 @@ function showRegionDetail(index) {
     }
   }
 
-  shareTitle = "[리얼랭커스 ";
-  shareTitle += `${selectedMonth.substr(2, 2)}년 ${Number(selectedMonth.substr(4, 2)).toString()}월]\n\n`;
-  shareText = "『" + regName + "』";
-  //shareText += "\nㆍ순위 : " + regRank + " (" + regValue + "점)";
-  shareText += `
-        \nㆍ투자등급 : Rank ${region_grade}
-        \nㆍ인구수 : ${regPop.toLocaleString()}명
-        \nㆍ공급량 : ${Math.round(regSupplyUpDown).toLocaleString()}세대 ${regSupplyLevel}
-        \nㆍ일자리 : ${regJob.toLocaleString()}개
-        \n\n
-      `;
+  if (isEn) {
+    var nameParts = regName.split(" ");      
+    //shortName에 마지막 단어만 남기고 제거
+    shortName = nameParts[nameParts.length - 1];
+    
+  }
+
+  var shareYear = selectedMonth.substr(0, 4);
+  var shareMonthVal = Number(selectedMonth.substr(4, 2)).toString();
+
+  if (isEn) {
+    var enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var shareMonthStr = enMonths[Number(shareMonthVal) - 1] || shareMonthVal;
+    shareTitle = tSafe("ui.region_detail.share_title_format", "[RealRankus {month}/{year}]\n\n")
+      .replace("{month}", shareMonthStr)
+      .replace("{year}", shareYear);
+  } else {
+    shareTitle = tSafe("ui.region_detail.share_title_format", "[리얼랭커스 {year}년 {month}월]\n\n")
+      .replace("{year}", selectedMonth.substr(2, 2))
+      .replace("{month}", shareMonthVal);
+  }
+
+  var supplyLevelTransVal = tSafe("ui.supply_level." + regSupplyLevel, regSupplyLevel);
+  var shareTextCountVal = Math.round(regSupplyUpDown).toLocaleString();
+
+  shareText = tSafe("ui.region_detail.share_text_format", "『{regName}』\nㆍ투자등급 : Rank {grade}\nㆍ인구수 : {pop}명\nㆍ공급량 : {supply}세대 {level}\nㆍ일자리 : {job}개\n\n")
+    .replace("{regName}", regName)
+    .replace("{grade}", region_grade)
+    .replace("{pop}", regPop.toLocaleString())
+    .replace("{supply}", shareTextCountVal)
+    .replace("{level}", supplyLevelTransVal)
+    .replace("{job}", regJob.toLocaleString());
+
   shareURL = "https://www.realrankus.com" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion + "&mon=" + selectedMonth;
+
+  var viewAptsBtnText = tSafe("ui.region_detail.view_apartments_btn", "{shortName} 아파트 보기")
+    .replace("{shortName}", shortName);
 
   footerHtml += `<div class='modal-footer'>`;
   //footerHtml += "<div></div>"
 
   if (UserAgent.indexOf("inApp") > -1) {
-    footerHtml += `<div><button type='button' class='goApt' data-dismiss='modal' onClick='show_apt(selectedMonth, linked, regionValue)'>${shortName} 아파트 보기</button></div>`;
+    footerHtml += `<div><button type='button' class='goApt' data-dismiss='modal' onClick='show_apt(selectedMonth, linked, regionValue)'>${viewAptsBtnText}</button></div>`;
     if (checkMobile() == "ios") {
       footerHtml += `<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>`;
     } else {
@@ -4163,7 +4320,7 @@ function showRegionDetail(index) {
     }
     footerHtml += `<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>`;
   } else {
-    footerHtml += `<div><button type='button' class='goApt' data-dismiss='modal' onClick='show_apt(selectedMonth, linked, regionValue)'>${shortName} 아파트 보기</button></div>`;
+    footerHtml += `<div><button type='button' class='goApt' data-dismiss='modal' onClick='show_apt(selectedMonth, linked, regionValue)'>${viewAptsBtnText}</button></div>`;
     if (checkMobile() == "ios") {
       footerHtml += `<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>`;
     } else {
@@ -4185,11 +4342,19 @@ function showRegionDetail(index) {
   });
   //}
 
+  if(isEn){
+    $("#regionSupplyStatus").css("grid-template-columns", "1.5fr 1.5fr");
+  }
+
 
 
   drawChart(regValue, regSupplyScore, regPopScore, regJobScore, "region");
-  drawSubChart(regPopScore, avgPopScore, "인구총점", "전국평균", "#fe4040", "#9f9f9f", "popChart");
-  drawSubChart(regJobScore, avgJobScore, "일자리총점", "전국평균", "#fe4040", "#9f9f9f", "jobChart");
+  var popScoreLabel = tSafe("ui.report.population_score_label", "인구총점");
+  var jobScoreLabel = tSafe("ui.report.job_score_label", "일자리총점");
+  var nationalAvgLabel = tSafe("ui.report.region_average", "전국평균");
+
+  drawSubChart(regPopScore, avgPopScore, popScoreLabel, nationalAvgLabel, "#fe4040", "#9f9f9f", "popChart");
+  drawSubChart(regJobScore, avgJobScore, jobScoreLabel, nationalAvgLabel, "#fe4040", "#9f9f9f", "jobChart");
 
   if (Number(selectedMonth) > 202203) {
     var dateArray = ["", ""];
@@ -4539,22 +4704,22 @@ function openRadarMap(searchCode) {
             // iframe으로 열기
             const container = document.getElementById("radar-container");
             const iframe = document.getElementById("radar-iframe");
-            if(isEn){
+            if (isEn) {
               iframe.src = "../radarMap.html"; // 새로 로딩
             }
-            else{
+            else {
               iframe.src = "./radarMap.html"; // 새로 로딩
-            }            
+            }
             iframe.style.visibility = "hidden";
             container.style.display = "block";
 
             // 뒤로가기를 감지할 히스토리 추가
             history.pushState({ radarOpen: true }, "", "");
           } else {
-            if(isEn){
+            if (isEn) {
               const radarMapWindow = window.open("../radarMap.html", "_blank");
             }
-            else{
+            else {
               const radarMapWindow = window.open("./radarMap.html", "_blank");
             }
           }

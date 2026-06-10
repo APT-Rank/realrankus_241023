@@ -1216,8 +1216,19 @@ function createLevel2Marker(markers){
     name_en = markers[i]['name_en']
     
     if (isEn && name_en) {
-      var name_en_array = name_en.split("_");
-      dong_name = name_en_array[name_en_array.length - 1];
+      var name_en_array = markers[i]['Law_Addr_EN']
+      //영문명에서 -dong, -eup, -myeon, -ga이 들어간 단어 추출하여 dong_name으로 설정
+      var regex = /([a-zA-Z]+-(dong|eup|myeon|ga))/g;
+      var matches = name_en_array.match(regex);
+      if (matches) {
+        dong_name = matches[matches.length - 1];
+      }
+      else{
+        //추출된 단어가 없는 경우, 기존 방식대로 마지막 단어를 dong_name으로 설정
+        dong_name = name_en_array.split(" ")[name_en_array.split(" ").length - 1];
+      }
+
+      dong_name = dong_name.replace("-dong", "").replace("-eup", "").replace("-myeon", "")
     }
     
     if(mapBounds.hasLatLng(markers[i])){
@@ -1421,10 +1432,38 @@ function createLevel0Marker(markers){
       }
       var region_grade = setGrade ( Number(markers[i]['avg_value']) )
 
-      var lv0_marker_html = `
+      let short_name_en = full_name
 
+      if(isEn){
+        if(full_name == "Gyeongsangnamdo"){
+          short_name_en = "Gyeongnam"
+        }
+        else if(full_name == "Gyeongsangbukdo"){
+          short_name_en = "Gyeongbuk"
+        }
+        else if(full_name == "Jeollanamdo"){
+          short_name_en = "Jeonnam"
+        }
+        else if(full_name == "Jeollabukdo"){
+          short_name_en = "Jeonbuk"
+        }
+        else if(full_name == "Chungcheongnamdo"){
+          short_name_en = "Chungnam"
+        }
+        else if(full_name == "Chungcheongbukdo"){
+          short_name_en = "Chungbuk"
+        }
+        else if(full_name == "Gangwondo"){
+          short_name_en = "Gangwon"
+        }
+        else if(full_name == "Jejudo"){
+          short_name_en = "Jeju"
+        }
+      }
+
+      var lv0_marker_html = `
       <div class='lv0_marker'>
-        <div class='lv0_marker_dong_name'>${full_name}</div>
+        <div class='lv0_marker_dong_name'>${isEn ? short_name_en : full_name}</div>
         <div class='lv0_marker_avg_price'>${avg_price}</div>        
       </div>      
       `

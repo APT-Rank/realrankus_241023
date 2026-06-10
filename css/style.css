@@ -1312,6 +1312,9 @@
   border: none;
   background-color: white;
   color: black;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 #sido:focus, #gungu:focus, #month:focus, #theme:focus{

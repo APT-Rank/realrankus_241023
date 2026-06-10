@@ -540,7 +540,7 @@ function drawPriceRateChart(dateArray, salesArray, rentArray){
         pointRadius: 1
       },
       {
-        label: (window.LANG === 'en' || sessionStorage.getItem('LANG') === 'en') ? "Jeonse Index" : "전세지수",
+        label: (window.LANG === 'en' || sessionStorage.getItem('LANG') === 'en') ? "Rent Index" : "전세지수",
         data: rentData,
         borderColor: "#5589c9",
         borderWidth: 1,
