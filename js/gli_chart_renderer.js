@@ -103,6 +103,25 @@
                         color: #777;
                         line-height: 1.2;
                     }
+                    .gli-chart-legend-mobile {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 6px 12px;
+                        background: rgba(255, 255, 255, 0.95);
+                        border: 1px solid #ddd;
+                        padding: 4px 4px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                        font-size: 10px;
+                        color: #333;
+                        margin-top: 6px;
+                        justify-content: flex-start;
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+                    .gli-chart-legend-mobile .gli-legend-item {
+                        display: flex;
+                        align-items: center;
+                    }
                     @media screen and (max-width: 799px) {
                         .gli-chart-legend {
                             bottom: 35px;
@@ -144,11 +163,18 @@
             // 기존 차트나 캔버스가 존재하면 제거 (중복 렌더링 방지)
             container.innerHTML = '';
 
+            // 모바일 감지
+            const isMobileView = window.innerWidth < 800;
+
             // absolute 레이아웃을 위한 래퍼 생성
             const wrapper = document.createElement('div');
             wrapper.style.position = 'relative';
             wrapper.style.width = '100%';
-            wrapper.style.height = '100%';
+            if (isMobileView) {
+                wrapper.style.height = 'calc(100% - 90px)';
+            } else {
+                wrapper.style.height = '100%';
+            }
             container.appendChild(wrapper);
 
             const canvas = document.createElement('canvas');
@@ -166,9 +192,6 @@
             const gliPadding = (gliMax - gliMin) * 0.05 || 1.0;
             const xMinLimit = gliMin - gliPadding;
             const xMaxLimit = gliMax + gliPadding;
-
-            // 모바일 감지
-            const isMobileView = window.innerWidth < 800;
 
             // 입주년차별 색상 정의
             const ageStyles = {
@@ -231,12 +254,14 @@
                     pointRadius: isMobileView ? 4 : 6,
                     pointHoverRadius: isMobileView ? 6 : 8,
                     order: 1,
+                    clip: true, // 확대/축소 시 차트 영역 밖의 점 클리핑
                     // 이 데이터셋에만 데이터레이블을 활성화하여 아파트 단지명을 위에 표기
                     datalabels: {
                         display: true,
                         align: 'top',
                         anchor: 'center',
                         offset: isMobileView ? 2 : 4,
+                        clip: true, // 라벨 클리핑 추가
                         formatter: function (value) {
                             return value.name;
                         },
@@ -323,7 +348,7 @@
             ];
 
             const xAxisTitle = isEn ? 'Value Score (GLI)' : '가치총점 (GLI)';
-            const yAxisTitle = isEn ? 'Average Price per Pyung (10k KRW)' : '단지 평균 평단가 (만원)';
+            const yAxisTitle = isEn ? 'Average Price per Pyung' : '단지 평균 평단가';
 
             // 차트 객체 초기화 및 렌더링
             const chartPlugins = [];
@@ -355,7 +380,16 @@
                             min: xMinLimit,
                             max: xMaxLimit,
                             grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                            ticks: { font: { size: isMobileView ? 9 : 12 } }
+                            ticks: {
+                                font: { size: isMobileView ? 9 : 12 },
+                                precision: 0,
+                                callback: function (value) {
+                                    if (value % 1 === 0) {
+                                        return value;
+                                    }
+                                    return '';
+                                }
+                            }
                         },
                         y: {
                             type: 'linear',
@@ -370,8 +404,24 @@
                             ticks: {
                                 font: { size: isMobileView ? 9 : 12 },
                                 callback: function (value) {
-                                    if (value >= 1000) return (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'K';
-                                    return value;
+                                    if (isEn) {
+                                        if (value >= 100) {
+                                            const val = value / 100;
+                                            return val.toFixed(val % 1 === 0 ? 0 : 1) + 'M';
+                                        }
+                                        const val = value * 10;
+                                        return val.toFixed(val % 1 === 0 ? 0 : 1) + 'K';
+                                    } else {
+                                        if (value >= 1000) {
+                                            const val = value / 1000;
+                                            return val.toFixed(val % 1 === 0 ? 0 : 1) + '천만';
+                                        }
+                                        if (value >= 100) {
+                                            const val = value / 100;
+                                            return val.toFixed(val % 1 === 0 ? 0 : 1) + '백만';
+                                        }
+                                        return value.toFixed(value % 1 === 0 ? 0 : 1) + '만';
+                                    }
                                 }
                             }
                         }
@@ -397,6 +447,9 @@
                             cornerRadius: 6,
                             displayColors: true,
                             callbacks: {
+                                title: function () {
+                                    return '';
+                                },
                                 // 호버된 타겟이 산점도 데이터일 때만 커스텀 정보를 표시
                                 label: function (context) {
                                     const raw = context.raw;
@@ -437,7 +490,7 @@
 
             // 1. 프리미엄 커스텀 HTML 레전드 렌더링
             const legendDiv = document.createElement('div');
-            legendDiv.className = 'gli-chart-legend';
+            legendDiv.className = isMobileView ? 'gli-chart-legend-mobile' : 'gli-chart-legend';
 
             // 영역 목록
             const zones = [
@@ -450,6 +503,8 @@
                 item.className = 'gli-legend-item';
                 item.innerHTML = `<div class="gli-legend-color-box" style="background-color: ${z.color}; border: 1px solid rgba(0,0,0,0.15);"></div><span>${z.label}</span>`;
                 legendDiv.appendChild(item);
+                const br = document.createElement('br');
+                legendDiv.appendChild(br); // 영역과 추세선 사이에 줄바꿈 추가
             });
 
             // 추세선 목록
@@ -462,6 +517,8 @@
                 item.className = 'gli-legend-item';
                 item.innerHTML = `<div class="gli-legend-line" style="border-top-color: ${l.color};"></div><span>${l.label}</span>`;
                 legendDiv.appendChild(item);
+                const br = document.createElement('br');
+                legendDiv.appendChild(br); // 추세선과 준공 년차 사이에 줄바꿈 추가
             });
 
             // 준공 년차 목록
@@ -473,8 +530,9 @@
                 legendDiv.appendChild(item);
             });
 
-            // 모바일에서는 레전드를 표시하지 않음
-            if (!isMobileView) {
+            if (isMobileView) {
+                container.appendChild(legendDiv);
+            } else {
                 wrapper.appendChild(legendDiv);
             }
 
