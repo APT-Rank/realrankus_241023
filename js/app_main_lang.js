@@ -4908,9 +4908,10 @@ function showGraphChart() {
       var now = new Date();
       var pad = function(n) { return String(n).padStart(2, '0'); };
       var dateStr = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate());
+      var timeStr = pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
       var filename = isEn
-        ? 'GLI_Analysis_' + activeDong + '_' + dateStr + '.png'
-        : 'GLI_분석_' + activeDong + '_' + dateStr + '.png';
+        ? 'GLI_Analysis_' + activeDong + '_' + dateStr + '_' + timeStr + '.png'
+        : 'GLI_분석_' + activeDong + '_' + dateStr + '_' + timeStr + '.png';
       GLIChartRenderer.downloadChartImage('chartWrapper', filename);
     });
 

@@ -43,20 +43,19 @@
                 style.id = styleId;
                 style.innerHTML = `
                     .gli-chart-legend {
-                        position: absolute;
-                        bottom: 52px;
-                        left: 70px;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 6px 12px;
                         background: rgba(255, 255, 255, 0.95);
-                        border: 1px solid #ccc;                        
-                        padding: 10px 15px;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                        z-index: 10;
+                        border: 1px solid #ddd;
+                        padding: 6px 10px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                         font-size: 11px;
                         color: #333;
-                        pointer-events: none;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 0px;
+                        margin-top: 6px;
+                        justify-content: center;
+                        width: 100%;
+                        box-sizing: border-box;
                     }
                     .gli-legend-item {
                         display: flex;
@@ -123,13 +122,7 @@
                         align-items: center;
                     }
                     @media screen and (max-width: 799px) {
-                        .gli-chart-legend {
-                            bottom: 35px;
-                            left: 10px;
-                            padding: 5px 8px;
-                            font-size: 8px;
-                            gap: 0;
-                        }
+
                         .gli-legend-color-box {
                             width: 12px;
                             height: 7px;
@@ -173,7 +166,7 @@
             if (isMobileView) {
                 wrapper.style.height = 'calc(100% - 90px)';
             } else {
-                wrapper.style.height = '100%';
+                wrapper.style.height = 'calc(100% - 60px)'; // 웹/데스크톱도 하단 범례 공간 확보
             }
             container.appendChild(wrapper);
 
@@ -455,7 +448,7 @@
                                     const raw = context.raw;
                                     if (raw && raw.name) {
                                         //raw.y의 소수점 제거하여 천 단위 구분 쉼표 추가 후 'k/py' 또는 '만원/평' 단위로 표시
-                                        py_price = raw.y.toLocaleString() + (isEn ? 'k/py' : '만원/평');
+                                        py_price = Math.round(raw.y).toLocaleString() + (isEn ? 'k/py' : '만원/평');
                                         return [
                                             isEn ? ` ${raw.name}` : ` ${raw.name}`,
                                             ` ${py_price}`,
@@ -535,11 +528,7 @@
                 legendDiv.appendChild(item);
             });
 
-            if (isMobileView) {
-                container.appendChild(legendDiv);
-            } else {
-                wrapper.appendChild(legendDiv);
-            }
+            container.appendChild(legendDiv);
 
             // 2. 워터마크 렌더링
             const watermarkDiv = document.createElement('div');
@@ -577,6 +566,7 @@
             alert('이미지 캡처 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
             return;
         }
+
         html2canvas(wrapper, {
             useCORS: true,
             allowTaint: true,
