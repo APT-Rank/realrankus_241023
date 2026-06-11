@@ -577,14 +577,17 @@
             backgroundColor: '#ffffff',
             scale: 2
         }).then(function (canvas) {
-            var base64Data = canvas.toDataURL('image/png');
-            var isApp = (typeof connectionWebApp !== 'undefined' && connectionWebApp === "App") || navigator.userAgent.indexOf('inApp') > -1;
+            const base64Data = canvas.toDataURL('image/png');
+            const targetFilename = filename || 'GLI_chart.png';
 
-            if (isApp && window.AndroidApp && typeof window.AndroidApp.downloadBase64Image === 'function') {
-                window.AndroidApp.downloadBase64Image(base64Data, filename || 'GLI_chart.png');
+            // 안드로이드 하이브리드 앱 웹뷰 환경인지 검사
+            if (window.Android && typeof window.Android.downloadImage === 'function') {
+                // 네이티브 저장 메서드 호출
+                window.Android.downloadImage(base64Data, targetFilename);
             } else {
+                // 일반 웹 브라우저 환경
                 var link = document.createElement('a');
-                link.download = filename || 'GLI_chart.png';
+                link.download = targetFilename;
                 link.href = base64Data;
                 link.click();
             }
