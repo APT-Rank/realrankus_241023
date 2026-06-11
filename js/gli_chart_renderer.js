@@ -503,8 +503,11 @@
                 item.className = 'gli-legend-item';
                 item.innerHTML = `<div class="gli-legend-color-box" style="background-color: ${z.color}; border: 1px solid rgba(0,0,0,0.15);"></div><span>${z.label}</span>`;
                 legendDiv.appendChild(item);
-                const br = document.createElement('br');
-                legendDiv.appendChild(br); // 영역과 추세선 사이에 줄바꿈 추가
+                //모바일인 경우 영역과 추세선 사이에 줄바꿈 추가, 그렇지 않으면 줄바꿈 없이 한 줄로 표시
+                if (isMobileView) {
+                    const br = document.createElement('br');                
+                    legendDiv.appendChild(br); // 영역과 추세선 사이에 줄바꿈 추가
+                }
             });
 
             // 추세선 목록
@@ -517,8 +520,10 @@
                 item.className = 'gli-legend-item';
                 item.innerHTML = `<div class="gli-legend-line" style="border-top-color: ${l.color};"></div><span>${l.label}</span>`;
                 legendDiv.appendChild(item);
-                const br = document.createElement('br');
-                legendDiv.appendChild(br); // 추세선과 준공 년차 사이에 줄바꿈 추가
+                if (isMobileView) {
+                    const br = document.createElement('br');
+                    legendDiv.appendChild(br); // 추세선과 준공 년차 사이에 줄바꿈 추가
+                }
             });
 
             // 준공 년차 목록
