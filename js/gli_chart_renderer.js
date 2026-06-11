@@ -64,7 +64,8 @@
                     .gli-legend-color-box {
                         width: 16px;
                         height: 10px;
-                        margin-right: 8px;
+                        margin-right: 4px;
+                        margin-top: 2px;
                         border-radius: 2px;
                     }
                     .gli-legend-line {
@@ -74,11 +75,12 @@
                         margin-right: 8px;
                     }
                     .gli-legend-circle {
-                        width: 8px;
-                        height: 8px;
+                        width: 10px;
+                        height: 10px;
                         border-radius: 50%;
-                        margin-right: 12px;
+                        margin-right: 4px;
                         margin-left: 4px;
+                        margin-top: 2px;
                         border: 1.5px solid #1e272e;
                     }
                     .gli-chart-watermark {
@@ -125,18 +127,20 @@
 
                         .gli-legend-color-box {
                             width: 12px;
-                            height: 7px;
+                            height: 10px;
                             margin-right: 5px;
+                            margin-top: 2px;
                         }
                         .gli-legend-line {
                             width: 12px;
                             margin-right: 5px;
                         }
                         .gli-legend-circle {
-                            width: 6px;
-                            height: 6px;
-                            margin-right: 8px;
-                            margin-left: 3px;
+                            width: 10px;
+                            height: 10px;
+                            margin-top: 2px;
+                            margin-right: 4px;
+                            margin-left: 0px;
                         }
                         .gli-chart-watermark {
                             bottom: 20px;
@@ -244,8 +248,8 @@
                     backgroundColor: ageStyles[key].color,
                     borderColor: '#1e272e',
                     borderWidth: isMobileView ? 1 : 1.5,
-                    pointRadius: isMobileView ? 4 : 6,
-                    pointHoverRadius: isMobileView ? 6 : 8,
+                    pointRadius: isMobileView ? 6 : 8,
+                    pointHoverRadius: isMobileView ? 10 : 10,
                     order: 1,
                     clip: true, // 확대/축소 시 차트 영역 밖의 점 클리핑
                     // 이 데이터셋에만 데이터레이블을 활성화하여 아파트 단지명을 위에 표기
@@ -259,7 +263,7 @@
                             return value.name;
                         },
                         font: {
-                            size: isMobileView ? 9 : 12,
+                            size: isMobileView ? 10 : 12,
                             weight: 'bold'
                         },
                         color: '#333'
