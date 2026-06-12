@@ -361,7 +361,6 @@
                     datasets: datasets
                 },
                 options: {
-                    devicePixelRatio: Math.max(window.devicePixelRatio || 1, 3), // 최소 3배 해상도 보장으로 고화질 출력 및 다운로드 대응
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
@@ -577,30 +576,56 @@
         const currentWidth = wrapper.offsetWidth || 360;
         const dynamicScale = Math.min(5, Math.max(3, targetWidth / currentWidth)); // 최소 3배, 최대 5배
 
-        html2canvas(wrapper, {
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            scale: dynamicScale
-        }).then(function (canvas) {
-            const base64Data = canvas.toDataURL('image/png');
-            const targetFilename = filename || 'GLI_chart.png';
+        // 임시로 차트 해상도(devicePixelRatio)를 높여서 이미지 캡처 대응
+        const gliChartContainer = wrapper.querySelector('#gliChartContainer');
+        const canvas = gliChartContainer ? gliChartContainer.querySelector('canvas') : null;
+        const chart = canvas ? window.Chart.getChart(canvas) : null;
+        const originalDPR = chart ? (chart.options.devicePixelRatio || window.devicePixelRatio || 1) : 1;
 
-            // 안드로이드 하이브리드 앱 웹뷰 환경인지 검사
-            if (window.Android && typeof window.Android.downloadImage === 'function') {
-                // 네이티브 저장 메서드 호출
-                window.Android.downloadImage(base64Data, targetFilename);
-            } else {
-                // 일반 웹 브라우저 환경
-                var link = document.createElement('a');
-                link.download = targetFilename;
-                link.href = base64Data;
-                link.click();
+        if (chart) {
+            chart.options.devicePixelRatio = Math.max(window.devicePixelRatio || 1, 3);
+            chart.resize();
+            chart.update('none');
+        }
+
+        function restoreOriginals() {
+            if (chart) {
+                chart.options.devicePixelRatio = originalDPR;
+                chart.resize();
+                chart.update('none');
             }
-        }).catch(function (err) {
-            console.error('이미지 캡처 실패:', err);
-            alert('이미지 다운로드에 실패했습니다.');
-        });
+        }
+
+        // 브라우저 렌더링/리플로우 시간을 주기 위해 150ms 딜레이 후 캡처
+        setTimeout(function () {
+            html2canvas(wrapper, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                scale: dynamicScale
+            }).then(function (canvas) {
+                restoreOriginals();
+
+                const base64Data = canvas.toDataURL('image/png');
+                const targetFilename = filename || 'GLI_chart.png';
+
+                // 안드로이드 하이브리드 앱 웹뷰 환경인지 검사
+                if (window.Android && typeof window.Android.downloadImage === 'function') {
+                    // 네이티브 저장 메서드 호출
+                    window.Android.downloadImage(base64Data, targetFilename);
+                } else {
+                    // 일반 웹 브라우저 환경
+                    var link = document.createElement('a');
+                    link.download = targetFilename;
+                    link.href = base64Data;
+                    link.click();
+                }
+            }).catch(function (err) {
+                restoreOriginals();
+                console.error('이미지 캡처 실패:', err);
+                alert('이미지 다운로드에 실패했습니다.');
+            });
+        }, 150);
     };
 
     // 전역 변수로 노출
