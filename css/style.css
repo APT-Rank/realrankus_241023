@@ -2675,9 +2675,10 @@
   /* 모바일: 그래프 모달 최적화 */
   @media screen and (max-width: 799px) {
     #graphModal .modal-dialog {
-      margin: 10vh auto;
+      /* margin: 10vh auto; */
       max-width: 100%;
-      height: 80%;
+      /* height: 80%; */
+      margin: 0;
     }
 
     #graphModal .modal-content {
