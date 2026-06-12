@@ -361,6 +361,7 @@
                     datasets: datasets
                 },
                 options: {
+                    devicePixelRatio: Math.max(window.devicePixelRatio || 1, 3), // 최소 3배 해상도 보장으로 고화질 출력 및 다운로드 대응
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
@@ -502,7 +503,7 @@
                 legendDiv.appendChild(item);
                 //모바일인 경우 영역과 추세선 사이에 줄바꿈 추가, 그렇지 않으면 줄바꿈 없이 한 줄로 표시
                 if (isMobileView) {
-                    const br = document.createElement('br');                
+                    const br = document.createElement('br');
                     legendDiv.appendChild(br); // 영역과 추세선 사이에 줄바꿈 추가
                 }
             });
@@ -571,11 +572,16 @@
             return;
         }
 
+        // 모바일 기기의 좁은 화면에서도 선명한 해상도(가로 약 2000px 이상)를 얻기 위해 배율을 동적으로 계산합니다.
+        const targetWidth = 2000;
+        const currentWidth = wrapper.offsetWidth || 360;
+        const dynamicScale = Math.min(5, Math.max(3, targetWidth / currentWidth)); // 최소 3배, 최대 5배
+
         html2canvas(wrapper, {
             useCORS: true,
             allowTaint: true,
             backgroundColor: '#ffffff',
-            scale: 2
+            scale: dynamicScale
         }).then(function (canvas) {
             const base64Data = canvas.toDataURL('image/png');
             const targetFilename = filename || 'GLI_chart.png';
