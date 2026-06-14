@@ -1724,8 +1724,19 @@
     $('#footer').html(footerHtml);
 
     if (coord_x != null) {
+      //지도 그리는 함수
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        var dw = $(window).width() - 40;
+        //var dw = 372;	 
+      }
+      else{
+        var dw = 459;	 
+      }    
+      var dh = 200;
+
       var detailMapOptions = {
         center: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
+        size: new naver.maps.Size(dw, dh),
         zoom: 15, //지도의 초기 줌 레벨
         zoomControl: false, //줌 컨트롤의 표시 여부
         draggable: false,
@@ -1744,12 +1755,10 @@
         map: detailMap
       });
 
-      setTimeout(function() {
-        if (detailMap) {
-          detailMap.refresh();
-          detailMap.setCenter(new naver.maps.LatLng(Number(coord_y), Number(coord_x)));
-        }
-      }, 150);
+      if(isMobile){
+        $("#detail_map").css("width", "100%");
+        detailMap.panBy(40, 0);
+      }
     }
 
     //if(UserAgent.indexOf("inApp")>-1){
