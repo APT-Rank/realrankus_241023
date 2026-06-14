@@ -115,20 +115,20 @@
   /* 등락 타입별 선 색상 정의 (파스텔톤) */
   .sparkline_path_red {
     stroke: #ff6b6b;
-    stroke-width: 0.5;
+    stroke-width: 1.0;
   }
   .sparkline_path_blue {
     stroke: #4dadf7;
-    stroke-width: 0.5;
+    stroke-width: 1.0;
   }
   .sparkline_path_grey {
     stroke: #868e96;
-    stroke-width: 0.5;
+    stroke-width: 1.0;
   }
 
   /* 마우스오버 인터랙티브 요소 스타일 */
   .sparkline--spot {
-    stroke-width: 0.5;
+    stroke-width: 1.0;
     display: none;
   }
   .sparkline_svg:hover .sparkline--spot {
@@ -151,7 +151,7 @@
   /* 세로 가이드 점선 */
   .sparkline--cursor {
     stroke: rgba(0, 0, 0, 0.15);
-    stroke-width: 1;
+    stroke-width: 1.0;
     stroke-dasharray: 2, 2;
     display: none;
   }

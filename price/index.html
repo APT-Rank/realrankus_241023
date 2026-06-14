@@ -1277,7 +1277,7 @@
           $(".compare_price").css({
             'grid-area': 'auto',
             'display': 'grid',
-            'grid-template-columns': '0.3fr 0.2fr 0.5fr',
+            'grid-template-columns': '0.2fr 0.2fr 0.6fr',
             'font-size': '0.7em',
             'font-weight': '600',
             'padding-top': '10px',
@@ -1297,7 +1297,8 @@
         $('#label_lower').html("#하락 (" + lowerDeal + ")")
 
         for (var i = 0; i < itemNum; i++) {
-          var priceHistory = aptData.data[i]["history_price"];
+          //var priceHistory = aptData.data[i]["history_price"];
+          var priceHistory = aptData.data[i]["graph_history_price"]
           if (priceHistory && priceHistory.length > 0) {
             var filteredPrices = priceHistory.slice(-48, -1);
 
@@ -1757,7 +1758,7 @@
 
       if(isMobile){
         $("#detail_map").css("width", "100%");
-        detailMap.panBy(40, 0);
+        //detailMap.panBy(40, 0);
       }
     }
 
