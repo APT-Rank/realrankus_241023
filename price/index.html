@@ -1487,9 +1487,9 @@ function updateTable(region){
           detailHtml += "</thead>"
 
           detailHtml += "<tbody>"
-              reverse_dealed_history_date = dealed_history_date.reverse()
-              reverse_dealed_history_price = dealed_history_price.reverse()
-              reverse_dealed_history_floor = dealed_history_floor.reverse()
+              reverse_dealed_history_date = [...dealed_history_date].reverse()
+              reverse_dealed_history_price = [...dealed_history_price].reverse()
+              reverse_dealed_history_floor = [...dealed_history_floor].reverse()
               if(reverse_dealed_history_date.length > 30){
                 history_length = 30
               }
