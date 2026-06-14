@@ -36,6 +36,7 @@ var block_end = '1976-1-1 00:00:00'
 var UserAgent = navigator.userAgent;
 var scr_width = screen.width
 var scr_height = screen.height
+var days_ago_num = 30
 
 var user_stat = new Object({
   accused: 0,

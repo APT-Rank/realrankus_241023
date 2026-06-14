@@ -74,11 +74,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"  crossorigin="anonymous"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd"></script>
+  <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>  
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   
-  <script src="../js/menu_select_box_price.js" type="text/javascript"></script>
+  <script src="../js/menu_select_box_price.js?ver=1.2" type="text/javascript"></script>
   <script src="../js/draw_chart_price.js" type="text/javascript"></script>
   <script src="../js/sort.js" type="text/javascript"></script>
   <script src="../js/search.js" type="text/javascript"></script>
@@ -92,7 +92,7 @@
   <script src="../js/kakao_sendtome.js" type="text/javascript"></script>
   <script src="../js/notice_aptrank.js" type="text/javascript"></script>
   <script src="../js/ad_aptrank_price.js" type="text/javascript"></script>
-  <script src="../js/post_json.js" type="text/javascript"></script>
+  <script src="../js/request_report.js" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet"/>
   <link href="../css/style_price.css" rel="stylesheet"/>
@@ -122,7 +122,7 @@
         <!--공유 버튼-->
         <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
         <!--단지 가중치 설정 버튼 표시-->
-        <div id='sort' data-clipboard-text=""></div>
+        <div id='fav' onClick='showFavorite()'><i class="fa-solid fa-star"></i></div>
         <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right" aria-controls="offcanvasRight"><i class="fa-solid fa-ellipsis"></i></div>
 
       </div>
@@ -132,13 +132,42 @@
         <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"></select></div>    
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
-            <option value="latest_deal" id="recent_deal">오늘 등록된</option>
-            <option value="202401" selected>2024년 01월</option>
-            <option value="202312">2023년 12월</option>
-            <option value="202311">2023년 11월</option>
-            <option value="202310">2023년 10월</option>
-            <option value="202309">2023년 09월</option>
+            <option value="latest_deal" id="recent_deal" selected>오늘 등록된</option>
+            <option value="202606">2026년 06월</option>
+            <option value="202605">2026년 05월</option>
+            <option value="202604">2026년 04월</option>
+            <option value="202603">2026년 03월</option>
+            <option value="202602">2026년 02월</option>
             <!--
+            <option value="202601">2026년 01월</option>            
+            <option value="202512">2025년 12월</option>            
+            <option value="202511">2025년 11월</option>            
+            <option value="202510">2025년 10월</option>            
+            <option value="202509">2025년 09월</option>            
+            <option value="202508">2025년 08월</option>            
+            <option value="202507">2025년 07월</option>
+            <option value="202506">2025년 06월</option>            
+            <option value="202505">2025년 05월</option>            
+            <option value="202504">2025년 04월</option>            
+            <option value="202503">2025년 03월</option>            
+            <option value="202502">2025년 02월</option>            
+            <option value="202501">2025년 01월</option>            
+            <option value="202412">2024년 12월</option>
+            <option value="202411">2024년 11월</option>
+            <option value="202410">2024년 10월</option>            
+            <option value="202409">2024년 09월</option>            
+            <option value="202408">2024년 08월</option>            
+            <option value="202407">2024년 07월</option>            
+            <option value="202406">2024년 06월</option>            
+            <option value="202405">2024년 05월</option>            
+            <option value="202404">2024년 04월</option>            
+            <option value="202403">2024년 03월</option>            
+            <option value="202402">2024년 02월</option>            
+            <option value="202401">2024년 01월</option>            
+            <option value="202312">2023년 12월</option>            
+            <option value="202311">2023년 11월</option>
+            <option value="202310">2023년 10월</option>            
+            <option value="202309">2023년 09월</option>            
             <option value="202308">2023년 08월</option>            
             <option value="202307">2023년 07월</option>
             <option value="202306">2023년 06월</option>
@@ -164,39 +193,6 @@
         <div id="closeSearch" onClick='closeSearch()' ><i class="fas fa-times"></i></div>
       </div>
 
-      <!--통합 검색창-->
-      <div id="unifiedSearchCard">
-        <div id="iconSearch"><i class="fas fa-search"></i></div>
-        <div id="unifiedSearchGuide">
-          <div id="unifiedSearchNotice">
-            <div>
-              <label>
-                <input type="radio" class="searchRadio" name="options" id="option1" autocomplete="off" value = "global" checked onchange="radioActive(this.value)"><span style="padding-left: 5px; vertical-align: middle;">전국검색</span>
-              </label>
-            </div>
-            <div>
-              <label>
-                <input type="radio" class="searchRadio" name="options" id="option2" autocomplete="off" value = "local" onchange="radioActive(this.value)"><span id='localSearch' style="padding-left: 5px; vertical-align: middle;">지역내검색</span>
-              </label>
-            </div>
-          </div>
-          <div id="unifiedInputBox"><input id="inputUnifiedSearch" type="text" placeholder="두 글자 이상 입력해 주세요" onkeyup="goSearchBySearchType()"></div>
-          <div id="unifiedSearchExample">예) 서초동, 래미안, 힐스테이트, 주공</div>
-        </div>
-        <div id="closeUnifiedSearch" onClick='closeUnifiedSearch()' ><i class="fas fa-times"></i></div>
-      </div>
-
-      <!--시군구 검색창-->
-      <div id="regionSearchCard">
-        <div id="iconSearch"><i class="fas fa-search"></i></div>
-        <div id="regionSearchGuide">
-          <div id="regionSearchNotice">전국 시군구 이름으로 검색합니다.</div>
-          <div id="regionInputBox"><input id="regionInputSearch" type="text" placeholder="어느 시군구를 찾아볼까요?" onkeyup="regionSearch()"></div>
-          <div id="regionSearchExample">예) 서울, 창원, 강남, 서구</div>
-        </div>
-        <div id="closeRegionSearch" onClick='closeRegionSearch()' ><i class="fas fa-times"></i></div>
-      </div>
-
       <!--단지 정렬창-->
       <div id="rearrangeCard">
         <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
@@ -213,34 +209,11 @@
         <div id="closeRearrange" onClick='closeRearrange()' ><i class="fas fa-times"></i></div>
       </div>
 
-      <!--시군구 정렬창-->
-      <div id="rearrangeRegionCard">
-        <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
-        <div id="rearrangeContatiner">
-            <div id="rearrangeRegionNotice"></div>
-            <div class='rearrangeArea'>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionScore' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionScore'>총점순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionRank' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionRank'>순위변동순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPop' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionPop'>인구순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPopUpDown' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionPopUpDown'>인구증감순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionJob' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionJob'>일자리순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionIncome' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-danger' for='rearrangeRegionIncome'>소득순</label></div>
-            </div>
-        </div>
-        <div id="closeRegionRearrange" onClick='closeRegionRearrange()' ><i class="fas fa-times"></i></div>
-      </div>
       <!--리스트 데이터 붙여넣는 영역-->
       <div id="dataList"></div>
 
       <!--리얼랭커스 연결-->
-      <div id="linkToAptrank">
-        <div id = 'tab1' onClick='openExternalLink("https://www.realrankus.com#aptrank.kr")'>아파트R</div>
-        <div id = 'tab2' style="background-color: #e31939; color:white;">PRICE</div>
-        <div id = 'tab3' onClick='openExternalLink("https://www.realrankus.com/theme#aptrank.kr")'>THEME</i></div>
-        <div id = 'tab4' onClick='openExternalLink("https://www.realrankus.com/op#aptrank.kr")'>오피스텔R</div>        
-        <div id = 'tab5' onClick='openExternalLink("https://www.realrankus.com/newsinfo#aptrank.kr")'>NEWS</div>
-        <div id = 'tab6' onClick='openExternalLink("https://www.realrankus.com/biz#aptrank.kr")'>BIZ</div>
-      </div>
+      <div id="linkToAptrank_bottom"></div>
 
       <!--단지 검색창 닫기 플로팅 버튼-->
       <div id="closeSearch_floating" onClick='closeSearch()'>
@@ -249,35 +222,6 @@
           <div id="clostText_floating">검색닫기</div>
         </div>
       </div>
-      <!--통합 검색창 닫기 플로팅 버튼-->
-      <div id="closeUnifiedSearch_floating" onClick='closeUnifiedSearch()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">검색닫기</div>
-        </div>
-      </div>
-      <!--시군구 검색창 닫기 플로팅 버튼-->
-      <div id="closeRegionSearch_floating" onClick='closeRegionSearch()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">검색닫기</div>
-        </div>
-      </div>
-      <!--단지 재정렬창 닫기 플로팅 버튼-->
-      <div id="closeRearrange_floating" onClick='closeRearrange()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">정렬닫기</div>
-        </div>
-      </div>
-      <!--단지 재정렬창 닫기 플로팅 버튼-->
-      <div id="closeRegionRearrange_floating" onClick='closeRegionRearrange()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">정렬닫기</div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -296,27 +240,16 @@
       </div>
     </div>
   </div>
-  <div class="modal fade" id="toggleModal1" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="toggleModalLabel">Modal title</h5>
+
+  <!-- Favorite Modal -->
+  <div class="modal fade" id="favModal" tabindex="-1" aria-labelledby="favModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content" id="favModalContent">
+        <div class="modal-header" id="favModalHeader">
+          <div class="modal-title" id="favModalLabel"><i class="fa-solid fa-star"></i> 즐겨찾기</div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id='simulDetail'></div>
-        <div id='toggle1footer'></div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="toggleModal2" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="toggleModalLabe2">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id='simulResult'></div>
-        <div id='toggle2footer'></div>
+        <div class="modal-body" id='favList'></div>        
       </div>
     </div>
   </div>
@@ -324,25 +257,56 @@
   <!-- Offcanvas Right -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
-      <h5 id="offcanvasRightLabel">SERVICES</h5>
+      <h5 id="offcanvasRightLabel">MENU</h5>
       <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body"></div>
+  </div>
+
+  <!-- Offcanvas Profile -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel"></h5><i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="offcanvas-body"></div>
   </div>  
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div>   
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>   
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+  
+  <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+  
 
 </body>
 
-<script type="module" src="../js/con_counter.js"></script>
+<script src="../js/con_counter_js.js"></script>
+<script src="../js/apple.js" type="text/javascript"></script>
+<script src="../js/login_260522.js" type="text/javascript"></script>
+<script src="../js/i18n.js?v=20260607"></script>
 
 <script>
-  var selectedMonth = "202401"
+  var selectedMonth = "latest_deal"
   var selectedRegion = "Korea"
   var selectedSubRegion = "1000000000_Korea"
   var selectedComplex = ""
@@ -368,6 +332,8 @@
   var newHigh = 0
   var newLow = 0
   var newDeal = 0
+  var higherDeal = 0
+  var lowerDeal = 0
 
   var modalState = 0;
   var searchState = 0;
@@ -384,25 +350,36 @@
   var priceCharts = []
   var currentMenu = ""
 
+  var shareText_all = ""
+  var shareText_highest = ""
+  var shareText_lowest = ""
+  var shareText_up = ""
+  var shareText_down = ""
+
   var count_info = ""
 
   var region_all = false
+  var price_fav = []
 
   var today = new Date()
   var prev_date = new Date()
-  prev_date = prev_date.setMonth(prev_date.getMonth()-1)
-  var monthago = new Date(prev_date)
+
+  //var today = new Date('2023-10-30')
   var today_day = dateReturn( today.getDate() );
   if (today_day == 1){    
     today = new Date(today.setDate(today.getDate() - 1))
+    prev_date.setMonth( prev_date.getMonth() - 1 );
   }
   var today_year = today.getFullYear();
   var today_month = dateReturn( (today.getMonth() + 1))
   var today_num = Number("" + today_year + today_month + today_day)  
   var today_str = today_year + "-" + today_month + "-" + today_day
-  var today_short_str = (today.getMonth() + 1) + "/" + today_day
+  var today_short_str = (today.getMonth() + 1) + "/" + today.getDate()
   var this_month = "" + (today_year) + today_month
-  var prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth() + 1))
+  
+  var monthago = new Date(prev_date)
+  monthago.setMonth( monthago.getMonth() - 1 );  
+  prev_month = "" + (monthago.getFullYear()) + dateReturn( (monthago.getMonth()+1 ) )  
 
   var start_date_str = (today.getMonth() + 1) + "/1"
   var end_date_str = (today.getMonth() + 1) + "/" + today.getDate()
@@ -416,19 +393,10 @@
     return n<10 ? "0"+n : n
   }
 
-  var broswerInfo = navigator.userAgent;
-  var UserAgent = navigator.userAgent; 
-  if (UserAgent.match(/iPhone|ipad|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null)
-  {
-    var isMobile = true
-  }
-
   $(document).ready(function(){
-    //document.cookie = "safeCookie1=foo; SameSite=Lax";
-    //document.cookie = "safeCookie2=foo";
-    //document.cookie = "crossCookie=bar; SameSite=None; Secure";
-
     Kakao.init(kakaoKey);
+    
+    countUp(pageName)
 
     $('div.modal').on('show.bs.modal', function() {
       var modal = this;
@@ -440,9 +408,6 @@
         }
       }
     });    
-
-    // SDK 초기화 여부를 판단합니다.
-    //console.log(Kakao.isInitialized());
 
     var option = ""
     for(i = 0 ; i < regions.length ; i++){
@@ -459,12 +424,35 @@
     //var lastSubRegion = sessionStorage.getItem('lastSubRegion')
     //var lastMonth = sessionStorage.getItem('lastMonth')
 
+    price_fav = JSON.parse(localStorage.getItem("priceFav"))
+    if(price_fav == null){
+      price_fav = []
+    }
+
+    toastr.options = {
+      closeButton: false,
+      progressBar: false,
+      showMethod: 'fadeIn',
+      closeMethod: 'fadeOut',
+      positionClass: "toast-top-center",
+      timeOut: 1000
+    };
+
+    //console.log($("#fav").offset().left)
+
+    fav_top_pos = $("#fav").position().top + $("#fav").height() - 20
+    if(isMobile){
+      fav_left_pos = $("#fav").offset().left - $("#favModalContent").width()/2 - 65
+    }
+    else{
+      fav_left_pos = $("#fav").offset().left - 800 - $("#favModalContent").width()/2
+    }
+    $("#favModalContent").css({"top": fav_top_pos, "left" : fav_left_pos})
+
     const url = new URL(window.location.href)
     const urlParams = url.searchParams
-    //console.log(urlParams)
 
     if(urlParams.has('preg')){
-      //console.log(urlParams.get('reg'))
       selectedRegion = urlParams.get('preg')
     }
     else if(lastRegion != null){
@@ -472,7 +460,6 @@
     }
 
     if(urlParams.has('psub')){
-      //console.log(urlParams.get('sub'))
       selectedSubRegion = urlParams.get('psub')
     }
     else if(lastSubRegion != null){
@@ -480,7 +467,6 @@
     }
 
     if(urlParams.has('pmon')){
-      //console.log(urlParams.get('mon'))
       selectedMonth = urlParams.get('pmon')
     }
     else if(lastMonth != null){
@@ -488,6 +474,19 @@
     }
     else{
       initSorting()
+    }
+
+    if (urlParams.has("cpx")) {
+      infoText = urlParams.get("cpx")
+      for(var i = 0; i < codeMap.length ; i++){
+        if(codeMap[i][0] == infoText){
+          selectedRegion = codeMap[i][1]
+          selectedSubRegion = codeMap[i][2]
+          break;
+        }
+      }      
+    } else if (lastRegion != null) {
+      selectedRegion = lastRegion;
     }
 
     if (selectedRegion != 'Korea' && urlParams.has('pmon') == false){
@@ -500,7 +499,7 @@
 
     $('#dataList').html("");
 
-    optionChange(selectedSubRegion)
+    optionChange(selectedSubRegion, selectedRegion);
     updateRegion()
 
     if(checkMobile() == "ios"){
@@ -511,7 +510,7 @@
     }    
     $('#share1').html(share1Html)
 
-    if(broswerInfo.indexOf("inApp")>-1){
+    if(UserAgent.indexOf("inApp")>-1){
       share2Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
     }
     else{
@@ -526,12 +525,20 @@
     $("#linkToAptrank").css('height', blank_height)
     $("#linkToAptrank").css('line-height', blank_height)
 
-    if(selectedRegion == "Korea"){ $("#recent_deal").hide() }
-    else{ $("#recent_deal").show() }
+    //if(selectedRegion == "Korea"){ $("#recent_deal").hide() }
+    //else{ $("#recent_deal").show() }
 
-    currentMenu = "aptrank_price"  //offcanvas  
+    currentMenu = "aptrank_price"  //offcanvas
+    /* Request Report Init */
+    requestReportModal()
+
     setOffcanvasMenu() //offcanvas
-
+    //login_checker() //LOGIN
+    setBottomMenu()
+    if(!isMobile){
+      $("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
+    }
+    setAppDownloadModal();
   });
 
   simple_view = 0
@@ -580,8 +587,8 @@
     optionChange()    
 
     if(selectedRegion == "Korea"){
-      $("#recent_deal").hide()
-      $("#month option:eq(1)").prop("selected", true);
+      //$("#recent_deal").hide()
+      $("#month option:eq(0)").prop("selected", true);
       selectedMonth = $("#month option:selected").val()
     }
     else{
@@ -645,10 +652,17 @@
     $( 'html, body' ).animate( { scrollTop : 0 }, 50 );
   }
 
-  function optionChange(subRegion){
-    selectedSubRegion = subRegion
-    regionName = $("#sido option:selected").val();
-    selectedRegion = regionName
+  function optionChange(subRegion, upperReion){
+    selectedSubRegion = subRegion;
+    if(upperReion == null || upperReion == "" || upperReion == undefined){
+      regionName = $("#sido option:selected").val();
+    }
+    else{
+      regionName = upperReion
+      $("#gungu").val(regionName).prop("selected", true);
+    }      
+    selectedRegion = regionName;
+
     var changeItem
 
     if(regionName == 'Korea'){
@@ -731,7 +745,9 @@
     regionName = $("#sido option:selected").text()
     //saveLocalStorage()
   }
-  function updateRegion(){    
+  function updateRegion(){
+    reportBannerHtml()
+
     selectedRegion = $("#sido option:selected").val()
     selectedSubRegion = $("#gungu option:selected").val()
     
@@ -753,8 +769,28 @@
       count_data = json
       updated_info = count_data['data'][1]['daily_count']      
       updated_datetime = updated_info[updated_info.length-1][2]
+
+      /*
+      //업데이트 날짜를 오늘 날짜로 표시해 주는 변환 시작
+      updated_time = updated_datetime.split(',')[1]
+      updated_year = Number( updated_datetime.substr(0, 4) )
+      updated_month = Number( updated_datetime.substr(5, 2) )-1
+      updated_date = Number( updated_datetime.substr(8, 2) )      
+      var updated_datetime_today = new Date(updated_year, updated_month, updated_date)     
+
+      updated_datetime_today.setDate(updated_datetime_today.getDate() + 1)
+      display_year = updated_datetime_today.getFullYear()
+      display_month = dateReturn(updated_datetime_today.getMonth()+1)
+      display_day = dateReturn(updated_datetime_today.getDate())
+
+      display_date = display_year + "-" + display_month + "-" + display_day
+      updated_datetime = display_date + ", " + updated_time
+      //업데이트 날짜를 오늘 날짜로 표시해 주는 변환 끝
+      */
+      
       if(updated_datetime == undefined){
-        updated_datetime = updated_info[0][0].substr(0, 4) + "-" + updated_info[0][0].substr(4, 2) + "-" + updated_info[0][0].substr(6, 2) + ", 23:59"
+        //updated_datetime = updated_info[0][0].substr(0, 4) + "-" + updated_info[0][0].substr(4, 2) + "-" + updated_info[0][0].substr(6, 2) + ", 23:59"
+        updated_datetime = display_date + ", 23:59"
       }
       
       for(var y = 0 ; y < count_data['data'].length; y++){        
@@ -769,7 +805,8 @@
     })
 
     if( regData == undefined || regData == "" ){
-      url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
       $.getJSON(url, function(json) {        
           regData = json;
           regSortData = regData;        
@@ -781,11 +818,11 @@
     $("#localSearch").html(localSearchText + " 검색")
 
     if (selectedRegion == "Korea"){
-      $("#recent_deal").hide()
+      //$("#recent_deal").hide()
       updateRegionTable(selectedSubRegion)
     }
     else{
-      $("#recent_deal").show()
+      //$("#recent_deal").show()
       updateTable(selectedSubRegion)
     }    
     showWeight()
@@ -799,6 +836,7 @@ function updateTable(region){
     //initSorting()
 
     $('#dataList').html("");
+    $("#dataList").html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-danger' role='status'></div></div>")
 
     //광고정보 로딩
     $.ajaxSetup({ async: false }); 
@@ -819,15 +857,19 @@ function updateTable(region){
     shareURL = get_sURL(region)
 
     if (selectedMonth == 'latest_deal'){
-      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 실거래]\n"
+      shareText_all = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 실거래]\n"
+      shareText_up = ""
+      shareText_down = ""
+      shareText_highest = ""
+      shareText_lowest = ""
     }
     else{
-      shareText = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
+      shareText_all = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
     }
 
-    url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    url = "./recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
     $.getJSON(url, function(json) {
-        //console.log(json);
         aptData = json;
         //sortData = json;
         //aptData.data = Object.assign(aptData.data, this_apt_data.data)
@@ -837,8 +879,10 @@ function updateTable(region){
         newLow = 0
         newDeal = 0
         higherDeal = 0
-        lowerDeal = 0
-
+        lowerDeal = 0        
+    })
+    .done(function(){
+        $('#dataList').html("");
         regionCountUp(pageName, region) //20231020
 
         //aptData.data = (aptData.data).reverse()
@@ -880,7 +924,7 @@ function updateTable(region){
             exp_start_date = reverse_count_info[0][0].substr(0, 4) + "-" + reverse_count_info[0][0].substr(4, 2) + "-01"
             exp_date = reverse_count_info[0][0].substr(0, 4) + "-" + reverse_count_info[0][0].substr(4, 2) + "-" + reverse_count_info[0][0].substr(6, 2)
             addon_html = "<div class='data_empty'>" + "등록된 실거래 정보가 없네요.<br>(" + exp_start_date + " ~ " + exp_date + ")" + "</div>"
-          }
+          }          
           $('#dataList').append(addon_html);
         }
         else{
@@ -900,16 +944,17 @@ function updateTable(region){
 
         share_count = 0
 
-        shareText += "(전체 " + itemNum + "건)\n\n"
+        shareText_all += "(전체 " + itemNum + "건)\n\n"
 
         addon_html = "<div class='hidden_saperator' onClick='simple_and_detail()'>"
           addon_html += "<div class = 'hidden_saperator_text'></div>"
           addon_html += "<div class = 'hidden_saperator_icon'><i class='fa-solid fa-down-left-and-up-right-to-center'></i></div>"
-        addon_html += "</div>"
-        $('#dataList').append(addon_html);        
+        addon_html += "</div>"                
 
         for(var i = 0 ; i < itemNum ; i++){
           addon_html = ""
+
+          if(i == 1){ $('#dataList').append(report_banner_html); }
           
           deal_count = itemNum
           for(var j = 0; j < sep_array.length ; j++){
@@ -936,12 +981,23 @@ function updateTable(region){
 
           var aptName = aptData.data[i]["아파트"]
           var apt_m = aptData.data[i]["전용면적"]
-          var apt_p = (Number(apt_m)/3.3058)
-          if(apt_m < 84){ apt_p += 7 }
-          else if(apt_m >= 84){ apt_p += 8 }
+
+          var apt_p = 0
+          var usingArea = aptData.data[i]["usingArea"]
+          if(usingArea == null || usingArea == "" || usingArea == undefined){
+            apt_p = (Number(apt_m)/3.3058)
+            if(apt_m < 84){ apt_p += 7 }
+            else if(apt_m >= 84){ apt_p += 8 }
+          }
+          else{
+            apt_p = ( Number(apt_m) * (100/Number(usingArea)) ) / 3.3058
+          }          
+
           var deal_type = aptData.data[i]["거래유형"]
           var deal_price = aptData.data[i]["거래금액"]
-          deal_price = deal_price.replaceAll(",", "")
+          if(typeof(deal_price) != "number"){
+            deal_price = deal_price.replaceAll(",", "")
+          }
           var deal_price_num = Number(deal_price)
           var deal_new_old = aptData.data[i]["type"]
           var apt_build = aptData.data[i]["건축년도"]
@@ -1012,18 +1068,66 @@ function updateTable(region){
           list_class_name = "listBox"
           if(Number(deal_price) > Number(max_price_deal[1])){
             list_class_name += " highest"
+            if(newHigh < 5){
+              shareText_highest += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_highest += " (분양권)』\n"
+              }
+              else{
+                shareText_highest += " (" + year_gap + "년차)』\n"
+              }
+              shareText_highest += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_highest += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_highest += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }            
             newHigh++
           }
           if(Number(deal_price) < Number(min_price_deal[1])){
             list_class_name += " lowest"
+            if(newLow < 5){
+              shareText_lowest += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_lowest += " (분양권)』\n"
+              }
+              else{
+                shareText_lowest += " (" + year_gap + "년차)』\n"
+              }
+              shareText_lowest += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_lowest += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_lowest += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }
             newLow++
           }
           if(Number(deal_price) > last_dealed_price){
             list_class_name += " higher"
+            if(higherDeal < 5){
+              shareText_up += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_up += " (분양권)』\n"
+              }
+              else{
+                shareText_up += " (" + year_gap + "년차)』\n"
+              }
+              shareText_up += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_up += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_up += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }
             higherDeal++
           }
           if(Number(deal_price) < last_dealed_price){
             list_class_name += " lower"
+            if(lowerDeal < 5){
+              shareText_down += "『" + aptName
+              if(deal_new_old == "BYG"){
+                shareText_down += " (분양권)』\n"
+              }
+              else{
+                shareText_down += " (" + year_gap + "년차)』\n"
+              }
+              shareText_down += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+              shareText_down += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+              shareText_down += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+            }
             lowerDeal++
           }
 
@@ -1047,7 +1151,7 @@ function updateTable(region){
                 addon_html += "<div class='hided_ratio'>직전대비 " + compare_last_tag + "</div>"
               addon_html += "</div>"
               addon_html += "<div class='complex_table'>"
-                addon_html += "<div class='apt_address' style='color:black'>" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m + ")</div>"
+                addon_html += "<div class='apt_address' style='color:black'>" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")</div>"
                 if(deal_type != "중개거래"){
                   addon_html += "<div class='apt_address'><span style='color: #e31939'>"  + deal_type + "</span> | " + dealed_date + "</div>"
                 }
@@ -1077,26 +1181,32 @@ function updateTable(region){
           }
           
           if(i < share_count){
-            shareText += "『" + aptName
+            shareText_all += "『" + aptName
             if(deal_new_old == "BYG"){
-              shareText += " (분양권)』\n"
+              shareText_all += " (분양권)』\n"
             }
             else{
-              shareText += " (" + year_gap + "년차)』\n"
+              shareText_all += " (" + year_gap + "년차)』\n"
             }
-            shareText += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
-            shareText += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m + ")\n"
-            shareText += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
-          }
-
+            shareText_all += "ㆍ" + Korean_price(deal_price_num) + " (" + dealed_date + ")\n"
+            shareText_all += "ㆍ" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")\n"
+            shareText_all += "ㆍ직전대비 : " + compare_last_ratio + "\n\n"
+          }          
           $('#dataList').append(addon_html);
         }
 
         if(itemNum == 0){
-            shareText += "등록된 실거래 정보 없음"
+            shareText_all += "등록된 실거래 정보 없음\n\n"
         }
 
-        shareText += shareURL
+        shareText_all += shareURL + "\n\n"
+
+        shareText_all += "[리얼랭커스 앱 다운로드]\n"
+        shareText_all += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+        shareText_all += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n"
+
+        shareText = shareText_all
+
         popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
       
         if(isMobile){
@@ -1161,19 +1271,19 @@ function updateTable(region){
   }
 
   function compare_price(deal_price_num, max_price_deal, min_price_deal, dealed_history_date, dealed_history_price, dealed_date){
-    last_dealed_date = dealed_history_date[dealed_history_date.length - 1]
-    last_dealed_price = dealed_history_price[dealed_history_price.length - 1]
+    var history_date_length = dealed_history_date.length
+    var history_price_length = dealed_history_price.length
     
-    //console.log("last_dealed_date :", last_dealed_date)
-    //console.log("dealed_date :", dealed_date)
+    last_dealed_date = dealed_history_date[history_date_length - 1]
+    last_dealed_price = dealed_history_price[history_price_length - 1]
 
     if(last_dealed_date == dealed_date){
-      last_dealed_date = dealed_history_date[dealed_history_date.length - 2]
-      last_dealed_price = dealed_history_price[dealed_history_price.length - 2]
+      last_dealed_date = dealed_history_date[history_date_length - 2]
+      last_dealed_price = dealed_history_price[history_price_length - 2]
     }
     else{
-      last_dealed_date = dealed_history_date[dealed_history_date.length - 1]
-      last_dealed_price = dealed_history_price[dealed_history_price.length - 1]
+      last_dealed_date = dealed_history_date[history_date_length - 1]
+      last_dealed_price = dealed_history_price[history_price_length - 1]
     }
 
     compare_last = ((deal_price_num/last_dealed_price) - 1) * 100
@@ -1209,12 +1319,23 @@ function updateTable(region){
 
     var aptName = aptData.data[index]["아파트"]
     var apt_m = aptData.data[index]["전용면적"]
-    var apt_p = (Number(apt_m)/3.3058)
-    if(apt_m < 84){ apt_p += 7 }
-    else if(apt_m >= 84){ apt_p += 8 }
+
+    var apt_p = 0
+    var usingArea = aptData.data[index]["usingArea"]
+    if(usingArea == null || usingArea == "" || usingArea == undefined){
+      apt_p = (Number(apt_m)/3.3058)
+      if(apt_m < 84){ apt_p += 7 }
+      else if(apt_m >= 84){ apt_p += 8 }
+    }
+    else{
+      apt_p = ( Number(apt_m) * (100/Number(usingArea)) ) / 3.3058
+    }
+
     var deal_type = aptData.data[index]["거래유형"]
     var deal_price = aptData.data[index]["거래금액"]
-    deal_price = deal_price.replaceAll(",", "")
+    if(typeof(deal_price) != "number"){
+      deal_price = deal_price.replaceAll(",", "")
+    }
     var deal_price_num = Number(deal_price)
     var deal_new_old = aptData.data[index]["type"]
     var apt_build = aptData.data[index]["건축년도"]
@@ -1334,7 +1455,7 @@ function updateTable(region){
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + "최근 실거래일" + "</div>" + "<div class='popResult'>" + dealed_date + "</div></div>";
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 유형" + "</div>" + "<div class='popResult'>" + deal_type + "</div></div>";
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 층수" + "</div>" + "<div class='popResult'>" + deal_floor + "층</div></div>";
-    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 면적" + "</div>" + "<div class='popResult'>" + "약 " + apt_p.toFixed(0) + "평 (" + apt_m + ")</div></div>";    
+    detailHtml += "<div class='popSubTable'><div class='popContent'>" + "거래 면적" + "</div>" + "<div class='popResult'>" + "약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")</div></div>";    
 
     compare_list = compare_price(deal_price_num, max_price_deal, min_price_deal, dealed_history_date, dealed_history_price, dealed_date)    
 
@@ -1366,9 +1487,9 @@ function updateTable(region){
           detailHtml += "</thead>"
 
           detailHtml += "<tbody>"
-              reverse_dealed_history_date = dealed_history_date.reverse()
-              reverse_dealed_history_price = dealed_history_price.reverse()
-              reverse_dealed_history_floor = dealed_history_floor.reverse()
+              reverse_dealed_history_date = [...dealed_history_date].reverse()
+              reverse_dealed_history_price = [...dealed_history_price].reverse()
+              reverse_dealed_history_floor = [...dealed_history_floor].reverse()
               if(reverse_dealed_history_date.length > 30){
                 history_length = 30
               }
@@ -1423,7 +1544,7 @@ function updateTable(region){
     shareText_detail += "ㆍ직전대비 : " + compare_last_ratio + "\n"
     shareText_detail += "ㆍ직전거래 : " + Korean_price(last_dealed_price) + " (" + last_dealed_date + ")\n"
     shareText_detail += shareURL_detail + "\n\n"
-    kakaoShareURL_detail = "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + $("#gungu option:selected").val() + "&pmon=" + selectedMonth + "#aptrank.kr"
+    kakaoShareURL_detail = "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + $("#gungu option:selected").val() + "&pmon=" + selectedMonth
 
     popMsg_detail = "'" + aptName + "'" + " 실거래 정보가 복사되었습니다."
     
@@ -1437,7 +1558,14 @@ function updateTable(region){
       }
     }
 
-    if(broswerInfo.indexOf("inApp")>-1){
+    if(naver_code != ""){      
+      sido_price = $("#sido option:selected").text()
+      gungu_price = $("#sido option:selected").text() + " " + rankAddr
+      dong_price = $("#sido option:selected").text() + " " + rankAddr + " " + ( (aptData.data[index]["법정동"]).split(" ") )[0]
+      realrankus_visit(naver_code, sido_price, gungu_price, dong_price)
+    }
+
+    if(UserAgent.indexOf("inApp")>-1){
       if(naver_code != ""){
         footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(" + naver_code + ")'>네이버 부동산 보기</button>"
         if(rank_info[2] != null){
@@ -1529,7 +1657,7 @@ function updateTable(region){
       });
     }
 
-    //if(broswerInfo.indexOf("inApp")>-1){
+    //if(UserAgent.indexOf("inApp")>-1){
     //  $('.modal-footer').css({"grid-template-columns" : "0.2fr 1fr 0.2fr", "text-align":"center", "text-align": "-webkit-center"})
     //}
     //else{
@@ -1559,13 +1687,19 @@ function updateTable(region){
       shareText = "[" + regionName + " " + start_date_str + "~" + end_date_str + " 거래량]\n\n"
     }
     else{
-      shareTitle = "[" + regionName + " " + selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량]"
-      shareText = "[" + regionName + " " + selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량]\n\n"
+      if(selectedMonth == "latest_deal"){
+        shareTitle = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 실거래]"
+        shareText = shareTitle + "\n\n"        
+      }
+      else{
+        shareTitle = "[" + regionName + " " + selectedMonth.substr(0, 4) + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량]"
+        shareText = shareTitle + "\n\n"
+      }
     }
     //shareURL = "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + $("#gungu option:selected").val() + "&pmon=" + selectedMonth
 
-    url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-
+    //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+    url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
     $('#dataList').html("");
 
     count_Korea = 0
@@ -1684,8 +1818,9 @@ function updateTable(region){
           var reg_vol_3month_ago = regData.data[i]["3개월전"]
           var reg_sURL = regData.data[i]["sURL"]
 
-          if(Number(selectedMonth) == this_month || Number(selectedMonth) == prev_month){
-            var reg_vol_month_end_predition = regData.data[i]["월말예측"]
+          if(Number(selectedMonth) == this_month || Number(selectedMonth) == prev_month || selectedMonth == "latest_deal"){
+            var reg_vol_month_end_predition = regData.data[i]["월말예측"]            
+            var reg_vol_prev_month_end_predition = regData.data[i][prev_month]
           }
 
           var reg_vol_yoy = regData.data[i]["전년동월"]
@@ -1701,11 +1836,21 @@ function updateTable(region){
 
           if(selectedSubRegion == "1000000000_Korea"){
             if((regCode.split("_")).length <= 2){
-              var addon_html = "<div class='listBox' onClick='gotoLink(" + i + ")'>";
+              var addon_html = "<div class='listBox'>";
 
-                addon_html += "<div class='reg_name'>" + regName + "</div>";      
+                if(i == 0){
+                  addon_html += "<div class='reg_name'>" + regName + "</div>";
+                  addon_html += "<div class='volume_content'>"
+                }
+                else{
+                  addon_html += "<div class = 'reg_name_wrapper'>"
+                    addon_html += "<div class='reg_name' onClick='gotoLink(" + i + ")'>" + regName + "</div>";
+                    addon_html += "<div class='fav_mark' id=\'lv1_" + regCode + "\' onClick='addRemoveFav(\"lv1\", this.id, \"" + regName + "\")'><i class='fa-solid fa-star'></i></div>";
+                  addon_html += "</div>"
 
-                addon_html += "<div class='volume_content'>"
+                  addon_html += "<div class='volume_content' onClick='gotoLink(" + i + ")'>"
+                }
+                
                   addon_html += "<div class='price_table'>"
                     if(regCode == "1000000000_Korea"){
                       deal_vol = count_Korea.toLocaleString()
@@ -1722,28 +1867,33 @@ function updateTable(region){
                       //count_gap = sido_gap['gap_count_' + regSido]
                     }
 
-                    //if(isNaN(deal_vol)){
-                    //  addon_html += "<div class='vol_num'>0건</div>" 
-                    //}
-                    //else{
-                      addon_html += "<div class='vol_num'>" + deal_vol + "건</div>" 
-                    //}                    
-                    /*              
-                    if(count_gap == 0){
-                      if(Number(selectedMonth) < this_month){
-                        addon_html += "<div class='vol_num'>" + deal_vol + "건</div>"                        
-                      }
-                      else{
-                        addon_html += "<div class='vol_num'>" + deal_vol + "건 <span style='font-size: 0.7em'> (변동없음) </span></div>"
-                      }
-                       
+                    if(selectedMonth != "latest_deal"){
+                      addon_html += "<div class='vol_num'>" + reg_vol_this_month.toLocaleString() + "건</div>" 
                     }
                     else{
-                      addon_html += "<div class='vol_num'>" + deal_vol + "건 <span style='font-size: 0.7em'>(+" + count_gap + ")</span></div>"
-                      //addon_html += "<div class='vol_num'>" + deal_vol + "건</div>"
+                      addon_html += "<div id='vol_sum' style='border-right: 1px solid #ddd'>"
+                      addon_html += "<div class='vol_num' style='border-right: none'>" + (deal_this_vol + deal_prev_vol).toLocaleString() + "건</div>"
+                                            
+                      addon_html += "<div style='font-size:0.6em'>" + Number(today_month) + "월 " + deal_this_vol.toLocaleString() + "건</div>"
+                      if(Number(today_month) == 1){
+                        addon_html += "<div style='font-size:0.6em'>12월 " + deal_prev_vol.toLocaleString() + "건</div>"
+                      }
+                      else{
+                        addon_html += "<div style='font-size:0.6em'>" + (Number(today_month)-1) + "월 " + deal_prev_vol.toLocaleString() + "건</div>"
+                      }                       
+                      
+                      addon_html +=  "</div>"
                     }
-                    */
+
                     addon_html += "<div class='compare_volume_sub'>"
+                      if(selectedMonth == "latest_deal"){
+                        str_prev_month = Number(prev_month.slice(-2)) + "월"
+                        str_this_month = Number(this_month.slice(-2)) + "월"
+                        
+                        addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                        addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                      }
+
                       if(selectedMonth == this_month || selectedMonth == prev_month){
                         addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
                       }
@@ -1758,24 +1908,7 @@ function updateTable(region){
 
                       addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>"  + "<div>" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() + "건</div>"
                       addon_html += "<div>3년평균 대비</div>" + "<div>"  + reg_ratio_3y_avg_tag + "</div>"  + "<div>" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() + "건</div>"
-                    addon_html += "</div>"
-                    
-                  addon_html += "<div class='compare_volume'>"
-                    addon_html += "<div class='compare_volume_title'>오늘 등록 거래</div>"
-
-                    addon_html += "<div class='column2_2'>"
-                      addon_html += "<div>" + Number(today_month) + "월</div><div class='deal_num'>" + deal_this_vol.toLocaleString() + "건</div>"
-                    addon_html += "</div>"
-
-                    addon_html += "<div class='column2_2'>"
-                      //addon_html += "<div>" + (Number(today_month)-1) + "월</div><div class='deal_num'>" + deal_prev_vol.toLocaleString() + "건</div>"
-                      addon_html += "<div>12월</div><div class='deal_num'>" + deal_prev_vol.toLocaleString() + "건</div>"
-                    addon_html += "</div>"
-                    
-                  addon_html += "</div>"
-                addon_html += "</div>"
-              
-              shareText += "『" + regName + "』\n"
+                    addon_html += "</div>"              
               
               if(Number(this_month) == Number(selectedMonth) || Number(prev_month) == Number(selectedMonth) ){
                 //shareText += "ㆍ국토부 신규 등록 : " + deal_vol + "건 (+" + count_gap + ")\n"
@@ -1791,30 +1924,45 @@ function updateTable(region){
                 if(reg_ratio_3y_avg > 0){ reg_ratio_3y_avg_share = "▲" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
                 else if(reg_ratio_3y_avg < 0){ reg_ratio_3y_avg_share = "▼" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
                 else { reg_ratio_3y_avg_share = "= " + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
-                
-                shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
-                shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
-                shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() +"건)\n"                 
+
+                if(selectedMonth == "latest_deal"){
+                  shareText += "ㆍ" + regName + " : "
+                  shareText += (deal_this_vol + deal_prev_vol).toLocaleString() + "건\n"
+                }
+                else{
+                  shareText += "『" + regName + "』\n"
+                  shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
+                  shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
+                  shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() +"건)\n"
+                }                
               }
               //shareText += "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + regCode + "&pmon=" + selectedMonth + "\n\n"
               shareText +=  reg_sURL + "\n\n"              
 
               popMsg = "'" + "전체시도" + "'" + " 거래량 정보가 복사되었습니다."
 
-              $('#dataList').append(addon_html);
+              if(i == 1){ $('#dataList').append(report_banner_html); }
+              $('#dataList').append(addon_html);              
+
               //scrollTo(0, lastScrollY_d00)
             }
           }
           else{
-            if(regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){              
+            if(regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){
             //if((regCode.split("_")).length > 2 && regCode.indexOf((selectedSubRegion.split("_"))[1]) >= 0 && regCode.indexOf(selectedSubRegion.substr(0, 2)) >= 0){
-              var addon_html = "<div class='listBox' onClick='gotoLink(" + i + ")'>";
+              var addon_html = "<div class='listBox'>";
 
                 if((regCode.split("_")).length == 2){
-                  addon_html += "<div class='reg_name'>" + regName + " 전체</div>";
+                  addon_html += "<div class='reg_name_wrapper'>"
+                    addon_html += "<div class='reg_name' onClick='gotoLink(" + i + ")'>" + regName + " 전체</div>";
+                    addon_html += "<div class='fav_mark' id=\'lv2_" + regCode + "\' onClick='addRemoveFav(\"lv2\", this.id, \"" + regName + " 전체\")'><i class='fa-solid fa-star'></i></div>";
+                  addon_html += "</div>"
                 }
                 else{
-                  addon_html += "<div class='reg_name'>" + regName + "</div>";
+                  addon_html += "<div class='reg_name_wrapper'>"
+                    addon_html += "<div class='reg_name' onClick='gotoLink(" + i + ")'>" + regName + "</div>";
+                    addon_html += "<div class='fav_mark' id=\'lv2_" + regCode + "\' onClick='addRemoveFav(\"lv2\", this.id, \"" + regName + "\")'><i class='fa-solid fa-star'></i></div>";
+                  addon_html += "</div>"
                 }                
                 for(var j = 0 ; j < count_data['data'].length; j++){
                   searching_region = count_data['data'][j]
@@ -1840,13 +1988,27 @@ function updateTable(region){
                 count_vol_gap = t_vol - t_prev_vol
                 //count_vol_gap = gungu_gap['gap_count_' + regCode]
 
-                addon_html += "<div class='volume_content'>"
+                addon_html += "<div class='volume_content' onClick='gotoLink(" + i + ")'>"
                   addon_html += "<div class='price_table'>"
-                    if(isNaN(t_vol)){
-                      addon_html += "<div class='vol_num'>0건</div>" 
+                    if(selectedMonth != "latest_deal"){
+                      if(isNaN(t_vol)){
+                        addon_html += "<div class='vol_num'>0건</div>" 
+                      }
+                      else{
+                        addon_html += "<div class='vol_num'>" + reg_vol_this_month.toLocaleString() + "건</div>" 
+                      }
                     }
                     else{
-                      addon_html += "<div class='vol_num'>" + Number(t_vol).toLocaleString() + "건</div>" 
+                      addon_html += "<div id='vol_sum' style='border-right: 1px solid #ddd'>"
+                      addon_html += "<div class='vol_num' style='border-right: none'>" + (today_count_this_month + today_count_prev_month).toLocaleString() + "건</div>"
+                      addon_html += "<div style='font-size:0.6em'>" + Number(today_month) + "월 " + today_count_this_month.toLocaleString() + "건</div>"
+                      if(Number(today_month) == 1){
+                        addon_html += "<div style='font-size:0.6em'>12월 " + today_count_prev_month.toLocaleString() + "건</div>"
+                      }
+                      else{
+                        addon_html += "<div style='font-size:0.6em'>" + (Number(today_month)-1) + "월 " + today_count_prev_month.toLocaleString() + "건</div>"
+                      }
+                      addon_html += "</div>"
                     }
                                         
                     /*
@@ -1865,7 +2027,15 @@ function updateTable(region){
                     */
 
                   addon_html += "<div class='compare_volume_sub'>"
-                    if( selectedMonth == this_month || selectedMonth == prev_month ){
+                    if(selectedMonth == "latest_deal"){
+                      str_prev_month = Number(prev_month.slice(-2)) + "월"
+                      str_this_month = Number(this_month.slice(-2)) + "월"                        
+                      
+                      addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + Number(reg_vol_prev_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                      addon_html += "<div>" + str_this_month +" 거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
+                    }
+
+                    if( selectedMonth == this_month || selectedMonth == prev_month){
                       addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + Number(reg_vol_month_end_predition.toFixed(0)).toLocaleString() + "건</div>"
                     }
 
@@ -1879,23 +2049,8 @@ function updateTable(region){
 
                     addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>"  + "<div>" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() + "건</div>"
                     addon_html += "<div>3년평균 대비</div>" + "<div>"  + reg_ratio_3y_avg_tag + "</div>"  + "<div>" + Number(reg_vol_3y_avg.toFixed(0)).toLocaleString() + "건</div>"
-                  addon_html += "</div>"
-
-                  addon_html += "<div class='compare_volume'>"
-                    addon_html += "<div class='compare_volume_title'>오늘 등록 거래</div>"
-
-                    addon_html += "<div class='column2_2'>"
-                      addon_html += "<div>" + Number(today_month) + "월</div><div class='deal_num'>" + today_count_this_month + "건</div>"
-                    addon_html += "</div>"
-
-                    addon_html += "<div class='column2_2'>"
-                      addon_html += "<div>" + (Number(today_month)-1) + "월</div><div class='deal_num'>" + today_count_prev_month + "건</div>"
-                    addon_html += "</div>"
-
-                  addon_html += "</div>"
-                addon_html += "</div>"
+                  addon_html += "</div>"              
               
-              shareText += "『" + regName + "』\n"              
               if( this_month == Number(selectedMonth) || prev_month == Number(selectedMonth) ){
                 //shareText += "ㆍ국토부 신규 등록 : " + t_vol.toLocaleString() + "건 (+" + count_vol_gap + ")\n"
                 shareText += "ㆍ국토부 신규 등록 : " + (today_count_this_month + today_count_prev_month).toLocaleString() + "건\n"                
@@ -1910,38 +2065,52 @@ function updateTable(region){
                 if(reg_ratio_3y_avg > 0){ reg_ratio_3y_avg_share = "△" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
                 else if(reg_ratio_3y_avg < 0){ reg_ratio_3y_avg_share = "▽" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
                 else { reg_ratio_3y_avg_share = "= " + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%" }
-                
-                shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(reg_vol_this_month.toFixed(0)).toLocaleString() + "건\n"
-                shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
-                shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"                
+
+                if(selectedMonth == "latest_deal"){
+                  shareText += "ㆍ" + regName + " : "
+                  shareText += (today_count_this_month + today_count_prev_month).toLocaleString() + "건\n"
+                }
+                else{
+                  shareText += "『" + regName + "』\n"
+                  shareText += "ㆍ" + today_year + "년 " + Number(selectedMonth.substr(4, 2)) + "월 거래량 : " + Number(Number(reg_vol_this_month).toFixed(0)).toLocaleString() + "건\n"
+                  shareText += "ㆍ전년동월 대비 : " + reg_ratio_yoy_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
+                  shareText += "ㆍ3년평균 대비 : " + reg_ratio_3y_avg_share + " (" + Number(reg_vol_yoy.toFixed(0)).toLocaleString() +"건)\n"
+                }
               }
               
               //shareText += "https://www.realrankus.com/price" + "?preg=" + regSido + "&psub=" + regCode + "&pmon=" + selectedMonth + "\n\n"
               shareText +=  reg_sURL + "\n\n"
 
               popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
-
-              $('#dataList').append(addon_html);              
+              
+              $('#dataList').append(addon_html);
+              if((regCode.split("_")).length == 2){ $('#dataList').append(report_banner_html); }
             }            
           }
         }
+        checkFav()
+
+        shareText += "[리얼랭커스 앱 다운로드]\n"
+        shareText += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+        shareText += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n" 
 
         if(isMobile){
           $(".volume_content").css('grid-template-columns', '1fr')
           $(".price_table").css('grid-template-columns', '100px 1fr')
           $(".price_table").css('border-right', '0px')
           $(".price_table").css('border-bottom', '0px')
-          $(".price_table").css('margin-top', '5px')
+          //$(".price_table").css('margin-top', '5px')
           //$(".price_table").css('margin-bottom', '5px')
-          $(".price_table").css('padding-bottom', '5px')
+          //$(".price_table").css('padding-bottom', '5px')
           $(".price_table").css('margin-right', '0px')
           
-          $(".vol_num").css('line-height', '1.5em')
+          //$(".vol_num").css('line-height', '1.5em')
           $(".vol_num").css('font-size', '1.1em')
           $(".reg_name").css('font-size', '1em')
           $(".compare_volume_sub").css('font-size', '0.75em')
           $(".compare_volume_sub").css('font-weight', '600')
           $(".compare_volume_sub").css('border-right', '0px')
+          $(".compare_volume_sub").css('padding-left', '15px')          
 
           $(".compare_volume").css('grid-template-columns', '94px 1fr 1fr')
           $(".compare_volume").css('grid-column', 'span 2')          
@@ -1978,6 +2147,143 @@ function updateTable(region){
           }
         }
     })
+  }
+
+  function showFavorite(){
+    fav_html = ""    
+    if(price_fav.length == 0){
+      fav_html += "<div class='favNotice'>저장된 즐겨찾기가 없어요.<br><br>지역 이름 옆의 <i class='fa-solid fa-star'></i> 을 눌러<br>즐겨찾기를 추가해 주세요.</div>"
+    }
+    else{
+      for(i = 0 ; i < price_fav.length ; i++){
+        for(j = 0; j < (count_data.data).length ; j++){
+          searching_name = price_fav[i][1]
+          searching_name = searching_name.replace("lv1_", "")
+          searching_name = searching_name.replace("lv2_", "")
+          if(searching_name == count_data.data[j]['file_name']){
+            fav_deal_count = count_data.data[j]['deal_count_prev_month'] + count_data.data[j]['deal_count_this_month']
+            break;
+          }
+        }
+        region_name = ""
+        if(price_fav[i][0] == "lv2"){
+          region_name = price_fav[i][2] + " (" + fav_deal_count.toLocaleString() + ")"
+        }
+        else{
+          region_name = price_fav[i][2]
+        }
+
+        fav_html += "<div class='fav_list'>"
+          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + region_name + "</div>"
+          fav_html += "<div class='fav_remove' onClick='removeFav(" + i + ", \"" + price_fav[i][1] + "\", \"" + price_fav[i][2] + "\")''><i class='fa-solid fa-circle-minus'></i></div>"
+        fav_html += "</div>"
+      }
+    }
+    $("#favList").html(fav_html)
+    $("#favModal").modal("show")
+  }
+
+  function checkFav(){
+    for(var i = 0 ; i < price_fav.length ; i++){      
+      $("#" + price_fav[i][1]).css({'color':'#e31939'})
+    }
+  }
+
+  function gotoFav(level, region){
+    region_name = region.replace("lv1_", "")
+    region_name = region_name.replace("lv2_", "")
+
+    favURL = ""
+
+    if(level == "lv1"){
+      favURL = "https://www.realrankus.com/price/?preg=Korea&psub=" + region_name + "&pmon=latest_deal"
+    }
+    if(level == "lv2"){
+      fav_upper_region = ( region_name.split("_") )[1]
+      favURL = "https://www.realrankus.com/price/?preg=" + fav_upper_region + "&psub=" + region_name + "&pmon=latest_deal"
+    }    
+    window.location = favURL
+  }
+
+  function removeFav(index, regId, regName){
+    price_fav.splice(index, 1)   
+
+    fav_html = ""
+
+    if(price_fav.length == 0){
+      fav_html += "<div class='favNotice'>저장된 즐겨찾기가 없어요.<br><br>지역 이름 옆의 <i class='fa-solid fa-star'></i> 을 눌러<br>즐겨찾기를 추가해 주세요.</div>"
+    }
+    else{
+      for(i = 0 ; i < price_fav.length ; i++){
+        for(j = 0; j < (count_data.data).length ; j++){
+          searching_name = price_fav[i][1]
+          searching_name = searching_name.replace("lv1_", "")
+          searching_name = searching_name.replace("lv2_", "")
+          if(searching_name == count_data.data[j]['file_name']){
+            fav_deal_count = count_data.data[j]['deal_count_prev_month'] + count_data.data[j]['deal_count_this_month']
+            break;
+          }
+        }
+        region_name = ""
+        if(price_fav[i][0] == "lv2"){
+          region_name = price_fav[i][2] + " (" + fav_deal_count.toLocaleString() + ")"
+        }
+        else{
+          region_name = price_fav[i][2]
+        }
+
+        fav_html += "<div class='fav_list'>"
+          fav_html += "<div class='fav_region' onClick='gotoFav(\"" + price_fav[i][0] + "\", \"" + price_fav[i][1] + "\")'>" + region_name + "</div>"
+          fav_html += "<div class='fav_remove' onClick='removeFav(" + i + ", \"" + price_fav[i][1] + "\", \"" + price_fav[i][2] + "\")''><i class='fa-solid fa-circle-minus'></i></div>"
+        fav_html += "</div>"
+      }
+    }
+    $("#favList").html("")
+    $("#favList").html(fav_html)    
+    $("#" + regId).css({'color':'#ddd'})
+
+    output = "'" + regName + "' 즐겨찾기가 삭제되었어요."
+    toastr.success(output);
+
+    price_fav_json = JSON.stringify(price_fav)
+    localStorage.setItem("priceFav", price_fav_json);    
+  }
+
+  function addRemoveFav(level, regId, regName){
+    var i = 0    
+    if(price_fav.length == 0){
+      price_fav.push([level, regId, regName])
+      $("#" + regId).css({'color':'#e31939'})
+    }
+    else{
+      base_length = price_fav.length
+      for(i = 0 ; i < price_fav.length ; i++){
+        if(price_fav[i][1] == regId){          
+          $("#" + regId).css({'color':'#ddd'})
+          price_fav.splice(i, 1)
+          output = "'" + regName + "' 즐겨찾기가 삭제되었어요."
+          toastr.success(output);
+          break;
+        }
+      }
+      if(i == base_length){
+        if(price_fav.length == 5){
+          output = "즐겨찾기는 최대 5개까지 추가할 수 있어요."
+          toastr.info(output);          
+        }
+        else{        
+          price_fav.push([level, regId, regName])
+          output = "'" + regName + "' 즐겨찾기가 추가되었어요."
+          toastr.success(output);
+          $("#" + regId).css({'color':'#e31939'})
+        }
+      }
+    }
+
+    price_fav_json = JSON.stringify(price_fav)
+    localStorage.setItem("priceFav", price_fav_json);
+
+    checkFav()
   }
 
   function show_apt(month, filename, sido){
@@ -2021,13 +2327,18 @@ function updateTable(region){
   var pcDevice = "win16|win32|win64|mac|macintel"
 
   function openNaver(code){
-    nURL = "https://new.land.naver.com/complexes/" + code
-    if(checkMobile() == "ios"){
-      window.location.href = nURL
+    if(isMobile){        
+      nURL = "https://m.land.naver.com/complex/info/" + code;
     }
-    else{
-      window.open(nURL)
+    else{        
+      nURL = "https://new.land.naver.com/complexes/" + code;
     }
+    if (checkMobile() == "ios") {
+      window.location.href = nURL;
+    }
+    else {
+      window.open(nURL)       
+    } 
   }
 
   function openHGNN(code){
@@ -2127,7 +2438,7 @@ function updateTable(region){
     go_region = (code.split('_'))[1]
 
     if(selectedSubRegion == "1000000000_Korea"){
-      aURL = "https://www.realrankus.com/price" + "?preg=Korea&psub=" + code + "&pmon=" + selectedMonth + "#aptrank.kr"
+      aURL = "https://www.realrankus.com/price" + "?preg=Korea&psub=" + code + "&pmon=" + selectedMonth
       
       //selectedSubRegion = code      
       //$("#sido").val("Korea").prop("selected", true);
@@ -2135,7 +2446,7 @@ function updateTable(region){
       //updateRegion()
     }
     else{
-      aURL = "https://www.realrankus.com/price" + "?preg=" + go_region + "&psub=" + code + "#aptrank.kr"
+      aURL = "https://www.realrankus.com/price" + "?preg=" + go_region + "&psub=" + code + "&pmon=" + selectedMonth
       
       //selectedRegion = selectedSubRegion
       //$("#sido").val(go_region).prop("selected", true);
@@ -2147,10 +2458,19 @@ function updateTable(region){
     window.location = aURL
   }
 
+  var shareText_info = ""
+
   function rearrangeList(obj, count){
     selections = obj.id
 
+    shareText_info = shareURL + "\n\n"
+    shareText_info += "[리얼랭커스 앱 다운로드]\n"
+    shareText_info += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+    shareText_info += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n"
+
     if(selections == "rearrangeAll"){
+      shareText = shareText_all
+
       $(".hidden_saperator").hide()      
       if(itemNum < 80){
         $(".listBox").fadeIn(450)
@@ -2162,12 +2482,13 @@ function updateTable(region){
         $(".date_saperator").show()
         $(".date_saperator_web").show()
       }
-      //$(".listBox").show()
-      //$(".date_saperator").show()
-      
-      //$(".hidden_saperator").fadeOut(450)
     }
     else if(selections == "rearrangeHighest"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 신고가]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_highest
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2178,6 +2499,11 @@ function updateTable(region){
       $(".hidden_saperator").slideDown(450)
     }
     else if(selections == "rearrangeLowest"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 신저가]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_lowest
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2188,6 +2514,11 @@ function updateTable(region){
       $(".hidden_saperator").slideDown(450)
     }
     else if(selections == "rearrangeHigher"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 상승 거래]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_up
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2198,6 +2529,11 @@ function updateTable(region){
       $(".hidden_saperator").slideDown(450)
     }
     else if(selections == "rearrangeLower"){
+      shareText = "[" + regionName + " 오늘(" + today_short_str + ") 등록된 하락 거래]\n"
+      shareText += "(전체 " + count + "건)\n"
+      shareText += shareText_down
+      shareText += shareText_info
+
       $(".listBox").hide()
       $(".date_saperator").hide()
       $(".date_saperator_web").hide()
@@ -2206,7 +2542,7 @@ function updateTable(region){
       $(".lower").fadeIn(450)
       $(".hidden_saperator_text").html("#하락 " + count + "건")
       $(".hidden_saperator").slideDown(450)
-    }
+    }    
   }
 </script>
 </html>
