@@ -4696,6 +4696,7 @@ function openRadarMap(searchCode) {
           //데이터 저장해서 새창으로 보내기
           const dataToSend = {
             aptDataFull: complex_info,
+            loginStatus: login_status,
             regionCode: $("#gungu option:selected").val(),
           };
 

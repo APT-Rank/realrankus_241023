@@ -297,7 +297,9 @@
   var origin_x = 0
   var origin_y = 0
   var origin_yx
-  login_status = true
+  //login_status = true
+
+  console.log(login_status)
 
   function formatOptionDate(dateStr) {
     if (!dateStr || dateStr.length < 6) return dateStr;
@@ -327,7 +329,7 @@
 
     //데이터 불러오기
     if (raw) {
-      const { aptDataFull, regionCode } = JSON.parse(raw);
+      const { aptDataFull, loginStatus, regionCode } = JSON.parse(raw);
       const loc_y = aptDataFull["Y"];
       const loc_x = aptDataFull["X"];
 
@@ -336,6 +338,7 @@
 
       apt_name = aptDataFull["아파트명"]
       selectedSubRegion = regionCode
+      login_status = loginStatus
 
       changeMetaTag(aptDataFull["아파트명"], aptDataFull["법정동주소"], aptDataFull["rank"].toFixed(), aptDataFull["법정동주소"], "", Math.round(aptDataFull["가치 총점"] * 100) / 100);
       showDetail(aptDataFull)

@@ -147,7 +147,8 @@ function loadRadarMap(center_x, center_y, aptData){
   
   drawCircleOnMap(aptData)
   createAPTMarker(aptData)
-  if (isNaN(transportScore) == false) {
+  
+  if (aptData["역세권여부"] != undefined && aptData["역세권여부"] != ""){
     createMetroMarker(aptData)
   }  
   createInfraMarker(aptData)
@@ -726,7 +727,7 @@ function createAPTMarker(markers){
   //naver.maps.Event.addListener(radar_apt_marker, 'mouseover', showUpInfo(radar_apt_marker));
 }
 
-function createMetroMarker(aptData){  
+function createMetroMarker(aptData){
     coordi_x = aptData["역지점좌표"][1]
     coordi_y = aptData["역지점좌표"][0]
     metro_name = aptData["가까운역이름"]

@@ -676,7 +676,7 @@ function setLogoutStatus(needRedirect = false) {
 	localStorage.removeItem('nLOG');
 	localStorage.removeItem('profile');
 
-	login_status = false;
+	login_status = true;
 
 	// Firebase Auth 로그아웃 실행
 	firebase.auth().signOut().then(() => {
