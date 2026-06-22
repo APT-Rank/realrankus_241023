@@ -63,8 +63,6 @@ function showSearchBar(){
 
   function aptSearch(){
     $('#dataList').html("");
-    console.log(minValue/2*10000)
-    console.log(maxValue/2*10000) 
     input = $('#inputSearch').val()
 
     //광고정보 표시영역
