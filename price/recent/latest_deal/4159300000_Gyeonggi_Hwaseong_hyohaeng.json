@@ -7,7 +7,7 @@
             },
             {
                 "name":"동",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"아파트",
@@ -35,11 +35,11 @@
             },
             {
                 "name":"해제사유발생일",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"해제여부",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"거래금액",
@@ -87,7 +87,7 @@
             },
             {
                 "name":"등기일자",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"도로명",
@@ -183,7 +183,7 @@
             },
             {
                 "name":"usingArea",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"type",
@@ -193,7 +193,7 @@
         "primaryKey":[
             "index"
         ],
-        "pandas_version":"0.20.0"
+        "pandas_version":"1.4.0"
     },
     "data":[
         {
