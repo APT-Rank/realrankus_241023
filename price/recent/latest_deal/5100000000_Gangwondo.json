@@ -39,15 +39,15 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -63,7 +63,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -111,7 +111,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -179,14 +179,6 @@
             },
             {
                 "name":"type",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
                 "type":"string"
             }
         ],
@@ -1728,9 +1720,7 @@
             "rank_info":"[np.float64(151.0), np.float64(62.0), np.float64(24.478123850000003)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce062",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":1,
@@ -1971,9 +1961,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.7652983:128.8891718:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":2,
@@ -2307,9 +2295,7 @@
             "rank_info":"[np.float64(151.0), np.float64(76.0), np.float64(20.28260445)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce076",
             "usingArea":87.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":3,
@@ -2550,9 +2536,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.8387315:128.8727734:17:\/APT\/A1",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":4,
@@ -2799,9 +2783,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.8387315:128.8727734:17:\/APT\/A1",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":5,
@@ -3042,9 +3024,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.8387315:128.8727734:17:\/APT\/A1",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":6,
@@ -3768,9 +3748,7 @@
             "rank_info":"[np.float64(151.0), np.float64(146.0), np.float64(8.04694555)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce147",
             "usingArea":72.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":7,
@@ -4494,9 +4472,7 @@
             "rank_info":"[np.float64(151.0), np.float64(146.0), np.float64(8.04694555)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce147",
             "usingArea":72.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":8,
@@ -5220,9 +5196,7 @@
             "rank_info":"[np.float64(151.0), np.float64(146.0), np.float64(8.04694555)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce147",
             "usingArea":72.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":9,
@@ -6453,9 +6427,7 @@
             "rank_info":"[np.float64(151.0), np.float64(32.0), np.float64(40.56309733333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce032",
             "usingArea":74.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":10,
@@ -7086,9 +7058,7 @@
             "rank_info":"[np.float64(151.0), np.float64(104.0), np.float64(17.274507693074135)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce104",
             "usingArea":75.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":11,
@@ -7368,9 +7338,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.878039:128.823857:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":12,
@@ -7821,9 +7789,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.7528407:128.8674622:17:\/APT\/A1",
             "usingArea":70.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":13,
@@ -8451,9 +8417,7 @@
             "rank_info":"[np.float64(151.0), np.float64(20.0), np.float64(45.374115272904895)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwgnce020",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":14,
@@ -8694,9 +8658,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/38.2714771:128.5517158:17:\/APT\/A1",
             "usingArea":null,
-            "type":"BYG",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"BYG"
         },
         {
             "index":15,
@@ -8967,9 +8929,7 @@
             "rank_info":"[np.float64(72.0), np.float64(57.0), np.float64(28.459420969197428)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwdhce056",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":16,
@@ -9282,9 +9242,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.536571:129.105234:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":17,
@@ -9972,9 +9930,7 @@
             "rank_info":"[72.0, 4.0, 46.71842994472222]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwdhce003",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":18,
@@ -10284,9 +10240,7 @@
             "rank_info":"[72.0, 50.0, 29.38417128601641]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwdhce049",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":19,
@@ -11391,9 +11345,7 @@
             "rank_info":"[np.float64(72.0), np.float64(36.0), np.float64(31.90691863882953)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwdhce035",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":20,
@@ -11997,9 +11949,7 @@
             "rank_info":"[np.float64(72.0), np.float64(23.0), np.float64(40.0416130425)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwdhce022",
             "usingArea":74.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":21,
@@ -12399,9 +12349,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.524391:129.1128279:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":22,
@@ -12729,9 +12677,7 @@
             "rank_info":"[np.float64(72.0), np.float64(1.0), np.float64(51.88684817972223)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwdhce000",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":23,
@@ -13242,9 +13188,7 @@
             "rank_info":"[np.float64(33.0), np.float64(3.0), np.float64(54.80799452179807)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwsace002",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":24,
@@ -14574,9 +14518,7 @@
             "rank_info":"[np.float64(33.0), np.float64(11.0), np.float64(23.4670544051271)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwsace010",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":25,
@@ -14982,9 +14924,7 @@
             "rank_info":"[np.float64(81.0), np.float64(77.0), np.float64(9.54236422)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwscce078",
             "usingArea":89.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":26,
@@ -15672,9 +15612,7 @@
             "rank_info":"[np.float64(81.0), np.float64(8.0), np.float64(31.88759193702211)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwscce007",
             "usingArea":70.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":27,
@@ -15942,9 +15880,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/38.205288:128.59259:17:\/APT\/A1",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":28,
@@ -16194,9 +16130,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/38.205288:128.59259:17:\/APT\/A1",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":29,
@@ -16506,9 +16440,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/38.205288:128.59259:17:\/APT\/A1",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":30,
@@ -17082,9 +17014,7 @@
             "rank_info":"[21.0, 21.0, 3.706720033333334]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce020",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":31,
@@ -17709,9 +17639,7 @@
             "rank_info":"[21.0, 3.0, 62.60516003333333]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce002",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":32,
@@ -18453,9 +18381,7 @@
             "rank_info":"[21.0, 10.0, 23.09873603333333]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce009",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":33,
@@ -18909,9 +18835,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/38.0055623:128.727821:17:\/APT\/A1",
             "usingArea":62.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":34,
@@ -19458,9 +19382,7 @@
             "rank_info":"[21.0, 19.0, 5.202915633333333]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce018",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":35,
@@ -20091,9 +20013,7 @@
             "rank_info":"[np.float64(15.0), np.float64(8.0), np.float64(14.9680904)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwywce007",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":36,
@@ -20385,9 +20305,7 @@
             "rank_info":"[np.float64(232.0), np.float64(130.0), np.float64(23.44099647385544)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce129",
             "usingArea":72.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":37,
@@ -22062,9 +21980,7 @@
             "rank_info":"[np.float64(232.0), np.float64(35.0), np.float64(60.197007223116806)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce034",
             "usingArea":79.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":38,
@@ -22494,9 +22410,7 @@
             "rank_info":"[np.float64(232.0), np.float64(40.0), np.float64(57.96917484229135)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce039",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":39,
@@ -24171,9 +24085,7 @@
             "rank_info":"[np.float64(232.0), np.float64(35.0), np.float64(60.197007223116806)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce034",
             "usingArea":79.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":40,
@@ -26568,9 +26480,7 @@
             "rank_info":"[np.float64(232.0), np.float64(26.0), np.float64(67.3208554511287)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce025",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":41,
@@ -26835,9 +26745,7 @@
             "rank_info":"[np.float64(232.0), np.float64(185.0), np.float64(17.318444432308013)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce185",
             "usingArea":100.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":42,
@@ -28134,9 +28042,7 @@
             "rank_info":"[np.float64(232.0), np.float64(71.0), np.float64(45.06664993383394)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce070",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":43,
@@ -29751,9 +29657,7 @@
             "rank_info":"[np.float64(232.0), np.float64(64.0), np.float64(51.11503244767352)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce063",
             "usingArea":74.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":44,
@@ -30183,9 +30087,7 @@
             "rank_info":"[np.float64(232.0), np.float64(201.0), np.float64(14.54560305899444)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce201",
             "usingArea":71.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":45,
@@ -30639,9 +30541,7 @@
             "rank_info":"[np.float64(232.0), np.float64(61.0), np.float64(51.64871486310068)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce060",
             "usingArea":79.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":46,
@@ -30882,9 +30782,7 @@
             "rank_info":"[np.float64(232.0), np.float64(3.0), np.float64(82.80023479973728)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce002",
             "usingArea":75.0,
-            "type":"BYG",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"BYG"
         },
         {
             "index":47,
@@ -31641,9 +31539,7 @@
             "rank_info":"[np.float64(232.0), np.float64(72.0), np.float64(44.60253381624675)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce071",
             "usingArea":88.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":48,
@@ -32394,9 +32290,7 @@
             "rank_info":"[np.float64(232.0), np.float64(214.0), np.float64(10.995671452615309)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce214",
             "usingArea":69.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":49,
@@ -33102,9 +32996,7 @@
             "rank_info":"[np.float64(232.0), np.float64(230.0), np.float64(4.070066473855441)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwwjce231",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":50,
@@ -33393,9 +33285,7 @@
             "rank_info":"[np.float64(14.0), np.float64(6.0), np.float64(18.013430547430634)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsce005",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":51,
@@ -33789,9 +33679,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2259788:128.7995381:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":52,
@@ -34281,9 +34169,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.2252438:128.7999909:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":53,
@@ -34740,9 +34626,7 @@
             "rank_info":"[14.0, 9.0, 16.8338907175]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsce008",
             "usingArea":76.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":54,
@@ -34983,9 +34867,7 @@
             "rank_info":"[14.0, 2.0, 38.85646033277778]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsce001",
             "usingArea":74.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":55,
@@ -35226,9 +35108,7 @@
             "rank_info":"[14.0, 2.0, 38.85646033277778]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwjsce001",
             "usingArea":74.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":56,
@@ -35538,9 +35418,7 @@
             "rank_info":"[11.0, 4.0, 38.7318619788018]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwcwce003",
             "usingArea":77.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":57,
@@ -36591,9 +36469,7 @@
             "rank_info":"['', '', '']",
             "sURL":"https:\/\/m.land.naver.com\/map\/37.8542294:127.753455:17:\/APT\/A1",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":58,
@@ -37599,9 +37475,7 @@
             "rank_info":"[np.float64(149.0), np.float64(38.0), np.float64(44.74467654386001)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce037",
             "usingArea":76.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":59,
@@ -37842,9 +37716,7 @@
             "rank_info":"[np.float64(149.0), np.float64(2.0), np.float64(79.41601782803141)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce001",
             "usingArea":74.0,
-            "type":"BYG",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"BYG"
         },
         {
             "index":60,
@@ -38085,9 +37957,7 @@
             "rank_info":"[np.float64(149.0), np.float64(2.0), np.float64(79.41601782803141)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce001",
             "usingArea":74.0,
-            "type":"BYG",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"BYG"
         },
         {
             "index":61,
@@ -41019,9 +40889,7 @@
             "rank_info":"[np.float64(149.0), np.float64(47.0), np.float64(39.29191224747585)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce046",
             "usingArea":76.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":62,
@@ -42009,9 +41877,7 @@
             "rank_info":"[np.float64(149.0), np.float64(60.0), np.float64(35.1386724669203)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce059",
             "usingArea":68.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":63,
@@ -43161,9 +43027,7 @@
             "rank_info":"[np.float64(149.0), np.float64(5.0), np.float64(74.7700742694103)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce004",
             "usingArea":75.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":64,
@@ -45129,9 +44993,7 @@
             "rank_info":"[np.float64(149.0), np.float64(56.0), np.float64(36.555808848930816)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce055",
             "usingArea":75.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":65,
@@ -45660,9 +45522,7 @@
             "rank_info":"[np.float64(149.0), np.float64(30.0), np.float64(52.65444083271615)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce029",
             "usingArea":76.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":66,
@@ -46530,9 +46390,7 @@
             "rank_info":"[np.float64(149.0), np.float64(126.0), np.float64(18.77946495725952)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce125",
             "usingArea":82.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":67,
@@ -47400,9 +47258,7 @@
             "rank_info":"[np.float64(149.0), np.float64(126.0), np.float64(18.77946495725952)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwccce125",
             "usingArea":82.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":68,
@@ -47715,9 +47571,7 @@
             "rank_info":"[np.float64(32.0), np.float64(9.0), np.float64(29.885659723611116)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbce008",
             "usingArea":80.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":69,
@@ -48480,9 +48334,7 @@
             "rank_info":"[32.0, 3.0, 42.53042216666458]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwtbce002",
             "usingArea":69.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":70,
@@ -50997,9 +50849,7 @@
             "rank_info":"[np.float64(22.0), np.float64(12.0), np.float64(24.4152703975)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwpcce011",
             "usingArea":null,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":71,
@@ -51867,9 +51717,7 @@
             "rank_info":"[22.0, 8.0, 30.67673598103484]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwpcce007",
             "usingArea":76.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":72,
@@ -52110,9 +51958,7 @@
             "rank_info":"[24.0, 3.0, 53.69990613333333]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhcce002",
             "usingArea":76.0,
-            "type":"BYG",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"BYG"
         },
         {
             "index":73,
@@ -53022,9 +52868,7 @@
             "rank_info":"[24.0, 7.0, 42.077574894308086]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhcce006",
             "usingArea":73.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":74,
@@ -54231,9 +54075,7 @@
             "rank_info":"[24.0, 18.0, 12.331307666666666]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhcce017",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":75,
@@ -55029,9 +54871,7 @@
             "rank_info":"[24.0, 13.0, 19.124813666666668]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhcce012",
             "usingArea":78.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":76,
@@ -55272,9 +55112,7 @@
             "rank_info":"[16.0, 3.0, 33.97703786797389]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhsce002",
             "usingArea":74.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         },
         {
             "index":77,
@@ -55848,9 +55686,7 @@
             "rank_info":"[16.0, 1.0, 36.98456822807764]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwhsce000",
             "usingArea":75.0,
-            "type":"TRADE",
-            "해제사유발생일":null,
-            "해제여부":null
+            "type":"TRADE"
         }
     ]
 }
