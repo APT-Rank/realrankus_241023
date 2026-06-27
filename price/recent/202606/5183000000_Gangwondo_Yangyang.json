@@ -71,7 +71,7 @@
             },
             {
                 "name":"등기일자",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"지역코드",
@@ -145,7 +145,7 @@
         "primaryKey":[
             "index"
         ],
-        "pandas_version":"0.20.0"
+        "pandas_version":"1.4.0"
     },
     "data":[
         {
@@ -1040,7 +1040,7 @@
             "code":119904,
             "y":38.080531,
             "x":128.612354,
-            "rank_info":"[21.0, 3.0, 62.60516003333333]",
+            "rank_info":"[np.float64(21.0), np.float64(3.0), np.float64(62.60516003333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce002",
             "usingArea":77.0,
             "type":"TRADE"
@@ -1655,7 +1655,7 @@
             "code":119904,
             "y":38.080531,
             "x":128.612354,
-            "rank_info":"[21.0, 3.0, 62.60516003333333]",
+            "rank_info":"[np.float64(21.0), np.float64(3.0), np.float64(62.60516003333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce002",
             "usingArea":77.0,
             "type":"TRADE"
@@ -2057,7 +2057,7 @@
             "code":119904,
             "y":38.080531,
             "x":128.612354,
-            "rank_info":"[21.0, 3.0, 62.60516003333333]",
+            "rank_info":"[np.float64(21.0), np.float64(3.0), np.float64(62.60516003333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce002",
             "usingArea":77.0,
             "type":"TRADE"
@@ -2459,7 +2459,7 @@
             "code":119904,
             "y":38.080531,
             "x":128.612354,
-            "rank_info":"[21.0, 3.0, 62.60516003333333]",
+            "rank_info":"[np.float64(21.0), np.float64(3.0), np.float64(62.60516003333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce002",
             "usingArea":77.0,
             "type":"TRADE"
@@ -3122,7 +3122,7 @@
             "code":115440,
             "y":38.079014,
             "x":128.612303,
-            "rank_info":"[21.0, 6.0, 56.55489536666666]",
+            "rank_info":"[np.float64(21.0), np.float64(6.0), np.float64(56.55489536666666)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce005",
             "usingArea":72.0,
             "type":"TRADE"
@@ -3854,7 +3854,7 @@
             "code":19558,
             "y":38.074906,
             "x":128.612038,
-            "rank_info":"[21.0, 10.0, 23.09873603333333]",
+            "rank_info":"[np.float64(21.0), np.float64(10.0), np.float64(23.09873603333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce009",
             "usingArea":77.0,
             "type":"TRADE"
@@ -4586,14 +4586,14 @@
             "code":19558,
             "y":38.074906,
             "x":128.612038,
-            "rank_info":"[21.0, 10.0, 23.09873603333333]",
+            "rank_info":"[np.float64(21.0), np.float64(10.0), np.float64(23.09873603333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce009",
             "usingArea":77.0,
             "type":"TRADE"
         },
         {
             "index":8,
-            "동":null,
+            "동":106.0,
             "아파트":"명지푸르미",
             "건축년도":2002,
             "매수자":"개인",
@@ -4609,7 +4609,7 @@
             "층":13,
             "지번":"449-1",
             "아파트여부":"N",
-            "등기일자":null,
+            "등기일자":"26.06.23",
             "지역코드":51830,
             "매도자":"개인",
             "법정동":"양양읍 월리",
@@ -5501,7 +5501,7 @@
             "code":15826,
             "y":38.063215,
             "x":128.616579,
-            "rank_info":"[21.0, 16.0, 13.839466033333334]",
+            "rank_info":"[np.float64(21.0), np.float64(16.0), np.float64(13.839466033333334)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce015",
             "usingArea":null,
             "type":"TRADE"
@@ -5975,7 +5975,7 @@
             "code":26069,
             "y":38.028698,
             "x":128.707801,
-            "rank_info":"[21.0, 19.0, 5.202915633333333]",
+            "rank_info":"[np.float64(21.0), np.float64(19.0), np.float64(5.202915633333333)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=gwyyce018",
             "usingArea":null,
             "type":"TRADE"

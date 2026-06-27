@@ -6,27 +6,15 @@
                 "type":"integer"
             },
             {
-                "name":"동",
-                "type":"string"
-            },
-            {
                 "name":"아파트",
                 "type":"string"
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
                 "type":"string"
             },
             {
@@ -35,23 +23,19 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
                 "type":"string"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"number"
             },
             {
                 "name":"전용면적",
@@ -59,7 +43,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -70,12 +54,8 @@
                 "type":"string"
             },
             {
-                "name":"등기일자",
-                "type":"string"
-            },
-            {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -134,10 +114,6 @@
                 "type":"string"
             },
             {
-                "name":"usingArea",
-                "type":"string"
-            },
-            {
                 "name":"type",
                 "type":"string"
             }
@@ -150,23 +126,18 @@
     "data":[
         {
             "index":0,
-            "동":null,
             "아파트":"우산주공",
             "건축년도":1999,
             "매수자":"개인",
-            "해제사유발생일":null,
-            "해제여부":null,
             "거래금액":"9,650",
             "일":24,
             "월":6,
             "년":2026,
             "거래유형":"직거래",
-            "중개사소재지":null,
             "전용면적":49.85,
             "층":15,
             "지번":"631-1",
             "아파트여부":"N",
-            "등기일자":null,
             "지역코드":46780,
             "매도자":"개인",
             "법정동":"보성읍 우산리",
@@ -988,7 +959,6 @@
             "x":127.0878,
             "rank_info":"[8.0, 8.0, 12.758498333333334]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnbsce007",
-            "usingArea":null,
             "type":"TRADE"
         }
     ]

@@ -23,11 +23,11 @@
             },
             {
                 "name":"해제사유발생일",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"해제여부",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"거래금액",
@@ -145,7 +145,7 @@
         "primaryKey":[
             "index"
         ],
-        "pandas_version":"0.20.0"
+        "pandas_version":"1.4.0"
     },
     "data":[
         {
@@ -500,7 +500,7 @@
             "code":27444.0,
             "y":37.927179,
             "x":127.053217,
-            "rank_info":"[57.0, 21.0, 47.2410043681437]",
+            "rank_info":"[np.float64(57.0), np.float64(21.0), np.float64(47.2410043681437)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce020",
             "usingArea":75.0,
             "type":"TRADE"
@@ -986,14 +986,14 @@
             "code":27444.0,
             "y":37.927179,
             "x":127.053217,
-            "rank_info":"[57.0, 21.0, 47.2410043681437]",
+            "rank_info":"[np.float64(57.0), np.float64(21.0), np.float64(47.2410043681437)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce020",
             "usingArea":75.0,
             "type":"TRADE"
         },
         {
             "index":2,
-            "동":null,
+            "동":103.0,
             "아파트":"상패주공",
             "건축년도":1997,
             "매수자":"개인",
@@ -1009,7 +1009,7 @@
             "층":11,
             "지번":"61",
             "아파트여부":"N",
-            "등기일자":null,
+            "등기일자":"26.06.24",
             "지역코드":41250,
             "매도자":"개인",
             "법정동":"상패동",
@@ -1412,7 +1412,7 @@
             "code":11881.0,
             "y":37.904799,
             "x":127.047784,
-            "rank_info":"[57.0, 41.0, 30.78046221728429]",
+            "rank_info":"[np.float64(57.0), np.float64(41.0), np.float64(30.78046221728429)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce040",
             "usingArea":73.0,
             "type":"TRADE"
@@ -1895,7 +1895,7 @@
             "code":11881.0,
             "y":37.904799,
             "x":127.047784,
-            "rank_info":"[57.0, 41.0, 30.78046221728429]",
+            "rank_info":"[np.float64(57.0), np.float64(41.0), np.float64(30.78046221728429)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce040",
             "usingArea":73.0,
             "type":"TRADE"
@@ -2261,7 +2261,7 @@
             "code":15931.0,
             "y":37.898052,
             "x":127.061344,
-            "rank_info":"[57.0, 45.0, 30.079591453398024]",
+            "rank_info":"[np.float64(57.0), np.float64(45.0), np.float64(30.079591453398024)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce044",
             "usingArea":null,
             "type":"TRADE"
@@ -2272,8 +2272,8 @@
             "아파트":"중앙역아파트제1동",
             "건축년도":2025,
             "매수자":"개인",
-            "해제사유발생일":null,
-            "해제여부":null,
+            "해제사유발생일":"26.06.24",
+            "해제여부":"O",
             "거래금액":"25,000",
             "일":6,
             "월":5,
@@ -2945,7 +2945,7 @@
             "code":14067.0,
             "y":37.891253,
             "x":127.049493,
-            "rank_info":"[57.0, 1.0, 66.64054159376695]",
+            "rank_info":"[np.float64(57.0), np.float64(1.0), np.float64(66.64054159376695)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce000",
             "usingArea":null,
             "type":"TRADE"
@@ -3494,7 +3494,7 @@
             "code":14067.0,
             "y":37.891253,
             "x":127.049493,
-            "rank_info":"[57.0, 1.0, 66.64054159376695]",
+            "rank_info":"[np.float64(57.0), np.float64(1.0), np.float64(66.64054159376695)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce000",
             "usingArea":null,
             "type":"TRADE"
@@ -3947,7 +3947,7 @@
             "code":14065.0,
             "y":37.895104,
             "x":127.04991,
-            "rank_info":"[57.0, 16.0, 48.82353247733334]",
+            "rank_info":"[np.float64(57.0), np.float64(16.0), np.float64(48.82353247733334)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce015",
             "usingArea":null,
             "type":"TRADE"
@@ -5483,7 +5483,7 @@
             "code":14067.0,
             "y":37.891253,
             "x":127.049493,
-            "rank_info":"[57.0, 1.0, 66.64054159376695]",
+            "rank_info":"[np.float64(57.0), np.float64(1.0), np.float64(66.64054159376695)]",
             "sURL":"https:\/\/www.realrankus.com?cpx=ggddce000",
             "usingArea":null,
             "type":"TRADE"

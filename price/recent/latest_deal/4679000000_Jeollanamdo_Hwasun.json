@@ -6,27 +6,15 @@
                 "type":"integer"
             },
             {
-                "name":"동",
-                "type":"string"
-            },
-            {
                 "name":"아파트",
                 "type":"string"
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
                 "type":"string"
             },
             {
@@ -35,15 +23,15 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -59,7 +47,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -70,12 +58,8 @@
                 "type":"string"
             },
             {
-                "name":"등기일자",
-                "type":"string"
-            },
-            {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -115,7 +99,7 @@
             },
             {
                 "name":"code",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"y",
@@ -140,26 +124,6 @@
             {
                 "name":"type",
                 "type":"string"
-            },
-            {
-                "name":"NO",
-                "type":"string"
-            },
-            {
-                "name":"시군구",
-                "type":"string"
-            },
-            {
-                "name":"법정동본번코드",
-                "type":"string"
-            },
-            {
-                "name":"법정동부번코드",
-                "type":"string"
-            },
-            {
-                "name":"도로명",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -170,12 +134,9 @@
     "data":[
         {
             "index":0,
-            "동":null,
             "아파트":"미륭",
             "건축년도":1992,
             "매수자":"법인",
-            "해제사유발생일":null,
-            "해제여부":null,
             "거래금액":"12,500",
             "일":8,
             "월":6,
@@ -186,7 +147,6 @@
             "층":3,
             "지번":"321",
             "아파트여부":"N",
-            "등기일자":null,
             "지역코드":46790,
             "매도자":"개인",
             "법정동":"화순읍 광덕리",
@@ -637,21 +597,13 @@
             "rank_info":"[28.0, 15.0, 41.24346291539491]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhsce014",
             "usingArea":82.0,
-            "type":"TRADE",
-            "NO":null,
-            "시군구":null,
-            "법정동본번코드":null,
-            "법정동부번코드":null,
-            "도로명":null
+            "type":"TRADE"
         },
         {
             "index":1,
-            "동":null,
             "아파트":"한국아델리움",
             "건축년도":2002,
             "매수자":"개인",
-            "해제사유발생일":null,
-            "해제여부":null,
             "거래금액":"20,000",
             "일":9,
             "월":6,
@@ -662,7 +614,6 @@
             "층":7,
             "지번":"37-8",
             "아파트여부":"N",
-            "등기일자":null,
             "지역코드":46790,
             "매도자":"개인",
             "법정동":"화순읍 대리",
@@ -1587,12 +1538,7 @@
             "rank_info":"[28.0, 14.0, 41.33516693333333]",
             "sURL":"https:\/\/www.realrankus.com?cpx=jnhsce013",
             "usingArea":null,
-            "type":"TRADE",
-            "NO":null,
-            "시군구":null,
-            "법정동본번코드":null,
-            "법정동부번코드":null,
-            "도로명":null
+            "type":"TRADE"
         }
     ]
 }
