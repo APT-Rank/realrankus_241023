@@ -1,5 +1,6 @@
-cd\
-cd Users\anito\APT-Rank_Git
+@echo off
+set GIT_TERMINAL_PROMPT=0
+cd /d C:\Users\anito\APT-Rank_Git
 git config --global core.autocrlf true
 git config --global credential.helper manager-core
 git add *
