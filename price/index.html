@@ -835,8 +835,8 @@
     })
 
     if (regData == undefined || regData == "") {
-      //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-      url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      //url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
       $.getJSON(url, function (json) {
         regData = json;
         regSortData = regData;
@@ -897,8 +897,8 @@
       shareText_all = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
     }
 
-    //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
-    url = "./recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    //url = "./recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
     $.getJSON(url, function (json) {
       aptData = json;
       //sortData = json;
