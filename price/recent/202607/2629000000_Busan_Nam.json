@@ -7,7 +7,7 @@
             },
             {
                 "name":"동",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"아파트",
@@ -27,7 +27,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"매수자",
@@ -35,11 +35,11 @@
             },
             {
                 "name":"해제사유발생일",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"해제여부",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"거래금액",
@@ -47,15 +47,15 @@
             },
             {
                 "name":"일",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"월",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"년",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"거래유형",
@@ -71,7 +71,7 @@
             },
             {
                 "name":"층",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"지번",
@@ -87,7 +87,7 @@
             },
             {
                 "name":"등기일자",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"도로명",
@@ -119,7 +119,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"매도자",
@@ -163,7 +163,7 @@
             },
             {
                 "name":"code",
-                "type":"number"
+                "type":"string"
             },
             {
                 "name":"y",
@@ -183,7 +183,7 @@
             },
             {
                 "name":"usingArea",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"type",
@@ -452,7 +452,7 @@
             "일련번호":"26290-2316",
             "법정동본번코드":976.0,
             "법정동부번코드":0.0,
-            "건축년도":2013.0,
+            "건축년도":2013,
             "매수자":"개인",
             "해제사유발생일":null,
             "해제여부":null,
@@ -1330,7 +1330,7 @@
                 "2019-08-16",
                 "21700"
             ],
-            "code":104246.0,
+            "code":104246,
             "y":35.111666,
             "x":129.109676,
             "rank_info":[
