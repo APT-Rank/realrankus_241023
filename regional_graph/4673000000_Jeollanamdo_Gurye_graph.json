@@ -6,12 +6,12 @@
     "dongs": {
         "구례읍": {
             "summary_metrics": {
-                "r_simple": 0.4309735308423705,
-                "r_multi": 0.9960328053864406,
+                "r_simple": 0.3949348446470352,
+                "r_multi": 0.9960043746299481,
                 "r_squared": "99.2%",
-                "price_per_gli_point": 1.1870907599834422,
-                "std_error": 152.51782102939828,
-                "remarks": ""
+                "price_per_gli_point": 2.2411563550070954,
+                "std_error": 154.41129447751618,
+                "remarks": "통계 유의성 부족"
             },
             "chart_boundaries": {
                 "min_gli": 18.2824382541,
@@ -19,41 +19,41 @@
                 "simple_trendline": [
                     {
                         "gli": 18.2824382541,
-                        "price": 525.203261903864
+                        "price": 539.239729011837
                     },
                     {
                         "gli": 36.9140431994,
-                        "price": 781.5173533248337
+                        "price": 772.8549281348767
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 18.2824382541,
-                        "price": 704.5341682990224
+                        "price": 662.8113200387044
                     },
                     {
                         "gli": 36.9140431994,
-                        "price": 682.4167622247951
+                        "price": 704.567659865845
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 18.2824382541,
-                        "price": 780.7930788137215
+                        "price": 740.0169672774624
                     },
                     {
                         "gli": 36.9140431994,
-                        "price": 758.6756727394942
+                        "price": 781.7733071046031
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 18.2824382541,
-                        "price": 628.2752577843233
+                        "price": 585.6056727999463
                     },
                     {
                         "gli": 36.9140431994,
-                        "price": 606.157851710096
+                        "price": 627.362012627087
                     }
                 ]
             },
@@ -77,7 +77,7 @@
                 {
                     "complex_name": "명지",
                     "gli_score": 18.2824382541,
-                    "price_per_pyung": 551.5,
+                    "price_per_pyung": 569.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
                     "household_count": 296
@@ -85,7 +85,7 @@
                 {
                     "complex_name": "섬지뜰",
                     "gli_score": 36.9140431994,
-                    "price_per_pyung": 515.0,
+                    "price_per_pyung": 500.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 15,
                     "household_count": 83
@@ -93,7 +93,7 @@
                 {
                     "complex_name": "월드메르디앙(주상복합)",
                     "gli_score": 32.2391050694,
-                    "price_per_pyung": 1011.4,
+                    "price_per_pyung": 1005.4,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 264
