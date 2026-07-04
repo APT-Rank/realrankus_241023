@@ -552,8 +552,6 @@
         PIR_ago1 = Object.values(PIR_list[PIR_key_list[1]])
         PIR_ago2 = Object.values(PIR_list[PIR_key_list[0]])
 
-        console.log("PIR_locations: ", PIR_locations)
-
         found_index = PIR_locations.indexOf(loc)
 
         $('#PIR_ago2_value').html(PIR_ago2[found_index].toFixed(2))
@@ -871,6 +869,9 @@ function region_coloring(regionData){
 
   pointed_region = selectedSubRegion + "z"
   pointed_text = "txt_" + selectedSubRegion + "z"
+
+  console.log("요청한 ID:", selectedSubRegion);
+console.log("실제 DOM 존재 여부:", document.getElementById(selectedSubRegion));
   
   for (i = 0 ; i < search_array.length ; i++){    
       searching_region = search_array[i][1]
@@ -1999,8 +2000,6 @@ function ListUp(listData){
           //매매, 전세가격지수
           var regName = $('#sido option:selected').text() + " " + $('#gungu option:selected').text()
           regName = regName.replace(" 전체", "")
-
-          console.log("regName : " + regName)
 
           if(rateExist.includes(regName)){
               addon_html += "<div class='subRegion_info2' style='grid-column: 2 / span 2;'>"
