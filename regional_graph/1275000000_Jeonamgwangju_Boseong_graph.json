@@ -1,0 +1,184 @@
+{
+    "region_code": "1275000000",
+    "region_name": "Jeonamgwangju_Boseong",
+    "region_key": "1275000000_Jeonamgwangju_Boseong",
+    "supply_score": 50.0,
+    "dongs": {
+        "보성읍": {
+            "summary_metrics": {
+                "r_simple": 0.9798233990626413,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 833.5149228075682,
+                "std_error": 52.167813536995865,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 12.7584983333,
+                "max_gli": 32.7802109614,
+                "simple_trendline": [
+                    {
+                        "gli": 12.7584983333,
+                        "price": 475.823291819067
+                    },
+                    {
+                        "gli": 32.7802109614,
+                        "price": 736.7826177980809
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 12.7584983333,
+                        "price": 8756.270500122082
+                    },
+                    {
+                        "gli": 32.7802109614,
+                        "price": -7932.125755564011
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 12.7584983333,
+                        "price": 8782.35440689058
+                    },
+                    {
+                        "gli": 32.7802109614,
+                        "price": -7906.041848795513
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 12.7584983333,
+                        "price": 8730.186593353585
+                    },
+                    {
+                        "gli": 32.7802109614,
+                        "price": -7958.20966233251
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "보성센트럴뷰(주상복합)",
+                    "gli_score": 32.7802109614,
+                    "price_per_pyung": 764.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 167
+                },
+                {
+                    "complex_name": "보성장미힐",
+                    "gli_score": 15.93129,
+                    "price_per_pyung": 521.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 298
+                },
+                {
+                    "complex_name": "성암해그린",
+                    "gli_score": 28.6896666667,
+                    "price_per_pyung": 648.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 13,
+                    "household_count": 175
+                },
+                {
+                    "complex_name": "우산주공",
+                    "gli_score": 12.7584983333,
+                    "price_per_pyung": 479.75,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 27,
+                    "household_count": 505
+                }
+            ]
+        },
+        "벌교읍": {
+            "summary_metrics": {
+                "r_simple": -0.5256295538273839,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 54.8191079823866,
+                "std_error": 12.242587761663822,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 13.809445,
+                "max_gli": 21.200112282,
+                "simple_trendline": [
+                    {
+                        "gli": 13.809445,
+                        "price": 371.2722783763983
+                    },
+                    {
+                        "gli": 21.200112282,
+                        "price": 310.21646351225775
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 13.809445,
+                        "price": 528.9633987001365
+                    },
+                    {
+                        "gli": 21.200112282,
+                        "price": 123.8136109062869
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 13.809445,
+                        "price": 535.0846925809684
+                    },
+                    {
+                        "gli": 21.200112282,
+                        "price": 129.9349047871188
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 13.809445,
+                        "price": 522.8421048193046
+                    },
+                    {
+                        "gli": 21.200112282,
+                        "price": 117.69231702545498
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "부영",
+                    "gli_score": 21.200112282,
+                    "price_per_pyung": 276.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 34,
+                    "household_count": 89
+                },
+                {
+                    "complex_name": "엘림(주상복합)",
+                    "gli_score": 18.3467349079,
+                    "price_per_pyung": 397.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 33,
+                    "household_count": 99
+                },
+                {
+                    "complex_name": "장미",
+                    "gli_score": 15.429445,
+                    "price_per_pyung": 334.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 27,
+                    "household_count": 219
+                },
+                {
+                    "complex_name": "제석",
+                    "gli_score": 13.809445,
+                    "price_per_pyung": 365.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 25,
+                    "household_count": 120
+                }
+            ]
+        }
+    }
+}

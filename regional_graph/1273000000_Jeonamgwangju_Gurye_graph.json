@@ -1,0 +1,112 @@
+{
+    "region_code": "1273000000",
+    "region_name": "Jeonamgwangju_Gurye",
+    "region_key": "1273000000_Jeonamgwangju_Gurye",
+    "supply_score": 50.0,
+    "dongs": {
+        "구례읍": {
+            "summary_metrics": {
+                "r_simple": 0.8102173928340332,
+                "r_multi": 0.9960101492287409,
+                "r_squared": "99.2%",
+                "price_per_gli_point": 5.82016303308965,
+                "std_error": 154.5550262513502,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 17.4301524961,
+                "max_gli": 35.4891050694,
+                "simple_trendline": [
+                    {
+                        "gli": 17.4301524961,
+                        "price": 445.8085963886958
+                    },
+                    {
+                        "gli": 35.4891050694,
+                        "price": 844.6091304928798
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 17.4301524961,
+                        "price": 623.5227046309215
+                    },
+                    {
+                        "gli": 35.4891050694,
+                        "price": 728.6287528143614
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 17.4301524961,
+                        "price": 700.8002177565966
+                    },
+                    {
+                        "gli": 35.4891050694,
+                        "price": 805.9062659400365
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 17.4301524961,
+                        "price": 546.2451915052463
+                    },
+                    {
+                        "gli": 35.4891050694,
+                        "price": 651.3512396886863
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "구례산이고운",
+                    "gli_score": 34.9111804709,
+                    "price_per_pyung": 710.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 12,
+                    "household_count": 172
+                },
+                {
+                    "complex_name": "구례트루엘센텀포레",
+                    "gli_score": 35.2986718331,
+                    "price_per_pyung": 916.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 2,
+                    "household_count": 247
+                },
+                {
+                    "complex_name": "명지",
+                    "gli_score": 18.2824382541,
+                    "price_per_pyung": 553.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 296
+                },
+                {
+                    "complex_name": "섬지뜰",
+                    "gli_score": 28.7340431994,
+                    "price_per_pyung": 500.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 15,
+                    "household_count": 83
+                },
+                {
+                    "complex_name": "월드메르디앙(주상복합)",
+                    "gli_score": 35.4891050694,
+                    "price_per_pyung": 1005.4,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 2,
+                    "household_count": 264
+                },
+                {
+                    "complex_name": "지리산파크맨션",
+                    "gli_score": 17.4301524961,
+                    "price_per_pyung": 437.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 26,
+                    "household_count": 180
+                }
+            ]
+        }
+    }
+}

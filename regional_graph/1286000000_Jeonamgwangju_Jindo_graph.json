@@ -1,0 +1,88 @@
+{
+    "region_code": "1286000000",
+    "region_name": "Jeonamgwangju_Jindo",
+    "region_key": "1286000000_Jeonamgwangju_Jindo",
+    "supply_score": 50.0,
+    "dongs": {
+        "진도읍": {
+            "summary_metrics": {
+                "r_simple": 0.9910888172617898,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 11.261208283706113,
+                "std_error": 49.03017780854461,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 8.3703083333,
+                "max_gli": 30.2719194444,
+                "simple_trendline": [
+                    {
+                        "gli": 8.3703083333,
+                        "price": 494.5851597273666
+                    },
+                    {
+                        "gli": 30.2719194444,
+                        "price": 998.3373710408339
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 8.3703083333,
+                        "price": 610.6286518052492
+                    },
+                    {
+                        "gli": 30.2719194444,
+                        "price": 857.2672562760783
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 8.3703083333,
+                        "price": 635.1437407095215
+                    },
+                    {
+                        "gli": 30.2719194444,
+                        "price": 881.7823451803506
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 8.3703083333,
+                        "price": 586.113562900977
+                    },
+                    {
+                        "gli": 30.2719194444,
+                        "price": 832.7521673718061
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "백두",
+                    "gli_score": 8.3703083333,
+                    "price_per_pyung": 469.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 26,
+                    "household_count": 117
+                },
+                {
+                    "complex_name": "세림아름누리",
+                    "gli_score": 16.1233638889,
+                    "price_per_pyung": 712.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 88
+                },
+                {
+                    "complex_name": "진도미래엔스위트",
+                    "gli_score": 30.2719194444,
+                    "price_per_pyung": 984.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 99
+                }
+            ]
+        }
+    }
+}

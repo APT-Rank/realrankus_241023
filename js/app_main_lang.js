@@ -88,7 +88,7 @@ var thisMonth = "202607"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
 var selectedMonth = "202607"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202607_01"; //수정
+var DB_Date = "202607_02"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
