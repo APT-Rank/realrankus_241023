@@ -73,7 +73,7 @@
   <script src="../js/search.js" type="text/javascript"></script>  
   <script src="../js/share.js" type="text/javascript"></script>
   <script src="../js/distance.js" type="text/javascript"></script>
-  <script src="../js/svg_region_Dongtan_added.js" type="text/javascript"></script>
+  <script src="../js/svg_region_260704.js" type="text/javascript"></script>
   <script src="../js/BIZ_guide.js" type="text/javascript"></script>
   <script src="./ad_aptrank_biz.js" type="text/javascript"></script>
 
@@ -385,9 +385,9 @@
           if(subRegion == "2800000000_Incheon"){
             selectedRegion = selectedSubRegion = "Incheon"
           }
-          if(subRegion == "2900000000_Gwangju"){
-            selectedRegion = selectedSubRegion = "Gwangju"
-          }
+          //if(subRegion == "2900000000_Gwangju"){
+          //  selectedRegion = selectedSubRegion = "Gwangju"
+          //}
           if(subRegion == "3000000000_Daejeon"){
             selectedRegion = selectedSubRegion = "Daejeon"
           }
@@ -424,9 +424,9 @@
             selectedRegion = "Jeollabukdo"
             selectedSubRegion = "4511100000_Jeollabukdo_Jeonju_Wansan"
           }
-          if(subRegion == "4600000000_Jeollanamdo"){
-            selectedRegion = "Jeollanamdo"
-            selectedSubRegion = "4613000000_Jeollanamdo_Yeosu"
+          if(subRegion == "1200000000_Jeonamgwangju"){
+            selectedRegion = "Jeonamgwangju"
+            selectedSubRegion = "1233000000_Jeonamgwangju_Gwangsan"
           }
           if(subRegion == "4700000000_Gyeongsangbukdo"){
             selectedRegion = "Gyeongsangbukdo"
@@ -513,7 +513,7 @@
   }
 
   function loadStandardInterest_KO(){
-    url = "https://www.realrankus.com/BOK_standatd_interest.json"
+    url = "https://www.realrankus.com/BOK_standatd_interest.json"    
     $.getJSON(url, function(json) {
         ko_interest = json;
         time_obj = ko_interest['TIME']
@@ -527,7 +527,7 @@
   }
 
   function loadStandardInterest_US(){
-    url = "https://www.realrankus.com/FED_standatd_interest.json"
+    url = "https://www.realrankus.com/FED_standatd_interest.json"    
     $.getJSON(url, function(json) {
         us_interest = json;
         time_obj = us_interest['DATE']
@@ -541,7 +541,9 @@
   }
 
   function loadPIR(loc){
-    url = "https://www.realrankus.com/PIR.json"
+    //url = "https://www.realrankus.com/PIR.json"
+    url = "../PIR.json"
+
     $.getJSON(url, function(json) {
         PIR_list = json;
         PIR_locations = Object.values(PIR_list['Location'])
@@ -549,6 +551,8 @@
         PIR_recent = Object.values(PIR_list[PIR_key_list[2]])
         PIR_ago1 = Object.values(PIR_list[PIR_key_list[1]])
         PIR_ago2 = Object.values(PIR_list[PIR_key_list[0]])
+
+        console.log("PIR_locations: ", PIR_locations)
 
         found_index = PIR_locations.indexOf(loc)
 
@@ -568,7 +572,8 @@
     })
   }
   function loadBP(loc){
-    url = "https://www.realrankus.com/BP.json"
+    //url = "https://www.realrankus.com/BP.json"
+    url = "../BP.json"
     $.getJSON(url, function(json) {
         BP_list = json;
         BP_locations = Object.values(BP_list['Location'])
@@ -631,9 +636,9 @@
     if(regionName == 'Daegu'){
       changeItem = inDaegu
     }
-    if(regionName == 'Gwangju'){
-      changeItem = inGwangju
-    }
+    //if(regionName == 'Gwangju'){
+    //  changeItem = inGwangju
+    //}
     if(regionName == 'Daejeon'){
       changeItem = inDaejeon
     }
@@ -658,7 +663,7 @@
     if(regionName == 'Jeollabukdo'){
       changeItem = inJeollabukdo
     }
-    if(regionName == 'Jeollanamdo'){
+    if(regionName == 'Jeonamgwangju'){
       changeItem = inJeollanamdo
     }
     if(regionName == 'Gyeongsangbukdo'){
@@ -846,7 +851,7 @@ function region_coloring(regionData){
     $('#svg_map .TEXT').css("font-size", "0.9em")
     search_array = inJeollabukdo
   }
-  if(selectedRegion == "Jeollanamdo"){
+  if(selectedRegion == "Jeonamgwangju"){
     $('#svg_map').html(svg_Jeollanamdo)
     $('#svg_map .TEXT').css("font-size", "0.9em")
     search_array = inJeollanamdo
@@ -1995,6 +2000,8 @@ function ListUp(listData){
           var regName = $('#sido option:selected').text() + " " + $('#gungu option:selected').text()
           regName = regName.replace(" 전체", "")
 
+          console.log("regName : " + regName)
+
           if(rateExist.includes(regName)){
               addon_html += "<div class='subRegion_info2' style='grid-column: 2 / span 2;'>"
                 addon_html += "<div class='subRegion_title'>"
@@ -2008,7 +2015,8 @@ function ListUp(listData){
               var salesArray = [null, null]
               var rentArray = [null, null]
 
-              rate_url = "https://www.realrankus.com/" + currentMonth + "/Price_Rate/" + regName + ".json"
+              //rate_url = "https://www.realrankus.com/" + currentMonth + "/Price_Rate/" + regName + ".json"
+              rate_url = "../" + currentMonth + "/Price_Rate/" + regName + ".json"
 
               $.getJSON(rate_url, function(json) {                
                 rateData = json

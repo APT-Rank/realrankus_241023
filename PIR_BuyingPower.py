@@ -159,7 +159,7 @@ def location_name_change(loc):
     if loc == '전북':
         return "전라북도"
     if loc == '전남':
-        return "전라남도"
+        return "전남광주시"
 
 save_buying_power()
 save_PIR()
