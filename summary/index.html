@@ -231,7 +231,9 @@
   //수정
   var this_month_update =`
   [26년 7월 업데이트 요약]
-  - 전국 초등/중학교 정보 업데이트 (공공데이터 제공)  
+  - '검단구, 서해구, 영종구, 제물포구' 적용 (인천시 행정구역 개편)
+  - '전남광주통합특별시' 적용 (전라남도 행정구역 개편)
+  - 전국 초등/중학교 정보 업데이트 (공공데이터 제공)
   \n`
 
   $(document).ready(function(){
@@ -355,7 +357,6 @@
       changeItem = inChungcheongnamdo
     }
     if(regionName == 'Jeollabukdo'){
-      console.log("ASDFASDFASDF")
       if(Number(selectedMonth) >= 202404){
         changeItem = inNewJeollabukdo
       }
@@ -363,7 +364,7 @@
         changeItem = inJeollabukdo
       }
     }
-    if(regionName == 'Jeollanamdo'){
+    if(regionName == 'Jeonamgwangju'){
       changeItem = inJeollanamdo
     }
     if(regionName == 'Gyeongsangbukdo'){

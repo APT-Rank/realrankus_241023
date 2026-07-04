@@ -665,7 +665,7 @@ $(document).ready(function () {
     }
   });
 
-  if ($.cookie("popCookie") != "202607" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+  if ($.cookie("popCookie") != "202607_02" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
     startNotice = true;
     showNotice();
     //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -1164,7 +1164,7 @@ function optionChange(subRegion, upperReion) {
       changeItem = inJeollabukdo;
     }
   }
-  if (regionName == "Jeollanamdo") {
+  if (regionName == "Jeonamgwangju") {
     changeItem = inJeollanamdo;
   }
   if (regionName == "Gyeongsangbukdo") {
@@ -4619,7 +4619,7 @@ function showNotice() {
   }
   $(".modal-footer").css({ "padding-top": "3px" });
 
-  if ($.cookie("popCookie") != "202607") {
+  if ($.cookie("popCookie") != "202607_02") {
     $("#flexCheckDefault").prop("checked", false);
   } else {
     $("#flexCheckDefault").prop("checked", true);
@@ -4627,7 +4627,7 @@ function showNotice() {
 
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
-      $.cookie("popCookie", "202607", { expires: 30, path: "/" });
+      $.cookie("popCookie", "202607_02", { expires: 30, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });

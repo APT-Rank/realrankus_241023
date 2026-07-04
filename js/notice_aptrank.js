@@ -1,6 +1,8 @@
 var notice_202607 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 7월 업데이트 안내 (2026-07-03)</div>"
 +"<ul>"
++"<li><div class='notice'>인천시 행정구역 개편으로 인한 '검단구, 서해구, 영종구, 제물포구' 분할 적용했습니다.</div></li>"
++"<li><div class='notice'>전라남도 행정구역 개편으로 인한 '전남광주통합특별시' 적용했습니다.</div></li>"
 +"<li><div class='notice'>전국 초등학교/중학교 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
 +"<li><div class='notice'>2026년 6월 인구 변동 정보 업데이트 했습니다.</div></li>"
 +"</ul>"
