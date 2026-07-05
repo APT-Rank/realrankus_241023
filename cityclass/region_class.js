@@ -1,7 +1,7 @@
 var regions = [
-  ['전국 시도', 'Korea_upper'], ['전국 시군구', 'Korea_lower'], ['서울시', 'Seoul'], ['경기도', 'Gyeonggi'], ['부산시', 'Busan'], ['대구시', 'Daegu'], ['인천시', 'Incheon'], ['광주시', 'Gwangju'], ['대전시', 'Daejeon'], 
+  ['전국 시도', 'Korea_upper'], ['전국 시군구', 'Korea_lower'], ['서울시', 'Seoul'], ['경기도', 'Gyeonggi'], ['부산시', 'Busan'], ['대구시', 'Daegu'], ['인천시', 'Incheon'], ['대전시', 'Daejeon'], 
   ['울산시', 'Ulsan'], ['세종시', 'Sejong'], ['강원도', 'Gangwondo'], ['충청북도', 'Chungcheongbukdo'], ['충청남도', 'Chungcheongnamdo'],
-  ['전북도', 'Jeollabukdo'], ['전라남도', 'Jeollanamdo'], ['경상북도', 'Gyeongsangbukdo'], ['경상남도', 'Gyeongsangnamdo'], ['제주도', 'Jejudo']
+  ['전북도', 'Jeollabukdo'], ['전남광주시', 'Jeonamgwangju'], ['경상북도', 'Gyeongsangbukdo'], ['경상남도', 'Gyeongsangnamdo'], ['제주도', 'Jejudo']
 ]
 
 var searchingDB = []
@@ -861,7 +861,7 @@ function setTreeMap(){
       cost_Jeollabukdo_temp.push(treemap_data[i])
       cost_Jeollabukdo_sum += treemap_data[i]['Sum']
     }
-    if(treemap_data[i]['Upper_region'] == "Jeollanamdo"){
+    if(treemap_data[i]['Upper_region'] == "Jeonamgwangju"){
       cost_Jeollanamdo_temp.push(treemap_data[i])
       cost_Jeollanamdo_sum += treemap_data[i]['Sum']
     }
@@ -947,7 +947,7 @@ function showCostsum(){
   if(current_selection == "Chungcheongbukdo"){ cost_data = cost_region_arr[12]; cost_sum = cost_treemap.data[11]['Sum']; cost_delta = cost_treemap.data[11]['Sum_delta'] }
   if(current_selection == "Chungcheongnamdo"){ cost_data = cost_region_arr[13]; cost_sum = cost_treemap.data[12]['Sum']; cost_delta = cost_treemap.data[12]['Sum_delta'] }
   if(current_selection == "Jeollabukdo"){ cost_data = cost_region_arr[14]; cost_sum = cost_treemap.data[13]['Sum']; cost_delta = cost_treemap.data[13]['Sum_delta'] }
-  if(current_selection == "Jeollanamdo"){ cost_data = cost_region_arr[15]; cost_sum = cost_treemap.data[14]['Sum']; cost_delta = cost_treemap.data[14]['Sum_delta'] }
+  if(current_selection == "Jeonamgwangju"){ cost_data = cost_region_arr[15]; cost_sum = cost_treemap.data[14]['Sum']; cost_delta = cost_treemap.data[14]['Sum_delta'] }
   if(current_selection == "Gyeongsangbukdo"){ cost_data = cost_region_arr[16]; cost_sum = cost_treemap.data[15]['Sum']; cost_delta = cost_treemap.data[15]['Sum_delta'] }
   if(current_selection == "Gyeongsangnamdo"){ cost_data = cost_region_arr[17]; cost_sum = cost_treemap.data[16]['Sum']; cost_delta = cost_treemap.data[16]['Sum_delta'] }
   if(current_selection == "Jejudo"){ cost_data = cost_region_arr[18]; cost_sum = cost_treemap.data[17]['Sum']; cost_delta = cost_treemap.data[17]['Sum_delta'] }
