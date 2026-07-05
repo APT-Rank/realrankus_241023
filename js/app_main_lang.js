@@ -403,7 +403,7 @@ $(document).ready(function () {
   } else {
     searching_url = pathPrefix + selectedMonth + "/Searching_list.json" + update_ver;
   }
-  region_url = pathPrefix + selectedMonth + "/region_map.json" + update_ver;
+  region_url = pathPrefix + selectedMonth + "/region_map.json?v=2.0" + update_ver;
 
   const request = indexedDB.open(DB_Date); // 1. DB 열기
   request.onerror = (e) => console.log("ERROR : ", e.target.errorCode);
@@ -416,7 +416,7 @@ $(document).ready(function () {
         //지도서비스추가
         request.result.close();
         writeIdxedDB(searchingData.data);
-        region_url = pathPrefix + selectedMonth + "/region_map.json" + update_ver;
+        region_url = pathPrefix + selectedMonth + "/region_map.json?v=2.0" + update_ver;
         $.getJSON(region_url, function (json) {
           regionMapData = json.data;
         }).done(function () {
@@ -1649,6 +1649,11 @@ function updateTable(month, region) {
 
         var aptValue = Math.round(aptData.data[i]["가치 총점"] * 100) / 100;
         var house_num = aptData.data[i]["세대수"];
+
+        //aptData.data[i]["rank"] 값이 null 또는 undefined인 경우, for문을 건너뛰도록 처리
+        if (aptData.data[i]["rank"] == null || aptData.data[i]["rank"] == undefined) {
+          aptData.data[i]["rank"] = 0
+        }
         var rank = aptData.data[i]["rank"].toFixed();
         var last_sales = aptData.data[i]["last_sales"].split(",");
         var last_sales_date = last_sales[0].toString();
@@ -1999,6 +2004,9 @@ function showDetail(index) {
   var aptName = aptData.data[index]["아파트명"];
   if (isEn) {
     aptName = aptData.data[index]["APT_Name_EN"];
+  }
+  if(aptData.data[index]["rank"] == null || aptData.data[index]["rank"] == undefined) {
+    aptData.data[index]["rank"] = 0;
   }
   var rank = aptData.data[index]["rank"].toFixed();
   var apt_m = aptData.data[index]["전용면적(m2)"];
