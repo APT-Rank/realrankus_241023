@@ -12,7 +12,7 @@
   };
 
 const default_db = firebase.initializeApp(firebaseConfig);
-const analytics = getAnalytics(default_db);
+//const analytics = getAnalytics(default_db);
 
 const sub01_db = firebase.initializeApp({
     databaseURL: "https://realrankus-sub001.firebaseio.com/"
