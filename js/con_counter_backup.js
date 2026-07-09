@@ -1,45 +1,43 @@
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyD5dnN8JIAMXSizkX-la-8L6FmarO5f5ko",
-    authDomain: "realrankus-260709.firebaseapp.com",
-    databaseURL: "https://realrankus-260709-default-rtdb.firebaseio.com",
-    projectId: "realrankus-260709",
-    storageBucket: "realrankus-260709.firebasestorage.app",
-    messagingSenderId: "239540682978",
-    appId: "1:239540682978:web:2bd6dd225efe2952171ebb",
-    measurementId: "G-691L6HZ82Z"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAivJVoqhrDQzuslEAoizhb5ByGhpQGHzE",
+  authDomain: "aptrank-cc61b.firebaseapp.com",
+  databaseURL: "https://aptrank-cc61b-default-rtdb.firebaseio.com",
+  projectId: "aptrank-cc61b",
+  storageBucket: "aptrank-cc61b.firebasestorage.app",
+  messagingSenderId: "987401326011",
+  appId: "1:987401326011:web:d5a08de82a2aa2aed7489e",
+  measurementId: "G-LSBHV7N1ND"
+};
 
 const default_db = firebase.initializeApp(firebaseConfig);
 const analytics = getAnalytics(default_db);
 
 const sub01_db = firebase.initializeApp({
-    databaseURL: "https://realrankus-sub001.firebaseio.com/"
+    databaseURL: "https://realrankus-sub01.firebaseio.com/"
 }, 'sub01_db');
 
 const sub02_db = firebase.initializeApp({
-  databaseURL: "https://realrankus-sub002.firebaseio.com/"
+  databaseURL: "https://realrankus-sub02.firebaseio.com/"
 }, 'sub02_db');
 
 const sub03_db = firebase.initializeApp({
-  databaseURL: "https://realrankus-sub003.firebaseio.com/"
+  databaseURL: "https://realrankus-sub03.firebaseio.com/"
 }, 'sub03_db');
 
 const sub04_db = firebase.initializeApp({
-  databaseURL: "https://realrankus-sub004.firebaseio.com/"
+  databaseURL: "https://realrankus-sub04.firebaseio.com/"
 }, 'sub04_db');
 
 const sub05_db = firebase.initializeApp({
-  databaseURL: "https://realrankus-sub005.firebaseio.com/"
+  databaseURL: "https://realrankus-sub05.firebaseio.com/"
 }, 'sub05_db');
 
 const sub06_db = firebase.initializeApp({
-  databaseURL: "https://realrankus-sub006.firebaseio.com/"
+  databaseURL: "https://realrankus-sub06.firebaseio.com/"
 }, 'sub06_db');
 
 const requestReport_db = firebase.initializeApp({
-  databaseURL: "https://realrankus-report-260710.firebaseio.com/"
+  databaseURL: "https://realrankus-report.firebaseio.com/"
 }, 'requestReport_db');
 
 var db_list = [sub01_db, sub02_db, sub03_db, sub04_db, sub05_db]
