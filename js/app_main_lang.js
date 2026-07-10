@@ -2249,7 +2249,7 @@ function showDetail(index) {
           <div class='popupSubtitle' style='font-size: 0.6em'>${isEn ? "(Jibun)" : "(구)"} ${legalAddress}</div>
         `;
   }
-  /*
+  
   detailHtml += `
         <div class='card'>
         <div id='complex_visit_info'><div class='spinner-border spinner-border-sm' role='status'></div></div>
@@ -2325,7 +2325,6 @@ function showDetail(index) {
         </div>
         </div>
       `;
-      */
 
   //총점,순위
   detailHtml += `
