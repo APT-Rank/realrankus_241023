@@ -24,7 +24,7 @@ for (i = 1; i < regions.length; i++) {
     else if (region_name == "전북도") {
       region_name = "전북"
     }
-    else if (region_name == "전라남도") {
+    else if (region_name == "전남광주시") {
       region_name = "전남"
     }
     else if (region_name == "경상북도") {
@@ -1196,7 +1196,7 @@ function drawComplex(complexInfo, compareNum) {
     }
     if (sales_info_array[k] == "거래 정보 없음") {
       if (isMobile) {
-        area_arr = area_array[k].splitSafe('(')
+        area_arr = area_array[k].split('(')
         var areaText0 = area_arr[0];
         if (isEn) {
           areaText0 = areaText0.replace("평", "py");
