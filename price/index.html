@@ -392,7 +392,6 @@
   var price_fav = []
 
   var today = new Date()
-  var prev_date = new Date()
 
   //var today = new Date('2023-10-30')
   var today_day = dateReturn(today.getDate());
@@ -407,9 +406,11 @@
   var today_short_str = (today.getMonth() + 1) + "/" + today.getDate()
   var this_month = "" + (today_year) + today_month
 
-  var monthago = new Date(prev_date)
-  monthago.setMonth(monthago.getMonth() - 1);
-  prev_month = "" + (monthago.getFullYear()) + dateReturn((monthago.getMonth() + 1))
+  // 이전 달 계산: 날짜를 1일로 설정하여 말일 이슈 방지
+  var prev_date = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  var prev_year = prev_date.getFullYear();
+  var prev_month_num = String(prev_date.getMonth() + 1).padStart(2, '0');
+  var prev_month = prev_year + prev_month_num; // "202606"
 
   var start_date_str = (today.getMonth() + 1) + "/1"
   var end_date_str = (today.getMonth() + 1) + "/" + today.getDate()
@@ -417,7 +418,7 @@
   var updated_datetime = ""
 
   var lastScrollY_d00
-  var lastScrollY_d01
+  var lastScrollY_d01  
 
   function dateReturn(n) {
     return n < 10 ? "0" + n : n
@@ -1921,7 +1922,7 @@
         var reg_vol_1month_ago = regData.data[i]["1개월전"]
         var reg_vol_2month_ago = regData.data[i]["2개월전"]
         var reg_vol_3month_ago = regData.data[i]["3개월전"]
-        var reg_sURL = regData.data[i]["sURL"]
+        var reg_sURL = regData.data[i]["sURL"]        
 
         if (Number(selectedMonth) == this_month || Number(selectedMonth) == prev_month || selectedMonth == "latest_deal") {
           var reg_vol_month_end_predition = regData.data[i]["월말예측"]
