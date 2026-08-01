@@ -392,12 +392,16 @@
   var price_fav = []
 
   var today = new Date()
+  var prev_date = new Date()
 
   //var today = new Date('2023-10-30')
   var today_day = dateReturn(today.getDate());
   if (today_day == 1) {
     today = new Date(today.setDate(today.getDate() - 1))
-    prev_date.setMonth(prev_date.getMonth() - 1);
+    prev_date = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+  }
+  else{
+    prev_date = new Date(today.getFullYear(), today.getMonth() - 1, 1);
   }
   var today_year = today.getFullYear();
   var today_month = dateReturn((today.getMonth() + 1))
@@ -406,8 +410,7 @@
   var today_short_str = (today.getMonth() + 1) + "/" + today.getDate()
   var this_month = "" + (today_year) + today_month
 
-  // 이전 달 계산: 날짜를 1일로 설정하여 말일 이슈 방지
-  var prev_date = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  // 이전 달 계산: 날짜를 1일로 설정하여 말일 이슈 방지  
   var prev_year = prev_date.getFullYear();
   var prev_month_num = String(prev_date.getMonth() + 1).padStart(2, '0');
   var prev_month = prev_year + prev_month_num; // "202606"
