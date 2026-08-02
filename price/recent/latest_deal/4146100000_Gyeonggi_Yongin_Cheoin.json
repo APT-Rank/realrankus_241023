@@ -11,7 +11,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"매수자",
@@ -23,15 +23,15 @@
             },
             {
                 "name":"일",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"월",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"년",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"거래유형",
@@ -47,11 +47,11 @@
             },
             {
                 "name":"층",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"지번",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"아파트여부",
@@ -59,7 +59,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"매도자",
@@ -99,7 +99,7 @@
             },
             {
                 "name":"code",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"y",
@@ -119,10 +119,74 @@
             },
             {
                 "name":"usingArea",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"type",
+                "type":"string"
+            },
+            {
+                "name":"동",
+                "type":"string"
+            },
+            {
+                "name":"일련번호",
+                "type":"string"
+            },
+            {
+                "name":"법정동본번코드",
+                "type":"string"
+            },
+            {
+                "name":"법정동부번코드",
+                "type":"string"
+            },
+            {
+                "name":"해제사유발생일",
+                "type":"string"
+            },
+            {
+                "name":"해제여부",
+                "type":"string"
+            },
+            {
+                "name":"법정동지번코드",
+                "type":"string"
+            },
+            {
+                "name":"등기일자",
+                "type":"string"
+            },
+            {
+                "name":"도로명",
+                "type":"string"
+            },
+            {
+                "name":"도로명건물본번호코드",
+                "type":"string"
+            },
+            {
+                "name":"도로명건물부번호코드",
+                "type":"string"
+            },
+            {
+                "name":"도로명코드",
+                "type":"string"
+            },
+            {
+                "name":"도로명일련번호코드",
+                "type":"string"
+            },
+            {
+                "name":"도로명시군구코드",
+                "type":"string"
+            },
+            {
+                "name":"도로명지상지하코드",
+                "type":"string"
+            },
+            {
+                "name":"법정동읍면동코드",
                 "type":"string"
             }
         ],
@@ -485,7 +549,23 @@
             ],
             "sURL":"https:\/\/www.realrankus.com?cpx=ggcicg030",
             "usingArea":73,
-            "type":"TRADE"
+            "type":"TRADE",
+            "동":null,
+            "일련번호":null,
+            "법정동본번코드":null,
+            "법정동부번코드":null,
+            "해제사유발생일":null,
+            "해제여부":null,
+            "법정동지번코드":null,
+            "등기일자":null,
+            "도로명":null,
+            "도로명건물본번호코드":null,
+            "도로명건물부번호코드":null,
+            "도로명코드":null,
+            "도로명일련번호코드":null,
+            "도로명시군구코드":null,
+            "도로명지상지하코드":null,
+            "법정동읍면동코드":null
         }
     ]
 }

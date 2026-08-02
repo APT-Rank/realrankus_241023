@@ -11,7 +11,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"매수자",
@@ -23,15 +23,15 @@
             },
             {
                 "name":"일",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"월",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"년",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"거래유형",
@@ -47,11 +47,11 @@
             },
             {
                 "name":"층",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"지번",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"아파트여부",
@@ -59,7 +59,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"매도자",
@@ -99,7 +99,7 @@
             },
             {
                 "name":"code",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"y",
@@ -119,10 +119,26 @@
             },
             {
                 "name":"usingArea",
-                "type":"integer"
+                "type":"string"
             },
             {
                 "name":"type",
+                "type":"string"
+            },
+            {
+                "name":"동",
+                "type":"string"
+            },
+            {
+                "name":"해제사유발생일",
+                "type":"string"
+            },
+            {
+                "name":"해제여부",
+                "type":"string"
+            },
+            {
+                "name":"등기일자",
                 "type":"string"
             }
         ],
@@ -749,7 +765,11 @@
             ],
             "sURL":"https:\/\/www.realrankus.com?cpx=dgbucg050",
             "usingArea":77,
-            "type":"TRADE"
+            "type":"TRADE",
+            "동":null,
+            "해제사유발생일":null,
+            "해제여부":null,
+            "등기일자":null
         }
     ]
 }
