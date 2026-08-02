@@ -6,12 +6,16 @@
                 "type":"integer"
             },
             {
+                "name":"type",
+                "type":"string"
+            },
+            {
                 "name":"아파트",
                 "type":"string"
             },
             {
                 "name":"건축년도",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"매수자",
@@ -23,15 +27,15 @@
             },
             {
                 "name":"일",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"월",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"년",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"거래유형",
@@ -47,7 +51,7 @@
             },
             {
                 "name":"층",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"지번",
@@ -59,7 +63,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"integer"
+                "type":"number"
             },
             {
                 "name":"매도자",
@@ -104,10 +108,6 @@
             {
                 "name":"sURL",
                 "type":"string"
-            },
-            {
-                "name":"type",
-                "type":"string"
             }
         ],
         "primaryKey":[
@@ -118,20 +118,21 @@
     "data":[
         {
             "index":0,
+            "type":"TRADE",
             "아파트":"성산빌라(가)",
-            "건축년도":1992,
+            "건축년도":1992.0,
             "매수자":"개인",
             "거래금액":"8,200",
-            "일":24,
-            "월":7,
-            "년":2026,
+            "일":24.0,
+            "월":7.0,
+            "년":2026.0,
             "거래유형":"중개거래",
             "중개사소재지":"전북 장수군",
             "전용면적":59.88,
-            "층":2,
+            "층":2.0,
             "지번":"304-12",
             "아파트여부":"N",
-            "지역코드":52740,
+            "지역코드":52740.0,
             "매도자":"개인",
             "법정동":"장수읍 장수리",
             "history_date":[
@@ -345,8 +346,7 @@
                 "",
                 ""
             ],
-            "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1",
-            "type":"TRADE"
+            "sURL":"https:\/\/m.land.naver.com\/map\/nan:nan:17:\/APT\/A1"
         }
     ]
 }
