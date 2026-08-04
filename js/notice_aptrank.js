@@ -1,3 +1,11 @@
+var notice_202608 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 8월 업데이트 안내 (2026-08-06)</div>"
++"<ul>"
++"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
++"<li><div class='notice'>전국 공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202607 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 7월 업데이트 안내 (2026-07-03)</div>"
 +"<ul>"
