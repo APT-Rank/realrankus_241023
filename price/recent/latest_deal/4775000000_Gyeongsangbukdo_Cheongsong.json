@@ -11,7 +11,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매수자",
@@ -23,15 +23,15 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -43,7 +43,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -55,7 +55,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -95,7 +95,7 @@
             },
             {
                 "name":"code",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"y",
@@ -115,30 +115,6 @@
             },
             {
                 "name":"type",
-                "type":"string"
-            },
-            {
-                "name":"동",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
-                "type":"string"
-            },
-            {
-                "name":"중개사소재지",
-                "type":"string"
-            },
-            {
-                "name":"등기일자",
-                "type":"string"
-            },
-            {
-                "name":"usingArea",
                 "type":"string"
             }
         ],
@@ -391,13 +367,7 @@
                 ""
             ],
             "sURL":"https:\/\/m.land.naver.com\/map\/36.436947:129.05199:17:\/APT\/A1",
-            "type":"TRADE",
-            "동":null,
-            "해제사유발생일":null,
-            "해제여부":null,
-            "중개사소재지":null,
-            "등기일자":null,
-            "usingArea":null
+            "type":"TRADE"
         }
     ]
 }

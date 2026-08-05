@@ -6,35 +6,15 @@
                 "type":"integer"
             },
             {
-                "name":"지역코드",
-                "type":"string"
-            },
-            {
-                "name":"법정동",
-                "type":"string"
-            },
-            {
                 "name":"아파트",
                 "type":"string"
             },
             {
-                "name":"지번",
-                "type":"string"
+                "name":"건축년도",
+                "type":"integer"
             },
             {
-                "name":"전용면적",
-                "type":"number"
-            },
-            {
-                "name":"년",
-                "type":"string"
-            },
-            {
-                "name":"월",
-                "type":"string"
-            },
-            {
-                "name":"일",
+                "name":"매수자",
                 "type":"string"
             },
             {
@@ -42,20 +22,16 @@
                 "type":"string"
             },
             {
-                "name":"층",
-                "type":"string"
+                "name":"일",
+                "type":"integer"
             },
             {
-                "name":"건축년도",
-                "type":"string"
+                "name":"월",
+                "type":"integer"
             },
             {
-                "name":"해제여부",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
+                "name":"년",
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -66,23 +42,31 @@
                 "type":"string"
             },
             {
-                "name":"등기일자",
+                "name":"전용면적",
+                "type":"number"
+            },
+            {
+                "name":"층",
+                "type":"integer"
+            },
+            {
+                "name":"지번",
                 "type":"string"
             },
             {
-                "name":"동",
+                "name":"아파트여부",
                 "type":"string"
+            },
+            {
+                "name":"지역코드",
+                "type":"integer"
             },
             {
                 "name":"매도자",
                 "type":"string"
             },
             {
-                "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"아파트여부",
+                "name":"법정동",
                 "type":"string"
             },
             {
@@ -114,10 +98,6 @@
                 "type":"string"
             },
             {
-                "name":"code",
-                "type":"string"
-            },
-            {
                 "name":"y",
                 "type":"number"
             },
@@ -134,10 +114,6 @@
                 "type":"string"
             },
             {
-                "name":"usingArea",
-                "type":"string"
-            },
-            {
                 "name":"type",
                 "type":"string"
             }
@@ -150,26 +126,22 @@
     "data":[
         {
             "index":0,
-            "지역코드":48860,
-            "법정동":"신안면 하정리",
             "아파트":"한라아트빌라",
-            "지번":"795-2",
-            "전용면적":84.94,
-            "년":2026,
-            "월":7,
-            "일":29,
-            "거래금액":"17,500",
-            "층":3,
             "건축년도":2001,
-            "해제여부":null,
-            "해제사유발생일":null,
+            "매수자":"개인",
+            "거래금액":"17,500",
+            "일":29,
+            "월":7,
+            "년":2026,
             "거래유형":"중개거래",
             "중개사소재지":"경남 산청군",
-            "등기일자":null,
-            "동":null,
-            "매도자":"개인",
-            "매수자":"개인",
+            "전용면적":84.94,
+            "층":3,
+            "지번":"795-2",
             "아파트여부":"N",
+            "지역코드":48860,
+            "매도자":"개인",
+            "법정동":"신안면 하정리",
             "history_date":[
                 "2021-03-08",
                 "2021-07-22",
@@ -399,7 +371,6 @@
                 "2021-09-24",
                 "8500"
             ],
-            "code":null,
             "y":35.3028231,
             "x":127.9702333,
             "rank_info":[
@@ -408,7 +379,6 @@
                 ""
             ],
             "sURL":"https:\/\/m.land.naver.com\/map\/35.3028231:127.9702333:17:\/APT\/A1",
-            "usingArea":null,
             "type":"TRADE"
         }
     ]

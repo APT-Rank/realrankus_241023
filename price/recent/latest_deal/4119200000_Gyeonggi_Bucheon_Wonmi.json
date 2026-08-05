@@ -11,7 +11,7 @@
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매수자",
@@ -23,15 +23,15 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
@@ -47,7 +47,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -59,7 +59,7 @@
             },
             {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -123,22 +123,6 @@
             },
             {
                 "name":"type",
-                "type":"string"
-            },
-            {
-                "name":"동",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
-                "type":"string"
-            },
-            {
-                "name":"등기일자",
                 "type":"string"
             }
         ],
@@ -1023,11 +1007,7 @@
             ],
             "sURL":"https:\/\/www.realrankus.com?cpx=ggwmcg004",
             "usingArea":null,
-            "type":"TRADE",
-            "동":null,
-            "해제사유발생일":null,
-            "해제여부":null,
-            "등기일자":null
+            "type":"TRADE"
         },
         {
             "index":1,
@@ -4103,11 +4083,7 @@
             ],
             "sURL":"https:\/\/www.realrankus.com?cpx=ggwmcg084",
             "usingArea":74.0,
-            "type":"TRADE",
-            "동":null,
-            "해제사유발생일":null,
-            "해제여부":null,
-            "등기일자":null
+            "type":"TRADE"
         }
     ]
 }

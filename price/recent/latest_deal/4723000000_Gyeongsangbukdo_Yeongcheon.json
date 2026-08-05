@@ -6,27 +6,15 @@
                 "type":"integer"
             },
             {
-                "name":"동",
-                "type":"string"
-            },
-            {
                 "name":"아파트",
                 "type":"string"
             },
             {
                 "name":"건축년도",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매수자",
-                "type":"string"
-            },
-            {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
                 "type":"string"
             },
             {
@@ -35,22 +23,18 @@
             },
             {
                 "name":"일",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"월",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"년",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"거래유형",
-                "type":"string"
-            },
-            {
-                "name":"중개사소재지",
                 "type":"string"
             },
             {
@@ -59,7 +43,7 @@
             },
             {
                 "name":"층",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"지번",
@@ -70,12 +54,8 @@
                 "type":"string"
             },
             {
-                "name":"등기일자",
-                "type":"string"
-            },
-            {
                 "name":"지역코드",
-                "type":"string"
+                "type":"integer"
             },
             {
                 "name":"매도자",
@@ -134,10 +114,6 @@
                 "type":"string"
             },
             {
-                "name":"usingArea",
-                "type":"string"
-            },
-            {
                 "name":"type",
                 "type":"string"
             }
@@ -150,23 +126,18 @@
     "data":[
         {
             "index":0,
-            "동":null,
             "아파트":"창신영천타운",
             "건축년도":1997,
             "매수자":"개인",
-            "해제사유발생일":null,
-            "해제여부":null,
             "거래금액":"8,000",
             "일":13,
             "월":7,
             "년":2026,
             "거래유형":"직거래",
-            "중개사소재지":null,
             "전용면적":59.34,
             "층":3,
             "지번":"462-2",
             "아파트여부":"N",
-            "등기일자":null,
             "지역코드":47230,
             "매도자":"개인",
             "법정동":"망정동",
@@ -2577,28 +2548,22 @@
                 14.16087485
             ],
             "sURL":"https:\/\/www.realrankus.com?cpx=gbyccg041",
-            "usingArea":null,
             "type":"TRADE"
         },
         {
             "index":1,
-            "동":null,
             "아파트":"청구하이츠",
             "건축년도":2001,
             "매수자":"개인",
-            "해제사유발생일":null,
-            "해제여부":null,
             "거래금액":"14,000",
             "일":21,
             "월":7,
             "년":2026,
             "거래유형":"직거래",
-            "중개사소재지":null,
             "전용면적":84.975,
             "층":7,
             "지번":"988-4",
             "아파트여부":"N",
-            "등기일자":null,
             "지역코드":47230,
             "매도자":"개인",
             "법정동":"완산동",
@@ -3014,7 +2979,6 @@
                 36.9717851908
             ],
             "sURL":"https:\/\/www.realrankus.com?cpx=gbyccg013",
-            "usingArea":null,
             "type":"TRADE"
         }
     ]
