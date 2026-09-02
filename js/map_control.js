@@ -1794,6 +1794,9 @@ function applyCurrentLocation(lat, lng, accuracy) {
         var sidoCode = parentLevel0 ? parentLevel0.name_en : nearestLevel1.name_en.split("_")[0];
         var gunguCode = nearestLevel1["법정동코드"] + "_" + nearestLevel1.name_en;
 
+        var newCenter = new naver.maps.LatLng(lat, lng);
+        defaultMap.setCenter(newCenter);
+
         if(typeof optionChange === 'function') {
             optionChange(gunguCode, sidoCode);
         }
@@ -1803,12 +1806,7 @@ function applyCurrentLocation(lat, lng, accuracy) {
         if(typeof updateRegion === 'function') {
             updateRegion();
         }
-        
-        var newCenter = new naver.maps.LatLng(lat, lng);
-        defaultMap.setCenter(newCenter);
-        if (!PRESERVE_ZOOM_ON_LOCATE) {
-            defaultMap.setZoom(16);
-        }
+
         
         if(typeof toastMessageNotice === "function") {
             var toastMsg = "실제 위치와 약간의 오차가 발생할 수 있습니다.";
