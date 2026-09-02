@@ -6,61 +6,61 @@
     "dongs": {
         "순창읍": {
             "summary_metrics": {
-                "r_simple": 0.38470515516357195,
-                "r_multi": 0.9899854438138018,
-                "r_squared": "98.0%",
-                "price_per_gli_point": 5.684355362836126,
-                "std_error": 59.704448097831595,
+                "r_simple": 0.31508783377881217,
+                "r_multi": 0.9930588921461149,
+                "r_squared": "98.6%",
+                "price_per_gli_point": 3.3173106680517543,
+                "std_error": 58.03326620712182,
                 "remarks": "통계 유의성 부족"
             },
             "chart_boundaries": {
-                "min_gli": 23.564522183,
-                "max_gli": 37.3701120092,
+                "min_gli": 22.679028073,
+                "max_gli": 36.4846202326,
                 "simple_trendline": [
                     {
-                        "gli": 23.564522183,
-                        "price": 526.1590699222381
+                        "gli": 22.679028073,
+                        "price": 527.427477756037
                     },
                     {
-                        "gli": 37.3701120092,
-                        "price": 718.5579188055681
+                        "gli": 36.4846202326,
+                        "price": 697.7513164931256
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 23.564522183,
-                        "price": 591.5433492770455
+                        "gli": 22.679028073,
+                        "price": 599.2313639040542
                     },
                     {
-                        "gli": 37.3701120092,
-                        "price": 670.0192278427214
+                        "gli": 36.4846202326,
+                        "price": 645.0288020538669
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 23.564522183,
-                        "price": 621.3955733259613
+                        "gli": 22.679028073,
+                        "price": 628.2479970076151
                     },
                     {
-                        "gli": 37.3701120092,
-                        "price": 699.8714518916372
+                        "gli": 36.4846202326,
+                        "price": 674.0454351574278
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 23.564522183,
-                        "price": 561.6911252281297
+                        "gli": 22.679028073,
+                        "price": 570.2147308004933
                     },
                     {
-                        "gli": 37.3701120092,
-                        "price": 640.1670037938056
+                        "gli": 36.4846202326,
+                        "price": 616.012168950306
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "광명메이루즈",
-                    "gli_score": 31.5130227825,
+                    "gli_score": 30.6275237154,
                     "price_per_pyung": 580.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 13,
@@ -68,23 +68,23 @@
                 },
                 {
                     "complex_name": "대석",
-                    "gli_score": 23.564522183,
-                    "price_per_pyung": 434.0,
+                    "gli_score": 22.679028073,
+                    "price_per_pyung": 421.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 27,
                     "household_count": 136
                 },
                 {
                     "complex_name": "순창남양휴튼",
-                    "gli_score": 35.3704315257,
-                    "price_per_pyung": 907.3333333333334,
+                    "gli_score": 34.5589541185,
+                    "price_per_pyung": 909.6666666666666,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 3,
                     "household_count": 378
                 },
                 {
                     "complex_name": "온리뷰",
-                    "gli_score": 31.9213167828,
+                    "gli_score": 31.1098835815,
                     "price_per_pyung": 733.0,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
@@ -92,7 +92,7 @@
                 },
                 {
                     "complex_name": "온리뷰2차",
-                    "gli_score": 29.1887218393,
+                    "gli_score": 28.3772914965,
                     "price_per_pyung": 687.6666666666666,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 7,
@@ -100,8 +100,8 @@
                 },
                 {
                     "complex_name": "해태",
-                    "gli_score": 37.3701120092,
-                    "price_per_pyung": 477.5,
+                    "gli_score": 36.4846202326,
+                    "price_per_pyung": 422.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
                     "household_count": 142

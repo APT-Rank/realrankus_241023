@@ -4,143 +4,63 @@
     "region_key": "4180000000_Gyeonggi_Yeoncheon",
     "supply_score": 50.0,
     "dongs": {
-        "연천읍": {
-            "summary_metrics": {
-                "r_simple": 0.9344129961107293,
-                "r_multi": 1.0,
-                "r_squared": "100.0%",
-                "price_per_gli_point": 5.247303880019839,
-                "std_error": 57.064556816189324,
-                "remarks": ""
-            },
-            "chart_boundaries": {
-                "min_gli": 21.5122989407,
-                "max_gli": 54.3036386367,
-                "simple_trendline": [
-                    {
-                        "gli": 21.5122989407,
-                        "price": 368.10348198570057
-                    },
-                    {
-                        "gli": 54.3036386367,
-                        "price": 786.7582505775501
-                    }
-                ],
-                "corrected_trendline": [
-                    {
-                        "gli": 21.5122989407,
-                        "price": 500.17539245937064
-                    },
-                    {
-                        "gli": 54.3036386367,
-                        "price": 672.24151647724
-                    }
-                ],
-                "stable_zone_upper": [
-                    {
-                        "gli": 21.5122989407,
-                        "price": 528.7076708674653
-                    },
-                    {
-                        "gli": 54.3036386367,
-                        "price": 700.7737948853346
-                    }
-                ],
-                "stable_zone_lower": [
-                    {
-                        "gli": 21.5122989407,
-                        "price": 471.643114051276
-                    },
-                    {
-                        "gli": 54.3036386367,
-                        "price": 643.7092380691454
-                    }
-                ]
-            },
-            "scatter_points": [
-                {
-                    "complex_name": "e편한세상연천웰스하임",
-                    "gli_score": 54.3036386367,
-                    "price_per_pyung": 842.6666666666666,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 499
-                },
-                {
-                    "complex_name": "로하스",
-                    "gli_score": 41.40969787,
-                    "price_per_pyung": 530.0,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 12,
-                    "household_count": 91
-                },
-                {
-                    "complex_name": "조흥",
-                    "gli_score": 21.5122989407,
-                    "price_per_pyung": 404.3333333333333,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 30,
-                    "household_count": 213
-                }
-            ]
-        },
         "전곡읍": {
             "summary_metrics": {
-                "r_simple": 0.9483911595105295,
-                "r_multi": 0.9508014768249011,
-                "r_squared": "90.4%",
-                "price_per_gli_point": 19.38946969827256,
-                "std_error": 99.05096506173813,
+                "r_simple": 0.9560918454198349,
+                "r_multi": 0.9582244874966679,
+                "r_squared": "91.8%",
+                "price_per_gli_point": 19.386348305314005,
+                "std_error": 97.01586419101235,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 22.8786826917,
-                "max_gli": 53.98307096,
+                "min_gli": 20.0132720212,
+                "max_gli": 51.11766912,
                 "simple_trendline": [
                     {
-                        "gli": 22.8786826917,
-                        "price": 327.0381181476296
+                        "gli": 20.0132720212,
+                        "price": 330.7544294215695
                     },
                     {
-                        "gli": 53.98307096,
-                        "price": 1033.7187532326589
+                        "gli": 51.11766912,
+                        "price": 1029.9173333352587
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 22.8786826917,
-                        "price": 365.07785293342874
+                        "gli": 20.0132720212,
+                        "price": 366.07331854491906
                     },
                     {
-                        "gli": 53.98307096,
-                        "price": 968.1754467449362
+                        "gli": 51.11766912,
+                        "price": 969.0739945290543
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 22.8786826917,
-                        "price": 414.6033354642978
+                        "gli": 20.0132720212,
+                        "price": 414.58125064042525
                     },
                     {
-                        "gli": 53.98307096,
-                        "price": 1017.7009292758053
+                        "gli": 51.11766912,
+                        "price": 1017.5819266245604
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 22.8786826917,
-                        "price": 315.5523704025597
+                        "gli": 20.0132720212,
+                        "price": 317.56538644941287
                     },
                     {
-                        "gli": 53.98307096,
-                        "price": 918.649964214067
+                        "gli": 51.11766912,
+                        "price": 920.5660624335482
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "가람채",
-                    "gli_score": 24.97042158,
+                    "gli_score": 22.12711027,
                     "price_per_pyung": 426.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
@@ -148,15 +68,15 @@
                 },
                 {
                     "complex_name": "명정",
-                    "gli_score": 22.8786826917,
-                    "price_per_pyung": 446.75,
+                    "gli_score": 20.0132720212,
+                    "price_per_pyung": 433.75,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
                     "household_count": 165
                 },
                 {
                     "complex_name": "석미모닝파크",
-                    "gli_score": 41.8607155933,
+                    "gli_score": 38.9953137533,
                     "price_per_pyung": 785.3333333333334,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
@@ -164,31 +84,31 @@
                 },
                 {
                     "complex_name": "연천전곡코아루더클래스",
-                    "gli_score": 41.5783601467,
-                    "price_per_pyung": 759.1666666666666,
+                    "gli_score": 38.7350488367,
+                    "price_per_pyung": 756.3333333333334,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 6,
                     "household_count": 307
                 },
                 {
                     "complex_name": "유명",
-                    "gli_score": 23.57092276,
-                    "price_per_pyung": 232.0,
+                    "gli_score": 20.70552092,
+                    "price_per_pyung": 268.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
                     "household_count": 90
                 },
                 {
                     "complex_name": "전곡석미",
-                    "gli_score": 33.4602914525,
-                    "price_per_pyung": 619.0,
+                    "gli_score": 30.5949089675,
+                    "price_per_pyung": 608.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 24,
                     "household_count": 225
                 },
                 {
                     "complex_name": "전곡석미모닝파크3차",
-                    "gli_score": 46.2183270933,
+                    "gli_score": 43.3529252533,
                     "price_per_pyung": 752.75,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 6,
@@ -196,15 +116,15 @@
                 },
                 {
                     "complex_name": "전곡예일세띠앙",
-                    "gli_score": 31.0212033433,
-                    "price_per_pyung": 570.0,
+                    "gli_score": 28.1256780533,
+                    "price_per_pyung": 569.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
                     "household_count": 359
                 },
                 {
                     "complex_name": "전곡제일풍경채리버파크",
-                    "gli_score": 53.98307096,
+                    "gli_score": 51.11766912,
                     "price_per_pyung": 1060.0,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
@@ -212,11 +132,91 @@
                 },
                 {
                     "complex_name": "조흥",
-                    "gli_score": 23.47228261,
-                    "price_per_pyung": 214.58823529411765,
+                    "gli_score": 20.60688077,
+                    "price_per_pyung": 216.2941176470588,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 34,
                     "household_count": 287
+                }
+            ]
+        },
+        "연천읍": {
+            "summary_metrics": {
+                "r_simple": 0.9344128861836133,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 5.247303188411618,
+                "std_error": 57.064556816189324,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 18.3075858031,
+                "max_gli": 51.0989481267,
+                "simple_trendline": [
+                    {
+                        "gli": 18.3075858031,
+                        "price": 368.1034790326843
+                    },
+                    {
+                        "gli": 51.0989481267,
+                        "price": 786.7581824407398
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 18.3075858031,
+                        "price": 500.17532545010715
+                    },
+                    {
+                        "gli": 51.0989481267,
+                        "price": 672.2415455230941
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 18.3075858031,
+                        "price": 528.7076038582018
+                    },
+                    {
+                        "gli": 51.0989481267,
+                        "price": 700.7738239311888
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 18.3075858031,
+                        "price": 471.6430470420125
+                    },
+                    {
+                        "gli": 51.0989481267,
+                        "price": 643.7092671149995
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "e편한세상연천웰스하임",
+                    "gli_score": 51.0989481267,
+                    "price_per_pyung": 842.6666666666666,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 499
+                },
+                {
+                    "complex_name": "로하스",
+                    "gli_score": 38.20500736,
+                    "price_per_pyung": 530.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 12,
+                    "household_count": 91
+                },
+                {
+                    "complex_name": "조흥",
+                    "gli_score": 18.3075858031,
+                    "price_per_pyung": 404.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 213
                 }
             ]
         },
@@ -225,58 +225,58 @@
                 "r_simple": -1.0,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 0.009766063680704984,
+                "price_per_gli_point": 0.010197948474710117,
                 "std_error": 24.600135543325774,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 24.8256451595,
-                "max_gli": 26.1867183445,
+                "min_gli": 22.6945705797,
+                "max_gli": 24.1158890831,
                 "simple_trendline": [
                     {
-                        "gli": 24.8256451595,
-                        "price": 350.0000000000001
+                        "gli": 22.6945705797,
+                        "price": 350.0
                     },
                     {
-                        "gli": 26.1867183445,
-                        "price": 318.66666666666674
+                        "gli": 24.1158890831,
+                        "price": 318.66666666666663
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 24.8256451595,
-                        "price": 334.3399794970328
+                        "gli": 22.6945705797,
+                        "price": 334.3405805997653
                     },
                     {
-                        "gli": 26.1867183445,
-                        "price": 334.326687169634
+                        "gli": 24.1158890831,
+                        "price": 334.32608606690144
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 24.8256451595,
-                        "price": 346.6400472686957
+                        "gli": 22.6945705797,
+                        "price": 346.6406483714282
                     },
                     {
-                        "gli": 26.1867183445,
-                        "price": 346.6267549412969
+                        "gli": 24.1158890831,
+                        "price": 346.62615383856433
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 24.8256451595,
-                        "price": 322.0399117253699
+                        "gli": 22.6945705797,
+                        "price": 322.0405128281024
                     },
                     {
-                        "gli": 26.1867183445,
-                        "price": 322.0266193979711
+                        "gli": 24.1158890831,
+                        "price": 322.02601829523854
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "백의아느칸빌",
-                    "gli_score": 26.1867183445,
+                    "gli_score": 24.1158890831,
                     "price_per_pyung": 318.6666666666667,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
@@ -284,7 +284,7 @@
                 },
                 {
                     "complex_name": "태창",
-                    "gli_score": 24.8256451595,
+                    "gli_score": 22.6945705797,
                     "price_per_pyung": 350.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 23,

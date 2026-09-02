@@ -84,11 +84,11 @@ var getRegionNameFromLink = (val) => {
 var exchange_rate = 1500; // 1억 KRW 당 USD 환산값 (예시: 1500M KRW = 1M USD)
 
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
-var thisMonth = "202608"; //수정
+var thisMonth = "202609"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
-var selectedMonth = "202608"; //수정
+var selectedMonth = "202609"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202608_02"; //수정
+var DB_Date = "202609_01"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
@@ -665,7 +665,7 @@ $(document).ready(function () {
     }
   });
 
-  if ($.cookie("popCookie") != "202608" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+  if ($.cookie("popCookie") != "202609" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
     startNotice = true;
     showNotice();
     //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -771,6 +771,7 @@ $(document).ready(function () {
  * @param {Array} searchingData - IndexedDB에 저장할 단지별 검색 데이터 배열
  */
 function writeIdxedDB(searchingData) {
+  /*
   window.indexedDB.deleteDatabase("202512_01");
   window.indexedDB.deleteDatabase("202512_02");
   window.indexedDB.deleteDatabase("202601_01");
@@ -793,6 +794,7 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202606_01");
   window.indexedDB.deleteDatabase("202606_02");
   window.indexedDB.deleteDatabase("202606_02_EN");
+  */
   window.indexedDB.deleteDatabase("202606_03");
   window.indexedDB.deleteDatabase("202606_03_EN");
   window.indexedDB.deleteDatabase("202606_04");
@@ -805,6 +807,8 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202607_03_EN");
   window.indexedDB.deleteDatabase("202608_01");
   window.indexedDB.deleteDatabase("202608_01_EN");
+  window.indexedDB.deleteDatabase("202608_02");
+  window.indexedDB.deleteDatabase("202608_02_EN");  
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;
@@ -4541,6 +4545,7 @@ function showNotice() {
   var footerHtml = "";
   var detailHtml = "";
 
+  /*
   if (selectedMonth == "202511") {
     detailHtml += `${notice_202511}`;
   }
@@ -4556,6 +4561,7 @@ function showNotice() {
   if (selectedMonth == "202603") {
     detailHtml += `${notice_202603}`;
   }
+  */
   if (selectedMonth == "202604") {
     detailHtml += `${notice_202604}`;
   }
@@ -4570,6 +4576,9 @@ function showNotice() {
   }
   if (selectedMonth == "202608") {
     detailHtml += `${notice_202608}`;
+  }
+  if (selectedMonth == "202609") {
+    detailHtml += `${notice_202609}`;
   }
 
   var coffeeChatTitle = t('ui.notice.coffeechat_title', '{years}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스')
@@ -4637,7 +4646,7 @@ function showNotice() {
   }
   $(".modal-footer").css({ "padding-top": "3px" });
 
-  if ($.cookie("popCookie") != "202608") {
+  if ($.cookie("popCookie") != "202609") {
     $("#flexCheckDefault").prop("checked", false);
   } else {
     $("#flexCheckDefault").prop("checked", true);
@@ -4645,7 +4654,7 @@ function showNotice() {
 
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
-      $.cookie("popCookie", "202608", { expires: 30, path: "/" });
+      $.cookie("popCookie", "202609", { expires: 30, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });

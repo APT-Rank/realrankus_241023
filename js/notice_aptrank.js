@@ -1,3 +1,12 @@
+var notice_202609 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 9월 업데이트 안내 (2026-09-02)</div>"
++"<ul>"
++"<li><div class='notice'>시군구별 일자리 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
++"<li><div class='notice'>은행 정보 업데이트 했습니다. (전국은행연합회 제공)</div></li>"
++"<li><div class='notice'>2026년 8월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202608 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 8월 업데이트 안내 (2026-08-06)</div>"
 +"<ul>"

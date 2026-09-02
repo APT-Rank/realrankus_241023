@@ -4,319 +4,79 @@
     "region_key": "4420000000_Chungcheongnamdo_Asan",
     "supply_score": 0.0,
     "dongs": {
-        "탕정면": {
-            "summary_metrics": {
-                "r_simple": 0.8092856344502014,
-                "r_multi": 0.9239124212822831,
-                "r_squared": "85.4%",
-                "price_per_gli_point": 16.173811624316123,
-                "std_error": 223.16784390087847,
-                "remarks": ""
-            },
-            "chart_boundaries": {
-                "min_gli": 22.9605411267,
-                "max_gli": 85.8847978524,
-                "simple_trendline": [
-                    {
-                        "gli": 22.9605411267,
-                        "price": 344.1263068251444
-                    },
-                    {
-                        "gli": 85.8847978524,
-                        "price": 1652.0488594744247
-                    }
-                ],
-                "corrected_trendline": [
-                    {
-                        "gli": 22.9605411267,
-                        "price": 509.21648422855617
-                    },
-                    {
-                        "gli": 85.8847978524,
-                        "price": 1526.9415591101347
-                    }
-                ],
-                "stable_zone_upper": [
-                    {
-                        "gli": 22.9605411267,
-                        "price": 620.8004061789954
-                    },
-                    {
-                        "gli": 85.8847978524,
-                        "price": 1638.5254810605738
-                    }
-                ],
-                "stable_zone_lower": [
-                    {
-                        "gli": 22.9605411267,
-                        "price": 397.63256227811695
-                    },
-                    {
-                        "gli": 85.8847978524,
-                        "price": 1415.3576371596955
-                    }
-                ]
-            },
-            "scatter_points": [
-                {
-                    "complex_name": "더샵탕정인피니티시티",
-                    "gli_score": 53.7638080889,
-                    "price_per_pyung": 1481.25,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 0,
-                    "household_count": 1140
-                },
-                {
-                    "complex_name": "더샵탕정인피니티시티2차",
-                    "gli_score": 53.6971870889,
-                    "price_per_pyung": 1504.1666666666667,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -1,
-                    "household_count": 1214
-                },
-                {
-                    "complex_name": "더샵탕정인피니티시티3차",
-                    "gli_score": 52.7816516533,
-                    "price_per_pyung": 1541.0,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -1,
-                    "household_count": 1163
-                },
-                {
-                    "complex_name": "신영한들물빛도시지웰시티센트럴푸르지오2단지",
-                    "gli_score": 85.850876131,
-                    "price_per_pyung": 2134.3333333333335,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 4,
-                    "household_count": 669
-                },
-                {
-                    "complex_name": "신영한들물빛도시지웰시티센트럴푸르지오3단지",
-                    "gli_score": 85.8847978524,
-                    "price_per_pyung": 2161.0,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 4,
-                    "household_count": 852
-                },
-                {
-                    "complex_name": "아산탕정동일하이빌파크레인",
-                    "gli_score": 53.72713324,
-                    "price_per_pyung": 1656.6,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -3,
-                    "household_count": 821
-                },
-                {
-                    "complex_name": "아산탕정자이메트로시티",
-                    "gli_score": 53.5694341989,
-                    "price_per_pyung": 1875.3333333333333,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -3,
-                    "household_count": 1638
-                },
-                {
-                    "complex_name": "아산탕정자이센트럴시티",
-                    "gli_score": 53.1375794044,
-                    "price_per_pyung": 1799.857142857143,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -2,
-                    "household_count": 1238
-                },
-                {
-                    "complex_name": "아산탕정자이퍼스트시티",
-                    "gli_score": 52.8761605157,
-                    "price_per_pyung": 1699.3333333333333,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -1,
-                    "household_count": 797
-                },
-                {
-                    "complex_name": "탕정삼성트라팰리스",
-                    "gli_score": 66.9214295465,
-                    "price_per_pyung": 1287.15,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 17,
-                    "household_count": 3953
-                },
-                {
-                    "complex_name": "탕정푸르지오리버파크",
-                    "gli_score": 53.6549009324,
-                    "price_per_pyung": 1316.4,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 0,
-                    "household_count": 1626
-                },
-                {
-                    "complex_name": "탕정푸르지오센터파크",
-                    "gli_score": 54.1856658288,
-                    "price_per_pyung": 1495.6,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": -2,
-                    "household_count": 1416
-                },
-                {
-                    "complex_name": "한들물빛도시시티프라디움",
-                    "gli_score": 79.8564044379,
-                    "price_per_pyung": 1621.6666666666667,
-                    "age_category": "준신축 (5~10년)",
-                    "construction_age": 5,
-                    "household_count": 746
-                },
-                {
-                    "complex_name": "한들물빛도시신영지웰시티센트럴푸르지오1단지",
-                    "gli_score": 84.8946623139,
-                    "price_per_pyung": 2129.1428571428573,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 4,
-                    "household_count": 685
-                },
-                {
-                    "complex_name": "한들물빛도시예미지",
-                    "gli_score": 80.9462202323,
-                    "price_per_pyung": 1816.6,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 4,
-                    "household_count": 791
-                },
-                {
-                    "complex_name": "한들물빛도시하늘채",
-                    "gli_score": 80.8752103989,
-                    "price_per_pyung": 1513.7142857142858,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 4,
-                    "household_count": 1062
-                },
-                {
-                    "complex_name": "한라",
-                    "gli_score": 22.9605411267,
-                    "price_per_pyung": 496.0,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 29,
-                    "household_count": 355
-                },
-                {
-                    "complex_name": "호반써밋그랜드마크Ⅰ(1차)",
-                    "gli_score": 54.1877822273,
-                    "price_per_pyung": 1336.5,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 756
-                },
-                {
-                    "complex_name": "호반써밋그랜드마크Ⅱ(2차)",
-                    "gli_score": 50.5392992784,
-                    "price_per_pyung": 1408.5,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 817
-                },
-                {
-                    "complex_name": "호반써밋그랜드마크Ⅲ(3차)",
-                    "gli_score": 50.5188592572,
-                    "price_per_pyung": 1389.75,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 662
-                },
-                {
-                    "complex_name": "호반써밋그랜드마크Ⅴ(5차)",
-                    "gli_score": 50.0421432013,
-                    "price_per_pyung": 1314.0,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 489
-                },
-                {
-                    "complex_name": "호반써밋그랜드마크Ⅵ(6차)",
-                    "gli_score": 50.2268148111,
-                    "price_per_pyung": 1144.0,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 303
-                },
-                {
-                    "complex_name": "홍익",
-                    "gli_score": 26.3231083433,
-                    "price_per_pyung": 330.0,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 27,
-                    "household_count": 999
-                }
-            ]
-        },
         "배방읍": {
             "summary_metrics": {
-                "r_simple": 0.8241192166405795,
-                "r_multi": 0.9266582945180236,
+                "r_simple": 0.8181535193730182,
+                "r_multi": 0.9270189506590681,
                 "r_squared": "85.9%",
-                "price_per_gli_point": 8.756205687155234,
-                "std_error": 160.8199513076899,
+                "price_per_gli_point": 8.45365944610021,
+                "std_error": 163.51563550822556,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 24.1791089773,
-                "max_gli": 83.9330420001,
+                "min_gli": 20.92099863,
+                "max_gli": 82.6797186359,
                 "simple_trendline": [
                     {
-                        "gli": 24.1791089773,
-                        "price": 205.2779253596616
+                        "gli": 20.92099863,
+                        "price": 192.1064875028419
                     },
                     {
-                        "gli": 83.9330420001,
-                        "price": 1100.8254804912963
+                        "gli": 82.6797186359,
+                        "price": 1114.6124275848365
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 24.1791089773,
-                        "price": 372.07509104411963
+                        "gli": 20.92099863,
+                        "price": 364.0835355272518
                     },
                     {
-                        "gli": 83.9330420001,
-                        "price": 895.292819208254
+                        "gli": 82.6797186359,
+                        "price": 886.1707222841864
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 24.1791089773,
-                        "price": 452.4850666979646
+                        "gli": 20.92099863,
+                        "price": 445.8413532813646
                     },
                     {
-                        "gli": 83.9330420001,
-                        "price": 975.7027948620989
+                        "gli": 82.6797186359,
+                        "price": 967.9285400382992
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 24.1791089773,
-                        "price": 291.66511539027465
+                        "gli": 20.92099863,
+                        "price": 282.325717773139
                     },
                     {
-                        "gli": 83.9330420001,
-                        "price": 814.882843554409
+                        "gli": 82.6797186359,
+                        "price": 804.4129045300735
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "e편한세상탕정퍼스트드림",
-                    "gli_score": 83.4987960154,
-                    "price_per_pyung": 1461.3333333333333,
+                    "gli_score": 82.2454723017,
+                    "price_per_pyung": 1463.8333333333333,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 1,
                     "household_count": 893
                 },
                 {
                     "complex_name": "대우푸르지오1차",
-                    "gli_score": 38.840331606,
-                    "price_per_pyung": 684.25,
+                    "gli_score": 35.2216359819,
+                    "price_per_pyung": 718.25,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 19,
                     "household_count": 893
                 },
                 {
                     "complex_name": "더샵센트로",
-                    "gli_score": 49.6148232174,
+                    "gli_score": 45.9986641888,
                     "price_per_pyung": 1263.0,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 3,
@@ -324,15 +84,15 @@
                 },
                 {
                     "complex_name": "롯데캐슬",
-                    "gli_score": 36.2173348056,
-                    "price_per_pyung": 676.25,
+                    "gli_score": 32.6011772753,
+                    "price_per_pyung": 679.25,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 18,
                     "household_count": 704
                 },
                 {
                     "complex_name": "배방메이루즈",
-                    "gli_score": 43.2617065509,
+                    "gli_score": 39.6430057237,
                     "price_per_pyung": 791.5,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
@@ -340,63 +100,63 @@
                 },
                 {
                     "complex_name": "배방북수마을자이2차",
-                    "gli_score": 35.5565536304,
-                    "price_per_pyung": 656.5,
+                    "gli_score": 31.9403887602,
+                    "price_per_pyung": 671.75,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 19,
                     "household_count": 712
                 },
                 {
                     "complex_name": "배방삼정그린코아",
-                    "gli_score": 35.5255924916,
-                    "price_per_pyung": 600.5,
+                    "gli_score": 31.9068903967,
+                    "price_per_pyung": 616.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 14,
                     "household_count": 2156
                 },
                 {
                     "complex_name": "배방역효성해링턴플레이스",
-                    "gli_score": 47.1647805654,
-                    "price_per_pyung": 960.6,
+                    "gli_score": 43.5480203293,
+                    "price_per_pyung": 962.8,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 8,
                     "household_count": 557
                 },
                 {
                     "complex_name": "배방자이",
-                    "gli_score": 36.6659804887,
-                    "price_per_pyung": 609.0,
+                    "gli_score": 33.0459398041,
+                    "price_per_pyung": 604.2,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 19,
                     "household_count": 1875
                 },
                 {
                     "complex_name": "배방푸르지오2차",
-                    "gli_score": 44.7532541514,
-                    "price_per_pyung": 794.0,
+                    "gli_score": 41.1364931183,
+                    "price_per_pyung": 872.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 11,
                     "household_count": 379
                 },
                 {
                     "complex_name": "배방필하우스리버시티",
-                    "gli_score": 52.8021844754,
-                    "price_per_pyung": 1363.75,
+                    "gli_score": 49.1860273179,
+                    "price_per_pyung": 1382.75,
                     "age_category": "신축 (5년미만)",
                     "construction_age": -1,
                     "household_count": 1083
                 },
                 {
                     "complex_name": "배방한성필하우스1단지",
-                    "gli_score": 37.2426203789,
-                    "price_per_pyung": 699.0,
+                    "gli_score": 33.6239210989,
+                    "price_per_pyung": 665.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
                     "household_count": 396
                 },
                 {
                     "complex_name": "배방한성필하우스2단지",
-                    "gli_score": 37.8465530456,
+                    "gli_score": 34.2278537656,
                     "price_per_pyung": 638.3333333333334,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 19,
@@ -404,15 +164,15 @@
                 },
                 {
                     "complex_name": "배방한성필하우스6차",
-                    "gli_score": 49.0602112666,
-                    "price_per_pyung": 921.8333333333334,
+                    "gli_score": 45.4415087464,
+                    "price_per_pyung": 947.5,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 6,
                     "household_count": 511
                 },
                 {
                     "complex_name": "별하신도시하늘채",
-                    "gli_score": 81.0027106537,
+                    "gli_score": 76.8105872202,
                     "price_per_pyung": 1255.5714285714287,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 3,
@@ -420,7 +180,7 @@
                 },
                 {
                     "complex_name": "삼정백조1차",
-                    "gli_score": 24.6630142033,
+                    "gli_score": 21.0429711333,
                     "price_per_pyung": 271.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 28,
@@ -428,31 +188,31 @@
                 },
                 {
                     "complex_name": "새솔마을중앙하이츠",
-                    "gli_score": 35.9865303322,
-                    "price_per_pyung": 688.0,
+                    "gli_score": 32.3703693222,
+                    "price_per_pyung": 615.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 18,
                     "household_count": 400
                 },
                 {
                     "complex_name": "센텀시티한양수자인",
-                    "gli_score": 45.258944998,
-                    "price_per_pyung": 929.3333333333334,
+                    "gli_score": 41.6402456206,
+                    "price_per_pyung": 916.6666666666666,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 7,
                     "household_count": 334
                 },
                 {
                     "complex_name": "신라",
-                    "gli_score": 24.1791089773,
-                    "price_per_pyung": 400.5,
+                    "gli_score": 22.4849660253,
+                    "price_per_pyung": 413.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
                     "household_count": 960
                 },
                 {
                     "complex_name": "신한",
-                    "gli_score": 26.4524313858,
+                    "gli_score": 24.7582883989,
                     "price_per_pyung": 450.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
@@ -460,7 +220,7 @@
                 },
                 {
                     "complex_name": "아산금강펜테리움센트럴파크",
-                    "gli_score": 82.8112248452,
+                    "gli_score": 79.0599217635,
                     "price_per_pyung": 1460.5,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 1,
@@ -468,31 +228,31 @@
                 },
                 {
                     "complex_name": "아산배방1단지우방아이유쉘",
-                    "gli_score": 47.92802337,
-                    "price_per_pyung": 1085.8,
+                    "gli_score": 44.31126512,
+                    "price_per_pyung": 1095.2,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 4,
                     "household_count": 519
                 },
                 {
                     "complex_name": "아산배방3차한성필하우스",
-                    "gli_score": 44.0627236247,
-                    "price_per_pyung": 963.2857142857143,
+                    "gli_score": 40.4459640499,
+                    "price_per_pyung": 957.8571428571429,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 711
                 },
                 {
                     "complex_name": "아산배방5차한성필하우스",
-                    "gli_score": 47.7429124515,
-                    "price_per_pyung": 982.0,
+                    "gli_score": 44.1261520149,
+                    "price_per_pyung": 990.6,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 8,
                     "household_count": 467
                 },
                 {
                     "complex_name": "아산배방금호어울림1단지",
-                    "gli_score": 32.7817400498,
+                    "gli_score": 29.1630440444,
                     "price_per_pyung": 481.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
@@ -500,7 +260,7 @@
                 },
                 {
                     "complex_name": "아산배방금호어울림2단지",
-                    "gli_score": 32.7131455276,
+                    "gli_score": 29.0944494024,
                     "price_per_pyung": 533.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
@@ -508,7 +268,7 @@
                 },
                 {
                     "complex_name": "아산배방라온프라이빗",
-                    "gli_score": 52.1615915203,
+                    "gli_score": 48.5428958359,
                     "price_per_pyung": 1225.6666666666667,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
@@ -516,47 +276,47 @@
                 },
                 {
                     "complex_name": "아산배방우방아이유쉘2단지",
-                    "gli_score": 51.1469986294,
-                    "price_per_pyung": 1063.6,
+                    "gli_score": 47.5302372405,
+                    "price_per_pyung": 1066.4,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 5,
                     "household_count": 1267
                 },
                 {
                     "complex_name": "아산탕정대광로제비앙",
-                    "gli_score": 81.7076019348,
-                    "price_per_pyung": 1406.0,
+                    "gli_score": 77.5154789331,
+                    "price_per_pyung": 1405.6666666666667,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 459
                 },
                 {
                     "complex_name": "아산한도",
-                    "gli_score": 28.7922301795,
-                    "price_per_pyung": 435.3333333333333,
+                    "gli_score": 25.1735277315,
+                    "price_per_pyung": 420.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
                     "household_count": 922
                 },
                 {
                     "complex_name": "엘리프아산탕정",
-                    "gli_score": 82.7646181544,
-                    "price_per_pyung": 1268.7142857142858,
+                    "gli_score": 81.5112947411,
+                    "price_per_pyung": 1290.2857142857142,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 1,
                     "household_count": 682
                 },
                 {
                     "complex_name": "연화마을8단지",
-                    "gli_score": 69.5402547322,
-                    "price_per_pyung": 909.3333333333334,
+                    "gli_score": 65.3533571689,
+                    "price_per_pyung": 843.3333333333334,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
                     "household_count": 724
                 },
                 {
                     "complex_name": "연화마을STX칸6단지",
-                    "gli_score": 76.0530692888,
+                    "gli_score": 71.8661683734,
                     "price_per_pyung": 1140.125,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 15,
@@ -564,15 +324,15 @@
                 },
                 {
                     "complex_name": "요진와이시티(주상복합)",
-                    "gli_score": 70.2754074778,
-                    "price_per_pyung": 1667.0,
+                    "gli_score": 66.0894057744,
+                    "price_per_pyung": 1672.625,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 15,
                     "household_count": 1479
                 },
                 {
                     "complex_name": "용연마을3단지",
-                    "gli_score": 67.3447179809,
+                    "gli_score": 63.1585708348,
                     "price_per_pyung": 861.8,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
@@ -580,7 +340,7 @@
                 },
                 {
                     "complex_name": "용연마을STX칸4단지",
-                    "gli_score": 71.9408420889,
+                    "gli_score": 67.7546910756,
                     "price_per_pyung": 1031.7142857142858,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 15,
@@ -588,7 +348,7 @@
                 },
                 {
                     "complex_name": "중앙하이츠오르젠1단지",
-                    "gli_score": 37.6615717747,
+                    "gli_score": 34.0428742011,
                     "price_per_pyung": 656.6,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
@@ -596,7 +356,7 @@
                 },
                 {
                     "complex_name": "중앙하이츠오르젠2단지",
-                    "gli_score": 37.046167204,
+                    "gli_score": 33.4274708427,
                     "price_per_pyung": 628.25,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
@@ -604,39 +364,39 @@
                 },
                 {
                     "complex_name": "천안아산역리슈빌",
-                    "gli_score": 68.1589754367,
-                    "price_per_pyung": 862.2857142857143,
+                    "gli_score": 63.9725244091,
+                    "price_per_pyung": 859.8571428571429,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 16,
                     "household_count": 824
                 },
                 {
                     "complex_name": "포레스트힐",
-                    "gli_score": 71.4934329778,
-                    "price_per_pyung": 990.25,
+                    "gli_score": 67.3072819644,
+                    "price_per_pyung": 982.25,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 16,
                     "household_count": 464
                 },
                 {
                     "complex_name": "한라비발디",
-                    "gli_score": 66.4909178233,
-                    "price_per_pyung": 636.0,
+                    "gli_score": 62.8722185433,
+                    "price_per_pyung": 637.75,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
                     "household_count": 794
                 },
                 {
                     "complex_name": "한성",
-                    "gli_score": 25.1131220433,
-                    "price_per_pyung": 328.0,
+                    "gli_score": 20.92099863,
+                    "price_per_pyung": 328.6666666666667,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 27,
                     "household_count": 290
                 },
                 {
                     "complex_name": "한양수자인2차",
-                    "gli_score": 46.4459457122,
+                    "gli_score": 42.8272464322,
                     "price_per_pyung": 866.6666666666666,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 6,
@@ -644,7 +404,7 @@
                 },
                 {
                     "complex_name": "힐스테이트자이아산센텀",
-                    "gli_score": 83.9330420001,
+                    "gli_score": 82.6797186359,
                     "price_per_pyung": 1391.857142857143,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 0,
@@ -652,63 +412,303 @@
                 }
             ]
         },
-        "모종동": {
+        "탕정면": {
             "summary_metrics": {
-                "r_simple": 0.9478705155098499,
-                "r_multi": 0.9589805578384754,
-                "r_squared": "92.0%",
-                "price_per_gli_point": 18.313637757722034,
-                "std_error": 109.24619382884678,
+                "r_simple": 0.8051607907971756,
+                "r_multi": 0.9218995081580568,
+                "r_squared": "85.0%",
+                "price_per_gli_point": 15.917634966021467,
+                "std_error": 224.12714580189024,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 21.8760885653,
-                "max_gli": 51.5562692871,
+                "min_gli": 18.6234392833,
+                "max_gli": 81.7002877183,
                 "simple_trendline": [
                     {
-                        "gli": 21.8760885653,
-                        "price": 212.30254895595874
+                        "gli": 18.6234392833,
+                        "price": 355.7130932877716
                     },
                     {
-                        "gli": 51.5562692871,
-                        "price": 1096.5627522203708
+                        "gli": 81.7002877183,
+                        "price": 1649.5176525899965
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 21.8760885653,
-                        "price": 1092.9033527910792
+                        "gli": 18.6234392833,
+                        "price": 520.3506908545194
                     },
                     {
-                        "gli": 51.5562692871,
-                        "price": 549.3512744683088
+                        "gli": 81.7002877183,
+                        "price": 1524.3849390499117
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 21.8760885653,
-                        "price": 1147.5264497055025
+                        "gli": 18.6234392833,
+                        "price": 632.4142637554645
                     },
                     {
-                        "gli": 51.5562692871,
-                        "price": 603.9743713827322
+                        "gli": 81.7002877183,
+                        "price": 1636.4485119508568
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 21.8760885653,
-                        "price": 1038.280255876656
+                        "gli": 18.6234392833,
+                        "price": 408.28711795357424
                     },
                     {
-                        "gli": 51.5562692871,
-                        "price": 494.7281775538854
+                        "gli": 81.7002877183,
+                        "price": 1412.3213661489667
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "더샵탕정인피니티시티",
+                    "gli_score": 49.4256610756,
+                    "price_per_pyung": 1482.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 0,
+                    "household_count": 1140
+                },
+                {
+                    "complex_name": "더샵탕정인피니티시티2차",
+                    "gli_score": 49.3590400756,
+                    "price_per_pyung": 1497.6666666666667,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -1,
+                    "household_count": 1214
+                },
+                {
+                    "complex_name": "더샵탕정인피니티시티3차",
+                    "gli_score": 48.44410188,
+                    "price_per_pyung": 1544.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -1,
+                    "household_count": 1163
+                },
+                {
+                    "complex_name": "신영한들물빛도시지웰시티센트럴푸르지오2단지",
+                    "gli_score": 81.6663668738,
+                    "price_per_pyung": 2128.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 669
+                },
+                {
+                    "complex_name": "신영한들물빛도시지웰시티센트럴푸르지오3단지",
+                    "gli_score": 81.7002877183,
+                    "price_per_pyung": 2161.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 852
+                },
+                {
+                    "complex_name": "아산탕정동일하이빌파크레인",
+                    "gli_score": 49.3919720166,
+                    "price_per_pyung": 1654.4,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -3,
+                    "household_count": 821
+                },
+                {
+                    "complex_name": "아산탕정자이메트로시티",
+                    "gli_score": 49.2323310723,
+                    "price_per_pyung": 1873.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -3,
+                    "household_count": 1638
+                },
+                {
+                    "complex_name": "아산탕정자이센트럴시티",
+                    "gli_score": 48.8004775611,
+                    "price_per_pyung": 1806.4285714285713,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -2,
+                    "household_count": 1238
+                },
+                {
+                    "complex_name": "아산탕정자이퍼스트시티",
+                    "gli_score": 48.5390574748,
+                    "price_per_pyung": 1701.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -1,
+                    "household_count": 797
+                },
+                {
+                    "complex_name": "탕정삼성트라팰리스",
+                    "gli_score": 62.5823844607,
+                    "price_per_pyung": 1281.05,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 17,
+                    "household_count": 3953
+                },
+                {
+                    "complex_name": "탕정푸르지오리버파크",
+                    "gli_score": 49.3448180508,
+                    "price_per_pyung": 1309.7,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 0,
+                    "household_count": 1626
+                },
+                {
+                    "complex_name": "탕정푸르지오센터파크",
+                    "gli_score": 49.8481151648,
+                    "price_per_pyung": 1500.2,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": -2,
+                    "household_count": 1416
+                },
+                {
+                    "complex_name": "한들물빛도시시티프라디움",
+                    "gli_score": 75.6718934657,
+                    "price_per_pyung": 1587.6666666666667,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 5,
+                    "household_count": 746
+                },
+                {
+                    "complex_name": "한들물빛도시신영지웰시티센트럴푸르지오1단지",
+                    "gli_score": 80.710155251,
+                    "price_per_pyung": 2137.1428571428573,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 685
+                },
+                {
+                    "complex_name": "한들물빛도시예미지",
+                    "gli_score": 76.7617093122,
+                    "price_per_pyung": 1801.4,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 791
+                },
+                {
+                    "complex_name": "한들물빛도시하늘채",
+                    "gli_score": 76.6907017956,
+                    "price_per_pyung": 1517.142857142857,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 4,
+                    "household_count": 1062
+                },
+                {
+                    "complex_name": "한라",
+                    "gli_score": 18.6234392833,
+                    "price_per_pyung": 496.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 355
+                },
+                {
+                    "complex_name": "호반써밋그랜드마크Ⅰ(1차)",
+                    "gli_score": 49.8526217176,
+                    "price_per_pyung": 1385.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 756
+                },
+                {
+                    "complex_name": "호반써밋그랜드마크Ⅱ(2차)",
+                    "gli_score": 46.2041386159,
+                    "price_per_pyung": 1374.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 817
+                },
+                {
+                    "complex_name": "호반써밋그랜드마크Ⅲ(3차)",
+                    "gli_score": 46.1836988325,
+                    "price_per_pyung": 1372.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 662
+                },
+                {
+                    "complex_name": "호반써밋그랜드마크Ⅴ(5차)",
+                    "gli_score": 45.706982373,
+                    "price_per_pyung": 1313.25,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 489
+                },
+                {
+                    "complex_name": "호반써밋그랜드마크Ⅵ(6차)",
+                    "gli_score": 45.8916539978,
+                    "price_per_pyung": 1144.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 303
+                },
+                {
+                    "complex_name": "홍익",
+                    "gli_score": 21.98406547,
+                    "price_per_pyung": 344.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 27,
+                    "household_count": 999
+                }
+            ]
+        },
+        "모종동": {
+            "summary_metrics": {
+                "r_simple": 0.9439872859320099,
+                "r_multi": 0.9552991267721233,
+                "r_squared": "91.3%",
+                "price_per_gli_point": 19.033577746990048,
+                "std_error": 116.96590933591584,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 20.0927542584,
+                "max_gli": 49.7753089252,
+                "simple_trendline": [
+                    {
+                        "gli": 20.0927542584,
+                        "price": 182.65426802436178
+                    },
+                    {
+                        "gli": 49.7753089252,
+                        "price": 1065.9372416164729
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 20.0927542584,
+                        "price": 1076.0135793500692
+                    },
+                    {
+                        "gli": 49.7753089252,
+                        "price": 511.0483673702493
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 20.0927542584,
+                        "price": 1134.4965340180272
+                    },
+                    {
+                        "gli": 49.7753089252,
+                        "price": 569.5313220382072
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 20.0927542584,
+                        "price": 1017.5306246821114
+                    },
+                    {
+                        "gli": 49.7753089252,
+                        "price": 452.5654127022914
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "라이프타운",
-                    "gli_score": 21.8760885653,
+                    "gli_score": 20.0927542584,
                     "price_per_pyung": 441.3333333333333,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 34,
@@ -716,15 +716,15 @@
                 },
                 {
                     "complex_name": "모종e편한세상",
-                    "gli_score": 33.6140124747,
-                    "price_per_pyung": 650.5,
+                    "gli_score": 31.8306763621,
+                    "price_per_pyung": 662.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
                     "household_count": 754
                 },
                 {
                     "complex_name": "모종금호어울림아이퍼스트",
-                    "gli_score": 47.0125885322,
+                    "gli_score": 45.2292543822,
                     "price_per_pyung": 943.5,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 4,
@@ -732,7 +732,7 @@
                 },
                 {
                     "complex_name": "모종리슈빌더스카이(주상복합)",
-                    "gli_score": 46.9347919329,
+                    "gli_score": 45.151458048,
                     "price_per_pyung": 1205.3333333333333,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
@@ -740,23 +740,23 @@
                 },
                 {
                     "complex_name": "모종캐슬어울림1단지",
-                    "gli_score": 42.5514439836,
-                    "price_per_pyung": 967.4,
+                    "gli_score": 40.7705107462,
+                    "price_per_pyung": 960.8,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 792
                 },
                 {
                     "complex_name": "모종캐슬어울림2단지",
-                    "gli_score": 42.354548232,
-                    "price_per_pyung": 954.2,
+                    "gli_score": 40.5736355842,
+                    "price_per_pyung": 939.6,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 794
                 },
                 {
                     "complex_name": "모종캐슬어울림3단지",
-                    "gli_score": 42.1912378438,
+                    "gli_score": 40.4079012965,
                     "price_per_pyung": 1017.4285714285714,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
@@ -764,15 +764,15 @@
                 },
                 {
                     "complex_name": "모종한성필하우스1차",
-                    "gli_score": 32.7511100241,
-                    "price_per_pyung": 748.0,
+                    "gli_score": 30.9700715547,
+                    "price_per_pyung": 718.3333333333334,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
                     "household_count": 769
                 },
                 {
                     "complex_name": "모종한성필하우스2차",
-                    "gli_score": 36.0653983358,
+                    "gli_score": 34.2820640774,
                     "price_per_pyung": 836.6666666666666,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 16,
@@ -780,23 +780,23 @@
                 },
                 {
                     "complex_name": "아산모종서한이다음노블리스",
-                    "gli_score": 51.5562692871,
-                    "price_per_pyung": 1363.5,
+                    "gli_score": 49.7753089252,
+                    "price_per_pyung": 1342.6666666666667,
                     "age_category": "신축 (5년미만)",
                     "construction_age": -2,
                     "household_count": 1079
                 },
                 {
                     "complex_name": "아산모종푸르지오",
-                    "gli_score": 34.5252292478,
-                    "price_per_pyung": 753.75,
+                    "gli_score": 32.7418942349,
+                    "price_per_pyung": 711.25,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 18,
                     "household_count": 427
                 },
                 {
                     "complex_name": "아산벨코어스위첸(주상복합)",
-                    "gli_score": 48.2150346942,
+                    "gli_score": 46.4871837265,
                     "price_per_pyung": 1337.1666666666667,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 1,
@@ -804,24 +804,24 @@
                 },
                 {
                     "complex_name": "한라동백",
-                    "gli_score": 23.6333977302,
-                    "price_per_pyung": 572.8333333333334,
+                    "gli_score": 21.8500637632,
+                    "price_per_pyung": 574.6666666666666,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 28,
                     "household_count": 688
                 },
                 {
                     "complex_name": "힐스테이트모종네오루체",
-                    "gli_score": 48.209473172,
-                    "price_per_pyung": 1325.0,
+                    "gli_score": 46.4285636647,
+                    "price_per_pyung": 1347.75,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 3,
                     "household_count": 927
                 },
                 {
                     "complex_name": "힐스테이트모종블랑루체",
-                    "gli_score": 51.228721492,
-                    "price_per_pyung": 1289.75,
+                    "gli_score": 49.4475114952,
+                    "price_per_pyung": 1263.5,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 0,
                     "household_count": 1060
@@ -830,69 +830,69 @@
         },
         "용화동": {
             "summary_metrics": {
-                "r_simple": 0.8835066330434322,
-                "r_multi": 0.8859394182651504,
+                "r_simple": 0.8819511796116495,
+                "r_multi": 0.8859132269930112,
                 "r_squared": "78.5%",
-                "price_per_gli_point": 31.100533124239345,
-                "std_error": 253.96430269852468,
+                "price_per_gli_point": 23.659195588784986,
+                "std_error": 252.38073223026134,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 22.8844944159,
-                "max_gli": 50.4350516558,
+                "min_gli": 21.1016061964,
+                "max_gli": 48.6521637065,
                 "simple_trendline": [
                     {
-                        "gli": 22.8844944159,
-                        "price": -18.926496622526315
+                        "gli": 21.1016061964,
+                        "price": -29.170881760295686
                     },
                     {
-                        "gli": 50.4350516558,
-                        "price": 823.0995077043385
+                        "gli": 48.6521637065,
+                        "price": 801.0103389840642
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 22.8844944159,
-                        "price": -26.014730146258444
+                        "gli": 21.1016061964,
+                        "price": 56.189252958895906
                     },
                     {
-                        "gli": 50.4350516558,
-                        "price": 830.8222878845038
+                        "gli": 48.6521637065,
+                        "price": 708.0132816704211
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 22.8844944159,
-                        "price": 100.9674212030039
+                        "gli": 21.1016061964,
+                        "price": 182.37961907402658
                     },
                     {
-                        "gli": 50.4350516558,
-                        "price": 957.8044392337662
+                        "gli": 48.6521637065,
+                        "price": 834.2036477855518
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 22.8844944159,
-                        "price": -152.99688149552077
+                        "gli": 21.1016061964,
+                        "price": -70.00111315623477
                     },
                     {
-                        "gli": 50.4350516558,
-                        "price": 703.8401365352414
+                        "gli": 48.6521637065,
+                        "price": 581.8229155552904
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "모아미래도",
-                    "gli_score": 31.8574187293,
-                    "price_per_pyung": 493.5,
+                    "gli_score": 30.0745314123,
+                    "price_per_pyung": 536.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
                     "household_count": 510
                 },
                 {
                     "complex_name": "백자",
-                    "gli_score": 23.202896873,
+                    "gli_score": 21.4200120319,
                     "price_per_pyung": 265.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 33,
@@ -900,23 +900,23 @@
                 },
                 {
                     "complex_name": "아산용화아이파크",
-                    "gli_score": 42.7727917704,
-                    "price_per_pyung": 858.0,
+                    "gli_score": 40.9911023731,
+                    "price_per_pyung": 859.4285714285714,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 12,
                     "household_count": 894
                 },
                 {
                     "complex_name": "아산용화엘크루",
-                    "gli_score": 41.9532227197,
-                    "price_per_pyung": 741.5,
+                    "gli_score": 40.1715327353,
+                    "price_per_pyung": 741.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 12,
                     "household_count": 511
                 },
                 {
                     "complex_name": "아산자이그랜드파크1단지",
-                    "gli_score": 50.1197162867,
+                    "gli_score": 48.3368300667,
                     "price_per_pyung": 1395.875,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 0,
@@ -924,7 +924,7 @@
                 },
                 {
                     "complex_name": "아산자이그랜드파크2단지",
-                    "gli_score": 50.4350516558,
+                    "gli_score": 48.6521637065,
                     "price_per_pyung": 1479.0,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 0,
@@ -932,40 +932,40 @@
                 },
                 {
                     "complex_name": "아산줌파크",
-                    "gli_score": 46.92684562,
-                    "price_per_pyung": 808.6666666666666,
+                    "gli_score": 45.1439594,
+                    "price_per_pyung": 801.0,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 3,
                     "household_count": 763
                 },
                 {
                     "complex_name": "온천마을",
-                    "gli_score": 24.4839665425,
-                    "price_per_pyung": 493.5,
+                    "gli_score": 22.7012279231,
+                    "price_per_pyung": 494.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 28,
                     "household_count": 830
                 },
                 {
                     "complex_name": "용화마을신도브래뉴",
-                    "gli_score": 38.6789968536,
-                    "price_per_pyung": 718.4,
+                    "gli_score": 36.8973039605,
+                    "price_per_pyung": 698.2,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
                     "household_count": 940
                 },
                 {
                     "complex_name": "주공2단지",
-                    "gli_score": 23.4502014533,
-                    "price_per_pyung": 544.5,
+                    "gli_score": 21.6673152333,
+                    "price_per_pyung": 515.75,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 37,
                     "household_count": 370
                 },
                 {
                     "complex_name": "주공3단지",
-                    "gli_score": 22.8844944159,
-                    "price_per_pyung": 385.0,
+                    "gli_score": 21.1016061964,
+                    "price_per_pyung": 429.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
                     "household_count": 898
@@ -974,341 +974,221 @@
         },
         "둔포면": {
             "summary_metrics": {
-                "r_simple": 0.9389006845629213,
-                "r_multi": 0.9505977479278007,
-                "r_squared": "90.4%",
-                "price_per_gli_point": 12.879484163130394,
-                "std_error": 72.33336153178224,
+                "r_simple": 0.9465579141226043,
+                "r_multi": 0.9563702805249907,
+                "r_squared": "91.5%",
+                "price_per_gli_point": 11.764911498721673,
+                "std_error": 68.75351981736681,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 19.75056989,
-                "max_gli": 50.3492219479,
+                "min_gli": 17.9453909233,
+                "max_gli": 48.5453880384,
                 "simple_trendline": [
                     {
-                        "gli": 19.75056989,
-                        "price": 166.87623316806034
+                        "gli": 17.9453909233,
+                        "price": 162.58610603821296
                     },
                     {
-                        "gli": 50.3492219479,
-                        "price": 811.5982593129193
+                        "gli": 48.5453880384,
+                        "price": 824.3108961619391
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 19.75056989,
-                        "price": 319.96213231978004
+                        "gli": 17.9453909233,
+                        "price": 346.8810133273671
                     },
                     {
-                        "gli": 50.3492219479,
-                        "price": 714.0569869126404
+                        "gli": 48.5453880384,
+                        "price": 706.887271247657
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 19.75056989,
-                        "price": 356.12881308567114
+                        "gli": 17.9453909233,
+                        "price": 381.2577732360505
                     },
                     {
-                        "gli": 50.3492219479,
-                        "price": 750.2236676785315
+                        "gli": 48.5453880384,
+                        "price": 741.2640311563405
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 19.75056989,
-                        "price": 283.79545155388894
+                        "gli": 17.9453909233,
+                        "price": 312.5042534186837
                     },
                     {
-                        "gli": 50.3492219479,
-                        "price": 677.8903061467493
+                        "gli": 48.5453880384,
+                        "price": 672.5105113389736
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "백남청솔",
-                    "gli_score": 21.4497865567,
-                    "price_per_pyung": 383.0,
+                    "gli_score": 19.64460759,
+                    "price_per_pyung": 351.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
                     "household_count": 297
                 },
                 {
                     "complex_name": "신영모닝빌",
-                    "gli_score": 19.75056989,
-                    "price_per_pyung": 262.0,
+                    "gli_score": 17.9453909233,
+                    "price_per_pyung": 260.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 26,
                     "household_count": 299
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원3단지",
-                    "gli_score": 44.3041358344,
-                    "price_per_pyung": 714.5,
+                    "gli_score": 42.5003006578,
+                    "price_per_pyung": 702.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 10,
                     "household_count": 589
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원4단지",
-                    "gli_score": 40.9735145538,
-                    "price_per_pyung": 719.0,
+                    "gli_score": 39.169677067,
+                    "price_per_pyung": 728.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 10,
                     "household_count": 665
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원5단지",
-                    "gli_score": 42.437927255,
-                    "price_per_pyung": 734.5,
+                    "gli_score": 40.6340912532,
+                    "price_per_pyung": 735.0,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 534
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원6단지",
-                    "gli_score": 42.5000173986,
-                    "price_per_pyung": 743.0,
+                    "gli_score": 40.6961804188,
+                    "price_per_pyung": 732.0,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 650
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원7단지",
-                    "gli_score": 42.2805634538,
-                    "price_per_pyung": 891.0,
+                    "gli_score": 40.4767273326,
+                    "price_per_pyung": 883.6666666666666,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 422
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원8단지",
-                    "gli_score": 42.1972945493,
-                    "price_per_pyung": 876.25,
+                    "gli_score": 40.3934577478,
+                    "price_per_pyung": 867.75,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 929
                 },
                 {
                     "complex_name": "아산테크노밸리이지더원9단지",
-                    "gli_score": 50.3492219479,
-                    "price_per_pyung": 971.6666666666666,
+                    "gli_score": 48.5453880384,
+                    "price_per_pyung": 987.6666666666666,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 3,
                     "household_count": 822
                 },
                 {
                     "complex_name": "우정배꽃마을",
-                    "gli_score": 31.5571969192,
-                    "price_per_pyung": 484.0,
+                    "gli_score": 29.7520179016,
+                    "price_per_pyung": 500.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
                     "household_count": 148
                 },
                 {
                     "complex_name": "테크노밸리이지더원1단지",
-                    "gli_score": 43.0971830567,
-                    "price_per_pyung": 687.0,
+                    "gli_score": 41.29334788,
+                    "price_per_pyung": 694.6666666666666,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 11,
                     "household_count": 471
                 },
                 {
                     "complex_name": "테크노밸리이지더원2단지",
-                    "gli_score": 40.3894429121,
-                    "price_per_pyung": 722.0,
+                    "gli_score": 38.5856055275,
+                    "price_per_pyung": 719.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 11,
                     "household_count": 542
                 }
             ]
         },
-        "음봉면": {
-            "summary_metrics": {
-                "r_simple": 0.9345113931903616,
-                "r_multi": 0.9708293742686718,
-                "r_squared": "94.3%",
-                "price_per_gli_point": 37.4025042716267,
-                "std_error": 86.6921438852829,
-                "remarks": ""
-            },
-            "chart_boundaries": {
-                "min_gli": 20.0645561867,
-                "max_gli": 49.5203840222,
-                "simple_trendline": [
-                    {
-                        "gli": 20.0645561867,
-                        "price": 114.27230292828051
-                    },
-                    {
-                        "gli": 49.5203840222,
-                        "price": 801.0118922865925
-                    }
-                ],
-                "corrected_trendline": [
-                    {
-                        "gli": 20.0645561867,
-                        "price": 1069.5981390450038
-                    },
-                    {
-                        "gli": 49.5203840222,
-                        "price": -32.123587396585435
-                    }
-                ],
-                "stable_zone_upper": [
-                    {
-                        "gli": 20.0645561867,
-                        "price": 1112.9442109876452
-                    },
-                    {
-                        "gli": 49.5203840222,
-                        "price": 11.222484546056016
-                    }
-                ],
-                "stable_zone_lower": [
-                    {
-                        "gli": 20.0645561867,
-                        "price": 1026.2520671023624
-                    },
-                    {
-                        "gli": 49.5203840222,
-                        "price": -75.4696593392269
-                    }
-                ]
-            },
-            "scatter_points": [
-                {
-                    "complex_name": "더샵레이크사이드",
-                    "gli_score": 35.4069159993,
-                    "price_per_pyung": 537.5,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 20,
-                    "household_count": 1288
-                },
-                {
-                    "complex_name": "아산더샵레이크시티2차",
-                    "gli_score": 42.4675311137,
-                    "price_per_pyung": 750.875,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 11,
-                    "household_count": 796
-                },
-                {
-                    "complex_name": "아산더샵레이크시티3차",
-                    "gli_score": 43.7616288486,
-                    "price_per_pyung": 683.4,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 10,
-                    "household_count": 1118
-                },
-                {
-                    "complex_name": "아산삼일원앙",
-                    "gli_score": 22.8542581867,
-                    "price_per_pyung": 432.3333333333333,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 29,
-                    "household_count": 1440
-                },
-                {
-                    "complex_name": "아산한라비발디스마트밸리",
-                    "gli_score": 49.5203840222,
-                    "price_per_pyung": 1146.5,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 998
-                },
-                {
-                    "complex_name": "초원그린타운",
-                    "gli_score": 23.07418549,
-                    "price_per_pyung": 328.0,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 29,
-                    "household_count": 1875
-                },
-                {
-                    "complex_name": "태헌장미2차",
-                    "gli_score": 20.0645561867,
-                    "price_per_pyung": 344.3333333333333,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 30,
-                    "household_count": 348
-                },
-                {
-                    "complex_name": "해링턴플레이스스마트밸리",
-                    "gli_score": 49.2401661333,
-                    "price_per_pyung": 1026.0,
-                    "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
-                    "household_count": 704
-                }
-            ]
-        },
         "권곡동": {
             "summary_metrics": {
-                "r_simple": 0.922333077798198,
-                "r_multi": 0.9642105037754323,
-                "r_squared": "93.0%",
-                "price_per_gli_point": 16.053354153453295,
-                "std_error": 87.98721014731007,
+                "r_simple": 0.9193789469674991,
+                "r_multi": 0.9607502723217507,
+                "r_squared": "92.3%",
+                "price_per_gli_point": 15.166352414590401,
+                "std_error": 89.51637418413624,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 23.0531944047,
-                "max_gli": 49.1979015033,
+                "min_gli": 21.271051919,
+                "max_gli": 47.4157618333,
                 "simple_trendline": [
                     {
-                        "gli": 23.0531944047,
-                        "price": 221.8195962972411
+                        "gli": 21.271051919,
+                        "price": 222.70933078807323
                     },
                     {
-                        "gli": 49.1979015033,
-                        "price": 886.5490344395328
+                        "gli": 47.4157618333,
+                        "price": 878.1991538363698
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 23.0531944047,
-                        "price": 294.56165664826534
+                        "gli": 21.271051919,
+                        "price": 299.5898791989192
                     },
                     {
-                        "gli": 49.1979015033,
-                        "price": 714.2718989403955
+                        "gli": 47.4157618333,
+                        "price": 696.1097635364285
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 23.0531944047,
-                        "price": 338.5552617219204
+                        "gli": 21.271051919,
+                        "price": 344.34806629098733
                     },
                     {
-                        "gli": 49.1979015033,
-                        "price": 758.2655040140505
+                        "gli": 47.4157618333,
+                        "price": 740.8679506284967
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 23.0531944047,
-                        "price": 250.5680515746103
+                        "gli": 21.271051919,
+                        "price": 254.8316921068511
                     },
                     {
-                        "gli": 49.1979015033,
-                        "price": 670.2782938667406
+                        "gli": 47.4157618333,
+                        "price": 651.3515764443604
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "삼부르네상스",
-                    "gli_score": 32.1435540033,
-                    "price_per_pyung": 560.5,
+                    "gli_score": 30.3614143333,
+                    "price_per_pyung": 570.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
                     "household_count": 498
                 },
                 {
                     "complex_name": "서해그랑블1단지",
-                    "gli_score": 35.4769142482,
+                    "gli_score": 33.6931313213,
                     "price_per_pyung": 646.6666666666666,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
@@ -1316,15 +1196,15 @@
                 },
                 {
                     "complex_name": "서해그랑블2단지",
-                    "gli_score": 35.9974663945,
-                    "price_per_pyung": 619.6,
+                    "gli_score": 34.2136835552,
+                    "price_per_pyung": 617.2,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
                     "household_count": 537
                 },
                 {
                     "complex_name": "성환",
-                    "gli_score": 23.1573440675,
+                    "gli_score": 21.3752009481,
                     "price_per_pyung": 313.6,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 39,
@@ -1332,7 +1212,7 @@
                 },
                 {
                     "complex_name": "아산더샵퍼스트타워",
-                    "gli_score": 34.4835972952,
+                    "gli_score": 32.701455399,
                     "price_per_pyung": 754.5714285714286,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
@@ -1340,7 +1220,7 @@
                 },
                 {
                     "complex_name": "아산한신더휴",
-                    "gli_score": 49.1979015033,
+                    "gli_score": 47.4157618333,
                     "price_per_pyung": 1073.8333333333333,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 1,
@@ -1348,7 +1228,7 @@
                 },
                 {
                     "complex_name": "올림픽",
-                    "gli_score": 23.1618054724,
+                    "gli_score": 21.3796619275,
                     "price_per_pyung": 293.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 38,
@@ -1356,7 +1236,7 @@
                 },
                 {
                     "complex_name": "주공",
-                    "gli_score": 23.0531944047,
+                    "gli_score": 21.271051919,
                     "price_per_pyung": 572.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 23,
@@ -1364,15 +1244,15 @@
                 },
                 {
                     "complex_name": "청솔",
-                    "gli_score": 24.5553283367,
-                    "price_per_pyung": 414.0,
+                    "gli_score": 22.7731886667,
+                    "price_per_pyung": 450.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 24,
                     "household_count": 620
                 },
                 {
                     "complex_name": "충무",
-                    "gli_score": 26.9240572982,
+                    "gli_score": 25.14191368,
                     "price_per_pyung": 434.8,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 47,
@@ -1382,69 +1262,69 @@
         },
         "신창면": {
             "summary_metrics": {
-                "r_simple": 0.879476995869292,
-                "r_multi": 0.91855386479664,
-                "r_squared": "84.4%",
-                "price_per_gli_point": 10.558525464820695,
-                "std_error": 67.961991789669,
+                "r_simple": 0.9150485672681032,
+                "r_multi": 0.9339682089743673,
+                "r_squared": "87.2%",
+                "price_per_gli_point": 14.630370209561754,
+                "std_error": 64.61086850316205,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 18.29096535,
-                "max_gli": 47.1339350542,
+                "min_gli": 17.85656726,
+                "max_gli": 46.7050608816,
                 "simple_trendline": [
                     {
-                        "gli": 18.29096535,
-                        "price": 104.21899832886805
+                        "gli": 17.85656726,
+                        "price": 86.49014284474012
                     },
                     {
-                        "gli": 47.1339350542,
-                        "price": 628.7932884130491
+                        "gli": 46.7050608816,
+                        "price": 645.1349052793526
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 18.29096535,
-                        "price": 168.4954388991265
+                        "gli": 17.85656726,
+                        "price": 125.40202383348114
                     },
                     {
-                        "gli": 47.1339350542,
-                        "price": 473.034669001974
+                        "gli": 46.7050608816,
+                        "price": 547.4661655056701
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 18.29096535,
-                        "price": 202.476434793961
+                        "gli": 17.85656726,
+                        "price": 157.70745808506217
                     },
                     {
-                        "gli": 47.1339350542,
-                        "price": 507.0156648968085
+                        "gli": 46.7050608816,
+                        "price": 579.7715997572511
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 18.29096535,
-                        "price": 134.514443004292
+                        "gli": 17.85656726,
+                        "price": 93.0965895819001
                     },
                     {
-                        "gli": 47.1339350542,
-                        "price": 439.0536731071395
+                        "gli": 46.7050608816,
+                        "price": 515.1607312540891
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "경희학성",
-                    "gli_score": 20.4829530133,
-                    "price_per_pyung": 350.75,
+                    "gli_score": 20.0461659633,
+                    "price_per_pyung": 324.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
                     "household_count": 937
                 },
                 {
                     "complex_name": "다소미",
-                    "gli_score": 30.20147112,
+                    "gli_score": 28.41888352,
                     "price_per_pyung": 283.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 21,
@@ -1452,15 +1332,15 @@
                 },
                 {
                     "complex_name": "샘마을",
-                    "gli_score": 19.2698141283,
-                    "price_per_pyung": 310.3333333333333,
+                    "gli_score": 18.8409394412,
+                    "price_per_pyung": 267.6666666666667,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 25,
                     "household_count": 926
                 },
                 {
                     "complex_name": "신일",
-                    "gli_score": 18.5132406273,
+                    "gli_score": 18.0843663844,
                     "price_per_pyung": 333.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
@@ -1468,15 +1348,15 @@
                 },
                 {
                     "complex_name": "아산SR친오애",
-                    "gli_score": 31.3268137356,
-                    "price_per_pyung": 538.5,
+                    "gli_score": 30.8900266856,
+                    "price_per_pyung": 504.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 19,
                     "household_count": 456
                 },
                 {
                     "complex_name": "아산대주",
-                    "gli_score": 21.54555018,
+                    "gli_score": 21.10876313,
                     "price_per_pyung": 333.3333333333333,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 32,
@@ -1484,39 +1364,39 @@
                 },
                 {
                     "complex_name": "아산삼부르네상스더힐",
-                    "gli_score": 47.1339350542,
-                    "price_per_pyung": 818.8888888888889,
+                    "gli_score": 46.7050608816,
+                    "price_per_pyung": 826.2222222222222,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 1016
                 },
                 {
                     "complex_name": "아산신창양우내안애",
-                    "gli_score": 32.30764618,
-                    "price_per_pyung": 522.6666666666666,
+                    "gli_score": 31.87085913,
+                    "price_per_pyung": 526.3333333333334,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 12,
                     "household_count": 1440
                 },
                 {
                     "complex_name": "아산코아루",
-                    "gli_score": 30.2821005396,
-                    "price_per_pyung": 466.5,
+                    "gli_score": 29.8532262876,
+                    "price_per_pyung": 496.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
                     "household_count": 526
                 },
                 {
                     "complex_name": "아산코아루에듀파크",
-                    "gli_score": 33.6875184022,
-                    "price_per_pyung": 461.85714285714283,
+                    "gli_score": 33.2507313522,
+                    "price_per_pyung": 468.14285714285717,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 17,
                     "household_count": 700
                 },
                 {
                     "complex_name": "아산한미금강",
-                    "gli_score": 21.30776535,
+                    "gli_score": 20.87336726,
                     "price_per_pyung": 205.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
@@ -1524,7 +1404,7 @@
                 },
                 {
                     "complex_name": "창덕에버빌",
-                    "gli_score": 18.29096535,
+                    "gli_score": 17.85656726,
                     "price_per_pyung": 214.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 26,
@@ -1532,79 +1412,199 @@
                 },
                 {
                     "complex_name": "태헌장미1차",
-                    "gli_score": 22.96534112,
-                    "price_per_pyung": 199.66666666666666,
+                    "gli_score": 21.18275352,
+                    "price_per_pyung": 191.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 32,
                     "household_count": 528
                 }
             ]
         },
-        "온천동": {
+        "음봉면": {
             "summary_metrics": {
-                "r_simple": 0.9376381020659648,
-                "r_multi": 0.9725004281426256,
-                "r_squared": "94.6%",
-                "price_per_gli_point": 31.399219471918524,
-                "std_error": 81.78934749611088,
+                "r_simple": 0.9488747291599977,
+                "r_multi": 0.9635861580148574,
+                "r_squared": "92.8%",
+                "price_per_gli_point": 18.027173226875373,
+                "std_error": 96.41952733366068,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 22.8414371433,
-                "max_gli": 46.1634782378,
+                "min_gli": 17.97292006,
+                "max_gli": 45.9067612822,
                 "simple_trendline": [
                     {
-                        "gli": 22.8414371433,
-                        "price": 308.1196970695817
+                        "gli": 17.97292006,
+                        "price": 129.47898095787815
                     },
                     {
-                        "gli": 46.1634782378,
-                        "price": 721.9055211457082
+                        "gli": 45.9067612822,
+                        "price": 801.6244083318973
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 22.8414371433,
-                        "price": 215.3987543893901
+                        "gli": 17.97292006,
+                        "price": 743.5657043287224
                     },
                     {
-                        "gli": 46.1634782378,
-                        "price": 947.6926412486986
+                        "gli": 45.9067612822,
+                        "price": 239.99750972409078
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 22.8414371433,
-                        "price": 256.2934281374455
+                        "gli": 17.97292006,
+                        "price": 791.7754679955527
                     },
                     {
-                        "gli": 46.1634782378,
-                        "price": 988.587314996754
+                        "gli": 45.9067612822,
+                        "price": 288.2072733909211
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 22.8414371433,
-                        "price": 174.50408064133467
+                        "gli": 17.97292006,
+                        "price": 695.3559406618921
                     },
                     {
-                        "gli": 46.1634782378,
-                        "price": 906.7979675006432
+                        "gli": 45.9067612822,
+                        "price": 191.78774605726045
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "더샵레이크사이드",
+                    "gli_score": 31.7882142474,
+                    "price_per_pyung": 585.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 1288
+                },
+                {
+                    "complex_name": "아산더샵레이크시티2차",
+                    "gli_score": 38.848829151,
+                    "price_per_pyung": 747.875,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 11,
+                    "household_count": 796
+                },
+                {
+                    "complex_name": "아산더샵레이크시티3차",
+                    "gli_score": 40.1429318078,
+                    "price_per_pyung": 697.8,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 1118
+                },
+                {
+                    "complex_name": "아산삼일원앙",
+                    "gli_score": 20.76262206,
+                    "price_per_pyung": 433.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 1440
+                },
+                {
+                    "complex_name": "아산한라비발디스마트밸리",
+                    "gli_score": 45.9067612822,
+                    "price_per_pyung": 1146.5,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 998
+                },
+                {
+                    "complex_name": "초원그린타운",
+                    "gli_score": 19.45548621,
+                    "price_per_pyung": 335.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 1875
+                },
+                {
+                    "complex_name": "태헌장미2차",
+                    "gli_score": 17.97292006,
+                    "price_per_pyung": 355.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 30,
+                    "household_count": 348
+                },
+                {
+                    "complex_name": "해링턴플레이스스마트밸리",
+                    "gli_score": 45.6265433933,
+                    "price_per_pyung": 1010.3333333333334,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 3,
+                    "household_count": 704
+                }
+            ]
+        },
+        "온천동": {
+            "summary_metrics": {
+                "r_simple": 0.9418263923236735,
+                "r_multi": 0.9696660695593797,
+                "r_squared": "94.0%",
+                "price_per_gli_point": 32.03801164197684,
+                "std_error": 85.52375963706758,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 21.0582523033,
+                "max_gli": 44.8078556081,
+                "simple_trendline": [
+                    {
+                        "gli": 21.0582523033,
+                        "price": 271.6230693444696
+                    },
+                    {
+                        "gli": 44.8078556081,
+                        "price": 721.6889834548429
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 21.0582523033,
+                        "price": 181.97622482898512
+                    },
+                    {
+                        "gli": 44.8078556081,
+                        "price": 942.8662920004989
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 21.0582523033,
+                        "price": 224.73810464751892
+                    },
+                    {
+                        "gli": 44.8078556081,
+                        "price": 985.6281718190327
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 21.0582523033,
+                        "price": 139.21434501045132
+                    },
+                    {
+                        "gli": 44.8078556081,
+                        "price": 900.1044121819651
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "경남아너스빌",
-                    "gli_score": 22.848305697,
-                    "price_per_pyung": 407.3333333333333,
+                    "gli_score": 21.0651214489,
+                    "price_per_pyung": 404.6666666666667,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
                     "household_count": 370
                 },
                 {
                     "complex_name": "무궁화",
-                    "gli_score": 26.6054044683,
+                    "gli_score": 25.0590648488,
                     "price_per_pyung": 586.2857142857143,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 40,
@@ -1612,39 +1612,39 @@
                 },
                 {
                     "complex_name": "삼정하이츠",
-                    "gli_score": 23.65278312,
-                    "price_per_pyung": 482.0,
+                    "gli_score": 21.87004621,
+                    "price_per_pyung": 428.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 35,
                     "household_count": 300
                 },
                 {
                     "complex_name": "아산반도유보라",
-                    "gli_score": 40.6150913644,
-                    "price_per_pyung": 789.0,
+                    "gli_score": 38.8319070517,
+                    "price_per_pyung": 807.6666666666666,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 10,
                     "household_count": 650
                 },
                 {
                     "complex_name": "아산온천미소지움",
-                    "gli_score": 41.4852325075,
-                    "price_per_pyung": 785.8333333333334,
+                    "gli_score": 39.7020480941,
+                    "price_per_pyung": 791.1666666666666,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 586
                 },
                 {
                     "complex_name": "아산칸타빌센트럴시티(주상복합)",
-                    "gli_score": 46.1634782378,
-                    "price_per_pyung": 885.6666666666666,
+                    "gli_score": 44.8078556081,
+                    "price_per_pyung": 915.0,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 299
                 },
                 {
                     "complex_name": "온양시영",
-                    "gli_score": 23.15855912,
+                    "gli_score": 21.37582221,
                     "price_per_pyung": 487.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 35,
@@ -1652,15 +1652,15 @@
                 },
                 {
                     "complex_name": "온양힐스테이트",
-                    "gli_score": 32.211494446,
-                    "price_per_pyung": 699.0,
+                    "gli_score": 30.4281598846,
+                    "price_per_pyung": 694.4,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
                     "household_count": 533
                 },
                 {
                     "complex_name": "온정",
-                    "gli_score": 23.18763112,
+                    "gli_score": 21.40489421,
                     "price_per_pyung": 383.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 34,
@@ -1668,7 +1668,7 @@
                 },
                 {
                     "complex_name": "용화주공",
-                    "gli_score": 23.1685133138,
+                    "gli_score": 21.3851809051,
                     "price_per_pyung": 602.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 43,
@@ -1676,7 +1676,7 @@
                 },
                 {
                     "complex_name": "일성",
-                    "gli_score": 22.8414371433,
+                    "gli_score": 21.0582523033,
                     "price_per_pyung": 477.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
@@ -1686,61 +1686,61 @@
         },
         "풍기동": {
             "summary_metrics": {
-                "r_simple": 0.9804970311605553,
-                "r_multi": 0.9908100327798156,
-                "r_squared": "98.2%",
-                "price_per_gli_point": 9.470485351127715,
-                "std_error": 37.944343833114566,
+                "r_simple": 0.9776019390402968,
+                "r_multi": 0.9867992746629843,
+                "r_squared": "97.4%",
+                "price_per_gli_point": 10.443239882045267,
+                "std_error": 43.4018729958219,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 20.5716235481,
-                "max_gli": 43.35272512,
+                "min_gli": 18.7891877869,
+                "max_gli": 41.57028683,
                 "simple_trendline": [
                     {
-                        "gli": 20.5716235481,
-                        "price": 323.8799141995194
+                        "gli": 18.7891877869,
+                        "price": 312.9037452656953
                     },
                     {
-                        "gli": 43.35272512,
-                        "price": 791.6454202200897
+                        "gli": 41.57028683,
+                        "price": 790.1034911473791
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 20.5716235481,
-                        "price": 451.3119568607001
+                        "gli": 18.7891877869,
+                        "price": 433.8981396863968
                     },
                     {
-                        "gli": 43.35272512,
-                        "price": 667.0600455799316
+                        "gli": 41.57028683,
+                        "price": 671.8066217701221
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 20.5716235481,
-                        "price": 470.28412877725737
+                        "gli": 18.7891877869,
+                        "price": 455.59907618430776
                     },
                     {
-                        "gli": 43.35272512,
-                        "price": 686.0322174964889
+                        "gli": 41.57028683,
+                        "price": 693.507558268033
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 20.5716235481,
-                        "price": 432.3397849441428
+                        "gli": 18.7891877869,
+                        "price": 412.19720318848584
                     },
                     {
-                        "gli": 43.35272512,
-                        "price": 648.0878736633744
+                        "gli": 41.57028683,
+                        "price": 650.1056852722112
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "동일하이빌",
-                    "gli_score": 36.2536586065,
+                    "gli_score": 34.4712177865,
                     "price_per_pyung": 674.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 18,
@@ -1748,7 +1748,7 @@
                 },
                 {
                     "complex_name": "세진",
-                    "gli_score": 20.5716235481,
+                    "gli_score": 18.7891877869,
                     "price_per_pyung": 423.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 28,
@@ -1756,23 +1756,23 @@
                 },
                 {
                     "complex_name": "아산아이파크",
-                    "gli_score": 35.9018008422,
-                    "price_per_pyung": 721.75,
+                    "gli_score": 34.1193625522,
+                    "price_per_pyung": 738.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 18,
                     "household_count": 869
                 },
                 {
                     "complex_name": "아산풍기EGthe1",
-                    "gli_score": 43.35272512,
-                    "price_per_pyung": 909.6666666666666,
+                    "gli_score": 41.57028683,
+                    "price_per_pyung": 924.3333333333334,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 9,
                     "household_count": 1120
                 },
                 {
                     "complex_name": "아산풍기이지더원2차",
-                    "gli_score": 42.8602653034,
+                    "gli_score": 41.0778295445,
                     "price_per_pyung": 824.0,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 8,
@@ -1780,7 +1780,7 @@
                 },
                 {
                     "complex_name": "인정프린스",
-                    "gli_score": 22.0670967513,
+                    "gli_score": 20.283763156,
                     "price_per_pyung": 372.6,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 33,
@@ -1788,8 +1788,8 @@
                 },
                 {
                     "complex_name": "주은",
-                    "gli_score": 23.6286856034,
-                    "price_per_pyung": 493.0,
+                    "gli_score": 21.8453513659,
+                    "price_per_pyung": 491.6666666666667,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 26,
                     "household_count": 1412
@@ -1801,67 +1801,67 @@
                 "r_simple": -1.0,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 0.0015731003448299086,
-                "std_error": 48.23622431262111,
+                "price_per_gli_point": 0.002393518371210407,
+                "std_error": 46.83054558725533,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 40.4843480105,
-                "max_gli": 42.8271183978,
+                "min_gli": 38.7020617017,
+                "max_gli": 41.0448294178,
                 "simple_trendline": [
                     {
-                        "gli": 40.4843480105,
-                        "price": 548.2818878436894
+                        "gli": 38.7020617017,
+                        "price": 561.9847272063723
                     },
                     {
-                        "gli": 42.8271183978,
-                        "price": 534.3485545103559
+                        "gli": 41.0448294178,
+                        "price": 540.7847272063723
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 40.4843480105,
-                        "price": 541.3170638834748
+                        "gli": 38.7020617017,
+                        "price": 551.3875309351563
                     },
                     {
-                        "gli": 42.8271183978,
-                        "price": 541.3133784705707
+                        "gli": 41.0448294178,
+                        "price": 551.3819234775883
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 40.4843480105,
-                        "price": 565.4351760397853
+                        "gli": 38.7020617017,
+                        "price": 574.8028037287839
                     },
                     {
-                        "gli": 42.8271183978,
-                        "price": 565.4314906268812
+                        "gli": 41.0448294178,
+                        "price": 574.797196271216
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 40.4843480105,
-                        "price": 517.1989517271643
+                        "gli": 38.7020617017,
+                        "price": 527.9722581415286
                     },
                     {
-                        "gli": 42.8271183978,
-                        "price": 517.1952663142602
+                        "gli": 41.0448294178,
+                        "price": 527.9666506839607
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "신원더파크2차",
-                    "gli_score": 42.8271183978,
-                    "price_per_pyung": 614.6666666666666,
+                    "gli_score": 41.0448294178,
+                    "price_per_pyung": 618.0,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 7,
                     "household_count": 369
                 },
                 {
                     "complex_name": "코아루더파크",
-                    "gli_score": 40.4843480105,
-                    "price_per_pyung": 628.6,
+                    "gli_score": 38.7020617017,
+                    "price_per_pyung": 639.2,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 10,
                     "household_count": 513
@@ -1870,61 +1870,61 @@
         },
         "방축동": {
             "summary_metrics": {
-                "r_simple": 0.6645587245347198,
-                "r_multi": 0.8638673207953291,
-                "r_squared": "74.6%",
-                "price_per_gli_point": 9.137021087294585,
-                "std_error": 74.40731393585418,
+                "r_simple": 0.6735668698791809,
+                "r_multi": 0.8722355145979402,
+                "r_squared": "76.1%",
+                "price_per_gli_point": 9.966940426107787,
+                "std_error": 76.47344153580757,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 20.235230784,
-                "max_gli": 32.71189381,
+                "min_gli": 18.4507047161,
+                "max_gli": 30.92870897,
                 "simple_trendline": [
                     {
-                        "gli": 20.235230784,
-                        "price": 228.46397953822003
+                        "gli": 18.4507047161,
+                        "price": 219.7552437068037
                     },
                     {
-                        "gli": 32.71189381,
-                        "price": 428.0328061980919
+                        "gli": 30.92870897,
+                        "price": 424.769628594092
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 20.235230784,
-                        "price": 258.159660399753
+                        "gli": 18.4507047161,
+                        "price": 247.74506467085592
                     },
                     {
-                        "gli": 32.71189381,
-                        "price": 372.15919356738374
+                        "gli": 30.92870897,
+                        "price": 372.1125897061968
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 20.235230784,
-                        "price": 295.3633173676801
+                        "gli": 18.4507047161,
+                        "price": 285.9817854387597
                     },
                     {
-                        "gli": 32.71189381,
-                        "price": 409.3628505353108
+                        "gli": 30.92870897,
+                        "price": 410.34931047410055
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 20.235230784,
-                        "price": 220.95600343182593
+                        "gli": 18.4507047161,
+                        "price": 209.50834390295213
                     },
                     {
-                        "gli": 32.71189381,
-                        "price": 334.95553659945665
+                        "gli": 30.92870897,
+                        "price": 333.875868938293
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "경성",
-                    "gli_score": 23.2593315698,
+                    "gli_score": 21.4761468506,
                     "price_per_pyung": 294.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 38,
@@ -1932,15 +1932,15 @@
                 },
                 {
                     "complex_name": "남산현대",
-                    "gli_score": 27.5321280322,
-                    "price_per_pyung": 516.5,
+                    "gli_score": 25.7489431922,
+                    "price_per_pyung": 507.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 28,
                     "household_count": 332
                 },
                 {
                     "complex_name": "동아1차",
-                    "gli_score": 23.5214283833,
+                    "gli_score": 21.7368997533,
                     "price_per_pyung": 419.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
@@ -1948,7 +1948,7 @@
                 },
                 {
                     "complex_name": "동아2차",
-                    "gli_score": 23.32689105,
+                    "gli_score": 21.54236242,
                     "price_per_pyung": 418.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
@@ -1956,15 +1956,15 @@
                 },
                 {
                     "complex_name": "방축현대",
-                    "gli_score": 22.7921681402,
-                    "price_per_pyung": 312.0,
+                    "gli_score": 21.00898298,
+                    "price_per_pyung": 300.75,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 35,
                     "household_count": 170
                 },
                 {
                     "complex_name": "아산삼환나우빌",
-                    "gli_score": 32.71189381,
+                    "gli_score": 30.92870897,
                     "price_per_pyung": 552.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
@@ -1972,7 +1972,7 @@
                 },
                 {
                     "complex_name": "주공",
-                    "gli_score": 23.1416491096,
+                    "gli_score": 21.3584639573,
                     "price_per_pyung": 497.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 36,
@@ -1980,8 +1980,8 @@
                 },
                 {
                     "complex_name": "한성",
-                    "gli_score": 20.235230784,
-                    "price_per_pyung": 410.6666666666667,
+                    "gli_score": 18.4507047161,
+                    "price_per_pyung": 398.6666666666667,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 29,
                     "household_count": 182
@@ -1990,69 +1990,69 @@
         },
         "실옥동": {
             "summary_metrics": {
-                "r_simple": 0.988948615813197,
+                "r_simple": 0.9820201888827025,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 12.366043531197594,
-                "std_error": 47.737030453760006,
+                "price_per_gli_point": 10.178852408452961,
+                "std_error": 40.33184114166552,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 21.4595155602,
-                "max_gli": 28.329580198,
+                "min_gli": 19.6763310454,
+                "max_gli": 26.5463954775,
                 "simple_trendline": [
                     {
-                        "gli": 21.4595155602,
-                        "price": 275.7547707210274
+                        "gli": 19.6763310454,
+                        "price": 280.96740962239966
                     },
                     {
-                        "gli": 28.329580198,
-                        "price": 503.145976179915
+                        "gli": 26.5463954775,
+                        "price": 511.142072897164
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 21.4595155602,
-                        "price": 335.7457481652482
+                        "gli": 19.6763310454,
+                        "price": 348.44895066593887
                     },
                     {
-                        "gli": 28.329580198,
-                        "price": 420.7012665384242
+                        "gli": 26.5463954775,
+                        "price": 418.37832255684697
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 21.4595155602,
-                        "price": 359.6142633921282
+                        "gli": 19.6763310454,
+                        "price": 368.61487123677165
                     },
                     {
-                        "gli": 28.329580198,
-                        "price": 444.5697817653042
+                        "gli": 26.5463954775,
+                        "price": 438.54424312767975
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 21.4595155602,
-                        "price": 311.8772329383682
+                        "gli": 19.6763310454,
+                        "price": 328.2830300951061
                     },
                     {
-                        "gli": 28.329580198,
-                        "price": 396.8327513115442
+                        "gli": 26.5463954775,
+                        "price": 398.2124019860142
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "벽산",
-                    "gli_score": 23.2700400604,
-                    "price_per_pyung": 391.0,
+                    "gli_score": 21.4855082486,
+                    "price_per_pyung": 381.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
                     "household_count": 350
                 },
                 {
                     "complex_name": "아산푸르지오",
-                    "gli_score": 28.329580198,
+                    "gli_score": 26.5463954775,
                     "price_per_pyung": 583.3333333333334,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 20,
@@ -2060,7 +2060,7 @@
                 },
                 {
                     "complex_name": "팬더",
-                    "gli_score": 21.4595155602,
+                    "gli_score": 19.6763310454,
                     "price_per_pyung": 365.25,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 27,
@@ -2073,67 +2073,67 @@
                 "r_simple": 1.0,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 0.0004804352593952288,
-                "std_error": 24.07107531180663,
+                "price_per_gli_point": 8.850123199385593e-05,
+                "std_error": 9.374166629626338,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 22.78553562,
-                "max_gli": 26.50018012,
+                "min_gli": 21.00294802,
+                "max_gli": 24.71759252,
                 "simple_trendline": [
                     {
-                        "gli": 22.78553562,
-                        "price": 255.0894623440967
+                        "gli": 21.00294802,
+                        "price": 288.50041668518685
                     },
                     {
-                        "gli": 26.50018012,
-                        "price": 321.58946234409666
+                        "gli": 24.71759252,
+                        "price": 300.75041668518685
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 22.78553562,
-                        "price": 288.33857002099967
+                        "gli": 21.00294802,
+                        "price": 294.6252523098795
                     },
                     {
-                        "gli": 26.50018012,
-                        "price": 288.34035466719365
+                        "gli": 24.71759252,
+                        "price": 294.62558106049414
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 22.78553562,
-                        "price": 300.374107676903
+                        "gli": 21.00294802,
+                        "price": 299.31233562469265
                     },
                     {
-                        "gli": 26.50018012,
-                        "price": 300.375892323097
+                        "gli": 24.71759252,
+                        "price": 299.3126643753073
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 22.78553562,
-                        "price": 276.3030323650963
+                        "gli": 21.00294802,
+                        "price": 289.93816899506635
                     },
                     {
-                        "gli": 26.50018012,
-                        "price": 276.3048170112903
+                        "gli": 24.71759252,
+                        "price": 289.938497745681
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "삼정백조",
-                    "gli_score": 26.50018012,
-                    "price_per_pyung": 365.5,
+                    "gli_score": 24.71759252,
+                    "price_per_pyung": 317.5,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 18,
                     "household_count": 498
                 },
                 {
                     "complex_name": "서진",
-                    "gli_score": 22.78553562,
-                    "price_per_pyung": 299.0,
+                    "gli_score": 21.00294802,
+                    "price_per_pyung": 305.25,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 26,
                     "household_count": 1215
@@ -2142,77 +2142,77 @@
         },
         "좌부동": {
             "summary_metrics": {
-                "r_simple": 0.9070408259852629,
+                "r_simple": 0.9966758996532649,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 21.108765059309825,
-                "std_error": 10.960155108391486,
+                "price_per_gli_point": 13.573893646092742,
+                "std_error": 4.949747468305833,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 20.35684157,
-                "max_gli": 23.4001782367,
+                "min_gli": 18.57350742,
+                "max_gli": 21.6168440867,
                 "simple_trendline": [
                     {
-                        "gli": 20.35684157,
-                        "price": 202.39119344535285
+                        "gli": 18.57350742,
+                        "price": 212.1404693799312
                     },
                     {
-                        "gli": 23.4001782367,
-                        "price": 265.01525382969714
+                        "gli": 21.6168440867,
+                        "price": 256.8975678209862
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 20.35684157,
-                        "price": 201.42409924581224
+                        "gli": 18.57350742,
+                        "price": 214.20212711375575
                     },
                     {
-                        "gli": 23.4001782367,
-                        "price": 265.66517793956564
+                        "gli": 21.6168440867,
+                        "price": 255.51205535679594
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 20.35684157,
-                        "price": 206.90417680000797
+                        "gli": 18.57350742,
+                        "price": 216.67700084790866
                     },
                     {
-                        "gli": 23.4001782367,
-                        "price": 271.1452554937614
+                        "gli": 21.6168440867,
+                        "price": 257.9869290909489
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 20.35684157,
-                        "price": 195.9440216916165
+                        "gli": 18.57350742,
+                        "price": 211.72725337960284
                     },
                     {
-                        "gli": 23.4001782367,
-                        "price": 260.1851003853699
+                        "gli": 21.6168440867,
+                        "price": 253.03718162264303
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "초원설화타운1단지",
-                    "gli_score": 20.35684157,
-                    "price_per_pyung": 224.5,
+                    "gli_score": 18.57350742,
+                    "price_per_pyung": 221.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 32,
                     "household_count": 810
                 },
                 {
                     "complex_name": "초원설화타운2단지",
-                    "gli_score": 23.4001782367,
-                    "price_per_pyung": 297.0,
+                    "gli_score": 21.6168440867,
+                    "price_per_pyung": 267.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
                     "household_count": 830
                 },
                 {
                     "complex_name": "초원설화타운3단지",
-                    "gli_score": 22.7739129033,
+                    "gli_score": 20.9905787533,
                     "price_per_pyung": 254.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
@@ -2220,159 +2220,71 @@
                 }
             ]
         },
-        "인주면": {
-            "summary_metrics": {
-                "r_simple": -0.8772041441804135,
-                "r_multi": 1.0,
-                "r_squared": "100.0%",
-                "price_per_gli_point": 42.406257685114674,
-                "std_error": 18.497747610632672,
-                "remarks": ""
-            },
-            "chart_boundaries": {
-                "min_gli": 19.8735399989,
-                "max_gli": 23.3700819433,
-                "simple_trendline": [
-                    {
-                        "gli": 19.8735399989,
-                        "price": 422.84641769892784
-                    },
-                    {
-                        "gli": 23.3700819433,
-                        "price": 236.25069296717953
-                    }
-                ],
-                "corrected_trendline": [
-                    {
-                        "gli": 19.8735399989,
-                        "price": 396.48862525560963
-                    },
-                    {
-                        "gli": 23.3700819433,
-                        "price": 248.21336655457145
-                    }
-                ],
-                "stable_zone_upper": [
-                    {
-                        "gli": 19.8735399989,
-                        "price": 405.737499060926
-                    },
-                    {
-                        "gli": 23.3700819433,
-                        "price": 257.4622403598878
-                    }
-                ],
-                "stable_zone_lower": [
-                    {
-                        "gli": 19.8735399989,
-                        "price": 387.2397514502933
-                    },
-                    {
-                        "gli": 23.3700819433,
-                        "price": 238.9644927492551
-                    }
-                ]
-            },
-            "scatter_points": [
-                {
-                    "complex_name": "기산현대",
-                    "gli_score": 19.8735399989,
-                    "price_per_pyung": 457.0,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 26,
-                    "household_count": 315
-                },
-                {
-                    "complex_name": "대진",
-                    "gli_score": 22.8155019433,
-                    "price_per_pyung": 264.5,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 29,
-                    "household_count": 90
-                },
-                {
-                    "complex_name": "미진무지개",
-                    "gli_score": 23.0550784933,
-                    "price_per_pyung": 354.5,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 26,
-                    "household_count": 480
-                },
-                {
-                    "complex_name": "수원신성",
-                    "gli_score": 23.3700819433,
-                    "price_per_pyung": 240.0,
-                    "age_category": "노후 (25년이상)",
-                    "construction_age": 29,
-                    "household_count": 85
-                }
-            ]
-        },
         "염치읍": {
             "summary_metrics": {
-                "r_simple": 0.3360145727716683,
+                "r_simple": 0.29450488569620237,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 39.21986473944672,
-                "std_error": 16.33576269591178,
+                "price_per_gli_point": 42.26756935014172,
+                "std_error": 15.57470476675011,
                 "remarks": "통계 유의성 부족"
             },
             "chart_boundaries": {
-                "min_gli": 20.8067394942,
-                "max_gli": 23.354262262,
+                "min_gli": 19.0257903542,
+                "max_gli": 21.5733208394,
                 "simple_trendline": [
                     {
-                        "gli": 20.8067394942,
-                        "price": 238.13508145405137
+                        "gli": 19.0257903542,
+                        "price": 248.22326724202588
                     },
                     {
-                        "gli": 23.354262262,
-                        "price": 287.0006169631638
+                        "gli": 21.5733208394,
+                        "price": 295.5339771775399
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 20.8067394942,
-                        "price": 206.69385357815798
+                        "gli": 19.0257903542,
+                        "price": 211.0421904623339
                     },
                     {
-                        "gli": 23.354262262,
-                        "price": 306.6073519519352
+                        "gli": 21.5733208394,
+                        "price": 318.7201119171249
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 20.8067394942,
-                        "price": 214.86173492611388
+                        "gli": 19.0257903542,
+                        "price": 218.82954284570897
                     },
                     {
-                        "gli": 23.354262262,
-                        "price": 314.77523329989106
+                        "gli": 21.5733208394,
+                        "price": 326.5074643004999
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 20.8067394942,
-                        "price": 198.5259722302021
+                        "gli": 19.0257903542,
+                        "price": 203.25483807895884
                     },
                     {
-                        "gli": 23.354262262,
-                        "price": 298.4394706039793
+                        "gli": 21.5733208394,
+                        "price": 310.93275953374985
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "송곡신일",
-                    "gli_score": 23.354262262,
-                    "price_per_pyung": 375.0,
+                    "gli_score": 21.5733208394,
+                    "price_per_pyung": 392.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 25,
                     "household_count": 420
                 },
                 {
                     "complex_name": "아산엑스포",
-                    "gli_score": 22.70352726,
+                    "gli_score": 20.92258207,
                     "price_per_pyung": 310.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 31,
@@ -2380,7 +2292,7 @@
                 },
                 {
                     "complex_name": "창우",
-                    "gli_score": 22.63866326,
+                    "gli_score": 20.85771807,
                     "price_per_pyung": 223.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
@@ -2388,11 +2300,99 @@
                 },
                 {
                     "complex_name": "한남프레시앙",
-                    "gli_score": 20.8067394942,
-                    "price_per_pyung": 292.0,
+                    "gli_score": 19.0257903542,
+                    "price_per_pyung": 304.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 24,
                     "household_count": 480
+                }
+            ]
+        },
+        "인주면": {
+            "summary_metrics": {
+                "r_simple": -0.431018845464745,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 95.97170451071366,
+                "std_error": 47.606897259395794,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 17.9357353056,
+                "max_gli": 21.43227725,
+                "simple_trendline": [
+                    {
+                        "gli": 17.9357353056,
+                        "price": 352.0792323976955
+                    },
+                    {
+                        "gli": 21.43227725,
+                        "price": 220.27952750033714
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 17.9357353056,
+                        "price": 492.20219947475334
+                    },
+                    {
+                        "gli": 21.43227725,
+                        "price": 156.63310917748046
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 17.9357353056,
+                        "price": 516.0056481044512
+                    },
+                    {
+                        "gli": 21.43227725,
+                        "price": 180.43655780717836
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 17.9357353056,
+                        "price": 468.3987508450555
+                    },
+                    {
+                        "gli": 21.43227725,
+                        "price": 132.82966054778257
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "기산현대",
+                    "gli_score": 17.9357353056,
+                    "price_per_pyung": 435.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 26,
+                    "household_count": 315
+                },
+                {
+                    "complex_name": "대진",
+                    "gli_score": 20.87769725,
+                    "price_per_pyung": 264.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 90
+                },
+                {
+                    "complex_name": "미진무지개",
+                    "gli_score": 21.11488484,
+                    "price_per_pyung": 502.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 26,
+                    "household_count": 480
+                },
+                {
+                    "complex_name": "수원신성",
+                    "gli_score": 21.43227725,
+                    "price_per_pyung": 200.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 85
                 }
             ]
         }
