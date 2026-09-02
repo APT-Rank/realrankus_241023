@@ -797,6 +797,23 @@ function toastMessage(msg_pop, delayTime) {
   toastr.success(output);
 }
 
+function toastMessageNotice(msg_pop, delayTime) {
+  toastr.options = {
+    closeButton: false,
+    progressBar: false,
+    showMethod: 'fadeIn',
+    closeMethod: 'fadeOut',
+    positionClass: "toast-bottom-center",
+    timeOut: delayTime
+  };
+  output = msg_pop
+  toastr.info(output).css({
+      "width": "100%",
+      "max-width": "400px",
+      "bottom": "50px"
+  })
+}
+
 function CopyToClipboard2(copied_text, msg_pop) {
   var txt = copied_text
 

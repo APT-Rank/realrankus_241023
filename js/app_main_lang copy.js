@@ -515,11 +515,6 @@ $(document).ready(function () {
 
           showHideMarker(current_zoom);
           $("#pageLoadingBack").remove();
-
-          if (localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
-            come_from_map = true;
-          }
-
           optionChange(selectedSubRegion, selectedRegion);
           updateRegion();
         });
@@ -745,16 +740,14 @@ $(document).ready(function () {
     $(window).resize(function () {
       clearTimeout(window.resizedFinished);
       window.resizedFinished = setTimeout(function () {
-        var boundedWidth = Math.max(window.innerWidth, 1460);
-        var boundedHeight = Math.max(window.innerHeight, 600);
-        dw = boundedWidth - 600;
-        dh = boundedHeight - $("#linkToAptrank_bottom").height();
-        new_window_size = new naver.maps.Size(dw, dh);
+        dw = window.innerWidth - 600;
+        dh = window.innerHeight - $("#linkToAptrank_bottom").height();
+        new_window_size = new naver.maps.Size(window.innerWidth - 600, window.innerHeight - $("#linkToAptrank_bottom").height());
         defaultMap.setSize(new_window_size);
 
         $("#dataList_wrapper").css({
           "margin-top": $("#titleBar").height() + $("#selections").height() + $("#weight").height() + $(".dong_selector").height() + 25,
-          height: boundedHeight - ($("#titleBar").height() + $("#selections").height() + $("#weight").height() + $(".dong_selector").height() + 23 + $("#linkToAptrank_bottom").height()),
+          height: window.innerHeight - ($("#titleBar").height() + $("#selections").height() + $("#weight").height() + $(".dong_selector").height() + 23 + $("#linkToAptrank_bottom").height()),
         });
       }, 50);
     });
@@ -815,7 +808,7 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202608_01");
   window.indexedDB.deleteDatabase("202608_01_EN");
   window.indexedDB.deleteDatabase("202608_02");
-  window.indexedDB.deleteDatabase("202608_02_EN");
+  window.indexedDB.deleteDatabase("202608_02_EN");  
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;
@@ -2022,7 +2015,7 @@ function showDetail(index) {
   if (isEn) {
     aptName = aptData.data[index]["APT_Name_EN"];
   }
-  if (aptData.data[index]["rank"] == null || aptData.data[index]["rank"] == undefined) {
+  if(aptData.data[index]["rank"] == null || aptData.data[index]["rank"] == undefined) {
     aptData.data[index]["rank"] = 0;
   }
   var rank = aptData.data[index]["rank"].toFixed();
@@ -2266,7 +2259,7 @@ function showDetail(index) {
           <div class='popupSubtitle' style='font-size: 0.6em'>${isEn ? "(Jibun)" : "(구)"} ${legalAddress}</div>
         `;
   }
-
+  
   detailHtml += `
         <div class='card'>
         <div id='complex_visit_info'><div class='spinner-border spinner-border-sm' role='status'></div></div>
@@ -3897,14 +3890,14 @@ function updateRegionTable(month, region) {
             <div class='reg_subTable'>
           `;
 
-      if (isEn) {
-        if (regSuplyLevel == "부족") {
+      if(isEn){
+        if(regSuplyLevel == "부족"){
           regSuplyLevel = "shortage";
         }
-        else if (regSuplyLevel == "적정") {
+        else if(regSuplyLevel == "적정"){
           regSuplyLevel = "proper";
         }
-        else if (regSuplyLevel == "과다") {
+        else if(regSuplyLevel == "과다"){
           regSuplyLevel = "excess";
         }
       }
@@ -3935,7 +3928,7 @@ function updateRegionTable(month, region) {
         addon_html += `<span class='regionPopDown'> (${popChange})</span></div>`;
       }
 
-      if (isEn) {
+      if(isEn){
         regIncome = Math.round(regIncome / 1000000) + "M";
       }
 
@@ -4114,17 +4107,17 @@ function showRegionDetail(index) {
   var properSupplyVal = tSafe("ui.region_detail.households_unit", "{count}세대")
     .replace("{count}", Math.round(regSupplyAll_nearby).toLocaleString());
 
-  if (isEn) {
-    if (regSupplyLevel == "부족") {
+  if(isEn){
+    if(regSupplyLevel == "부족"){
       regSupplyLevel = "shortage";
     }
-    else if (regSupplyLevel == "적정") {
+    else if(regSupplyLevel == "적정"){
       regSupplyLevel = "proper";
     }
-    else if (regSupplyLevel == "과다") {
+    else if(regSupplyLevel == "과다"){
       regSupplyLevel = "excess";
     }
-  }
+  }    
 
   var supplyLevelTrans = tSafe("ui.supply_level." + regSupplyLevel, regSupplyLevel);
   var supplyStatusVal = tSafe("ui.region_detail.status_format_short", "{count}세대 공급 {status}")
@@ -4138,7 +4131,7 @@ function showRegionDetail(index) {
   detailHtml += `<div class='popSubTable' id='regionSupplyStatus'><div class='popContent'>${supplyStatusLabel}</div>`;
   detailHtml += `<div class='popResult'>${supplyStatusVal}</div></div>`;
 
-  if (isEn) {
+  if(isEn){
     //regName에 마지막 단어만 남기고 제거 (예: "Gyeonggi-do" -> "Gyeonggi")
     var regNameParts = regName.split(" ");
     regName = regNameParts[regNameParts.length - 1];
@@ -4186,7 +4179,7 @@ function showRegionDetail(index) {
       }
       short_region_name = short_region_name.trim();
     }
-    if (isEn) {
+    if(isEn){
       //short_region_name에서 마지막 단어만 남기고 제거 (예: "Gyeonggi-do" -> "Gyeonggi")
       var shortNameParts = short_region_name.split(" ");
       short_region_name = shortNameParts[shortNameParts.length - 1];
@@ -4301,10 +4294,10 @@ function showRegionDetail(index) {
   }
 
   if (isEn) {
-    var nameParts = regName.split(" ");
+    var nameParts = regName.split(" ");      
     //shortName에 마지막 단어만 남기고 제거
     shortName = nameParts[nameParts.length - 1];
-
+    
   }
 
   var shareYear = selectedMonth.substr(0, 4);
@@ -4372,7 +4365,7 @@ function showRegionDetail(index) {
   });
   //}
 
-  if (isEn) {
+  if(isEn){
     $("#regionSupplyStatus").css("grid-template-columns", "1.5fr 1.5fr");
   }
 
@@ -4904,10 +4897,10 @@ function showGraphChart() {
       const dongData = data.dongs[dongName];
 
       console.log(`Rendering chart for ${dongName}:`, dongData); // 디버깅 로그
-
+      
       // 제목 설정
-      const titleText = isEn
-        ? `'${dongName}' RealRankus GLI-Based Market Diagnosis`
+      const titleText = isEn 
+        ? `'${dongName}' RealRankus GLI-Based Market Diagnosis` 
         : `'${dongName}' 리얼랭커스 GLI 기반 시장 진단`;
       $("#gliChartTitle").text(titleText);
 
@@ -4948,8 +4941,8 @@ function showGraphChart() {
     // 다운로드 버튼 이벤트 바인딩
     $("#gliDownloadBtn").off("click").on("click", function () {
       var now = new Date();
-      var pad = function (n) { return String(n).padStart(2, '0'); };
-      var dateStr = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+      var pad = function(n) { return String(n).padStart(2, '0'); };
+      var dateStr = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate());
       var timeStr = pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
       var filename = isEn
         ? 'GLI_Analysis_' + activeDong + '_' + dateStr + '_' + timeStr + '.png'
@@ -4967,10 +4960,10 @@ function showGraphChart() {
       $(".modal-backdrop").css({ "z-index": "1000", width: "600px" });
     });
   })
-    .fail(function () {
-      console.error("그래프 데이터를 불러오는데 실패했습니다.");
-      alert(isEn ? "Failed to load graph data." : "그래프 데이터를 불러오는데 실패했습니다.");
-    });
+  .fail(function () {
+    console.error("그래프 데이터를 불러오는데 실패했습니다.");
+    alert(isEn ? "Failed to load graph data." : "그래프 데이터를 불러오는데 실패했습니다.");
+  });
 }
 
 // Intercept rearrange notice update

@@ -65,14 +65,28 @@ function loadMap(center_x, center_y){
     zoom_level = 16
   }
   else{
-    dw = window.innerWidth - 600
-    dh = window.innerHeight - $("#linkToAptrank_bottom").height()
+    var boundedWidth = Math.max(window.innerWidth, 1460);
+    var boundedHeight = Math.max(window.innerHeight, 600);
+    dw = boundedWidth - 600;
+    dh = boundedHeight - $("#linkToAptrank_bottom").height();
     zoom_control = true
     zoom_level = 16
   }
 
   if (selectedRegion == "Korea"){
     zoom_level = 8
+  }
+
+  var savedLat = localStorage.getItem("lastMapLat");
+  var savedLng = localStorage.getItem("lastMapLng");
+  var savedZoom = localStorage.getItem("lastMapZoom");
+
+  if (savedLat && savedLng) {
+    coord_y = parseFloat(savedLat);
+    coord_x = parseFloat(savedLng);
+  }
+  if (savedZoom) {
+    zoom_level = parseInt(savedZoom, 10);
   }
 
   var MapOptions = {
@@ -94,6 +108,19 @@ function loadMap(center_x, center_y){
   };
 
   defaultMap = new naver.maps.Map("dataMap", MapOptions);
+
+  // Remove any previously added button to prevent duplicates on reload
+  $("#btn_current_location").remove();
+  
+  var locationBtnHtml = '<button id="btn_current_location" class="map-btn-location" type="button" title="Current location" style="position: absolute; top: 75px; right: -4px; background-color: #fff; border: 1px solid rgba(0,0,0,0.3); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); width: 38px; height: 38px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 0;">' +
+                        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                        '<circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="1" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="23"></line><line x1="1" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="23" y2="12"></line></svg></button>';
+  
+  $("#dataMap").append(locationBtnHtml);
+  
+  $("#btn_current_location").on("click", function() {
+      activateCurrentLocation();
+  });
 
   var bounds = defaultMap.getBounds(),
       southWest = bounds.getSW(),
@@ -117,6 +144,12 @@ function loadMap(center_x, center_y){
 
     origin_lat = current_coord['y']
     origin_lng = current_coord['x']    
+
+    if (origin_lat && origin_lng) {
+      localStorage.setItem("lastMapLat", origin_lat);
+      localStorage.setItem("lastMapLng", origin_lng);
+      localStorage.setItem("lastMapZoom", current_zoom);
+    }
 
     nearby_region = []
     nearby_region = findNearbyRegion(origin_lat, origin_lng, 30)
@@ -1666,4 +1699,125 @@ function setGradeFilter(){
   if(gradeC_checked){    $(".gradeC").show()  }
   else{    $(".gradeC").hide()  }
   
+}
+
+var isCurrentLocationActive = false;
+var userCurrentLat = null;
+var userCurrentLng = null;
+var userCurrentAccuracy = null;
+var PRESERVE_ZOOM_ON_LOCATE = true;
+var watchPositionId = null;
+var currentLocationMarker = null;
+
+function activateCurrentLocation() {
+    if (watchPositionId !== null) {
+        if (userCurrentLat && userCurrentLng) {
+            applyCurrentLocation(userCurrentLat, userCurrentLng, userCurrentAccuracy);
+        }
+        return;
+    }
+
+    if (navigator.geolocation) {
+        watchPositionId = navigator.geolocation.watchPosition(function(position) {
+            userCurrentLat = position.coords.latitude;
+            userCurrentLng = position.coords.longitude;
+            userCurrentAccuracy = position.coords.accuracy;
+            
+            updateLocationMarker(userCurrentLat, userCurrentLng);
+            
+            if (!isCurrentLocationActive) {
+                isCurrentLocationActive = true;
+                applyCurrentLocation(userCurrentLat, userCurrentLng, userCurrentAccuracy);
+            }
+        }, function(error) {
+            if(typeof toastMessageNotice === "function") {
+                toastMessageNotice("위치 정보를 가져올 수 없습니다.", 1000);
+            }
+        }, {
+            enableHighAccuracy: true,
+            maximumAge: 0
+        });
+    } else {
+        if(typeof toastMessageNotice === "function") {
+            toastMessageNotice("현재 브라우저에서는 위치 정보를 지원하지 않습니다.", 1000);
+        }
+    }
+}
+
+function updateLocationMarker(lat, lng) {
+    if (!defaultMap) return;
+    
+    var newLatLng = new naver.maps.LatLng(lat, lng);
+    
+    if (currentLocationMarker) {
+        currentLocationMarker.setPosition(newLatLng);
+    } else {
+        currentLocationMarker = new naver.maps.Marker({
+            position: newLatLng,
+            map: defaultMap,
+            icon: {
+                content: '<div class="current-location-dot"></div>',
+                size: new naver.maps.Size(20, 20),
+                anchor: new naver.maps.Point(10, 10)
+            },
+            zIndex: 1000
+        });
+    }
+}
+
+function applyCurrentLocation(lat, lng, accuracy) {
+    if (typeof level1_loc === 'undefined' || level1_loc.length == 0 || typeof level0_loc === 'undefined' || level0_loc.length == 0) return;
+
+    var minDistance = Infinity;
+    var nearestLevel1 = null;
+
+    for (var i = 0; i < level1_loc.length; i++) {
+        var loc = level1_loc[i];
+        if(typeof getDistanceFromLatLonInKm === 'function') {
+            var dist = getDistanceFromLatLonInKm(lat, lng, loc.lat, loc.lng);
+            if (dist < minDistance) {
+                minDistance = dist;
+                nearestLevel1 = loc;
+            }
+        }
+    }
+
+    if (nearestLevel1) {
+        var parentLevel0 = null;
+        for (var j = 0; j < level0_loc.length; j++) {
+            if (level0_loc[j]["법정동코드"] == nearestLevel1["find_link"]) {
+                parentLevel0 = level0_loc[j];
+                break;
+            }
+        }
+        
+        var sidoCode = parentLevel0 ? parentLevel0.name_en : nearestLevel1.name_en.split("_")[0];
+        var gunguCode = nearestLevel1["법정동코드"] + "_" + nearestLevel1.name_en;
+
+        if(typeof optionChange === 'function') {
+            optionChange(gunguCode, sidoCode);
+        }
+        
+        come_from_map = true; // Prevent map center from jumping to the #1 apartment of the region
+        
+        if(typeof updateRegion === 'function') {
+            updateRegion();
+        }
+        
+        var newCenter = new naver.maps.LatLng(lat, lng);
+        defaultMap.setCenter(newCenter);
+        if (!PRESERVE_ZOOM_ON_LOCATE) {
+            defaultMap.setZoom(16);
+        }
+        
+        if(typeof toastMessageNotice === "function") {
+            var toastMsg = "실제 위치와 약간의 오차가 발생할 수 있습니다.";
+            if (accuracy > 1000) {
+                toastMsg = "유선 네트워크(PC) 환경에서는 통신사 위치로 잡혀 실제 위치와 크게 다를 수 있습니다.";
+            } else if (accuracy > 100) {
+                toastMsg = "실내 및 Wi-Fi 환경에서는 실제 위치와 수백 미터의 오차가 발생할 수 있습니다.";
+            }
+            toastMessageNotice(toastMsg, 1000);
+        }
+    }
 }
