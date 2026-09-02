@@ -112,13 +112,19 @@ function loadMap(center_x, center_y){
   // Remove any previously added button to prevent duplicates on reload
   $("#btn_current_location").remove();
   
-  var locationBtnHtml = '<button id="btn_current_location" class="map-btn-location" type="button" title="Current location" style="position: absolute; top: 75px; right: -4px; background-color: #fff; border: 1px solid rgba(0,0,0,0.3); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); width: 38px; height: 38px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 0;">' +
+  var locationBtnHtml = '<button id="btn_current_location" class="map-btn-location" type="button" title="Current location" style="position: absolute; top: 75px; right: -4px; background-color: #fff; border: 1px solid rgba(0,0,0,0.3); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); width: 38px; height: 38px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 0; transition: background-color 0.2s, transform 0.1s;">' +
                         '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                         '<circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="1" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="23"></line><line x1="1" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="23" y2="12"></line></svg></button>';
   
   $("#dataMap").append(locationBtnHtml);
   
   $("#btn_current_location").on("click", function() {
+      var $btn = $(this);
+      $btn.css({"background-color": "#e0e0e0", "transform": "scale(0.9)"});
+      setTimeout(function() {
+          $btn.css({"background-color": "#fff", "transform": "scale(1)"});
+      }, 150);
+      
       activateCurrentLocation();
   });
 
