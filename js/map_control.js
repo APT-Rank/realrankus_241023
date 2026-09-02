@@ -1737,7 +1737,7 @@ function activateCurrentLocation() {
             }
         }, function(error) {
             if(typeof toastMessageNotice === "function") {
-                toastMessageNotice("위치 정보를 가져올 수 없습니다.", 1000);
+                toastMessageNotice("위치 정보를 가져올 수 없습니다.", 1500);
             }
         }, {
             enableHighAccuracy: true,
@@ -1745,7 +1745,7 @@ function activateCurrentLocation() {
         });
     } else {
         if(typeof toastMessageNotice === "function") {
-            toastMessageNotice("현재 브라우저에서는 위치 정보를 지원하지 않습니다.", 1000);
+            toastMessageNotice("현재 브라우저에서는 위치 정보를 지원하지 않습니다.", 1500);
         }
     }
 }
@@ -1821,7 +1821,7 @@ function applyCurrentLocation(lat, lng, accuracy) {
             } else if (accuracy > 100) {
                 toastMsg = "실내 및 Wi-Fi 환경에서는 실제 위치와 수백 미터의 오차가 발생할 수 있습니다.";
             }
-            toastMessageNotice(toastMsg, 1000);
+            toastMessageNotice(toastMsg, 2000);
         }
     }
 }
