@@ -168,7 +168,10 @@
             <div class="modal-content">
               <div class="modal-header" style="background: #eee;">
                 <h5 class="modal-title" id="costTitle">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div style="display: flex; align-items: center;">
+                  <button type="button" id="btn_back_korea" class="btn-close" style="display:none; margin-right:15px; transform: translateY(2px); background-size: 1.2em auto; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.67' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M14 8H2M7 3L2 8l5 5'/%3e%3c/svg%3e&quot;);" onClick="goBackToKorea()" aria-label="Back"></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
               </div>
               <div class="modal-body" id='costDetail'></div>
               <div id='costfooter'></div>

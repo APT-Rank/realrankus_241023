@@ -88,7 +88,7 @@ var thisMonth = "202609"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
 var selectedMonth = "202609"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202609_01"; //수정
+var DB_Date = "202609_02"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
@@ -816,6 +816,8 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202608_01_EN");
   window.indexedDB.deleteDatabase("202608_02");
   window.indexedDB.deleteDatabase("202608_02_EN");
+  window.indexedDB.deleteDatabase("202609_01");
+  window.indexedDB.deleteDatabase("202609_01_EN");
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;

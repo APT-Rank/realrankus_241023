@@ -5,6 +5,7 @@ var regions = [
 ]
 
 var searchingDB = []
+var is_drilldown_from_korea = false;
 
 function getUniqueList(jsonArrray, finding){  
   const unique = jsonArrray.map(function (val, index) {
@@ -218,8 +219,22 @@ async function drawTable(indexData, sido_list, gungu_list){
   if(isMobile){
   }
   else{
-    //$("#exampleModal").modal("hide")
-    setTimeout(() => $("#exampleModal").modal("hide"), 500);
+    setTimeout(() => {
+      var hideExampleModal = function() {
+        $("#exampleModal").modal("hide");
+        if (window.location.hash === '#exampleModal') {
+          window.history.replaceState(null, null, ' ');
+        }
+      };
+      
+      hideExampleModal();
+      
+      // In case it was transitioning and ignored the hide command
+      $("#exampleModal").on('shown.bs.modal', function() {
+        hideExampleModal();
+        $(this).off('shown.bs.modal');
+      });
+    }, 500);
   }
   $('#data_table').css({'background':'white'}) 
   
@@ -910,6 +925,14 @@ function showCostsum(){
   }
   cost_data = ""
   cost_sum = 0
+  
+  if (current_selection === "Korea_upper" || current_selection === "Korea_lower") {
+    is_drilldown_from_korea = false;
+    $("#btn_back_korea").hide();
+  } else {
+    is_drilldown_from_korea = true;
+    $("#btn_back_korea").show();
+  }
 
   /*
   if(current_selection == "Korea_upper"){ cost_data = cost_region_arr[0]; cost_sum = cost_sum_arr[0] }
@@ -1082,6 +1105,39 @@ function drawTreeMap(data){
       ],
     },
     options: {
+      onClick: function(e, elements, chart) {
+        if (elements.length > 0) {
+          var datasetIndex = elements[0].datasetIndex;
+          var index = elements[0].index;
+          var dataItem = chart.data.datasets[datasetIndex].data[index];
+          
+          if (dataItem && dataItem._data) {
+            var current_selection = isMobile ? $("#sidogungu_m option:selected").val() : $("#sidogungu option:selected").val();
+            
+            if (current_selection === "Korea_upper" && dataItem._data.Level === "Level1") {
+              var regionEng = dataItem._data.Region_ENG;
+              
+              is_drilldown_from_korea = true;
+              $("#btn_back_korea").show();
+              
+              if (isMobile) {
+                $("#sidogungu_m").val(regionEng);
+              } else {
+                $("#sidogungu").val(regionEng);
+              }
+              showCostsum();
+            }
+          }
+        }
+      },
+      onHover: function(e, elements, chart) {
+        var current_selection = isMobile ? $("#sidogungu_m option:selected").val() : $("#sidogungu option:selected").val();
+        if (current_selection === "Korea_upper" && elements.length > 0) {
+          e.native.target.style.cursor = 'pointer';
+        } else {
+          e.native.target.style.cursor = 'default';
+        }
+      },
       animation: {        
           duration: 850,
       },
@@ -1160,4 +1216,45 @@ function colorFromRaw(ctx, border) {
   //converted_b = color_b * (alpha)
 
   return "rgba(" + color_r + "," + color_g + "," + color_b + "," + alpha + ")"
+}
+
+$(document).ready(function() {
+  $('#costModal').on('hide.bs.modal', function(e) {
+    if (is_drilldown_from_korea) {
+      if (!window.location.hash) {
+        // Back button pressed (hash is empty)
+        e.preventDefault();
+        is_drilldown_from_korea = false;
+        $("#btn_back_korea").hide();
+        
+        if (isMobile) {
+          $("#sidogungu_m").val("Korea_upper");
+        } else {
+          $("#sidogungu").val("Korea_upper");
+        }
+        showCostsum();
+        
+        // Re-push hash to allow next Back button press to close the modal
+        window.history.pushState(null, null, '#costModal');
+      } else {
+        // Close (X) button pressed explicitly (hash is still #costModal)
+        is_drilldown_from_korea = false;
+        $("#btn_back_korea").hide();
+      }
+    }
+  });
+});
+
+function goBackToKorea() {
+  if (is_drilldown_from_korea) {
+    is_drilldown_from_korea = false;
+    $("#btn_back_korea").hide();
+    
+    if (isMobile) {
+      $("#sidogungu_m").val("Korea_upper");
+    } else {
+      $("#sidogungu").val("Korea_upper");
+    }
+    showCostsum();
+  }
 }
