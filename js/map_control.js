@@ -120,10 +120,19 @@ function loadMap(center_x, center_y){
   
   $("#btn_current_location").on("click", function() {
       var $btn = $(this);
-      $btn.css({"background-color": "#e0e0e0", "transform": "scale(0.9)"});
-      setTimeout(function() {
-          $btn.css({"background-color": "#fff", "transform": "scale(1)"});
-      }, 150);
+      
+      if ($btn.hasClass("loading")) return;
+      
+      $btn.addClass("loading");
+      if (!$btn.data("original-content")) {
+          $btn.data("original-content", $btn.html());
+      }
+      
+      $btn.css({
+          "background-color": "#333",
+          "border-color": "#333"
+      });
+      $btn.html('<i class="fa-solid fa-spinner fa-spin" style="color: white; font-size: 18px;"></i>');
       
       activateCurrentLocation();
   });
@@ -1716,10 +1725,25 @@ var watchPositionId = null;
 var currentLocationMarker = null;
 
 function activateCurrentLocation() {
+    function restoreButton() {
+        var $btn = $("#btn_current_location");
+        if ($btn.length && $btn.hasClass("loading")) {
+            $btn.removeClass("loading");
+            $btn.css({
+                "background-color": "#fff",
+                "border-color": "rgba(0,0,0,0.3)"
+            });
+            if ($btn.data("original-content")) {
+                $btn.html($btn.data("original-content"));
+            }
+        }
+    }
+
     if (watchPositionId !== null) {
         if (userCurrentLat && userCurrentLng) {
             applyCurrentLocation(userCurrentLat, userCurrentLng, userCurrentAccuracy);
         }
+        restoreButton();
         return;
     }
 
@@ -1735,10 +1759,12 @@ function activateCurrentLocation() {
                 isCurrentLocationActive = true;
                 applyCurrentLocation(userCurrentLat, userCurrentLng, userCurrentAccuracy);
             }
+            restoreButton();
         }, function(error) {
             if(typeof toastMessageNotice === "function") {
                 toastMessageNotice("위치 정보를 가져올 수 없습니다.", 1500);
             }
+            restoreButton();
         }, {
             enableHighAccuracy: true,
             maximumAge: 0
@@ -1747,6 +1773,7 @@ function activateCurrentLocation() {
         if(typeof toastMessageNotice === "function") {
             toastMessageNotice("현재 브라우저에서는 위치 정보를 지원하지 않습니다.", 1500);
         }
+        restoreButton();
     }
 }
 
