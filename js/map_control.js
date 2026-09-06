@@ -81,11 +81,14 @@ function loadMap(center_x, center_y) {
   var savedLng = localStorage.getItem("lastMapLng");
   var savedZoom = localStorage.getItem("lastMapZoom");
 
-  if (savedLat && savedLng) {
+  var urlParams = new URLSearchParams(window.location.search);
+  var hasUrlParam = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
+
+  if (!hasUrlParam && savedLat && savedLng) {
     coord_y = parseFloat(savedLat);
     coord_x = parseFloat(savedLng);
   }
-  if (savedZoom) {
+  if (!hasUrlParam && savedZoom) {
     zoom_level = parseInt(savedZoom, 10);
   }
 

@@ -516,7 +516,8 @@ $(document).ready(function () {
           showHideMarker(current_zoom);
           $("#pageLoadingBack").remove();
 
-          if (localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
+          const hasUrlParam = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
+          if (!hasUrlParam && localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
             come_from_map = true;
           }
 
