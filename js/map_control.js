@@ -307,6 +307,37 @@ function findNearbyRegion(origin_lat, origin_lng, area_distance) {
   return nearby_result
 }
 
+/**
+ * @function findClosestRegion
+ * @description 주어진 지도 중심 좌표(origin_lat, origin_lng)를 기준으로 가장 가까운 시군구(level1_loc) 정보를 반환합니다.
+ * 지도 드래그 후 앱을 재접속했을 때 마지막에 보고 있던 지도 위치를 기반으로 해당 지역 데이터를 로드하기 위해 사용됩니다.
+ * @param {number} origin_lat - 기준이 되는 위도 (마지막 지도의 중심 y좌표)
+ * @param {number} origin_lng - 기준이 되는 경도 (마지막 지도의 중심 x좌표)
+ * @returns {Object|null} 기준 좌표에서 가장 가까운 거리에 위치한 시군구 객체 (level1_loc 요소). 없으면 null 반환.
+ */
+function findClosestRegion(origin_lat, origin_lng) {
+  var closest_region = null;
+  var min_distance = Infinity;
+
+  // 전체 시군구(level1_loc) 배열을 순회하며 주어진 중심 좌표와의 거리를 계산합니다.
+  for (var i in level1_loc) {
+    var dest_lat = level1_loc[i]['lat'];
+    var dest_lng = level1_loc[i]['lng'];
+    
+    // getDistanceFromLatLonInKm 함수를 이용해 직선거리(km)를 구합니다.
+    var distance = getDistanceFromLatLonInKm(origin_lat, origin_lng, dest_lat, dest_lng);
+
+    // 계산된 거리가 기존 최소 거리보다 작다면 최소 거리를 갱신하고 가장 가까운 지역으로 저장합니다.
+    if (distance < min_distance) {
+      min_distance = distance;
+      closest_region = level1_loc[i];
+    }
+  }
+
+  // 가장 가까운 시군구 정보를 반환합니다.
+  return closest_region;
+}
+
 var marker_z_depth = 1000
 
 var infoWindow

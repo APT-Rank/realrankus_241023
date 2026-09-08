@@ -459,6 +459,41 @@ $(document).ready(function () {
 
           showHideMarker(current_zoom);
           $("#pageLoadingBack").remove();
+          
+          // URL 파라미터(cpx, reg, sub 등)가 존재하는지 확인합니다. 파라미터가 있다면 특정 지역이나 단지를 강제로 조회하려는 의도이므로 로컬스토리지 좌표를 무시합니다.
+          const hasUrlParam = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
+          
+          // URL 파라미터가 없고, 로컬스토리지에 마지막 지도 좌표가 저장되어 있는 경우 동기화를 수행합니다.
+          if (!hasUrlParam && localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
+            come_from_map = true;
+            
+            // 로컬스토리지의 문자열 좌표값을 실수(float)로 변환합니다.
+            var c_lat = parseFloat(localStorage.getItem("lastMapLat"));
+            var c_lng = parseFloat(localStorage.getItem("lastMapLng"));
+            
+            // 지도 중심 좌표에서 가장 가까운 시군구(level1_loc) 객체를 찾습니다.
+            var closestRegion = findClosestRegion(c_lat, c_lng);
+            if (closestRegion) {
+              // 찾은 시군구 객체의 법정동코드를 문자열로 추출합니다. (예: "1168000000")
+              var targetCode = closestRegion["법정동코드"].toString();
+              
+              // share.js에 정의된 전체 지역 코드 맵(codeMap)을 순회하며 법정동코드와 일치하는 지역을 찾습니다.
+              for (var c_i = 0; c_i < codeMap.length; c_i++) {
+                // codeMap[c_i][2]는 "1168000000_Seoul_Gangnam" 형태이므로 대상 법정동코드로 시작하는지 확인합니다.
+                if (codeMap[c_i][2].startsWith(targetCode)) {
+                  // 일치하는 경우, 전역 상태인 선택 지역(selectedRegion)과 선택 시군구(selectedSubRegion)를 갱신합니다.
+                  selectedRegion = codeMap[c_i][1];
+                  selectedSubRegion = codeMap[c_i][2];
+                  
+                  // UI 상의 '시/도' 콤보박스(#sido) 값을 변경된 지역으로 강제 선택(selected) 처리합니다.
+                  // (구/군 콤보박스는 이어지는 optionChange 함수에서 처리됩니다)
+                  $("#sido").val(selectedRegion).prop("selected", true);
+                  break;
+                }
+              }
+            }
+          }
+
           optionChange(selectedSubRegion, selectedRegion);
           updateRegion();
         });
@@ -516,9 +551,38 @@ $(document).ready(function () {
           showHideMarker(current_zoom);
           $("#pageLoadingBack").remove();
 
+          // URL 파라미터(cpx, reg, sub 등)가 존재하는지 확인합니다. 파라미터가 있다면 특정 지역이나 단지를 강제로 조회하려는 의도이므로 로컬스토리지 좌표를 무시합니다.
           const hasUrlParam = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
+          
+          // URL 파라미터가 없고, 로컬스토리지에 마지막 지도 좌표가 저장되어 있는 경우 동기화를 수행합니다.
           if (!hasUrlParam && localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
             come_from_map = true;
+            
+            // 로컬스토리지의 문자열 좌표값을 실수(float)로 변환합니다.
+            var c_lat = parseFloat(localStorage.getItem("lastMapLat"));
+            var c_lng = parseFloat(localStorage.getItem("lastMapLng"));
+            
+            // 지도 중심 좌표에서 가장 가까운 시군구(level1_loc) 객체를 찾습니다.
+            var closestRegion = findClosestRegion(c_lat, c_lng);
+            if (closestRegion) {
+              // 찾은 시군구 객체의 법정동코드를 문자열로 추출합니다. (예: "1168000000")
+              var targetCode = closestRegion["법정동코드"].toString();
+              
+              // share.js에 정의된 전체 지역 코드 맵(codeMap)을 순회하며 법정동코드와 일치하는 지역을 찾습니다.
+              for (var c_i = 0; c_i < codeMap.length; c_i++) {
+                // codeMap[c_i][2]는 "1168000000_Seoul_Gangnam" 형태이므로 대상 법정동코드로 시작하는지 확인합니다.
+                if (codeMap[c_i][2].startsWith(targetCode)) {
+                  // 일치하는 경우, 전역 상태인 선택 지역(selectedRegion)과 선택 시군구(selectedSubRegion)를 갱신합니다.
+                  selectedRegion = codeMap[c_i][1];
+                  selectedSubRegion = codeMap[c_i][2];
+                  
+                  // UI 상의 '시/도' 콤보박스(#sido) 값을 변경된 지역으로 강제 선택(selected) 처리합니다.
+                  // (구/군 콤보박스는 이어지는 optionChange 함수에서 처리됩니다)
+                  $("#sido").val(selectedRegion).prop("selected", true);
+                  break;
+                }
+              }
+            }
           }
 
           optionChange(selectedSubRegion, selectedRegion);
