@@ -307,10 +307,19 @@
         shareText = shareTitle + "\n\n"        
     })
 
-    show_hourly_info()
-    show_daily_info()
+    if (hourly_market && hourly_market !== "") {
+      show_hourly_info()
+    } else {
+      $('#hourly_info').append("<div style='text-align:center; padding: 20px; color:red;'>실시간 시장지표(Hourly) 데이터를 불러올 수 없습니다.</div>");
+    }
+
+    if (daily_market && daily_market !== "") {
+      show_daily_info()
+    } else {
+      $('#graph_area').append("<div style='text-align:center; padding: 20px; color:red;'>일간 시장지표(Daily) 데이터를 불러올 수 없습니다.</div>");
+    }
     //show_monthly_info()
-    $.ajaxSetup({ async: true });    
+    $.ajaxSetup({ async: true });
 
     currentMenu = "moneyflow"  //offcanvas  
     setOffcanvasMenu() //offcanvas
