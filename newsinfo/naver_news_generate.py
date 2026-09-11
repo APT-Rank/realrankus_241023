@@ -27,7 +27,7 @@ fred_key = "a7d5a17c8b520a7802d3c905fca10131"
 bok_key = "570IL3KK1XG2THUF38RC"
 
 #기준시점 선정
-utcnow = datetime.datetime.utcnow()
+utcnow = datetime.datetime.now(datetime.timezone.utc)
 now = utcnow + datetime.timedelta(hours=9)
 
 date_7days_ago = now - datetime.timedelta(days=7)
@@ -173,104 +173,67 @@ def save_RealTime_KOR_Stock_info(stock):
 
 def save_RealTime_KOR_Currency_info(symbol):
     if symbol == "USDKRW":
-        url = 'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_USDKRW'
-    if symbol == "JPYKRW":
-        url = 'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_JPYKRW'
-    if symbol == "EURKRW":
-        url = 'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_EURKRW'
-    if symbol == "CNYKRW":
-        url = 'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_CNYKRW'        
+        code = 'FX_USDKRW'
+    elif symbol == "JPYKRW":
+        code = 'FX_JPYKRW'
+    elif symbol == "EURKRW":
+        code = 'FX_EURKRW'
+    elif symbol == "CNYKRW":
+        code = 'FX_CNYKRW'        
+    else:
+        code = symbol
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        html = response.text
-        soup = BeautifulSoup(html, 'html.parser')
-        rate = soup.find('div', {'class': 'today'})
-        rate2 = rate.select('span', class_='no_today')
-        txt = ""
-        for i in range(len(rate2)):
-            txt += rate2[i].get_text()
-    
-    txt = txt.replace("전일대비", " ")    
-    txt = txt.replace("(", " ")
-    txt = txt.replace(")", "")
-    txt = txt.replace(",", "")
-    txt = txt.replace("원", "")
-    txt = txt.replace("%", "")
-    result = txt.split(" ")
-    num = float(result[0])
-    updown = float(result[1])
-    updown_percent = float(result[2])
-    if updown_percent < 0:
-        updown = updown * (-1)
+    url = f'https://m.stock.naver.com/front-api/marketIndex/productDetail?category=exchange&reutersCode={code}'
+    try:
+        response = requests.get(url)
+        result = response.json()
+        if result.get('isSuccess') == True:
+            num = float(result['result']['closePrice'].replace(',', ''))
+            updown = float(result['result']['fluctuations'].replace(',', ''))
+            updown_percent = float(result['result']['fluctuationsRatio'].replace(',', ''))
+            if result['result']['fluctuationsType']['name'] == 'FALLING':
+                updown = -updown
+                updown_percent = -updown_percent
+        else:
+            num, updown, updown_percent = 0.0, 0.0, 0.0
+    except:
+        num, updown, updown_percent = 0.0, 0.0, 0.0
 
     return num, updown, updown_percent, symbol
 
 def save_RealTime_KOR_Oil_info(symbol):
     if symbol == "WTI" or symbol == "YF_WTI":
-        url = 'https://finance.naver.com/marketindex/worldOilDetail.naver?marketindexCd=OIL_CL'
-    if symbol == "Brent" or symbol == "YF_Brent":
-        url = 'https://finance.naver.com/marketindex/worldOilDetail.naver?marketindexCd=OIL_BRT'
-    if symbol == "Dubai":
-        url = 'https://finance.naver.com/marketindex/worldOilDetail.naver?marketindexCd=OIL_DU'
+        yf_symbol = 'CL=F'
+    elif symbol == "Brent" or symbol == "YF_Brent":
+        yf_symbol = 'BZ=F'
+    else:
+        return 0.0, 0.0, 0.0, symbol
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        html = response.text
-        soup = BeautifulSoup(html, 'html.parser')
-        rate = soup.find('div', {'class': 'today'})
-        rate2 = rate.select('span', class_='no_today')
-        txt = ""
-        for i in range(len(rate2)):
-            txt += rate2[i].get_text()
+    ticker = yf.Ticker(yf_symbol)
+    info = ticker.info
+    num = info.get('regularMarketPrice', 0.0)
+    updown = info.get('regularMarketChange', 0.0)
+    updown_percent = info.get('regularMarketChangePercent', 0.0)
     
-    txt = txt.replace("전일대비", " ")
-    txt = txt.replace("달러/배럴", "")
-    txt = txt.replace("(", " ")
-    txt = txt.replace(")", "")
-    txt = txt.replace(",", "")
-    txt = txt.replace("원", "")
-    txt = txt.replace("%", "")
-    result = txt.split(" ")
-    num = float(result[0])
-    updown = float(result[1])
-    updown_percent = float(result[2])
-    if updown_percent < 0:
-        updown = updown * (-1)
-
-    return num, updown, updown_percent, symbol
+    return round(num, 2), round(updown, 2), round(updown_percent, 2), symbol
 
 def save_RealTime_US_Stock_info(symbol):
     if symbol == "DOW":
-        url = 'https://finance.naver.com/world/sise.naver?symbol=DJI@DJI'
-    if symbol == "NAS":
-        url = 'https://finance.naver.com/world/sise.naver?symbol=NAS@IXIC'
-    if symbol == "SNP":
-        url = 'https://finance.naver.com/world/sise.naver?symbol=SPI@SPX'
+        yf_symbol = '^DJI'
+    elif symbol == "NAS":
+        yf_symbol = '^IXIC'
+    elif symbol == "SNP":
+        yf_symbol = '^GSPC'
+    else:
+        yf_symbol = symbol
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        html = response.text
-        soup = BeautifulSoup(html, 'html.parser')
-        rate = soup.find('div', {'class': 'today'})
-        rate2 = rate.select('span', class_='no_today')
-        txt = ""
-        for i in range(len(rate2)):
-            txt += rate2[i].get_text()
-   
-    txt = txt.replace("전일대비", " ")
-    txt = txt.replace("(", " ")
-    txt = txt.replace(")", "")
-    txt = txt.replace(",", "")
-    txt = txt.replace("%", "")
-    result = txt.split(" ")
-    num = float(result[0])
-    updown = float(result[1])
-    updown_percent = float(result[2])
-    if updown_percent < 0:
-        updown = updown * (-1)
+    ticker = yf.Ticker(yf_symbol)
+    info = ticker.info
+    num = info.get('regularMarketPrice', 0.0)
+    updown = info.get('regularMarketChange', 0.0)
+    updown_percent = info.get('regularMarketChangePercent', 0.0)
 
-    return num, updown, updown_percent, symbol
+    return round(num, 2), round(updown, 2), round(updown_percent, 2), symbol
    
 """   
 def save_YF_realtime_info(symbol):
