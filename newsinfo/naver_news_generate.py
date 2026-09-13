@@ -202,6 +202,23 @@ def save_RealTime_KOR_Currency_info(symbol):
     return num, updown, updown_percent, symbol
 
 def save_RealTime_KOR_Oil_info(symbol):
+    if symbol == "Dubai":
+        url = 'https://finance.naver.com/marketindex/worldDailyQuote.naver?marketindexCd=OIL_DU&fdtc=2'
+        try:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            tr = soup.find('table', {'class': 'tbl_exchange today'}).find('tbody').find('tr')
+            tds = tr.find_all('td')
+            num = float(tds[1].text.strip().replace(',', ''))
+            updown_text = tds[2].text.strip().split()[-1].replace(',', '')
+            updown = float(updown_text)
+            updown_percent = float(tds[3].text.strip().replace('%', '').replace(',', ''))
+            if 'down' in tr.get('class', []):
+                updown = -updown
+            return round(num, 2), round(updown, 2), round(updown_percent, 2), symbol
+        except:
+            return 0.0, 0.0, 0.0, symbol
+
     if symbol == "WTI" or symbol == "YF_WTI":
         yf_symbol = 'CL=F'
     elif symbol == "Brent" or symbol == "YF_Brent":
