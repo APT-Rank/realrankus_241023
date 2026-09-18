@@ -203,18 +203,19 @@ def save_RealTime_KOR_Currency_info(symbol):
 
 def save_RealTime_KOR_Oil_info(symbol):
     if symbol == "Dubai":
-        url = 'https://finance.naver.com/marketindex/worldDailyQuote.naver?marketindexCd=OIL_DU&fdtc=2'
+        url = 'https://m.stock.naver.com/front-api/marketIndex/productDetail?category=energy&reutersCode=DCBc1'
         try:
             response = requests.get(url)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            tr = soup.find('table', {'class': 'tbl_exchange today'}).find('tbody').find('tr')
-            tds = tr.find_all('td')
-            num = float(tds[1].text.strip().replace(',', ''))
-            updown_text = tds[2].text.strip().split()[-1].replace(',', '')
-            updown = float(updown_text)
-            updown_percent = float(tds[3].text.strip().replace('%', '').replace(',', ''))
-            if 'down' in tr.get('class', []):
-                updown = -updown
+            result = response.json()
+            if result.get('isSuccess') == True:
+                num = float(result['result']['closePrice'].replace(',', ''))
+                updown = float(result['result']['fluctuations'].replace(',', ''))
+                updown_percent = float(result['result']['fluctuationsRatio'].replace(',', ''))
+                if result['result']['fluctuationsType']['name'] == 'FALLING':
+                    updown = -updown
+                    updown_percent = -updown_percent
+            else:
+                num, updown, updown_percent = 0.0, 0.0, 0.0
             return round(num, 2), round(updown, 2), round(updown_percent, 2), symbol
         except:
             return 0.0, 0.0, 0.0, symbol
