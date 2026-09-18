@@ -23,6 +23,15 @@ async function drawMap(region_data, sido_list, gungu_list){
 
   origin_yx = new naver.maps.LatLng(coord_y, coord_x);  
 
+  var savedLat = localStorage.getItem('cc_last_lat');
+  var savedLng = localStorage.getItem('cc_last_lng');
+  var savedZoom = localStorage.getItem('cc_last_zoom');
+
+  if (savedLat && savedLng) {
+    coord_y = savedLat;
+    coord_x = savedLng;
+  }
+
   if(isMobile){
     dw = window.innerWidth    
     dh = window.innerHeight - $("#titleBar_theme_m").height() - $("#update_info_m").height() - $("#menu_selector_m").height() - $("#region_search_m").height() - $("#linkToAptrank_bottom").height()- 8
@@ -36,6 +45,10 @@ async function drawMap(region_data, sido_list, gungu_list){
     zoom_control = true
     zoom_level = 14
     minZoom_limit = 7
+  }
+
+  if (savedZoom) {
+    zoom_level = Number(savedZoom);
   }
 
   var MapOptions = {
@@ -59,6 +72,28 @@ async function drawMap(region_data, sido_list, gungu_list){
 
   defaultMap = new naver.maps.Map("map_area", MapOptions);
 
+  $("#btn_current_location").remove();
+  var locationBtnHtml = '<button id="btn_current_location" class="map-btn-location" type="button" title="Current location" style="position: absolute; top: 80px; right: 6px; background-color: #fff; border: 1px solid rgba(0,0,0,0.3); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); width: 38px; height: 38px; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 0; transition: background-color 0.2s, transform 0.1s;">' +
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="1" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="23"></line><line x1="1" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="23" y2="12"></line></svg></button>';
+
+  $("#map_area").append(locationBtnHtml);
+
+  $("#btn_current_location").on("click", function () {
+    var $btn = $(this);
+    if ($btn.hasClass("loading")) return;
+    $btn.addClass("loading");
+    if (!$btn.data("original-content")) {
+      $btn.data("original-content", $btn.html());
+    }
+    $btn.css({
+      "background-color": "#333",
+      "border-color": "#333"
+    });
+    $btn.html('<div class="spinner-border spinner-border-sm text-white" role="status"></div>');
+    activateCurrentLocation();
+  });
+
   if(isMobile){
     defaultMap.panBy(new naver.maps.Point(15, 130))
   }
@@ -79,6 +114,11 @@ async function drawMap(region_data, sido_list, gungu_list){
   naver.maps.Event.addListener(defaultMap, 'idle', function() {
     removeMarkers()
     showHideMarker(current_zoom)
+
+    var center = defaultMap.getCenter();
+    localStorage.setItem('cc_last_lat', center.lat());
+    localStorage.setItem('cc_last_lng', center.lng());
+    localStorage.setItem('cc_last_zoom', defaultMap.getZoom());
   });
 
   naver.maps.Event.addListener(defaultMap, 'zoom_changed', function (zoom) {
@@ -447,5 +487,100 @@ function mapTableModeChange(){
     $("#map_table_text").html("표 보기")    
 
     view_mode = "map"
+  }
+}
+
+var isCurrentLocationActive = false;
+var userCurrentLat = null;
+var userCurrentLng = null;
+var userCurrentAccuracy = null;
+var watchPositionId = null;
+var currentLocationMarker = null;
+
+function activateCurrentLocation() {
+  function restoreButton() {
+    var $btn = $("#btn_current_location");
+    if ($btn.length && $btn.hasClass("loading")) {
+      $btn.removeClass("loading");
+      $btn.css({
+        "background-color": "#fff",
+        "border-color": "rgba(0,0,0,0.3)"
+      });
+      if ($btn.data("original-content")) {
+        $btn.html($btn.data("original-content"));
+      }
+    }
+  }
+
+  if (watchPositionId !== null) {
+    if (userCurrentLat && userCurrentLng) {
+      applyCurrentLocation(userCurrentLat, userCurrentLng, userCurrentAccuracy);
+    }
+    restoreButton();
+    return;
+  }
+
+  if (navigator.geolocation) {
+    watchPositionId = navigator.geolocation.watchPosition(function (position) {
+      userCurrentLat = position.coords.latitude;
+      userCurrentLng = position.coords.longitude;
+      userCurrentAccuracy = position.coords.accuracy;
+
+      updateLocationMarker(userCurrentLat, userCurrentLng);
+
+      if (!isCurrentLocationActive) {
+        isCurrentLocationActive = true;
+        applyCurrentLocation(userCurrentLat, userCurrentLng, userCurrentAccuracy);
+      }
+      restoreButton();
+    }, function (error) {
+      if (typeof toastMessageNotice === "function") {
+        toastMessageNotice("위치 정보를 가져올 수 없습니다.", 1500);
+      }
+      restoreButton();
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 0
+    });
+  } else {
+    if (typeof toastMessageNotice === "function") {
+      toastMessageNotice("현재 브라우저에서는 위치 정보를 지원하지 않습니다.", 1500);
+    }
+    restoreButton();
+  }
+}
+
+function updateLocationMarker(lat, lng) {
+  if (!defaultMap) return;
+  var newLatLng = new naver.maps.LatLng(lat, lng);
+
+  if (currentLocationMarker) {
+    currentLocationMarker.setPosition(newLatLng);
+  } else {
+    currentLocationMarker = new naver.maps.Marker({
+      position: newLatLng,
+      map: defaultMap,
+      icon: {
+        content: '<div class="current-location-dot"><div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid #e31939;"></div></div>',
+        size: new naver.maps.Size(32, 32),
+        anchor: new naver.maps.Point(16, 16)
+      },
+      zIndex: 1000
+    });
+  }
+}
+
+function applyCurrentLocation(lat, lng, accuracy) {
+  var newCenter = new naver.maps.LatLng(lat, lng);
+  defaultMap.setCenter(newCenter);
+  
+  if (typeof toastMessageNotice === "function") {
+    var toastMsg = "실제 위치와 약간의 오차가 발생할 수 있습니다.";
+    if (accuracy > 1000) {
+      toastMsg = "유선 네트워크(PC) 환경에서는 통신사 위치로 잡혀 실제 위치와 크게 다를 수 있습니다.";
+    } else if (accuracy > 100) {
+      toastMsg = "실내 및 Wi-Fi 환경에서는 실제 위치와 수백 미터의 오차가 발생할 수 있습니다.";
+    }
+    toastMessageNotice(toastMsg, 2000);
   }
 }
