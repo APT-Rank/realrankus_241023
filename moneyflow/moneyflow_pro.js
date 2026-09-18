@@ -1067,7 +1067,13 @@ function return_MoneyFlow_time(obj_val, duration){
     return_arr_val = arr_val.slice(-60)
   }
   if(duration == '10Y'){
-    return_arr_val = arr_val
+    return_arr_val = arr_val.slice(-120)
+  }
+  if(duration == '15Y'){
+    return_arr_val = arr_val.slice(-180)
+  }
+  if(duration == '20Y'){
+    return_arr_val = arr_val.slice(-240)
   }
 
   return return_arr_val
@@ -1093,7 +1099,13 @@ function return_MoneyFlow_arr(obj_val, duration){
     return_arr_val = arr_val.slice(-60)
   }
   if(duration == '10Y'){
-    return_arr_val = arr_val
+    return_arr_val = arr_val.slice(-120)
+  }
+  if(duration == '15Y'){
+    return_arr_val = arr_val.slice(-180)
+  }
+  if(duration == '20Y'){
+    return_arr_val = arr_val.slice(-240)
   }
 
   return_arr_val = return_arr_val.map( x => {    
@@ -1250,6 +1262,8 @@ function show_daily_info(){
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_3Y_MONEY_FLOW' onClick='redraw_graph(this, \"3Y\")'><label class='btn btn-outline-danger' id='label_3Y' for='redraw_3Y_MONEY_FLOW'>3Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_5Y_MONEY_FLOW' onClick='redraw_graph(this, \"5Y\")' checked><label class='btn btn-outline-danger' id='label_5Y' for='redraw_5Y_MONEY_FLOW'>5Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_10Y_MONEY_FLOW' onClick='redraw_graph(this, \"10Y\")'><label class='btn btn-outline-danger' id='label_10Y' for='redraw_10Y_MONEY_FLOW'>10Y</label></div>"
+      addon_html += "<div style='display:none;'><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_15Y_MONEY_FLOW' onClick='redraw_graph(this, \"15Y\")'><label class='btn btn-outline-danger' id='label_15Y' for='redraw_15Y_MONEY_FLOW'>15Y</label></div>"
+      addon_html += "<div style='display:none;'><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_20Y_MONEY_FLOW' onClick='redraw_graph(this, \"20Y\")'><label class='btn btn-outline-danger' id='label_20Y' for='redraw_20Y_MONEY_FLOW'>20Y</label></div>"
     addon_html += "</div>"
     addon_html += "<div class='daily_sub_mf'>" + moneyflow_updated + "</div>"
   addon_html += "</div>"
@@ -3833,262 +3847,68 @@ function redraw_graph(obj, duration){
   }
 
   if(item_checker == "MONEY_FLOW"){
-    if(duration_cheker == "1Y"){
-      mf_time_arr = return_MoneyFlow_time(moneyflow_market['TIME'], "1Y")
+    mf_time_arr = return_MoneyFlow_time(moneyflow_market['TIME'], duration_cheker)
 
-      mf_us_total_asset = return_MoneyFlow_arr( moneyflow_market['FRED_Total_Asset_NOR'], "1Y" )
-      mf_ko_total_asset = return_MoneyFlow_arr( moneyflow_market['BOK_Total_Asset_NOR'], "1Y" )
+    mf_us_total_asset = return_MoneyFlow_arr( moneyflow_market['FRED_Total_Asset_NOR'], duration_cheker )
+    mf_ko_total_asset = return_MoneyFlow_arr( moneyflow_market['BOK_Total_Asset_NOR'], duration_cheker )
 
-      mf_oil_wti = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_WTI_NOR'], "1Y" )
-      mf_oil_dubai = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_Dubai_NOR'], "1Y" )
+    mf_oil_wti = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_WTI_NOR'], duration_cheker )
+    mf_oil_dubai = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_Dubai_NOR'], duration_cheker )
 
-      mf_metal_gold = return_MoneyFlow_arr( moneyflow_market['BOK_Metal_Gold_NOR'], "1Y" )
+    mf_metal_gold = return_MoneyFlow_arr( moneyflow_market['BOK_Metal_Gold_NOR'], duration_cheker )
 
-      mf_housing_trade_all = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_All_NOR'], "1Y" )
-      mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], "1Y" )
-      mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "1Y" )
-      
-      //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
-      mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
+    mf_housing_trade_all = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_All_NOR'], duration_cheker )
+    mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], duration_cheker )
+    mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], duration_cheker )
+    
+    //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
+    mf_housing_apt_price = mf_housing_apt_price.map( x => {
+      if(x == 0 || x == undefined){ x = null }
+      return x
+    })
 
-      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "1Y" )
-      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
+    mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], duration_cheker )
+    mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
+      if(x == 0 || x == undefined){ x = null }
+      return x
+    })
 
-      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "1Y" )
-      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
+    mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], duration_cheker )
+    mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
+      if(x == 0 || x == undefined){ x = null }
+      return x
+    })
 
-      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "1Y" )
-      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
+    mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], duration_cheker )
+    mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
+      if(x == 0 || x == undefined){ x = null }
+      return x
+    })
 
-      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "1Y" )
-      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
+    mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], duration_cheker )
+    mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
+      if(x == 0 || x == undefined){ x = null }
+      return x
+    })
 
-      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "1Y" )      
-      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
+    mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], duration_cheker )      
+    mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
+      if(x == 0 || x == undefined){ x = null }
+      return x
+    })      
 
-      mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "1Y" )
-      mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "1Y" )
-      mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "1Y" )      
+    mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], duration_cheker )
+    mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], duration_cheker )
+    mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], duration_cheker )      
 
-      mf_ko_kospi = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_NOR'], "1Y" )
-      mf_ko_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSDAQ_NOR'], "1Y" )
-      mf_ko_kospi_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_KOSDAQ_NOR'], "1Y" )
+    mf_ko_kospi = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_NOR'], duration_cheker )
+    mf_ko_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSDAQ_NOR'], duration_cheker )
+    mf_ko_kospi_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_KOSDAQ_NOR'], duration_cheker )
 
-      mf_currency_USDKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_US_NOR'], "1Y" )
-      mf_currency_JPYKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_JP_NOR'], "1Y" )
+    mf_currency_USDKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_US_NOR'], duration_cheker )
+    mf_currency_JPYKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_JP_NOR'], duration_cheker )
 
-      mf_coin_btc = return_MoneyFlow_arr( moneyflow_market['yf_BTCUSD_NOR'], "1Y" )      
-    }
-    if(duration_cheker == "3Y"){
-      mf_time_arr = return_MoneyFlow_time(moneyflow_market['TIME'], "3Y")
-
-      mf_us_total_asset = return_MoneyFlow_arr( moneyflow_market['FRED_Total_Asset_NOR'], "3Y" )
-      mf_ko_total_asset = return_MoneyFlow_arr( moneyflow_market['BOK_Total_Asset_NOR'], "3Y" )
-
-      mf_oil_wti = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_WTI_NOR'], "3Y" )
-      mf_oil_dubai = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_Dubai_NOR'], "3Y" )
-
-      mf_metal_gold = return_MoneyFlow_arr( moneyflow_market['BOK_Metal_Gold_NOR'], "3Y" )
-
-      mf_housing_trade_all = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_All_NOR'], "3Y" )
-      mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], "3Y" )
-      mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "3Y" )
-
-      //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
-      mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "3Y" )
-      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "3Y" )
-      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "3Y" )
-      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "3Y" )
-      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "3Y" )      
-      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })      
-
-      mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "3Y" )
-      mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "3Y" )
-      mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "3Y" )      
-
-      mf_ko_kospi = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_NOR'], "3Y" )
-      mf_ko_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSDAQ_NOR'], "3Y" )
-      mf_ko_kospi_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_KOSDAQ_NOR'], "3Y" )
-
-      mf_currency_USDKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_US_NOR'], "3Y" )
-      mf_currency_JPYKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_JP_NOR'], "3Y" )
-
-      mf_coin_btc = return_MoneyFlow_arr( moneyflow_market['yf_BTCUSD_NOR'], "3Y" )  
-    }
-    if(duration_cheker == "5Y"){
-      mf_time_arr = return_MoneyFlow_time(moneyflow_market['TIME'], "5Y")
-
-      mf_us_total_asset = return_MoneyFlow_arr( moneyflow_market['FRED_Total_Asset_NOR'], "5Y" )
-      mf_ko_total_asset = return_MoneyFlow_arr( moneyflow_market['BOK_Total_Asset_NOR'], "5Y" )
-
-      mf_oil_wti = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_WTI_NOR'], "5Y" )
-      mf_oil_dubai = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_Dubai_NOR'], "5Y" )
-
-      mf_metal_gold = return_MoneyFlow_arr( moneyflow_market['BOK_Metal_Gold_NOR'], "5Y" )
-
-      mf_housing_trade_all = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_All_NOR'], "5Y" )
-      mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], "5Y" )
-      mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "5Y" )
-
-      //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
-      mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "5Y" )
-      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "5Y" )
-      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "5Y" )
-      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "5Y" )
-      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "5Y" )      
-      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })      
-
-      mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "5Y" )
-      mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "5Y" )
-      mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "5Y" )      
-
-      mf_ko_kospi = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_NOR'], "5Y" )
-      mf_ko_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSDAQ_NOR'], "5Y" )
-      mf_ko_kospi_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_KOSDAQ_NOR'], "5Y" )
-
-      mf_currency_USDKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_US_NOR'], "5Y" )
-      mf_currency_JPYKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_JP_NOR'], "5Y" )
-
-      mf_coin_btc = return_MoneyFlow_arr( moneyflow_market['yf_BTCUSD_NOR'], "5Y" )  
-    }
-    if(duration_cheker == "10Y"){
-      mf_time_arr = return_MoneyFlow_time(moneyflow_market['TIME'], "10Y")
-
-      mf_us_total_asset = return_MoneyFlow_arr( moneyflow_market['FRED_Total_Asset_NOR'], "10Y" )
-      mf_ko_total_asset = return_MoneyFlow_arr( moneyflow_market['BOK_Total_Asset_NOR'], "10Y" )
-
-      mf_oil_wti = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_WTI_NOR'], "10Y" )
-      mf_oil_dubai = return_MoneyFlow_arr( moneyflow_market['BOK_Oil_Dubai_NOR'], "10Y" )
-
-      mf_metal_gold = return_MoneyFlow_arr( moneyflow_market['BOK_Metal_Gold_NOR'], "10Y" )
-
-      mf_housing_trade_all = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_All_NOR'], "10Y" )
-      mf_housing_trade_apt = return_MoneyFlow_arr( moneyflow_market['BOK_Housing_Trade_Apt_NOR'], "10Y" )
-      mf_housing_apt_price = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_NOR'], "10Y" )
-
-      //mf_housing_apt_price 배열에서 0인 값을 null로 변경한다.
-      mf_housing_apt_price = mf_housing_apt_price.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_metro = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_METROPOLITAN_NOR'], "10Y" )
-      mf_housing_apt_price_metro = mf_housing_apt_price_metro.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_urban = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_URBAN_NOR'], "10Y" )
-      mf_housing_apt_price_urban = mf_housing_apt_price_urban.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_seoul = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_SEOUL_NOR'], "10Y" )
-      mf_housing_apt_price_seoul = mf_housing_apt_price_seoul.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_kkd = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_KYUNGKIDO_NOR'], "10Y" )
-      mf_housing_apt_price_kkd = mf_housing_apt_price_kkd.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })
-
-      mf_housing_apt_price_largecity6 = return_MoneyFlow_arr( moneyflow_market['KOR_APT_PRICE_LARGECITY6_NOR'], "10Y" )      
-      mf_housing_apt_price_largecity6 = mf_housing_apt_price_largecity6.map( x => {
-        if(x == 0 || x == undefined){ x = null }
-        return x
-      })      
-
-      mf_us_nas = return_MoneyFlow_arr( moneyflow_market['yf_NASDAQ_NOR'], "10Y" )
-      mf_us_snp = return_MoneyFlow_arr( moneyflow_market['yf_SNP_NOR'], "10Y" )
-      mf_us_dow = return_MoneyFlow_arr( moneyflow_market['yf_DOW_NOR'], "10Y" )      
-
-      mf_ko_kospi = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_NOR'], "10Y" )
-      mf_ko_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSDAQ_NOR'], "10Y" )
-      mf_ko_kospi_kosdaq = return_MoneyFlow_arr( moneyflow_market['yf_KOSPI_KOSDAQ_NOR'], "10Y" )
-
-      mf_currency_USDKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_US_NOR'], "10Y" )
-      mf_currency_JPYKRW = return_MoneyFlow_arr( moneyflow_market['BOK_Currency_JP_NOR'], "10Y" )
-
-      mf_coin_btc = return_MoneyFlow_arr( moneyflow_market['yf_BTCUSD_NOR'], "10Y" )  
-    }
+    mf_coin_btc = return_MoneyFlow_arr( moneyflow_market['yf_BTCUSD_NOR'], duration_cheker )  
 
     value_arr = Object.values(moneyflow_market['TIME'])
     value_index = value_arr.indexOf('2019-06-01')
