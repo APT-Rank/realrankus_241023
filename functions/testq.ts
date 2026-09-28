@@ -1,0 +1,1 @@
+import { initializeApp } from 'firebase-admin/app'; import { getFunctions } from 'firebase-admin/functions'; initializeApp(); const q = getFunctions().taskQueue('aggregateBatch'); console.log('Name:', q.name);  

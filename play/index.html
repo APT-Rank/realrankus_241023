@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ko" class="play-app">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>PLAY - Economic World</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/css/SpoqaHanSansNeo.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="./css/play.css" />
+</head>
+<body class="play-app">
+
+  <!-- Navigation -->
+  <div id="play-navbar">
+    <div class="navbar-brand">
+      <i class="fa-solid fa-play me-2"></i> PLAY <span>REAL ECONOMY SIMULATION</span>
+    </div>
+    <div class="navbar-links">
+      <a href="#" onclick="goBackToWorld()" class="active">홈</a>
+      <a href="#" onclick="viewMapView()">지도보기</a>
+      <a href="#" onclick="viewRegionExplorer()">지역탐색</a>
+      <a href="#" onclick="viewMyWorld()">내 자산</a>
+      <a href="#" onclick="viewPeople()">다른 참가자</a>
+      <a href="#" onclick="viewSeason()">시즌랭킹</a>
+      <a href="#" onclick="viewGuide()">가이드</a>
+    </div>
+    <div class="navbar-right d-flex align-items-center">
+      <!-- Login Button -->
+      <button id="hero-login-btn" class="btn btn-sm btn-outline-primary ms-3" onclick="loginAsHero()">HERO 로그인</button>
+      <!-- TIME-SLIP TEST MODE Toggle -->
+      <div class="form-check form-switch ms-3 me-3 text-warning fw-bold">
+        <input class="form-check-input" type="checkbox" role="switch" id="testModeToggle" onchange="toggleTestMode(this.checked)">
+        <label class="form-check-label" for="testModeToggle">TIME-SLIP</label>
+      </div>
+
+      <i class="fa-solid fa-magnifying-glass" style="cursor:pointer;" onclick="alert('Placeholder: 검색')"></i>
+      <i class="fa-regular fa-bell ms-3" style="cursor:pointer;" onclick="alert('Placeholder: 알림')"></i>
+      <i class="fa-solid fa-gear ms-3" style="cursor:pointer;" onclick="alert('Placeholder: 설정')"></i>
+      <div class="d-flex align-items-center gap-2 ms-3" style="cursor:pointer;" onclick="alert('Placeholder: 플레이어 정보')">
+        <i class="fa-solid fa-circle-user fs-4"></i>
+        <span>HERO</span>
+      </div>
+      <button class="btn-season ms-3" onclick="alert('Placeholder: 시즌')">시즌 <i class="fa-solid fa-chevron-down ms-1"></i></button>
+    </div>
+  </div>
+
+  <div id="map-initial-loading" class="map-initial-loading" role="status" aria-live="polite" hidden>
+    <div class="map-initial-loading-card">
+      <span class="spinner-border text-primary" aria-hidden="true"></span>
+      <span>지도와 아파트 단지를 불러오는 중입니다...</span>
+    </div>
+  </div>
+
+  <!-- TEST MODE CONTROL PANEL (Hidden by Default) -->
+  <div id="test-mode-panel" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #fff; padding: 15px 25px; border-radius: 10px; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+    <div class="d-flex align-items-center gap-4">
+      <div class="text-info fw-bold fs-5">
+        <i class="fa-regular fa-clock me-1"></i> <span id="sim-time-display">Period 0</span>
+      </div>
+      <span id="sim-status-display" class="small text-light" role="status" aria-live="polite">PAUSED</span>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-success fw-bold" onclick="simRun()"><i class="fa-solid fa-play"></i> RUN</button>
+        <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="simPause()"><i class="fa-solid fa-pause"></i> PAUSE</button>
+        <button class="btn btn-sm btn-info fw-bold text-dark" onclick="simStep()"><i class="fa-solid fa-forward-step"></i> STEP</button>
+        <button class="btn btn-sm btn-danger fw-bold" onclick="simStop()"><i class="fa-solid fa-stop"></i> STOP</button>
+      </div>
+      <div class="d-flex gap-1 border-start ps-3 border-secondary">
+        <button class="btn btn-sm btn-outline-light active" onclick="setSimSpeed(1)">1x</button>
+        <button class="btn btn-sm btn-outline-light" onclick="setSimSpeed(5)">5x</button>
+        <button class="btn btn-sm btn-outline-light" onclick="setSimSpeed(20)">20x</button>
+        <button class="btn btn-sm btn-outline-light" onclick="setSimSpeed(100)">100x</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST MODE LIVE ACTIVITY (Hidden by Default) -->
+  <div id="test-mode-activity" style="display: none; position: fixed; top: 80px; right: 20px; width: 300px; background: rgba(0,0,0,0.85); color: #fff; padding: 15px; border-radius: 10px; z-index: 9998; max-height: 400px; overflow-y: auto;">
+    <h6 class="fw-bold border-bottom border-secondary pb-2 mb-2 text-warning"><i class="fa-solid fa-bolt"></i> Live Activity</h6>
+    <div id="activity-log-container" class="small">
+      <!-- Activity logs will go here -->
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div id="main-container">
+    
+    <!-- MAP VIEW CONTAINER -->
+    <div id="map-view-container" style="display:flex; width:100%; height:100%;">
+      
+      <!-- MAP LEFT SIDEBAR (For '지도보기') -->
+      <div id="map-left-sidebar" class="left-sidebar" style="display:none; flex-shrink:0;">
+        <h6 class="fw-bold mb-3">지도 레이어</h6>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer1" checked>
+          <label class="form-check-label" for="layer1">가격 변동률 (3개월)</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer2">
+          <label class="form-check-label" for="layer2">거래량</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer3">
+          <label class="form-check-label" for="layer3">전세가율</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer4">
+          <label class="form-check-label" for="layer4">평균 매매가</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer5">
+          <label class="form-check-label" for="layer5">개발호재</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer6">
+          <label class="form-check-label" for="layer6">학군</label>
+        </div>
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="radio" name="mapLayer" id="layer7">
+          <label class="form-check-label" for="layer7">생활환경</label>
+        </div>
+
+        <h6 class="fw-bold mb-3 border-top pt-3">표시 항목</h6>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="check1" checked>
+          <label class="form-check-label" for="check1">지역 경계</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="check2" checked>
+          <label class="form-check-label" for="check2">아파트 단지</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="check3" checked>
+          <label class="form-check-label" for="check3">지하철</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="check4" checked>
+          <label class="form-check-label" for="check4">주요 시설</label>
+        </div>
+      </div>
+
+      <!-- LEFT / TOP : MAP -->
+      <div id="map-wrapper" style="flex:1;">
+        
+        <!-- Map Overlays -->
+        <div class="map-overlay map-search-bar" id="map-search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="map-search-input" type="search" placeholder="지역 또는 단지 검색" aria-label="지역 또는 단지 검색" autocomplete="off">
+          <button id="map-search-clear" type="button" class="map-search-clear" aria-label="검색어 지우기" hidden><i class="fa-solid fa-xmark"></i></button>
+          <div id="map-search-results" class="map-search-results" role="listbox" hidden></div>
+        </div>
+        
+        <div class="map-overlay map-left-toolbar" id="map-left-toolbar">
+          <button type="button" class="toolbar-btn" data-map-tool="filters" aria-pressed="false"><i class="fa-solid fa-bars-staggered fs-5"></i><span>필터</span></button>
+          <button type="button" class="toolbar-btn" data-map-tool="favorites" aria-pressed="false"><i class="fa-regular fa-star fs-5"></i><span>관심지역</span></button>
+          <button type="button" class="toolbar-btn" data-map-tool="subway" aria-pressed="false"><i class="fa-solid fa-train-subway fs-5"></i><span>지하철</span></button>
+          <button type="button" class="toolbar-btn" data-map-tool="development" aria-pressed="false"><i class="fa-solid fa-map-location-dot fs-5"></i><span>개발계획</span></button>
+          <button type="button" class="toolbar-btn" data-map-tool="schools" aria-pressed="false"><i class="fa-solid fa-school fs-5"></i><span>학교</span></button>
+          <button type="button" class="toolbar-btn" data-map-tool="amenities" aria-pressed="false"><i class="fa-solid fa-tree-city fs-5"></i><span>생활환경</span></button>
+        </div>
+        
+        <div class="map-overlay map-top-filters d-none d-lg-flex" id="map-top-filters">
+          <button type="button" class="filter-btn active" data-map-type="normal" aria-pressed="true">지도</button>
+          <button type="button" class="filter-btn" data-map-type="satellite" aria-pressed="false">위성</button>
+          <button type="button" class="filter-btn" data-map-layer="volume" aria-pressed="false"><i class="fa-solid fa-filter me-1"></i>거래량</button>
+          <button type="button" class="filter-btn" data-map-layer="price" aria-pressed="false"><i class="fa-solid fa-arrow-trend-up me-1"></i>가격변화</button>
+          <button type="button" class="filter-btn" data-map-layer="jeonse" aria-pressed="false"><i class="fa-solid fa-percent me-1"></i>전세가율</button>
+          <button type="button" class="filter-btn" data-map-layer="development" aria-pressed="false"><i class="fa-solid fa-building me-1"></i>개발호재</button>
+          <button type="button" class="filter-btn" data-map-layer="favorites" aria-pressed="false"><i class="fa-solid fa-bookmark me-1"></i>내 관심</button>
+        </div>
+
+        <div class="map-overlay map-bottom-carousel d-none d-lg-block" id="map-bottom-carousel">
+          <div class="carousel-title">주목할 만한 지역 <span class="fw-normal ms-2 small">현재 검증된 매물 스냅샷 기준</span></div>
+          <div class="carousel-items" id="featured-area-items" aria-live="polite">
+            <div class="featured-area-empty">지역 데이터를 불러오는 중입니다.</div>
+          </div>
+        </div>
+
+        <div id="map-interaction-panel" class="map-overlay map-interaction-panel" hidden aria-live="polite"></div>
+        <div id="map-container"></div>
+      </div>
+      
+      <!-- RIGHT / BOTTOM : COMMAND PANEL -->
+      <div id="command-panel" style="display:flex; flex-direction:column;">
+        
+        <!-- WORLD DEFAULT CONTENT -->
+        <div id="world-command-content">
+          <!-- Profile Card -->
+          <div class="command-section">
+            <div class="my-world-header">
+              <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
+              <div class="profile-info">
+                <div class="fw-bold" style="font-size:11px;">MY WORLD</div>
+                <h4 id="my-world-player-name">HERO</h4>
+                <p id="my-world-season-name">HERO Test Season</p>
+              </div>
+            </div>
+            
+            <div class="season-progress">
+              <div class="d-flex justify-content-between">
+                <span>시즌 진행 상황</span>
+                <span id="my-world-season-progress">Period — / 360</span>
+              </div>
+              <div id="my-world-season-progress-bar" class="progress-bar-bg" role="progressbar" aria-label="시즌 진행 상황" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0">
+                <div id="my-world-season-progress-fill" class="progress-bar-fill"></div>
+              </div>
+            </div>
+            
+            <div class="asset-summary">
+              <div class="title">보유 자산 (Net Worth)</div>
+              <div class="amount" id="my-world-net-worth">—</div>
+              <div class="asset-details">
+                <div class="asset-box">
+                  <div class="label"><i class="fa-solid fa-money-bill-wave me-1"></i>현금</div>
+                  <div class="value" id="my-world-cash">—</div>
+                </div>
+                <div class="asset-box">
+                  <div class="label"><i class="fa-solid fa-credit-card me-1"></i>부채</div>
+                  <div class="value" id="my-world-debt">—</div>
+                </div>
+                <div class="asset-box">
+                  <div class="label"><i class="fa-solid fa-house me-1"></i>보유 부동산</div>
+                  <div class="value" id="my-world-property-count">—</div>
+                </div>
+              </div>
+            </div>
+            
+            <div id="purchased-properties-container" class="mt-3">
+              <!-- Purchased properties will be rendered here -->
+            </div>
+            
+            <button class="btn-time-advance" id="my-world-time-advance">
+              <i class="fa-solid fa-play fs-5"></i>
+              <div class="text-start">
+                <div class="fs-6">시간 진행하기</div>
+                <div class="fw-normal" style="font-size:11px;">다음 달로 이동 (MONTH 01 / 36)</div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Action Selection -->
+          <div class="command-section" id="action-selection-section">
+            <div class="section-title">행동 선택 <span class="fw-normal small ms-2">이 지역에서 할 행동을 선택하세요.</span> <span class="link ms-auto">빠른 가이드 &gt;</span></div>
+            <div class="action-grid">
+              <div class="action-btn">
+                <i class="fa-solid fa-magnifying-glass-location"></i>
+                <div>탐색하기<span class="sub">지역 단지 보기</span></div>
+              </div>
+              <div class="action-btn">
+                <i class="fa-solid fa-code-compare"></i>
+                <div>비교하기<span class="sub">다른 지역과 비교</span></div>
+              </div>
+              <div class="action-btn">
+                <i class="fa-regular fa-star"></i>
+                <div>관심 등록<span class="sub">변화 추적하기</span></div>
+              </div>
+              <div class="action-btn">
+                <i class="fa-solid fa-pause"></i>
+                <div>관망하기<span class="sub">지켜보기</span></div>
+              </div>
+              <div class="action-btn primary" style="grid-column: 1 / -1; justify-content: center;">
+                <i class="fa-solid fa-house-circle-check"></i>
+                <div class="text-center">매수하기<span class="sub">거래 시도</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Context Section -->
+          <div class="command-section" id="dynamic-context">
+            <div id="context-header" class="mb-2 fw-bold" style="font-size:12px;">세계</div>
+            <div id="panel-content">
+              <div class="panel-title" id="panel-title">세계 개요</div>
+              <div id="action-area">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAP VIEW COMMAND CONTENT (For '지도보기') -->
+        <div id="map-view-command-content" style="display:none; padding: 20px;">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+      </div>
+    </div> <!-- END map-view-container -->
+
+    <!-- FULL SCREEN CONTAINER (For Screens 3,4,5,6) -->
+    <div id="full-screen-container" style="display:none; width:100%; height:100%;">
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-functions-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = { 
+      projectId: 'aptrank-cc61b',
+      apiKey: "AIzaSyAivJVoqhrDQzuslEAoizhb5ByGhpQGHzE"
+    };
+    firebase.initializeApp(firebaseConfig);
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      // firebase.auth().useEmulator('http://127.0.0.1:9099');
+      // firebase.firestore().useEmulator('127.0.0.1', 8080);
+      // firebase.functions('asia-northeast3').useEmulator('127.0.0.1', 5001);
+    }
+  </script>
+  <script src="./js/map_tile_loader.js"></script>
+  <script src="./js/play_app.js"></script>
+  <script>
+    // Adjust navbar active state for basic navigation
+    document.querySelectorAll('.navbar-links a').forEach(a => {
+      a.addEventListener('click', function(e) {
+        document.querySelectorAll('.navbar-links a').forEach(link => link.classList.remove('active'));
+        if (!this.getAttribute('onclick')?.includes('Placeholder')) {
+          this.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

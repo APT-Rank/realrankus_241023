@@ -1,0 +1,466 @@
+{
+  "season_id": "S_GATE4_1790411035808",
+  "preflight": {
+    "property_master": 209,
+    "normal": 200,
+    "incomplete": 9
+  },
+  "periods": [
+    {
+      "period": 1,
+      "batch_id": "S_GATE4_1790411035808_1_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 2
+    },
+    {
+      "period": 2,
+      "batch_id": "S_GATE4_1790411035808_2_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 3
+    },
+    {
+      "period": 3,
+      "batch_id": "S_GATE4_1790411035808_3_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 4
+    },
+    {
+      "period": 4,
+      "batch_id": "S_GATE4_1790411035808_4_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 5
+    },
+    {
+      "period": 5,
+      "batch_id": "S_GATE4_1790411035808_5_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 6,
+      "checkpoint": {
+        "total_assets": 150,
+        "invariants_valid": true,
+        "anomalies": [],
+        "sample_asset": {
+          "player_id": "S_GATE4_1790411035808_p1",
+          "season_id": "S_GATE4_1790411035808",
+          "cash_locked": 0,
+          "processed_batches": [
+            "S_GATE4_1790411035808_5_MONTHLY"
+          ],
+          "net_worth": 5846570,
+          "last_processed_batch_id": "S_GATE4_1790411035808_5_MONTHLY",
+          "updated_at": {
+            "_seconds": 1790411092,
+            "_nanoseconds": 722000000
+          },
+          "last_processed_at": {
+            "_seconds": 1790411092,
+            "_nanoseconds": 722000000
+          },
+          "last_processed_period": 5,
+          "cash_available": 5846570,
+          "cash_total": 5846570
+        }
+      }
+    },
+    {
+      "period": 6,
+      "batch_id": "S_GATE4_1790411035808_6_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 7
+    },
+    {
+      "period": 7,
+      "batch_id": "S_GATE4_1790411035808_7_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 8
+    },
+    {
+      "period": 8,
+      "batch_id": "S_GATE4_1790411035808_8_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 9
+    },
+    {
+      "period": 9,
+      "batch_id": "S_GATE4_1790411035808_9_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 10
+    },
+    {
+      "period": 10,
+      "batch_id": "S_GATE4_1790411035808_10_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 11,
+      "checkpoint": {
+        "total_assets": 150,
+        "invariants_valid": true,
+        "anomalies": [],
+        "sample_asset": {
+          "player_id": "S_GATE4_1790411035808_p1",
+          "season_id": "S_GATE4_1790411035808",
+          "cash_locked": 0,
+          "processed_batches": [
+            "S_GATE4_1790411035808_10_MONTHLY"
+          ],
+          "net_worth": 11688371,
+          "last_processed_batch_id": "S_GATE4_1790411035808_10_MONTHLY",
+          "updated_at": {
+            "_seconds": 1790411152,
+            "_nanoseconds": 820000000
+          },
+          "last_processed_at": {
+            "_seconds": 1790411152,
+            "_nanoseconds": 820000000
+          },
+          "last_processed_period": 10,
+          "cash_available": 11688371,
+          "cash_total": 11688371
+        }
+      }
+    },
+    {
+      "period": 11,
+      "batch_id": "S_GATE4_1790411035808_11_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 12
+    },
+    {
+      "period": 12,
+      "batch_id": "S_GATE4_1790411035808_12_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 13
+    },
+    {
+      "period": 13,
+      "batch_id": "S_GATE4_1790411035808_13_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 14
+    },
+    {
+      "period": 14,
+      "batch_id": "S_GATE4_1790411035808_14_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 15
+    },
+    {
+      "period": 15,
+      "batch_id": "S_GATE4_1790411035808_15_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 16,
+      "checkpoint": {
+        "total_assets": 150,
+        "invariants_valid": true,
+        "anomalies": [],
+        "sample_asset": {
+          "player_id": "S_GATE4_1790411035808_p1",
+          "season_id": "S_GATE4_1790411035808",
+          "cash_locked": 0,
+          "processed_batches": [
+            "S_GATE4_1790411035808_15_MONTHLY"
+          ],
+          "net_worth": 17535179,
+          "last_processed_batch_id": "S_GATE4_1790411035808_15_MONTHLY",
+          "updated_at": {
+            "_seconds": 1790411214,
+            "_nanoseconds": 178000000
+          },
+          "last_processed_at": {
+            "_seconds": 1790411214,
+            "_nanoseconds": 178000000
+          },
+          "last_processed_period": 15,
+          "cash_available": 17535179,
+          "cash_total": 17535179
+        }
+      }
+    },
+    {
+      "period": 16,
+      "batch_id": "S_GATE4_1790411035808_16_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 17
+    },
+    {
+      "period": 17,
+      "batch_id": "S_GATE4_1790411035808_17_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 18
+    },
+    {
+      "period": 18,
+      "batch_id": "S_GATE4_1790411035808_18_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 19
+    },
+    {
+      "period": 19,
+      "batch_id": "S_GATE4_1790411035808_19_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 20
+    },
+    {
+      "period": 20,
+      "batch_id": "S_GATE4_1790411035808_20_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 21,
+      "checkpoint": {
+        "total_assets": 150,
+        "invariants_valid": true,
+        "anomalies": [],
+        "sample_asset": {
+          "player_id": "S_GATE4_1790411035808_p1",
+          "season_id": "S_GATE4_1790411035808",
+          "cash_locked": 0,
+          "processed_batches": [
+            "S_GATE4_1790411035808_20_MONTHLY"
+          ],
+          "net_worth": 23386763,
+          "last_processed_batch_id": "S_GATE4_1790411035808_20_MONTHLY",
+          "updated_at": {
+            "_seconds": 1790411277,
+            "_nanoseconds": 120000000
+          },
+          "last_processed_at": {
+            "_seconds": 1790411277,
+            "_nanoseconds": 120000000
+          },
+          "last_processed_period": 20,
+          "cash_available": 23386763,
+          "cash_total": 23386763
+        }
+      }
+    },
+    {
+      "period": 21,
+      "batch_id": "S_GATE4_1790411035808_21_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 22
+    },
+    {
+      "period": 22,
+      "batch_id": "S_GATE4_1790411035808_22_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 23
+    },
+    {
+      "period": 23,
+      "batch_id": "S_GATE4_1790411035808_23_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 24
+    },
+    {
+      "period": 24,
+      "batch_id": "S_GATE4_1790411035808_24_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 25
+    },
+    {
+      "period": 25,
+      "batch_id": "S_GATE4_1790411035808_25_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 26,
+      "checkpoint": {
+        "total_assets": 150,
+        "invariants_valid": true,
+        "anomalies": [],
+        "sample_asset": {
+          "player_id": "S_GATE4_1790411035808_p1",
+          "season_id": "S_GATE4_1790411035808",
+          "cash_locked": 0,
+          "processed_batches": [
+            "S_GATE4_1790411035808_25_MONTHLY"
+          ],
+          "net_worth": 29242893,
+          "last_processed_batch_id": "S_GATE4_1790411035808_25_MONTHLY",
+          "updated_at": {
+            "_seconds": 1790411338,
+            "_nanoseconds": 532000000
+          },
+          "last_processed_at": {
+            "_seconds": 1790411338,
+            "_nanoseconds": 532000000
+          },
+          "last_processed_period": 25,
+          "cash_available": 29242893,
+          "cash_total": 29242893
+        }
+      }
+    },
+    {
+      "period": 26,
+      "batch_id": "S_GATE4_1790411035808_26_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 27
+    },
+    {
+      "period": 27,
+      "batch_id": "S_GATE4_1790411035808_27_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 28
+    },
+    {
+      "period": 28,
+      "batch_id": "S_GATE4_1790411035808_28_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 29
+    },
+    {
+      "period": 29,
+      "batch_id": "S_GATE4_1790411035808_29_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 30
+    },
+    {
+      "period": 30,
+      "batch_id": "S_GATE4_1790411035808_30_MONTHLY",
+      "expected_players": 150,
+      "processed": 150,
+      "chunk_count": 2,
+      "batch_status": "COMPLETED",
+      "decision_logs": 150,
+      "clock_after": 31,
+      "checkpoint": {
+        "total_assets": 150,
+        "invariants_valid": true,
+        "anomalies": [],
+        "sample_asset": {
+          "player_id": "S_GATE4_1790411035808_p1",
+          "season_id": "S_GATE4_1790411035808",
+          "cash_locked": 0,
+          "processed_batches": [
+            "S_GATE4_1790411035808_30_MONTHLY"
+          ],
+          "net_worth": 35103334,
+          "last_processed_batch_id": "S_GATE4_1790411035808_30_MONTHLY",
+          "updated_at": {
+            "_seconds": 1790411398,
+            "_nanoseconds": 241000000
+          },
+          "last_processed_at": {
+            "_seconds": 1790411398,
+            "_nanoseconds": 240000000
+          },
+          "last_processed_period": 30,
+          "cash_available": 35103334,
+          "cash_total": 35103334
+        }
+      }
+    }
+  ]
+}

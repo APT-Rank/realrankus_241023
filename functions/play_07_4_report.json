@@ -1,0 +1,352 @@
+{
+  "golden": {
+    "season_id": "S_GOLDEN_1790427029037",
+    "player_id": "S_GOLDEN_1790427029037_p1",
+    "assetBefore": {
+      "player_id": "S_GOLDEN_1790427029037_p1",
+      "season_id": "S_GOLDEN_1790427029037",
+      "cash_locked": 0,
+      "property_count": 0,
+      "last_processed_period": 0,
+      "processed_batches": [
+        "S_GOLDEN_1790427029037_0_MONTHLY"
+      ],
+      "net_worth": 101166667,
+      "last_processed_batch_id": "S_GOLDEN_1790427029037_0_MONTHLY",
+      "updated_at": {
+        "_seconds": 1790427033,
+        "_nanoseconds": 534000000
+      },
+      "last_processed_at": {
+        "_seconds": 1790427033,
+        "_nanoseconds": 534000000
+      },
+      "cash_available": 101166667,
+      "cash_total": 101166667
+    },
+    "assetAfterPurchase": {
+      "player_id": "S_GOLDEN_1790427029037_p1",
+      "season_id": "S_GOLDEN_1790427029037",
+      "cash_locked": 0,
+      "last_processed_period": 0,
+      "processed_batches": [
+        "S_GOLDEN_1790427029037_0_MONTHLY"
+      ],
+      "last_processed_batch_id": "S_GOLDEN_1790427029037_0_MONTHLY",
+      "last_processed_at": {
+        "_seconds": 1790427033,
+        "_nanoseconds": 534000000
+      },
+      "net_worth": 100966667,
+      "property_count": 1,
+      "updated_at": {
+        "_seconds": 1790427044,
+        "_nanoseconds": 379000000
+      },
+      "cash_available": 90966667,
+      "cash_total": 90966667
+    },
+    "assetFinal": {
+      "player_id": "S_GOLDEN_1790427029037_p1",
+      "season_id": "S_GOLDEN_1790427029037",
+      "cash_locked": 0,
+      "property_count": 1,
+      "processed_batches": [
+        "S_GOLDEN_1790427029037_1_MONTHLY"
+      ],
+      "net_worth": 92133552,
+      "last_processed_batch_id": "S_GOLDEN_1790427029037_1_MONTHLY",
+      "updated_at": {
+        "_seconds": 1790427045,
+        "_nanoseconds": 210000000
+      },
+      "last_processed_at": {
+        "_seconds": 1790427045,
+        "_nanoseconds": 210000000
+      },
+      "last_processed_period": 1,
+      "cash_available": 92133552,
+      "cash_total": 92133552
+    },
+    "decisionLogCount": 3
+  },
+  "replay": {
+    "season_id": "S_REPLAY_1790427029037",
+    "player_id": "S_REPLAY_1790427029037_p1",
+    "assetBefore": {
+      "player_id": "S_REPLAY_1790427029037_p1",
+      "season_id": "S_REPLAY_1790427029037",
+      "cash_locked": 0,
+      "property_count": 0,
+      "last_processed_period": 0,
+      "processed_batches": [
+        "S_REPLAY_1790427029037_0_MONTHLY"
+      ],
+      "net_worth": 101166667,
+      "last_processed_batch_id": "S_REPLAY_1790427029037_0_MONTHLY",
+      "updated_at": {
+        "_seconds": 1790427058,
+        "_nanoseconds": 377000000
+      },
+      "last_processed_at": {
+        "_seconds": 1790427058,
+        "_nanoseconds": 376000000
+      },
+      "cash_available": 101166667,
+      "cash_total": 101166667
+    },
+    "assetAfterPurchase": {
+      "player_id": "S_REPLAY_1790427029037_p1",
+      "season_id": "S_REPLAY_1790427029037",
+      "cash_locked": 0,
+      "last_processed_period": 0,
+      "processed_batches": [
+        "S_REPLAY_1790427029037_0_MONTHLY"
+      ],
+      "last_processed_batch_id": "S_REPLAY_1790427029037_0_MONTHLY",
+      "last_processed_at": {
+        "_seconds": 1790427058,
+        "_nanoseconds": 376000000
+      },
+      "net_worth": 100966667,
+      "property_count": 1,
+      "updated_at": {
+        "_seconds": 1790427069,
+        "_nanoseconds": 33000000
+      },
+      "cash_available": 90966667,
+      "cash_total": 90966667
+    },
+    "assetFinal": {
+      "player_id": "S_REPLAY_1790427029037_p1",
+      "season_id": "S_REPLAY_1790427029037",
+      "cash_locked": 0,
+      "property_count": 1,
+      "processed_batches": [
+        "S_REPLAY_1790427029037_1_MONTHLY"
+      ],
+      "net_worth": 92133552,
+      "last_processed_batch_id": "S_REPLAY_1790427029037_1_MONTHLY",
+      "updated_at": {
+        "_seconds": 1790427069,
+        "_nanoseconds": 697000000
+      },
+      "last_processed_at": {
+        "_seconds": 1790427069,
+        "_nanoseconds": 697000000
+      },
+      "last_processed_period": 1,
+      "cash_available": 92133552,
+      "cash_total": 92133552
+    },
+    "decisionLogCount": 3,
+    "match": true
+  },
+  "audit": {
+    "logs": [
+      {
+        "season_id": "S_GOLDEN_1790427029037",
+        "player_id": "S_GOLDEN_1790427029037_p1",
+        "simulation_period": 1,
+        "batch_id": "S_GOLDEN_1790427029037_1_MONTHLY",
+        "chunk_id": "S_GOLDEN_1790427029037_1_MONTHLY_c0",
+        "event_type": "MONTHLY_ECONOMIC_UPDATE",
+        "before_cash": 90966667,
+        "income": 4171840,
+        "living_expense": 3004955,
+        "after_cash": 92133552,
+        "before_net_worth": 100966667,
+        "after_net_worth": 92133552,
+        "created_at": {
+          "_seconds": 1790427045,
+          "_nanoseconds": 210000000
+        },
+        "request_id": "S_GOLDEN_1790427029037_1_MONTHLY_c0_dispatch",
+        "trace_id": "32a25b854ba8ecd8de55e8fed113e933/805411765410919894;o=1",
+        "scenario_id": "SCENARIO_3",
+        "scenario_version": "1.0",
+        "rule_version": "1.0",
+        "idempotency_key": "S_GOLDEN_1790427029037_1_MONTHLY_S_GOLDEN_1790427029037_p1"
+      },
+      {
+        "season_id": "S_GOLDEN_1790427029037",
+        "player_id": "S_GOLDEN_1790427029037_p1",
+        "simulation_period": 0,
+        "batch_id": "S_GOLDEN_1790427029037_0_MONTHLY",
+        "chunk_id": "S_GOLDEN_1790427029037_0_MONTHLY_c0",
+        "event_type": "MONTHLY_ECONOMIC_UPDATE",
+        "before_cash": 100000000,
+        "income": 4166667,
+        "living_expense": 3000000,
+        "after_cash": 101166667,
+        "before_net_worth": 100000000,
+        "after_net_worth": 101166667,
+        "created_at": {
+          "_seconds": 1790427033,
+          "_nanoseconds": 534000000
+        },
+        "request_id": "S_GOLDEN_1790427029037_0_MONTHLY_c0_dispatch",
+        "trace_id": "2087e43944d44f4174a86d6b804fb929/9586226338858168071;o=1",
+        "scenario_id": "SCENARIO_3",
+        "scenario_version": "1.0",
+        "rule_version": "1.0",
+        "idempotency_key": "S_GOLDEN_1790427029037_0_MONTHLY_S_GOLDEN_1790427029037_p1"
+      },
+      {
+        "season_id": "S_GOLDEN_1790427029037",
+        "player_id": "S_GOLDEN_1790427029037_p1",
+        "simulation_period": 1,
+        "batch_id": "USER_ACTION",
+        "action_type": "PRIMARY_PURCHASE",
+        "property_id": "PROP_1",
+        "transaction_id": "M5mfldqqeZxsICn7adai",
+        "before_cash": 101166667,
+        "after_cash": 90966667,
+        "before_net_worth": 101166667,
+        "after_net_worth": 100966667,
+        "property_count_before": 0,
+        "property_count_after": 1,
+        "result": "SUCCESS",
+        "created_at": {
+          "_seconds": 1790427044,
+          "_nanoseconds": 380000000
+        }
+      }
+    ]
+  },
+  "incident": {
+    "paused": true,
+    "snapshot_before": {
+      "season": {
+        "season_id": "S_INCIDENT_1790427029037",
+        "status": "ACTIVE",
+        "clock_status": "RUNNING",
+        "scenario_id": "SCENARIO_3",
+        "scenario_version": "1.0",
+        "rule_version": "1.0",
+        "transaction_status": "NORMAL",
+        "created_at": {
+          "_seconds": 1790427077,
+          "_nanoseconds": 27000000
+        },
+        "last_successful_period": 0,
+        "updated_at": {
+          "_seconds": 1790427091,
+          "_nanoseconds": 848000000
+        },
+        "current_simulation_period": 1,
+        "last_successful_batch_id": "S_INCIDENT_1790427029037_0_MONTHLY"
+      },
+      "asset": {
+        "player_id": "S_INCIDENT_1790427029037_p1",
+        "season_id": "S_INCIDENT_1790427029037",
+        "cash_locked": 0,
+        "property_count": 0,
+        "last_processed_period": 0,
+        "processed_batches": [
+          "S_INCIDENT_1790427029037_0_MONTHLY"
+        ],
+        "net_worth": 101166667,
+        "last_processed_batch_id": "S_INCIDENT_1790427029037_0_MONTHLY",
+        "updated_at": {
+          "_seconds": 1790427081,
+          "_nanoseconds": 90000000
+        },
+        "last_processed_at": {
+          "_seconds": 1790427081,
+          "_nanoseconds": 90000000
+        },
+        "cash_available": 101166667,
+        "cash_total": 101166667
+      }
+    },
+    "snapshot_fault": {
+      "season": {
+        "season_id": "S_INCIDENT_1790427029037",
+        "status": "ACTIVE",
+        "clock_status": "RUNNING",
+        "scenario_id": "SCENARIO_3",
+        "scenario_version": "1.0",
+        "rule_version": "1.0",
+        "transaction_status": "NORMAL",
+        "created_at": {
+          "_seconds": 1790427077,
+          "_nanoseconds": 27000000
+        },
+        "last_successful_period": 0,
+        "updated_at": {
+          "_seconds": 1790427091,
+          "_nanoseconds": 848000000
+        },
+        "current_simulation_period": 1,
+        "last_successful_batch_id": "S_INCIDENT_1790427029037_0_MONTHLY"
+      },
+      "asset": {
+        "player_id": "S_INCIDENT_1790427029037_p1",
+        "season_id": "S_INCIDENT_1790427029037",
+        "cash_locked": 0,
+        "property_count": 0,
+        "last_processed_period": 0,
+        "processed_batches": [
+          "S_INCIDENT_1790427029037_0_MONTHLY"
+        ],
+        "net_worth": 101166667,
+        "last_processed_batch_id": "S_INCIDENT_1790427029037_0_MONTHLY",
+        "updated_at": {
+          "_seconds": 1790427081,
+          "_nanoseconds": 90000000
+        },
+        "last_processed_at": {
+          "_seconds": 1790427081,
+          "_nanoseconds": 90000000
+        },
+        "cash_available": 101166667,
+        "cash_total": 999999999
+      }
+    },
+    "snapshot_after": {
+      "season": {
+        "season_id": "S_INCIDENT_1790427029037",
+        "status": "ACTIVE",
+        "scenario_id": "SCENARIO_3",
+        "scenario_version": "1.0",
+        "rule_version": "1.0",
+        "created_at": {
+          "_seconds": 1790427077,
+          "_nanoseconds": 27000000
+        },
+        "last_successful_period": 0,
+        "current_simulation_period": 1,
+        "last_successful_batch_id": "S_INCIDENT_1790427029037_0_MONTHLY",
+        "transaction_status": "TRANSACTION_PAUSED",
+        "updated_at": {
+          "_seconds": 1790427104,
+          "_nanoseconds": 475000000
+        },
+        "clock_status": "PAUSED"
+      },
+      "asset": {
+        "player_id": "S_INCIDENT_1790427029037_p1",
+        "season_id": "S_INCIDENT_1790427029037",
+        "cash_locked": 0,
+        "property_count": 0,
+        "processed_batches": [
+          "S_INCIDENT_1790427029037_1_MONTHLY"
+        ],
+        "net_worth": 1001166884,
+        "last_processed_batch_id": "S_INCIDENT_1790427029037_1_MONTHLY",
+        "updated_at": {
+          "_seconds": 1790427094,
+          "_nanoseconds": 404000000
+        },
+        "last_processed_at": {
+          "_seconds": 1790427094,
+          "_nanoseconds": 404000000
+        },
+        "last_processed_period": 1,
+        "cash_available": 102333552,
+        "cash_total": 1001166884
+      }
+    }
+  }
+}

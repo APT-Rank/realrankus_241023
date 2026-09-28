@@ -1,0 +1,3203 @@
+[
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab77cf20002d480393aaab6",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3va7705i5ra",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T08:06:10.256363821Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "11432547789532579216",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T08:06:10.185472Z",
+    "trace": "projects/aptrank-cc61b/traces/57f55c6edaefb96aff46a9f4c1a74e32"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab77cf20002d3976758cd0e",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3va7705i5ra",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T08:06:10.256363821Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "11432547789532579216",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T08:06:10.185239Z"
+  },
+  {
+    "insertId": "6ab77cf20002d2be08e8a7cb",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3va7705i5ra",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T08:06:10.256363821Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "11432547789532579216",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T08:06:10.185022Z"
+  },
+  {
+    "insertId": "6ab77cf1000e09dded21799a",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3va7705i5ra",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T08:06:09.924702793Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "11432547789532579216",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T08:06:09.920029Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.426342751s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.100",
+      "requestMethod": "POST",
+      "requestSize": "1571",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77cf20002d8887698536f",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T08:06:10.191825801Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "9ea891a470c44590",
+    "timestamp": "2026-09-26T08:06:09.750289Z",
+    "trace": "projects/aptrank-cc61b/traces/57f55c6edaefb96aff46a9f4c1a74e32",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab77b580000cdeb40c2bab6",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3mhv1dd3yss",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:59:20.168801757Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "15998253587705133541",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:59:20.052715Z",
+    "trace": "projects/aptrank-cc61b/traces/0187c970bef03541bdc2211ff15a3712"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab77b580000cd2889974d1d",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3mhv1dd3yss",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:59:20.168801757Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15998253587705133541",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:59:20.052520Z"
+  },
+  {
+    "insertId": "6ab77b580000cb96a8a5d35d",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3mhv1dd3yss",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:59:20.168801757Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15998253587705133541",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:59:20.052118Z"
+  },
+  {
+    "insertId": "6ab77b57000cb286cc4a0b77",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3mhv1dd3yss",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:59:19.837662083Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15998253587705133541",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:59:19.832134Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.268306917s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.171",
+      "requestMethod": "POST",
+      "requestSize": "1570",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77b580000d2b14ba59696",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:59:20.057811117Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "de0536e029c879e5",
+    "timestamp": "2026-09-26T07:59:19.781533Z",
+    "trace": "projects/aptrank-cc61b/traces/0187c970bef03541bdc2211ff15a3712",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.564411732s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.161",
+      "requestMethod": "POST",
+      "requestSize": "1500",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77b3c000066a4f679ff47",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:58:52.030305591Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "e315ae4afc314aa4",
+    "timestamp": "2026-09-26T07:58:51.454753Z",
+    "trace": "projects/aptrank-cc61b/traces/51fb50346a621677e6a2d99a5c15c6cb",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab77afd00024844349799d6",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3kjvvad78xt",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:57:49.486889814Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "4924199397569440965",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:57:49.149572Z",
+    "trace": "projects/aptrank-cc61b/traces/b8a6f367007c0ca6a5f2241573a70ad1"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab77afd0002470f00094cad",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3kjvvad78xt",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:57:49.152168394Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "4924199397569440965",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:57:49.149263Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.053807968s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.3",
+      "requestMethod": "POST",
+      "requestSize": "1557",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77afd00024c5eeaf96e61",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:57:49.157576120Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "445645433751acc5",
+    "timestamp": "2026-09-26T07:57:49.087866Z",
+    "trace": "projects/aptrank-cc61b/traces/b8a6f367007c0ca6a5f2241573a70ad1",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab77a8a000d9f80f1f49f2c",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3i3i186p2xq",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:55:54.977672672Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "4289333322122840209",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:55:54.892800Z",
+    "trace": "projects/aptrank-cc61b/traces/2b926d28fa0e43bf198ce0052035f798"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab77a8a000d9eed9015b2aa",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3i3i186p2xq",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:55:54.977672672Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "4289333322122840209",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:55:54.892653Z"
+  },
+  {
+    "insertId": "6ab77a8a000d9e227028a097",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3i3i186p2xq",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:55:54.977672672Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "4289333322122840209",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:55:54.892450Z"
+  },
+  {
+    "insertId": "6ab77a8a0009c59350ddf290",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3i3i186p2xq",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:55:54.644168698Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "4289333322122840209",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:55:54.640403Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.342588151s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.71",
+      "requestMethod": "POST",
+      "requestSize": "1570",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77a8a000da34688328689",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:55:54.897080365Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "3b86c5ee3c60c891",
+    "timestamp": "2026-09-26T07:55:54.540821Z",
+    "trace": "projects/aptrank-cc61b/traces/2b926d28fa0e43bf198ce0052035f798",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab77a240000a19a03f6ec89",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3fw1mqgi8zo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:54:12.303531875Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "7086576606525852623",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:54:12.041370Z",
+    "trace": "projects/aptrank-cc61b/traces/5ec27451d0f5bd5dd875324494313ac4"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab77a240000a07b9a04c2bf",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3fw1mqgi8zo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:54:12.303531875Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7086576606525852623",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:54:12.041083Z"
+  },
+  {
+    "insertId": "6ab77a2400009f3ba09a7337",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3fw1mqgi8zo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:54:12.303531875Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7086576606525852623",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:54:12.040763Z"
+  },
+  {
+    "insertId": "6ab77a230009a90776d16ed8",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3fw1mqgi8zo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:54:11.640257337Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7086576606525852623",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:54:11.633095Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.467075427s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.201",
+      "requestMethod": "POST",
+      "requestSize": "1571",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77a240000a69ed5886e66",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:54:12.047691680Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "625893e099910bcf",
+    "timestamp": "2026-09-26T07:54:11.567654Z",
+    "trace": "projects/aptrank-cc61b/traces/5ec27451d0f5bd5dd875324494313ac4",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779f00004436e93fd56d1",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3es721zbmd8",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:53:20.328668740Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "3963695555143695322",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:53:20.279406Z",
+    "trace": "projects/aptrank-cc61b/traces/c154e0a5e243fa4f7acc5a1fe5e8fe08"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779f0000442921cf3e7e8",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3es721zbmd8",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:53:20.328668740Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3963695555143695322",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:53:20.279186Z"
+  },
+  {
+    "insertId": "6ab779f0000441acb9387af0",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3es721zbmd8",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:53:20.328668740Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3963695555143695322",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:53:20.278956Z"
+  },
+  {
+    "insertId": "6ab779ef000f20916f40ca5f",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3es721zbmd8",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:53:19.994793404Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3963695555143695322",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:53:19.991377Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.353524225s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.7",
+      "requestMethod": "POST",
+      "requestSize": "1568",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779f0000447128d2006a1",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:53:20.284562226Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "3701e01b5a227bda",
+    "timestamp": "2026-09-26T07:53:19.922154Z",
+    "trace": "projects/aptrank-cc61b/traces/c154e0a5e243fa4f7acc5a1fe5e8fe08",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779d60003a105823e88a2",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3e847h2cfsp",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:54.281909129Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "1987106205699612983",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:54.237829Z",
+    "trace": "projects/aptrank-cc61b/traces/da67c8adfabf0235fca2947f3c1549b0"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779d60003a013d3e708f3",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3e847h2cfsp",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:54.281909129Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "1987106205699612983",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:54.237587Z"
+  },
+  {
+    "insertId": "6ab779d600039ef77a871339",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3e847h2cfsp",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:54.281909129Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "1987106205699612983",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:54.237303Z"
+  },
+  {
+    "insertId": "6ab779d5000e6f0c0d2a3cd5",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3e847h2cfsp",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:53.950461576Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "1987106205699612983",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:53.945932Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.329859902s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.103",
+      "requestMethod": "POST",
+      "requestSize": "1567",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779d60003a540ac51edab",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:54.242497525Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "1b939e90e1b32137",
+    "timestamp": "2026-09-26T07:52:53.905269Z",
+    "trace": "projects/aptrank-cc61b/traces/da67c8adfabf0235fca2947f3c1549b0",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779c900002f90ba340fcb",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dxzq24bg5n",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:41.044315471Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "16017107732494891344",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:41.012176Z",
+    "trace": "projects/aptrank-cc61b/traces/58cdc2aa322cab6f999598c84127cbbb"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779c900002e657128201e",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dxzq24bg5n",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:41.044315471Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "16017107732494891344",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:41.011877Z"
+  },
+  {
+    "insertId": "6ab779c900002d955b7fe4c8",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dxzq24bg5n",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:41.044315471Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "16017107732494891344",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:41.011669Z"
+  },
+  {
+    "insertId": "6ab779c8000c97e6a924f6d7",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dxzq24bg5n",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:41.044315471Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "16017107732494891344",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:40.825318Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.226471330s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.38",
+      "requestMethod": "POST",
+      "requestSize": "1568",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779c900003676875f04a1",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:41.307193221Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "de48329ed4853950",
+    "timestamp": "2026-09-26T07:52:40.785647Z",
+    "trace": "projects/aptrank-cc61b/traces/58cdc2aa322cab6f999598c84127cbbb",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779c200047e8f5388f145",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dst5uywnja",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:34.384191917Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "15459333217890628209",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:34.294543Z",
+    "trace": "projects/aptrank-cc61b/traces/e250f45958794f98d23a1e7976be42b3"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779c200047ddf03ad7c63",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dst5uywnja",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:34.384191917Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15459333217890628209",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:34.294367Z"
+  },
+  {
+    "insertId": "6ab779c200047d045be5daac",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dst5uywnja",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:34.384191917Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15459333217890628209",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:34.294148Z"
+  },
+  {
+    "insertId": "6ab779c200020866daf5b8dc",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dst5uywnja",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:34.384191917Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15459333217890628209",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:34.133222Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.225103254s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "34.116.37.3",
+      "requestMethod": "POST",
+      "requestSize": "1570",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779c2000482564f4e0783",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:34.314573132Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "d68a95a794c47271",
+    "timestamp": "2026-09-26T07:52:34.068579Z",
+    "trace": "projects/aptrank-cc61b/traces/e250f45958794f98d23a1e7976be42b3"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779bd000e71c4e7d5ab02",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dph0m03s7o",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:30.055185652Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "6844969064838072713",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:29.946628Z",
+    "trace": "projects/aptrank-cc61b/traces/a6dbdae984d2de6c7acc5a1fe5e8fe66"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779bd000e712b784e6dc4",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dph0m03s7o",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:30.055185652Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "6844969064838072713",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:29.946475Z"
+  },
+  {
+    "insertId": "6ab779bd000e701ff27036dc",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dph0m03s7o",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:30.055185652Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "6844969064838072713",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:29.946207Z"
+  },
+  {
+    "insertId": "6ab779bd000c15ed2b2aed37",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dph0m03s7o",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:30.055185652Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "6844969064838072713",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:29.792045Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.202289146s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.7",
+      "requestMethod": "POST",
+      "requestSize": "1569",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779bd000e7614f980a380",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:29.988519717Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "5efe371928360989",
+    "timestamp": "2026-09-26T07:52:29.743452Z",
+    "trace": "projects/aptrank-cc61b/traces/a6dbdae984d2de6c7acc5a1fe5e8fe66",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779bb000ee9e570c96f03",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dnykyg78iw",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:28.059466602Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "18030790923243959810",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:27.977381Z",
+    "trace": "projects/aptrank-cc61b/traces/23edd4a269309e7fb722b702a5069569"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779bb000ee927e6c629e8",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dnykyg78iw",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:28.059466602Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18030790923243959810",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:27.977191Z"
+  },
+  {
+    "insertId": "6ab779bb000ee85c44d0b495",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dnykyg78iw",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:28.059466602Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18030790923243959810",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:27.976988Z"
+  },
+  {
+    "insertId": "6ab779bb000ca9fcaca8f05b",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dnykyg78iw",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:28.059466602Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18030790923243959810",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:27.829948Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.192597583s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.4",
+      "requestMethod": "POST",
+      "requestSize": "1569",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779bb000eee00f62e9bde",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:27.987017191Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "fa3a3cd03f4b3602",
+    "timestamp": "2026-09-26T07:52:27.783850Z",
+    "trace": "projects/aptrank-cc61b/traces/23edd4a269309e7fb722b702a5069569"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779b9000e553bcfd1b498",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dmdx57cjwa",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:26.059758862Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "15656994768764148583",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:25.939323Z",
+    "trace": "projects/aptrank-cc61b/traces/0f98730b6e2f169e4a67ab70110dd8af"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779b9000e549f330deb70",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dmdx57cjwa",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:26.059758862Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15656994768764148583",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:25.939167Z"
+  },
+  {
+    "insertId": "6ab779b9000e53d045572ed1",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dmdx57cjwa",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:26.059758862Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15656994768764148583",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:25.938960Z"
+  },
+  {
+    "insertId": "6ab779b9000c1b7c206cba04",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dmdx57cjwa",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:26.059758862Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "15656994768764148583",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:25.793468Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.195164187s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.231",
+      "requestMethod": "POST",
+      "requestSize": "1570",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779b9000e598336e4ec72",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:25.989091847Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "d948d1c9b2561b67",
+    "timestamp": "2026-09-26T07:52:25.743074Z",
+    "trace": "projects/aptrank-cc61b/traces/0f98730b6e2f169e4a67ab70110dd8af"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779b7000f2374d5ab340d",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dku437rlx1",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:24.065234823Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "5522206452868046275",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:23.992116Z",
+    "trace": "projects/aptrank-cc61b/traces/87a764135620210e406dfa4a5f41c087"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779b7000f2299cf907052",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dku437rlx1",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:24.065234823Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "5522206452868046275",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:23.991897Z"
+  },
+  {
+    "insertId": "6ab779b7000f21ae4e269de9",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dku437rlx1",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:24.065234823Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "5522206452868046275",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:23.991662Z"
+  },
+  {
+    "insertId": "6ab779b7000bd362b5bab2e7",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dku437rlx1",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:24.065234823Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "5522206452868046275",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:23.775010Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.256099095s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "34.116.37.4",
+      "requestMethod": "POST",
+      "requestSize": "1569",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779b7000f2823e099173f",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:24.324223032Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "4ca2d182cf91ddc3",
+    "timestamp": "2026-09-26T07:52:23.735304Z",
+    "trace": "projects/aptrank-cc61b/traces/87a764135620210e406dfa4a5f41c087"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779b600003d7a4a019f90",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3djatza7uy9",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:22.064443098Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "14083934630107018501",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:22.015738Z",
+    "trace": "projects/aptrank-cc61b/traces/7255b85a4b3deca2fbeb8d76865c6655"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779b600003cebfb5c0675",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3djatza7uy9",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:22.064443098Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "14083934630107018501",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:22.015595Z"
+  },
+  {
+    "insertId": "6ab779b600003c2c8c6147f8",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3djatza7uy9",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:22.064443098Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "14083934630107018501",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:22.015404Z"
+  },
+  {
+    "insertId": "6ab779b5000c46e7cbf91781",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3djatza7uy9",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:22.064443098Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "14083934630107018501",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:21.804583Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.269846174s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.67",
+      "requestMethod": "POST",
+      "requestSize": "1570",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779b6000041973d05f7c4",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:22.325790384Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "c3742fed1b59f505",
+    "timestamp": "2026-09-26T07:52:21.745063Z",
+    "trace": "projects/aptrank-cc61b/traces/7255b85a4b3deca2fbeb8d76865c6655"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CJ2XuOat5b_EsQE"
+      }
+    ],
+    "insertId": "6ab779b3000a05fdd6aad43f",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dhfepj8ugo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:19.730964002Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "13194735010849586372",
+    "textPayload": "Unhandled error Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:52:19.656893Z",
+    "trace": "projects/aptrank-cc61b/traces/f4c7c6ac7b9bb250406dfa4a5f41c543"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CLqv-_b5vez_kQE"
+      }
+    ],
+    "insertId": "6ab779b3000a051ed56e3660",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dhfepj8ugo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:19.730964002Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "13194735010849586372",
+    "textPayload": "runReconciliation CRITICAL ERROR: Error: Reconciliation failed. Check logs.\n    at /workspace/lib/play/reconciliation/runReconciliation.js:154:19\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:52:19.656670Z"
+  },
+  {
+    "insertId": "6ab779b3000a041f9fe44795",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dhfepj8ugo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:19.730964002Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "13194735010849586372",
+    "textPayload": "Reconciliation failed: 1 errors. System paused.\n",
+    "timestamp": "2026-09-26T07:52:19.656415Z"
+  },
+  {
+    "insertId": "6ab779b300060764a0722839",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i3dhfepj8ugo",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:52:19.398649830Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "13194735010849586372",
+    "textPayload": "Asset mismatch for S_F308_1790409125223_p1: cash_total != available + locked\n",
+    "timestamp": "2026-09-26T07:52:19.395108Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.337863794s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "34.116.37.4",
+      "requestMethod": "POST",
+      "requestSize": "1497",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab779b3000a0a47ab89dfb5",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:52:19.664078787Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "b71d1d956b197cc4",
+    "timestamp": "2026-09-26T07:52:19.312265Z",
+    "trace": "projects/aptrank-cc61b/traces/f4c7c6ac7b9bb250406dfa4a5f41c543",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.876658250s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.72",
+      "requestMethod": "POST",
+      "requestSize": "1498",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77966000730908bb0004d",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:51:02.475788221Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "bdfcb27b74e48208",
+    "timestamp": "2026-09-26T07:51:01.585167Z",
+    "trace": "projects/aptrank-cc61b/traces/7b17d25232051ae79df13d065fbefc9e",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.668755006s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.8",
+      "requestMethod": "POST",
+      "requestSize": "1497",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77872000476dd7e6df260",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:46:58.296039082Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "ce10fcf63f8678b4",
+    "timestamp": "2026-09-26T07:46:57.615792Z",
+    "trace": "projects/aptrank-cc61b/traces/9cbe25626728dc5e727ed462bdff960c",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab777c9000c2595dcc97ff1",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i32zn1skdh26",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:44:10.134574034Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "13881606938704264188",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:44:09.796053Z",
+    "trace": "projects/aptrank-cc61b/traces/feb103ba4cdd27154229c73e4f8f449f"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab777c9000c2494ab7d45a0",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i32zn1skdh26",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:44:09.799301365Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "13881606938704264188",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:44:09.795796Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.091597002s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.64",
+      "requestMethod": "POST",
+      "requestSize": "1557",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab777c9000c2a7966f9b4cf",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:44:09.801227245Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "c0a55ff67d10bbfc",
+    "timestamp": "2026-09-26T07:44:09.695760Z",
+    "trace": "projects/aptrank-cc61b/traces/feb103ba4cdd27154229c73e4f8f449f",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.422842067s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.198",
+      "requestMethod": "POST",
+      "requestSize": "1517",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab776d9000b56c619cc99ea",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:40:09.747753380Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "9203ff2e67445e34",
+    "timestamp": "2026-09-26T07:40:09.311773Z",
+    "trace": "projects/aptrank-cc61b/traces/271c7f8dce2f6642dcd1c4a16cf9352a",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.553785789s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.100",
+      "requestMethod": "POST",
+      "requestSize": "1489",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab776cd000d78b31905d22f",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:39:58.220696376Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "82d742a34a8192f1",
+    "timestamp": "2026-09-26T07:39:57.323961Z",
+    "trace": "projects/aptrank-cc61b/traces/666357a45721f2c423217eba755fb68c",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.460857988s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.174",
+      "requestMethod": "POST",
+      "requestSize": "1493",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab776c1000da3afb64b0914",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:39:45.897756735Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "f7611a3d9c3b84a8",
+    "timestamp": "2026-09-26T07:39:45.423333Z",
+    "trace": "projects/aptrank-cc61b/traces/a9c09b5ea16370c664843729bb65e604",
+    "traceSampled": true
+  },
+  {
+    "httpRequest": {
+      "latency": "0.655048308s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.161",
+      "requestMethod": "POST",
+      "requestSize": "1491",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab7768a0002c740f8fd1a31",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:38:50.187296766Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "aadc1085056e9c6b",
+    "timestamp": "2026-09-26T07:38:49.518885Z",
+    "trace": "projects/aptrank-cc61b/traces/98f4b5fd00d4c5581ff40df06e267478",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab77630000010542586d7ff",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2u7guzi7v5p",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:37:20.343856989Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "13798420304842005830",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:37:20.004180Z",
+    "trace": "projects/aptrank-cc61b/traces/6acdc1e84b3190533a1965e03ae5c971"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab7763000000f5e27d8323f",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2u7guzi7v5p",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:37:20.008697370Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "13798420304842005830",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:37:20.003934Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.058257808s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.103",
+      "requestMethod": "POST",
+      "requestSize": "1556",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab77630000014d4aff22ded",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:37:20.012365932Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "bf7dd628fba51d46",
+    "timestamp": "2026-09-26T07:37:19.938118Z",
+    "trace": "projects/aptrank-cc61b/traces/6acdc1e84b3190533a1965e03ae5c971",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab775630000b929767b9881",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2ptbe8yuuc2",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:33:55.384895909Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "2974125420227165756",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:33:55.047401Z",
+    "trace": "projects/aptrank-cc61b/traces/f6eb42cb1b575c66ea4a86056386d252"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab775630000b83ad455ee0b",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2ptbe8yuuc2",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:33:55.052821799Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "2974125420227165756",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:33:55.047162Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.066397091s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.2",
+      "requestMethod": "POST",
+      "requestSize": "1557",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab775630000bdbb57531707",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:33:55.054396244Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "2946374fe6197e3c",
+    "timestamp": "2026-09-26T07:33:54.972253Z",
+    "trace": "projects/aptrank-cc61b/traces/f6eb42cb1b575c66ea4a86056386d252",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab774fc00069d618b1b2396",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2nm5iyhdfww",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:32:12.771391527Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "5224548007349143269",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:32:12.433505Z",
+    "trace": "projects/aptrank-cc61b/traces/95abe21d909a081bca7b99daeeb2ab17"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab774fc00069c7e22bfb870",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2nm5iyhdfww",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:32:12.440107437Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "5224548007349143269",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:32:12.433278Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.047961235s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.229",
+      "requestMethod": "POST",
+      "requestSize": "1556",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab774fc0006a104ed66fc53",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:32:12.438720605Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "488152bb5a0546e5",
+    "timestamp": "2026-09-26T07:32:12.377328Z",
+    "trace": "projects/aptrank-cc61b/traces/95abe21d909a081bca7b99daeeb2ab17",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab774c90000cecacf4d5560",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2miimx9ogd9",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:31:21.395222094Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "12789049433516799496",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:31:21.052938Z",
+    "trace": "projects/aptrank-cc61b/traces/67fbc86fff0fae32db3499eba61a4838"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab774c90000cdd8d56d5b5e",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2miimx9ogd9",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:31:21.056930670Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "12789049433516799496",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:31:21.052696Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.034650356s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.105",
+      "requestMethod": "POST",
+      "requestSize": "1556",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab774c90000d3257df375a9",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:31:21.116474386Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "b17bd4b353adf608",
+    "timestamp": "2026-09-26T07:31:21.017674Z",
+    "trace": "projects/aptrank-cc61b/traces/67fbc86fff0fae32db3499eba61a4838"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.789424003s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "34.116.37.7",
+      "requestMethod": "POST",
+      "requestSize": "1485",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "82",
+      "serverIp": "216.239.36.54",
+      "status": 204,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab774c20006e60ac3512e92",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:31:14.456474482Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "a87b1e9abf20385f",
+    "timestamp": "2026-09-26T07:31:13.659408Z",
+    "trace": "projects/aptrank-cc61b/traces/861e2e00f54467c677d1dcaa3dc1272e",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab774af00050311b0b18d7b",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2lynkkqfx1v",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:30:55.666132258Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "10613541402965604876",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:30:55.328465Z",
+    "trace": "projects/aptrank-cc61b/traces/5ca97d0db8bc20de78046ba54a1dfd29"
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CMycge_i2PbKeg"
+      }
+    ],
+    "insertId": "6ab774af00050205ff1b9819",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2lynkkqfx1v",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:30:55.332606073Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "10613541402965604876",
+    "textPayload": "runReconciliation CRITICAL ERROR: TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17\n",
+    "timestamp": "2026-09-26T07:30:55.328197Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.052052089s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "107.178.198.167",
+      "requestMethod": "POST",
+      "requestSize": "1556",
+      "requestUrl": "https://asia-northeast3-aptrank-cc61b.cloudfunctions.net/runReconciliation",
+      "responseSize": "193",
+      "serverIp": "216.239.36.54",
+      "status": 500,
+      "userAgent": "Google-Cloud-Tasks"
+    },
+    "insertId": "6ab774af0005083412312fd0",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2026-09-26T07:30:55.333794500Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "934adfac4caa7a0c",
+    "timestamp": "2026-09-26T07:30:55.272598Z",
+    "trace": "projects/aptrank-cc61b/traces/5ca97d0db8bc20de78046ba54a1dfd29",
+    "traceSampled": true
+  },
+  {
+    "errorGroups": [
+      {
+        "id": "CPWW8qafncT5jAE"
+      }
+    ],
+    "insertId": "6ab774a20005d2b8ba8148de",
+    "labels": {
+      "deployment-taskqueue": "true",
+      "execution_id": "i2lonofq2jvi",
+      "firebase-functions-hash": "95cb039e9d0b65dd30010df74c0b9d1eac698917",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0010dd86079b7dc45968e1631eacc0e25a5d3a697dfb3013731e291a59d0d30fe521305d813af1ece023b6070ad9207b7a0d664ec46b17e77a8d3a103553ee8680366bc4d3f7a8cf57433586cf83b89b244e",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20260819_20_20_2_RC00"
+    },
+    "logName": "projects/aptrank-cc61b/logs/run.googleapis.com%2Fstderr",
+    "receiveTimestamp": "2026-09-26T07:30:42.567246903Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "runreconciliation",
+        "location": "asia-northeast3",
+        "project_id": "aptrank-cc61b",
+        "revision_name": "runreconciliation-00001-nav",
+        "service_name": "runreconciliation"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "ERROR",
+    "spanId": "551526712466877951",
+    "textPayload": "Unhandled error TypeError: Cannot read properties of undefined (reading 'includes')\n    at /workspace/lib/play/reconciliation/runReconciliation.js:34:51\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:83:17",
+    "timestamp": "2026-09-26T07:30:42.381624Z",
+    "trace": "projects/aptrank-cc61b/traces/643c364a9d82c4c916a431fc30858d95"
+  }
+]

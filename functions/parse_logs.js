@@ -1,0 +1,10 @@
+const agg = require('./logs_agg.json');
+const clk = require('./logs_clock.json');
+const ts = '2026-09-26T07:57:42Z';
+const aggIds = [...new Set(agg.filter(x => x.timestamp >= ts).map(x => x.labels?.execution_id).filter(Boolean))];
+const clkIds = [...new Set(clk.filter(x => x.timestamp >= ts).map(x => x.labels?.execution_id).filter(Boolean))];
+const rec = require('./logs_recon.json');
+const recIds = [...new Set(rec.filter(x => x.timestamp >= ts).map(x => x.labels?.execution_id).filter(Boolean))];
+console.log('Aggregator Runs:', aggIds);
+console.log('Recon Runs:', recIds);
+console.log('Clock Runs:', clkIds);
