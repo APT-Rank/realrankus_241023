@@ -22,6 +22,9 @@ export const controlSimulation = onCall(async (request) => {
   if (speed !== undefined && ![1, 5, 20, 100].includes(speed)) {
     throw new HttpsError('invalid-argument', 'Unsupported simulation speed');
   }
+  if (process.env.FUNCTIONS_EMULATOR === 'true' && ['RUN', 'STEP'].includes(action)) {
+    throw new HttpsError('failed-precondition', 'RUN and STEP are disabled locally until the task handoff is verified as emulator-only');
+  }
 
   const seasonRef = db.collection(COLLECTION_SEASON).doc(season_id);
   

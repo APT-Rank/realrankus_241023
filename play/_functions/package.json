@@ -6,7 +6,10 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "serve": "npm run build && firebase emulators:start --only functions",
+    "dev": "npm run build && firebase emulators:start --project demo-play --only auth,firestore,functions,hosting",
+    "serve": "npm run dev",
+    "test": "npm run build && node --test",
+    "build:map-tiles": "node scripts/build_play_map_tiles.js",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -23,6 +26,7 @@
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0",
+    "firebase-tools": "^14.0.0",
     "typescript": "^5.0.0"
   },
   "private": true

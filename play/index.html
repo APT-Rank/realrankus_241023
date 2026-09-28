@@ -303,15 +303,16 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-functions-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
   <script>
+    const isLocalPlay = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const firebaseConfig = { 
-      projectId: 'aptrank-cc61b',
+      projectId: isLocalPlay ? 'demo-play' : 'aptrank-cc61b',
       apiKey: "AIzaSyAivJVoqhrDQzuslEAoizhb5ByGhpQGHzE"
     };
     firebase.initializeApp(firebaseConfig);
-    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-      // firebase.auth().useEmulator('http://127.0.0.1:9099');
-      // firebase.firestore().useEmulator('127.0.0.1', 8080);
-      // firebase.functions('asia-northeast3').useEmulator('127.0.0.1', 5001);
+    if (isLocalPlay) {
+      firebase.auth().useEmulator('http://127.0.0.1:9099');
+      firebase.firestore().useEmulator('127.0.0.1', 8080);
+      firebase.functions('asia-northeast3').useEmulator('127.0.0.1', 5001);
     }
   </script>
   <script src="./js/map_tile_loader.js"></script>

@@ -152,13 +152,16 @@ async function writeTileAssets(index, outputDirectory, version, zoom = defaultTi
 
 async function main() {
   const admin = require('firebase-admin');
-  const projectId = process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT || 'aptrank-cc61b';
+  const projectId = process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT || 'demo-play';
+  if (!process.env.FIRESTORE_EMULATOR_HOST && process.env.PLAY_ALLOW_REMOTE_MAP_BUILD !== 'true') {
+    throw new Error('Map tile generation requires the Firestore emulator. Set PLAY_ALLOW_REMOTE_MAP_BUILD=true to explicitly allow remote reads.');
+  }
   if (admin.apps.length === 0) admin.initializeApp({ projectId });
   const db = admin.firestore();
   const tileZoom = Number(process.env.PLAY_MAP_TILE_ZOOM || defaultTileZoom);
   const versionArgument = process.argv.slice(2).find(argument => argument.startsWith('--version='));
   const version = makeVersion(versionArgument ? versionArgument.slice('--version='.length) : process.env.PLAY_MAP_TILE_VERSION);
-  const outputDirectory = path.resolve(__dirname, '../../play/data/map_tiles');
+  const outputDirectory = path.resolve(__dirname, '../../data/map_tiles');
   const accumulator = createMarkerAccumulator();
   const collection = db.collection('PLAY_PROPERTY_MASTER');
   let lastDocument = null;
