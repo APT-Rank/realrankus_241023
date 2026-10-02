@@ -6,7 +6,11 @@
                 "type":"integer"
             },
             {
-                "name":"동",
+                "name":"지역코드",
+                "type":"string"
+            },
+            {
+                "name":"법정동",
                 "type":"string"
             },
             {
@@ -14,27 +18,15 @@
                 "type":"string"
             },
             {
-                "name":"건축년도",
+                "name":"지번",
                 "type":"string"
             },
             {
-                "name":"매수자",
+                "name":"전용면적",
                 "type":"string"
             },
             {
-                "name":"해제사유발생일",
-                "type":"string"
-            },
-            {
-                "name":"해제여부",
-                "type":"string"
-            },
-            {
-                "name":"거래금액",
-                "type":"string"
-            },
-            {
-                "name":"일",
+                "name":"년",
                 "type":"string"
             },
             {
@@ -42,7 +34,27 @@
                 "type":"string"
             },
             {
-                "name":"년",
+                "name":"일",
+                "type":"string"
+            },
+            {
+                "name":"거래금액",
+                "type":"string"
+            },
+            {
+                "name":"층",
+                "type":"string"
+            },
+            {
+                "name":"건축년도",
+                "type":"string"
+            },
+            {
+                "name":"해제여부",
+                "type":"string"
+            },
+            {
+                "name":"해제사유발생일",
                 "type":"string"
             },
             {
@@ -54,27 +66,11 @@
                 "type":"string"
             },
             {
-                "name":"전용면적",
-                "type":"string"
-            },
-            {
-                "name":"층",
-                "type":"string"
-            },
-            {
-                "name":"지번",
-                "type":"string"
-            },
-            {
-                "name":"아파트여부",
-                "type":"string"
-            },
-            {
                 "name":"등기일자",
                 "type":"string"
             },
             {
-                "name":"지역코드",
+                "name":"동",
                 "type":"string"
             },
             {
@@ -82,7 +78,11 @@
                 "type":"string"
             },
             {
-                "name":"법정동",
+                "name":"매수자",
+                "type":"string"
+            },
+            {
+                "name":"아파트여부",
                 "type":"string"
             },
             {
