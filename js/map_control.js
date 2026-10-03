@@ -1850,7 +1850,7 @@ function updateLocationMarker(lat, lng) {
       position: newLatLng,
       map: defaultMap,
       icon: {
-        content: '<div class="current-location-dot"><div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid #e31939;"></div></div>',
+        content: '<div class="current-location-dot"><div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 9px solid #E43B46;"></div></div>',
         size: new naver.maps.Size(32, 32),
         anchor: new naver.maps.Point(16, 16)
       },

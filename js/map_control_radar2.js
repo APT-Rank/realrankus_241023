@@ -222,7 +222,7 @@ function drawCircleOnMap(aptInfo){
     radii = [250, 500, 1000, 3000, 5000];
 
     // 원 색상 및 스타일
-    colors = ['#e31939', '#e31939', '#e31939', '#e31939', '#e31939'];
+    colors = ['#E43B46', '#E43B46', '#E43B46', '#E43B46', '#E43B46'];
 
     // 원 생성
     radii.forEach((radius, index) => {

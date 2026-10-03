@@ -815,7 +815,7 @@ function commentbox_animate() {
     );
     $("#comment_light").animate(
       {
-        "background-color": "#e31939",
+        "background-color": "#E43B46",
       },
       350,
       "easeOutCirc",
@@ -2907,7 +2907,7 @@ function showDetail(index) {
     radii = [100, 200, 300, 400];
 
     // 원 색상 및 스타일
-    colors = ["#e31939", "#e31939", "#e31939", "#e31939"];
+    colors = ["#E43B46", "#E43B46", "#E43B46", "#E43B46"];
 
     // 원 생성
     radii.forEach((radius, index) => {
@@ -4124,7 +4124,7 @@ function dong_filter(selection) {
     $(".listBox2").hide();
     $(".liked").fadeIn(950, "easeOutQuart");
     if ($(".liked").length === 0) {
-      $("#blank_list").html("<br>좋아요 단지가 없어요<br><br>가장 먼저 마음에 드는 단지에<br><span style='color:#e31939'>\"<i class='fa-regular fa-thumbs-up'></i> 좋아요\"</span> 를 해 주시는건 어떨까요?");
+      $("#blank_list").html("<br>좋아요 단지가 없어요<br><br>가장 먼저 마음에 드는 단지에<br><span style='color:#E43B46'>\"<i class='fa-regular fa-thumbs-up'></i> 좋아요\"</span> 를 해 주시는건 어떨까요?");
       $("#blank_list").css({ height: "10em" });
     } else {
       $("#blank_list").html("");

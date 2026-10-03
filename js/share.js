@@ -1015,19 +1015,19 @@ function setBottomMenu() {
 
 function setupBottomMenu(currentMenu) {
   var selectedClass = ""
-  var bgColor = "#e31939"
+  var bgColor = "#E43B46"
 
   if (currentMenu == "aptrank") {
     selectedClass = "#tab1"
-    bgColor = "#e31939"
+    bgColor = "#E43B46"
   }
   if (currentMenu == "aptrank_price") {
     selectedClass = "#tab2"
-    bgColor = "#e31939"
+    bgColor = "#E43B46"
   }
   if (currentMenu == "aptrank_theme") {
     selectedClass = "#tab3"
-    bgColor = "#e31939"
+    bgColor = "#E43B46"
   }
   if (currentMenu == "aptrank_op") {
     selectedClass = "#tab4"
@@ -1035,7 +1035,7 @@ function setupBottomMenu(currentMenu) {
   }
   if (currentMenu == "aptrank_news") {
     selectedClass = "#tab5"
-    bgColor = "#e31939"
+    bgColor = "#E43B46"
   }
   if (currentMenu == "aptrank_biz") {
     selectedClass = "#tab6"

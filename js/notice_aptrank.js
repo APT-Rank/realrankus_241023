@@ -125,7 +125,7 @@ var notice_202510 =
 +"<ul>"
 +"<li><div class='notice'>전국 학원가 정보 업데이트 했습니다.</div></li>"
 +"<li><div class='notice'>전국 상권 정보 업데이트 했습니다.</div></li>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>인구, 공원 등의 공공데이터 업데이트는 국가정보자원관리원 복구 후 추가 진행 예정입니다.</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>인구, 공원 등의 공공데이터 업데이트는 국가정보자원관리원 복구 후 추가 진행 예정입니다.</div></li>"
 +"</ul>"
 +"<hr>"
 
@@ -216,7 +216,7 @@ var notice_202502 =
 var notice_202501 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2025년 1월 업데이트 안내 (2025-01-05)</div>"
 +"<ul>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>단지별 리얼포스팅을 개인이 자유롭게 등록할 수 있도록 수정했습니다.</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>단지별 리얼포스팅을 개인이 자유롭게 등록할 수 있도록 수정했습니다.</div></li>"
 +"<li><div class='notice'>지역별 소득 정보 업데이트 했습니다.(공공데이터 제공)</div></li>"
 +"<li><div class='notice'>전국 기피시설 정보 업데이트 했습니다. (자원순환정보시스템 제공)</div></li>"
 +"<li><div class='notice'>교육통계서비스 기반 2024년 하반기 초등학교 정보 업데이트 했습니다.</div></li>"
@@ -228,8 +228,8 @@ var notice_202501 =
 var notice_202412 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 12월 업데이트 안내 (2024-12-03)</div>"
 +"<ul>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>단지 검색 시, 최근에 검색한 단지가 표시됩니다.</div></li>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>'즐겨찾기'를 추가해 자주 확인하는 지역 등록 가능합니다.(실거래가 우측 상단)</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>단지 검색 시, 최근에 검색한 단지가 표시됩니다.</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>'즐겨찾기'를 추가해 자주 확인하는 지역 등록 가능합니다.(실거래가 우측 상단)</div></li>"
 +"<li><div class='notice'>전국 롯데백화점 위치 정교화 했습니다.</div></li>"
 +"<li><div class='notice'>공원 정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
 +"<li><div class='notice'>교육 감점요소인 유흥주점, 단란주점, 모텔정보 업데이트 했습니다. (공공데이터 제공)</div></li>"
@@ -240,10 +240,10 @@ var notice_202412 =
 var notice_202411 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2024년 11월 업데이트 안내 (2024-11-02)</div>"
 +"<ul>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>2024년 지하철 승객 승하차 기준 주요역을 재설정 했습니다</div></li>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>주요역까지의 이동 시간 측정을 구글에서 T-MAP으로 변경했습니다</div></li>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>2030년까지 개통 예정역을 추가 반영 했습니다</div></li>"
-+"<li><div class='notice' style='color: #e31939; font-weight: 600'>전국 지하철 역과 출구좌표를 재설정 했습니다</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>2024년 지하철 승객 승하차 기준 주요역을 재설정 했습니다</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>주요역까지의 이동 시간 측정을 구글에서 T-MAP으로 변경했습니다</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>2030년까지 개통 예정역을 추가 반영 했습니다</div></li>"
++"<li><div class='notice' style='color: #E43B46; font-weight: 600'>전국 지하철 역과 출구좌표를 재설정 했습니다</div></li>"
 +"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
 +"<li><div class='notice'>2024년 10월 인구 변동 정보 업데이트 했습니다.</div></li>"
 +"</ul>"

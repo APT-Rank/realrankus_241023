@@ -12,7 +12,7 @@ function complex_list_like_status(){
 				complex_like_num = complexes[1]['Living'] + complexes[1]['Trans'] + complexes[1]['Infra'] + complexes[1]['Edu']
 				$("#complex_like_num_" + complex_code).html(complex_like_num)
 				if(complex_like_num > 0){
-					$("#complex_" + complex_code).css({'color' : '#e31939'})
+					$("#complex_" + complex_code).css({'color' : '#E43B46'})
 					$("#complex_" + complex_code).parent('div').parent('div').addClass('liked')
 					//console.log($("#complex_" + complex_code).parent('div').parent('div').prop('outerHTML'))
 				}
@@ -38,7 +38,7 @@ function complex_list_like_status(){
 				complex_like_num = complexes[1]['Living'] + complexes[1]['Trans'] + complexes[1]['Infra'] + complexes[1]['Edu']
 				$("#complex_like_num_" + complex_code).html(complex_like_num)
 				if(complex_like_num > 0){
-					$("#complex_" + complex_code).css({'color' : '#e31939'})
+					$("#complex_" + complex_code).css({'color' : '#E43B46'})
 				}
 			})
 		}
@@ -561,7 +561,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_living_" + complex_id).css({'color' : '#999'})							
 						}
 						else{							
-							$("#complex_like_living_" + complex_id).css({'color' : '#e31939'})							
+							$("#complex_like_living_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})					
 				}
@@ -581,7 +581,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_living_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_living_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_living_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})
 				}				
@@ -603,7 +603,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_trans_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_trans_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_trans_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})					
 				}
@@ -623,7 +623,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_trans_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_trans_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_trans_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})
 				}
@@ -645,7 +645,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_infra_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_infra_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_infra_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})					
 				}
@@ -665,7 +665,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_infra_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_infra_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_infra_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})
 				}
@@ -687,7 +687,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_edu_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_edu_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_edu_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})					
 				}
@@ -707,7 +707,7 @@ function complex_like_updown(category, complex_id, aptName){
 							$("#complex_like_edu_" + complex_id).css({'color' : '#999'})
 						}
 						else{
-							$("#complex_like_edu_" + complex_id).css({'color' : '#e31939'})
+							$("#complex_like_edu_" + complex_id).css({'color' : '#E43B46'})
 						}
 					})
 				}
@@ -743,7 +743,7 @@ function background_update(current_region_id, complex_id){
 			$("#complex_like_num_" + complex_id).html(complex_like_num)
 
 			if(complex_like_num > 0){
-				$("#complex_" + complex_id).css({'color' : '#e31939'})
+				$("#complex_" + complex_id).css({'color' : '#E43B46'})
 			}
 			else{
 				$("#complex_" + complex_id).css({'color' : '#999'})
@@ -775,16 +775,16 @@ function setComplexLike(complexCode, aptName){
 			var infra_count = like_status['Infra']
 			var edu_count = like_status['Edu']
 			if(living_count > 0){
-				$("#complex_like_living_" + complexCode).css({'color' : '#e31939'})
+				$("#complex_like_living_" + complexCode).css({'color' : '#E43B46'})
 			}
 			if(trans_count > 0){
-				$("#complex_like_trans_" + complexCode).css({'color' : '#e31939'})
+				$("#complex_like_trans_" + complexCode).css({'color' : '#E43B46'})
 			}
 			if(infra_count > 0){
-				$("#complex_like_infra_" + complexCode).css({'color' : '#e31939'})
+				$("#complex_like_infra_" + complexCode).css({'color' : '#E43B46'})
 			}
 			if(edu_count > 0){
-				$("#complex_like_edu_" + complexCode).css({'color' : '#e31939'})
+				$("#complex_like_edu_" + complexCode).css({'color' : '#E43B46'})
 			}
 
 			if(living_count == '' || living_count == undefined){
@@ -1311,7 +1311,7 @@ function read_comment(scroll_pos){
             querySnapshot.forEach((doc) => {
               like_status = doc.data()
               if(like_status['like']){
-                $("#like_" + doc.id).css({'color' : '#e31939'})
+                $("#like_" + doc.id).css({'color' : '#E43B46'})
               }              
             })           
           })
@@ -1396,7 +1396,7 @@ function likeit(comment_id, user_id, like_num){
 		  .then()
 		  current_like_num = $('#like_num_' + comment_id).html()                        
 		  $('#like_num_' + comment_id).html(Number(current_like_num)+1)
-		  $('#like_' + comment_id).css({'color' : '#e31939'})
+		  $('#like_' + comment_id).css({'color' : '#E43B46'})
 		}
 	  }
 	  else{
@@ -1409,7 +1409,7 @@ function likeit(comment_id, user_id, like_num){
 		})
 		current_like_num = $('#like_num_' + comment_id).html()                        
 		$('#like_num_' + comment_id).html(Number(current_like_num)+1)
-		$('#like_' + comment_id).css({'color' : '#e31939'})
+		$('#like_' + comment_id).css({'color' : '#E43B46'})
 	  }                                    
 	})
   }
@@ -1451,7 +1451,7 @@ function likeit(comment_id, user_id, like_num){
 		  .then()
 		  current_like_num = $('#like_num_' + reply_id).html()                        
 		  $('#like_num_' + reply_id).html(Number(current_like_num)+1)
-		  $('#like_' + reply_id).css({'color' : '#e31939'})
+		  $('#like_' + reply_id).css({'color' : '#E43B46'})
 		}
 	  }
 	  else{
@@ -1464,7 +1464,7 @@ function likeit(comment_id, user_id, like_num){
 		})
 		current_like_num = $('#like_num_' + reply_id).html()                        
 		$('#like_num_' + reply_id).html(Number(current_like_num)+1)
-		$('#like_' + reply_id).css({'color' : '#e31939'})
+		$('#like_' + reply_id).css({'color' : '#E43B46'})
 	  }                                    
 	})
   }   
@@ -1476,7 +1476,7 @@ function write_comment_modal(){
 	comment_html += "<div id='comment_write_notice'>"
 		comment_html +=
 		`
-		<div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>` + tSafe("ui.report.comment_notice_header", "건강한 랭커스톡을 만들어주세요!") + `</div>
+		<div style='font-size: 1.2em; color:#E43B46; font-weight:600; text-align:center'>` + tSafe("ui.report.comment_notice_header", "건강한 랭커스톡을 만들어주세요!") + `</div>
 		<div>
 		<ul class='write_notice'>
 			<li>` + tSafe("ui.report.comment_notice_item1", "다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.") + `</li>              
@@ -1598,7 +1598,7 @@ function reply_modal(comment_id){
 	comment_html += "<div id='comment_write_notice'>"
 		comment_html +=
 		`
-		<div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>` + tSafe("ui.report.comment_notice_header", "건강한 랭커스톡을 만들어주세요!") + `</div>
+		<div style='font-size: 1.2em; color:#E43B46; font-weight:600; text-align:center'>` + tSafe("ui.report.comment_notice_header", "건강한 랭커스톡을 만들어주세요!") + `</div>
 		<div>
 		<ul class='write_notice'>
 			<li>` + tSafe("ui.report.comment_notice_item1", "다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.") + `</li>              

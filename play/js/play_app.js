@@ -1209,7 +1209,7 @@ async function renderAdministrativeMarkers(zoom, renderSequence) {
             map: map,
             title: `${regionName} ${averagePrice}`,
             icon: {
-                content: `<div class="${markerClass}" style="background-color:#e31939;color:#fff;text-align:center;width:${markerWidth};border-radius:5px;padding:3px 0;box-shadow:rgba(0,0,0,.25) 3px 3px 5px,rgba(0,0,0,.5) 2px 2px 4px;user-select:none;"><div class="${markerClass}_dong_name" style="font-size:${nameFontSize};">${region.name}</div><div class="${markerClass}_avg_price" style="font-size:${priceFontSize};">${averagePrice}</div></div>`,
+                content: `<div class="${markerClass}" style="background-color:#E43B46;color:#fff;text-align:center;width:${markerWidth};border-radius:5px;padding:3px 0;box-shadow:rgba(0,0,0,.25) 3px 3px 5px,rgba(0,0,0,.5) 2px 2px 4px;user-select:none;"><div class="${markerClass}_dong_name" style="font-size:${nameFontSize};">${region.name}</div><div class="${markerClass}_avg_price" style="font-size:${priceFontSize};">${averagePrice}</div></div>`,
                 size: new naver.maps.Size(24, 37),
                 anchor: new naver.maps.Point(8, 45)
             }
