@@ -7,7 +7,11 @@ const {
   calculateMonthlyLoanPayment,
   getAnnualIncomeForPeriod
 } = require('../lib/play/batch/economicEngine');
-const { getNextPeriodDelaySeconds, LIVE_SIMULATION_PERIOD_SECONDS } = require('../lib/play/season/periodSchedule');
+const {
+  getElapsedSimulationPeriods,
+  getNextPeriodDelaySeconds,
+  LIVE_SIMULATION_PERIOD_SECONDS
+} = require('../lib/play/season/periodSchedule');
 
 test('annual salary remains fixed for twelve periods and grows at the year boundary', () => {
   assert.equal(getAnnualIncomeForPeriod(0), 50_000_000);
@@ -47,4 +51,14 @@ test('live seasons advance every six hours while test speeds remain accelerated'
   assert.equal(getNextPeriodDelaySeconds(), 21_600);
   assert.equal(getNextPeriodDelaySeconds(1), 10);
   assert.equal(getNextPeriodDelaySeconds(5), 2);
+});
+
+test('elapsed simulation periods align with the season clock and stop at 30 years', () => {
+  const start = 1_800_000_000_000;
+  const sixHours = LIVE_SIMULATION_PERIOD_SECONDS * 1000;
+  assert.equal(getElapsedSimulationPeriods(start, start + sixHours - 1), 0);
+  assert.equal(getElapsedSimulationPeriods({ seconds: start / 1000 }, start + sixHours), 1);
+  assert.equal(getElapsedSimulationPeriods(start, start + 20 * sixHours), 20);
+  assert.equal(getElapsedSimulationPeriods(start, start + 400 * sixHours), 360);
+  assert.equal(getElapsedSimulationPeriods(start, start - 1), 0);
 });

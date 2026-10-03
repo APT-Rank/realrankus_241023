@@ -1,7 +1,8 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { db, COLLECTION_PLAYER, COLLECTION_PLAYER_ASSET } from '../common/db';
+import { db, COLLECTION_PLAYER, COLLECTION_PLAYER_ASSET, COLLECTION_SEASON } from '../common/db';
 import { checkTransactionStatus } from '../common/utils';
-import { PlayPlayer, PlayPlayerAsset } from '../common/types';
+import { PlayPlayer, PlayPlayerAsset, PlaySeason } from '../common/types';
+import { getElapsedSimulationPeriods, getSeasonStartTimestamp } from './periodSchedule';
 import { BASE_MONTHLY_LIVING_EXPENSE, STARTING_ANNUAL_INCOME } from '../batch/economicEngine';
 import * as admin from 'firebase-admin';
 
@@ -22,14 +23,26 @@ export const joinSeason = onCall(async (request) => {
 
   const playerRef = db.collection(COLLECTION_PLAYER).doc(player_id);
   const assetRef = db.collection(COLLECTION_PLAYER_ASSET).doc(player_id);
+  const seasonRef = db.collection(COLLECTION_SEASON).doc(season_id);
 
   await db.runTransaction(async (t) => {
-    const playerDoc = await t.get(playerRef);
+    const [playerDoc, seasonDoc] = await Promise.all([t.get(playerRef), t.get(seasonRef)]);
     if (playerDoc.exists) {
       throw new HttpsError('already-exists', 'Player already joined this season');
     }
 
     const now = admin.firestore.Timestamp.now();
+    const season = seasonDoc.data() as PlaySeason | undefined;
+    const storedPeriod = Number(season?.current_simulation_period);
+    const currentPeriod = Number.isInteger(storedPeriod) && storedPeriod >= 0
+      ? storedPeriod
+      : Number.isInteger(season?.last_successful_period) && Number(season?.last_successful_period) >= 0
+        ? Number(season?.last_successful_period) + 1
+        : 0;
+    const elapsedPeriods = season_id === 'test_hero_season' || Number(season?.test_mode_speed) > 0
+      ? currentPeriod
+      : getElapsedSimulationPeriods(getSeasonStartTimestamp(season));
+    const participationStartPeriod = Math.min(360, Math.max(currentPeriod, elapsedPeriods));
 
     const newPlayer: PlayPlayer = {
       player_id,
@@ -56,8 +69,9 @@ export const joinSeason = onCall(async (request) => {
       monthly_income: Math.round(STARTING_ANNUAL_INCOME / 12),
       monthly_living_expense: BASE_MONTHLY_LIVING_EXPENSE,
       monthly_loan_payment: 0,
+      participation_start_period: participationStartPeriod,
       cumulative_inflation_factor: 1,
-      last_processed_period: null,
+      last_processed_period: participationStartPeriod > 0 ? participationStartPeriod - 1 : null,
       last_processed_batch_id: null,
       last_processed_at: null,
       created_at: now,

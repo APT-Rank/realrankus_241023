@@ -343,11 +343,22 @@ let selectedComplexSupplyStatus = 'loading';
 let dynamicContextDismissed = false;
 let dynamicContextMapReady = false;
 let dynamicContextRevealTimer = null;
+let dynamicContextCrossfadeTimer = null;
+const DYNAMIC_CONTEXT_CROSSFADE_DURATION_MS = 240;
 const dynamicContextBoundMaps = new WeakSet();
 let allProperties = [];
 let complexDataMap = {}; // { 'complex_name': [property1, property2] }
 const complexDetailsCache = new Map();
 const complexDetailsRequests = new Map();
+const COMPLEX_SNAPSHOT_MONTH = '202609';
+const COMPLEX_SNAPSHOT_LOAD_ERROR = Symbol('complexSnapshotLoadError');
+const complexSnapshotCache = new Map();
+const complexSnapshotRequests = new Map();
+let selectedComplexSnapshot = null;
+let selectedComplexSnapshotStatus = 'loading';
+let selectedComplexDealHistory = null;
+let selectedComplexDealHistoryStatus = 'loading';
+let selectedComplexDealHistoryUnsubscribe = null;
 const propertyMasterCache = new Map();
 const propertyMasterRequests = new Map();
 const complexMasterSummaryCache = new Map();
@@ -500,6 +511,462 @@ async function loadComplexProperties(complexName, complexId) {
 
     complexDetailsRequests.set(cacheKey, request);
     return request;
+}
+
+async function loadComplexSnapshot(complexId) {
+    const documentId = String(complexId || '').trim();
+    if (!documentId) return null;
+    const cacheKey = `${documentId}:${COMPLEX_SNAPSHOT_MONTH}`;
+    if (complexSnapshotCache.has(cacheKey)) return complexSnapshotCache.get(cacheKey);
+    if (complexSnapshotRequests.has(cacheKey)) return complexSnapshotRequests.get(cacheKey);
+
+    const request = firebase.firestore()
+        .collection('PLAY_PROPERTY_MASTER').doc(documentId)
+        .collection('SNAPSHOTS').doc(COMPLEX_SNAPSHOT_MONTH).get()
+        .then(snapshot => {
+            if (!snapshot.exists) return null;
+            const documentData = snapshot.data() || {};
+            return documentData.data && typeof documentData.data === 'object'
+                ? documentData.data
+                : documentData;
+        })
+        .catch(error => {
+            console.warn(`Failed to load ${COMPLEX_SNAPSHOT_MONTH} snapshot for complex ${documentId}`, error);
+            return { [COMPLEX_SNAPSHOT_LOAD_ERROR]: true };
+        })
+        .then(data => {
+            if (!data?.[COMPLEX_SNAPSHOT_LOAD_ERROR]) complexSnapshotCache.set(cacheKey, data);
+            return data;
+        })
+        .finally(() => complexSnapshotRequests.delete(cacheKey));
+
+    complexSnapshotRequests.set(cacheKey, request);
+    return request;
+}
+
+function findSnapshotField(data, aliases, exactOnly = false) {
+    const normalizedAliases = new Set(aliases.map(alias => alias.toLowerCase().replace(/[^a-z0-9가-힣]/g, '')));
+    const entries = [];
+    const pending = [{ value: data, depth: 0 }];
+    while (pending.length) {
+        const { value, depth } = pending.pop();
+        if (!value || typeof value !== 'object' || depth > 5) continue;
+        Object.entries(value).forEach(([key, child]) => {
+            const normalizedKey = key.toLowerCase().replace(/[^a-z0-9가-힣]/g, '');
+            entries.push([normalizedKey, child]);
+            if (child && typeof child === 'object') pending.push({ value: child, depth: depth + 1 });
+        });
+    }
+    const exactMatch = entries.find(([key]) => normalizedAliases.has(key));
+    if (exactMatch) return exactMatch[1];
+    if (exactOnly) return undefined;
+    const partialMatch = entries.find(([key]) => [...normalizedAliases].some(alias => key.includes(alias)
+        && (alias.length >= 4 || /[가-힣]/.test(alias))));
+    return partialMatch ? partialMatch[1] : undefined;
+}
+
+function getResidentialSnapshotEntries(data) {
+    const findValue = aliases => findSnapshotField(data, aliases);
+    const findHeating = () => findSnapshotField(data, ['난방'], true);
+    const withUnit = (value, unit) => {
+        const formatted = formatSnapshotValue(value).trimEnd();
+        if (formatted === '--' || formatted.endsWith(unit)) return formatted;
+        if (unit === '년차' && formatted.endsWith('년')) return `${formatted}차`;
+        return `${formatted}${unit}`;
+    };
+    const floorAreaRatio = withUnit(findValue(['용적률', 'floor_area_ratio', 'far']), '%');
+    const buildingCoverageRatio = withUnit(findValue(['건폐율', 'building_coverage_ratio', 'bcr']), '%');
+
+    return [
+        { label: '세대수', value: withUnit(findValue(['세대수', '총세대수', 'household_count', 'households', 'total_households', 'total_units']), '세대') },
+        { label: '주차', value: findValue(['주차', '주차대수', '주차가능대수', 'parking', 'parking_count', 'parking_spaces', 'parking_capacity']) },
+        { label: '난방방식', value: findHeating() },
+        { label: '관리비평균', value: withUnit(findValue(['관리비평균', '평균관리비', 'average_maintenance_fee', 'maintenance_fee_avg']), '원') },
+        { label: '현관구조', value: findValue(['현관구조', '현관유형', 'entrance_structure', 'entrance_type']) },
+        { label: '준공년차', value: withUnit(findValue(['준공년차', '준공연차', '건축연차', '연식', 'building_age', 'completion_age', 'years_since_completion']), '년차') },
+        { label: '용적률/건폐율', value: `${floorAreaRatio} / ${buildingCoverageRatio}` }
+    ];
+}
+
+function formatTransitCount(value) {
+    const formatted = formatSnapshotValue(value).trimEnd();
+    if (formatted === '--' || formatted.endsWith('개')) return formatted;
+    return `${formatted}개`;
+}
+
+function formatTransitDistance(value) {
+    const formatted = formatSnapshotValue(value).trimEnd();
+    const numericDistance = Number(formatted.replace(/,/g, '').replace(/\s*m$/i, ''));
+    if (Number.isFinite(numericDistance)) return `${Math.round(numericDistance).toLocaleString('ko-KR')}m`;
+    if (formatted === '--' || /m$/i.test(formatted)) return formatted;
+    return `${formatted}m`;
+}
+
+function formatTransitStationNames(value) {
+    if (value === null || value === undefined || value === '') return '--';
+    const names = [];
+    const appendNames = item => {
+        if (Array.isArray(item)) {
+            item.forEach(appendNames);
+            return;
+        }
+        if (item && typeof item === 'object') {
+            const stationName = findSnapshotField(item, ['역이름', '역명', 'station_name', 'name']);
+            if (stationName !== undefined && stationName !== item) {
+                appendNames(stationName);
+                return;
+            }
+            Object.values(item).forEach(appendNames);
+            return;
+        }
+        String(item).replace(/[\[\]']/g, '').split(/[,\n|·]/).map(name => name.trim()).filter(Boolean).forEach(name => names.push(name));
+    };
+    appendNames(value);
+    return names.length ? names.join(', ') : '--';
+}
+
+function renderComplexTransportationCard(data) {
+    const stationName = formatSnapshotValue(findSnapshotField(data, ['가까운역이름', 'nearest_station_name', 'closest_station_name']));
+    const stationDistance = formatSnapshotValue(findSnapshotField(data, ['가까운역거리m', '가까운역거리', 'nearest_station_distance_m', 'closest_station_distance_m']));
+    const stationLine = formatSnapshotValue(findSnapshotField(data, ['가까운역노선', '가까운역노선명', '가까운역노선정보', '가까운역호선', '가까운역호선명', '가까운역지하철노선', 'nearest_station_line', 'nearest_station_line_name', 'nearest_station_route', 'closest_station_line']));
+    const stationLabel = stationName === '--'
+        ? '--'
+        : `${stationName}${stationDistance === '--' ? '' : `(${formatTransitDistance(stationDistance)})`}`;
+    const thirtyMinuteCount = formatTransitCount(findSnapshotField(data, ['30분이내주요거점역', '30분이내주요거점역수', 'major_hub_count_30m']));
+    const thirtyMinuteNames = formatTransitStationNames(findSnapshotField(data, ['30분거점역이름', '30분이내거점역이름', 'major_hub_names_30m']));
+    const oneHourCount = formatTransitCount(findSnapshotField(data, ['1시간이내주요거점역', '1시간이내주요거점역수', 'major_hub_count_1h']));
+    const oneHourNames = formatTransitStationNames(findSnapshotField(data, ['1시간거점역이름', '1시간이내거점역이름', 'major_hub_names_1h']));
+
+    return `<section class="card mb-3 complex-transport-card"><div class="card-body py-3">
+        <h3 class="h6 mb-3">교통</h3>
+        ${renderComplexSnapshotScoreGraph(data, '교통총점', '교통총점')}
+        <div class="complex-transit-group">
+            <div class="complex-transit-heading"><span>가장 가까운 역</span><strong>${escapeHtml(stationLabel)}</strong></div>
+            ${stationLine !== '--' ? `<div class="complex-transit-subtext">${escapeHtml(stationLine)}</div>` : ''}
+        </div>
+        <div class="complex-transit-group">
+            <div class="complex-transit-heading"><span>30분 이내 도착 가능 주요역</span><strong>${escapeHtml(thirtyMinuteCount)}</strong></div>
+            <div class="complex-transit-station-list">${escapeHtml(thirtyMinuteNames)}</div>
+        </div>
+        <div class="complex-transit-group">
+            <div class="complex-transit-heading"><span>1시간 이내 도착 가능 주요역</span><strong>${escapeHtml(oneHourCount)}</strong></div>
+            <div class="complex-transit-station-list">${escapeHtml(oneHourNames)}</div>
+        </div>
+    </div></section>`;
+}
+
+function formatSnapshotValue(value) {
+    if (value === null || value === undefined || value === '') return '--';
+    if (Array.isArray(value)) return value.map(formatSnapshotValue).filter(item => item !== '--').join(' · ') || '--';
+    if (typeof value === 'object') {
+        return Object.values(value).map(formatSnapshotValue).filter(item => item !== '--').join(' · ') || '--';
+    }
+    if (typeof value === 'number') return Number.isFinite(value) ? value.toLocaleString('ko-KR', { maximumFractionDigits: 2 }) : '--';
+    return String(value);
+}
+
+function getInfrastructureCount(data, aliases) {
+    const value = findSnapshotField(data, aliases, true);
+    if (Array.isArray(value)) return value.length;
+    if (value && typeof value === 'object') {
+        const count = findSnapshotField(value, ['개수', '시설수', 'count', 'facility_count', 'nearby_count'], true);
+        return count === undefined ? undefined : count;
+    }
+    return value;
+}
+
+function formatInfrastructureCount(value) {
+    if (value === undefined || value === null || value === '') return '--';
+    const formatted = formatSnapshotValue(value).trimEnd();
+    if (formatted === '--' || formatted.endsWith('개')) return formatted;
+    return `${formatted}개`;
+}
+
+function formatInfrastructureScore(value) {
+    if (value === undefined || value === null || value === '') return '--';
+    const numericValue = typeof value === 'number' ? value : Number(String(value).replace(/,/g, '').trim());
+    return Number.isFinite(numericValue)
+        ? numericValue.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : formatSnapshotValue(value);
+}
+
+function renderComplexSnapshotScoreGraph(data, schemaField, label) {
+    const score = findSnapshotField(data, [schemaField], true);
+    const numericValue = typeof score === 'number' ? score : Number(String(score ?? '').replace(/,/g, '').trim());
+    const width = Number.isFinite(numericValue) ? Math.max(0, Math.min(100, numericValue)) : 0;
+    return `<div class="complex-infrastructure-score-chart">
+        <div class="complex-infrastructure-score-row is-measured">
+            <div class="complex-infrastructure-score-heading"><span>${label}</span><strong>${escapeHtml(formatInfrastructureScore(score))}</strong></div>
+            <div class="complex-infrastructure-score-track" role="progressbar" aria-label="${label}" aria-valuemin="0" aria-valuemax="100"${Number.isFinite(numericValue) ? ` aria-valuenow="${width}"` : ''}><span style="width:${width}%"></span></div>
+        </div>
+        <div class="complex-infrastructure-score-axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+    </div>`;
+}
+
+function renderComplexResidentialCard(data) {
+    const scoreGraph = renderComplexSnapshotScoreGraph(data, '주거총점', '주거총점');
+    const entries = getResidentialSnapshotEntries(data);
+    const items = entries.map(entry => `<div class="complex-infrastructure-facility"><span>${escapeHtml(entry.label)}</span><strong>${escapeHtml(formatSnapshotValue(entry.value))}</strong></div>`).join('');
+    return `<section class="card mb-3 complex-infrastructure-card"><div class="card-body py-3">
+        <h3 class="h6 mb-3">주거</h3>
+        ${scoreGraph}
+        <div class="complex-infrastructure-facilities">${items || '<div class="small text-muted py-2">표시할 정보가 없습니다.</div>'}</div>
+    </div></section>`;
+}
+
+function renderComplexInfrastructureCard(data) {
+    const infrastructureTotal = findSnapshotField(data, ['인프라총점'], true);
+
+    const scoreRows = [
+        { label: '인프라총점', value: infrastructureTotal, className: 'is-measured' }
+    ];
+    const facilities = [
+        { label: '3km 이내 백화점', count: ['3km이내백화점수', '3km이내백화점', '백화점3km', '백화점_3km', 'department_store_within_3km', 'department_store_3km'] },
+        { label: '5km 이내 아울렛/몰', count: ['5km이내아울렛몰수', '5km이내아울렛몰', '5km이내아울렛', '아울렛몰5km', '아울렛/몰5km', 'outlet_mall_within_5km', 'outlet_mall_5km'] },
+        { label: '1km 이내 대형마트', count: ['1km이내대형먀트수', '1km이내대형마트수', '1km이내대형마트', '대형마트1km', '대형마트_1km', 'large_mart_within_1km', 'large_mart_1km'] },
+        { label: '300m 이내 상권', count: ['300m이내상권', '상권300m', '상권_300m', 'commercial_district_within_300m', 'commercial_district_300m'], total: ['300m이내점포수', '300m이내상권총지점수', '300m이내총지점수', '상권총지점수', 'commercial_district_total_branches_300m', 'commercial_district_total_branches'] },
+        { label: '500m 이내 은행', count: ['500m이내은행수', '500m이내은행', '은행500m', '은행_500m', 'bank_within_500m', 'bank_500m'] },
+        { label: '500m 이내 병원', count: ['500m이내병원수', '500m이내병원', '병원500m', '병원_500m', 'hospital_within_500m', 'hospital_500m'] },
+        { label: '5km 이내 대형병원', count: ['5km이내대형병원수', '5km이내대형병원', '대형병원5km', '대형병원_5km', 'major_hospital_within_5km', 'major_hospital_5km'] },
+        { label: '500m 이내 공원', count: ['500m이내공원수', '500m이내공원', '공원500m', '공원_500m', 'park_within_500m', 'park_500m'] },
+        { label: '1km 이내 대형공원', count: ['800m이내대형공원수', '1km이내대형공원', '대형공원1km', '대형공원_1km', 'large_park_within_1km', 'large_park_1km'] },
+        { label: '3km 이내 혐오시설', count: ['3km이내혐오시설수', '3km이내혐오시설', '혐오시설3km', '혐오시설_3km', 'undesirable_facility_within_3km', 'undesirable_facility_3km'] }
+    ];
+    const scoreChart = scoreRows.map(row => {
+        const numericValue = typeof row.value === 'number' ? row.value : Number(String(row.value ?? '').replace(/,/g, '').trim());
+        const width = Number.isFinite(numericValue) ? Math.max(0, Math.min(100, numericValue)) : 0;
+        return `<div class="complex-infrastructure-score-row ${row.className}">
+            <div class="complex-infrastructure-score-heading"><span>${row.label}</span><strong>${escapeHtml(formatInfrastructureScore(row.value))}</strong></div>
+            <div class="complex-infrastructure-score-track" role="progressbar" aria-label="${row.label}" aria-valuemin="0" aria-valuemax="100"${Number.isFinite(numericValue) ? ` aria-valuenow="${width}"` : ''}><span style="width:${width}%"></span></div>
+        </div>`;
+    }).join('');
+    const facilityRows = facilities.map(facility => {
+        const count = formatInfrastructureCount(getInfrastructureCount(data, facility.count));
+        const total = facility.total ? getInfrastructureCount(data, facility.total) : undefined;
+        const value = facility.total
+            ? `${count}${total === undefined || total === null || total === '' ? '' : `(총 ${formatInfrastructureCount(total)} 지점)`}`
+            : count;
+        return `<div class="complex-infrastructure-facility"><span>${facility.label}</span><strong>${escapeHtml(value)}</strong></div>`;
+    }).join('');
+
+    return `<section class="card mb-3 complex-infrastructure-card"><div class="card-body py-3">
+        <h3 class="h6 mb-3">인프라</h3>
+        <div class="complex-infrastructure-score-chart">
+            ${scoreChart}<div class="complex-infrastructure-score-axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+        </div>
+        <div class="complex-infrastructure-facilities">${facilityRows}</div>
+    </div></section>`;
+}
+
+function formatEducationDistance(value) {
+    if (value === undefined || value === null || value === '') return '--';
+    const distance = typeof value === 'number'
+        ? value
+        : Number(String(value).replace(/,/g, '').trim().replace(/\s*m$/i, ''));
+    if (!Number.isFinite(distance) || distance < 0) return formatSnapshotValue(value);
+    const minimumDistance = Math.max(10, Math.round(distance - 50));
+    const maximumDistance = Math.round(distance + 50);
+    return `${minimumDistance}~${maximumDistance}m`;
+}
+
+function formatEducationAchievement(value) {
+    if (value === undefined || value === null || value === '') return '--';
+    const formatted = formatSnapshotValue(value).trim();
+    if (formatted === '--' || /%$/.test(formatted)) return formatted;
+    const numericValue = Number(formatted.replace(/,/g, ''));
+    return Number.isFinite(numericValue)
+        ? `${numericValue.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })}%`
+        : formatted;
+}
+
+function renderComplexEducationCard(data) {
+    const scoreGraph = renderComplexSnapshotScoreGraph(data, '학군총점', '학군총점');
+    const entries = [
+        { label: '초등학교 거리', value: formatEducationDistance(findSnapshotField(data, ['초등학교거리'], true)) },
+        { label: '중학교 보통 학력 이상', value: formatEducationAchievement(findSnapshotField(data, ['중학교학업성취도'], true)) }
+    ];
+    [
+        { label: '300m 이내 학원가', nearby: ['500m이내학원가'], total: ['500m이내학원수'] },
+        { label: '1km 이내 학원가', nearby: ['1km이내학원가'], total: ['1km이내학원수'] }
+    ].forEach(academy => {
+        const nearby = getInfrastructureCount(data, academy.nearby);
+        const total = getInfrastructureCount(data, academy.total);
+        const nearbyLabel = formatInfrastructureCount(nearby);
+        const totalLabel = total === undefined || total === null || total === ''
+            ? ''
+            : `(총 ${formatInfrastructureCount(total)} 학원)`;
+        entries.push({ label: academy.label, value: `${nearbyLabel}${totalLabel}` });
+    });
+
+    const entertainmentCounts = [
+        getInfrastructureCount(data, ['300m이내모텔']),
+        getInfrastructureCount(data, ['300m이내유흥주점']),
+        getInfrastructureCount(data, ['300m이내단란주점'])
+    ].filter(value => value !== undefined && value !== null && value !== '');
+    const numericEntertainmentCounts = entertainmentCounts
+        .map(value => Number(String(value).replace(/[\s,개]/g, '')))
+        .filter(Number.isFinite);
+    entries.push({
+        label: '300m 이내 유흥시설/모텔',
+        value: numericEntertainmentCounts.length ? formatInfrastructureCount(numericEntertainmentCounts.reduce((total, count) => total + count, 0)) : '--'
+    });
+
+    const items = entries.map(entry => `<div class="complex-infrastructure-facility"><span>${escapeHtml(entry.label)}</span><strong>${escapeHtml(entry.value)}</strong></div>`).join('');
+    return `<section class="card mb-3 complex-infrastructure-card"><div class="card-body py-3">
+        <h3 class="h6 mb-3">교육</h3>
+        ${scoreGraph}
+        <div class="complex-infrastructure-facilities">${items}</div>
+    </div></section>`;
+}
+
+function getSnapshotCategories(data) {
+    const categories = [
+        { id: 'residence', label: '주거', pattern: /residen|housing|household|apartment|maintenance|parking|주거|주택|세대|관리비|주차/i, entries: [] },
+        { id: 'traffic', label: '교통', pattern: /traffic|transit|transport|subway|station|rail|bus|교통|대중교통|지하철|역세권|버스|철도/i, entries: [] },
+        { id: 'infrastructure', label: '인프라', pattern: /infrastructure|infra|amenit|facilit|convenience|park|hospital|market|생활|인프라|편의|공원|병원|마트|상권/i, entries: [] },
+        { id: 'education', label: '교육', pattern: /education|school|academy|academic|학군|교육|학교|학원/i, entries: [] }
+    ];
+    const excluded = /price|sales?|trade|rent|jeonse|transaction|score|rating|grade|achievement|가격|시세|매매|전세|실거래|점수|평점|등급|성취도/i;
+
+    function visit(value, path, depth) {
+        if (value === null || value === undefined || value === '' || depth > 7) return;
+        if (Array.isArray(value)) {
+            if (value.every(item => item === null || typeof item !== 'object')) {
+                const category = categories.find(item => item.pattern.test(path));
+                if (category && !excluded.test(path)) category.entries.push({ label: path, value });
+                return;
+            }
+            value.forEach((item, index) => visit(item, `${path} ${index + 1}`, depth + 1));
+            return;
+        }
+        if (typeof value === 'object') {
+            Object.entries(value).forEach(([key, child]) => visit(child, path ? `${path}.${key}` : key, depth + 1));
+            return;
+        }
+
+        if (!path || excluded.test(path)) return;
+        const category = categories.find(item => item.pattern.test(path));
+        if (category) category.entries.push({ label: path, value });
+    }
+
+    visit(data, '', 0);
+    return categories;
+}
+
+function formatSnapshotPath(path) {
+    return path.replace(/\s\d+(?=\.|$)/g, '').split('.').map(part => part.replace(/[_-]/g, ' ')).join(' · ');
+}
+
+function renderComplexTradeAction() {
+    const dealPrice = selectedComplexDealHistory?.deal_price;
+    const numericPrice = Number(dealPrice);
+    const priceLabel = selectedComplexDealHistoryStatus === 'loading'
+        ? '가격 확인 중...'
+        : Number.isFinite(numericPrice) && dealPrice !== null && dealPrice !== undefined && dealPrice !== ''
+            ? `${numericPrice.toLocaleString('ko-KR')}원`
+            : '--';
+    const purchaseEnabled = selectedComplexSupplyStatus === 'available';
+    const purchaseButtonLabel = purchaseEnabled
+        ? '매수 가능'
+        : selectedComplexSupplyStatus === 'unavailable'
+            ? '매수 불가'
+            : selectedComplexSupplyStatus === 'error'
+                ? '매수 상태 확인 불가'
+                : '매수 가능 여부 확인 중...';
+    const purchaseButtonClass = purchaseEnabled ? 'btn-primary' : 'btn-outline-secondary';
+    const purchaseButtonDisabled = purchaseEnabled ? '' : 'disabled';
+    const purchaseButtonAction = purchaseEnabled ? 'onclick="viewListings()"' : '';
+
+    return `<div class="complex-trade-summary">
+                <div class="complex-trade-price">가격 : ${priceLabel}</div>
+                <div class="d-grid">
+                    <button class="btn ${purchaseButtonClass}" ${purchaseButtonDisabled} ${purchaseButtonAction}>${purchaseButtonLabel}</button>
+                </div>
+            </div>`;
+}
+
+function watchComplexDealHistory(complexId, selectionSequence) {
+    if (selectedComplexDealHistoryUnsubscribe) {
+        selectedComplexDealHistoryUnsubscribe();
+        selectedComplexDealHistoryUnsubscribe = null;
+    }
+
+    selectedComplexDealHistory = null;
+    selectedComplexDealHistoryStatus = 'loading';
+    const documentId = String(complexId || '').trim();
+    if (!documentId) {
+        selectedComplexDealHistoryStatus = 'missing';
+        return;
+    }
+
+    const masterRef = firebase.firestore().collection('PLAY_PROPERTY_MASTER').doc(documentId);
+    let initialDealHistoryRequest = null;
+    const loadInitialDealHistory = () => {
+        if (!initialDealHistoryRequest) {
+            initialDealHistoryRequest = masterRef.get().then(snapshot => {
+                if (!snapshot.exists) return null;
+                const master = snapshot.data() || {};
+                if (master.initial_price === undefined && master.initial_price_date === undefined) return null;
+                return {
+                    buyer: '없음',
+                    seller: '없음',
+                    deal_at: master.initial_price_date ?? null,
+                    deal_price: master.initial_price ?? null
+                };
+            });
+        }
+        return initialDealHistoryRequest;
+    };
+
+    selectedComplexDealHistoryUnsubscribe = masterRef.collection('deal_history')
+        .orderBy('deal_at_sort', 'desc')
+        .limit(1)
+        .onSnapshot(async snapshot => {
+            if (selectionSequence !== complexSelectionSequence || selectedComplexId !== complexId) return;
+            try {
+                const latestDeal = snapshot.empty ? await loadInitialDealHistory() : snapshot.docs[0].data();
+                if (selectionSequence !== complexSelectionSequence || selectedComplexId !== complexId) return;
+                selectedComplexDealHistory = latestDeal;
+                selectedComplexDealHistoryStatus = latestDeal ? 'loaded' : 'missing';
+            } catch (error) {
+                console.warn(`Failed to load deal history for complex ${documentId}`, error);
+                selectedComplexDealHistory = null;
+                selectedComplexDealHistoryStatus = 'error';
+            }
+            updateCommandPanel();
+        }, error => {
+            if (selectionSequence !== complexSelectionSequence || selectedComplexId !== complexId) return;
+            console.warn(`Failed to watch deal history for complex ${documentId}`, error);
+            loadInitialDealHistory().then(initialDeal => {
+                if (selectionSequence !== complexSelectionSequence || selectedComplexId !== complexId) return;
+                selectedComplexDealHistory = initialDeal;
+                selectedComplexDealHistoryStatus = initialDeal ? 'loaded' : 'error';
+                updateCommandPanel();
+            }).catch(fallbackError => {
+                console.warn(`Failed to load initial price for complex ${documentId}`, fallbackError);
+                selectedComplexDealHistoryStatus = 'error';
+                updateCommandPanel();
+            });
+        });
+}
+
+function renderComplexSnapshotCard() {
+    if (selectedComplexSnapshotStatus === 'loading') return '<div class="text-muted small">2026년 9월 단지 스냅샷을 불러오는 중...</div>';
+    if (selectedComplexSnapshotStatus === 'error') return '<div class="text-muted small">단지 스냅샷을 불러오지 못했습니다.</div>';
+    if (selectedComplexSnapshotStatus !== 'loaded') return '<div class="text-muted small">2026년 9월 단지 스냅샷 정보가 없습니다.</div>';
+
+    const categories = getSnapshotCategories(selectedComplexSnapshot);
+const sections = categories.map(category => {
+        if (category.id === 'residence') return renderComplexResidentialCard(selectedComplexSnapshot);
+        if (category.id === 'traffic') return renderComplexTransportationCard(selectedComplexSnapshot);
+        if (category.id === 'infrastructure') return renderComplexInfrastructureCard(selectedComplexSnapshot);
+        if (category.id === 'education') return renderComplexEducationCard(selectedComplexSnapshot);
+        const items = category.entries.length
+            ? category.entries.map(entry => `<div class="d-flex justify-content-between align-items-start gap-3 py-2 border-bottom"><span class="small text-muted">${escapeHtml(formatSnapshotPath(entry.label))}</span><strong class="small text-end">${escapeHtml(formatSnapshotValue(entry.value))}</strong></div>`).join('')
+            : '<div class="small text-muted py-2">표시할 정보가 없습니다.</div>';
+        return `<section class="card mb-3 bg-light border-0"><div class="card-body py-2"><h3 class="h6 mb-1">${category.label}</h3>${items}</div></section>`;
+    }).join('');
+    return sections;
 }
 
 async function loadComplexPrimarySupply(properties, seasonId) {
@@ -1272,7 +1739,7 @@ function positionDynamicContextPanel() {
 
     const panelWidth = panel.offsetWidth;
     const panelHeight = panel.offsetHeight;
-    const preferredLeft = mapWidth / 2 + 54;
+    const preferredLeft = mapWidth / 2 + 74;
     const maxLeft = Math.max(12, mapWidth - panelWidth - 12);
     const preferredTop = (mapHeight - panelHeight) / 2;
     const maxTop = Math.max(12, mapHeight - panelHeight - 12);
@@ -1286,6 +1753,18 @@ function positionDynamicContextPanel() {
     panel.style.top = `${Math.min(Math.max(preferredTop, 12), maxTop)}px`;
 }
 
+function fitDynamicContextPanelTitle() {
+    const title = document.getElementById('panel-title');
+    if (!title || title.clientWidth === 0) return;
+
+    let fontSize = 18;
+    title.style.fontSize = `${fontSize}px`;
+    while (title.scrollWidth > title.clientWidth && fontSize > 10) {
+        fontSize -= 1;
+        title.style.fontSize = `${fontSize}px`;
+    }
+}
+
 function showDynamicContextPanel() {
     const panel = document.getElementById('dynamic-context');
     if (!panel || dynamicContextDismissed) return;
@@ -1296,6 +1775,57 @@ function showDynamicContextPanel() {
         positionDynamicContextPanel();
         panel.classList.add('is-visible');
     });
+}
+
+function crossFadeDynamicContextPanel() {
+    const panel = document.getElementById('dynamic-context');
+    const heading = panel?.querySelector('.map-context-panel-heading');
+    const fixedSummary = panel?.querySelector('#panel-fixed-summary');
+    const content = panel?.querySelector('#panel-content');
+    if (!panel || panel.hidden || !panel.classList.contains('is-visible') || !heading || !fixedSummary || !content) return false;
+
+    if (dynamicContextCrossfadeTimer) {
+        window.clearTimeout(dynamicContextCrossfadeTimer);
+        dynamicContextCrossfadeTimer = null;
+    }
+    panel.querySelector('.map-context-panel-transition-layer')?.remove();
+    heading.classList.remove('is-crossfade-incoming');
+    fixedSummary.classList.remove('is-crossfade-incoming');
+    content.classList.remove('is-crossfade-incoming');
+
+    const outgoingLayer = document.createElement('div');
+    outgoingLayer.className = 'map-context-panel-transition-layer';
+    outgoingLayer.setAttribute('aria-hidden', 'true');
+    outgoingLayer.inert = true;
+    [heading, fixedSummary, content].forEach(source => {
+        const copy = source.cloneNode(true);
+        copy.removeAttribute('id');
+        copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+        copy.classList.remove('is-crossfade-incoming');
+        if (source === content) {
+            copy.classList.add('map-context-panel-transition-content');
+            copy.scrollTop = source.scrollTop;
+        }
+        outgoingLayer.appendChild(copy);
+    });
+    panel.appendChild(outgoingLayer);
+    heading.classList.add('is-crossfade-incoming');
+    fixedSummary.classList.add('is-crossfade-incoming');
+    content.classList.add('is-crossfade-incoming');
+    void outgoingLayer.offsetWidth;
+
+    window.requestAnimationFrame(() => {
+        if (!outgoingLayer.isConnected) return;
+        outgoingLayer.classList.add('is-fading');
+        heading.classList.remove('is-crossfade-incoming');
+        fixedSummary.classList.remove('is-crossfade-incoming');
+        content.classList.remove('is-crossfade-incoming');
+    });
+    dynamicContextCrossfadeTimer = window.setTimeout(() => {
+        outgoingLayer.remove();
+        dynamicContextCrossfadeTimer = null;
+    }, DYNAMIC_CONTEXT_CROSSFADE_DURATION_MS);
+    return true;
 }
 
 function hideDynamicContextPanel() {
@@ -1358,15 +1888,32 @@ async function selectComplex(complexName, lat, lng, complexId, regionName, prese
         && Math.abs(mapCenter.lng() - lng) < 0.000001
         && (preserveZoom || map.getZoom() === 15);
     dynamicContextMapReady = isAlreadyCentered;
-    hideDynamicContextPanel();
+    const isVisibleComplexSwitch = currentContext === 'COMPLEX'
+        && selectedComplex
+        && selectedComplex !== complexName
+        && !dynamicContextDismissed
+        && crossFadeDynamicContextPanel();
+    if (!isVisibleComplexSwitch) hideDynamicContextPanel();
     if (selectedComplex && selectedComplex !== complexName) delete complexDataMap[selectedComplex];
     currentContext = 'COMPLEX';
     selectedComplex = complexName;
     selectedComplexId = complexId ?? null;
+    watchComplexDealHistory(selectedComplexId, selectionSequence);
+    selectedComplexSnapshot = null;
+    selectedComplexSnapshotStatus = 'loading';
     selectedRegion = regionName || selectedRegion;
     selectedListing = null;
     selectedComplexLoadError = null;
     delete complexDataMap[complexName];
+
+    loadComplexSnapshot(selectedComplexId).then(snapshot => {
+        if (selectionSequence !== complexSelectionSequence || currentContext !== 'COMPLEX' || selectedComplex !== complexName) return;
+        selectedComplexSnapshot = snapshot;
+        selectedComplexSnapshotStatus = snapshot?.[COMPLEX_SNAPSHOT_LOAD_ERROR]
+            ? 'error'
+            : snapshot ? 'loaded' : 'missing';
+        updateCommandPanel();
+    });
 
     const center = selectedComplexMapPosition;
     if (preserveZoom) map.panTo(center, { duration: LARGE_MARKER_PAN_DURATION_MS });
@@ -2736,17 +3283,19 @@ function updateCommandPanel() {
 
     const headerEl = document.getElementById('context-header');
     const titleEl = document.getElementById('panel-title');
-    const actionEl = document.getElementById('action-area');
+    const summaryEl = document.getElementById('panel-summary-content');
+    const actionEl = document.getElementById('complex_info_area');
+    summaryEl.innerHTML = '';
 
     if (isTimeSlipEnabled() && currentContext === 'REGION_EXPLORE') {
-        headerEl.textContent = '지역탐색';
+        if (headerEl) headerEl.textContent = '지역탐색';
         titleEl.textContent = getActiveRegionLabel();
         actionEl.innerHTML = `<div class="mb-3">Period ${currentSeasonState?.current_simulation_period ?? '—'}</div><div class="alert alert-secondary">시장 가격·거래량 집계는 backend에 제공되지 않습니다.</div><div>최근 참가자 활동</div>${renderActivityMarkup(liveActivityRecords.slice(0, 10))}`;
         return;
     }
 
     if (currentContext === 'WORLD') {
-        headerEl.innerHTML = LANG.WORLD;
+        if (headerEl) headerEl.innerHTML = LANG.WORLD;
         titleEl.innerHTML = `${LANG.WORLD} 개요`;
         
         let html = `<p class="text-muted small">탐험할 지역을 선택하세요.</p>`;
@@ -2756,7 +3305,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'REGION_EXPLORE') {
-        headerEl.innerHTML = LANG.REGION + ` 탐색`;
+        if (headerEl) headerEl.innerHTML = LANG.REGION + ` 탐색`;
         titleEl.innerHTML = `수도권 주요 지역`;
         
         let html = `
@@ -2786,7 +3335,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'MY_WORLD') {
-        headerEl.innerHTML = `내 자산 (MY WORLD)`;
+        if (headerEl) headerEl.innerHTML = `내 자산 (MY WORLD)`;
         titleEl.innerHTML = `자산 현황`;
         
         let html = `
@@ -2812,7 +3361,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'PEOPLE') {
-        headerEl.innerHTML = `다른 참가자 (PEOPLE)`;
+        if (headerEl) headerEl.innerHTML = `다른 참가자 (PEOPLE)`;
         titleEl.innerHTML = `참가자 목록 및 활동`;
         
         let html = `
@@ -2832,7 +3381,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'SEASON') {
-        headerEl.innerHTML = `시즌랭킹 (SEASON)`;
+        if (headerEl) headerEl.innerHTML = `시즌랭킹 (SEASON)`;
         titleEl.innerHTML = `시즌 종합 랭킹`;
         
         let html = `
@@ -2854,7 +3403,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'GUIDE') {
-        headerEl.innerHTML = `가이드 (SYSTEM / GUIDE)`;
+        if (headerEl) headerEl.innerHTML = `가이드 (SYSTEM / GUIDE)`;
         titleEl.innerHTML = `PLAY 이용 가이드`;
         
         let html = `
@@ -2878,7 +3427,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'REGION') {
-        headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; ${selectedRegion}`;
+        if (headerEl) headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; ${selectedRegion}`;
         titleEl.innerHTML = `${selectedRegion} ${LANG.REGION}`;
         
         const complexes = visibleComplexMarkers.slice(0, 50);
@@ -2902,10 +3451,16 @@ function updateCommandPanel() {
         });
         
     } else if (currentContext === 'COMPLEX') {
-        headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; <a href="#" onclick="goBackToRegion()" class="text-decoration-none">${selectedRegion}</a> &gt; ${selectedComplex}`;
+        if (headerEl) headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; <a href="#" onclick="goBackToRegion()" class="text-decoration-none">${selectedRegion}</a> &gt; ${selectedComplex}`;
         titleEl.innerHTML = `${selectedComplex}`;
         
         const props = complexDataMap[selectedComplex];
+        const address = Array.isArray(props) && props.length
+            ? props[0].legal_dong_address || '주소 확인 불가'
+            : '주소 확인 불가';
+        summaryEl.innerHTML = `<p class="complex-summary-address text-muted small">${escapeHtml(address)}</p>${renderComplexTradeAction()}`;
+        let html = '';
+
         if (!Array.isArray(props)) {
             if (selectedComplexLoadError) {
                 actionEl.innerHTML = '<div class="alert alert-danger">단지 정보를 불러오지 못했습니다. <button class="btn btn-sm btn-outline-danger ms-2" data-retry-complex>다시 시도</button></div>';
@@ -2919,65 +3474,19 @@ function updateCommandPanel() {
             return;
         }
         if (!props.length) {
-            actionEl.innerHTML = '<div class="alert alert-warning">이 단지에 등록된 매물 정보가 없습니다.</div>';
+            actionEl.innerHTML = '<div class="alert alert-warning">이 단지에 등록된 매물 정보가 없습니다.</div>' + renderComplexSnapshotCard();
             return;
         }
-        const tradableProperties = props.filter(property => property.property_status === 'NORMAL');
-        const tradableCount = tradableProperties.length;
-        const listingPrices = tradableProperties.map(property => Number(property.initial_price)).filter(price => Number.isFinite(price) && price > 0);
-        const minListingPrice = listingPrices.length ? Math.min(...listingPrices) : null;
-        const maxListingPrice = listingPrices.length ? Math.max(...listingPrices) : null;
-        const pricePerPyeong = tradableProperties.map(property => {
-            const price = Number(property.initial_price);
-            const area = Number(property.representative_area_sqm);
-            return Number.isFinite(price) && price > 0 && Number.isFinite(area) && area > 0
-                ? price / area * 3.305785
-                : null;
-        }).filter(price => price !== null);
-        const averagePricePerPyeong = pricePerPyeong.length
-            ? pricePerPyeong.reduce((sum, price) => sum + price, 0) / pricePerPyeong.length
-            : null;
-        const recentSalesInfo = tradableProperties.find(property => property.sales_info_raw)?.sales_info_raw;
         
-        let html = `<p class="text-muted small">${props[0].legal_dong_address || '주소 확인 불가'}</p>`;
         
-        html += `<div class="card mb-3 bg-light border-0">
-                    <div class="card-body py-2">
-                        <div class="d-flex justify-content-between mb-1"><span>총 세대수</span> <strong>${props[0].household_count || '확인 불가'}</strong></div>
-                        <div class="d-flex justify-content-between mb-1"><span>현재 등록 매물</span> <strong>${tradableCount}건</strong></div>
-                        <div class="d-flex justify-content-between"><span>대표 면적</span> <strong>${props[0].representative_area_sqm}㎡</strong></div>
-                    </div>
-                 </div>`;
-        
-        const priceRangeLabel = minListingPrice !== null
-            ? `${formatPrice(minListingPrice)} ~ ${formatPrice(maxListingPrice)}`
-            : '확인 불가';
-        const averagePricePerPyeongLabel = averagePricePerPyeong !== null
-            ? formatPrice(averagePricePerPyeong)
-            : '확인 불가';
-        const recentSalesInfoLabel = recentSalesInfo ? escapeHtml(String(recentSalesInfo)) : '확인 불가';
-        html += `<div class="card mb-3 bg-light border-0">
-                    <div class="card-body py-2">
-                        <div class="d-flex justify-content-between mb-1"><span>등록 매물 가격대</span> <strong>${priceRangeLabel}</strong></div>
-                        <div class="d-flex justify-content-between mb-1"><span>평당 평균 등록가</span> <strong>${averagePricePerPyeongLabel}</strong></div>
-                        <div class="d-flex justify-content-between gap-2"><span>최근 실거래 정보</span> <strong class="text-end">${recentSalesInfoLabel}</strong></div>
-                    </div>
-                 </div>`;
+        html += renderComplexSnapshotCard();
 
-        const purchaseEnabled = selectedComplexSupplyStatus === 'available';
-        const purchaseButtonLabel = purchaseEnabled
-            ? '매수 가능'
-            : selectedComplexSupplyStatus === 'unavailable'
-                ? '매수 불가'
-                : selectedComplexSupplyStatus === 'error'
-                    ? '매수 상태 확인 불가'
-                    : '매수 가능 여부 확인 중...';
-        const purchaseButtonClass = purchaseEnabled ? 'btn-primary' : 'btn-outline-secondary';
-        const purchaseButtonDisabled = purchaseEnabled ? '' : 'disabled';
-        const purchaseButtonAction = purchaseEnabled ? 'onclick="viewListings()"' : '';
-        html += `<div class="d-grid gap-2 mb-3">
-                    <button class="btn ${purchaseButtonClass}" ${purchaseButtonDisabled} ${purchaseButtonAction}>${purchaseButtonLabel}</button>
-                 </div>`;
+
+
+
+
+
+        
                  
 
         actionEl.innerHTML = html;
@@ -2986,7 +3495,7 @@ function updateCommandPanel() {
         // Research Logging Hook: Listing 노출
         console.log(`[RESEARCH_LOGGING_HOOK] EXPOSURE: Listings for ${selectedComplex} displayed`);
         
-        headerEl.innerHTML = `<a href="#" onclick="goBackToRegion()" class="text-decoration-none">${selectedRegion}</a> &gt; <a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; ${LANG.LISTING}`;
+        if (headerEl) headerEl.innerHTML = `<a href="#" onclick="goBackToRegion()" class="text-decoration-none">${selectedRegion}</a> &gt; <a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; ${LANG.LISTING}`;
         titleEl.innerHTML = `${selectedComplex} ${LANG.LISTING}`;
         
         const props = complexDataMap[selectedComplex] || [];
@@ -3033,7 +3542,7 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'LISTING_DETAIL') {
-        headerEl.innerHTML = `<a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; <a href="#" onclick="goBackToListing()" class="text-decoration-none">${LANG.LISTING}</a> &gt; ${LANG.LISTING_DETAIL}`;
+        if (headerEl) headerEl.innerHTML = `<a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; <a href="#" onclick="goBackToListing()" class="text-decoration-none">${LANG.LISTING}</a> &gt; ${LANG.LISTING_DETAIL}`;
         titleEl.innerHTML = `${LANG.LISTING_DETAIL}`;
         
         const p = selectedListing;

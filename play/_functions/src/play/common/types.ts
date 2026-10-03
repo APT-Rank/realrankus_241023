@@ -32,6 +32,8 @@ export interface PlaySeason {
   created_at: FirebaseFirestore.Timestamp;
   updated_at: FirebaseFirestore.Timestamp;
   started_at?: FirebaseFirestore.Timestamp;
+  simulation_started_at?: FirebaseFirestore.Timestamp;
+  activated_at?: FirebaseFirestore.Timestamp;
   closed_at?: FirebaseFirestore.Timestamp;
 }
 
@@ -63,6 +65,7 @@ export interface PlayPlayerAsset {
   annual_income?: number;
   monthly_income?: number;
   monthly_living_expense?: number;
+  participation_start_period?: number;
   cumulative_inflation_factor?: number;
   monthly_loan_payment?: number;
   
@@ -164,7 +167,9 @@ export interface PlayDecisionLog {
   transaction_id?: string;
   before_cash?: number;  
   income?: number;  
-  living_expense?: number;  
+  living_expense?: number;
+  monthly_loan_payment?: number;
+  annual_income?: number;
   after_cash?: number;  
   before_net_worth?: number;  
   after_net_worth?: number;

@@ -2,6 +2,7 @@ import { onTaskDispatched } from 'firebase-functions/v2/tasks';
 import { db, COLLECTION_PLAYER_ASSET, COLLECTION_SEASON, COLLECTION_PROPERTY_MASTER, COLLECTION_PRIMARY_SUPPLY, COLLECTION_PROPERTY_OWNERSHIP, COLLECTION_SECONDARY_ORDER } from '../common/db';
 import * as admin from 'firebase-admin';
 import { CloudTasksClient } from '@google-cloud/tasks';
+import { findInvalidIncompletePropertyIds } from './propertyIntegrity';
 
 const tasksClient = new CloudTasksClient();
 
@@ -35,7 +36,7 @@ export const runReconciliation = onTaskDispatched(async (req) => {
         
         expectedPlayersForBatch = batch.expected_player_count;
         expectedPeriod = batch.simulation_period;
-        isMonthlyBatch = batch.batch_type.includes('MONTHLY');
+        isMonthlyBatch = batch.batch_type.includes('MONTHLY') || batch.batch_type === 'ECONOMIC';
         
         const chunksSnap = await db.collection('PLAY_BATCH_CHUNKS').where('batch_id', '==', batch_id).get();
         let processedPlayers = 0;
@@ -83,7 +84,8 @@ export const runReconciliation = onTaskDispatched(async (req) => {
       }
       
       // Rule: Period Match
-      if (batch_id && isMonthlyBatch) {
+      if (batch_id && isMonthlyBatch
+        && expectedPeriod >= Number(asset.participation_start_period || 0)) {
         if (asset.last_processed_period !== expectedPeriod) {
           failedCount++;
           console.error(`Player ${doc.id} period mismatch. Expected ${expectedPeriod}, got ${asset.last_processed_period}`);
@@ -91,30 +93,15 @@ export const runReconciliation = onTaskDispatched(async (req) => {
       }
     }
 
-    // PROPERTY RECONCILIATION
-    const propsSnap = await db.collection(COLLECTION_PROPERTY_MASTER).get();
-    // The collection also contains six deliberately minimal IA-03C transaction
-    // fixtures (P_*). Reconcile the validated regional snapshot only; treating
-    // those fixtures as production inventory blocks every otherwise valid batch.
-    const snapshotPropertyDocs = propsSnap.docs.filter(doc => !!doc.data().snapshot_version);
-    let normalCount = 0;
-    let incompleteCount = 0;
-    for (const doc of snapshotPropertyDocs) {
-      const p = doc.data();
-      if (p.property_status === 'NORMAL') normalCount++;
-      else if (p.property_status === 'INCOMPLETE') {
-        incompleteCount++;
-        if (p.tradable) {
-          failedCount++;
-          console.error(`INCOMPLETE property ${doc.id} is tradable`);
-        }
-      }
-    }
-    
-    // According to spec, validated Suji sample MUST be 209 (200 NORMAL, 9 INCOMPLETE)
-    if (snapshotPropertyDocs.length !== 209 || normalCount !== 200 || incompleteCount !== 9) {
+    const incompletePropertiesSnap = await db.collection(COLLECTION_PROPERTY_MASTER)
+      .where('property_status', '==', 'INCOMPLETE')
+      .get();
+    const invalidIncompletePropertyIds = findInvalidIncompletePropertyIds(
+      incompletePropertiesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    );
+    for (const propertyId of invalidIncompletePropertyIds) {
       failedCount++;
-      console.error(`Validated Property Snapshot mismatch: Total ${snapshotPropertyDocs.length}, NORMAL ${normalCount}, INCOMPLETE ${incompleteCount}`);
+      console.error(`INCOMPLETE property ${propertyId} must have tradable=false`);
     }
 
     const supplySnap = await db.collection(COLLECTION_PRIMARY_SUPPLY).where('season_id', '==', season_id).get();

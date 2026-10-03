@@ -5,6 +5,7 @@ export { createSeason } from './play/season/createSeason';
 export { joinSeason } from './play/season/joinSeason';
 export { getPlayerState } from './play/season/getPlayerState';
 export { advanceSeasonClock } from './play/season/advanceSeasonClock';
+export { startActiveSeasonClocks } from './play/season/startActiveSeasonClocks';
 
 export { createEconomicBatch, createEconomicBatchTask } from './play/batch/createEconomicBatch';
 export { dispatchBatchChunks, dispatchBatchChunksTask } from './play/batch/dispatchBatchChunks';
@@ -19,4 +20,5 @@ export { controlSimulation } from './play/admin/controlSimulation';
 export { purchasePrimaryProperty } from './play/market/purchasePrimaryProperty';
 export { createSecondaryListing } from './play/market/createSecondaryListing';
 export { executeSecondaryTransaction } from './play/market/executeSecondaryTransaction';
+export { recordComplexDealHistory } from './play/market/recordComplexDealHistory';
 // export { createSecondaryOrder, cancelSecondaryOrder, matchSecondaryOrder } from './play/market/secondaryMarket';

@@ -6,6 +6,7 @@ import * as admin from 'firebase-admin';
 import { CloudTasksClient } from '@google-cloud/tasks';
 import { verifyInternalTaskRequest } from '../common/internalAuth';
 import { normalizeAnnualRate } from './economicEngine';
+import { getElapsedSimulationPeriods, getSeasonStartTimestamp, SIMULATION_PERIODS_PER_SEASON } from '../season/periodSchedule';
 
 export const createEconomicBatch = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'User must be logged in');
@@ -27,7 +28,7 @@ export const createEconomicBatchTask = onRequest(async (request, response) => {
 });
 
 async function createEconomicBatchCore(data: any, isInternalTask: boolean) {
-  const { season_id, batch_type, allow_paused_clock = false } = data || {};
+  const { season_id, batch_type, allow_paused_clock = false, expected_simulation_period } = data || {};
   if (!season_id || !batch_type) {
     throw new HttpsError('invalid-argument', 'Missing fields');
   }
@@ -65,7 +66,30 @@ async function createEconomicBatchCore(data: any, isInternalTask: boolean) {
       throw new HttpsError('unavailable', 'Transaction Paused');
     }
 
-    const currentPeriod = season.current_simulation_period;
+    const storedPeriod = Number(season.current_simulation_period);
+    const recoveredPeriod = Number.isInteger(season.last_successful_period) && Number(season.last_successful_period) >= 0
+      ? Number(season.last_successful_period) + 1
+      : 0;
+    const currentPeriod = Number.isInteger(storedPeriod) && storedPeriod >= 0 ? storedPeriod : recoveredPeriod;
+
+    if (expected_simulation_period !== undefined && Number(expected_simulation_period) !== currentPeriod) {
+      return { batch_id: '', status: 'STALE_PERIOD' };
+    }
+
+    const isWallClockSeason = season_id !== 'test_hero_season'
+      && !(Number.isFinite(season.test_mode_speed) && Number(season.test_mode_speed) > 0);
+    if (isInternalTask && !allow_paused_clock && isWallClockSeason) {
+      const startTimestamp = getSeasonStartTimestamp(season);
+      const elapsedPeriods = getElapsedSimulationPeriods(startTimestamp);
+      if (!startTimestamp || currentPeriod >= elapsedPeriods) {
+        return { batch_id: '', status: 'NOT_DUE' };
+      }
+    }
+
+    if (currentPeriod >= SIMULATION_PERIODS_PER_SEASON) {
+      return { batch_id: '', status: 'SEASON_COMPLETE' };
+    }
+
     const batchId = `${season_id}_${currentPeriod}_${batch_type}`;
     const batchRef = db.collection(COLLECTION_BATCH).doc(batchId);
 
@@ -73,6 +97,13 @@ async function createEconomicBatchCore(data: any, isInternalTask: boolean) {
     if (batchDoc.exists) {
       // Idempotency: Return existing batch if it's the exact same period
       return { batch_id: batchId, status: 'EXISTING' };
+    }
+
+    if (!Number.isInteger(storedPeriod) || storedPeriod < 0) {
+      t.update(seasonRef, {
+        current_simulation_period: currentPeriod,
+        updated_at: admin.firestore.Timestamp.now()
+      });
     }
 
     const newBatch: PlayBatch = {

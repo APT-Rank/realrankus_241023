@@ -205,15 +205,18 @@
         <div id="map-container"></div>
         <div id="map-view-map-container" style="display:none;"></div>
         <div id="dynamic-context" class="command-section map-context-panel" role="region" aria-label="선택한 아파트 단지 정보" hidden>
-          <div class="map-context-panel-heading">
-            <div id="context-header" class="map-context-panel-kicker">단지 정보</div>
+          <div class="map-context-panel-heading"><div class="panel-title" id="panel-title">선택한 단지</div>
+
             <button type="button" class="map-context-panel-close" aria-label="상세 패널 닫기" title="닫기" onclick="closeDynamicContextPanel()">
               <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
           </div>
+          <div id="panel-fixed-summary" class="map-context-panel-fixed-summary">
+            
+            <div id="panel-summary-content"></div>
+          </div>
           <div id="panel-content">
-            <div class="panel-title" id="panel-title">선택한 단지</div>
-            <div id="action-area"><!-- Dynamically populated via JS --></div>
+            <div id="complex_info_area"><!-- Dynamically populated via JS --></div>
           </div>
         </div>
       </div>

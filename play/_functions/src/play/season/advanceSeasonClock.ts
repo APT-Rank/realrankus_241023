@@ -57,7 +57,11 @@ export const advanceSeasonClock = onTaskDispatched(async (req) => {
     const updatedSeasonDoc = await seasonRef.get();
     const updatedSeason = updatedSeasonDoc.data() as PlaySeason;
     
-    if (updatedSeason.clock_status === 'RUNNING' && updatedSeason.transaction_status === 'NORMAL') {
+    const isAcceleratedTestClock = season_id === 'test_hero_season'
+      || (Number.isFinite(updatedSeason.test_mode_speed) && Number(updatedSeason.test_mode_speed) > 0);
+    if (updatedSeason.clock_status === 'RUNNING'
+      && updatedSeason.transaction_status === 'NORMAL'
+      && isAcceleratedTestClock) {
       console.log(`[advanceSeasonClock] Clock is RUNNING. Triggering next batch automatically.`);
       const { CloudTasksClient } = require('@google-cloud/tasks');
       const tasksClient = new CloudTasksClient();

@@ -1,5 +1,5 @@
 import { onRequest } from 'firebase-functions/v2/https';
-import { db, COLLECTION_BATCH, COLLECTION_BATCH_CHUNKS, COLLECTION_LOAN, COLLECTION_PLAYER_ASSET, COLLECTION_PRIMARY_SUPPLY } from '../common/db';
+import { db, COLLECTION_BATCH, COLLECTION_BATCH_CHUNKS, COLLECTION_DECISION_LOG, COLLECTION_LOAN, COLLECTION_PLAYER_ASSET, COLLECTION_PRIMARY_SUPPLY } from '../common/db';
 import { checkTransactionStatus } from '../common/utils';
 import { PlayBatch, PlayBatchChunk, PlayLoan, PlayPlayerAsset } from '../common/types';
 import * as admin from 'firebase-admin';
@@ -133,17 +133,19 @@ export const processBatchChunk = onRequest(async (req, res) => {
           if (!assetDoc.exists) return; // Player has no asset, skip
 
           const asset = assetDoc.data() as PlayPlayerAsset;
+          if (simulation_period < (asset.participation_start_period ?? 0)) return;
 
           // P3-11: Already Processed Player & Player-level Idempotency Check
           // We uniquely identify processing by period.
-          const assetProcessedPeriod = asset.last_processed_period ?? 0;
+          const assetProcessedPeriod = asset.last_processed_period ?? (asset.participation_start_period ?? 0);
           const processedBatches = asset.processed_batches || [];
           
           if (assetProcessedPeriod > simulation_period) {
              // ALREADY_PROCESSED for a future period (handles out of order)
              return;
           }
-          if (assetProcessedPeriod === simulation_period && processedBatches.includes(batch_id)) {
+          if (assetProcessedPeriod === simulation_period
+            && (processedBatches.includes(batch_id) || asset.last_processed_batch_id === batch_id)) {
             // ALREADY_PROCESSED for this exact batch in this period
             return;
           }
@@ -248,6 +250,27 @@ export const processBatchChunk = onRequest(async (req, res) => {
             processed_batches: newProcessedBatches,
             last_processed_at: now,
             updated_at: now
+          });
+
+          const monthlyLogRef = db.collection(COLLECTION_DECISION_LOG)
+            .doc(`${season_id}_${player_id}_${simulation_period}_ECONOMIC_MONTHLY`);
+          t.set(monthlyLogRef, {
+            season_id,
+            player_id,
+            simulation_period,
+            batch_id,
+            event_type: 'ECONOMIC_MONTHLY',
+            action_type: 'MONTHLY_CASH_FLOW',
+            before_cash,
+            income: monthlyIncome,
+            living_expense: economicState.monthly_living_expense,
+            monthly_loan_payment: monthlyLoanPayment,
+            annual_income: annualIncome,
+            after_cash: after_cash_total,
+            before_net_worth: asset.net_worth,
+            after_net_worth,
+            result: 'APPLIED',
+            created_at: now
           });
 
           // ACTIVE_TRADING_TEST Strategy Execution (using real market logic)
