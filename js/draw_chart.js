@@ -1,3 +1,90 @@
+var SCORE_CHART_COLOR = '#e43b46';
+
+function drawRoundedScoreTrack(ctx, x, y, width, height) {
+  var radius = Math.min(height / 2, 5);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+var scoreBarStylePlugin = {
+  id: 'scoreBarStyle',
+  beforeDatasetsDraw: function(chart) {
+    var chartArea = chart.chartArea;
+    var xScale = chart.scales.x;
+    var firstDataset = chart.getDatasetMeta(0);
+    if (!chartArea || !xScale || !firstDataset) return;
+
+    var ctx = chart.ctx;
+    var trackStart = xScale.getPixelForValue(0);
+    var trackEnd = xScale.getPixelForValue(100);
+    ctx.save();
+    ctx.fillStyle = '#edf0f3';
+    firstDataset.data.forEach(function(bar) {
+      var props = bar.getProps ? bar.getProps(['y', 'height'], true) : bar;
+      var height = props.height || 9;
+      drawRoundedScoreTrack(ctx, trackStart, props.y - height / 2, trackEnd - trackStart, height);
+    });
+    ctx.restore();
+  },
+  afterDatasetsDraw: function(chart) {
+    var chartArea = chart.chartArea;
+    var xScale = chart.scales.x;
+    if (!chartArea || !xScale) return;
+
+    var ctx = chart.ctx;
+    ctx.save();
+    ctx.fillStyle = '#fff';
+    [20, 40, 60, 80].forEach(function(tickValue) {
+      var tickX = xScale.getPixelForValue(tickValue);
+      chart.data.datasets.forEach(function(dataset, datasetIndex) {
+        var meta = chart.getDatasetMeta(datasetIndex);
+        meta.data.forEach(function(bar) {
+          var props = bar.getProps ? bar.getProps(['y', 'height'], true) : bar;
+          var height = props.height || 9;
+          ctx.fillRect(Math.round(tickX), props.y - height / 2, 1, height);
+        });
+      });
+    });
+
+    chart.data.datasets.forEach(function(dataset, datasetIndex) {
+      var meta = chart.getDatasetMeta(datasetIndex);
+      meta.data.forEach(function(bar, index) {
+        var props = bar.getProps ? bar.getProps(['y', 'height'], true) : bar;
+        var height = props.height || 9;
+        var labelY = props.y - height / 2 - 5;
+        var value = Number(dataset.data[index]);
+
+        ctx.font = '600 12px Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+        ctx.fillStyle = '#354052';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(normalizeScoreLabel(chart.data.labels[index]), chartArea.left, labelY);
+
+        if (!isFinite(value)) return;
+        ctx.font = '700 12px Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+        ctx.fillStyle = '#273247';
+        ctx.textAlign = 'right';
+        ctx.fillText(value.toFixed(2), chartArea.right, labelY);
+      });
+    });
+    ctx.restore();
+  }
+};
+
+function normalizeScoreLabel(label) {
+  return String(label).replace(/총점/g, '').trim();
+}
+
 function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
     /*
     var label = ["총점", "주거", "교통", "인프라", "교육"]
@@ -24,75 +111,55 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
       data = [livingScore, transportScore, infraScore]        
     }
 
-    var colorArray = []
-    var alignArray = []
-    for (var i = 0; i < data.length ; i++){
-      if(data[i] < 85){
-        colorArray.push('black')
-        alignArray.push('end')
-      }
-      else{
-        colorArray.push('white')
-        alignArray.push('start')
-      }
-    }    
-
     var ctx = document.getElementById("valueChart").getContext('2d');
     var myChart = new Chart(ctx, {
       type: 'bar',
-      plugins:[ChartDataLabels],
+      plugins:[scoreBarStylePlugin],
       data: {          
         labels: label,
         datasets: [{                
           data: data,
-          backgroundColor: [
-              //'#ff3d38',
-              '#e31939',
-              '#e31939',
-              '#e31939',
-              '#e31939',
-          ],
+          backgroundColor: SCORE_CHART_COLOR,
+          borderRadius: 999,
+          borderSkipped: false,
           borderColor: [
               'rgba(255,99,132, 0)',
               'rgba(54, 162, 235, 0)',
           ],                
-          barThickness: 14,            
+          barThickness: 9,            
         }]
       },
       options: {
         indexAxis: 'y',
-        maintainAspectRatio: false,          
-        plugins:{
-          legend:{
-            display: false
-          },            
-          datalabels: {
-            display: true,
-            color: colorArray,
-            align: alignArray,
-            anchor: 'end',              
-            offset: 2,
-            textAlign: 'center',
-            font: {
-              weight: 'bold'
-            },              
-          },                      
+        maintainAspectRatio: false,
+        layout: { padding: { top: 14 } },
+        plugins: {
+          legend: { display: false },
+          datalabels: { display: false }
         },
-        animation: {            
-          x:{
-            from: 100
-          }
+        animation: {
+          x: { from: 100 }
         },
         scales: {
-          x:{
+          x: {
             type: 'linear',
+            position: 'bottom',
             min: 0,
             max: 100,
+            ticks: {
+              stepSize: 20,
+              color: '#8993a2',
+              padding: 6,
+              font: { size: 10 }
+            },
+            grid: { display: false, drawBorder: false, drawTicks: false }
           },
-          myScale: {              
-            position: 'left', // `axis` is determined by the position as `'y'`
+          y: {
+            display: false,
+            grid: { display: false },
+            ticks: { display: false }
           }
-        }          
+        }
       }
   });
 }
@@ -202,75 +269,56 @@ function drawChart_op(aptValue, transportScore, infraScore, livingScore, eduScor
 }
 
 function drawSubChart(score, avgScore, label1, label2, color1, color2, className){
-    var element = document.getElementById(className);
-    if (!element) return;
-    var ctx = element.getContext('2d');
-    var color = 'white'
-    var align = 'start'
-    var data = [score, avgScore]
+  var element = document.getElementById(className);
+  if (!element) return;
 
-    var colorArray = []
-    var alignArray = []
-    for (var i = 0; i < data.length ; i++){
-      if(data[i] < 85){
-        colorArray.push('black')
-        alignArray.push('end')
-      }
-      else{
-        colorArray.push('white')
-        alignArray.push('start')
+  var ctx = element.getContext('2d');
+  var data = [score, avgScore];
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    plugins: [scoreBarStylePlugin],
+    data: {
+      labels: [normalizeScoreLabel(label1), normalizeScoreLabel(label2)],
+      datasets: [{
+        data: data,
+        backgroundColor: [SCORE_CHART_COLOR, color2],
+        borderRadius: 999,
+        borderSkipped: false,
+        barThickness: 9
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      maintainAspectRatio: false,
+      layout: { padding: { top: 14 } },
+      plugins: {
+        legend: { display: false },
+        datalabels: { display: false }
+      },
+      animation: {
+        x: { from: 100 }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          position: 'bottom',
+          min: 0,
+          max: 100,
+          ticks: {
+            stepSize: 20,
+            color: '#8993a2',
+            padding: 6,
+            font: { size: 10 }
+          },
+          grid: { display: false, drawBorder: false, drawTicks: false }
+        },
+        y: {
+          display: false,
+          grid: { display: false },
+          ticks: { display: false }
+        }
       }
     }
-
-    var myChart = new Chart(ctx, {
-      type: 'bar',
-      plugins:[ChartDataLabels],
-      data: {          
-        labels: [label1, label2],
-        datasets: [{                
-          data: data,
-          backgroundColor: [
-              color1,
-              color2,
-          ],               
-          barThickness: 20,            
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        maintainAspectRatio: false,        
-        plugins:{
-          legend:{
-            display: false
-          },            
-          datalabels: {
-            display: true,
-            color: colorArray,
-            align: alignArray,
-            anchor: 'end',              
-            offset: 2,
-            textAlign: 'center',
-            font: {
-              weight: 'bold'
-            },              
-          },                      
-        },
-        animation: {            
-          x:{
-            from: 100
-          }
-        },
-        scales: {
-          x:{
-            type: 'linear',
-            min: 0,
-            max: 100,
-          },
-          myScale: {              
-            position: 'left', // `axis` is determined by the position as `'y'`
-          }
-        }          
-      }
   });
 }
 
