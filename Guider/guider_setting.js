@@ -423,10 +423,10 @@ function draw_score_graph(canvas_id, livingScore, transportScore, infraScore, ed
           data: data,
           backgroundColor: [
               //'#ff3d38',
-              '#e31939',
-              '#e31939',
-              '#e31939',
-              '#e31939',
+              '#E43B46',
+              '#E43B46',
+              '#E43B46',
+              '#E43B46',
           ],
           borderColor: [
               'rgba(255,99,132, 0)',

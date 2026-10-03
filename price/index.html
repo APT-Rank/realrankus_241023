@@ -1192,7 +1192,7 @@
           addon_html += "<div class='complex_table'>"
           addon_html += "<div class='apt_address' style='color:black'>" + deal_floor + "층, 약 " + apt_p.toFixed(0) + "평 (" + apt_m.toFixed(2) + ")</div>"
           if (deal_type != "중개거래") {
-            addon_html += "<div class='apt_address'><span style='color: #e31939'>" + deal_type + "</span> | " + dealed_date + "</div>"
+            addon_html += "<div class='apt_address'><span style='color: #E43B46'>" + deal_type + "</span> | " + dealed_date + "</div>"
           }
           else {
             addon_html += "<div class='apt_address'>" + deal_type + " | " + dealed_date + "</div>"
@@ -2298,7 +2298,7 @@
 
   function checkFav() {
     for (var i = 0; i < price_fav.length; i++) {
-      $("#" + price_fav[i][1]).css({ 'color': '#e31939' })
+      $("#" + price_fav[i][1]).css({ 'color': '#E43B46' })
     }
   }
 
@@ -2366,7 +2366,7 @@
     var i = 0
     if (price_fav.length == 0) {
       price_fav.push([level, regId, regName])
-      $("#" + regId).css({ 'color': '#e31939' })
+      $("#" + regId).css({ 'color': '#E43B46' })
     }
     else {
       base_length = price_fav.length
@@ -2388,7 +2388,7 @@
           price_fav.push([level, regId, regName])
           output = "'" + regName + "' 즐겨찾기가 추가되었어요."
           toastr.success(output);
-          $("#" + regId).css({ 'color': '#e31939' })
+          $("#" + regId).css({ 'color': '#E43B46' })
         }
       }
     }

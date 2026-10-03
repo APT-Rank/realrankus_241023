@@ -402,7 +402,7 @@
         querySnapshot.forEach((doc) => {
           like_status = doc.data()
           if (like_status['like']) {
-            $("#like_" + doc.id).css({ 'color': '#e31939' })
+            $("#like_" + doc.id).css({ 'color': '#E43B46' })
           }
         })
       })
@@ -454,7 +454,7 @@
             .then()
           current_like_num = $('#like_num_' + comment_id).html()
           $('#like_num_' + comment_id).html(Number(current_like_num) + 1)
-          $('#like_' + comment_id).css({ 'color': '#e31939' })
+          $('#like_' + comment_id).css({ 'color': '#E43B46' })
         }
       }
       else {
@@ -467,7 +467,7 @@
         })
         current_like_num = $('#like_num_' + comment_id).html()
         $('#like_num_' + comment_id).html(Number(current_like_num) + 1)
-        $('#like_' + comment_id).css({ 'color': '#e31939' })
+        $('#like_' + comment_id).css({ 'color': '#E43B46' })
       }
     })
   }
@@ -501,7 +501,7 @@
             .then()
           current_like_num = $('#like_num_' + reply_id).html()
           $('#like_num_' + reply_id).html(Number(current_like_num) + 1)
-          $('#like_' + reply_id).css({ 'color': '#e31939' })
+          $('#like_' + reply_id).css({ 'color': '#E43B46' })
         }
       }
       else {
@@ -514,7 +514,7 @@
         })
         current_like_num = $('#like_num_' + reply_id).html()
         $('#like_num_' + reply_id).html(Number(current_like_num) + 1)
-        $('#like_' + reply_id).css({ 'color': '#e31939' })
+        $('#like_' + reply_id).css({ 'color': '#E43B46' })
       }
     })
   }
@@ -526,7 +526,7 @@
     comment_html += "<div id='comment_write_notice'>"
     comment_html +=
       `
-          <div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
+          <div style='font-size: 1.2em; color:#E43B46; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
           <div>
             <ul class='write_notice'>
               <li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
@@ -646,7 +646,7 @@
     comment_html += "<div id='comment_write_notice'>"
     comment_html +=
       `
-          <div style='font-size: 1.2em; color:#e31939; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
+          <div style='font-size: 1.2em; color:#E43B46; font-weight:600; text-align:center'>건강한 랭커스톡을 만들어주세요!</div>
           <div>
             <ul class='write_notice'>
               <li>다른 사람 비방, 불쾌감 유발, 욕설은 임의로 삭제됩니다.</li>              
