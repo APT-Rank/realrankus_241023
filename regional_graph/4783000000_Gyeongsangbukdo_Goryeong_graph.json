@@ -6,11 +6,11 @@
     "dongs": {
         "다산면": {
             "summary_metrics": {
-                "r_simple": 0.9981276326522169,
+                "r_simple": 0.82715391153749,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 8.530068139622104,
-                "std_error": 72.24123098719633,
+                "price_per_gli_point": 275.29785304010255,
+                "std_error": 70.98341942547803,
                 "remarks": ""
             },
             "chart_boundaries": {
@@ -19,41 +19,41 @@
                 "simple_trendline": [
                     {
                         "gli": 17.66055369,
-                        "price": 307.26914921151644
+                        "price": 318.2922167834279
                     },
                     {
                         "gli": 37.7093728008,
-                        "price": 842.673573031934
+                        "price": 1115.4593896785257
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 17.66055369,
-                        "price": 433.0503621769533
+                        "price": 3341.3686550198063
                     },
                     {
                         "gli": 37.7093728008,
-                        "price": 604.0681553110351
+                        "price": -2178.028202172809
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 17.66055369,
-                        "price": 469.17097767055145
+                        "price": 3376.8603647325453
                     },
                     {
                         "gli": 37.7093728008,
-                        "price": 640.1887708046332
+                        "price": -2142.53649246007
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 17.66055369,
-                        "price": 396.9297466833551
+                        "price": 3305.876945307067
                     },
                     {
                         "gli": 37.7093728008,
-                        "price": 567.9475398174369
+                        "price": -2213.519911885548
                     }
                 ]
             },
@@ -61,7 +61,7 @@
                 {
                     "complex_name": "금류강남타운",
                     "gli_score": 18.3734577648,
-                    "price_per_pyung": 345.25,
+                    "price_per_pyung": 329.75,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
                     "household_count": 656
@@ -77,20 +77,28 @@
                 {
                     "complex_name": "다산월드메르디앙",
                     "gli_score": 37.7093728008,
-                    "price_per_pyung": 842.0,
+                    "price_per_pyung": 785.5,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 631
+                },
+                {
+                    "complex_name": "다산월드메르디앙센텀하이",
+                    "gli_score": 35.2798948803,
+                    "price_per_pyung": 1395.0,
+                    "age_category": "신축 (5년미만)",
+                    "construction_age": 0,
+                    "household_count": 463
                 }
             ]
         },
         "대가야읍": {
             "summary_metrics": {
-                "r_simple": 0.2287424754859391,
+                "r_simple": 0.1801837599240647,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 22.005582798842905,
-                "std_error": 28.792754770475284,
+                "price_per_gli_point": 15.939261326424734,
+                "std_error": 48.216132720754935,
                 "remarks": "통계 유의성 부족"
             },
             "chart_boundaries": {
@@ -99,41 +107,41 @@
                 "simple_trendline": [
                     {
                         "gli": 7.673925,
-                        "price": 387.7603137705498
+                        "price": 396.72184942508215
                     },
                     {
                         "gli": 28.350175,
-                        "price": 484.30352765966836
+                        "price": 462.4736188875896
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 7.673925,
-                        "price": 657.9902388285736
+                        "price": 590.4103189014122
                     },
                     {
                         "gli": 28.350175,
-                        "price": 202.99730748399634
+                        "price": 260.846166900923
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 7.673925,
-                        "price": 672.3866162138113
+                        "price": 614.5183852617897
                     },
                     {
                         "gli": 28.350175,
-                        "price": 217.393684869234
+                        "price": 284.95423326130043
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 7.673925,
-                        "price": 643.593861443336
+                        "price": 566.3022525410347
                     },
                     {
                         "gli": 28.350175,
-                        "price": 188.60093009875868
+                        "price": 236.7381005405455
                     }
                 ]
             },
@@ -141,7 +149,7 @@
                 {
                     "complex_name": "궁전맨션",
                     "gli_score": 22.5110831343,
-                    "price_per_pyung": 713.5,
+                    "price_per_pyung": 661.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 30,
                     "household_count": 165
@@ -165,7 +173,7 @@
                 {
                     "complex_name": "해동디오팰리스",
                     "gli_score": 12.68255,
-                    "price_per_pyung": 404.0,
+                    "price_per_pyung": 432.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 19,
                     "household_count": 375

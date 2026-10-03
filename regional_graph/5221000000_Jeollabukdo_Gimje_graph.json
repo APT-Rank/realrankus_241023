@@ -2,73 +2,73 @@
     "region_code": "5221000000",
     "region_name": "Jeollabukdo_Gimje",
     "region_key": "5221000000_Jeollabukdo_Gimje",
-    "supply_score": 84.11764705882354,
+    "supply_score": 87.61670761670761,
     "dongs": {
         "하동": {
             "summary_metrics": {
                 "r_simple": 1.0,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 0.06016235981521545,
-                "std_error": 30.00396803689778,
+                "price_per_gli_point": 0.060480279207580256,
+                "std_error": 30.102206848383343,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 50.6820565133,
-                "max_gli": 69.7311966522,
+                "min_gli": 50.6807893733,
+                "max_gli": 69.7920479442,
                 "simple_trendline": [
                     {
-                        "gli": 50.6820565133,
-                        "price": 745.4915498792554
+                        "gli": 50.6807893733,
+                        "price": 748.5359898488634
                     },
                     {
-                        "gli": 69.7311966522,
-                        "price": 1072.3248832125887
+                        "gli": 69.7920479442,
+                        "price": 1076.0359898488637
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 50.6820565133,
-                        "price": 908.3351959343186
+                        "gli": 50.6807893733,
+                        "price": 911.7080627216756
                     },
                     {
-                        "gli": 69.7311966522,
-                        "price": 909.4812371575256
+                        "gli": 69.7920479442,
+                        "price": 912.8639169760518
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 50.6820565133,
-                        "price": 923.3371799527674
+                        "gli": 50.6807893733,
+                        "price": 926.7591661458672
                     },
                     {
-                        "gli": 69.7311966522,
-                        "price": 924.4832211759744
+                        "gli": 69.7920479442,
+                        "price": 927.9150204002434
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 50.6820565133,
-                        "price": 893.3332119158697
+                        "gli": 50.6807893733,
+                        "price": 896.6569592974839
                     },
                     {
-                        "gli": 69.7311966522,
-                        "price": 894.4792531390767
+                        "gli": 69.7920479442,
+                        "price": 897.8128135518601
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "김제하동오투그란데",
-                    "gli_score": 50.6820565133,
-                    "price_per_pyung": 709.6666666666666,
+                    "gli_score": 50.6807893733,
+                    "price_per_pyung": 709.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 10,
                     "household_count": 491
                 },
                 {
                     "complex_name": "하동본아르떼",
-                    "gli_score": 69.7311966522,
+                    "gli_score": 69.7920479442,
                     "price_per_pyung": 1036.5,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 1,
@@ -78,11 +78,11 @@
         },
         "검산동": {
             "summary_metrics": {
-                "r_simple": 0.9992054709494484,
-                "r_multi": 0.9993836963185923,
-                "r_squared": "99.9%",
-                "price_per_gli_point": 107.44457484512935,
-                "std_error": 40.36424410746303,
+                "r_simple": 0.9952680665214004,
+                "r_multi": 0.999965156126304,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 236.43039313324326,
+                "std_error": 35.90948467941065,
                 "remarks": ""
             },
             "chart_boundaries": {
@@ -91,41 +91,41 @@
                 "simple_trendline": [
                     {
                         "gli": 11.5303958569,
-                        "price": 447.93097137929317
+                        "price": 444.0723581386906
                     },
                     {
                         "gli": 67.9601647811,
-                        "price": 1052.7506695805964
+                        "price": 1049.4492759159289
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 11.5303958569,
-                        "price": -2380.3865740970373
+                        "price": -6163.907850661459
                     },
                     {
                         "gli": 67.9601647811,
-                        "price": 3682.685956572525
+                        "price": 7177.804600505218
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 11.5303958569,
-                        "price": -2360.204452043306
+                        "price": -6145.9531083217535
                     },
                     {
                         "gli": 67.9601647811,
-                        "price": 3702.868078626256
+                        "price": 7195.759342844924
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 11.5303958569,
-                        "price": -2400.5686961507686
+                        "price": -6181.862593001164
                     },
                     {
                         "gli": 67.9601647811,
-                        "price": 3662.5038345187936
+                        "price": 7159.849858165513
                     }
                 ]
             },
@@ -133,7 +133,7 @@
                 {
                     "complex_name": "검산이지움라프라임",
                     "gli_score": 67.9601647811,
-                    "price_per_pyung": 1004.5,
+                    "price_per_pyung": 971.0,
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 188
@@ -148,7 +148,7 @@
                 },
                 {
                     "complex_name": "김제검산주공2단지",
-                    "gli_score": 24.52423667,
+                    "gli_score": 24.7094137266,
                     "price_per_pyung": 555.0,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 22,
@@ -157,7 +157,7 @@
                 {
                     "complex_name": "김제검산화산샬레2차",
                     "gli_score": 50.8756884551,
-                    "price_per_pyung": 817.2,
+                    "price_per_pyung": 823.2,
                     "age_category": "구축 (10~25년)",
                     "construction_age": 10,
                     "household_count": 337
@@ -165,7 +165,7 @@
                 {
                     "complex_name": "진우",
                     "gli_score": 11.5303958569,
-                    "price_per_pyung": 390.0,
+                    "price_per_pyung": 361.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 28,
                     "household_count": 510
@@ -174,11 +174,11 @@
         },
         "신풍동": {
             "summary_metrics": {
-                "r_simple": 0.8664733254515617,
-                "r_multi": 0.9510041714220361,
-                "r_squared": "90.4%",
-                "price_per_gli_point": 3.4783021704661983,
-                "std_error": 78.9262309086149,
+                "r_simple": 0.8814672721145109,
+                "r_multi": 0.9414153274502148,
+                "r_squared": "88.6%",
+                "price_per_gli_point": 0.22560274170284908,
+                "std_error": 86.29328294971747,
                 "remarks": ""
             },
             "chart_boundaries": {
@@ -187,41 +187,41 @@
                 "simple_trendline": [
                     {
                         "gli": 7.8556335657,
-                        "price": 402.2901916995918
+                        "price": 416.0036387787063
                     },
                     {
                         "gli": 62.7966121128,
-                        "price": 972.9086987619886
+                        "price": 998.4252735338796
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 7.8556335657,
-                        "price": 569.2387372540153
+                        "price": 546.3714464586305
                     },
                     {
                         "gli": 62.7966121128,
-                        "price": 378.1374123261005
+                        "price": 533.9766110665674
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 7.8556335657,
-                        "price": 608.7018527083227
+                        "price": 589.5180879334893
                     },
                     {
                         "gli": 62.7966121128,
-                        "price": 417.60052778040796
+                        "price": 577.1232525414262
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 7.8556335657,
-                        "price": 529.7756217997079
+                        "price": 503.22480498377183
                     },
                     {
                         "gli": 62.7966121128,
-                        "price": 338.67429687179305
+                        "price": 490.82996959170873
                     }
                 ]
             },
@@ -229,7 +229,7 @@
                 {
                     "complex_name": "김제신풍주공",
                     "gli_score": 11.00218867,
-                    "price_per_pyung": 318.5,
+                    "price_per_pyung": 349.75,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 34,
                     "household_count": 400
@@ -237,7 +237,7 @@
                 {
                     "complex_name": "대방",
                     "gli_score": 14.7235921789,
-                    "price_per_pyung": 569.0,
+                    "price_per_pyung": 555.6666666666666,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 25,
                     "household_count": 276
@@ -245,7 +245,7 @@
                 {
                     "complex_name": "부영3차",
                     "gli_score": 8.76290117,
-                    "price_per_pyung": 349.0,
+                    "price_per_pyung": 353.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 26,
                     "household_count": 1242
@@ -253,7 +253,7 @@
                 {
                     "complex_name": "비사벌",
                     "gli_score": 8.22037829,
-                    "price_per_pyung": 323.5,
+                    "price_per_pyung": 272.5,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 33,
                     "household_count": 480
@@ -269,7 +269,7 @@
                 {
                     "complex_name": "성산그린빌",
                     "gli_score": 15.5588784156,
-                    "price_per_pyung": 467.0,
+                    "price_per_pyung": 391.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 25,
                     "household_count": 132
@@ -309,7 +309,7 @@
                 {
                     "complex_name": "황산근로자",
                     "gli_score": 15.3566629945,
-                    "price_per_pyung": 138.5,
+                    "price_per_pyung": 132.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 33,
                     "household_count": 150
@@ -318,11 +318,11 @@
         },
         "옥산동": {
             "summary_metrics": {
-                "r_simple": 0.9981817857716271,
+                "r_simple": 0.9957805468909746,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 9.876073917713365,
-                "std_error": 31.74515711096734,
+                "price_per_gli_point": 9.63665435764116,
+                "std_error": 32.13378284609517,
                 "remarks": ""
             },
             "chart_boundaries": {
@@ -331,41 +331,41 @@
                 "simple_trendline": [
                     {
                         "gli": 11.40756443,
-                        "price": 197.9616766846005
+                        "price": 196.16963278351
                     },
                     {
                         "gli": 53.0274653189,
-                        "price": 805.8962346132116
+                        "price": 808.195369417117
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 11.40756443,
-                        "price": 273.9820051742536
+                        "price": 277.5394640161385
                     },
                     {
                         "gli": 53.0274653189,
-                        "price": 685.0232228009343
+                        "price": 678.6160632817498
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 11.40756443,
-                        "price": 289.8545837297372
+                        "price": 293.6063554391861
                     },
                     {
                         "gli": 53.0274653189,
-                        "price": 700.8958013564179
+                        "price": 694.6829547047973
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 11.40756443,
-                        "price": 258.10942661876993
+                        "price": 261.4725725930909
                     },
                     {
                         "gli": 53.0274653189,
-                        "price": 669.1506442454506
+                        "price": 662.5491718587023
                     }
                 ]
             },
@@ -373,7 +373,7 @@
                 {
                     "complex_name": "김제하우스디",
                     "gli_score": 53.0274653189,
-                    "price_per_pyung": 769.25,
+                    "price_per_pyung": 768.5,
                     "age_category": "준신축 (5~10년)",
                     "construction_age": 7,
                     "household_count": 248
@@ -381,15 +381,15 @@
                 {
                     "complex_name": "옥산",
                     "gli_score": 11.40756443,
-                    "price_per_pyung": 175.8,
+                    "price_per_pyung": 178.8,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 35,
                     "household_count": 190
                 },
                 {
                     "complex_name": "진주",
-                    "gli_score": 17.995874125,
-                    "price_per_pyung": 233.0,
+                    "gli_score": 17.9500455281,
+                    "price_per_pyung": 215.0,
                     "age_category": "노후 (25년이상)",
                     "construction_age": 34,
                     "household_count": 83
@@ -411,41 +411,41 @@
                 "simple_trendline": [
                     {
                         "gli": 8.128633546,
-                        "price": 200.62115806549804
+                        "price": 204.9496624954276
                     },
                     {
                         "gli": 33.407910242,
-                        "price": 602.0059161439779
+                        "price": 606.3344205739074
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 8.128633546,
-                        "price": 280.70886498581683
+                        "price": 285.0373694157464
                     },
                     {
                         "gli": 33.407910242,
-                        "price": 473.91760283316955
+                        "price": 478.24610726309913
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 8.128633546,
-                        "price": 295.95924447917236
+                        "price": 300.28774890910194
                     },
                     {
                         "gli": 33.407910242,
-                        "price": 489.1679823265251
+                        "price": 493.49648675645466
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 8.128633546,
-                        "price": 265.4584854924613
+                        "price": 269.7869899223909
                     },
                     {
                         "gli": 33.407910242,
-                        "price": 458.66722333981403
+                        "price": 462.9957277697436
                     }
                 ]
             },
@@ -499,41 +499,41 @@
                 "simple_trendline": [
                     {
                         "gli": 11.08280443,
-                        "price": 238.63155067169015
+                        "price": 245.31135598288904
                     },
                     {
                         "gli": 13.31930443,
-                        "price": 340.63155067169004
+                        "price": 347.3113559828889
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 11.08280443,
-                        "price": 289.5712579682513
+                        "price": 296.2510632794502
                     },
                     {
                         "gli": 13.31930443,
-                        "price": 289.6918433751288
+                        "price": 296.3716486863277
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 11.08280443,
-                        "price": 315.27266843538325
+                        "price": 321.95247374658214
                     },
                     {
                         "gli": 13.31930443,
-                        "price": 315.3932538422608
+                        "price": 322.07305915345967
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 11.08280443,
-                        "price": 263.86984750111935
+                        "price": 270.54965281231824
                     },
                     {
                         "gli": 13.31930443,
-                        "price": 263.9904329079969
+                        "price": 270.67023821919577
                     }
                 ]
             },
