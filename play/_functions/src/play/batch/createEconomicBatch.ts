@@ -5,6 +5,7 @@ import { PlaySeason, PlayBatch } from '../common/types';
 import * as admin from 'firebase-admin';
 import { CloudTasksClient } from '@google-cloud/tasks';
 import { verifyInternalTaskRequest } from '../common/internalAuth';
+import { normalizeAnnualRate } from './economicEngine';
 
 export const createEconomicBatch = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'User must be logged in');
@@ -48,6 +49,10 @@ async function createEconomicBatchCore(data: any, isInternalTask: boolean) {
     }
 
     const season = seasonDoc.data() as PlaySeason;
+    const annualInflation = normalizeAnnualRate(season.inflation, null);
+    if (annualInflation === null) {
+      throw new HttpsError('failed-precondition', 'Season inflation is required before creating an economic batch');
+    }
 
     if (isInternalTask && season.clock_status !== 'RUNNING' && !allow_paused_clock) {
       return { batch_id: '', status: 'SKIPPED_PAUSED' };
@@ -79,6 +84,9 @@ async function createEconomicBatchCore(data: any, isInternalTask: boolean) {
       scenario_id: season.scenario_id || 'DEFAULT',
       scenario_version: season.scenario_version || '1.0',
       rule_version: season.rule_version || '1.0',
+      ...(season.base_interest != null ? { base_interest: season.base_interest } : {}),
+      inflation: annualInflation,
+      income_rate: annualInflation - 0.005,
       
       expected_player_count,
       chunk_count,

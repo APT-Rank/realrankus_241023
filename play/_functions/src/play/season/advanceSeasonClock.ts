@@ -2,6 +2,7 @@ import { onTaskDispatched } from 'firebase-functions/v2/tasks';
 import { db, COLLECTION_SEASON, COLLECTION_BATCH } from '../common/db';
 import { PlaySeason, PlayBatch } from '../common/types';
 import * as admin from 'firebase-admin';
+import { getNextPeriodDelaySeconds } from './periodSchedule';
 
 export const advanceSeasonClock = onTaskDispatched(async (req) => {
   try {
@@ -83,7 +84,7 @@ export const advanceSeasonClock = onTaskDispatched(async (req) => {
           }
         },
         scheduleTime: {
-          seconds: Math.floor(Date.now() / 1000) + Math.max(1, Math.floor(10 / (updatedSeason.test_mode_speed || 1)))
+          seconds: Math.floor(Date.now() / 1000) + getNextPeriodDelaySeconds(updatedSeason.test_mode_speed)
         }
       };
       

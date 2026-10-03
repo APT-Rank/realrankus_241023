@@ -3,6 +3,7 @@
     {
       "source": "play/_functions",
       "codebase": "default",
+      "predeploy": ["npm --prefix play/_functions run build"],
       "ignore": [
         "node_modules",
         ".git",

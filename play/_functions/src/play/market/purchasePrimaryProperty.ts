@@ -119,14 +119,22 @@ export const purchasePrimaryProperty = onCall(async (request) => {
       let monthly_payment = 0;
       let annual_debt_service = 0;
       let interest_rate = 0;
+      let base_interest_at_origination = 0.03;
+      let rate_spread = 0.017;
+      let existing_monthly_debt = 0;
       let loan_term = 360;
 
       if (loan_request > 0) {
         const ltv_limit = season.config?.primary_supply_ratio || 0.7; // default LTV 70% if not set
         const max_ltv_loan = price * ltv_limit;
         
-        const base_rate = 0.03; // Assume 3% base rate
-        interest_rate = base_rate + 0.015 + 0.002; // Base + 1.5% + 0.2% Normal Risk Spread
+        const configuredBaseRate = typeof season.base_interest === 'string' && season.base_interest.trim().endsWith('%')
+          ? Number.parseFloat(season.base_interest) / 100
+          : Number(season.base_interest);
+        base_interest_at_origination = Number.isFinite(configuredBaseRate)
+          ? Math.abs(configuredBaseRate) > 1 ? configuredBaseRate / 100 : configuredBaseRate
+          : 0.03;
+        interest_rate = base_interest_at_origination + rate_spread;
         
         // DSR check: we need player's income. Assume default income if not specified.
         const annual_income = 70000000; // 70M KRW default income for DSR calculation
@@ -142,7 +150,10 @@ export const purchasePrimaryProperty = onCall(async (request) => {
         
         let existing_annual_debt = 0;
         existingLoansSnap.forEach(doc => {
-          existing_annual_debt += doc.data().annual_debt_service || 0;
+          const loan = doc.data();
+          if (loan.season_id !== season_id) return;
+          existing_annual_debt += loan.annual_debt_service || 0;
+          existing_monthly_debt += loan.monthly_payment || 0;
         });
 
         // Calculate loan_term dynamically from season remaining periods
@@ -211,6 +222,7 @@ export const purchasePrimaryProperty = onCall(async (request) => {
         cash_total: new_cash,
         cash_available: new_cash_available,
         debt_total: new_debt,
+        ...(final_loan_amount > 0 ? { monthly_loan_payment: existing_monthly_debt + monthly_payment } : {}),
         property_count: new_property_count,
         net_worth: new_net_worth,
         updated_at: FieldValue.serverTimestamp()
@@ -230,6 +242,8 @@ export const purchasePrimaryProperty = onCall(async (request) => {
           remaining_months: loan_term,
           monthly_payment,
           annual_debt_service,
+          base_interest_at_origination,
+          rate_spread,
           status: 'ACTIVE',
           created_at: FieldValue.serverTimestamp() as any,
           updated_at: FieldValue.serverTimestamp() as any

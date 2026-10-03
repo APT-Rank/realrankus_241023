@@ -15,6 +15,8 @@
 
 On `localhost` or `127.0.0.1`, the browser selects the isolated `demo-play` project and points Auth, Firestore, and Functions SDK traffic at local emulators. Hosting excludes `_functions/`. The emulators start empty; authenticated market actions require appropriate test-season/property documents.
 
+The Firebase runtime bootstrap is isolated in `js/runtime/firebase_runtime.js`. HERO test login and TIME-SLIP controls live under `js/dev/` and are dynamically loaded only on `localhost` or `127.0.0.1`; their controls stay hidden otherwise. The HERO test season is selected only for the `HERO_USER` identity in emulator mode. TIME-SLIP defaults to off, and switching it off or signing out stops its live listeners. The local HERO credentials are confined to the emulator-only login module and are never loaded by hosted production pages.
+
 The Functions Emulator reported that Application Default Credentials are present. Startup and static Hosting were verified without invoking a callable, but external Google API access from backend task code has not been proven isolated. Do not call batch/task endpoints or treat emulator startup as proof of transaction execution until those paths are guarded or verified against emulator endpoints.
 
 Map tile generation targets this folder's `data/map_tiles/` and defaults to `demo-play`. It refuses remote Firestore reads unless `PLAY_ALLOW_REMOTE_MAP_BUILD=true` is explicitly set.

@@ -1,4 +1,10 @@
 /* PLAY WIREFRAME CSS */
+.play-app #time-slip-toggle,
+.play-app #test-mode-panel,
+.play-app #test-mode-activity {
+  display: none !important;
+}
+
 body.play-app, html.play-app {
   margin: 0;
   padding: 0;
@@ -90,18 +96,35 @@ body.play-app, html.play-app {
 /* Layout */
 .play-app #main-container {
   height: calc(100vh - 60px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 42%);
+  position: relative;
+  overflow: hidden;
+}
+
+.play-app #map-view-container {
   display: flex;
   flex-direction: column;
-  position: relative;
+  min-width: 0;
+  min-height: 0;
 }
 
 .play-app #map-wrapper {
-  flex: 1;
+  flex: 1 1 0;
   position: relative;
-  min-height: 40vh;
+  min-width: 0;
+  min-height: 0;
   border-bottom: 1px solid #ccc;
 }
-.play-app #map-container {
+.play-app #map-container,
+.play-app #map-view-map-container {
+  position: absolute;
+  inset: 0;
+}
+
+.play-app #map-container,
+.play-app #map-view-map-container {
   width: 100%;
   height: 100%;
   background-color: #e0e0e0; /* Placeholder for map */
@@ -134,29 +157,217 @@ body.play-app, html.play-app {
   font-weight: 600;
 }
 
+.play-app #map-view-container,
+.play-app #full-screen-container {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.play-app .map-view-command-sidebar {
+  box-sizing: border-box;
+  flex: 0 0 40%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 16px;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.play-app #map-view-command-content,
+.play-app #map-view-command-content * {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.play-app #map-view-command-content {
+  overflow-wrap: anywhere;
+}
+
+.play-app #map-view-command-content .d-flex.gap-2.text-center.mb-4 {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px !important;
+}
+
+.play-app #map-view-command-content .wireframe-box {
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.play-app #map-view-command-content .d-flex.justify-content-between.align-items-center.mb-3 {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.play-app #map-view-command-content .wireframe-chart {
+  width: 100%;
+  overflow: hidden;
+  padding: clamp(12px, 3vw, 24px) !important;
+}
+
+.play-app .map-view-layer-toolbar {
+  top: auto;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  max-height: 160px;
+  overflow-y: auto;
+  width: auto;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16);
+}
+
+.play-app #map-left-sidebar h6 {
+  flex: 0 0 100%;
+  margin: 0 !important;
+}
+
+.play-app #map-left-sidebar .form-check {
+  margin-bottom: 0 !important;
+}
+
 .play-app #command-panel {
-  flex: 1;
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
   background-color: #fff;
   overflow-y: auto;
-  padding: 24px;
+  padding: 16px;
+  border-top: 1px solid #ccc;
 }
 
 @media (min-width: 992px) {
   .play-app #main-container {
+    grid-template-columns: minmax(0, 1fr) 420px;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .play-app #map-view-container,
+  .play-app #full-screen-container {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .play-app #map-view-container {
     flex-direction: row;
   }
+  .play-app .map-view-command-sidebar {
+    flex: 0 0 320px;
+    width: 320px;
+    height: 100%;
+    border-right: 1px solid #ccc;
+    border-bottom: none;
+  }
+  .play-app #map-left-sidebar {
+    z-index: 20;
+  }
   .play-app #map-wrapper {
-    flex: 6; 
+    flex: 1;
     border-bottom: none;
   }
   .play-app #command-panel {
-    flex: 4; 
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
     min-width: 400px;
     max-width: 450px;
+    height: 100%;
+    border-top: none;
     border-left: 1px solid #ccc;
   }
 }
 
+.play-app #map-container, .play-app #map-view-map-container {
+  z-index: 0;
+}
+.play-app #dynamic-context.map-context-panel {
+  position: absolute;
+  z-index: 40;
+  box-sizing: border-box;
+  width: min(390px, calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  margin: 0;
+  overflow-y: auto;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 42px rgba(22, 36, 54, 0.24);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px) scale(0.985);
+  transform-origin: left center;
+  transition: opacity 500ms ease, transform 500ms ease, visibility 500ms;
+  pointer-events: none;
+}
+.play-app #dynamic-context.map-context-panel[hidden] {
+  display: none !important;
+}
+.play-app #dynamic-context.map-context-panel.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+}
+.play-app .map-context-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -2px 0 10px;
+}
+.play-app .map-context-panel-kicker {
+  color: #748195;
+  font-size: 12px;
+  font-weight: 700;
+}
+.play-app .map-context-panel-close {
+  display: inline-flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: -6px -6px 0 0;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f4f8;
+  color: #475569;
+  cursor: pointer;
+}
+.play-app .map-context-panel-close:hover {
+  background: #e2e8f0;
+  color: #172033;
+}
+.play-app #dynamic-context #panel-title {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+@media (max-width: 575.98px) {
+  .play-app #dynamic-context.map-context-panel {
+    width: min(360px, calc(100% - 20px));
+    max-height: calc(100% - 20px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .play-app #dynamic-context.map-context-panel {
+    transition: none;
+  }
+}
 /* Map Overlays (Wireframe) */
 .play-app .map-overlay {
   position: absolute;
@@ -340,11 +551,16 @@ body.play-app, html.play-app {
 }
 
 /* Command Center */
-.play-app .command-section {
-  background: white;
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin-bottom: 16px;
+.play-app .command-section,
+.play-app .season-progress-card {
+  flex: 0 0 auto;
+  margin: 0 0 16px;
+  padding: 16px;
+  color: #263445;
+  background: #fff;
+  border: 1px solid #d8e0ea;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(25, 50, 80, 0.08);
 }
 .play-app .section-title {
   font-size: 14px;
@@ -369,7 +585,6 @@ body.play-app, html.play-app {
 .play-app .my-world-header {
   display: flex;
   align-items: center;
-  gap: 12px;
   margin-bottom: 16px;
 }
 .play-app .profile-avatar {
@@ -392,10 +607,224 @@ body.play-app, html.play-app {
   font-size: 12px;
   color: #666;
 }
-.play-app .season-progress {
+.play-app .season-progress-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.play-app .season-progress-title-group,
+.play-app .season-title-row {
+  min-width: 0;
+}
+.play-app .season-progress-label {
+  margin-bottom: 4px;
+  color: #6a7788;
   font-size: 12px;
-  color: #333;
-  margin-bottom: 16px;
+  font-weight: 600;
+}
+.play-app .season-title-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.play-app .season-title-row h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.play-app .season-info-button,
+.play-app .season-info-close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #54718f;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.play-app .season-info-button {
+  width: 26px;
+  height: 26px;
+  font-size: 17px;
+}
+.play-app #my-world-season-progress {
+  flex: 1 1 100%;
+  color: #35465a;
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.play-app .season-progress-card .progress-bar-bg {
+  height: 10px;
+  margin-top: 0;
+}
+.play-app .season-progress-milestones {
+  display: flex;
+  margin-top: 6px;
+  color: #718096;
+  font-size: 11px;
+}
+.play-app .season-progress-milestones span {
+  flex: 1 1 0;
+  text-align: right;
+}
+.play-app .season-economic-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.play-app .season-economic-metric {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  background: #f6f8fb;
+  border: 1px solid #e4eaf1;
+  border-radius: 7px;
+}
+.play-app .season-economic-metric span {
+  color: #718096;
+  font-size: 10px;
+}
+.play-app .season-economic-metric-value {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px;
+}
+.play-app .season-economic-metric-value strong {
+  overflow-wrap: anywhere;
+  color: #35465a;
+  font-size: 13px;
+  font-weight: 700;
+}
+.play-app .season-economic-metric-value small {
+  flex: 0 0 auto;
+  color: #718096;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.play-app .season-economic-events {
+  margin-top: 12px;
+  border-top: 1px solid #e4eaf1;
+}
+.play-app .season-economic-events summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 0 2px;
+  color: #35465a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.play-app .season-economic-events summary::-webkit-details-marker {
+  display: none;
+}
+.play-app .season-economic-events-title {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 7px;
+}
+.play-app .season-economic-events-title i {
+  color: #54718f;
+}
+.play-app .season-economic-event-count {
+  min-width: 22px;
+  padding: 2px 7px;
+  color: #496782;
+  background: #edf3f8;
+  border-radius: 999px;
+  font-size: 10px;
+  text-align: center;
+}
+.play-app .season-economic-events-chevron {
+  color: #718096;
+  font-size: 10px;
+  transition: transform 160ms ease;
+}
+.play-app .season-economic-events[open] .season-economic-events-chevron {
+  transform: rotate(180deg);
+}
+.play-app .season-economic-event-list {
+  display: grid;
+  gap: 8px;
+  max-height: 220px;
+  padding-top: 10px;
+  overflow-y: auto;
+}
+.play-app .season-economic-event-item {
+  padding: 8px 10px;
+  background: #f6f8fb;
+  border-left: 3px solid #7c9bb8;
+  border-radius: 0 6px 6px 0;
+}
+.play-app .season-economic-event-item.is-recession {
+  border-left-color: #c87979;
+}
+.play-app .season-economic-event-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #35465a;
+  font-size: 11px;
+  font-weight: 700;
+}
+.play-app .season-economic-event-period,
+.play-app .season-economic-event-meta,
+.play-app .season-economic-event-empty {
+  color: #718096;
+  font-size: 10px;
+}
+.play-app .season-economic-event-meta {
+  margin-top: 4px;
+}
+.play-app .season-info-dialog {
+  width: min(420px, calc(100vw - 32px));
+  max-width: none;
+  padding: 20px;
+  color: #263445;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+}
+.play-app .season-info-dialog::backdrop {
+  background: rgba(16, 28, 43, 0.48);
+}
+.play-app .season-info-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.play-app .season-info-dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.play-app .season-info-dialog p {
+  margin: 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.play-app .season-info-close {
+  width: 28px;
+  height: 28px;
+  font-size: 24px;
 }
 .play-app .progress-bar-bg {
   height: 8px;
@@ -417,35 +846,38 @@ body.play-app, html.play-app {
 }
 .play-app .asset-summary .title {
   font-size: 12px;
-  color: #333;
-  font-weight: bold;
+  color: #6a7788;
+  font-weight: 600;
 }
 .play-app .asset-summary .amount {
   font-size: 24px;
   font-weight: bold;
-  color: #000;
+  color: #263445;
   margin: 4px 0 12px;
 }
 .play-app .asset-details {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
   font-size: 13px;
 }
 .play-app .asset-box {
-  flex: 1;
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  padding: 10px;
+  min-width: 0;
+  background: #f6f8fb;
+  border: 1px solid #e4eaf1;
+  border-radius: 7px;
+  padding: 8px 10px;
   text-align: center;
 }
 .play-app .asset-box .label {
-  color: #333;
+  color: #718096;
   font-size: 11px;
   margin-bottom: 4px;
 }
 .play-app .asset-box .value {
   font-weight: bold;
-  color: #000;
+  color: #263445;
+  overflow-wrap: anywhere;
 }
 .play-app .btn-time-advance {
   width: 100%;

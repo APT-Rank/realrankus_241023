@@ -1,10 +1,18 @@
 import { onRequest } from 'firebase-functions/v2/https';
-import { db, COLLECTION_BATCH, COLLECTION_BATCH_CHUNKS, COLLECTION_PLAYER_ASSET, COLLECTION_PRIMARY_SUPPLY } from '../common/db';
+import { db, COLLECTION_BATCH, COLLECTION_BATCH_CHUNKS, COLLECTION_LOAN, COLLECTION_PLAYER_ASSET, COLLECTION_PRIMARY_SUPPLY } from '../common/db';
 import { checkTransactionStatus } from '../common/utils';
-import { PlayBatch, PlayBatchChunk, PlayPlayerAsset } from '../common/types';
+import { PlayBatch, PlayBatchChunk, PlayLoan, PlayPlayerAsset } from '../common/types';
 import * as admin from 'firebase-admin';
 import { verifyInternalTask } from '../common/internalAuth';
-import { calculateEconomicState } from './economicEngine';
+import {
+  applyAnnualIncomeGrowth,
+  calculateEconomicState,
+  calculateEconomicStateWithSeasonInflation,
+  calculateMonthlyLoanPayment,
+  BASE_MONTHLY_LIVING_EXPENSE,
+  getAnnualIncomeForPeriod,
+  normalizeAnnualRate
+} from './economicEngine';
 
 let globalTestProperties: any[] | null = null;
 
@@ -46,6 +54,9 @@ export const processBatchChunk = onRequest(async (req, res) => {
       return;
     }
     const batch = batchDoc.data() as PlayBatch;
+    const batchIncomeGrowth = normalizeAnnualRate(batch.income_rate, null);
+    const annualInflation = normalizeAnnualRate(batch.inflation, null)
+      ?? (batchIncomeGrowth === null ? null : batchIncomeGrowth + 0.005);
     
     // Scenario / Rule Version Mismatch Check (P3-09)
     if (
@@ -125,7 +136,7 @@ export const processBatchChunk = onRequest(async (req, res) => {
 
           // P3-11: Already Processed Player & Player-level Idempotency Check
           // We uniquely identify processing by period.
-          const assetProcessedPeriod = asset.last_processed_period || 0;
+          const assetProcessedPeriod = asset.last_processed_period ?? 0;
           const processedBatches = asset.processed_batches || [];
           
           if (assetProcessedPeriod > simulation_period) {
@@ -140,19 +151,82 @@ export const processBatchChunk = onRequest(async (req, res) => {
           // If we advanced to a new period, reset the processed_batches array
           const newProcessedBatches = assetProcessedPeriod < simulation_period ? [batch_id] : [...processedBatches, batch_id];
 
-          // Calculate economic state deterministically (seed would normally be used if random involved)
-          // For now we use the basic economicEngine logic which is deterministic
-          const economicState = calculateEconomicState(simulation_period);
+          const priorAnnualIncome = asset.annual_income
+            ?? (asset.monthly_income != null ? asset.monthly_income * 12 : getAnnualIncomeForPeriod(assetProcessedPeriod));
+          const economicStateBeforeIncomeUpdate = calculateEconomicState(simulation_period, priorAnnualIncome);
+          const annualIncomeGrowth = normalizeAnnualRate(batch.income_rate, economicStateBeforeIncomeUpdate.annual_income_growth)
+            ?? economicStateBeforeIncomeUpdate.annual_income_growth;
+          const annualIncome = assetProcessedPeriod < simulation_period && simulation_period > 0 && simulation_period % 12 === 0
+            ? applyAnnualIncomeGrowth(priorAnnualIncome, annualIncomeGrowth)
+            : priorAnnualIncome;
+          const storedInflationFactor = Number(asset.cumulative_inflation_factor);
+          const legacyInflationFactor = Number(asset.monthly_living_expense) / BASE_MONTHLY_LIVING_EXPENSE;
+          const priorInflationFactor = Number.isFinite(storedInflationFactor) && storedInflationFactor > 0
+            ? storedInflationFactor
+            : Number.isFinite(legacyInflationFactor) && legacyInflationFactor > 0
+              ? legacyInflationFactor
+              : 1;
+          const economicState = annualInflation === null
+            ? calculateEconomicState(simulation_period, annualIncome)
+            : calculateEconomicStateWithSeasonInflation(
+              simulation_period,
+              annualIncome,
+              annualInflation,
+              priorInflationFactor,
+              assetProcessedPeriod < simulation_period
+            );
+          const monthlyIncome = Math.round(annualIncome / 12);
+
+          let activeLoans: Array<{ ref: FirebaseFirestore.DocumentReference; loan: PlayLoan }> = [];
+          if ((asset.debt_total || 0) > 0) {
+            const activeLoanQuery = db.collection(COLLECTION_LOAN)
+              .where('participant_id', '==', player_id)
+              .where('status', '==', 'ACTIVE');
+            const activeLoanSnapshot = await t.get(activeLoanQuery);
+            activeLoans = activeLoanSnapshot.docs
+              .filter(document => document.data().season_id === season_id)
+              .map(document => ({ ref: document.ref, loan: document.data() as PlayLoan }));
+          }
+
+          let monthlyLoanPayment = 0;
+          let totalPrincipalRepaid = 0;
+          const now = admin.firestore.Timestamp.now();
+          activeLoans.forEach(({ ref, loan }) => {
+            const outstandingPrincipal = Math.max(0, Number(loan.outstanding_principal ?? loan.principal) || 0);
+            const remainingMonths = Math.max(1, Math.floor(Number(loan.remaining_months) || 1));
+            const originalBaseRate = normalizeAnnualRate(loan.base_interest_at_origination, 0.03) ?? 0.03;
+            const originalInterestRate = normalizeAnnualRate(loan.interest_rate, originalBaseRate + 0.017) ?? originalBaseRate + 0.017;
+            const rateSpread = Number.isFinite(loan.rate_spread) ? Number(loan.rate_spread) : originalInterestRate - originalBaseRate;
+            const currentBaseRate = normalizeAnnualRate(batch.base_interest, null);
+            const annualInterestRate = Math.max(0, currentBaseRate === null ? originalInterestRate : currentBaseRate + rateSpread);
+            const calculatedPayment = calculateMonthlyLoanPayment(outstandingPrincipal, annualInterestRate, remainingMonths);
+            const monthlyInterest = Math.round(outstandingPrincipal * annualInterestRate / 12);
+            const payment = Math.round(Math.min(outstandingPrincipal + monthlyInterest, calculatedPayment));
+            const principalRepaid = Math.min(outstandingPrincipal, Math.max(0, payment - monthlyInterest));
+            const nextOutstandingPrincipal = Math.max(0, outstandingPrincipal - principalRepaid);
+            const nextRemainingMonths = nextOutstandingPrincipal === 0 ? 0 : remainingMonths - 1;
+
+            monthlyLoanPayment += payment;
+            totalPrincipalRepaid += principalRepaid;
+            t.update(ref, {
+              interest_rate: annualInterestRate,
+              outstanding_principal: nextOutstandingPrincipal,
+              remaining_months: nextRemainingMonths,
+              monthly_payment: payment,
+              annual_debt_service: payment * 12,
+              status: nextOutstandingPrincipal === 0 ? 'PAID_OFF' : 'ACTIVE',
+              updated_at: now
+            });
+          });
 
           const before_cash = asset.cash_total;
-          let after_cash_total = before_cash + economicState.monthly_income - economicState.monthly_living_expense;
-          let after_cash_available = asset.cash_available + economicState.monthly_income - economicState.monthly_living_expense;
-          
-          let property_value = 0; 
-          let financial_asset = asset.financial_asset_total || 0; 
-          let debt = asset.debt_total || 0;
-
-          let after_net_worth = after_cash_total + property_value + financial_asset - debt;
+          const monthlyOutflow = economicState.monthly_living_expense + monthlyLoanPayment;
+          const after_cash_total = before_cash + monthlyIncome - monthlyOutflow;
+          const after_cash_available = asset.cash_available + monthlyIncome - monthlyOutflow;
+          const debt = Math.max(0, (asset.debt_total || 0) - totalPrincipalRepaid);
+          const after_net_worth = Number.isFinite(asset.net_worth)
+            ? asset.net_worth + (after_cash_total - before_cash) + totalPrincipalRepaid
+            : after_cash_total + (asset.financial_asset_total || 0) - debt;
 
           // P3-04: Crash Before Commit
           if (inject_crash_before_commit_player === player_id) {
@@ -162,12 +236,18 @@ export const processBatchChunk = onRequest(async (req, res) => {
           t.update(assetRef, {
             cash_total: after_cash_total,
             cash_available: after_cash_available,
+            debt_total: debt,
             net_worth: after_net_worth,
+            annual_income: annualIncome,
+            monthly_income: monthlyIncome,
+            monthly_living_expense: economicState.monthly_living_expense,
+            cumulative_inflation_factor: economicState.cumulative_inflation_factor,
+            monthly_loan_payment: monthlyLoanPayment,
             last_processed_period: simulation_period,
             last_processed_batch_id: batch_id,
             processed_batches: newProcessedBatches,
-            last_processed_at: admin.firestore.Timestamp.now(),
-            updated_at: admin.firestore.Timestamp.now()
+            last_processed_at: now,
+            updated_at: now
           });
 
           // ACTIVE_TRADING_TEST Strategy Execution (using real market logic)

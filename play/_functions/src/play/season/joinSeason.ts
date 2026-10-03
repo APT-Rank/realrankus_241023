@@ -2,6 +2,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { db, COLLECTION_PLAYER, COLLECTION_PLAYER_ASSET } from '../common/db';
 import { checkTransactionStatus } from '../common/utils';
 import { PlayPlayer, PlayPlayerAsset } from '../common/types';
+import { BASE_MONTHLY_LIVING_EXPENSE, STARTING_ANNUAL_INCOME } from '../batch/economicEngine';
 import * as admin from 'firebase-admin';
 
 export const joinSeason = onCall(async (request) => {
@@ -51,6 +52,11 @@ export const joinSeason = onCall(async (request) => {
       property_count: 0,
       financial_asset_total: 0,
       net_worth: 700000000,
+      annual_income: STARTING_ANNUAL_INCOME,
+      monthly_income: Math.round(STARTING_ANNUAL_INCOME / 12),
+      monthly_living_expense: BASE_MONTHLY_LIVING_EXPENSE,
+      monthly_loan_payment: 0,
+      cumulative_inflation_factor: 1,
       last_processed_period: null,
       last_processed_batch_id: null,
       last_processed_at: null,

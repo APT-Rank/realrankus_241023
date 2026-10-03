@@ -13,6 +13,11 @@ export interface PlaySeason {
   rule_version: string;
   supply_policy?: 'FIXED_ONE' | 'HOUSEHOLD_BASED';
   test_mode_speed?: number;
+  base_interest?: number | string;
+  inflation?: number | string;
+  income_rate?: number | string;
+  DSR?: number | string;
+  LTV?: number | string;
   config?: {
     primary_supply_ratio?: number;
   };
@@ -55,6 +60,11 @@ export interface PlayPlayerAsset {
   property_count: number;
   financial_asset_total: number;
   net_worth: number;
+  annual_income?: number;
+  monthly_income?: number;
+  monthly_living_expense?: number;
+  cumulative_inflation_factor?: number;
+  monthly_loan_payment?: number;
   
   last_processed_period: number | null;
   last_processed_batch_id: string | null;
@@ -68,6 +78,7 @@ export interface PlayPlayerAsset {
 export type BatchStatus = 'PENDING' | 'DISPATCHING' | 'RUNNING' | 'AGGREGATING' | 'COMPLETED' | 'FAILED' | 'PAUSED';
 
 export interface PlayBatch {
+  inflation?: number | string;
   batch_id: string;
   season_id: string;
   simulation_period: number;
@@ -76,6 +87,8 @@ export interface PlayBatch {
   scenario_id: string;
   scenario_version: string;
   rule_version: string;
+  base_interest?: number | string;
+  income_rate?: number | string;
   
   expected_player_count: number;
   chunk_count: number;
@@ -221,6 +234,8 @@ export interface PlayLoan {
   remaining_months: number;
   monthly_payment: number;
   annual_debt_service: number;
+  base_interest_at_origination?: number;
+  rate_spread?: number;
   status: 'ACTIVE' | 'PAID_OFF' | 'DEFAULTED';
   created_at: FirebaseFirestore.Timestamp;
   updated_at: FirebaseFirestore.Timestamp;

@@ -8,23 +8,273 @@ let playerState = { cash: null };
 let currentUser = null;
 let currentSeasonId = 'S_FINAL'; 
 let currentContext = 'WORLD'; // WORLD, REGION, COMPLEX, LISTING, LISTING_DETAIL
+let currentSeasonState = null;
+let seasonCardState = null;
+let seasonEconomicEvents = [];
+let seasonEventsLoaded = false;
+let playerAssetUnsubscribe = null;
+let playerAssetSubscriptionId = null;
+const SEASON_ECONOMIC_METRIC_FIELDS = [
+    { field: 'base_interest', valueId: 'season-metric-base-interest', deltaId: 'season-delta-base-interest' },
+    { field: 'inflation', valueId: 'season-metric-inflation', deltaId: 'season-delta-inflation' },
+    { field: 'income_rate', valueId: 'season-metric-income-rate', deltaId: 'season-delta-income-rate' },
+    { field: 'DSR', valueId: 'season-metric-dsr', deltaId: 'season-delta-dsr' },
+    { field: 'LTV', valueId: 'season-metric-ltv', deltaId: 'season-delta-ltv' }
+];
+let liveActivityRecords = [];
+let seasonStateUnsubscribe = null;
+let seasonStateSubscriptionId = null;
+let seasonCardStateUnsubscribe = null;
+let seasonEventsUnsubscribe = null;
+let participantUnsubscribe = null;
+let participantSeasonId = null;
+const participantAssetUnsubscribers = new Map();
+let seasonParticipants = [];
+
+function isHeroTestSeason() {
+    return false;
+}
+
+function isTimeSlipEnabled() {
+    return false;
+}
+
+async function resolveActivePlayerSeason(user) {
+    const firestore = firebase.firestore();
+    const playersSnapshot = await firestore.collection('PLAY_PLAYER')
+        .where('user_id', '==', user.uid)
+        .get();
+    const players = playersSnapshot.docs
+        .map(document => document.data())
+        .filter(player => player.status === 'ACTIVE' && player.season_id && player.player_id);
+
+    if (!players.length) {
+        throw new Error('No active PLAY_PLAYER record exists for this account.');
+    }
+
+    const seasonIds = [...new Set(players.map(player => player.season_id))];
+    const seasonEntries = await Promise.all(seasonIds.map(async seasonId => {
+        const seasonDocument = await firestore.collection('PLAY_SEASON').doc(seasonId).get();
+        return [seasonId, seasonDocument.exists ? seasonDocument.data() : null];
+    }));
+    const seasons = new Map(seasonEntries);
+    const memberships = players.filter(player => seasons.get(player.season_id)?.status === 'ACTIVE');
+
+    if (memberships.length !== 1) {
+        throw new Error(memberships.length ? 'Multiple active PLAY seasons found for this account.' : 'No active PLAY_SEASON exists for this account.');
+    }
+
+    const player = memberships[0];
+    return { player, seasonId: player.season_id, season: seasons.get(player.season_id) };
+}
+
+function stopSeasonStateSubscription() {
+    if (seasonStateUnsubscribe) seasonStateUnsubscribe();
+    seasonStateUnsubscribe = null;
+    seasonStateSubscriptionId = null;
+}
+
+function stopPlayerAssetSubscription() {
+    if (playerAssetUnsubscribe) playerAssetUnsubscribe();
+    playerAssetUnsubscribe = null;
+    playerAssetSubscriptionId = null;
+}
+
+function subscribeToPlayerAsset(playerId) {
+    if (playerAssetSubscriptionId === playerId && playerAssetUnsubscribe) return;
+    stopPlayerAssetSubscription();
+    if (!playerId) return;
+
+    playerAssetSubscriptionId = playerId;
+    playerAssetUnsubscribe = firebase.firestore().collection('PLAY_PLAYER_ASSET').doc(playerId).onSnapshot(assetDocument => {
+        if (!assetDocument.exists || playerState?.player_id !== playerId) return;
+        playerState = { ...playerState, asset: assetDocument.data() };
+        updateMyWorldUI();
+    }, error => console.error(`Player asset listener failed (${playerId}):`, error));
+}
+
+function stopSeasonCardSubscriptions() {
+    if (seasonCardStateUnsubscribe) seasonCardStateUnsubscribe();
+    if (seasonEventsUnsubscribe) seasonEventsUnsubscribe();
+    seasonCardStateUnsubscribe = null;
+    seasonEventsUnsubscribe = null;
+    seasonEconomicEvents = [];
+    seasonEventsLoaded = false;
+}
+
+function toSeasonPercentPoints(value) {
+    if (value === null || value === undefined || value === '') return null;
+    if (typeof value === 'string' && value.trim().endsWith('%')) {
+        const parsedValue = Number.parseFloat(value);
+        return Number.isFinite(parsedValue) ? parsedValue : null;
+    }
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return null;
+    return Math.abs(numericValue) <= 1 ? numericValue * 100 : numericValue;
+}
+
+function getSeasonMetricValues(season) {
+    return Object.fromEntries(SEASON_ECONOMIC_METRIC_FIELDS.map(({ field }) => [
+        field,
+        toSeasonPercentPoints(season?.[field])
+    ]));
+}
+
+function calculateSeasonMetricDeltas(currentValues, previousValues) {
+    return Object.fromEntries(SEASON_ECONOMIC_METRIC_FIELDS.map(({ field }) => {
+        const currentValue = currentValues?.[field];
+        const previousValue = previousValues?.[field];
+        return [field, Number.isFinite(currentValue) && Number.isFinite(previousValue)
+            ? currentValue - previousValue
+            : 0];
+    }));
+}
+
+function getSeasonEconomicEventMetricDeltas() {
+    const [currentEvent, previousEvent] = seasonEconomicEvents;
+    if (!currentEvent || !previousEvent) {
+        return Object.fromEntries(SEASON_ECONOMIC_METRIC_FIELDS.map(({ field }) => [field, 0]));
+    }
+    return calculateSeasonMetricDeltas(
+        getSeasonMetricValues(currentEvent),
+        getSeasonMetricValues(previousEvent)
+    );
+}
+
+function setSeasonCardState(season) {
+    seasonCardState = season;
+    updateSeasonProgressCard();
+}
+
+function subscribeToSeasonState(seasonId) {
+    if (seasonStateSubscriptionId === seasonId && seasonStateUnsubscribe) return;
+    stopSeasonStateSubscription();
+    seasonStateSubscriptionId = seasonId;
+    if (seasonId === 'S_FINAL' && seasonCardStateUnsubscribe) {
+        seasonCardStateUnsubscribe();
+        seasonCardStateUnsubscribe = null;
+    }
+    seasonStateUnsubscribe = firebase.firestore().collection('PLAY_SEASON').doc(seasonId).onSnapshot(seasonDocument => {
+        if (currentSeasonId !== seasonId) return;
+        currentSeasonState = seasonDocument.exists ? seasonDocument.data() : null;
+        if (seasonId === 'S_FINAL') setSeasonCardState(currentSeasonState);
+        else updateSeasonProgressCard();
+    }, error => console.error(`Season state listener failed (${seasonId}):`, error));
+}
+
+function subscribeToSeasonCard() {
+    const firestore = firebase.firestore();
+    if (seasonStateSubscriptionId === 'S_FINAL' && seasonStateUnsubscribe) {
+        setSeasonCardState(currentSeasonState);
+    } else if (!seasonCardStateUnsubscribe) {
+        seasonCardStateUnsubscribe = firestore.collection('PLAY_SEASON').doc('S_FINAL').onSnapshot(seasonDocument => {
+            setSeasonCardState(seasonDocument.exists ? seasonDocument.data() : null);
+        }, error => {
+            console.error('Season card state listener failed (S_FINAL):', error);
+            setSeasonCardState(null);
+        });
+    }
+
+    if (!seasonEventsUnsubscribe) {
+        seasonEventsUnsubscribe = firestore.collection('PLAY_SEASON').doc('S_FINAL')
+            .collection('season_event')
+            .orderBy('created_at', 'desc')
+            .onSnapshot(eventsSnapshot => {
+                seasonEconomicEvents = eventsSnapshot.docs.map(document => ({
+                    id: document.id,
+                    ...document.data()
+                }));
+                seasonEventsLoaded = true;
+                renderSeasonEconomicEvents();
+                renderSeasonEconomicMetrics();
+            }, error => {
+                console.error('Season economic events listener failed (S_FINAL):', error);
+                seasonEconomicEvents = [];
+                seasonEventsLoaded = true;
+                renderSeasonEconomicEvents();
+            });
+    }
+    updateSeasonProgressCard();
+}
+
+function setupHeroLogin(auth) {
+    const loginButton = document.getElementById('hero-login-btn');
+    const loginModal = document.getElementById('hero-login-modal');
+    const loginForm = document.getElementById('hero-login-form');
+    const emailInput = document.getElementById('hero-login-email');
+    const passwordInput = document.getElementById('hero-login-password');
+    const errorElement = document.getElementById('hero-login-error');
+    const submitButton = document.getElementById('hero-login-submit');
+    if (!loginButton || !loginModal || !loginForm) return;
+
+    loginButton.addEventListener('click', () => {
+        errorElement.textContent = '';
+        bootstrap.Modal.getOrCreateInstance(loginModal).show();
+    });
+    loginForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        errorElement.textContent = '';
+        submitButton.disabled = true;
+        try {
+            await auth.signInWithEmailAndPassword(emailInput.value.trim(), passwordInput.value);
+            passwordInput.value = '';
+            bootstrap.Modal.getOrCreateInstance(loginModal).hide();
+        } catch (error) {
+            errorElement.textContent = error.message || 'Firebase sign-in failed.';
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+}
 
 async function initFirebaseAndPlayer() {
-    firebase.auth().onAuthStateChanged(async (user) => {
+    const auth = firebase.auth();
+    try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    } catch (error) {
+        console.warn('Firebase Auth persistence could not be enabled:', error);
+    }
+    setupHeroLogin(auth);
+    auth.onAuthStateChanged(async (user) => {
+        const loginButton = document.getElementById('hero-login-btn');
+        const heroStatus = document.getElementById('hero-auth-status');
+        stopPlayerAssetSubscription();
+        if (loginButton) loginButton.hidden = Boolean(user);
         if (user) {
             currentUser = user;
-            // The signed-in HERO opens directly into their authoritative PLAY season.
-            // TIME-SLIP only controls visibility/clock actions; it does not define identity.
-            const userSeasonId = user.uid === 'HERO_USER' ? 'test_hero_season' : 'S_FINAL';
-            if (currentSeasonId !== userSeasonId) stopTestModeListeners();
+            // Only the local emulator HERO opens the isolated test season.
+            // TIME-SLIP controls test visibility/actions, not user identity.
+            const userSeasonId = currentSeasonId;
+
+
+            if (currentSeasonId !== userSeasonId) {
+                window.playDevFeatures?.timeSlip?.deactivate();
+                resetSeasonParticipants();
+            }
             currentSeasonId = userSeasonId;
-            console.log("Logged in as", user.uid);
+            window.playDevFeatures?.heroLogin?.syncAuth(user);
+            window.playDevFeatures?.timeSlip?.syncAuth(user);
+            if (heroStatus) heroStatus.textContent = 'Loading PLAY…';
             try {
+                const membership = await resolveActivePlayerSeason(user);
+                if (currentSeasonId !== membership.seasonId) {
+                    window.playDevFeatures?.timeSlip?.deactivate();
+                    resetSeasonParticipants();
+                }
+                currentSeasonId = membership.seasonId;
+                currentSeasonState = membership.season;
+                subscribeToSeasonState(currentSeasonId);
+                subscribeToSeasonCard();
                 const getPlayerState = firebase.app().functions('asia-northeast3').httpsCallable('getPlayerState');
                 const res = await getPlayerState({ season_id: currentSeasonId });
+                if (res.data.player_id !== membership.player.player_id) {
+                    throw new Error('PLAY_PLAYER identity changed while loading account state.');
+                }
                 playerState = { ...res.data, ownership: res.data.ownership || res.data.ownerships || [] };
-                console.log("Player state loaded", res.data);
-                if (currentSeasonId === 'test_hero_season') {
+                subscribeToPlayerAsset(playerState.player_id);
+                if (heroStatus) heroStatus.textContent = playerState.player_id;
+                console.log('PLAY state loaded from Firestore', currentSeasonId, playerState.player_id);
+                if (isHeroTestSeason()) {
                     try {
                         const seasonDoc = await firebase.firestore().collection('PLAY_SEASON').doc(currentSeasonId).get();
                         currentSeasonState = seasonDoc.exists ? seasonDoc.data() : null;
@@ -33,54 +283,52 @@ async function initFirebaseAndPlayer() {
                     }
                 }
             } catch (e) {
+                stopPlayerAssetSubscription();
+                stopSeasonStateSubscription();
+                subscribeToSeasonCard();
                 if (e.message && e.message.includes('not found')) {
                     console.warn(`Player not found in current season (${currentSeasonId}).`);
                 } else {
                     console.error("Failed to load player state", e);
                 }
-                playerState = { player_id: currentSeasonId === 'test_hero_season' ? 'HERO' : null, asset: null, ownership: [] };
+                playerState = { player_id: null, asset: null, ownership: [] };
+                currentSeasonState = null;
+                if (heroStatus) heroStatus.textContent = 'PLAY setup unavailable';
             }
             updateMyWorldUI();
             updateCommandPanel();
-            if (currentSeasonId === 'test_hero_season') startTestModeListeners();
-            document.getElementById('hero-login-btn').style.display = 'none';
         } else {
             console.log("Not logged in");
-            stopTestModeListeners();
+            stopPlayerAssetSubscription();
+            stopSeasonStateSubscription();
+            stopSeasonCardSubscriptions();
+            window.playDevFeatures?.timeSlip?.syncAuth(null);
+            window.playDevFeatures?.heroLogin?.syncAuth(null);
+            if (heroStatus) heroStatus.textContent = 'Not signed in';
             currentUser = null;
             currentSeasonId = 'S_FINAL';
             currentSeasonState = null;
+            seasonCardState = null;
+            resetSeasonParticipants();
             playerState = { player_id: null, asset: null, ownership: [] };
-            isTestModeOn = false;
-            const testModeToggle = document.getElementById('testModeToggle');
-            if (testModeToggle) testModeToggle.checked = false;
-            document.getElementById('test-mode-panel').style.display = 'none';
-            document.getElementById('test-mode-activity').style.display = 'none';
             updateMyWorldUI();
-            document.getElementById('hero-login-btn').style.display = 'block';
         }
     });
 }
 
-async function loginAsHero() {
-    try {
-        await firebase.auth().signInWithEmailAndPassword('hero@aptrank.test', 'password123');
-        alert('HERO 로그인 성공!');
-    } catch (e) {
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-            alert('HERO 계정이 생성되지 않았거나 비밀번호가 틀립니다. 백엔드 스크립트로 계정을 먼저 생성해주세요.');
-        } else {
-            alert('로그인 에러: ' + e.message);
-        }
-    }
-}
 let selectedRegion = null;
 let selectedComplex = null;
 let selectedListing = null;
 let map = null;
+let homeMap = null;
+let mapViewMap = null;
 let markers = [];
+const complexMarkerInstances = new Map();
+const regionMarkerInstances = new Map();
+let activeMarkerMode = null;
 let currentMarkerInfoWindow = null;
 let markerHoverZIndex = 1000;
+const LARGE_MARKER_PAN_DURATION_MS = 500;
 let regionMasterCache = new Map();
 let regionMasterRequests = new Map();
 let markerRenderSequence = 0;
@@ -89,12 +337,21 @@ let visibleComplexMarkers = [];
 let complexSelectionSequence = 0;
 let selectedComplexId = null;
 let selectedComplexLoadError = null;
+let selectedComplexMapPosition = null;
+let selectedComplexSupplyByPropertyId = new Map();
+let selectedComplexSupplyStatus = 'loading';
+let dynamicContextDismissed = false;
+let dynamicContextMapReady = false;
+let dynamicContextRevealTimer = null;
+const dynamicContextBoundMaps = new WeakSet();
 let allProperties = [];
 let complexDataMap = {}; // { 'complex_name': [property1, property2] }
 const complexDetailsCache = new Map();
 const complexDetailsRequests = new Map();
 const propertyMasterCache = new Map();
 const propertyMasterRequests = new Map();
+const complexMasterSummaryCache = new Map();
+const complexMasterSummaryRequests = new Map();
 const complexSearchCache = new Map();
 let searchDebounceTimer = null;
 let searchRequestSequence = 0;
@@ -245,9 +502,69 @@ async function loadComplexProperties(complexName, complexId) {
     return request;
 }
 
+async function loadComplexPrimarySupply(properties, seasonId) {
+    const propertyIds = [...new Map(properties
+        .filter(property => property.property_status === 'NORMAL' && property.tradable === true && property.property_id !== null && property.property_id !== undefined)
+        .map(property => [String(property.property_id), property.property_id])).values()];
+    const propertyIdBatches = [];
+    for (let index = 0; index < propertyIds.length; index += 10) {
+        propertyIdBatches.push(propertyIds.slice(index, index + 10));
+    }
+
+    const supplySnapshots = await Promise.all(propertyIdBatches.map(propertyIdBatch => firebase.firestore()
+        .collection('PLAY_PRIMARY_SUPPLY')
+        .where('season_id', '==', seasonId)
+        .where('property_id', 'in', propertyIdBatch)
+        .get()));
+    const supplyByPropertyId = new Map();
+    supplySnapshots.forEach(snapshot => snapshot.forEach(document => {
+        const supply = document.data();
+        supplyByPropertyId.set(String(supply.property_id), Number(supply.remaining_supply) || 0);
+    }));
+    return supplyByPropertyId;
+}
+
+async function loadComplexMasterSummary(complexId) {
+    if (complexId === null || complexId === undefined || String(complexId).trim() === '') return null;
+    const key = String(complexId);
+    if (complexMasterSummaryCache.has(key)) return complexMasterSummaryCache.get(key);
+    if (complexMasterSummaryRequests.has(key)) return complexMasterSummaryRequests.get(key);
+
+    const request = (async () => {
+        const queryIds = [complexId];
+        if (typeof complexId === 'string' && /^\d+$/.test(complexId.trim())) {
+            queryIds.push(Number(complexId));
+        } else if (typeof complexId === 'number') {
+            queryIds.push(String(complexId));
+        }
+
+        const summary = { representative_area_label: null, initial_price: null };
+        for (const queryId of queryIds) {
+            const snapshot = await firebase.firestore().collection('PLAY_PROPERTY_MASTER')
+                .where('complex_id', '==', queryId)
+                .limit(1)
+                .get();
+            const property = snapshot.docs[0]?.data();
+            if (!property) continue;
+
+            const label = String(property.representative_area_label || '').trim();
+            if (label && label.replace(/\s/g, '') !== '정보없음') summary.representative_area_label = label;
+            const initialPrice = Number(property.initial_price);
+            if (Number.isFinite(initialPrice) && initialPrice > 0) summary.initial_price = initialPrice;
+            if (summary.representative_area_label && summary.initial_price !== null) break;
+        }
+
+        complexMasterSummaryCache.set(key, summary);
+        return summary;
+    })()
+        .finally(() => complexMasterSummaryRequests.delete(key));
+    complexMasterSummaryRequests.set(key, request);
+    return request;
+}
+
 // Map Initialization
 function initMap() {
-    map = new naver.maps.Map('map-container', {
+    homeMap = map = new naver.maps.Map('map-container', {
         center: new naver.maps.LatLng(37.3220, 127.0970),
         zoom: 16,
         minZoom: 5,
@@ -257,8 +574,9 @@ function initMap() {
         }
     });
     
-    naver.maps.Event.addListener(map, 'idle', function() {
-        if (['WORLD', 'MAP_VIEW', 'REGION', 'COMPLEX', 'LISTING'].includes(currentContext)) {
+    const homeMapInstance = map;
+    naver.maps.Event.addListener(homeMapInstance, 'idle', function() {
+        if (map === homeMapInstance && ['WORLD', 'MAP_VIEW', 'REGION', 'COMPLEX', 'LISTING'].includes(currentContext)) {
             renderWorldMarkers();
         }
     });
@@ -267,7 +585,10 @@ function initMap() {
 
     const renderInitialMarkers = attempt => {
         requestAnimationFrame(() => {
-            if (!map) return;
+            if (map !== homeMapInstance) {
+                finishInitialMapRender();
+                return;
+            }
             if (!map.getBounds()) {
                 if (attempt < 10) setTimeout(() => renderInitialMarkers(attempt + 1), 100);
                 else finishInitialMapRender();
@@ -277,6 +598,30 @@ function initMap() {
         });
     };
     renderInitialMarkers(0);
+}
+
+function ensureMapViewMap() {
+    if (mapViewMap) return mapViewMap;
+
+    mapViewMap = new naver.maps.Map('map-view-map-container', {
+        center: new naver.maps.LatLng(37.5, 127.0),
+        zoom: 11,
+        minZoom: 5,
+        zoomControl: true,
+        zoomControlOptions: {
+            position: naver.maps.Position.TOP_RIGHT
+        }
+    });
+
+    const mapViewInstance = mapViewMap;
+    naver.maps.Event.addListener(mapViewInstance, 'idle', function() {
+        if (map !== mapViewInstance) return;
+        if (['WORLD', 'MAP_VIEW', 'REGION', 'COMPLEX', 'LISTING'].includes(currentContext)) {
+            renderWorldMarkers();
+        }
+    });
+
+    return mapViewInstance;
 }
 
 function bindMapControls() {
@@ -560,6 +905,17 @@ function clearMarkers() {
     markers = [];
 }
 
+function resetActiveMapMarkerState() {
+    markerRenderSequence += 1;
+    clearMarkers();
+    complexMarkerInstances.forEach(marker => marker.setMap(null));
+    regionMarkerInstances.forEach(marker => marker.setMap(null));
+    complexMarkerInstances.clear();
+    regionMarkerInstances.clear();
+    activeMarkerMode = null;
+    visibleComplexMarkers = [];
+}
+
 // ---------------------------------------------------------
 // RENDER MAP MARKERS
 // ---------------------------------------------------------
@@ -590,14 +946,21 @@ function hideComplexInfo(marker) {
 }
 
 function renderWorldMarkers() {
-    clearMarkers();
     const renderSequence = ++markerRenderSequence;
     const mapBounds = map.getBounds();
     if (!mapBounds) return;
 
     const zoom = map.getZoom();
+    const showComplexMarkers = currentContext !== 'MAP_VIEW' && zoom >= 14;
+    const markerMode = showComplexMarkers ? 'complex' : 'administrative';
+    if (markerMode !== activeMarkerMode) {
+        clearMarkers();
+        complexMarkerInstances.clear();
+        regionMarkerInstances.clear();
+        activeMarkerMode = markerMode;
+    }
     
-    if (zoom >= 14) {
+    if (showComplexMarkers) {
         // Show small complex markers one zoom level below the large markers
         const isSmallMarker = zoom < 15;
         const southwest = mapBounds.getSW();
@@ -608,7 +971,7 @@ function renderWorldMarkers() {
             south: southwest.lat(),
             north: northeast.lat()
         };
-        playMapTiles.loadVisibleMarkers(tileBounds).then(complexMarkers => {
+        playMapTiles.loadVisibleMarkers(tileBounds).then(async complexMarkers => {
             if (renderSequence !== markerRenderSequence || map.getZoom() !== zoom) return;
             const currentBounds = map.getBounds();
             if (!currentBounds) return;
@@ -618,6 +981,25 @@ function renderWorldMarkers() {
                 return Number.isFinite(latitude) && Number.isFinite(longitude)
                     && currentBounds.hasLatLng(new naver.maps.LatLng(latitude, longitude));
             });
+            const areaLabelEntries = [];
+            if (!isSmallMarker) {
+                for (let index = 0; index < visibleComplexMarkers.length; index += 10) {
+                    const markerBatch = visibleComplexMarkers.slice(index, index + 10);
+                    const batchEntries = await Promise.all(markerBatch.map(async comp => {
+                        const complexId = comp.complex_id || comp.id;
+                        try {
+                        return [String(complexId || ''), await loadComplexMasterSummary(complexId)];
+                        } catch (error) {
+                            console.error(`Failed to load representative area for complex ${complexId}`, error);
+                            return [String(complexId || ''), null];
+                        }
+                    }));
+                    areaLabelEntries.push(...batchEntries);
+                }
+            }
+            if (renderSequence !== markerRenderSequence || map.getZoom() !== zoom) return;
+            const masterSummaries = new Map(areaLabelEntries);
+            const desiredMarkerIds = new Set();
             visibleComplexMarkers.forEach(comp => {
             const complexName = comp.complex_name;
             if (mapUiState.onlyTradable && Number(comp.tradable_count || 0) < 1) return;
@@ -626,11 +1008,22 @@ function renderWorldMarkers() {
             if (!Number.isFinite(Number(comp.y)) || !Number.isFinite(Number(comp.x)) || !currentBounds.hasLatLng(position)) return;
             const markerPrefix = isSmallMarker ? 'small_marker' : 'large_marker';
             const markerId = `${markerPrefix}_${String(comp.complex_id || comp.id || complexName).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
-            const initialPrice = Number(comp.initial_price);
-            const markerPrice = Number.isFinite(initialPrice) && initialPrice > 0 ? formatPrice(initialPrice) : '정보 없음';
-            const markerAreaValue = Number(comp.representative_area_sqm);
-            const markerArea = comp.representative_area_label || (Number.isFinite(markerAreaValue) ? `${markerAreaValue}㎡` : '--');
+            const masterSummary = masterSummaries.get(String(comp.complex_id || comp.id || ''));
+            const initialPrice = Number(masterSummary?.initial_price);
+            const markerPrice = Number.isFinite(initialPrice) && initialPrice > 0 ? formatPrice(initialPrice) : '--';
+            const markerArea = masterSummary?.representative_area_label || '--';
             const markerColor = '#198754';
+            const markerKey = String(comp.complex_id || comp.id || complexName);
+            const markerSignature = JSON.stringify([
+                markerPrefix,
+                complexName,
+                Number(comp.y),
+                Number(comp.x),
+                comp.legal_dong_address || '',
+                markerPrice,
+                markerArea
+            ]);
+            desiredMarkerIds.add(markerKey);
             const markerContent = isSmallMarker ? `
                 <svg version="1.1" class="small_marker_play" id="${markerId}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="30" height="30">
                     <defs>
@@ -661,7 +1054,14 @@ function renderWorldMarkers() {
                         <text class="cls-5_text" text-anchor="middle" x="17" y="26">${markerArea}</text>
                     </g>
                 </svg>`;
-            const marker = new naver.maps.Marker({
+            const existingMarker = complexMarkerInstances.get(markerKey);
+            if (existingMarker?.playSignature === markerSignature) return;
+            if (existingMarker) {
+                if (existingMarker.hoverInfoWindow) hideComplexInfo(existingMarker);
+                existingMarker.setPosition(position);
+            }
+
+            const marker = existingMarker || new naver.maps.Marker({
                 position: position,
                 map: map,
                 title: comp.complex_name,
@@ -671,23 +1071,43 @@ function renderWorldMarkers() {
                     anchor: new naver.maps.Point(12, isSmallMarker ? 24 : 60)
                 }
             });
+            if (existingMarker) {
+                existingMarker.setTitle(comp.complex_name);
+                existingMarker.setIcon({
+                    content: markerContent,
+                    size: new naver.maps.Size(24, 37),
+                    anchor: new naver.maps.Point(12, isSmallMarker ? 24 : 60)
+                });
+            }
+            marker.playSignature = markerSignature;
             marker.apt_name = comp.complex_name;
             marker.address = comp.legal_dong_address || '주소 확인 불가';
-            
-            naver.maps.Event.addListener(marker, 'click', function() {
+            marker.playComplexContext = { comp, isSmallMarker };
+
+            if (!existingMarker) {
+                naver.maps.Event.addListener(marker, 'click', function() {
                 const addressParts = String(comp.legal_dong_address || '').split(/\s+/).filter(Boolean);
                 const regionName = [...addressParts].reverse().find(part => /(시|군|구)$/.test(part)) || selectedRegion;
-                selectComplex(comp.complex_name, comp.y, comp.x, comp.complex_id || comp.id, regionName);
+                const { comp: markerComp, isSmallMarker: markerIsSmall } = marker.playComplexContext;
+                selectComplex(markerComp.complex_name, markerComp.y, markerComp.x, markerComp.complex_id || markerComp.id, regionName, !markerIsSmall);
             });
             naver.maps.Event.addListener(marker, 'mouseover', function() {
-                showComplexInfo(marker, isSmallMarker);
+                showComplexInfo(marker, marker.playComplexContext.isSmallMarker);
             });
             naver.maps.Event.addListener(marker, 'mouseout', function() {
                 hideComplexInfo(marker);
             });
-            
-            markers.push(marker);
+
+            }
+            complexMarkerInstances.set(markerKey, marker);
         });
+            complexMarkerInstances.forEach((marker, markerKey) => {
+                if (desiredMarkerIds.has(markerKey)) return;
+                if (marker.hoverInfoWindow) hideComplexInfo(marker);
+                marker.setMap(null);
+                complexMarkerInstances.delete(markerKey);
+            });
+            markers = Array.from(complexMarkerInstances.values());
             if (currentContext === 'REGION') updateCommandPanel();
         }).catch(error => {
             if (renderSequence === markerRenderSequence) console.error('Failed to load visible apartment markers', error);
@@ -734,8 +1154,12 @@ async function loadRegionMasterLevel(level) {
 
 async function renderAdministrativeMarkers(zoom, renderSequence) {
     const regionLevel = zoom >= 12 ? 'Level2' : zoom >= 10 ? 'Level1' : zoom >= 9 ? 'Level0' : null;
-    if (!regionLevel) return;
-    if ((mapUiState.layer === 'favorites' || mapUiState.tool === 'favorites') && !mapUiState.favoriteRegions.has('Suji-gu')) return;
+    if (!regionLevel || ((mapUiState.layer === 'favorites' || mapUiState.tool === 'favorites') && !mapUiState.favoriteRegions.has('Suji-gu'))) {
+        regionMarkerInstances.forEach(marker => marker.setMap(null));
+        regionMarkerInstances.clear();
+        markers = [];
+        return;
+    }
 
     let regions;
     try {
@@ -753,6 +1177,7 @@ async function renderAdministrativeMarkers(zoom, renderSequence) {
     const nameFontSize = regionLevel === 'Level2' ? '0.7em' : regionLevel === 'Level1' ? '0.8em' : '1em';
     const priceFontSize = regionLevel === 'Level2' ? '0.8em' : regionLevel === 'Level1' ? '0.9em' : '1.1em';
     const nextZoom = regionLevel === 'Level2' ? 14 : regionLevel === 'Level1' ? 12 : 11;
+    const desiredMarkerIds = new Set();
 
     regions.forEach(region => {
         const latitude = Number(region.latitude);
@@ -764,6 +1189,21 @@ async function renderAdministrativeMarkers(zoom, renderSequence) {
         const averagePrice = Number.isFinite(averagePriceValue) && averagePriceValue > 0
             ? `${(averagePriceValue / 100000000).toFixed(2)}억`
             : '--';
+        const markerKey = `${regionLevel}:${latitude}:${longitude}`;
+        const markerSignature = JSON.stringify([
+            regionLevel,
+            latitude,
+            longitude,
+            regionName,
+            region.name,
+            averagePrice,
+            nextZoom
+        ]);
+        desiredMarkerIds.add(markerKey);
+        const existingMarker = regionMarkerInstances.get(markerKey);
+        if (existingMarker?.playSignature === markerSignature) return;
+        if (existingMarker) existingMarker.setMap(null);
+
         const marker = new naver.maps.Marker({
             position: position,
             map: map,
@@ -774,6 +1214,7 @@ async function renderAdministrativeMarkers(zoom, renderSequence) {
                 anchor: new naver.maps.Point(8, 45)
             }
         });
+        marker.playSignature = markerSignature;
 
         naver.maps.Event.addListener(marker, 'click', function() {
             const markerPosition = new naver.maps.LatLng(latitude, longitude);
@@ -781,8 +1222,15 @@ async function renderAdministrativeMarkers(zoom, renderSequence) {
             map.setZoom(nextZoom);
         });
 
-        markers.push(marker);
+        regionMarkerInstances.set(markerKey, marker);
     });
+
+    regionMarkerInstances.forEach((marker, markerKey) => {
+        if (desiredMarkerIds.has(markerKey)) return;
+        marker.setMap(null);
+        regionMarkerInstances.delete(markerKey);
+    });
+    markers = Array.from(regionMarkerInstances.values());
 }
 
 function renderComplexMarkers() {
@@ -807,11 +1255,110 @@ function selectRegion(regionName, zoom = 14, center = new naver.maps.LatLng(37.3
     updateCommandPanel();
 }
 
-async function selectComplex(complexName, lat, lng, complexId, regionName) {
+function positionDynamicContextPanel() {
+    const panel = document.getElementById('dynamic-context');
+    const mapWrapper = document.getElementById('map-wrapper');
+
+    if (!panel || panel.hidden || !mapWrapper) return;
+
+
+
+
+
+    const mapWidth = mapWrapper.clientWidth;
+    const mapHeight = mapWrapper.clientHeight;
+
+
+
+    const panelWidth = panel.offsetWidth;
+    const panelHeight = panel.offsetHeight;
+    const preferredLeft = mapWidth / 2 + 54;
+    const maxLeft = Math.max(12, mapWidth - panelWidth - 12);
+    const preferredTop = (mapHeight - panelHeight) / 2;
+    const maxTop = Math.max(12, mapHeight - panelHeight - 12);
+
+
+
+
+
+
+    panel.style.left = `${Math.min(Math.max(preferredLeft, 12), maxLeft)}px`;
+    panel.style.top = `${Math.min(Math.max(preferredTop, 12), maxTop)}px`;
+}
+
+function showDynamicContextPanel() {
+    const panel = document.getElementById('dynamic-context');
+    if (!panel || dynamicContextDismissed) return;
+
+    panel.hidden = false;
+    window.requestAnimationFrame(() => {
+        if (panel.hidden || dynamicContextDismissed) return;
+        positionDynamicContextPanel();
+        panel.classList.add('is-visible');
+    });
+}
+
+function hideDynamicContextPanel() {
+    const panel = document.getElementById('dynamic-context');
+    if (!panel) return;
+    panel.classList.remove('is-visible');
+    panel.hidden = true;
+}
+
+function closeDynamicContextPanel() {
+    const panel = document.getElementById('dynamic-context');
+    if (!panel) return;
+
+    dynamicContextDismissed = true;
+    if (dynamicContextRevealTimer) {
+        window.clearTimeout(dynamicContextRevealTimer);
+        dynamicContextRevealTimer = null;
+    }
+    panel.classList.remove('is-visible');
+    window.setTimeout(() => {
+        if (dynamicContextDismissed) panel.hidden = true;
+    }, LARGE_MARKER_PAN_DURATION_MS);
+}
+
+function handleDynamicContextMapIdle() {
+    dynamicContextMapReady = true;
+    if (dynamicContextRevealTimer) {
+        window.clearTimeout(dynamicContextRevealTimer);
+        dynamicContextRevealTimer = null;
+    }
+    positionDynamicContextPanel();
+    if (['COMPLEX', 'LISTING', 'LISTING_DETAIL'].includes(currentContext) && !dynamicContextDismissed) {
+        showDynamicContextPanel();
+    }
+}
+
+function bindDynamicContextMapEvents(activeMap) {
+    if (!activeMap || dynamicContextBoundMaps.has(activeMap)) return;
+    naver.maps.Event.addListener(activeMap, 'idle', handleDynamicContextMapIdle);
+    dynamicContextBoundMaps.add(activeMap);
+}
+
+window.addEventListener('resize', positionDynamicContextPanel);
+async function selectComplex(complexName, lat, lng, complexId, regionName, preserveZoom = false) {
     // Research Logging Hook: Complex 선택
     console.log(`[RESEARCH_LOGGING_HOOK] EXPOSURE: Complex Selected - ${complexName}`);
     
     const selectionSequence = ++complexSelectionSequence;
+    if (currentMarkerInfoWindow) {
+        currentMarkerInfoWindow.close();
+        currentMarkerInfoWindow = null;
+    }
+    selectedComplexMapPosition = new naver.maps.LatLng(lat, lng);
+    selectedComplexSupplyByPropertyId = new Map();
+    selectedComplexSupplyStatus = 'loading';
+    dynamicContextDismissed = false;
+    bindDynamicContextMapEvents(map);
+    const mapCenter = map.getCenter();
+    const isAlreadyCentered = Math.abs(mapCenter.lat() - lat) < 0.000001
+        && Math.abs(mapCenter.lng() - lng) < 0.000001
+        && (preserveZoom || map.getZoom() === 15);
+    dynamicContextMapReady = isAlreadyCentered;
+    hideDynamicContextPanel();
     if (selectedComplex && selectedComplex !== complexName) delete complexDataMap[selectedComplex];
     currentContext = 'COMPLEX';
     selectedComplex = complexName;
@@ -821,13 +1368,35 @@ async function selectComplex(complexName, lat, lng, complexId, regionName) {
     selectedComplexLoadError = null;
     delete complexDataMap[complexName];
 
-    map.morph(new naver.maps.LatLng(lat, lng), 15);
+    const center = selectedComplexMapPosition;
+    if (preserveZoom) map.panTo(center, { duration: LARGE_MARKER_PAN_DURATION_MS });
+    else map.morph(center, 15);
+    dynamicContextMapReady = true;
+    if (!dynamicContextMapReady) {
+        dynamicContextRevealTimer = window.setTimeout(() => {
+            if (selectionSequence !== complexSelectionSequence || dynamicContextDismissed || currentContext !== 'COMPLEX') return;
+            dynamicContextMapReady = true;
+            showDynamicContextPanel();
+        }, 1200);
+    }
     renderMapInteractionPanel();
     updateCommandPanel();
     try {
         const properties = await loadComplexProperties(complexName, selectedComplexId);
         if (selectionSequence !== complexSelectionSequence || currentContext !== 'COMPLEX' || selectedComplex !== complexName) return;
         complexDataMap[complexName] = properties;
+        try {
+            const supplyByPropertyId = await loadComplexPrimarySupply(properties, currentSeasonId);
+            if (selectionSequence !== complexSelectionSequence || currentContext !== 'COMPLEX' || selectedComplex !== complexName) return;
+            selectedComplexSupplyByPropertyId = supplyByPropertyId;
+            const hasRemainingSupply = [...selectedComplexSupplyByPropertyId.values()].some(remainingSupply => remainingSupply > 0);
+            selectedComplexSupplyStatus = hasRemainingSupply ? 'available' : 'unavailable';
+
+        } catch (supplyError) {
+            if (selectionSequence !== complexSelectionSequence) return;
+            selectedComplexSupplyStatus = 'error';
+            console.error(`Failed to load primary supply for ${complexName}`, supplyError);
+        }
         updateCommandPanel();
     } catch (error) {
         if (selectionSequence !== complexSelectionSequence) return;
@@ -869,6 +1438,15 @@ function restoreStandardMapLayout() {
 
 function viewMapView() {
     currentContext = 'MAP_VIEW';
+    document.getElementById('map-container').style.display = 'none';
+    document.getElementById('map-view-map-container').style.display = 'block';
+
+    const nextMap = ensureMapViewMap();
+    if (map !== nextMap) {
+        resetActiveMapMarkerState();
+        map = nextMap;
+    }
+    nextMap.autoResize();
     selectedRegion = null;
     selectedComplex = null;
     selectedListing = null;
@@ -876,7 +1454,7 @@ function viewMapView() {
     document.getElementById('map-view-container').style.display = 'flex';
     document.getElementById('full-screen-container').style.display = 'none';
 
-    document.getElementById('map-left-sidebar').style.display = 'block';
+    document.getElementById('map-left-sidebar').style.display = 'flex';
     document.getElementById('map-search-bar').style.display = 'none';
     document.getElementById('map-left-toolbar').style.display = 'none';
     document.getElementById('map-top-filters').classList.remove('d-lg-flex');
@@ -884,12 +1462,20 @@ function viewMapView() {
     document.getElementById('map-bottom-carousel').classList.remove('d-lg-block');
     document.getElementById('map-bottom-carousel').style.display = 'none';
 
-    map.morph(isTestModeOn ? new naver.maps.LatLng(37.3220, 127.0970) : new naver.maps.LatLng(37.5, 127.0), 11);
+    nextMap.autoResize();
     renderWorldMarkers();
     updateCommandPanel();
 }
 
 function goBackToWorld() {
+    document.getElementById('map-view-map-container').style.display = 'none';
+    document.getElementById('map-container').style.display = 'block';
+
+    if (homeMap && map !== homeMap) {
+        resetActiveMapMarkerState();
+        map = homeMap;
+    }
+    if (homeMap) homeMap.autoResize();
     currentContext = 'WORLD';
     selectedRegion = null;
     selectedComplex = null;
@@ -899,6 +1485,7 @@ function goBackToWorld() {
     document.getElementById('full-screen-container').style.display = 'none';
     restoreStandardMapLayout();
 
+    if (homeMap) homeMap.autoResize();
     // Maintain current map viewport (center and zoom) when returning to Home
     renderWorldMarkers();
     updateCommandPanel();
@@ -1334,17 +1921,152 @@ function getAvailableCash() {
     return null; // UNAVAILABLE
 }
 
-function updateSeasonProgressBar(period) {
+const SEASON_MONTH_COUNT = 360;
+const REAL_HOURS_PER_SEASON_MONTH = 6;
+const GAME_DAYS_PER_SEASON_MONTH = 30;
+function getSeasonStartDate(season) {
+    const timestamp = season?.simulation_started_at
+        || season?.started_at
+        || season?.activated_at
+        || season?.created_at;
+    if (!timestamp) return null;
+
+    try {
+        if (typeof timestamp.toDate === 'function') return timestamp.toDate();
+        if (timestamp instanceof Date) return timestamp;
+        if (Number.isFinite(timestamp.seconds)) {
+            return new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1e6);
+        }
+        if (Number.isFinite(timestamp._seconds)) {
+            return new Date(timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1e6);
+        }
+        const date = new Date(timestamp);
+        return Number.isNaN(date.getTime()) ? null : date;
+    } catch (error) {
+        return null;
+    }
+}
+
+function updateSeasonProgressBar(elapsedMonths, ariaText) {
     const bar = document.getElementById('my-world-season-progress-bar');
     const fill = document.getElementById('my-world-season-progress-fill');
     if (!bar || !fill) return;
 
-    const completed = Number.isFinite(period) ? Math.max(0, Math.min(360, period)) : 0;
-    const percent = completed / 360 * 100;
+    const completed = Number.isFinite(elapsedMonths) ? Math.max(0, Math.min(SEASON_MONTH_COUNT, elapsedMonths)) : 0;
+    const percent = completed / SEASON_MONTH_COUNT * 100;
     fill.style.width = `${percent}%`;
     bar.setAttribute('aria-valuenow', String(completed));
-    bar.setAttribute('aria-valuetext', `Period ${completed} / 360`);
+    bar.setAttribute('aria-valuetext', ariaText);
 }
+
+function formatSeasonPercent(value) {
+    if (value === null || value === undefined || value === '') return '—';
+    if (typeof value === 'string' && value.trim().endsWith('%')) return value.trim();
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return String(value);
+    const percentage = Math.abs(numericValue) <= 1 ? numericValue * 100 : numericValue;
+    return `${percentage.toLocaleString('ko-KR', { maximumFractionDigits: 2 })}%`;
+}
+
+function renderSeasonEconomicMetrics() {
+    const season = seasonCardState || {};
+    const deltas = getSeasonEconomicEventMetricDeltas();
+    SEASON_ECONOMIC_METRIC_FIELDS.forEach(({ field, valueId, deltaId }) => {
+        const valueElement = document.getElementById(valueId);
+        const deltaElement = document.getElementById(deltaId);
+        if (valueElement) valueElement.textContent = formatSeasonPercent(season[field]);
+        if (deltaElement) {
+            const rawDelta = Number(deltas[field]) || 0;
+            const roundedDelta = Math.abs(rawDelta) < 0.05 ? 0 : Math.round(rawDelta * 10) / 10;
+            const sign = roundedDelta >= 0 ? '+' : '';
+            deltaElement.textContent = `(${sign}${roundedDelta.toFixed(1)})`;
+        }
+    });
+}
+
+function renderSeasonEconomicEvents() {
+    const countEl = document.getElementById('season-economic-event-count');
+    const listEl = document.getElementById('season-economic-event-list');
+    if (!countEl || !listEl) return;
+
+    countEl.textContent = seasonEventsLoaded ? String(seasonEconomicEvents.length) : '—';
+    if (!seasonEventsLoaded) {
+        listEl.innerHTML = '<div class="season-economic-event-empty">경제 이벤트를 불러오는 중입니다.</div>';
+        return;
+    }
+    if (!seasonEconomicEvents.length) {
+        listEl.innerHTML = '<div class="season-economic-event-empty">등록된 경제 이벤트가 없습니다.</div>';
+        return;
+    }
+
+    const formatCreatedAt = value => {
+        const date = getSeasonStartDate({ created_at: value });
+        return date ? date.toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '날짜 미상';
+    };
+    const season = seasonCardState || {};
+
+    listEl.innerHTML = seasonEconomicEvents.map(event => {
+        const description = escapeHtml(event.description || '설명 없음');
+        return `
+          <article class="season-economic-event-item">
+            <div class="season-economic-event-heading">
+              <span>${description}</span>
+              <span class="season-economic-event-period">${escapeHtml(formatCreatedAt(event.created_at))}</span>
+            </div>
+            <div class="season-economic-event-meta">기준금리 ${escapeHtml(formatSeasonPercent(season.base_interest))} · 물가상승률 ${escapeHtml(formatSeasonPercent(season.inflation))} · 소득증가율 ${escapeHtml(formatSeasonPercent(season.income_rate))}</div>
+            <div class="season-economic-event-meta">DSR ${escapeHtml(formatSeasonPercent(season.DSR))} · LTV ${escapeHtml(formatSeasonPercent(season.LTV))}</div>
+          </article>`;
+    }).join('');
+}
+
+function updateSeasonProgressCard() {
+    const seasonNameEl = document.getElementById('my-world-season-name');
+    const progressEl = document.getElementById('my-world-season-progress');
+    if (!progressEl) return;
+
+    const seasonName = seasonCardState?.season_name || '시즌명을 불러오는 중…';
+    if (seasonNameEl) seasonNameEl.textContent = seasonName;
+    renderSeasonEconomicMetrics();
+    renderSeasonEconomicEvents();
+
+    const startDate = getSeasonStartDate(seasonCardState);
+    if (!startDate) {
+        progressEl.textContent = '시즌 시작 정보 없음 / 360개월 (—%)';
+        updateSeasonProgressBar(0, '시즌 시작 시각을 확인할 수 없습니다.');
+        return;
+    }
+
+    const realMonthDurationMs = REAL_HOURS_PER_SEASON_MONTH * 60 * 60 * 1000;
+    const realGameDayDurationMs = realMonthDurationMs / GAME_DAYS_PER_SEASON_MONTH;
+    const elapsedMs = Math.min(SEASON_MONTH_COUNT * realMonthDurationMs, Math.max(0, Date.now() - startDate.getTime()));
+    const realGameHourDurationMs = realGameDayDurationMs / 24;
+    const elapsedGameHours = Math.floor(elapsedMs / realGameHourDurationMs);
+    const gameHoursPerMonth = GAME_DAYS_PER_SEASON_MONTH * 24;
+    const months = Math.min(SEASON_MONTH_COUNT, Math.floor(elapsedGameHours / gameHoursPerMonth));
+    const days = months === SEASON_MONTH_COUNT
+        ? 0
+        : Math.floor(elapsedGameHours / 24) % GAME_DAYS_PER_SEASON_MONTH;
+    const hours = months === SEASON_MONTH_COUNT ? 0 : elapsedGameHours % 24;
+    const elapsedMonths = elapsedMs / realMonthDurationMs;
+    const percent = (elapsedMonths / SEASON_MONTH_COUNT * 100).toFixed(1);
+    const progressLabel = `${months}개월 ${days}일 ${hours}시간 / ${SEASON_MONTH_COUNT}개월 (${percent}%)`;
+
+    progressEl.textContent = progressLabel;
+    updateSeasonProgressBar(elapsedMonths, progressLabel);
+}
+
+function openSeasonInfo() {
+    const dialog = document.getElementById('season-info-dialog');
+    if (dialog && !dialog.open) dialog.showModal();
+}
+
+function closeSeasonInfo() {
+    const dialog = document.getElementById('season-info-dialog');
+    if (dialog?.open) dialog.close();
+}
+
+window.setInterval(updateSeasonProgressCard, 3 * 1000);
+window.addEventListener('focus', updateSeasonProgressCard);
 
 function updateMyWorldUI() {
     const cashEl = document.getElementById('my-world-cash');
@@ -1352,35 +2074,20 @@ function updateMyWorldUI() {
     const propertyCountEl = document.getElementById('my-world-property-count');
     const propsContainer = document.getElementById('purchased-properties-container');
     const playerNameEl = document.getElementById('my-world-player-name');
-    if (playerNameEl) {
-        playerNameEl.textContent = !currentUser ? '로그인 필요'
-            : currentUser.uid === 'HERO_USER' || playerState?.player_id === 'HERO' ? 'HERO'
-            : playerState?.player_id || '참가자';
-    }
-    const seasonNameEl = document.getElementById('my-world-season-name');
-    if (seasonNameEl) {
-        seasonNameEl.textContent = currentSeasonState?.season_name || (currentSeasonId === 'test_hero_season' ? 'HERO Test Season' : '시즌 정보 없음');
-    }
+    const playerName = currentUser?.displayName || playerState?.display_name || playerState?.player_id || '사용자';
+    if (playerNameEl) playerNameEl.textContent = `${playerName}님의 자산현황`;
+    updateSeasonProgressCard();
     updateMyWorldScreen();
 
-    const progressEl = document.getElementById('my-world-season-progress');
     const advanceButton = document.getElementById('my-world-time-advance');
-    if (progressEl && currentSeasonId === 'test_hero_season') {
-        const period = currentSeasonState?.current_simulation_period;
-        const completed = Number.isFinite(period) ? period : null;
-        const percent = completed === null ? '—' : `${Math.min(100, (completed / 360 * 100).toFixed(1))}%`;
-        progressEl.textContent = completed === null ? 'Period — / 360' : `Period ${completed} / 360 (${percent})`;
-        updateSeasonProgressBar(completed);
-    } else if (progressEl) {
-        progressEl.textContent = currentUser ? '시즌 상태 불러오는 중' : '로그인 후 표시';
-        updateSeasonProgressBar(null);
-    }
-    if (advanceButton) advanceButton.style.display = currentSeasonId === 'test_hero_season' ? 'none' : '';
+    if (advanceButton) advanceButton.style.display = 'none';
     
     if (playerState && playerState.asset) {
-        if (cashEl) cashEl.textContent = formatPrice(playerState.asset.cash_available);
-        if (netWorthEl) netWorthEl.textContent = formatPrice(playerState.asset.net_worth);
-        if (propertyCountEl) propertyCountEl.textContent = playerState.asset.property_count + ' 채';
+        const currency = value => value == null ? '—' : `${Math.round(value).toLocaleString('ko-KR')}원`;
+        const compactCash = value => value == null ? '—' : `${(value / 100000000).toFixed(2)}억`;
+        if (cashEl) cashEl.textContent = compactCash(playerState.asset.cash_available);
+        if (netWorthEl) netWorthEl.textContent = currency(playerState.asset.net_worth);
+        if (propertyCountEl) propertyCountEl.textContent = `${playerState.asset.property_count ?? 0}채`;
         
         if (propsContainer) {
             let html = '';
@@ -1437,6 +2144,10 @@ function updateMyWorldUI() {
         if (cashEl) cashEl.textContent = '—';
         if (netWorthEl) netWorthEl.textContent = '—';
         if (propertyCountEl) propertyCountEl.textContent = '—';
+        ['my-world-monthly-income', 'my-world-living-expense', 'my-world-loan-payment'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = '—';
+        });
         if (propsContainer) propsContainer.innerHTML = '<div class="text-muted small mt-3">HERO 자산을 불러오려면 로그인하세요.</div>';
     }
 }
@@ -1451,6 +2162,10 @@ function updateMyWorldScreen() {
         'my-world-property-value': currency((playerState.ownership || []).reduce((sum, item) => sum + (item.acquisition_price || 0), 0)),
         'my-world-debt-value': currency(asset.debt_total),
         'my-world-property-count': `${asset.property_count ?? 0}채`,
+
+        'my-world-monthly-income': currency(asset.monthly_income),
+        'my-world-living-expense': currency(asset.monthly_living_expense),
+        'my-world-loan-payment': currency(asset.monthly_loan_payment ?? 0),
         'live-my-total-assets': currency(asset.cash_total),
         'live-my-net-worth': currency(asset.net_worth),
         'live-my-cash': currency(asset.cash_available),
@@ -1467,7 +2182,7 @@ function updateMyWorldScreen() {
         if (element) element.textContent = value;
     });
     const historyEl = document.getElementById('my-world-history-chart');
-    if (historyEl && isTestModeOn) {
+    if (historyEl && isTimeSlipEnabled()) {
         historyEl.textContent = `Period ${currentSeasonState?.current_simulation_period ?? '—'}의 자산 상태는 위 요약에서 확인할 수 있습니다. 과거 period별 자산 이력은 backend에서 제공되지 않습니다.`;
     }
 }
@@ -1518,7 +2233,7 @@ function getActiveRegionLabel() {
     if (scope && typeof scope === 'object') {
         return [scope.province, scope.city, scope.district].filter(Boolean).join(' ') || '지역 설정 없음';
     }
-    return currentSeasonId === 'test_hero_season' ? '경기도 용인시 수지구' : '지역 설정 없음';
+    return isHeroTestSeason() ? '경기도 용인시 수지구' : '지역 설정 없음';
 }
 
 function renderTestRegionExplorer() {
@@ -1549,7 +2264,7 @@ function viewRegionExplorer() {
     selectedComplex = null;
     selectedListing = null;
 
-    if (isTestModeOn) {
+    if (isTimeSlipEnabled()) {
         renderTestRegionExplorer();
         updateCommandPanel();
         return;
@@ -1828,6 +2543,17 @@ function viewSeason() {
     renderSeasonParticipants();
 }
 
+function resetSeasonParticipants() {
+    if (participantUnsubscribe) participantUnsubscribe();
+    participantAssetUnsubscribers.forEach(unsubscribe => unsubscribe());
+    participantAssetUnsubscribers.clear();
+    participantUnsubscribe = null;
+    participantSeasonId = null;
+    seasonParticipants = [];
+    liveActivityRecords = [];
+    currentSeasonState = null;
+}
+
 function subscribeSeasonParticipants() {
     if (participantSeasonId !== currentSeasonId) {
         if (participantUnsubscribe) participantUnsubscribe();
@@ -1957,10 +2683,11 @@ function updateCommandPanel() {
     
     // Toggle command panel wrapper contents
     if (currentContext === 'MAP_VIEW') {
-        worldCommandContent.style.display = 'none';
+        hideDynamicContextPanel();
+        worldCommandContent.style.display = 'block';
         mapViewCommandContent.style.display = 'block';
 
-        if (isTestModeOn) {
+    if (isTimeSlipEnabled()) {
             mapViewCommandContent.innerHTML = `
                 <div class="mb-4">
                     <div class="fw-bold text-muted small mb-3">Season Live State</div>
@@ -2003,12 +2730,15 @@ function updateCommandPanel() {
         mapViewCommandContent.style.display = 'none';
     }
 
+    const isComplexContext = ['COMPLEX', 'LISTING', 'LISTING_DETAIL'].includes(currentContext);
+    if (isComplexContext && dynamicContextMapReady && !dynamicContextDismissed) showDynamicContextPanel();
+    else hideDynamicContextPanel();
+
     const headerEl = document.getElementById('context-header');
     const titleEl = document.getElementById('panel-title');
     const actionEl = document.getElementById('action-area');
 
-    if (isTestModeOn && currentContext === 'REGION_EXPLORE') {
-        document.getElementById('action-selection-section').style.display = 'none';
+    if (isTimeSlipEnabled() && currentContext === 'REGION_EXPLORE') {
         headerEl.textContent = '지역탐색';
         titleEl.textContent = getActiveRegionLabel();
         actionEl.innerHTML = `<div class="mb-3">Period ${currentSeasonState?.current_simulation_period ?? '—'}</div><div class="alert alert-secondary">시장 가격·거래량 집계는 backend에 제공되지 않습니다.</div><div>최근 참가자 활동</div>${renderActivityMarkup(liveActivityRecords.slice(0, 10))}`;
@@ -2016,7 +2746,6 @@ function updateCommandPanel() {
     }
 
     if (currentContext === 'WORLD') {
-        document.getElementById('action-selection-section').style.display = 'block';
         headerEl.innerHTML = LANG.WORLD;
         titleEl.innerHTML = `${LANG.WORLD} 개요`;
         
@@ -2027,7 +2756,6 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'REGION_EXPLORE') {
-        document.getElementById('action-selection-section').style.display = 'none';
         headerEl.innerHTML = LANG.REGION + ` 탐색`;
         titleEl.innerHTML = `수도권 주요 지역`;
         
@@ -2150,7 +2878,6 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'REGION') {
-        document.getElementById('action-selection-section').style.display = 'block';
         headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; ${selectedRegion}`;
         titleEl.innerHTML = `${selectedRegion} ${LANG.REGION}`;
         
@@ -2175,7 +2902,6 @@ function updateCommandPanel() {
         });
         
     } else if (currentContext === 'COMPLEX') {
-        document.getElementById('action-selection-section').style.display = 'block';
         headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; <a href="#" onclick="goBackToRegion()" class="text-decoration-none">${selectedRegion}</a> &gt; ${selectedComplex}`;
         titleEl.innerHTML = `${selectedComplex}`;
         
@@ -2196,7 +2922,22 @@ function updateCommandPanel() {
             actionEl.innerHTML = '<div class="alert alert-warning">이 단지에 등록된 매물 정보가 없습니다.</div>';
             return;
         }
-        const tradableCount = props.filter(p => p.property_status === 'NORMAL').length;
+        const tradableProperties = props.filter(property => property.property_status === 'NORMAL');
+        const tradableCount = tradableProperties.length;
+        const listingPrices = tradableProperties.map(property => Number(property.initial_price)).filter(price => Number.isFinite(price) && price > 0);
+        const minListingPrice = listingPrices.length ? Math.min(...listingPrices) : null;
+        const maxListingPrice = listingPrices.length ? Math.max(...listingPrices) : null;
+        const pricePerPyeong = tradableProperties.map(property => {
+            const price = Number(property.initial_price);
+            const area = Number(property.representative_area_sqm);
+            return Number.isFinite(price) && price > 0 && Number.isFinite(area) && area > 0
+                ? price / area * 3.305785
+                : null;
+        }).filter(price => price !== null);
+        const averagePricePerPyeong = pricePerPyeong.length
+            ? pricePerPyeong.reduce((sum, price) => sum + price, 0) / pricePerPyeong.length
+            : null;
+        const recentSalesInfo = tradableProperties.find(property => property.sales_info_raw)?.sales_info_raw;
         
         let html = `<p class="text-muted small">${props[0].legal_dong_address || '주소 확인 불가'}</p>`;
         
@@ -2208,15 +2949,40 @@ function updateCommandPanel() {
                     </div>
                  </div>`;
         
+        const priceRangeLabel = minListingPrice !== null
+            ? `${formatPrice(minListingPrice)} ~ ${formatPrice(maxListingPrice)}`
+            : '확인 불가';
+        const averagePricePerPyeongLabel = averagePricePerPyeong !== null
+            ? formatPrice(averagePricePerPyeong)
+            : '확인 불가';
+        const recentSalesInfoLabel = recentSalesInfo ? escapeHtml(String(recentSalesInfo)) : '확인 불가';
+        html += `<div class="card mb-3 bg-light border-0">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between mb-1"><span>등록 매물 가격대</span> <strong>${priceRangeLabel}</strong></div>
+                        <div class="d-flex justify-content-between mb-1"><span>평당 평균 등록가</span> <strong>${averagePricePerPyeongLabel}</strong></div>
+                        <div class="d-flex justify-content-between gap-2"><span>최근 실거래 정보</span> <strong class="text-end">${recentSalesInfoLabel}</strong></div>
+                    </div>
+                 </div>`;
+
+        const purchaseEnabled = selectedComplexSupplyStatus === 'available';
+        const purchaseButtonLabel = purchaseEnabled
+            ? '매수 가능'
+            : selectedComplexSupplyStatus === 'unavailable'
+                ? '매수 불가'
+                : selectedComplexSupplyStatus === 'error'
+                    ? '매수 상태 확인 불가'
+                    : '매수 가능 여부 확인 중...';
+        const purchaseButtonClass = purchaseEnabled ? 'btn-primary' : 'btn-outline-secondary';
+        const purchaseButtonDisabled = purchaseEnabled ? '' : 'disabled';
+        const purchaseButtonAction = purchaseEnabled ? 'onclick="viewListings()"' : '';
         html += `<div class="d-grid gap-2 mb-3">
-                    <button class="btn btn-primary" onclick="viewListings()">${LANG.VIEW_LISTINGS} (${tradableCount})</button>
+                    <button class="btn ${purchaseButtonClass}" ${purchaseButtonDisabled} ${purchaseButtonAction}>${purchaseButtonLabel}</button>
                  </div>`;
                  
-        html += `<button class="btn btn-outline-secondary btn-sm" onclick="goBackToRegion()"><i class="fa-solid fa-arrow-left"></i> ${LANG.BACK_TO_REGION}</button>`;
+
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'LISTING') {
-        document.getElementById('action-selection-section').style.display = 'block';
         // Research Logging Hook: Listing 노출
         console.log(`[RESEARCH_LOGGING_HOOK] EXPOSURE: Listings for ${selectedComplex} displayed`);
         
@@ -2225,7 +2991,8 @@ function updateCommandPanel() {
         
         const props = complexDataMap[selectedComplex] || [];
         // Filter out INCOMPLETE
-        let tradableProps = props.filter(p => p.property_status === 'NORMAL');
+        let tradableProps = props.filter(property => property.property_status === 'NORMAL'
+            && (selectedComplexSupplyByPropertyId.get(String(property.property_id)) || 0) > 0);
         
         // Sorting (default low price)
         tradableProps.sort((a,b) => a.initial_price - b.initial_price);
@@ -2266,7 +3033,6 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'LISTING_DETAIL') {
-        document.getElementById('action-selection-section').style.display = 'block';
         headerEl.innerHTML = `<a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; <a href="#" onclick="goBackToListing()" class="text-decoration-none">${LANG.LISTING}</a> &gt; ${LANG.LISTING_DETAIL}`;
         titleEl.innerHTML = `${LANG.LISTING_DETAIL}`;
         
@@ -2630,188 +3396,12 @@ function updateCommandPanel() {
 }
 
 // On Load
-$(document).ready(function() {
+$(document).ready(async function() {
+    await (window.playDevFeaturesReady || Promise.resolve());
     initFirebaseAndPlayer();
     loadData();
 });
 
-
-// ==========================================
-// TEST MODE (TIME-SLIP) LOGIC
-// ==========================================
-let isTestModeOn = false;
-let simSpeedMultiplier = 1;
-let simUnsubscribe = null;
-let activityUnsubscribe = null;
-let heroAssetUnsubscribe = null;
-let participantUnsubscribe = null;
-let participantSeasonId = null;
-const participantAssetUnsubscribers = new Map();
-let seasonParticipants = [];
-let currentSeasonState = null;
-let liveActivityRecords = [];
-
-function stopTestModeListeners() {
-    if (simUnsubscribe) simUnsubscribe();
-    if (activityUnsubscribe) activityUnsubscribe();
-    if (heroAssetUnsubscribe) heroAssetUnsubscribe();
-    if (participantUnsubscribe) participantUnsubscribe();
-    participantAssetUnsubscribers.forEach(unsubscribe => unsubscribe());
-    participantAssetUnsubscribers.clear();
-    simUnsubscribe = null;
-    activityUnsubscribe = null;
-    heroAssetUnsubscribe = null;
-    participantUnsubscribe = null;
-    participantSeasonId = null;
-    seasonParticipants = [];
-    liveActivityRecords = [];
-}
-
-function toggleTestMode(isOn) {
-    if (isOn && !currentUser) {
-        document.getElementById('testModeToggle').checked = false;
-        alert('TIME-SLIP을 사용하려면 먼저 HERO 로그인 해주세요.');
-        return;
-    }
-    isTestModeOn = isOn;
-    const panel = document.getElementById('test-mode-panel');
-    const activity = document.getElementById('test-mode-activity');
-    
-    if (isOn) {
-        // OFF -> ON
-        console.log("TIME-SLIP TEST MODE: ON");
-        panel.style.display = 'block';
-        activity.style.display = 'block';
-        
-        // Force the season to our test season
-        currentSeasonId = 'test_hero_season';
-        
-        // Start live listeners for simulation clock and activity
-        startTestModeListeners();
-        
-        // Reload player state for HERO
-        reloadHeroState();
-    } else {
-        // ON -> OFF
-        console.log("TIME-SLIP TEST MODE: OFF");
-        panel.style.display = 'none';
-        activity.style.display = 'none';
-        
-        // Keep observing the same state but hide controls (per requirement)
-        // We do NOT destroy the listeners or reset HERO to avoid duplicate connections if toggled again
-    }
-}
-
-async function reloadHeroState() {
-    try {
-        const getPlayerState = firebase.app().functions('asia-northeast3').httpsCallable('getPlayerState');
-        const res = await getPlayerState({ season_id: currentSeasonId, player_id: 'HERO' });
-        playerState = { ...res.data, ownership: res.data.ownership || res.data.ownerships || [] };
-        console.log("HERO Player state loaded", res.data);
-        updateMyWorldUI();
-    } catch (e) {
-        console.error("Failed to load HERO state", e);
-    }
-}
-
-function startTestModeListeners() {
-    if (simUnsubscribe) return; // Prevent duplicate listeners
-    
-    const db = firebase.firestore();
-    
-    // Listen to Season for Clock/Period updates
-    simUnsubscribe = db.collection('PLAY_SEASON').doc(currentSeasonId).onSnapshot(doc => {
-        if (doc.exists) {
-            const data = doc.data();
-            currentSeasonState = data;
-            document.getElementById('sim-time-display').innerText = `Period ${data.current_simulation_period}`;
-            updateMyWorldUI();
-            setSimStatus(data.clock_status || 'UNKNOWN');
-            if (currentContext === 'MAP_VIEW') updateCommandPanel();
-            if (currentContext === 'REGION_EXPLORE' && isTestModeOn) renderTestRegionExplorer();
-            if (currentContext === 'MY_WORLD') {
-                updateMyWorldScreen();
-                updateCommandPanel();
-            }
-        }
-    });
-
-    heroAssetUnsubscribe = db.collection('PLAY_PLAYER_ASSET').doc('HERO').onSnapshot(doc => {
-        if (!doc.exists) return;
-        playerState = { ...playerState, player_id: 'HERO', asset: doc.data() };
-        updateMyWorldUI();
-        updateCommandPanel();
-    }, error => console.error('HERO asset listener failed:', error));
-
-    // Listen to Decision Logs for Live Activity
-    activityUnsubscribe = db.collection('PLAY_DECISION_LOG')
-        .where('season_id', '==', currentSeasonId)
-        .orderBy('created_at', 'desc')
-        .limit(20)
-        .onSnapshot(snapshot => {
-            liveActivityRecords = snapshot.docs.map(doc => doc.data());
-            const container = document.getElementById('activity-log-container');
-            container.innerHTML = '';
-
-            liveActivityRecords.forEach(log => {
-                const isHero = log.player_id === 'HERO';
-                const color = isHero ? 'text-warning' : 'text-light';
-                const name = isHero ? 'YOU (HERO)' : `AI (${log.player_id})`;
-                const action = log.action_type || log.event_type || 'acted';
-                
-                const div = document.createElement('div');
-                div.className = `mb-1 ${color}`;
-                div.innerHTML = `<strong>${name}</strong>: ${action} <span class="text-muted" style="font-size:0.8em">P${log.simulation_period}</span>`;
-                container.appendChild(div);
-            });
-            if (currentContext === 'MAP_VIEW') updateCommandPanel();
-            if (currentContext === 'REGION_EXPLORE' && isTestModeOn) renderTestRegionExplorer();
-            if (currentContext === 'MY_WORLD') updateCommandPanel();
-        });
-
-    subscribeSeasonParticipants();
-}
-
-function setSimSpeed(speed) {
-    simSpeedMultiplier = speed;
-    console.log(`Simulation speed set to ${speed}x`);
-    // Highlight the active button
-    const buttons = document.querySelectorAll('#test-mode-panel .btn-outline-light');
-    buttons.forEach(btn => {
-        if (btn.innerText === `${speed}x`) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-}
-
-// Backend Simulation Control Triggers
-function setSimStatus(status) {
-    const statusEl = document.getElementById('sim-status-display');
-    if (statusEl) statusEl.textContent = status;
-}
-
-async function callSimControl(action) {
-    try {
-        setSimStatus(`${action} 요청 중...`);
-        const controlFn = firebase.app().functions('asia-northeast3').httpsCallable('controlSimulation');
-        const response = await controlFn({
-            season_id: currentSeasonId,
-            action: action,
-            speed: simSpeedMultiplier
-        });
-        setSimStatus(action === 'STEP' ? 'STEP 처리 중...' : response.data.clock_status || action);
-    } catch (e) {
-        console.error(`Simulation control [${action}] failed:`, e);
-        setSimStatus(`오류: ${e.message || e.code || '요청 실패'}`);
-    }
-}
-
-function simRun() { callSimControl('RUN'); }
-function simPause() { callSimControl('PAUSE'); }
-function simStep() { callSimControl('STEP'); }
-function simStop() { callSimControl('STOP'); }
 
 window.updateLoanUI = function(valStr, propertyPrice, ltvLimit, annualIncome, existingAnnualDebt, monthlyRate, loanTerm, interestRate, currentCash, requiredFunds) {
     const val = parseInt(valStr) || 0;
