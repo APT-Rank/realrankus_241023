@@ -319,6 +319,7 @@ async function initFirebaseAndPlayer() {
 let selectedRegion = null;
 let selectedComplex = null;
 let selectedListing = null;
+let complexFundingCheckEntry = false;
 let map = null;
 let homeMap = null;
 let mapViewMap = null;
@@ -875,7 +876,7 @@ function renderComplexTradeAction() {
                 : '매수 가능 여부 확인 중...';
     const purchaseButtonClass = purchaseEnabled ? 'btn-primary' : 'btn-outline-secondary';
     const purchaseButtonDisabled = purchaseEnabled ? '' : 'disabled';
-    const purchaseButtonAction = purchaseEnabled ? 'onclick="viewListings()"' : '';
+    const purchaseButtonAction = purchaseEnabled ? 'onclick="openComplexFundingCheck()"' : '';
 
     return `<div class="complex-trade-summary">
                 <div class="complex-trade-price">가격 : ${priceLabel}</div>
@@ -1897,6 +1898,8 @@ async function selectComplex(complexName, lat, lng, complexId, regionName, prese
     if (selectedComplex && selectedComplex !== complexName) delete complexDataMap[selectedComplex];
     currentContext = 'COMPLEX';
     selectedComplex = complexName;
+    complexFundingCheckEntry = false;
+    decisionState = 'NONE';
     selectedComplexId = complexId ?? null;
     watchComplexDealHistory(selectedComplexId, selectionSequence);
     selectedComplexSnapshot = null;
@@ -1954,12 +1957,34 @@ async function selectComplex(complexName, lat, lng, complexId, regionName, prese
 }
 
 function viewListings() {
+    complexFundingCheckEntry = false;
     currentContext = 'LISTING';
     selectedListing = null;
     updateCommandPanel();
 }
 
+function openComplexFundingCheck() {
+    const availableListings = (complexDataMap[selectedComplex] || [])
+        .filter(property => property.property_status === 'NORMAL'
+            && (selectedComplexSupplyByPropertyId.get(String(property.property_id)) || 0) > 0
+            && Number(property.initial_price) > 0)
+        .sort((left, right) => Number(left.initial_price) - Number(right.initial_price));
+
+    if (!availableListings.length) {
+        window.alert('현재 자금 확인이 가능한 매물이 없습니다.');
+        return;
+    }
+
+    complexFundingCheckEntry = true;
+    currentContext = 'LISTING_DETAIL';
+    selectedListing = availableListings[0];
+    decisionState = 'FUNDING_CHECK';
+    window.currentLoanRequest = 0;
+    updateCommandPanel();
+}
+
 function selectListing(propertyId) {
+    complexFundingCheckEntry = false;
     // Research Logging Hook: Listing 선택
     console.log(`[RESEARCH_LOGGING_HOOK] EXPOSURE/DECISION: Listing Selected - ${propertyId}`);
     
@@ -2057,6 +2082,7 @@ function goBackToRegion() {
 }
 
 function goBackToComplex() {
+    complexFundingCheckEntry = false;
     if(!selectedComplex) return goBackToRegion();
     // retrieve lat lng
     const props = complexDataMap[selectedComplex];
@@ -2187,6 +2213,11 @@ async function doBuyTransaction() {
 
 function cancelDecision() {
     decisionState = 'NONE';
+    if (complexFundingCheckEntry) {
+        complexFundingCheckEntry = false;
+        currentContext = 'COMPLEX';
+        selectedListing = null;
+    }
     updateCommandPanel();
 }
 
@@ -3451,7 +3482,7 @@ function updateCommandPanel() {
         });
         
     } else if (currentContext === 'COMPLEX') {
-        if (headerEl) headerEl.innerHTML = `<a href="#" onclick="goBackToWorld()" class="text-decoration-none">${LANG.WORLD}</a> &gt; <a href="#" onclick="goBackToRegion()" class="text-decoration-none">${selectedRegion}</a> &gt; ${selectedComplex}`;
+        if (headerEl) headerEl.textContent = '단지정보';
         titleEl.innerHTML = `${selectedComplex}`;
         
         const props = complexDataMap[selectedComplex];
@@ -3542,12 +3573,18 @@ function updateCommandPanel() {
         actionEl.innerHTML = html;
         
     } else if (currentContext === 'LISTING_DETAIL') {
-        if (headerEl) headerEl.innerHTML = `<a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; <a href="#" onclick="goBackToListing()" class="text-decoration-none">${LANG.LISTING}</a> &gt; ${LANG.LISTING_DETAIL}`;
-        titleEl.innerHTML = `${LANG.LISTING_DETAIL}`;
+        if (headerEl) {
+            if (complexFundingCheckEntry) {
+                headerEl.textContent = '단지정보 > 자금 확인 및 대출';
+            } else {
+                headerEl.innerHTML = `<a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; <a href="#" onclick="goBackToListing()" class="text-decoration-none">${LANG.LISTING}</a> &gt; ${LANG.LISTING_DETAIL}`;
+            }
+        }
+        titleEl.textContent = complexFundingCheckEntry ? selectedComplex : LANG.LISTING_DETAIL;
         
         const p = selectedListing;
         
-        let html = `
+        let html = complexFundingCheckEntry ? '' : `
         <div class="card mb-4 border-primary">
             <div class="card-header bg-primary text-white d-flex justify-content-between">
                 <span>${p.complex_name}</span>
