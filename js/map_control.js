@@ -11,6 +11,8 @@ var level2_loc = []
 
 var complex_small_markers = []
 var complex_large_markers = []
+var complex_visit_count_cache = {}
+var complex_visit_badge_animated = {}
 
 var all_markers = []
 
@@ -250,12 +252,11 @@ function animateMarker(marker, visit_marker) {
   removeAnimation()
 
   setTimeout(function () {
-    marker.setAnimation(naver.maps.Animation.BOUNCE)
-    if (visit_marker) {
-      visit_marker.setAnimation(naver.maps.Animation.BOUNCE)
+    if (marker) {
+      marker.setAnimation(naver.maps.Animation.BOUNCE)
     }
-    else {
-      visit_marker.setAnimation(null);
+    if (visit_marker && visit_marker !== marker) {
+      visit_marker.setAnimation(naver.maps.Animation.BOUNCE)
     }
   }, 350)
 }
@@ -612,11 +613,15 @@ function updateVisits(map, markers) {
     position = marker.getPosition();
 
     if (mapBounds.hasLatLng(position)) {
-      show_visit.push(marker['code'])
-      showMarker(map, marker)
+      show_visit.push(marker['visit_code'] || marker['code'])
+      if (!marker['visit_code']) {
+        showMarker(map, marker)
+      }
     }
     else {
-      hideMarker(map, marker);
+      if (!marker['visit_code']) {
+        hideMarker(map, marker);
+      }
     }
   }
 
@@ -657,7 +662,12 @@ function showVisitInfo_test(visits) {
           visit_id = 'visit_' + snapshot.key
           //visit_count = 99
           $("#" + visit_id).html(visit_count.toLocaleString() + (isEn ? " visits" : "명 방문"))
-          $("#" + visit_id).animate({ opacity: '1', marginTop: '0px' }, 250);
+          if (!complex_visit_badge_animated[snapshot.key]) {
+            $("#" + visit_id).stop(true, true).animate({ opacity: '1', marginTop: '0px' }, 250)
+            complex_visit_badge_animated[snapshot.key] = true
+          } else {
+            $("#" + visit_id).css({ opacity: 1, marginTop: '0px' })
+          }
 
           if (visit_count < 1000) {
             if (isMobile && current_zoom == 15) {
@@ -710,10 +720,16 @@ function showVisitInfo(visits, visit_check_count) {
           }
           //몇 명 이상 방문해야 보여지는지
           if (visit_count >= min_visit) {
+            complex_visit_count_cache[visits[visit_check_count]] = visit_count
             visit_id = 'visit_' + visits[visit_check_count]
             //visit_count = 99
             $("#" + visit_id).html(visit_count.toLocaleString() + (isEn ? " visits" : "명 방문"))
-            $("#" + visit_id).animate({ opacity: '1', marginTop: '0px' }, 250);
+            if (!complex_visit_badge_animated[visits[visit_check_count]]) {
+              $("#" + visit_id).stop(true, true).animate({ opacity: '1', marginTop: '0px' }, 250)
+              complex_visit_badge_animated[visits[visit_check_count]] = true
+            } else {
+              $("#" + visit_id).css({ opacity: 1, marginTop: '0px' })
+            }
 
             if (visit_count < 1000) {
               if (isMobile && current_zoom == 15) {
@@ -739,7 +755,15 @@ function showVisitInfo(visits, visit_check_count) {
                 $("#" + visit_id).css({ 'width': '80px', 'left': '-8px' });
               }
             }
+          } else {
+            var hidden_visit_code = visits[visit_check_count]
+            delete complex_visit_count_cache[hidden_visit_code]
+            $("#visit_" + hidden_visit_code).css({ opacity: 0 }).empty()
           }
+        } else {
+          var missing_visit_code = visits[visit_check_count]
+          delete complex_visit_count_cache[missing_visit_code]
+          $("#visit_" + missing_visit_code).css({ opacity: 0 }).empty()
         }
         visit_check_count++
         showVisitInfo(visits, visit_check_count)
@@ -1117,45 +1141,48 @@ function createLargeMarker(markers) {
       </g>
       </svg>
       `
+      var visit_code = "complex_" + marker_code
+      var visit_large_id = 'visit_' + visit_code
+      var cached_visit_count = complex_visit_count_cache[visit_code]
+      var cached_visit_text = ""
+      var cached_visit_style = ""
+      if (cached_visit_count !== undefined && cached_visit_count >= min_visit) {
+        cached_visit_text = cached_visit_count.toLocaleString() + (isEn ? " visits" : "명 방문")
+        cached_visit_style = ' style="opacity:1;margin-top:0px;"'
+      }
+      visit_loc_large = `
+      <div class='${visit_marker_class} ${grade}' id="${visit_large_id}"${cached_visit_style}>${cached_visit_text}</div>
+      `
+      var marker_icon_content = `
+      <div style="position:relative;width:68px;height:${visit_marker_anchor_y}px;">
+        <div style="position:absolute;left:${visit_marker_anchor_x - large_marker_anchor_x}px;top:${visit_marker_anchor_y - large_marker_anchor_y}px;">${svg_loc_large}</div>
+        <div style="position:absolute;left:0;top:0;">${visit_loc_large}</div>
+      </div>
+      `
+
       window["large_marker_obj_" + marker_code] = new naver.maps.Marker({
         position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
         icon: {
-          content: svg_loc_large,
-          size: new naver.maps.Size(24, 37),
-          anchor: new naver.maps.Point(large_marker_anchor_x, large_marker_anchor_y),
+          content: marker_icon_content,
+          size: new naver.maps.Size(68, visit_marker_anchor_y),
+          anchor: new naver.maps.Point(visit_marker_anchor_x, visit_marker_anchor_y),
           origin: new naver.maps.Point(Number(coordi_y), Number(coordi_x)),
         },
-        zIndex: 100 + Number(k),
+        zIndex: 500 + Number(k),
         map: defaultMap,
         apt_name: isEn ? (markers[k]['아파트명'] || markers[k]['APT_Name_EN']) : markers[k]['아파트명'],
         code: marker_code,
+        visit_code: "complex_" + marker_code,
         gungu: markers[k]['gungu'],
         sido: markers[k]['sido'],
         address: isEn ? (markers[k]['Road_Addr_EN'] || markers[k]['Law_Addr_EN'] || markers[k]['법정동주소']) : markers[k]['법정동주소']
       });
 
-      var visit_large_id = 'visit_complex_' + marker_code
-      visit_loc_large = `      
-      <div class='${visit_marker_class} ${grade}' id="${visit_large_id}"></div>      
-      `
-      window["visit_obj_" + marker_code] = new naver.maps.Marker({
-        position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
-        icon: {
-          content: visit_loc_large,
-          //size: new naver.maps.Size(24, 37),
-          anchor: new naver.maps.Point(visit_marker_anchor_x, visit_marker_anchor_y),
-          origin: new naver.maps.Point(Number(coordi_y), Number(coordi_x)),
-        },
-        code: "complex_" + marker_code,
-        zIndex: 500 + Number(k),
-        map: defaultMap,
-      });
-
-      visit_display.push(window["visit_obj_" + marker_code])
+      window["visit_obj_" + marker_code] = window["large_marker_obj_" + marker_code]
+      visit_display.push(window["large_marker_obj_" + marker_code])
       complex_large_markers.push(window["large_marker_obj_" + marker_code])
 
       all_markers.push(window["large_marker_obj_" + marker_code])
-      all_markers.push(window["visit_obj_" + marker_code])
     }
   }
   updateMarkers(defaultMap, complex_large_markers);

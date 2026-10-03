@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>valueChart 테스트 시안</title>
+  <style>
+    :root { color-scheme: light; font-family: Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; color: #202938; background: #f4f6f8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 42px 20px; }
+    .card { width: min(100%, 660px); margin: 0 auto; padding: 28px 30px 23px; border: 1px solid #e8ebef; border-radius: 18px; background: #fff; box-shadow: 0 12px 34px #1720330c; }
+    .eyebrow { color: #e31939; font-size: 11px; font-weight: 750; letter-spacing: .12em; }
+    .heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 10px 0 5px; }
+    h1 { margin: 0; font-size: 21px; letter-spacing: -.04em; }
+    .test-badge { flex: none; padding: 6px 9px; border-radius: 999px; color: #a91a31; background: #fff0f2; font-size: 11px; font-weight: 700; }
+    .description { margin: 0; color: #8590a0; font-size: 12px; }
+    .chart { margin-top: 29px; }
+    .score-row { margin-bottom: 26px; }
+    .row-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+    .label { color: #354052; font-size: 13px; font-weight: 650; }
+    .score { color: #202938; font-size: 15px; font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+    .track { position: relative; height: 9px; overflow: hidden; border-radius: 99px; background: #edf0f3; }
+    .fill { position: relative; z-index: 1; height: 100%; border-radius: inherit; background: #e43b46; }
+    .tick { position: absolute; z-index: 2; top: 0; width: 1px; height: 100%; background: #fff; transform: translateX(-50%); pointer-events: none; }
+    .axis { display: grid; grid-template-columns: repeat(6, 1fr); margin-top: -17px; color: #8993a2; font-size: 10px; font-variant-numeric: tabular-nums; }
+    .axis span:nth-child(1) { text-align: left; }
+    .axis span:not(:first-child):not(:last-child) { text-align: center; }
+    .axis span:last-child { text-align: right; }
+    .footnote { margin: 22px 0 0; padding-top: 15px; border-top: 1px solid #eef0f3; color: #8a94a3; font-size: 11px; }
+    @media (max-width: 520px) { body { padding: 20px 12px; } .card { padding: 22px 18px 18px; border-radius: 15px; } h1 { font-size: 18px; } .score-row { margin-bottom: 24px; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="eyebrow">APT RANK / VALUE CHART</div>
+    <div class="heading"><h1>분야별 입지 점수</h1><span class="test-badge">테스트 전용 · 예시값</span></div>
+    <p class="description">각 항목의 점수를 0–100 기준으로 비교합니다.</p>
+    <section class="chart" aria-label="분야별 입지 점수 그래프">
+      <div class="score-row"><div class="row-head"><span class="label">주거</span><span class="score">51.99</span></div><div class="track"><span class="tick" style="left:20%"></span><span class="tick" style="left:40%"></span><span class="tick" style="left:60%"></span><span class="tick" style="left:80%"></span><div class="fill" style="width:51.99%"></div></div></div>
+      <div class="score-row"><div class="row-head"><span class="label">교통</span><span class="score">78.00</span></div><div class="track"><span class="tick" style="left:20%"></span><span class="tick" style="left:40%"></span><span class="tick" style="left:60%"></span><span class="tick" style="left:80%"></span><div class="fill" style="width:78%"></div></div></div>
+      <div class="score-row"><div class="row-head"><span class="label">인프라</span><span class="score">86.00</span></div><div class="track"><span class="tick" style="left:20%"></span><span class="tick" style="left:40%"></span><span class="tick" style="left:60%"></span><span class="tick" style="left:80%"></span><div class="fill" style="width:86%"></div></div></div>
+      <div class="score-row"><div class="row-head"><span class="label">교육</span><span class="score">83.00</span></div><div class="track"><span class="tick" style="left:20%"></span><span class="tick" style="left:40%"></span><span class="tick" style="left:60%"></span><span class="tick" style="left:80%"></span><div class="fill" style="width:83%"></div></div></div>
+      <div class="axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+    </section>
+    <p class="footnote">테스트용 예시 데이터입니다. 기존 valueChart 디자인과 동작은 변경하지 않았습니다.</p>
+  </main>
+</body>
+</html>
