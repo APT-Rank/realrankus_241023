@@ -1289,7 +1289,7 @@ function createLargeMarker(markers) {
       var area_marker_id = 'area_' + markers[k]['검색코드']
       var sortModeLabel = selectedRegion == "Korea" ? "" : (sortModeLabels[sortSelection] || "")
       var sortModeBadge = sortModeLabel
-        ? `<div class="sort-mode-badge" style="height:16px;padding:0 4px;border:1px solid #E43B46;border-radius:8px;background:#fff;color:#E43B46;font-size:7px;font-weight:700;line-height:14px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.18);">${sortModeLabel}</div>`
+        ? `<div class="sort-mode-badge" style="padding:0 4px;border-radius:8px;background:#E43B46;color:#fff;font-size:0.55em;font-weight:700;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.18);">${sortModeLabel}</div>`
         : ""
 
       svg_loc_large = `
@@ -1313,7 +1313,6 @@ function createLargeMarker(markers) {
       <text class="cls-3_text" text-anchor="middle" x="16.5" y="10">${complex_grade}</text>
       <text class="cls-4_text" id="${sPrice_marker_id}" text-anchor="middle" x="17" y="20">${last_sales_price_kor}</text>
       <text class="cls-5_text" id="${area_marker_id}" text-anchor="middle" x="17" y="26">${last_sales_area_kor}</text>
-      ${sortModeBadge}
       </g>
       </svg>
       `
@@ -1332,7 +1331,7 @@ function createLargeMarker(markers) {
       var marker_icon_content = `
       <div style="position:relative;width:96px;height:${visit_marker_anchor_y}px;">
         <div style="position:absolute;left:${visit_marker_anchor_x - large_marker_anchor_x}px;top:${visit_marker_anchor_y - large_marker_anchor_y}px;">${svg_loc_large}</div>
-        <div style="position:absolute;left:53px;top:48px;z-index:2;">${sortModeBadge}</div>
+        <div style="position:absolute;left:38px;top:71px;z-index:2;">${sortModeBadge}</div>
         <div style="position:absolute;left:0;top:0;">${visit_loc_large}</div>
       </div>
       `
