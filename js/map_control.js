@@ -292,7 +292,7 @@ function getMapComplexScoreWeights() {
 
 function getMapDisplayedComplexValue(complex) {
   var originalValue = Number(complex["가치 총점"]);
-  if (sortSelection == "sortDefault") return originalValue;
+  if (sortSelection == "sortDefault" || selectedRegion == "Korea") return originalValue;
 
   var regionCode = String(complex.gungu || "").split("_", 1)[0];
   var complexCode = String(complex["검색코드"] || "").trim();
@@ -412,7 +412,7 @@ function refreshMapComplexScores(redrawImmediately) {
   var isTop300 = ["Living_Top300", "Trans_Top300", "Infra_Top300", "Edu_Top300", "Balanced_Top300"].includes(selectedSubRegion);
 
   if (redrawImmediately) showHideMarker(current_zoom, true);
-  if (sortSelection == "sortDefault" || isTop300 || current_zoom < zoomLevels[1]) return Promise.resolve();
+  if (sortSelection == "sortDefault" || selectedRegion == "Korea" || isTop300 || current_zoom < zoomLevels[1]) return Promise.resolve();
 
   var visibleComplexes = getVisibleMapComplexes();
   var context = getMapComplexScoreContext(visibleComplexes);
@@ -1287,9 +1287,9 @@ function createLargeMarker(markers) {
       var large_marker_id = 'large_marker_' + markers[k]['검색코드']
       var sPrice_marker_id = 'sPrice_' + markers[k]['검색코드']
       var area_marker_id = 'area_' + markers[k]['검색코드']
-      var sortModeLabel = sortModeLabels[sortSelection] || ""
+      var sortModeLabel = selectedRegion == "Korea" ? "" : (sortModeLabels[sortSelection] || "")
       var sortModeBadge = sortModeLabel
-        ? `<g class="sort-mode-badge"><rect x="21.5" y="27.5" width="12.2" height="5.2" rx="1.2" fill="#fff" stroke="#E43B46" stroke-width="0.45"/><text x="27.6" y="31.2" text-anchor="middle" fill="#E43B46" font-size="3.2" font-weight="700">${sortModeLabel}</text></g>`
+        ? `<div class="sort-mode-badge" style="height:16px;padding:0 4px;border:1px solid #E43B46;border-radius:8px;background:#fff;color:#E43B46;font-size:7px;font-weight:700;line-height:14px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.18);">${sortModeLabel}</div>`
         : ""
 
       svg_loc_large = `
@@ -1330,8 +1330,9 @@ function createLargeMarker(markers) {
       <div class='${visit_marker_class} ${grade}' id="${visit_large_id}"${cached_visit_style}>${cached_visit_text}</div>
       `
       var marker_icon_content = `
-      <div style="position:relative;width:68px;height:${visit_marker_anchor_y}px;">
+      <div style="position:relative;width:96px;height:${visit_marker_anchor_y}px;">
         <div style="position:absolute;left:${visit_marker_anchor_x - large_marker_anchor_x}px;top:${visit_marker_anchor_y - large_marker_anchor_y}px;">${svg_loc_large}</div>
+        <div style="position:absolute;left:53px;top:48px;z-index:2;">${sortModeBadge}</div>
         <div style="position:absolute;left:0;top:0;">${visit_loc_large}</div>
       </div>
       `
@@ -1340,7 +1341,7 @@ function createLargeMarker(markers) {
         position: new naver.maps.LatLng(Number(coordi_y), Number(coordi_x)),
         icon: {
           content: marker_icon_content,
-          size: new naver.maps.Size(68, visit_marker_anchor_y),
+          size: new naver.maps.Size(96, visit_marker_anchor_y),
           anchor: new naver.maps.Point(visit_marker_anchor_x, visit_marker_anchor_y),
           origin: new naver.maps.Point(Number(coordi_y), Number(coordi_x)),
         },

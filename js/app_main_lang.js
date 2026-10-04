@@ -1540,6 +1540,22 @@ function return_sPrice_FilteredData_onList(area_arr, sales_arr, rent_arr, ratio_
 
 var svg_loc = "";
 
+function getTopRankedComplexForMap() {
+  var useConfiguredPriority = selectedRegion != "Korea" && sortSelection != "sortDefault";
+  var sourceData = useConfiguredPriority ? sortData : aptData;
+  return sourceData && sourceData.data && sourceData.data.length ? sourceData.data[0] : null;
+}
+
+function moveMapToTopRankedComplex() {
+  if (!defaultMap) return false;
+  var complex = getTopRankedComplexForMap();
+  var latitude = Number(complex && complex["Y"]);
+  var longitude = Number(complex && complex["X"]);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return false;
+  defaultMap.setCenter(new naver.maps.LatLng(latitude, longitude));
+  return true;
+}
+
 /**
  * @function updateTable
  * @description 특정 월과 지역(군/구)의 아파트 JSON 데이터(랭크/입지점수/거래정보 등)를 원격 서버에서 페치하여 UI 리스트와 지도 마커를 갱신합니다.
@@ -1950,7 +1966,10 @@ function updateTable(month, region) {
 
         for (var i in level1_loc) {
           if (level1_loc[i]["법정동코드"] + "" == region_code) {
-            new_center = new naver.maps.LatLng(aptData.data[0]["Y"], aptData.data[0]["X"]);
+            var topRankedComplex = getTopRankedComplexForMap();
+            if (topRankedComplex) {
+              new_center = new naver.maps.LatLng(topRankedComplex["Y"], topRankedComplex["X"]);
+            }
 
             defaultMap.setCenter(new_center);
             current_zoom = defaultMap.getZoom();
@@ -3487,43 +3506,37 @@ function showDetail(index) {
   price_sDateChange($("#pStart").val());
   setComplexLike(searchCode.toString(), aptName);
 
+  prev_selection = current_selection;
+  current_selection = searchCode;
+  current_apt_name = aptName;
+
   //리스트 선택 시, 지도 아이콘 애니메이션
   mapBounds = defaultMap.getBounds();
   current_zoom = defaultMap.getZoom();
   target_position = { lat: coord_y, lng: coord_x };
 
   if (mapBounds.hasLatLng(target_position)) {
-    if (current_zoom >= zoom_levels[0]) {
-      marker_obj = window["large_marker_obj_" + searchCode];
-      visit_obj = window["visit_obj_" + searchCode];
-    } else if (current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]) {
-      marker_obj = window["small_marker_obj_" + searchCode];
+    marker_obj = null;
+    for (var markerIndex = 0; markerIndex < all_markers.length; markerIndex++) {
+      if (String(all_markers[markerIndex].code) == String(searchCode)) {
+        marker_obj = all_markers[markerIndex];
+        break;
+      }
     }
+    visit_obj = window["visit_obj_" + searchCode];
     if (marker_obj) {
       marker_obj.setZIndex((marker_z_depth += 1));
       animateMarker(marker_obj, visit_obj);
+    } else if (current_zoom >= zoom_levels[1]) {
+      showHideMarker(current_zoom);
     }
   } else {
     defaultMap.setCenter(target_position);
-    if (current_zoom >= zoom_levels[0]) {
-      marker_obj = window["large_marker_obj_" + searchCode];
-      visit_obj = window["visit_obj_" + searchCode];
-    } else if (current_zoom < zoom_levels[0] && current_zoom >= zoom_levels[1]) {
-      marker_obj = window["small_marker_obj_" + searchCode];
-    }
-    if (marker_obj) {
-      marker_obj.setZIndex((marker_z_depth += 1));
-      animateMarker(marker_obj, visit_obj);
-    }
   }
 
   if (current_zoom < zoom_levels[1]) {
     defaultMap.setZoom(zoom_levels[0]);
   }
-
-  prev_selection = current_selection;
-  current_selection = searchCode;
-  current_apt_name = aptName;
 
   ///////////////////////////////////////////
 

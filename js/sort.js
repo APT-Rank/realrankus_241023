@@ -434,6 +434,7 @@
         rearrange(sortData, valLiving/total, 0, valInfra/total, valEdu/total)
       }     
       aptSearch()
+      if (selectedRegion != "Korea") moveMapToTopRankedComplex()
       $('html').scrollTop(0)
     }
     else{
