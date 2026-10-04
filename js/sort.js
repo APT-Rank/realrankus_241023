@@ -26,6 +26,7 @@
       return
     }
 
+    /*
     toastr.options = {
       closeButton: true,
       progressBar: true,
@@ -36,6 +37,7 @@
     };
     output = t('ui.sorting.map_only_balanced')
     toastr.success(output);
+    */
 
     //$('.btn-close').hide()
     //console.log("SHOW!!")
@@ -105,7 +107,7 @@
     detailHtml += "<hr style='margin-top:1.5em; margin-bottom:1em'>";
     */  
 
-    detailHtml += "<div style='font-size: 0.85em; text-align:center'> " + t('ui.sorting.map_notice') + "</div>";
+    //detailHtml += "<div style='font-size: 0.85em; text-align:center'> " + t('ui.sorting.map_notice') + "</div>";
 
     detailHtml += "<div class='settingArea' style='padding-top:0.5em'>";    
     detailHtml += "<div><input type='radio' class='btn-check' name='btnSort' autocomplete='off' id='sortLiving' onClick='setRangeValue(this)'><label class='btn btn-outline-danger' for='sortLiving'>" + t('ui.report.sort_living') + "</label></div>"
@@ -144,7 +146,7 @@
     detailHtml += "</div>";
 
     footerHtml += "<div class='modal-footer'>"
-    footerHtml += "<div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='startSortPop'><label class='form-check-label' for='startSortPop'><span class='notice'>" + t('ui.sorting.hide_on_change') + "</span></label></div>"
+    //footerHtml += "<div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='startSortPop'><label class='form-check-label' for='startSortPop'><span class='notice'>" + t('ui.sorting.hide_on_change') + "</span></label></div>"
     footerHtml += "<div><button type='button' id='sortClose' class='btn btn-outline-danger' onClick='closeSorting()'>" + t('ui.sorting.close') + "</button></div>"
     footerHtml += "<div><button type='button' id='sortApply' class='btn btn-outline-danger' onClick='applySorting()'>" + t('ui.sorting.apply') + "</button></div>"    
     footerHtml += "</div>"    
