@@ -447,6 +447,7 @@
 
     $('div.modal').modal("hide")
     rearrange_on = false;
+    refreshMapComplexScores(true)
     sleep(250)
   }
 

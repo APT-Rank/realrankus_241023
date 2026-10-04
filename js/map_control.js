@@ -179,15 +179,17 @@ function loadMap(center_x, center_y) {
     //getDistanceFromLatLonInKm()
 
     showHideMarker(current_zoom)
+    refreshMapComplexScores(false)
   });
 
   naver.maps.Event.addListener(defaultMap, 'zoom_changed', function (zoom) {
     current_zoom = defaultMap.getZoom()
     showHideMarker(current_zoom)
+    refreshMapComplexScores(false)
   });
 }
 
-function showHideMarker(zoom) {
+function showHideMarker(zoom, suppressSelectionAnimation) {
   if (isMobile) {
     zoom_levels = mobile_level_control
     //[16, 15, 13, 10, 6]
@@ -226,7 +228,7 @@ function showHideMarker(zoom) {
     min_visit = min_level0_visit
   }
 
-  if (current_selection != "") {
+  if (current_selection != "" && !suppressSelectionAnimation) {
     for (var i in all_markers) {
       if (all_markers[i]['code'] == current_selection) {
         animateMarker(all_markers[i], window["visit_obj_" + current_selection])
@@ -259,6 +261,168 @@ function animateMarker(marker, visit_marker) {
       visit_marker.setAnimation(naver.maps.Animation.BOUNCE)
     }
   }, 350)
+}
+
+var mapComplexScoreCache = new Map();
+var mapComplexScoreRequests = new Map();
+var mapComplexScoreFailureUntil = new Map();
+var mapComplexScoreRefreshVersion = 0;
+
+function getMapComplexScoreKey(month, regionCode, complexCode) {
+  return month + ":" + regionCode + ":" + complexCode;
+}
+
+function getMapComplexScoreWeights() {
+  var living = Number(valLiving);
+  var trans = Number(valTrans);
+  var infra = Number(valInfra);
+  var edu = Number(valEdu);
+  var transportRegions = ["Seoul", "Incheon", "Gyeonggi", "Busan", "Daegu", "Daejeon", "Gwangju"];
+  var hasTransportWeight = transportRegions.includes(selectedRegion);
+  var total = living + infra + edu + (hasTransportWeight ? trans : 0);
+
+  if (!Number.isFinite(total) || total <= 0) return null;
+  return {
+    living: living / total,
+    trans: hasTransportWeight ? trans / total : 0,
+    infra: infra / total,
+    edu: edu / total,
+  };
+}
+
+function getMapDisplayedComplexValue(complex) {
+  var originalValue = Number(complex["가치 총점"]);
+  if (sortSelection == "sortDefault") return originalValue;
+
+  var regionCode = String(complex.gungu || "").split("_", 1)[0];
+  var complexCode = String(complex["검색코드"] || "").trim();
+  if (!regionCode || !complexCode) return originalValue;
+
+  var score = mapComplexScoreCache.get(getMapComplexScoreKey(selectedMonth, regionCode, complexCode));
+  var weights = getMapComplexScoreWeights();
+  if (!score || !weights || ![score.livingTotal, score.infraTotal, score.educationTotal].every(Number.isFinite)) {
+    return originalValue;
+  }
+
+  var value = score.livingTotal * weights.living
+    + score.infraTotal * weights.infra
+    + score.educationTotal * weights.edu;
+  if (weights.trans && Number.isFinite(score.transportTotal)) {
+    value += score.transportTotal * weights.trans;
+  }
+  return Number.isFinite(value) ? value : originalValue;
+}
+
+function getVisibleMapComplexes() {
+  if (!defaultMap || !show_up_complexs || !show_up_complexs.length) return [];
+  var mapBounds = defaultMap.getBounds();
+  return show_up_complexs.filter(function (complex) {
+    var lat = Number(complex.lat);
+    var lng = Number(complex.lng);
+    return Number.isFinite(lat) && Number.isFinite(lng)
+      && mapBounds.hasLatLng(new naver.maps.LatLng(lat, lng));
+  });
+}
+
+function fetchMapComplexScores(complexes, month) {
+  var regions = new Map();
+  var pendingRequests = new Set();
+  var now = Date.now();
+
+  complexes.forEach(function (complex) {
+    var regionCode = String(complex.gungu || "").split("_", 1)[0];
+    var complexCode = String(complex["검색코드"] || "").trim();
+    if (!regionCode || !complexCode) return;
+
+    var scoreKey = getMapComplexScoreKey(month, regionCode, complexCode);
+    if (mapComplexScoreCache.has(scoreKey)) return;
+    var inFlightRequest = mapComplexScoreRequests.get(scoreKey);
+    if (inFlightRequest) {
+      pendingRequests.add(inFlightRequest);
+      return;
+    }
+    if ((mapComplexScoreFailureUntil.get(scoreKey) || 0) > now) return;
+
+    if (!regions.has(regionCode)) regions.set(regionCode, new Set());
+    regions.get(regionCode).add(complexCode);
+  });
+
+  regions.forEach(function (complexCodes, regionCode) {
+    var codes = Array.from(complexCodes);
+    for (var start = 0; start < codes.length; start += 30) {
+      (function (currentRegionCode, batchCodes) {
+        var batchKeys = batchCodes.map(function (code) {
+          return getMapComplexScoreKey(month, currentRegionCode, code);
+        });
+        var collection = firebase.firestore()
+          .collection("complex_scores").doc(month)
+          .collection("regions").doc(currentRegionCode)
+          .collection("complexes");
+        var request;
+
+        request = collection
+          .where(firebase.firestore.FieldPath.documentId(), "in", batchCodes)
+          .get()
+          .then(function (snapshot) {
+            batchKeys.forEach(function (key) { mapComplexScoreCache.set(key, null); });
+            snapshot.forEach(function (document) {
+              mapComplexScoreCache.set(
+                getMapComplexScoreKey(month, currentRegionCode, document.id),
+                document.data(),
+              );
+            });
+            return true;
+          })
+          .catch(function (error) {
+            batchKeys.forEach(function (key) {
+              mapComplexScoreFailureUntil.set(key, Date.now() + 30000);
+            });
+            console.warn("Firestore map scores could not be loaded.", error);
+            return false;
+          })
+          .finally(function () {
+            batchKeys.forEach(function (key) {
+              if (mapComplexScoreRequests.get(key) === request) mapComplexScoreRequests.delete(key);
+            });
+          });
+
+        batchKeys.forEach(function (key) { mapComplexScoreRequests.set(key, request); });
+        pendingRequests.add(request);
+      })(regionCode, codes.slice(start, start + 30));
+    }
+  });
+
+  return Promise.all(Array.from(pendingRequests));
+}
+
+function getMapComplexScoreContext(complexes) {
+  var visibleKeys = complexes.map(function (complex) {
+    var regionCode = String(complex.gungu || "").split("_", 1)[0];
+    var complexCode = String(complex["검색코드"] || "").trim();
+    return getMapComplexScoreKey(selectedMonth, regionCode, complexCode);
+  }).sort();
+  return JSON.stringify([
+    selectedMonth, selectedRegion, sortSelection, valLiving, valTrans, valInfra, valEdu, visibleKeys,
+  ]);
+}
+
+function refreshMapComplexScores(redrawImmediately) {
+  var requestVersion = ++mapComplexScoreRefreshVersion;
+  var zoomLevels = isMobile ? mobile_level_control : web_level_control;
+  var isTop300 = ["Living_Top300", "Trans_Top300", "Infra_Top300", "Edu_Top300", "Balanced_Top300"].includes(selectedSubRegion);
+
+  if (redrawImmediately) showHideMarker(current_zoom, true);
+  if (sortSelection == "sortDefault" || isTop300 || current_zoom < zoomLevels[1]) return Promise.resolve();
+
+  var visibleComplexes = getVisibleMapComplexes();
+  var context = getMapComplexScoreContext(visibleComplexes);
+  return fetchMapComplexScores(visibleComplexes, selectedMonth).then(function (results) {
+    if (results.some(Boolean)
+      && requestVersion == mapComplexScoreRefreshVersion
+      && context == getMapComplexScoreContext(getVisibleMapComplexes())) {
+      showHideMarker(current_zoom, true);
+    }
+  });
 }
 
 function defineMarkerList(nearby_region) {
@@ -1029,12 +1193,19 @@ function createLargeMarker(markers) {
     large_marker_size = 45
   }
 
+  var sortModeLabels = {
+    sortLiving: "주거",
+    sortTrans: "교통",
+    sortInfra: "인프라",
+    sortEdu: "교육",
+    sortCustom: "커스텀"
+  }
   var mapBounds = defaultMap.getBounds();
   //markers = markers.reverse()
 
   for (var k in markers) {
     if (mapBounds.hasLatLng(markers[k])) {
-      var aptValue = Math.round(markers[k]["가치 총점"] * 100) / 100;
+      var aptValue = Math.round(getMapDisplayedComplexValue(markers[k]) * 100) / 100;
       complex_grade = setGrade(aptValue)
       coordi_x = markers[k]['lng']
       coordi_y = markers[k]['lat']
@@ -1116,6 +1287,10 @@ function createLargeMarker(markers) {
       var large_marker_id = 'large_marker_' + markers[k]['검색코드']
       var sPrice_marker_id = 'sPrice_' + markers[k]['검색코드']
       var area_marker_id = 'area_' + markers[k]['검색코드']
+      var sortModeLabel = sortModeLabels[sortSelection] || ""
+      var sortModeBadge = sortModeLabel
+        ? `<g class="sort-mode-badge"><rect x="21.5" y="27.5" width="12.2" height="5.2" rx="1.2" fill="#fff" stroke="#E43B46" stroke-width="0.45"/><text x="27.6" y="31.2" text-anchor="middle" fill="#E43B46" font-size="3.2" font-weight="700">${sortModeLabel}</text></g>`
+        : ""
 
       svg_loc_large = `
       <svg version="1.1" class='large_marker ${grade}' id="${large_marker_id}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -1138,6 +1313,7 @@ function createLargeMarker(markers) {
       <text class="cls-3_text" text-anchor="middle" x="16.5" y="10">${complex_grade}</text>
       <text class="cls-4_text" id="${sPrice_marker_id}" text-anchor="middle" x="17" y="20">${last_sales_price_kor}</text>
       <text class="cls-5_text" id="${area_marker_id}" text-anchor="middle" x="17" y="26">${last_sales_area_kor}</text>
+      ${sortModeBadge}
       </g>
       </svg>
       `
@@ -1203,7 +1379,7 @@ function createSmallMarker(markers) {
   for (var k in markers) {
     if (mapBounds.hasLatLng(markers[k])) {
 
-      var aptValue = Math.round(markers[k]["가치 총점"] * 100) / 100;
+      var aptValue = Math.round(getMapDisplayedComplexValue(markers[k]) * 100) / 100;
       complex_grade = setGrade(aptValue)
 
       coordi_x = markers[k]['lng']
