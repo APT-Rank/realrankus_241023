@@ -1312,9 +1312,9 @@ function updateMonth() {
  * @description 선택된 월과 지역 정보를 토대로 화면 구성을 갱신하고 데이터를 다시 로드하는 핵심 함수.
  * 로딩 인디케이터 표시, 필터 UI 표시 조건 설정, 그리고 일반 지역 테이블/탑랭크 테이블/전국 비교 테이블 업데이트 함수를 선택 실행합니다.
  */
-// 수정일: 2026-10-05 — 지도 초기화 전 지역 요청은 보류하고 첫 idle 이벤트에서 실행합니다.
+// 수정일: 2026-10-05 — 지도 idle을 기다리지 않고 지도 객체 생성 후 지역 데이터 요청을 시작합니다.
 function updateRegion() {
-  if (!defaultMap || !defaultMapReady) {
+  if (!defaultMap) {
     regionUpdatePending = true
     return
   }
