@@ -4,6 +4,102 @@
     "region_key": "5181000000_Gangwondo_Inje",
     "supply_score": 50.0,
     "dongs": {
+        "인제읍": {
+            "summary_metrics": {
+                "r_simple": 0.9717823595585319,
+                "r_multi": 0.9973115067713285,
+                "r_squared": "99.5%",
+                "price_per_gli_point": 4.193317684957689,
+                "std_error": 37.66336268842707,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 10.0779958,
+                "max_gli": 43.4862711901,
+                "simple_trendline": [
+                    {
+                        "gli": 10.0779958,
+                        "price": 406.5982678522092
+                    },
+                    {
+                        "gli": 43.4862711901,
+                        "price": 1051.3291674736145
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 10.0779958,
+                        "price": 643.6312719771865
+                    },
+                    {
+                        "gli": 43.4862711901,
+                        "price": 783.7227839944296
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 10.0779958,
+                        "price": 662.4629533214
+                    },
+                    {
+                        "gli": 43.4862711901,
+                        "price": 802.5544653386431
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 10.0779958,
+                        "price": 624.799590632973
+                    },
+                    {
+                        "gli": 43.4862711901,
+                        "price": 764.8911026502161
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "내설악",
+                    "gli_score": 15.1224736668,
+                    "price_per_pyung": 535.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 23,
+                    "household_count": 162
+                },
+                {
+                    "complex_name": "신아(리버빌)",
+                    "gli_score": 19.4854594,
+                    "price_per_pyung": 465.6666666666667,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 24,
+                    "household_count": 100
+                },
+                {
+                    "complex_name": "인제라온프라이빗",
+                    "gli_score": 43.4862711901,
+                    "price_per_pyung": 1050.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 329
+                },
+                {
+                    "complex_name": "인제양우내안애",
+                    "gli_score": 40.6783992679,
+                    "price_per_pyung": 1030.5,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 6,
+                    "household_count": 216
+                },
+                {
+                    "complex_name": "한양쉐르빌",
+                    "gli_score": 10.0779958,
+                    "price_per_pyung": 465.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 22,
+                    "household_count": 100
+                }
+            ]
+        },
         "북면": {
             "summary_metrics": {
                 "r_simple": 0.9428531718736073,
@@ -89,102 +185,6 @@
                     "age_category": "신축 (5년미만)",
                     "construction_age": 2,
                     "household_count": 129
-                }
-            ]
-        },
-        "인제읍": {
-            "summary_metrics": {
-                "r_simple": 0.9717823595585321,
-                "r_multi": 0.9973115067713285,
-                "r_squared": "99.5%",
-                "price_per_gli_point": 4.193317684957708,
-                "std_error": 37.66336268842707,
-                "remarks": ""
-            },
-            "chart_boundaries": {
-                "min_gli": 6.7328758,
-                "max_gli": 40.1411511901,
-                "simple_trendline": [
-                    {
-                        "gli": 6.7328758,
-                        "price": 406.5982678522091
-                    },
-                    {
-                        "gli": 40.1411511901,
-                        "price": 1051.3291674736147
-                    }
-                ],
-                "corrected_trendline": [
-                    {
-                        "gli": 6.7328758,
-                        "price": 643.6312719771861
-                    },
-                    {
-                        "gli": 40.1411511901,
-                        "price": 783.7227839944298
-                    }
-                ],
-                "stable_zone_upper": [
-                    {
-                        "gli": 6.7328758,
-                        "price": 662.4629533213996
-                    },
-                    {
-                        "gli": 40.1411511901,
-                        "price": 802.5544653386434
-                    }
-                ],
-                "stable_zone_lower": [
-                    {
-                        "gli": 6.7328758,
-                        "price": 624.7995906329726
-                    },
-                    {
-                        "gli": 40.1411511901,
-                        "price": 764.8911026502163
-                    }
-                ]
-            },
-            "scatter_points": [
-                {
-                    "complex_name": "내설악",
-                    "gli_score": 11.7773536668,
-                    "price_per_pyung": 535.5,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 23,
-                    "household_count": 162
-                },
-                {
-                    "complex_name": "신아(리버빌)",
-                    "gli_score": 16.1403394,
-                    "price_per_pyung": 465.6666666666667,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 24,
-                    "household_count": 100
-                },
-                {
-                    "complex_name": "인제라온프라이빗",
-                    "gli_score": 40.1411511901,
-                    "price_per_pyung": 1050.5,
-                    "age_category": "준신축 (5~10년)",
-                    "construction_age": 6,
-                    "household_count": 329
-                },
-                {
-                    "complex_name": "인제양우내안애",
-                    "gli_score": 37.3332792679,
-                    "price_per_pyung": 1030.5,
-                    "age_category": "준신축 (5~10년)",
-                    "construction_age": 6,
-                    "household_count": 216
-                },
-                {
-                    "complex_name": "한양쉐르빌",
-                    "gli_score": 6.7328758,
-                    "price_per_pyung": 465.0,
-                    "age_category": "구축 (10~25년)",
-                    "construction_age": 22,
-                    "household_count": 100
                 }
             ]
         }
