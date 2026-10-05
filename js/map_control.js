@@ -1309,6 +1309,8 @@ function createLargeMarker(markers) {
       var visit_marker_class = "visit_loc_large"
       var visit_marker_anchor_x = 9
       var visit_marker_anchor_y = 80
+      var sortModeBadgeLeft = 38
+      var sortModeBadgeTop = 71
 
       var large_marker_anchor_x = 12
       var large_marker_anchor_y = 60
@@ -1317,6 +1319,8 @@ function createLargeMarker(markers) {
         visit_marker_class = "visit_loc_mid"
         visit_marker_anchor_x = 12
         visit_marker_anchor_y = 65
+        sortModeBadgeLeft = 31
+        sortModeBadgeTop = 56
 
         large_marker_anchor_x = 12
         large_marker_anchor_y = 47
@@ -1369,7 +1373,7 @@ function createLargeMarker(markers) {
       var marker_icon_content = `
       <div style="position:relative;width:96px;height:${visit_marker_anchor_y}px;">
         <div style="position:absolute;left:${visit_marker_anchor_x - large_marker_anchor_x}px;top:${visit_marker_anchor_y - large_marker_anchor_y}px;">${svg_loc_large}</div>
-        <div style="position:absolute;left:38px;top:71px;z-index:2;">${sortModeBadge}</div>
+        <div style="position:absolute;left:${sortModeBadgeLeft}px;top:${sortModeBadgeTop}px;z-index:2;">${sortModeBadge}</div>
         <div style="position:absolute;left:0;top:0;">${visit_loc_large}</div>
       </div>
       `
