@@ -18,6 +18,28 @@
     sortSelection = "sortDefault"
   }
 
+  function supportsTransportPriority(region) {
+    return ["Seoul", "Gyeonggi", "Incheon", "Busan", "Daegu", "Daejeon"].includes(region);
+  }
+
+  function resetUnsupportedTransportPriority(showNotice) {
+    if (sortSelection != "sortTrans" || supportsTransportPriority(selectedRegion)) return false;
+
+    sortSelection = "sortDefault";
+    valLiving = valTrans = valInfra = valEdu = 0;
+    valLiving_temp = valTrans_temp = valInfra_temp = valEdu_temp = 0;
+
+    $("#sortDefault").prop("checked", true);
+    $("#rangeLiving, #rangeTrans, #rangeInfra, #rangeEdu").val(0).prop("disabled", true);
+    $("#setLivingValue, #setTransValue, #setInfraValue, #setEduValue").html("0");
+
+    if (showNotice && typeof toastMessageNotice == "function") {
+      toastMessageNotice("지하철이 없는 지역구는 교통우선 랭크가 적용되지 않습니다", 2500);
+    }
+
+    return true;
+  }
+
   function showSorting(){
     login_status = true
         
@@ -112,7 +134,7 @@
     detailHtml += "<div class='settingArea' style='padding-top:0.5em'>";    
     detailHtml += "<div><input type='radio' class='btn-check' name='btnSort' autocomplete='off' id='sortLiving' onClick='setRangeValue(this)'><label class='btn btn-outline-danger' for='sortLiving'>" + t('ui.report.sort_living') + "</label></div>"
 
-    if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+    if(supportsTransportPriority(selectedRegion)){
       detailHtml += "<div><input type='radio' class='btn-check' name='btnSort' autocomplete='off' id='sortTrans' onClick='setRangeValue(this)'><label class='btn btn-outline-danger' for='sortTrans'>" + t('ui.report.sort_trans') + "</label></div>"
     }    
 
@@ -130,7 +152,7 @@
     detailHtml += "<div class='rangeSet'><input type='range' class='form-range' min='0' max='100' step='5' value='50' id='rangeLiving' onInput='updateRangeValue(" + 'setLivingValue,' + 'this' + ")'/></div>";
     detailHtml += "<div class='rangeValue' id='setLivingValue'>50%</div>";
 
-    if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+    if(supportsTransportPriority(selectedRegion)){
       detailHtml += "<div class='rangeName'>" + t('ui.report.transport') + "</div>"
       detailHtml += "<div class='rangeSet'><input type='range' class='form-range' min='0' max='100' step='5' value='50' id='rangeTrans' onInput='updateRangeValue(" + 'setTransValue,' + 'this' + ")'/></div>";
       detailHtml += "<div class='rangeValue' id='setTransValue'>50%</div>";
@@ -216,6 +238,11 @@
   function setRangeValue(e){
     sortSelection = e.id
 
+    if (resetUnsupportedTransportPriority(true)) {
+      showWeight();
+      return;
+    }
+
     if(sortSelection == "sortDefault" || sortSelection == "sortLiving" || sortSelection == "sortTrans" || sortSelection == "sortInfra" || sortSelection == "sortEdu"){
       $('#rangeLiving').prop("disabled", true)
       $('#rangeTrans').prop("disabled", true)
@@ -229,7 +256,7 @@
       valEdu_temp = 0
     }    
     if(sortSelection == "sortLiving"){
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         valLiving_temp = 100
         valTrans_temp = 20
         valInfra_temp = 40
@@ -249,7 +276,7 @@
       valEdu_temp = 30
     }
     if(sortSelection == "sortInfra"){
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         valLiving_temp = 20
         valTrans_temp = 30
         valInfra_temp = 100
@@ -263,7 +290,7 @@
       }
     }
     if(sortSelection == "sortEdu"){
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         valLiving_temp = 40
         valTrans_temp = 20
         valInfra_temp = 40
@@ -342,7 +369,7 @@
       valEdu_temp = 0
     }    
     if(sortSelection == "sortLiving"){
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         valLiving_temp = 100
         valTrans_temp = 20
         valInfra_temp = 40
@@ -362,7 +389,7 @@
       valEdu_temp = 30
     }
     if(sortSelection == "sortInfra"){
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         valLiving_temp = 20
         valTrans_temp = 30
         valInfra_temp = 100
@@ -376,7 +403,7 @@
       }
     }
     if(sortSelection == "sortEdu"){
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         valLiving_temp = 40
         valTrans_temp = 20
         valInfra_temp = 40
@@ -397,7 +424,7 @@
 
     if(sortSelection != "sortDefault"){
       showWeight()
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         total = Number(valLiving) + Number(valTrans) + Number(valInfra) + Number(valEdu)      
         rearrange(sortData, valLiving/total, valTrans/total, valInfra/total, valEdu/total)
       }
@@ -420,6 +447,8 @@
   }
 
   function applySorting(){
+    resetUnsupportedTransportPriority(true);
+
     valLiving = valLiving_temp
     valTrans = valTrans_temp
     valInfra = valInfra_temp
@@ -427,7 +456,7 @@
 
     if(sortSelection != "sortDefault"){
       showWeight()
-      if(selectedRegion == 'Seoul' || selectedRegion == 'Incheon' || selectedRegion == 'Gyeonggi' || selectedRegion == 'Busan' || selectedRegion == 'Daegu' || selectedRegion == 'Daejeon' || selectedRegion == 'Gwangju'){
+      if(supportsTransportPriority(selectedRegion)){
         total = Number(valLiving) + Number(valTrans) + Number(valInfra) + Number(valEdu)      
         rearrange(sortData, valLiving/total, valTrans/total, valInfra/total, valEdu/total)
       }
@@ -436,13 +465,13 @@
         rearrange(sortData, valLiving/total, 0, valInfra/total, valEdu/total)
       }     
       aptSearch()
-      if (selectedRegion != "Korea") moveMapToTopRankedComplex()
       $('html').scrollTop(0)
     }
     else{
       showWeight()
       //aptData = aptData_original      
       //aptSearch()
+      come_from_map = true
       updateTable(selectedMonth, selectedSubRegion)      
       $('html').scrollTop(0)
       //updateRegion()

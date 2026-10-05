@@ -179,13 +179,13 @@ function loadMap(center_x, center_y) {
     //getDistanceFromLatLonInKm()
 
     showHideMarker(current_zoom)
-    refreshMapComplexScores(false)
+    refreshMapComplexScores(false).then(animatePendingSelectionMarker)
   });
 
   naver.maps.Event.addListener(defaultMap, 'zoom_changed', function (zoom) {
     current_zoom = defaultMap.getZoom()
     showHideMarker(current_zoom)
-    refreshMapComplexScores(false)
+    refreshMapComplexScores(false).then(animatePendingSelectionMarker)
   });
 }
 
@@ -263,6 +263,28 @@ function animateMarker(marker, visit_marker) {
   }, 350)
 }
 
+var pendingSelectionAnimationCode = "";
+
+function animatePendingSelectionMarker() {
+  if (!pendingSelectionAnimationCode) return;
+  if (String(current_selection) != pendingSelectionAnimationCode) {
+    pendingSelectionAnimationCode = "";
+    return;
+  }
+
+  for (var i = 0; i < all_markers.length; i++) {
+    if (String(all_markers[i].code) == pendingSelectionAnimationCode) {
+      var marker = all_markers[i];
+      if (marker.getMap && marker.getMap()) {
+        var selectedCode = pendingSelectionAnimationCode;
+        pendingSelectionAnimationCode = "";
+        animateMarker(marker, window["visit_obj_" + selectedCode]);
+      }
+      return;
+    }
+  }
+}
+
 var mapComplexScoreCache = new Map();
 var mapComplexScoreRequests = new Map();
 var mapComplexScoreFailureUntil = new Map();
@@ -277,8 +299,7 @@ function getMapComplexScoreWeights() {
   var trans = Number(valTrans);
   var infra = Number(valInfra);
   var edu = Number(valEdu);
-  var transportRegions = ["Seoul", "Incheon", "Gyeonggi", "Busan", "Daegu", "Daejeon", "Gwangju"];
-  var hasTransportWeight = transportRegions.includes(selectedRegion);
+  var hasTransportWeight = supportsTransportPriority(selectedRegion);
   var total = living + infra + edu + (hasTransportWeight ? trans : 0);
 
   if (!Number.isFinite(total) || total <= 0) return null;

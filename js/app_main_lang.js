@@ -1110,7 +1110,7 @@ function showWeight() {
       var transLabel = isEn ? "Transit" : "교통";
       var infraLabel = isEn ? "Infra" : "인프라";
       var eduLabel = isEn ? "Edu" : "교육";
-      if (selectedRegion == "Seoul" || selectedRegion == "Incheon" || selectedRegion == "Gyeonggi" || selectedRegion == "Busan" || selectedRegion == "Daegu" || selectedRegion == "Daejeon" || selectedRegion == "Gwangju") {
+      if (supportsTransportPriority(selectedRegion)) {
         weightInfo = sortName + " : " + livingLabel + " " + valLiving + ", " + transLabel + " " + valTrans + ", " + infraLabel + " " + valInfra + ", " + eduLabel + " " + valEdu;
         weightInfo += `   |   ${priceRange}`;
       } else {
@@ -1319,6 +1319,7 @@ function updateRegion() {
 
   selectedRegion = $("#sido option:selected").val();
   selectedSubRegion = $("#gungu option:selected").val();
+  resetUnsupportedTransportPriority(true);
 
   localSearchText = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());
   $("#localSearch").html(isEn ? (localSearchText + " Search") : (localSearchText + " 검색"));
@@ -3508,6 +3509,7 @@ function showDetail(index) {
 
   prev_selection = current_selection;
   current_selection = searchCode;
+  pendingSelectionAnimationCode = String(searchCode);
   current_apt_name = aptName;
 
   //리스트 선택 시, 지도 아이콘 애니메이션
@@ -3525,10 +3527,12 @@ function showDetail(index) {
     }
     visit_obj = window["visit_obj_" + searchCode];
     if (marker_obj) {
+      pendingSelectionAnimationCode = "";
       marker_obj.setZIndex((marker_z_depth += 1));
       animateMarker(marker_obj, visit_obj);
     } else if (current_zoom >= zoom_levels[1]) {
       showHideMarker(current_zoom);
+      animatePendingSelectionMarker();
     }
   } else {
     defaultMap.setCenter(target_position);
