@@ -15,6 +15,8 @@ var complex_visit_count_cache = {}
 var complex_visit_badge_animated = {}
 
 var all_markers = []
+var defaultMapReady = false
+var regionUpdatePending = false
 
 var defaultMap = ""
 var regionMapData = ""
@@ -52,6 +54,7 @@ var min_visit = 0
 
 */
 function loadMap(center_x, center_y) {
+  defaultMapReady = false
   coord_y = center_y
   coord_x = center_x
 
@@ -113,6 +116,7 @@ function loadMap(center_x, center_y) {
   };
 
   defaultMap = new naver.maps.Map("dataMap", MapOptions);
+  // 수정일: 2026-10-05 — 지도 idle을 지역 데이터 로딩의 준비 완료 기준으로 사용합니다.
 
   // Remove any previously added button to prevent duplicates on reload
   $("#btn_current_location").remove();
@@ -150,6 +154,14 @@ function loadMap(center_x, center_y) {
 
   // 수정일: 2026-10-05 — 지도 이동·확대 후 마커 갱신이 끝나면 선택된 단지 애니메이션을 이어갑니다.
   naver.maps.Event.addListener(defaultMap, 'idle', function () {
+    if (!defaultMapReady) {
+      defaultMapReady = true
+      if (regionUpdatePending) {
+        regionUpdatePending = false
+        updateRegion()
+      }
+    }
+
     if (selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300"
       || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300") {
       createTopMarker(top_300_data)

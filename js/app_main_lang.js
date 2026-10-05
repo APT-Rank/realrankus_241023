@@ -1312,7 +1312,16 @@ function updateMonth() {
  * @description 선택된 월과 지역 정보를 토대로 화면 구성을 갱신하고 데이터를 다시 로드하는 핵심 함수.
  * 로딩 인디케이터 표시, 필터 UI 표시 조건 설정, 그리고 일반 지역 테이블/탑랭크 테이블/전국 비교 테이블 업데이트 함수를 선택 실행합니다.
  */
+// 수정일: 2026-10-05 — 지도 초기화 전 지역 요청은 보류하고 첫 idle 이벤트에서 실행합니다.
 function updateRegion() {
+  if (!defaultMap || !defaultMapReady) {
+    regionUpdatePending = true
+    return
+  }
+  regionUpdatePending = false
+  latestRegionDataRequestId++
+
+  $('#pageLoadingBack').remove()
   reportBannerHtml();
 
   $("body").append(
@@ -1323,6 +1332,10 @@ function updateRegion() {
 
   selectedRegion = $("#sido option:selected").val();
   selectedSubRegion = $("#gungu option:selected").val();
+  if (searched_code && searched_region && searched_region !== selectedSubRegion) {
+    searched_code = "";
+    searched_region = "";
+  }
   // 수정일: 2026-10-05 — 교통우선 미지원 지역으로 이동하면 균형잡힌 설정으로 전환하고 안내합니다.
   resetUnsupportedTransportPriority(true);
 
@@ -1545,6 +1558,7 @@ function return_sPrice_FilteredData_onList(area_arr, sales_arr, rent_arr, ratio_
 }
 
 var svg_loc = "";
+var latestRegionDataRequestId = 0;
 
 // 수정일: 2026-10-04 — 지역 정렬 결과에서 가장 높은 단지를 찾아 지도 중심을 이동합니다.
 function getTopRankedComplexForMap() {
@@ -1570,7 +1584,11 @@ function moveMapToTopRankedComplex() {
  * @param {string} month - 분석 년월 (예: "202605")
  * @param {string} region - 지역구 법정동 코드 (예: "1168000000_Seoul_Gangnam")
  */
+// 수정일: 2026-10-05 — 최신 지역 데이터가 도착한 뒤 검색 단지를 검증해 상세를 엽니다.
 function updateTable(month, region) {
+  var requestId = ++latestRegionDataRequestId;
+  var requestedSearchedCode = typeof searched_code !== "undefined" && searched_region === region ? searched_code : "";
+
   removeMarkers();
   $("#rearrangeScore").prop("checked", true);
 
@@ -1600,6 +1618,7 @@ function updateTable(month, region) {
 
 
   $.getJSON(url, function (json) {
+    if (requestId !== latestRegionDataRequestId) return;
     aptData = json;
     aptData_original = deepCopy(aptData);
     sortData = deepCopy(aptData);
@@ -1611,6 +1630,7 @@ function updateTable(month, region) {
     eduSum = 0;
   })
     .done(function () {
+      if (requestId !== latestRegionDataRequestId) return;
       $("#dataList").html("");
       //광고정보표시
       show_partnership();
@@ -2048,24 +2068,33 @@ function updateTable(month, region) {
         selectedComplex = "";
       }
 
-      if (searched_code != "") {
-        pos = searchAndShow(searched_code);
-        $("html").scrollTop(70 * pos);
-        showDetail(pos);
-        searched_code = "";
+      if (requestedSearchedCode) {
+        var searchPosition = searchAndShow(requestedSearchedCode);
+        if (searchPosition >= 0 && aptData.data[searchPosition]) {
+          $("html").scrollTop(70 * searchPosition);
+          showDetail(searchPosition, true);
+        } else {
+          var notFoundMessage = isEn ? "The selected complex is not available in this month data." : "선택한 단지를 현재 월 데이터에서 찾을 수 없습니다.";
+          $("#dataList").prepend("<div class='text-center py-3'>" + notFoundMessage + "</div>");
+        }
+        if (searched_code === requestedSearchedCode) {
+          searched_code = "";
+          searched_region = "";
+        }
       }
       complex_list_like_status();
       $("#pageLoadingBack").remove();
+      showHideListFiltered(aptData);
     })
     .fail(function (jqXMLHttpRequest, status, error) {
-      $("#gungu option:eq(0)").prop("selected", true);
-      var changeRegion = $("#gungu > option:selected").val();
-      updateTable(month, changeRegion);
+      if (requestId !== latestRegionDataRequestId) return;
+      $("#pageLoadingBack").remove();
+      var loadErrorMessage = isEn ? "Failed to load this region. Please try again." : "지역 정보를 불러오지 못했습니다. 다시 시도해 주세요.";
+      $("#dataList").html("<div class='text-center py-3'>" + loadErrorMessage + "<br><button type='button' class='btn btn-outline-secondary btn-sm mt-2' onclick='updateRegion()'>" + (isEn ? "Retry" : "다시 시도") + "</button></div>");
     });
 
   showWeight();
   saveLocalStorage();
-  showHideListFiltered(aptData);
 }
 
 /**
@@ -2074,6 +2103,7 @@ function updateTable(month, region) {
  * @param {string} searched_code - 찾고자 하는 아파트 고유 검색코드
  * @returns {number} 현재 데이터 리스트 내에서의 해당 아파트 인덱스
  */
+// 수정일: 2026-10-05 — 단지코드와 검색코드를 모두 확인하고 미검색 시 -1을 반환합니다.
 function searchAndShow(searched_code) {
   findArray = "";
   if (sortSelection != "sortDefault") {
@@ -2084,11 +2114,12 @@ function searchAndShow(searched_code) {
 
   var itemNums = findArray.length;
   for (var p = 0; p < itemNums; p++) {
-    var aptCode = findArray[p]["검색코드"];
-    if (aptCode == searched_code) {
+    var aptCode = findArray[p]["검색코드"] || findArray[p]["코드"];
+    if (String(aptCode) == String(searched_code)) {
       return p;
     }
   }
+  return -1;
 }
 
 var detail_loading = false;
@@ -2098,7 +2129,14 @@ var detail_loading = false;
  * @description 아파트 리스트 아이템 또는 지도 마커 클릭 시 동작하며, 상세 입지 등급(S/A/B/C), 교통(30분/1시간 도착역), 교육(학업성취도, 학원가), 인프라, 실거래 가격 추이 차트, 층간소음 여부 등의 정밀 분석 모달창을 빌드하여 보여줍니다.
  * @param {number} index - 상세 정보를 볼 아파트 데이터의 배열 인덱스
  */
-function showDetail(index) {
+// 수정일: 2026-10-05 — 유효한 단지 데이터만 열고 검색 선택은 해당 단지를 지도 중심에 둡니다.
+function showDetail(index, forceMapCenter) {
+  index = Number(index);
+  if (!sortData || !sortData.data || !Number.isInteger(index) || index < 0 || !sortData.data[index]) {
+    detail_loading = false;
+    return false;
+  }
+
   if (isMobile) {
     $(".modal-backdrop").css({ width: "100%" });
     $("#baseModal").css({ width: "100%" });
@@ -3524,6 +3562,10 @@ function showDetail(index) {
   mapBounds = defaultMap.getBounds();
   current_zoom = defaultMap.getZoom();
   target_position = { lat: coord_y, lng: coord_x };
+
+  if (forceMapCenter) {
+    defaultMap.setCenter(target_position);
+  }
 
   if (mapBounds.hasLatLng(target_position)) {
     marker_obj = null;

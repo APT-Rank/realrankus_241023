@@ -264,6 +264,7 @@ function unifiedAptSearch(){
 }
 
 var searched_code = ""
+var searched_region = ""
 
 function save_recent_to_LocalStorage(recent_search) {
   recent_search_json = JSON.stringify(recent_search)
@@ -271,6 +272,7 @@ function save_recent_to_LocalStorage(recent_search) {
 }
 
 //var title_loading_html = "<div class='popupTitle'><h1 style='font-size: 1em; font-weight: 600'>데이터를 불러오고 있어요!</h></div>";
+// 수정일: 2026-10-05 — 검색·최근 목록을 동일한 데이터 로딩 흐름으로 처리합니다.
 function searchingUpdate(code, sido, gungu, aptName, aptAddress){
   $('#searchingBox').hide()
   //$("#baseModal").modal("hide")
@@ -310,11 +312,14 @@ function searchingUpdate(code, sido, gungu, aptName, aptAddress){
     save_recent_to_LocalStorage(recent_search)
   }
 
-  removeMarkers()
-  defaultMap.setZoom(17)
+  if (defaultMap && defaultMapReady) {
+    removeMarkers()
+    defaultMap.setZoom(17)
+  }
   
   //$('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>검색 정보를 불러오고 있어요~!</div></div>")
   searched_code = code  
+  searched_region = gungu
   selectedRegion = sido
   selectedSubRegion = gungu
   $("#sido").val(sido).prop("selected", true);  
@@ -322,72 +327,10 @@ function searchingUpdate(code, sido, gungu, aptName, aptAddress){
   optionChange(selectedSubRegion)
   closeUnifiedSearch()  
 
-  setTimeout(function(){    
-    updateRegion()
-    //$("#baseModal").modal("show")
-  }, 350)
+  updateRegion()
 }
 
+// 수정일: 2026-10-05 — 지역 검색 결과도 코드 기준 조회·상세 표시 흐름을 공유합니다.
 function internalSearchingUpdate(index, code, sido, gungu, aptName, aptAddress){
-  $('#searchingBox').hide()
-  //$("#baseModal").modal("hide")
-  closeModal("baseModal")
-
-  var searchingDate = new Date()
-  var searchingY = searchingDate.getFullYear()
-  var searchingM = searchingDate.getMonth() + 1
-  var searchingD = searchingDate.getDate()
-  var searchingH = searchingDate.getHours()
-  var searchingMm = searchingDate.getMinutes()
-  searchingDateStr = (searchingY.toString()).substring(2, 4) + "년 " + searchingM + "월 " + searchingD + "일, " + searchingH + "시 " + searchingMm + "분"
-
-  //최근검색에 하나도 없으면 바로 최금 검색 저장
-  if(recent_search.length == 0){
-    recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
-  }
-  else{    
-    if(recent_search[0][0] != code){
-      //최근검색단지는 최대 10개 표시
-      //10개가 넘어가면 배열 앞에서 부터 채움      
-
-      if(recent_search.length == 10){    
-        recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
-        recent_search.pop()
-      }
-      else{
-        recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])
-      }
-      //최근검색단지는 LocalStorage에 저장      
-    }
-    //마지막 검색과 현재 검색이 동일하면 최근 검색으로 대체
-    else{
-      recent_search.shift()
-      recent_search.unshift([code, sido, gungu, aptName, aptAddress, searchingDateStr])            
-    }
-    save_recent_to_LocalStorage(recent_search)
-  }
-
-  removeMarkers()
-  defaultMap.setZoom(17)
-
-  var actualIndex = -1;
-  var dataToSearch = sortData.data;
-  for (var p = 0; p < dataToSearch.length; p++) {
-    if (dataToSearch[p]["검색코드"] == code || dataToSearch[p]["코드"] == code) {
-      actualIndex = p;
-      break;
-    }
-  }
-  if (actualIndex === -1) {
-    actualIndex = Number(index);
-  }
-
-  showDetail(actualIndex)
-  closeUnifiedSearch()  
-  
-  /*
-  setTimeout(function(){    
-    $("#baseModal").modal("show")
-  }, 500)
-  */
+  searchingUpdate(code, sido, gungu, aptName, aptAddress)
 }
