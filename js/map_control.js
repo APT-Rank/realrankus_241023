@@ -148,6 +148,7 @@ function loadMap(center_x, center_y) {
     lngSpan = northEast.lng() - southWest.lng(),
     latSpan = northEast.lat() - southWest.lat();
 
+  // 수정일: 2026-10-05 — 지도 이동·확대 후 마커 갱신이 끝나면 선택된 단지 애니메이션을 이어갑니다.
   naver.maps.Event.addListener(defaultMap, 'idle', function () {
     if (selectedSubRegion == "Living_Top300" || selectedSubRegion == "Trans_Top300" || selectedSubRegion == "Infra_Top300"
       || selectedSubRegion == "Edu_Top300" || selectedSubRegion == "Balanced_Top300") {
@@ -291,10 +292,12 @@ var mapComplexScoreRequests = new Map();
 var mapComplexScoreFailureUntil = new Map();
 var mapComplexScoreRefreshVersion = 0;
 
+// 수정일: 2026-10-04 — 월·지역·단지코드를 결합해 메모리 점수 캐시의 고유 키를 만듭니다.
 function getMapComplexScoreKey(month, regionCode, complexCode) {
   return month + ":" + regionCode + ":" + complexCode;
 }
 
+// 수정일: 2026-10-04, 2026-10-05 — 설정 가중치를 정규화하며 교통우선은 지원 지역에만 반영합니다.
 function getMapComplexScoreWeights() {
   var living = Number(valLiving);
   var trans = Number(valTrans);
@@ -312,6 +315,7 @@ function getMapComplexScoreWeights() {
   };
 }
 
+// 수정일: 2026-10-04 — 지역·단지별 Firestore 총점과 설정 가중치로 지도 마커 점수를 계산합니다.
 function getMapDisplayedComplexValue(complex) {
   var originalValue = Number(complex["가치 총점"]);
   if (sortSelection == "sortDefault" || selectedRegion == "Korea") return originalValue;
@@ -335,6 +339,7 @@ function getMapDisplayedComplexValue(complex) {
   return Number.isFinite(value) ? value : originalValue;
 }
 
+// 수정일: 2026-10-04 — 현재 지도 화면 안에 있는 단지만 골라 점수 조회 대상을 구성합니다.
 function getVisibleMapComplexes() {
   if (!defaultMap || !show_up_complexs || !show_up_complexs.length) return [];
   var mapBounds = defaultMap.getBounds();
@@ -346,6 +351,7 @@ function getVisibleMapComplexes() {
   });
 }
 
+// 수정일: 2026-10-04 — Firestore에서 지역별 단지 총점을 묶음 조회해 메모리 캐시에 저장합니다.
 function fetchMapComplexScores(complexes, month) {
   var regions = new Map();
   var pendingRequests = new Set();
@@ -417,6 +423,7 @@ function fetchMapComplexScores(complexes, month) {
   return Promise.all(Array.from(pendingRequests));
 }
 
+// 수정일: 2026-10-04 — 월·지역·정렬·가중치·표시 단지 목록을 묶어 조회 결과의 유효성을 확인합니다.
 function getMapComplexScoreContext(complexes) {
   var visibleKeys = complexes.map(function (complex) {
     var regionCode = String(complex.gungu || "").split("_", 1)[0];
@@ -428,6 +435,7 @@ function getMapComplexScoreContext(complexes) {
   ]);
 }
 
+// 수정일: 2026-10-04 — 현재 지도 화면의 단지 점수를 불러온 뒤 마커를 갱신합니다.
 function refreshMapComplexScores(redrawImmediately) {
   var requestVersion = ++mapComplexScoreRefreshVersion;
   var zoomLevels = isMobile ? mobile_level_control : web_level_control;
@@ -529,6 +537,7 @@ var marker_z_depth = 1000
 
 var infoWindow
 
+// 수정일: 2026-10-05 — 단지 선택이나 마커 재생성 후에도 현위치 원형 마커를 항상 최상단에 둡니다.
 function keepCurrentLocationMarkerOnTop() {
   if (!currentLocationMarker) return;
 

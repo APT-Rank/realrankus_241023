@@ -83,6 +83,7 @@ var getRegionNameFromLink = (val) => {
 
 var exchange_rate = 1500; // 1억 KRW 당 USD 환산값 (예시: 1500M KRW = 1M USD)
 
+// 수정일: 2026-10-03 — 10월 데이터 공개에 맞춰 분석 기준월과 초기 선택월을 갱신했습니다.
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
 var thisMonth = "202610"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
@@ -885,6 +886,7 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202609_01_EN");
   window.indexedDB.deleteDatabase("202609_02");
   window.indexedDB.deleteDatabase("202609_02_EN");
+  // 수정일: 2026-10-03 — 이전 9월 IndexedDB 데이터베이스 버전을 정리합니다.
   window.indexedDB.deleteDatabase("202609_03");
   window.indexedDB.deleteDatabase("202609_03_EN");
   window.indexedDB.deleteDatabase("202610_01");
@@ -1321,6 +1323,7 @@ function updateRegion() {
 
   selectedRegion = $("#sido option:selected").val();
   selectedSubRegion = $("#gungu option:selected").val();
+  // 수정일: 2026-10-05 — 교통우선 미지원 지역으로 이동하면 균형잡힌 설정으로 전환하고 안내합니다.
   resetUnsupportedTransportPriority(true);
 
   localSearchText = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());
@@ -1543,6 +1546,7 @@ function return_sPrice_FilteredData_onList(area_arr, sales_arr, rent_arr, ratio_
 
 var svg_loc = "";
 
+// 수정일: 2026-10-04 — 지역 정렬 결과에서 가장 높은 단지를 찾아 지도 중심을 이동합니다.
 function getTopRankedComplexForMap() {
   var useConfiguredPriority = selectedRegion != "Korea" && sortSelection != "sortDefault";
   var sourceData = useConfiguredPriority ? sortData : aptData;
@@ -2237,6 +2241,7 @@ function showDetail(index) {
   var transportScore = (Math.round(aptData.data[index]["교통총점"] * 100) / 100).toFixed(2);
   var infraScore = (Math.round(aptData.data[index]["인프라총점"] * 100) / 100).toFixed(2);
   var eduScore = (Math.round(aptData.data[index]["학군총점"] * 100) / 100).toFixed(2);
+  // 수정일: 2026-10-05 — 상세 모달의 항목별 점수와 지역 평균을 현재 우선순위 가중치로 환산해 그래프에 반영합니다.
   var displayScoreWeightsEnabled = sortSelection != "sortDefault" && selectedRegion != "Korea";
   var displayTransportWeight = supportsTransportPriority(selectedRegion) ? Number(valTrans) : 0;
   var displayScoreWeightTotal = Number(valLiving) + displayTransportWeight + Number(valInfra) + Number(valEdu);
@@ -3525,6 +3530,7 @@ function showDetail(index) {
 
   prev_selection = current_selection;
   current_selection = searchCode;
+  // 수정일: 2026-10-05 — 지도 밖 단지를 선택해 마커가 다시 만들어져도 선택 애니메이션을 이어갑니다.
   pendingSelectionAnimationCode = String(searchCode);
   current_apt_name = aptName;
 
@@ -4692,6 +4698,7 @@ function showNotice() {
   if (selectedMonth == "202609") {
     detailHtml += `${notice_202609}`;
   }
+  // 수정일: 2026-10-03 — 10월 데이터 선택 시 해당 월의 공지 내용을 표시합니다.
   if (selectedMonth == "202610") {
     detailHtml += `${notice_202610}`;
   }
@@ -4769,6 +4776,7 @@ function showNotice() {
 
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
+      // 수정일: 2026-10-03 — 10월 공지 확인 상태와 노출 기간을 새 버전으로 갱신합니다.
       $.cookie("popCookie", "202610", { expires: 45, path: "/" });
       console.log($.cookie("popCookie"));
     } else {

@@ -18,6 +18,7 @@
     sortSelection = "sortDefault"
   }
 
+  // 수정일: 2026-10-05 — 교통우선은 지하철 점수를 지원하는 6개 시·도에서만 허용하고, 그 외 지역은 균형잡힌으로 되돌립니다.
   function supportsTransportPriority(region) {
     return ["Seoul", "Gyeonggi", "Incheon", "Busan", "Daegu", "Daejeon"].includes(region);
   }
@@ -446,6 +447,7 @@
     }
   }
 
+  // 수정일: 2026-10-05 — 우선순위 적용 시 점수와 마커만 갱신하고 현재 지도 중심은 유지합니다.
   function applySorting(){
     resetUnsupportedTransportPriority(true);
 
