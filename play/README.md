@@ -8,14 +8,17 @@
 
 ## Local run
 
-1. Install Node.js 20 (the Functions runtime target) and run `npm ci` in `play/_functions`.
-2. Run `npm run dev` in `play/_functions`.
-3. Open `http://127.0.0.1:5000/`. Emulator UI is at `http://127.0.0.1:4000/`.
-4. `npm test` builds the Functions package and runs the local smoke tests.
+1. Install Node.js 22 (the Functions runtime target) and run `npm ci` in `play/_functions`.
+2. Run `npm run dev` in `play/_functions`; this starts Auth, Firestore, Functions, and Hosting with project `demo-play`.
+3. In a second terminal, run `npm run seed:exchange-emulator` in `play/_functions` to reset and seed the emulator-only exchange scenario.
+4. Open `http://127.0.0.1:5000/`. Emulator UI is at `http://127.0.0.1:4000/`.
+5. `npm test` builds the Functions package and runs the local smoke and emulator-fixture safety tests.
 
-On `localhost` or `127.0.0.1`, the browser selects the isolated `demo-play` project and points Auth, Firestore, and Functions SDK traffic at local emulators. Hosting excludes `_functions/`. The emulators start empty; authenticated market actions require appropriate test-season/property documents.
+`js/runtime/firebase_runtime.js` routes `localhost`, `127.0.0.1`, and `::1` to the `demo-play` Auth, Firestore, and Functions emulators. Other hosts retain the production project. Hosting excludes `_functions/`.
 
-The Firebase runtime bootstrap is isolated in `js/runtime/firebase_runtime.js`. HERO test login and TIME-SLIP controls live under `js/dev/` and are dynamically loaded only on `localhost` or `127.0.0.1`; their controls stay hidden otherwise. The HERO test season is selected only for the `HERO_USER` identity in emulator mode. TIME-SLIP defaults to off, and switching it off or signing out stops its live listeners. The local HERO credentials are confined to the emulator-only login module and are never loaded by hosted production pages.
+`npm run seed:exchange-emulator` refuses to run without the explicit `--target=demo-play` target and pins both emulator endpoints to loopback. It resets only documents in `test_hero_season` plus its specifically tagged `TEST_ONLY` master records, then seeds the HERO-owned home (map complex `10002`), AI-owned home (`100473`), a primary-supply home (`10065`), and an AI sell order. HERO login is `hero@aptrank.test` / `password123`; AI owner login is `ai-owner@aptrank.test` / `password123`. These credentials and all seeded assets exist only in the local emulator. After signing in as HERO, the emulator-only account switch button toggles between HERO and the AI owner, allowing both sides of an order to be tested. Use the map to test HERO's sell form and the AI-owned property's request form; the exchange board also shows the AI sell order and test primary supply.
+
+HERO test login and TIME-SLIP controls live under `js/dev/` and load only in emulator mode. The HERO test season is selected by the active `HERO_USER` membership. TIME-SLIP defaults to off, and switching it off or signing out stops its live listeners.
 
 The Functions Emulator reported that Application Default Credentials are present. Startup and static Hosting were verified without invoking a callable, but external Google API access from backend task code has not been proven isolated. Do not call batch/task endpoints or treat emulator startup as proof of transaction execution until those paths are guarded or verified against emulator endpoints.
 

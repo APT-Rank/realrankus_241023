@@ -205,7 +205,7 @@ function setupHeroLogin(auth) {
     const passwordInput = document.getElementById('hero-login-password');
     const errorElement = document.getElementById('hero-login-error');
     const submitButton = document.getElementById('hero-login-submit');
-    if (!loginButton || !loginModal || !loginForm) return;
+    if (!loginButton || !loginModal || !loginForm || window.playRuntime?.isEmulatorMode) return;
 
     loginButton.addEventListener('click', () => {
         errorElement.textContent = '';
@@ -272,6 +272,7 @@ async function initFirebaseAndPlayer() {
                 }
                 playerState = { ...res.data, ownership: res.data.ownership || res.data.ownerships || [] };
                 subscribeToPlayerAsset(playerState.player_id);
+                await refreshMarketBoard();
                 if (heroStatus) heroStatus.textContent = playerState.player_id;
                 console.log('PLAY state loaded from Firestore', currentSeasonId, playerState.player_id);
                 if (isHeroTestSeason()) {
@@ -341,6 +342,12 @@ let selectedComplexLoadError = null;
 let selectedComplexMapPosition = null;
 let selectedComplexSupplyByPropertyId = new Map();
 let selectedComplexSupplyStatus = 'loading';
+let selectedComplexOwnershipByPropertyId = new Map();
+let selectedComplexOwnershipStatus = 'loading';
+let complexTradeFormMode = null;
+let marketExchangeTab = 'SELL';
+let marketBoardState = { status: 'idle', primaryListings: [], secondaryOrders: [], error: null };
+let marketBoardRequestId = 0;
 let dynamicContextDismissed = false;
 let dynamicContextMapReady = false;
 let dynamicContextRevealTimer = null;
@@ -410,6 +417,11 @@ function formatPrice(price) {
     if (!price || isNaN(price)) return '확인 불가';
     // Format to 억 단위
     return (price / 100000000).toFixed(1) + '억';
+}
+
+function formatFullPrice(price) {
+    if (price === null || price === undefined || price === '' || !Number.isFinite(Number(price))) return '확인 불가';
+    return `${Math.round(Number(price)).toLocaleString('ko-KR')}원`;
 }
 
 function formatDate(dateString) {
@@ -858,32 +870,116 @@ function formatSnapshotPath(path) {
     return path.replace(/\s\d+(?=\.|$)/g, '').split('.').map(part => part.replace(/[_-]/g, ' ')).join(' · ');
 }
 
+function formatMarketWon(value) {
+    if (value === null || value === undefined || value === '') return '—';
+    const amount = Number(value);
+    return Number.isFinite(amount) ? `${Math.round(amount).toLocaleString('ko-KR')}원` : '—';
+}
+
+function openComplexTradeForm(mode) {
+    const tradeContext = getComplexTradeContext();
+    const requiredState = mode === 'SELL' ? 'OWNED' : 'OTHER';
+    if (tradeContext.state !== requiredState) return;
+    complexTradeFormMode = mode;
+    updateCommandPanel();
+    window.setTimeout(updateComplexTradeEstimate, 0);
+}
+
+function cancelComplexTradeForm() {
+    complexTradeFormMode = null;
+    updateCommandPanel();
+}
+
+function updateComplexTradeEstimate() {
+    const tradeContext = getComplexTradeContext();
+    const priceInput = document.getElementById('market-trade-price');
+    const price = Number(priceInput?.value);
+    if (!Number.isFinite(price) || price <= 0) return;
+
+    if (complexTradeFormMode === 'SELL') {
+        const acquisitionPrice = Number(tradeContext.ownership?.acquisition_price) || 0;
+        const grossProfit = price - acquisitionPrice;
+        const taxEstimate = document.getElementById('market-trade-tax-estimate');
+        const profitEstimate = document.getElementById('market-trade-profit-estimate');
+        if (taxEstimate) taxEstimate.textContent = '정책 연동 후 산정';
+        if (profitEstimate) profitEstimate.textContent = `${formatMarketWon(grossProfit)} (세금·수수료 제외)`;
+        return;
+    }
+
+    if (complexTradeFormMode === 'REQUEST') {
+        const area = Number(tradeContext.property?.representative_area_sqm);
+        const costRate = getTransactionCostRate(price, area);
+        const acquisitionCost = costRate === null ? null : Math.round(price * costRate);
+        const feeEstimate = document.getElementById('market-trade-fee-estimate');
+        const totalEstimate = document.getElementById('market-trade-total-estimate');
+        if (feeEstimate) feeEstimate.textContent = costRate === null
+            ? '면적 정보가 없어 계산할 수 없음'
+            : `${formatMarketWon(acquisitionCost)} · ${(costRate * 100).toFixed(2)}%`;
+        if (totalEstimate) totalEstimate.textContent = costRate === null
+            ? '—'
+            : formatMarketWon(price + acquisitionCost);
+    }
+}
+
+async function submitComplexTradeOrder() {
+    const tradeContext = getComplexTradeContext();
+    const price = Number(document.getElementById('market-trade-price')?.value);
+    if (!Number.isSafeInteger(price) || price <= 0) return window.alert('1원 이상의 정수 가격을 입력해 주세요.');
+    if (!currentUser || !tradeContext.property?.property_id) return window.alert('로그인 또는 단지 정보를 확인한 뒤 다시 시도해 주세요.');
+    if (complexTradeFormMode === 'SELL' && (!tradeContext.ownership || tradeContext.ownership.locked_for_sale)) return window.alert('소유권이 없거나 이미 매도 등록된 매물입니다.');
+    const side = complexTradeFormMode === 'SELL' ? 'SELL' : 'BUY';
+    const callable = firebase.app().functions('asia-northeast3').httpsCallable('createSecondaryOrder');
+    try {
+        const result = await callable({ season_id: currentSeasonId, property_id: String(tradeContext.property.property_id), side: side, price: price, idempotency_key: 'MARKET_' + side + '_' + currentUser.uid + '_' + Date.now() });
+        complexTradeFormMode = null;
+        await Promise.all([refreshMarketBoard(), refreshPlayerState()]);
+        updateCommandPanel();
+        window.alert(side === 'SELL' ? '매도 매물을 거래소에 등록했습니다.' : '매수 요청을 거래소에 등록했습니다. 요청 금액과 수수료가 보유현금에서 잠금 처리됩니다.');
+        return result.data;
+    } catch (error) {
+        console.error('Market order submission failed:', error);
+        window.alert(error.message || '거래소 주문을 등록하지 못했습니다.');
+    }
+}
+
+function renderComplexTradeForm() {
+    const tradeContext = getComplexTradeContext();
+    const property = tradeContext.property;
+    const price = complexTradeFormMode === 'SELL' ? Number(tradeContext.ownership?.acquisition_price) || Number(property?.initial_price) || 0 : Number(selectedComplexDealHistory?.deal_price) || Number(property?.initial_price) || 0;
+    const isSale = complexTradeFormMode === 'SELL';
+    const priceLabel = isSale ? '매도 가격' : '매도 요청 가격';
+    const submitLabel = isSale ? '매도 신청' : '매도 요청';
+    const details = isSale
+        ? '<div class="market-trade-row"><span>나의 매수가격</span><strong>' + formatMarketWon(tradeContext.ownership?.acquisition_price) + '</strong></div><div class="market-trade-row"><span>예상 양도세/수수료</span><strong id="market-trade-tax-estimate">정책 연동 후 산정</strong></div><div class="market-trade-row market-trade-total"><span>예상 수익</span><strong id="market-trade-profit-estimate">—</strong></div><p class="market-trade-note">매도 등록 시 소유권이 체결 또는 주문 취소 전까지 잠깁니다.</p>'
+        : '<div class="market-trade-row"><span>예상 취득세/수수료</span><strong id="market-trade-fee-estimate">—</strong></div><div class="market-trade-row market-trade-total"><span>총 예상 매수 비용</span><strong id="market-trade-total-estimate">—</strong></div><p class="market-trade-note">매수 요청 금액과 예상 수수료가 잠기며, 소유자가 거래소에서 요청을 수락하면 거래됩니다.</p>';
+    return '<section class="market-trade-form-card" aria-labelledby="market-trade-form-title"><h6 id="market-trade-form-title">' + (isSale ? '매도 등록하기' : '매도 요청하기') + '</h6><div class="market-trade-row"><span>' + priceLabel + '</span><input id="market-trade-price" class="form-control form-control-sm" type="number" min="1" step="1" value="' + Math.max(0, Math.round(price)) + '" oninput="updateComplexTradeEstimate()" aria-label="' + priceLabel + '"></div>' + details + '<div class="market-trade-actions"><button type="button" class="btn btn-primary" onclick="submitComplexTradeOrder()">' + submitLabel + '</button><button type="button" class="btn btn-outline-secondary" onclick="cancelComplexTradeForm()">취소</button></div></section>';
+}
+
 function renderComplexTradeAction() {
     const dealPrice = selectedComplexDealHistory?.deal_price;
     const numericPrice = Number(dealPrice);
-    const priceLabel = selectedComplexDealHistoryStatus === 'loading'
-        ? '가격 확인 중...'
-        : Number.isFinite(numericPrice) && dealPrice !== null && dealPrice !== undefined && dealPrice !== ''
-            ? `${numericPrice.toLocaleString('ko-KR')}원`
-            : '--';
-    const purchaseEnabled = selectedComplexSupplyStatus === 'available';
-    const purchaseButtonLabel = purchaseEnabled
-        ? '매수 가능'
-        : selectedComplexSupplyStatus === 'unavailable'
-            ? '매수 불가'
-            : selectedComplexSupplyStatus === 'error'
-                ? '매수 상태 확인 불가'
-                : '매수 가능 여부 확인 중...';
-    const purchaseButtonClass = purchaseEnabled ? 'btn-primary' : 'btn-outline-secondary';
-    const purchaseButtonDisabled = purchaseEnabled ? '' : 'disabled';
-    const purchaseButtonAction = purchaseEnabled ? 'onclick="openComplexFundingCheck()"' : '';
+    const priceLabel = selectedComplexDealHistoryStatus === 'loading' ? '가격 확인 중...' : Number.isFinite(numericPrice) && dealPrice !== null && dealPrice !== undefined && dealPrice !== '' ? numericPrice.toLocaleString('ko-KR') + '원' : '--';
+    const tradeContext = getComplexTradeContext();
+    const actions = {
+        INITIAL: { label: '매수 검토하기', className: 'btn-primary', handler: 'openComplexFundingCheck()', disabled: false },
+        OWNED: tradeContext.ownership?.locked_for_sale ? { label: '거래소 등록 중', className: 'btn-outline-secondary', handler: '', disabled: true } : { label: '매도 등록하기', className: 'btn-primary', handler: "openComplexTradeForm('SELL')", disabled: false },
+        OTHER: { label: '매도 요청하기', className: 'btn-primary', handler: "openComplexTradeForm('REQUEST')", disabled: false },
+        CHECKING: { label: '소유 상태 확인 중...', className: 'btn-outline-secondary', handler: '', disabled: true },
+        ERROR: { label: '소유 상태 확인 불가', className: 'btn-outline-secondary', handler: '', disabled: true },
+        UNAVAILABLE: { label: '매수 불가', className: 'btn-outline-secondary', handler: '', disabled: true }
+    };
+    const action = actions[tradeContext.state] || actions.UNAVAILABLE;
+    const actionAttribute = action.handler ? 'onclick="' + action.handler + '"' : '';
+    return '<div class="complex-trade-summary"><div class="complex-trade-price">가격 : ' + priceLabel + '</div><div class="d-grid"><button class="btn ' + action.className + '" ' + (action.disabled ? 'disabled' : '') + ' ' + actionAttribute + '>' + action.label + '</button></div></div>';
+}
 
-    return `<div class="complex-trade-summary">
-                <div class="complex-trade-price">가격 : ${priceLabel}</div>
-                <div class="d-grid">
-                    <button class="btn ${purchaseButtonClass}" ${purchaseButtonDisabled} ${purchaseButtonAction}>${purchaseButtonLabel}</button>
-                </div>
-            </div>`;
+function renderComplexFixedSummary() {
+    const properties = complexDataMap[selectedComplex];
+    const address = Array.isArray(properties) && properties.length
+        ? properties[0].legal_dong_address || '주소 확인 불가'
+        : '주소 확인 불가';
+
+    return `<p class="complex-summary-address text-muted small">${escapeHtml(address)}</p>${renderComplexTradeAction()}`;
 }
 
 function watchComplexDealHistory(complexId, selectionSequence) {
@@ -990,6 +1086,327 @@ async function loadComplexPrimarySupply(properties, seasonId) {
         supplyByPropertyId.set(String(supply.property_id), Number(supply.remaining_supply) || 0);
     }));
     return supplyByPropertyId;
+}
+
+async function loadComplexOwnership(properties, seasonId) {
+    const propertyIds = [...new Map(properties
+        .filter(property => property.property_id !== null && property.property_id !== undefined)
+        .map(property => [String(property.property_id), property.property_id])).values()];
+    const propertyIdBatches = [];
+    for (let index = 0; index < propertyIds.length; index += 10) {
+        propertyIdBatches.push(propertyIds.slice(index, index + 10));
+    }
+    if (!currentUser || !propertyIdBatches.length) return new Map();
+
+    const ownershipSnapshots = await Promise.all(propertyIdBatches.map(propertyIdBatch => firebase.firestore()
+        .collection('PLAY_PROPERTY_OWNERSHIP')
+        .where('property_id', 'in', propertyIdBatch)
+        .get()));
+    const ownershipByPropertyId = new Map();
+    ownershipSnapshots.forEach(snapshot => snapshot.forEach(document => {
+        const ownership = document.data();
+        if (String(ownership.season_id) !== String(seasonId)
+            || String(ownership.status || '').toUpperCase() !== 'ACTIVE') return;
+        const propertyId = String(ownership.property_id);
+        if (!ownershipByPropertyId.has(propertyId)) ownershipByPropertyId.set(propertyId, []);
+        ownershipByPropertyId.get(propertyId).push(ownership);
+    }));
+    return ownershipByPropertyId;
+}
+
+function getComplexTradeContext() {
+    const complexProperties = complexDataMap[selectedComplex];
+    if (!Array.isArray(complexProperties)) return { state: selectedComplexLoadError ? 'ERROR' : 'CHECKING', property: null, ownership: null };
+    const properties = complexProperties.filter(property => property.property_status === 'NORMAL');
+    if (!properties.length) return { state: 'UNAVAILABLE', property: null, ownership: null };
+    const propertyIds = new Set(properties.map(property => String(property.property_id)));
+    const ownRecord = (playerState?.ownership || []).find(ownership => propertyIds.has(String(ownership.property_id)) && String(ownership.status || 'ACTIVE').toUpperCase() === 'ACTIVE');
+    if (ownRecord) return { state: 'OWNED', property: properties.find(item => String(item.property_id) === String(ownRecord.property_id)), ownership: ownRecord };
+    for (const property of properties) {
+        const ownerships = selectedComplexOwnershipByPropertyId.get(String(property.property_id)) || [];
+        const owner = ownerships.find(ownership => String(ownership.player_id) !== String(playerState?.player_id));
+        if (owner) return { state: 'OTHER', property, ownership: owner };
+    }
+    if (selectedComplexOwnershipStatus === 'loading') return { state: 'CHECKING', property: null, ownership: null };
+    if (selectedComplexOwnershipStatus === 'error') return { state: 'ERROR', property: null, ownership: null };
+    const initialProperty = properties.find(property => property.tradable === true && (selectedComplexSupplyByPropertyId.get(String(property.property_id)) || 0) > 0);
+    return initialProperty ? { state: 'INITIAL', property: initialProperty, ownership: null } : { state: 'UNAVAILABLE', property: null, ownership: null };
+}
+
+async function refreshPlayerState() {
+    if (!currentUser || !currentSeasonId) return;
+    const callable = firebase.app().functions('asia-northeast3').httpsCallable('getPlayerState');
+    const result = await callable({ season_id: currentSeasonId });
+    playerState = { ...result.data, ownership: result.data.ownership || result.data.ownerships || [] };
+    subscribeToPlayerAsset(playerState.player_id);
+    updateMyWorldUI();
+}
+
+async function refreshMarketBoard() {
+    if (!currentUser || !currentSeasonId) return;
+    const requestId = ++marketBoardRequestId;
+    marketBoardState = { ...marketBoardState, status: 'loading', loadingMore: false, error: null };
+    renderMarketBoard();
+    try {
+        const callable = firebase.app().functions('asia-northeast3').httpsCallable('getMarketBoard');
+        const result = await callable({ season_id: currentSeasonId, page_size: 30 });
+        if (requestId !== marketBoardRequestId) return;
+        marketBoardState = {
+            status: 'loaded',
+            playerId: result.data.player_id,
+            primaryListings: result.data.primary_listings || [],
+            secondaryOrders: result.data.secondary_orders || [],
+            secondaryListings: result.data.secondary_listings || [],
+            nextCursors: result.data.next_cursors || {},
+            loadingMore: false,
+            error: null
+        };
+        renderMarketBoard();
+    } catch (error) {
+        if (requestId !== marketBoardRequestId) return;
+        marketBoardState = { ...marketBoardState, status: 'error', loadingMore: false, error: error.message || '거래소 정보를 불러오지 못했습니다.' };
+        renderMarketBoard();
+    }
+}
+
+async function loadMoreMarketBoard() {
+    if (!currentUser || !currentSeasonId || marketBoardState.loadingMore) return;
+    const sourceNames = Object.keys(marketBoardState.nextCursors || {}).filter(source => marketBoardState.nextCursors[source]);
+    if (!sourceNames.length) return;
+    const requestId = ++marketBoardRequestId;
+    marketBoardState = { ...marketBoardState, loadingMore: true, error: null };
+    renderMarketBoard();
+    try {
+        const callable = firebase.app().functions('asia-northeast3').httpsCallable('getMarketBoard');
+        const result = await callable({
+            season_id: currentSeasonId,
+            page_size: 30,
+            sources: sourceNames,
+            cursors: marketBoardState.nextCursors
+        });
+        if (requestId !== marketBoardRequestId) return;
+        const appendRows = (currentRows, incomingRows, key) => {
+            const rows = new Map((currentRows || []).map(row => [String(row[key]), row]));
+            (incomingRows || []).forEach(row => rows.set(String(row[key]), row));
+            return [...rows.values()];
+        };
+        marketBoardState = {
+            ...marketBoardState,
+            primaryListings: appendRows(marketBoardState.primaryListings, result.data.primary_listings, 'supply_id'),
+            secondaryOrders: appendRows(marketBoardState.secondaryOrders, result.data.secondary_orders, 'order_id'),
+            secondaryListings: appendRows(marketBoardState.secondaryListings, result.data.secondary_listings, 'listing_id'),
+            nextCursors: { ...marketBoardState.nextCursors, ...(result.data.next_cursors || {}) },
+            loadingMore: false,
+            error: null
+        };
+        renderMarketBoard();
+    } catch (error) {
+        if (requestId !== marketBoardRequestId) return;
+        marketBoardState = { ...marketBoardState, loadingMore: false, error: error.message || '추가 매물을 불러오지 못했습니다.' };
+        renderMarketBoard();
+    }
+}
+
+function setMarketExchangeTab(tab) {
+    if (!['SELL', 'REQUEST'].includes(tab)) return;
+    marketExchangeTab = tab;
+    const sellButton = document.getElementById('market-exchange-sell-tab');
+    const requestButton = document.getElementById('market-exchange-request-tab');
+    if (sellButton) { sellButton.classList.toggle('active', tab === 'SELL'); sellButton.setAttribute('aria-selected', String(tab === 'SELL')); }
+    if (requestButton) { requestButton.classList.toggle('active', tab === 'REQUEST'); requestButton.setAttribute('aria-selected', String(tab === 'REQUEST')); }
+    renderMarketBoard();
+}
+
+function renderMarketBoard() {
+    const container = document.getElementById('market-exchange-status');
+    const badge = document.getElementById('market-exchange-status-badge');
+    const refreshButton = document.getElementById('market-exchange-refresh');
+    if (!container) return;
+    if (badge) badge.textContent = marketBoardState.status === 'loaded' ? 'Firestore' : marketBoardState.status === 'loading' ? '불러오는 중' : '연결 필요';
+    if (refreshButton) refreshButton.disabled = marketBoardState.status === 'loading' || marketBoardState.loadingMore === true;
+    if (marketBoardState.status === 'idle' || marketBoardState.status === 'loading') {
+        container.textContent = marketBoardState.status === 'loading' ? '거래소 매물을 불러오는 중입니다.' : '로그인 후 거래소 매물을 확인할 수 있습니다.';
+        return;
+    }
+    if (marketBoardState.status === 'error' && !marketBoardState.primaryListings?.length && !marketBoardState.secondaryOrders?.length && !marketBoardState.secondaryListings?.length) {
+        container.textContent = marketBoardState.error || '거래소 정보를 불러오지 못했습니다.';
+        return;
+    }
+    const ownPlayerId = String(marketBoardState.playerId || playerState?.player_id || '');
+    const items = marketExchangeTab === 'SELL'
+        ? [
+            ...(marketBoardState.primaryListings || []).map(item => ({ ...item, side: 'PRIMARY' })),
+            ...(marketBoardState.secondaryListings || []).map(item => ({ ...item, side: 'SELL', isLegacyListing: true })),
+            ...(marketBoardState.secondaryOrders || []).filter(item => item.side === 'SELL')
+        ]
+        : (marketBoardState.secondaryOrders || []).filter(item => item.side === 'BUY');
+    const nextSources = Object.keys(marketBoardState.nextCursors || {}).filter(source => marketBoardState.nextCursors[source]);
+    const loadMoreButton = nextSources.length
+        ? '<button class="btn btn-sm btn-outline-secondary market-board-load-more" type="button" onclick="loadMoreMarketBoard()" ' + (marketBoardState.loadingMore ? 'disabled' : '') + '>' + (marketBoardState.loadingMore ? '불러오는 중…' : '매물 더 보기') + '</button>'
+        : '';
+    if (!items.length) {
+        const emptyText = marketExchangeTab === 'SELL' ? '현재 구매 가능한 매물이나 매도 등록 매물이 없습니다.' : '현재 등록된 매수 요청이 없습니다.';
+        container.innerHTML = '<div class="market-exchange-empty">' + emptyText + '</div>' + loadMoreButton;
+        return;
+    }
+    const itemCards = items.map(item => {
+        const orderId = encodeURIComponent(String(item.order_id || ''));
+        const listingId = encodeURIComponent(String(item.listing_id || ''));
+        const propertyId = encodeURIComponent(String(item.property_id || ''));
+        const name = escapeHtml(item.complex_name || ('단지 ' + (item.complex_id || '')));
+        const address = escapeHtml(item.address || '주소 정보 없음');
+        const isPrimary = item.side === 'PRIMARY';
+        const isLegacyListing = item.isLegacyListing === true;
+        const isMine = String(item.player_id || '') === ownPlayerId;
+        const owned = (playerState?.ownership || []).some(record => String(record.property_id) === String(item.property_id) && String(record.status || 'ACTIVE').toUpperCase() === 'ACTIVE');
+        let action = '';
+        if (isPrimary) {
+            action = owned
+                ? '<span class="market-board-state">보유 중</span>'
+                : '<button class="btn btn-sm btn-primary" onclick="openMarketPrimaryFunding(decodeURIComponent(&quot;' + propertyId + '&quot;))">매수 검토</button>';
+        } else if (isLegacyListing) {
+            action = isMine
+                ? '<button class="btn btn-sm btn-outline-secondary" onclick="cancelLegacyMarketListing(decodeURIComponent(&quot;' + listingId + '&quot;))">등록 취소</button>'
+                : '<button class="btn btn-sm btn-primary" onclick="buyLegacyMarketListing(decodeURIComponent(&quot;' + listingId + '&quot;))">매수하기</button>';
+        } else if (item.side === 'SELL') {
+            action = isMine
+                ? '<button class="btn btn-sm btn-outline-secondary" onclick="cancelMarketOrder(decodeURIComponent(&quot;' + orderId + '&quot;))">등록 취소</button>'
+                : '<button class="btn btn-sm btn-primary" onclick="buySecondaryFromMarket(decodeURIComponent(&quot;' + orderId + '&quot;))">매수하기</button>';
+        } else if (isMine) {
+            action = '<button class="btn btn-sm btn-outline-secondary" onclick="cancelMarketOrder(decodeURIComponent(&quot;' + orderId + '&quot;))">요청 취소</button>';
+        } else if (owned) {
+            action = '<button class="btn btn-sm btn-primary" onclick="acceptMarketOffer(decodeURIComponent(&quot;' + orderId + '&quot;))">요청 수락</button>';
+        }
+        const typeLabel = isPrimary
+            ? '신규 매물 · 잔여 ' + (Number(item.remaining_supply) || 0) + '개'
+            : item.side === 'SELL' ? (isMine ? '내 매도 등록' : '소유자 매도 등록') : (isMine ? '내 매수 요청' : '매수 요청');
+        const areaLabel = item.representative_area_sqm ? Number(item.representative_area_sqm).toLocaleString('ko-KR') + '㎡' : '면적 정보 없음';
+        return '<article class="market-board-item"><div class="market-board-copy"><strong>' + name + '</strong><span>' + address + '</span><small>' + typeLabel + ' · ' + areaLabel + '</small></div><div class="market-board-price"><strong>' + formatMarketWon(item.price) + '</strong>' + action + '</div></article>';
+    }).join('');
+    const errorMessage = marketBoardState.error ? '<div class="market-exchange-error" role="alert">' + escapeHtml(marketBoardState.error) + '</div>' : '';
+    container.innerHTML = errorMessage + itemCards + loadMoreButton;
+}
+
+function openMarketPrimaryFunding(propertyId) {
+    const candidates = [...allProperties, ...Object.values(complexDataMap).flatMap(properties => Array.isArray(properties) ? properties : [])];
+    const boardListing = (marketBoardState.primaryListings || []).find(item => String(item.property_id) === String(propertyId));
+    const property = candidates.find(item => String(item.property_id) === String(propertyId)) || (boardListing ? {
+        ...boardListing,
+        property_status: boardListing.property_status || 'NORMAL',
+        initial_price: Number(boardListing.initial_price || boardListing.price),
+        tradable: boardListing.tradable !== false
+    } : null);
+    if (!property) return window.alert('매물 정보를 불러오지 못했습니다. 거래소를 새로고침한 뒤 다시 시도해 주세요.');
+    complexFundingCheckEntry = true;
+    selectedComplex = property.complex_name;
+    currentContext = 'LISTING_DETAIL';
+    selectedListing = property;
+    decisionState = 'FUNDING_CHECK';
+    window.currentLoanRequest = 0;
+    updateCommandPanel();
+}
+
+async function cancelLegacyMarketListing(listingId) {
+    const listing = (marketBoardState.secondaryListings || []).find(item => item.listing_id === listingId);
+    if (!listing || String(listing.player_id) !== String(marketBoardState.playerId)) return;
+    if (!window.confirm('이 매도 등록을 취소하고 소유 잠금을 해제할까요?')) return;
+    try {
+        const callable = firebase.app().functions('asia-northeast3').httpsCallable('cancelSecondaryListing');
+        await callable({
+            season_id: currentSeasonId,
+            listing_id: listingId,
+            idempotency_key: 'MARKET_LEGACY_CANCEL_' + currentUser.uid + '_' + Date.now()
+        });
+        await Promise.all([refreshMarketBoard(), refreshPlayerState()]);
+    } catch (error) {
+        console.error('Legacy secondary listing cancellation failed:', error);
+        await Promise.all([refreshMarketBoard(), refreshPlayerState().catch(() => {})]);
+        window.alert(error.message || '매도 등록을 취소하지 못했습니다.');
+    }
+}
+
+async function buyLegacyMarketListing(listingId) {
+    const listing = (marketBoardState.secondaryListings || []).find(item => item.listing_id === listingId);
+    if (!listing || String(listing.player_id) === String(marketBoardState.playerId)) return;
+    if (!window.confirm((listing.complex_name || '매물') + '\n' + formatMarketWon(listing.price) + '에 매수하시겠습니까?')) return;
+    try {
+        const callable = firebase.app().functions('asia-northeast3').httpsCallable('executeSecondaryTransaction');
+        const result = await callable({
+            season_id: currentSeasonId,
+            listing_id: listingId,
+            idempotency_key: 'MARKET_LEGACY_BUY_' + currentUser.uid + '_' + Date.now()
+        });
+        await Promise.all([refreshMarketBoard(), refreshPlayerState()]);
+        window.alert(result.data.status === 'SUCCESS' ? '매매가 체결되었습니다.' : '매수 거래를 확인했습니다.');
+    } catch (error) {
+        console.error('Legacy secondary listing purchase failed:', error);
+        await Promise.all([refreshMarketBoard(), refreshPlayerState().catch(() => {})]);
+        window.alert(error.message || '매매를 진행하지 못했습니다.');
+    }
+}
+async function buySecondaryFromMarket(sellOrderId) {
+    const sellOrder = marketBoardState.secondaryOrders.find(order => order.order_id === sellOrderId && order.side === 'SELL');
+    if (!sellOrder || String(sellOrder.player_id) === String(marketBoardState.playerId)) return;
+    if (!window.confirm((sellOrder.complex_name || '매물') + '\n' + formatMarketWon(sellOrder.price) + '에 매수 요청하고 체결할까요?')) return;
+    let buyOrderId = null;
+    try {
+        const orderCallable = firebase.app().functions('asia-northeast3').httpsCallable('createSecondaryOrder');
+        const orderResult = await orderCallable({ season_id: currentSeasonId, property_id: String(sellOrder.property_id), side: 'BUY', price: Number(sellOrder.price), idempotency_key: 'MARKET_BUY_' + currentUser.uid + '_' + Date.now() });
+        buyOrderId = orderResult.data.order_id || null;
+        const matchCallable = firebase.app().functions('asia-northeast3').httpsCallable('matchSecondaryOrder');
+        const matchResult = await matchCallable({ season_id: currentSeasonId, buy_order_id: buyOrderId, sell_order_id: sellOrderId, idempotency_key: 'MARKET_MATCH_' + currentUser.uid + '_' + Date.now() });
+        await Promise.all([refreshMarketBoard(), refreshPlayerState()]);
+        window.alert(matchResult.data.status === 'SUCCESS' ? '매매가 체결되었습니다.' : '매수 요청을 거래소에 등록했습니다.');
+    } catch (error) {
+        console.error('Secondary market purchase failed:', error);
+        if (buyOrderId) {
+            try {
+                const cancelCallable = firebase.app().functions('asia-northeast3').httpsCallable('cancelSecondaryOrder');
+                await cancelCallable({ season_id: currentSeasonId, order_id: buyOrderId, idempotency_key: 'MARKET_BUY_ROLLBACK_' + currentUser.uid + '_' + Date.now() });
+            } catch (cancelError) {
+                console.warn('Could not cancel the unmatched market buy order:', cancelError);
+            }
+        }
+        await Promise.all([refreshMarketBoard(), refreshPlayerState().catch(() => {})]);
+        window.alert(error.message || '매매를 진행하지 못했습니다.');
+    }
+}
+
+async function acceptMarketOffer(buyOrderId) {
+    const buyOrder = marketBoardState.secondaryOrders.find(order => order.order_id === buyOrderId && order.side === 'BUY');
+    if (!buyOrder || String(buyOrder.player_id) === String(marketBoardState.playerId)) return;
+    const ownership = (playerState?.ownership || []).find(record => String(record.property_id) === String(buyOrder.property_id) && String(record.status || 'ACTIVE').toUpperCase() === 'ACTIVE');
+    if (!ownership) return;
+    if (!window.confirm((buyOrder.complex_name || '보유 단지') + ' 매수 요청 ' + formatMarketWon(buyOrder.price) + '을 수락할까요?')) return;
+    try {
+        let sellOrder = marketBoardState.secondaryOrders.find(order => order.side === 'SELL' && String(order.property_id) === String(buyOrder.property_id) && String(order.player_id) === String(marketBoardState.playerId));
+        if (!sellOrder) {
+            const orderCallable = firebase.app().functions('asia-northeast3').httpsCallable('createSecondaryOrder');
+            const result = await orderCallable({ season_id: currentSeasonId, property_id: String(buyOrder.property_id), side: 'SELL', price: Number(buyOrder.price), idempotency_key: 'MARKET_SELL_ACCEPT_' + currentUser.uid + '_' + Date.now() });
+            sellOrder = { order_id: result.data.order_id, price: buyOrder.price };
+        }
+        if (Number(sellOrder.price) > Number(buyOrder.price)) throw new Error('내 매도 가격이 매수 요청 가격보다 높아 요청을 수락할 수 없습니다.');
+        const matchCallable = firebase.app().functions('asia-northeast3').httpsCallable('matchSecondaryOrder');
+        await matchCallable({ season_id: currentSeasonId, buy_order_id: buyOrderId, sell_order_id: sellOrder.order_id, idempotency_key: 'MARKET_ACCEPT_' + currentUser.uid + '_' + Date.now() });
+        await Promise.all([refreshMarketBoard(), refreshPlayerState()]);
+        window.alert('매수 요청을 수락해 거래를 체결했습니다.');
+    } catch (error) {
+        console.error('Secondary market offer acceptance failed:', error);
+        await Promise.all([refreshMarketBoard(), refreshPlayerState().catch(() => {})]);
+        window.alert(error.message || '매수 요청을 수락하지 못했습니다.');
+    }
+}
+
+async function cancelMarketOrder(orderId) {
+    if (!window.confirm('이 주문을 취소할까요? 매수 요청의 잠긴 현금 또는 매도 등록 상태가 해제됩니다.')) return;
+    try {
+        const callable = firebase.app().functions('asia-northeast3').httpsCallable('cancelSecondaryOrder');
+        await callable({ season_id: currentSeasonId, order_id: orderId, idempotency_key: 'MARKET_CANCEL_' + currentUser.uid + '_' + Date.now() });
+        await Promise.all([refreshMarketBoard(), refreshPlayerState()]);
+    } catch (error) {
+        console.error('Market order cancellation failed:', error);
+        window.alert(error.message || '주문을 취소하지 못했습니다.');
+    }
 }
 
 async function loadComplexMasterSummary(complexId) {
@@ -1742,7 +2159,7 @@ function positionDynamicContextPanel() {
     const panelHeight = panel.offsetHeight;
     const preferredLeft = mapWidth / 2 + 74;
     const maxLeft = Math.max(12, mapWidth - panelWidth - 12);
-    const preferredTop = (mapHeight - panelHeight) / 2;
+    const preferredTop = 65;
     const maxTop = Math.max(12, mapHeight - panelHeight - 12);
 
 
@@ -1882,6 +2299,9 @@ async function selectComplex(complexName, lat, lng, complexId, regionName, prese
     selectedComplexMapPosition = new naver.maps.LatLng(lat, lng);
     selectedComplexSupplyByPropertyId = new Map();
     selectedComplexSupplyStatus = 'loading';
+    selectedComplexOwnershipByPropertyId = new Map();
+    selectedComplexOwnershipStatus = 'loading';
+    complexTradeFormMode = null;
     dynamicContextDismissed = false;
     bindDynamicContextMapEvents(map);
     const mapCenter = map.getCenter();
@@ -1941,11 +2361,19 @@ async function selectComplex(complexName, lat, lng, complexId, regionName, prese
             selectedComplexSupplyByPropertyId = supplyByPropertyId;
             const hasRemainingSupply = [...selectedComplexSupplyByPropertyId.values()].some(remainingSupply => remainingSupply > 0);
             selectedComplexSupplyStatus = hasRemainingSupply ? 'available' : 'unavailable';
-
         } catch (supplyError) {
             if (selectionSequence !== complexSelectionSequence) return;
             selectedComplexSupplyStatus = 'error';
             console.error(`Failed to load primary supply for ${complexName}`, supplyError);
+        }
+        try {
+            selectedComplexOwnershipByPropertyId = await loadComplexOwnership(properties, currentSeasonId);
+            if (selectionSequence !== complexSelectionSequence || currentContext !== 'COMPLEX' || selectedComplex !== complexName) return;
+            selectedComplexOwnershipStatus = 'loaded';
+        } catch (ownershipError) {
+            if (selectionSequence !== complexSelectionSequence) return;
+            selectedComplexOwnershipStatus = 'error';
+            console.error(`Failed to load ownership for ${complexName}`, ownershipError);
         }
         updateCommandPanel();
     } catch (error) {
@@ -2098,6 +2526,16 @@ function goBackToComplex() {
     } else {
         goBackToRegion();
     }
+}
+
+function returnToComplexInfo() {
+    if (!selectedComplex) return false;
+    complexFundingCheckEntry = false;
+    currentContext = 'COMPLEX';
+    selectedListing = null;
+    decisionState = 'NONE';
+    updateCommandPanel();
+    return false;
 }
 
 function goBackToListing() {
@@ -3256,6 +3694,8 @@ function viewGuide() {
 // ---------------------------------------------------------
 
 function updateCommandPanel() {
+    setMarketExchangeTab(marketExchangeTab);
+
     const worldCommandContent = document.getElementById('world-command-content');
     const mapViewCommandContent = document.getElementById('map-view-command-content');
     
@@ -3486,10 +3926,7 @@ function updateCommandPanel() {
         titleEl.innerHTML = `${selectedComplex}`;
         
         const props = complexDataMap[selectedComplex];
-        const address = Array.isArray(props) && props.length
-            ? props[0].legal_dong_address || '주소 확인 불가'
-            : '주소 확인 불가';
-        summaryEl.innerHTML = `<p class="complex-summary-address text-muted small">${escapeHtml(address)}</p>${renderComplexTradeAction()}`;
+        summaryEl.innerHTML = renderComplexFixedSummary();
         let html = '';
 
         if (!Array.isArray(props)) {
@@ -3508,7 +3945,11 @@ function updateCommandPanel() {
             actionEl.innerHTML = '<div class="alert alert-warning">이 단지에 등록된 매물 정보가 없습니다.</div>' + renderComplexSnapshotCard();
             return;
         }
-        
+        if (complexTradeFormMode) {
+            actionEl.innerHTML = renderComplexTradeForm();
+            updateComplexTradeEstimate();
+            return;
+        }
         
         html += renderComplexSnapshotCard();
 
@@ -3575,7 +4016,7 @@ function updateCommandPanel() {
     } else if (currentContext === 'LISTING_DETAIL') {
         if (headerEl) {
             if (complexFundingCheckEntry) {
-                headerEl.textContent = '단지정보 > 자금 확인 및 대출';
+                headerEl.innerHTML = `<a href="#" class="text-decoration-none" onclick="returnToComplexInfo()">단지정보</a> &gt; 자금 확인 및 대출`;
             } else {
                 headerEl.innerHTML = `<a href="#" onclick="goBackToComplex()" class="text-decoration-none">${selectedComplex}</a> &gt; <a href="#" onclick="goBackToListing()" class="text-decoration-none">${LANG.LISTING}</a> &gt; ${LANG.LISTING_DETAIL}`;
             }
@@ -3583,6 +4024,7 @@ function updateCommandPanel() {
         titleEl.textContent = complexFundingCheckEntry ? selectedComplex : LANG.LISTING_DETAIL;
         
         const p = selectedListing;
+        if (complexFundingCheckEntry) summaryEl.innerHTML = renderComplexFixedSummary();
         
         let html = complexFundingCheckEntry ? '' : `
         <div class="card mb-4 border-primary">
@@ -3712,8 +4154,12 @@ function updateCommandPanel() {
             const interest_rate = base_rate + 0.015 + 0.002; // 4.70%
             const monthly_rate = interest_rate / 12;
             const loan_term = calculateRemainingTerm();
-            
+
+            const max_ltv_loan = p.initial_price * ltv_limit;
+            const max_dsr_loan = calculateDSRLoanLimit(annual_income, existing_annual_debt, monthly_rate, loan_term, dsr_limit);
+            const dsr_monthly_capacity = Math.max(0, (annual_income * dsr_limit - existing_annual_debt) / 12);
             const max_loan_possible = calculateMaxLoan(p.initial_price, ltv_limit, annual_income, existing_annual_debt, monthly_rate, loan_term, dsr_limit);
+            const max_loan_binding_limit = max_ltv_loan <= max_dsr_loan ? 'LTV' : 'DSR';
             
             let requested_loan = window.currentLoanRequest || 0;
             if (requested_loan > max_loan_possible) requested_loan = max_loan_possible;
@@ -3722,11 +4168,17 @@ function updateCommandPanel() {
             const monthly_payment = calculateMonthlyPayment(requested_loan, monthly_rate, loan_term);
             const calculated_dsr = annual_income > 0 ? ((existing_annual_debt + monthly_payment * 12) / annual_income) : 0;
             
-            const cashStr = currentCash === null ? 'UNAVAILABLE' : formatPrice(currentCash);
-            const requiredFundsStr = requiredFunds === null ? 'UNAVAILABLE' : formatPrice(requiredFunds);
+            const propertyPriceFullStr = formatFullPrice(p.initial_price);
+            const propertyPriceCompactStr = formatPrice(p.initial_price);
+            const transactionCostStr = tax === null ? '확인 불가' : formatFullPrice(tax);
+            const transactionCostRateStr = taxRate === null ? '--' : `${(taxRate * 100).toFixed(2)}%`;
+            const totalPurchaseCostStr = requiredFunds === null ? '확인 불가' : formatFullPrice(requiredFunds);
+            const totalPurchaseCostCompactStr = requiredFunds === null ? '--' : formatPrice(requiredFunds);
+            const cashFullStr = currentCash === null ? '확인 불가' : formatFullPrice(currentCash);
+            const cashCompactStr = currentCash === null ? '--' : formatPrice(currentCash);
             
             let isSufficient = false;
-            let statusStr = 'UNAVAILABLE';
+            let statusStr = '확인 불가';
             let statusClass = 'text-muted';
             
             if (currentCash !== null && requiredFunds !== null) {
@@ -3743,63 +4195,87 @@ function updateCommandPanel() {
             const amt50 = formatPrice(Math.round((max_loan_possible * 0.50) / 1000000) * 1000000);
             const amt75 = formatPrice(Math.round((max_loan_possible * 0.75) / 1000000) * 1000000);
             const amt100 = formatPrice(max_loan_possible);
+            const ltvLoanFormula = `${formatFullPrice(p.initial_price)} × ${(ltv_limit * 100).toFixed(0)}% = ${formatFullPrice(Math.floor(max_ltv_loan))}`;
+            const dsrMonthlyCapacityDisplay = `${dsr_monthly_capacity.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}원`;
+            const dsrMonthlyCapacityFormula = `((${formatFullPrice(annual_income)} × ${(dsr_limit * 100).toFixed(0)}% − ${formatFullPrice(existing_annual_debt)}) ÷ 12) = ${dsrMonthlyCapacityDisplay}/월`;
+            const monthlyRateDecimal = monthly_rate.toFixed(12);
+            const dsrLoanFormula = monthly_rate > 0
+                ? `${dsrMonthlyCapacityDisplay} × (((1 + ${monthlyRateDecimal})^${loan_term} − 1) ÷ (${monthlyRateDecimal} × (1 + ${monthlyRateDecimal})^${loan_term})) = ${formatFullPrice(Math.floor(max_dsr_loan))}`
+                : `${dsrMonthlyCapacityDisplay} × ${loan_term} = ${formatFullPrice(Math.floor(max_dsr_loan))}`;
+            const maxLoanFormula = `min(${formatFullPrice(Math.floor(max_ltv_loan))}, ${formatFullPrice(Math.floor(max_dsr_loan))}) = ${formatFullPrice(max_loan_possible)} (${max_loan_binding_limit} 한도 적용)`;
 
             html += `
-            <div class="alert alert-primary" id="decision-funding-check-panel">
-                <h6 class="fw-bold"><i class="fa-solid fa-wallet me-1"></i> 자금 확인 및 대출 (Funding Check)</h6>
-                <ul class="list-group list-group-flush small mb-3">
-                    <li class="list-group-item px-0 d-flex justify-content-between bg-transparent">
-                        <span>매물 가격</span>
-                        <strong>${formatPrice(p.initial_price)}</strong>
-                    </li>
-                    <li class="list-group-item px-0 bg-transparent border-top border-dark mt-1 pt-2">
-                        <div class="d-flex justify-content-between align-items-baseline">
-                            <span>최대 가능 대출</span>
-                            <strong class="fs-6">${formatPrice(max_loan_possible)}</strong>
+            <div id="decision-funding-check-panel">
+                <div class="funding-check-heading">
+                        <h6 class="fw-bold mb-0">자금 확인 및 대출 (Funding Check)</h6>
+                    </div>
+                    <div class="funding-check-cost-section funding-check-subcard">
+                        <div class="funding-check-row funding-check-price-row">
+                            <span>매물 가격</span>
+                            <div class="funding-check-value-stack">
+                                <strong>${propertyPriceFullStr}</strong>
+                                <span>${propertyPriceCompactStr}</span>
+                            </div>
                         </div>
-                        <div class="text-muted text-end" style="font-size: 11px;">
-                            LTV·DSR 계산 결과 중 낮은 금액 적용<br>
-                            LTV ${(ltv_limit * 100).toFixed(0)}% · DSR 50% 기준
+                        <div class="funding-check-row">
+                            <span>예상 취득세/수수료</span>
+                            <div class="funding-check-value-stack">
+                                <strong>${transactionCostStr}</strong>
+                                <span>${transactionCostRateStr}</span>
+                            </div>
                         </div>
-                    </li>
-                    <li class="list-group-item px-0 bg-transparent">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>대출 신청 금액</span>
-                            <strong id="loanAmountLabel" class="text-primary">${formatPrice(requested_loan)}</strong>
+                        <div class="funding-check-row funding-check-total-row">
+                            <span>총 매수 비용</span>
+                            <div class="funding-check-value-stack">
+                                <strong>${totalPurchaseCostStr}</strong>
+                                <span>${totalPurchaseCostCompactStr}</span>
+                            </div>
                         </div>
-                        <input type="range" class="form-range mb-0" min="0" max="${max_loan_possible}" step="1000000" id="loanRangeInput" value="${requested_loan}" oninput="window.updateLoanUI(this.value, ${p.initial_price}, ${ltv_limit}, ${annual_income}, ${existing_annual_debt}, ${monthly_rate}, ${loan_term}, ${interest_rate}, ${currentCash}, ${requiredFunds})">
-                        <div class="d-flex justify-content-between text-muted mt-1" style="font-size: 11px; line-height: 1.2;">
-                            <span class="text-start">0</span>
-                            <span class="text-center">${amt25}</span>
-                            <span class="text-center">${amt50}</span>
-                            <span class="text-center">${amt75}</span>
-                            <span class="text-end">최대 (${amt100})</span>
+                    </div>
+                    <div class="funding-check-finance-section funding-check-subcard">
+                        <div class="funding-check-row funding-check-cash-row">
+                            <span>보유 현금</span>
+                            <div class="funding-check-value-stack">
+                                <strong>${cashFullStr}</strong>
+                                <span>${cashCompactStr}</span>
+                            </div>
                         </div>
-                    </li>
-                    <li class="list-group-item px-0 bg-transparent">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span>예상 월 상환액</span>
-                            <strong id="loanMonthlyLabel" class="fs-6 text-dark">${Math.round(monthly_payment).toLocaleString('ko-KR')}원/월</strong>
+                        <div class="funding-check-row">
+                            <span>자금 상태</span>
+                            <strong id="fundStatusLabel" class="${statusClass}">${statusStr}</strong>
                         </div>
-                        <div class="text-muted text-end" style="font-size: 11px;" id="loanMetaLabel">
-                            금리 ${(interest_rate * 100).toFixed(2)}% · 상환기간 ${loan_term}개월
+                        <div class="funding-check-row funding-check-loan-row">
+                            <div class="d-flex justify-content-between align-items-baseline gap-2 mb-1">
+                                <span>대출 신청 금액</span>
+                                <div class="funding-check-value-stack">
+                                    <strong id="loanAmountLabel" class="text-primary">${formatFullPrice(requested_loan)}</strong>
+                                    <span id="loanAmountCompactLabel">${formatPrice(requested_loan)}</span>
+                                </div>
+                            </div>
+                            <input type="range" class="form-range mb-0" min="0" max="${max_loan_possible}" step="1000000" id="loanRangeInput" value="${requested_loan}" oninput="window.updateLoanUI(this.value, ${p.initial_price}, ${ltv_limit}, ${annual_income}, ${existing_annual_debt}, ${monthly_rate}, ${loan_term}, ${interest_rate}, ${currentCash}, ${requiredFunds})">
+                            <div class="d-flex justify-content-between text-muted mt-1 funding-check-loan-range-labels">
+                                <span>0</span>
+                                <span>${amt25}</span>
+                                <span>${amt50}</span>
+                                <span>${amt75}</span>
+                                <span>최대 (${amt100})</span>
+                            </div>
+                            <div class="funding-check-loan-guidance">
+                                <div>DSR ${(dsr_limit * 100).toFixed(0)}%, LTV ${(ltv_limit * 100).toFixed(0)}% 기준으로 계산한 실제 한도입니다.</div>
+                            </div>
                         </div>
-                    </li>
-                    <li class="list-group-item px-0 d-flex justify-content-between bg-transparent border-top border-dark mt-1 pt-2">
-                        <span>보유 현금</span>
-                        <strong>${cashStr}</strong>
-                    </li>
-                    <li class="list-group-item px-0 d-flex justify-content-between bg-transparent">
-                        <span>필요 자금 (비용 포함)</span>
-                        <strong class="text-danger">${requiredFundsStr}</strong>
-                    </li>
-                    <li class="list-group-item px-0 d-flex justify-content-between bg-transparent">
-                        <span>자금 상태</span>
-                        <strong id="fundStatusLabel" class="${statusClass}">${statusStr}</strong>
-                    </li>
-                </ul>
-                <button class="btn btn-primary w-100 mb-2" id="nextCostCheckBtn" onclick="doCostCheck()" ${nextDisabled}>비용 확인 (Transaction Cost)</button>
-                <button class="btn btn-sm btn-outline-secondary w-100" onclick="cancelDecision()">취소</button>
+                        <div class="funding-check-row funding-check-monthly-row">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <span>예상 월 상환액</span>
+                                <strong id="loanMonthlyLabel">${formatFullPrice(monthly_payment)}/월</strong>
+                            </div>
+                            <div class="text-muted text-end funding-check-loan-meta" id="loanMetaLabel">
+                                금리 ${(interest_rate * 100).toFixed(2)}% · 상환기간 ${loan_term}개월
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100 mb-2" id="nextExpectedResultBtn" onclick="doExpectedResult()" ${nextDisabled}>구매 후 예상</button>
+                    <button class="btn btn-sm btn-outline-secondary w-100" onclick="cancelDecision()">취소</button>
             </div>
             `;
         } else if (decisionState === 'COST_CHECK') {
@@ -3936,7 +4412,9 @@ function updateCommandPanel() {
             return;
         }
                  
-        html += `<button class="btn btn-outline-secondary btn-sm" onclick="goBackToListing()"><i class="fa-solid fa-arrow-left"></i> ${LANG.BACK_TO_LISTING}</button>`;
+        if (!complexFundingCheckEntry) {
+            html += `<button class="btn btn-outline-secondary btn-sm" onclick="goBackToListing()"><i class="fa-solid fa-arrow-left"></i> ${LANG.BACK_TO_LISTING}</button>`;
+        }
         actionEl.innerHTML = html;
     }
 }
@@ -3954,12 +4432,14 @@ window.updateLoanUI = function(valStr, propertyPrice, ltvLimit, annualIncome, ex
     window.currentLoanRequest = val;
     
     const amountLabel = document.getElementById('loanAmountLabel');
-    if (amountLabel) amountLabel.innerText = formatPrice(val);
+    if (amountLabel) amountLabel.innerText = formatFullPrice(val);
+    const compactAmountLabel = document.getElementById('loanAmountCompactLabel');
+    if (compactAmountLabel) compactAmountLabel.innerText = formatPrice(val);
     
     const monthlyPayment = calculateMonthlyPayment(val, monthlyRate, loanTerm);
     const monthlyLabel = document.getElementById('loanMonthlyLabel');
     if (monthlyLabel) {
-        monthlyLabel.innerText = `${Math.round(monthlyPayment).toLocaleString('ko-KR')}원/월`;
+        monthlyLabel.innerText = `${formatFullPrice(monthlyPayment)}/월`;
     }
     
     const newAnnualDebt = (existingAnnualDebt || 0) + (monthlyPayment * 12);
@@ -3976,7 +4456,7 @@ window.updateLoanUI = function(valStr, propertyPrice, ltvLimit, annualIncome, ex
             statusEl.className = isSufficient ? 'text-success' : 'text-danger';
         }
         
-        const btn = document.getElementById('nextCostCheckBtn');
+        const btn = document.getElementById('nextExpectedResultBtn');
         if (btn) btn.disabled = !isSufficient;
     }
 };

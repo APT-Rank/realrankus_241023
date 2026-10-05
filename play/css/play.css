@@ -303,6 +303,8 @@ body.play-app, html.play-app {
   flex-direction: column;
   box-sizing: border-box;
   width: min(390px, calc(100% - 24px));
+  top: 65px;
+  height: min(900px, calc(100% - 24px));
   max-height: calc(100% - 24px);
   margin: 0;
   overflow: hidden;
@@ -324,13 +326,14 @@ body.play-app, html.play-app {
   min-height: 0;
   padding-bottom: 14px;
   border-bottom: 1px solid #e6eaf0;
+  margin-bottom: 8px;
 }
 .play-app #dynamic-context #panel-content {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
 }
 .play-app .complex-summary-address {
   margin-bottom: 10px;
@@ -349,6 +352,111 @@ body.play-app, html.play-app {
   border: 1px solid #d8e0ea;
   border-radius: 8px;
   background: #fff;
+}
+.play-app #decision-funding-check-panel {
+  margin-top: 10px;
+}
+.play-app #decision-funding-check-panel .funding-check-heading h6 {
+  margin-bottom: 0;
+  color: #263445;
+}
+.play-app #decision-funding-check-panel .funding-check-heading {
+  padding-bottom: 2px;
+}
+.play-app #decision-funding-check-panel .funding-check-subcard {
+  padding: 0 12px;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  background: #fff;
+  margin-top: 12px;
+}
+.play-app #decision-funding-check-panel .funding-check-cost-section {
+  padding-bottom: 4px;
+}
+.play-app #decision-funding-check-panel .funding-check-finance-section {
+  margin-bottom: 12px;
+}
+.play-app #decision-funding-check-panel .funding-check-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid #e2e5e9;
+  color: #4c535c;
+  font-size: 13px;
+}
+.play-app #decision-funding-check-panel .funding-check-row > strong:not(#fundStatusLabel),
+.play-app #decision-funding-check-panel .funding-check-value-stack strong {
+  color: #30343b;
+  font-size: 13px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.play-app #decision-funding-check-panel #fundStatusLabel {
+  font-size: 13px;
+  text-align: right;
+}
+.play-app #decision-funding-check-panel .funding-check-value-stack {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.play-app #decision-funding-check-panel .funding-check-value-stack span {
+  color: #9298a0;
+  font-size: 11px;
+}
+.play-app #decision-funding-check-panel .funding-check-total-row {
+  border-bottom: 0;
+  font-weight: 700;
+}
+.play-app #decision-funding-check-panel .funding-check-total-row .funding-check-value-stack strong {
+  color: #172033;
+  font-size: 14px;
+}
+.play-app #decision-funding-check-panel #fundStatusLabel.text-danger {
+  color: #dc3545 !important;
+}
+.play-app #decision-funding-check-panel #fundStatusLabel.text-success {
+  color: #198754 !important;
+}
+.play-app #decision-funding-check-panel .funding-check-price-row,
+.play-app #decision-funding-check-panel .funding-check-cash-row {
+  align-items: flex-start;
+}
+.play-app #decision-funding-check-panel .funding-check-loan-row,
+.play-app #decision-funding-check-panel .funding-check-monthly-row {
+  display: block;
+}
+.play-app #decision-funding-check-panel .funding-check-monthly-row {
+  border-bottom: 0;
+}
+.play-app #decision-funding-check-panel .funding-check-monthly-row strong {
+  color: #30343b;
+  font-size: 14px;
+}
+.play-app #decision-funding-check-panel .funding-check-loan-range-labels {
+  gap: 4px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.play-app #decision-funding-check-panel .funding-check-loan-range-labels span {
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.play-app #decision-funding-check-panel .funding-check-loan-guidance,
+.play-app #decision-funding-check-panel .funding-check-loan-meta {
+  color: #9298a0;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.play-app #decision-funding-check-panel .funding-check-loan-guidance {
+  margin-top: 6px;
+}
+.play-app #decision-funding-check-panel .funding-check-loan-meta {
+  margin-top: 4px;
 }
 .play-app .complex-infrastructure-score-chart {
   margin-bottom: 14px;
@@ -521,14 +629,16 @@ body.play-app, html.play-app {
   transform: translateX(0) scale(1);
   pointer-events: auto;
 }
-.play-app .map-context-panel-heading {
+.play-app .map-context-panel-topline {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: -2px 0 10px;
+  min-height: 32px;
+  margin: -6px -6px 4px;
 }
 .play-app .map-context-panel-kicker {
+  min-width: 0;
   color: #748195;
   font-size: 12px;
   font-weight: 700;
@@ -540,7 +650,7 @@ body.play-app, html.play-app {
   justify-content: center;
   width: 32px;
   height: 32px;
-  margin: -6px -6px 0 0;
+  margin: 0;
   border: 0;
   border-radius: 50%;
   background: #f1f4f8;
@@ -551,14 +661,20 @@ body.play-app, html.play-app {
   background: #e2e8f0;
   color: #172033;
 }
+.play-app .map-context-panel-heading {
+  margin: 0 0 10px;
+}
 .play-app #dynamic-context #panel-title {
-  margin-bottom: 12px;
+  margin-bottom: 0;
   font-size: 18px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 @media (max-width: 575.98px) {
   .play-app #dynamic-context.map-context-panel {
     width: min(360px, calc(100% - 20px));
-    max-height: calc(100% - 20px);
+    height: min(900px, calc(100% - 24px));
+    max-height: calc(100% - 24px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1221,9 +1337,12 @@ body.play-app, html.play-app {
   background-color: #666 !important;
   border: 1px solid #333;
 }
+/*
 .play-app .text-primary, .play-app .text-success, .play-app .text-danger, .play-app .text-muted {
-  color: #333 !important; /* Force grayscale */
+  color: #333 !important;
 }
+*/
+
 .play-app .bg-primary, .play-app .bg-success, .play-app .bg-danger {
   background-color: #ccc !important; /* Force grayscale */
 }
@@ -1319,4 +1438,145 @@ body.play-app, html.play-app {
   justify-content: center;
   color: #666;
   font-size: 14px;
+}
+
+.play-app .market-exchange-card {
+  padding: 14px 16px;
+}
+.play-app .market-exchange-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.play-app .market-exchange-heading h5 {
+  margin: 0;
+  color: #263445;
+  font-size: 15px;
+  font-weight: 700;
+}
+.play-app .market-exchange-heading-actions { display: flex; align-items: center; gap: 7px; }
+.play-app .market-exchange-heading-actions .btn { padding: 4px 7px; font-size: 10px; white-space: nowrap; }
+.play-app .market-exchange-heading p {
+  margin: 4px 0 0;
+  color: #718096;
+  font-size: 11px;
+}
+.play-app .market-exchange-status-badge {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #607084;
+  font-size: 10px;
+  font-weight: 700;
+}
+.play-app .market-exchange-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+}
+.play-app .market-exchange-tabs button {
+  padding: 7px 8px;
+  border: 1px solid #d8e0ea;
+  border-radius: 6px;
+  background: #fff;
+  color: #718096;
+  font-size: 11px;
+  font-weight: 600;
+}
+.play-app .market-exchange-tabs button.active {
+  border-color: #7895b5;
+  background: #f1f6fb;
+  color: #365879;
+}
+.play-app .market-exchange-empty {
+  padding: 11px 2px 2px;
+  color: #8994a2;
+  font-size: 11px;
+  line-height: 1.45;
+}
+.play-app .market-board-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+.play-app .market-board-item:last-child { border-bottom: 0; }
+.play-app .market-board-copy { display: grid; min-width: 0; gap: 3px; }
+.play-app .market-board-copy strong { overflow: hidden; color: #35465a; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.play-app .market-board-copy span,
+.play-app .market-board-copy small { overflow-wrap: anywhere; color: #8994a2; font-size: 10px; line-height: 1.35; }
+.play-app .market-board-price { display: grid; flex: 0 0 auto; justify-items: end; gap: 6px; color: #263445; font-size: 12px; text-align: right; }
+.play-app .market-board-price .btn { padding: 5px 8px; font-size: 10px; white-space: nowrap; }
+.play-app .market-board-state { color: #718096; font-size: 10px; }
+.play-app .market-board-load-more { width: 100%; margin-top: 8px; }
+.play-app .market-exchange-error { margin: 6px 0; color: #b42318; font-size: 11px; }
+@media (max-width: 380px) {
+  .play-app .market-board-item { align-items: flex-start; }
+  .play-app .market-board-copy strong { white-space: normal; }
+}
+.play-app .market-trade-form-card {
+  padding: 14px;
+  border: 1px solid #d8e0ea;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(25, 50, 80, 0.06);
+}
+.play-app .market-trade-form-card h6 {
+  margin: 0 0 9px;
+  color: #35465a;
+  font-size: 13px;
+  font-weight: 700;
+}
+.play-app .market-trade-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #edf0f4;
+  color: #657386;
+  font-size: 11px;
+}
+.play-app .market-trade-row strong {
+  color: #303a48;
+  font-size: 12px;
+  text-align: right;
+}
+.play-app .market-trade-row input {
+  width: 58%;
+  max-width: 190px;
+  text-align: right;
+}
+.play-app .market-trade-row.market-trade-total {
+  border-bottom: 0;
+  font-weight: 700;
+}
+.play-app .market-trade-row.market-trade-total strong {
+  color: #244d74;
+  font-size: 14px;
+}
+.play-app .market-trade-note,
+.play-app .market-trade-preview-note {
+  margin: 8px 0 0;
+  color: #8994a2;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.play-app .market-trade-preview-note {
+  color: #54718f;
+}
+.play-app .market-trade-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.play-app .market-trade-actions .btn {
+  padding: 8px 10px;
+  font-size: 12px;
 }

@@ -21,4 +21,5 @@ export { purchasePrimaryProperty } from './play/market/purchasePrimaryProperty';
 export { createSecondaryListing } from './play/market/createSecondaryListing';
 export { executeSecondaryTransaction } from './play/market/executeSecondaryTransaction';
 export { recordComplexDealHistory } from './play/market/recordComplexDealHistory';
-// export { createSecondaryOrder, cancelSecondaryOrder, matchSecondaryOrder } from './play/market/secondaryMarket';
+export { getMarketBoard } from './play/market/getMarketBoard';
+export { createSecondaryOrder, cancelSecondaryOrder, cancelSecondaryListing, matchSecondaryOrder } from './play/market/secondaryMarket';

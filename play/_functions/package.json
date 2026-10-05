@@ -10,6 +10,7 @@
     "serve": "npm run dev",
     "test": "npm run build && node --test",
     "build:map-tiles": "node scripts/build_play_map_tiles.js",
+    "seed:exchange-emulator": "node scripts/seed_market_emulator.js --target=demo-play",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
