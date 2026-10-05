@@ -2241,21 +2241,6 @@ function showDetail(index) {
   var transportScore = (Math.round(aptData.data[index]["교통총점"] * 100) / 100).toFixed(2);
   var infraScore = (Math.round(aptData.data[index]["인프라총점"] * 100) / 100).toFixed(2);
   var eduScore = (Math.round(aptData.data[index]["학군총점"] * 100) / 100).toFixed(2);
-  // 수정일: 2026-10-05 — 상세 모달의 항목별 점수와 지역 평균을 현재 우선순위 가중치로 환산해 그래프에 반영합니다.
-  var displayScoreWeightsEnabled = sortSelection != "sortDefault" && selectedRegion != "Korea";
-  var displayTransportWeight = supportsTransportPriority(selectedRegion) ? Number(valTrans) : 0;
-  var displayScoreWeightTotal = Number(valLiving) + displayTransportWeight + Number(valInfra) + Number(valEdu);
-  function applyDisplayScoreWeight(score, weight) {
-    if (!displayScoreWeightsEnabled || !Number.isFinite(displayScoreWeightTotal) || displayScoreWeightTotal <= 0 || !Number.isFinite(Number(score))) {
-      return score;
-    }
-
-    return (Math.round((Number(score) * Number(weight) / displayScoreWeightTotal) * 100) / 100).toFixed(2);
-  }
-  livingScore = applyDisplayScoreWeight(livingScore, valLiving);
-  transportScore = applyDisplayScoreWeight(transportScore, displayTransportWeight);
-  infraScore = applyDisplayScoreWeight(infraScore, valInfra);
-  eduScore = applyDisplayScoreWeight(eduScore, valEdu);
   var area_info = aptData.data[index]["area_info"];
   if (Number(selectedMonth) > 202203) {
     var maintainance = aptData.data[index]["maintenance"];
@@ -2521,9 +2506,10 @@ function showDetail(index) {
             </div>
           `;
   } else {
+    // 수정일: 2026-10-05 — 상세 모달 그래프에 렌더 완료까지 로딩 상태를 표시합니다.
     detailHtml += `
           <div class='card-body' style='padding-top: 2px'>
-          <div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>
+          <div class='graph detail-chart-loading is-chart-loading' style='height: 200px'> <canvas id='valueChart'></canvas></div>
           <div class='comment'>${tSafe('ui.report.score_relative_guide', '(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)')}</div>
           </div>
         `;
@@ -2554,7 +2540,7 @@ function showDetail(index) {
         RANK HISTORY</button>
         <div id='collapseOne' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
         <div class='accordion-body' id='rank_history_area'>
-        <div class='graph' style='height: 120px;'> <canvas id='rankChart'></canvas></div>
+        <div class='graph detail-chart-loading is-chart-loading' style='height: 120px;'> <canvas id='rankChart'></canvas></div>
         </div></div>
         </div></div>
       `;
@@ -2598,7 +2584,7 @@ function showDetail(index) {
         <div id='popLiving'>
       `;
   if (login_status) {
-    detailHtml += `<div class='graph' style='height: 120px'> <canvas id='livingChart'></canvas></div>`;
+    detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='livingChart'></canvas></div>`;
     if (apt_type == "분양(예정)") {
       detailHtml += `<div class='comment'>${isEn ? "'TBD' items are replaced with averages for calculation,<br>and scores may change with future updates." : "'미정' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다."}</div><hr>`;
     }
@@ -2691,7 +2677,7 @@ function showDetail(index) {
     detailHtml += `<div class='comment2'>${tSafe('ui.report.living_score_guide', '주거총점 계산을 위한 정보는 네이버 부동산으로 취득하며, 세대수/평형/난방방식 등의 항목을 상대점수로 산정합니다.')}</div>`;
   }
   detailHtml += `</div></div></div></div>`;
-  avgLivingScore = applyDisplayScoreWeight(Math.round((livingSum / itemNum) * 100) / 100, valLiving);
+  avgLivingScore = Math.round((livingSum / itemNum) * 100) / 100;
 
   if (Number(selectedMonth) > 202207 && apt_type != "분양(예정)") {
     if (floor_noise == "NA" || floor_noise == "" || floor_noise == null || floor_noise == undefined) {
@@ -2737,7 +2723,7 @@ function showDetail(index) {
           <div id='popTransport'>
         `;
     if (login_status) {
-      detailHtml += `<div class='graph' style='height: 120px'> <canvas id='transportChart'></canvas></div>`;
+      detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='transportChart'></canvas></div>`;
     }
     detailHtml += `
           <div class='popTable'>
@@ -2778,7 +2764,7 @@ function showDetail(index) {
     }
 
     detailHtml += `</div></div></div></div>`;
-    avgTransportScore = applyDisplayScoreWeight((Math.round((transportSum / itemNum) * 100) / 100).toFixed(2), displayTransportWeight);
+    avgTransportScore = (Math.round((transportSum / itemNum) * 100) / 100).toFixed(2);
   }
 
   //인프라
@@ -2791,7 +2777,7 @@ function showDetail(index) {
         <div id='popInfra'>
       `;
   if (login_status) {
-    detailHtml += `<div class='graph' style='height: 120px'> <canvas id='infraChart'></canvas></div>`;
+    detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='infraChart'></canvas></div>`;
   }
   detailHtml += `
         <div class='popTable'>
@@ -2822,7 +2808,7 @@ function showDetail(index) {
     detailHtml += `<div class='comment2'>${tSafe("ui.report.infra_guide_base", "인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정됩니다.")}</div>`;
   }
   detailHtml += `</div></div></div></div>`;
-  avgInfraScore = applyDisplayScoreWeight((Math.round((infraSum / itemNum) * 100) / 100).toFixed(2), valInfra);
+  avgInfraScore = (Math.round((infraSum / itemNum) * 100) / 100).toFixed(2);
 
   //교육
   detailHtml += `
@@ -2834,7 +2820,7 @@ function showDetail(index) {
         <div id='popEducation'>
       `;
   if (login_status) {
-    detailHtml += `<div class='graph' style='height: 120px'> <canvas id='eduChart'></canvas></div>`;
+    detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='eduChart'></canvas></div>`;
   }
   detailHtml += `<div class='popTable'>`;
   if (Number(selectedMonth) > 202204) {
@@ -2890,7 +2876,7 @@ function showDetail(index) {
     detailHtml += `<div class='comment2'>${tSafe("ui.report.edu_guide_base", "교육 정보는 교육통계서비스 정보를 기반으로 산정됩니다.")}</div>`;
   }
   detailHtml += `</div></div></div></div>`;
-  avgEduScore = applyDisplayScoreWeight((Math.round((eduSum / itemNum) * 100) / 100).toFixed(2), valEdu);
+  avgEduScore = (Math.round((eduSum / itemNum) * 100) / 100).toFixed(2);
 
   //실거래가
   var rent_info_array = rent_info.split(",");
@@ -3153,7 +3139,7 @@ function showDetail(index) {
             </div>
           `;
 
-      detailHtml += `<div class='priceGraph' style='height: 100px; border-bottom: 1px solid #ddd'> <canvas id=${generatedID}></canvas></div>`;
+      detailHtml += `<div class='priceGraph detail-chart-loading is-chart-loading' style='height: 100px; border-bottom: 1px solid #ddd'> <canvas id=${generatedID}></canvas></div>`;
       priceCharts.push(generatedID);
     }
     detailHtml += `</div></div></div></div>`;
@@ -3168,7 +3154,7 @@ function showDetail(index) {
           </div>
           <div class='card-body'>
           <div id='popEducation'>
-          <div class='graph' style='height: 120px'> <canvas id='regionChart'></canvas></div>
+          <div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='regionChart'></canvas></div>
           <div class='comment2'>${tSafe("ui.report.region_info_guide", "지역구 정보는 공공데이터포탈 정보를 기반으로 산정됩니다.")}</div>
           </div></div></div>
         `;
@@ -3648,6 +3634,8 @@ function changeMetaTagToDefault() {
  */
 function graphShowHide(obj) {
   if (obj.checked) {
+    // 수정일: 2026-10-05 — 실거래가 그래프 표시 후 차트 크기를 다시 계산합니다.
+    window.requestAnimationFrame(refreshDetailChartsWhenModalShown);
     $(".priceGraph").show();
     $(".popSubPriceTable").css({
       "margin-top": "10px",

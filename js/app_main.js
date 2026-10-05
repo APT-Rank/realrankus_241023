@@ -2095,9 +2095,10 @@ function showDetail(index) {
             </div>
           `;
   } else {
+    // 수정일: 2026-10-05 — 상세 모달 그래프에 렌더 완료까지 로딩 상태를 표시합니다.
     detailHtml += `
           <div class='card-body' style='padding-top: 2px'>
-          <div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>
+          <div class='graph detail-chart-loading is-chart-loading' style='height: 200px'> <canvas id='valueChart'></canvas></div>
           <div class='comment'>(지역구의 모든 단지에 대해 100점으로 환산한 상대 점수 입니다.)</div>
           </div>
         `;
@@ -2129,7 +2130,7 @@ function showDetail(index) {
         RANK HISTORY</button>
         <div id='collapseOne' class='accordion-collapse collapse' data-bs-parent='#accordionExample'>
         <div class='accordion-body' id='rank_history_area'>
-        <div class='graph' style='height: 120px;'> <canvas id='rankChart'></canvas></div>
+        <div class='graph detail-chart-loading is-chart-loading' style='height: 120px;'> <canvas id='rankChart'></canvas></div>
         </div></div>
         </div></div>
       `;
@@ -2173,7 +2174,7 @@ function showDetail(index) {
         <div id='popLiving'>
       `;
   if (login_status) {
-    detailHtml += `<div class='graph' style='height: 120px'> <canvas id='livingChart'></canvas></div>`;
+    detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='livingChart'></canvas></div>`;
     if (apt_type == "분양(예정)") {
       detailHtml += `<div class='comment'>\'미정\' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.</div><hr>`;
     }
@@ -2310,7 +2311,7 @@ function showDetail(index) {
           <div id='popTransport'>
         `;
     if (login_status) {
-      detailHtml += `<div class='graph' style='height: 120px'> <canvas id='transportChart'></canvas></div>`;
+      detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='transportChart'></canvas></div>`;
     }
     detailHtml += `
           <div class='popTable'>
@@ -2355,7 +2356,7 @@ function showDetail(index) {
         <div id='popInfra'>
       `;
   if (login_status) {
-    detailHtml += `<div class='graph' style='height: 120px'> <canvas id='infraChart'></canvas></div>`;
+    detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='infraChart'></canvas></div>`;
   }
   detailHtml += `
         <div class='popTable'>
@@ -2398,7 +2399,7 @@ function showDetail(index) {
         <div id='popEducation'>
       `;
   if (login_status) {
-    detailHtml += `<div class='graph' style='height: 120px'> <canvas id='eduChart'></canvas></div>`;
+    detailHtml += `<div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='eduChart'></canvas></div>`;
   }
   detailHtml += `<div class='popTable'>`;
   if (Number(selectedMonth) > 202204) {
@@ -2687,7 +2688,7 @@ function showDetail(index) {
             </div>
           `;
 
-      detailHtml += `<div class='priceGraph' style='height: 100px; border-bottom: 1px solid #ddd'> <canvas id=${generatedID}></canvas></div>`;
+      detailHtml += `<div class='priceGraph detail-chart-loading is-chart-loading' style='height: 100px; border-bottom: 1px solid #ddd'> <canvas id=${generatedID}></canvas></div>`;
       priceCharts.push(generatedID);
     }
     detailHtml += `</div></div></div></div>`;
@@ -2702,7 +2703,7 @@ function showDetail(index) {
           </div>
           <div class='card-body'>
           <div id='popEducation'>
-          <div class='graph' style='height: 120px'> <canvas id='regionChart'></canvas></div>
+          <div class='graph detail-chart-loading is-chart-loading' style='height: 120px'> <canvas id='regionChart'></canvas></div>
           <div class='comment2'>지역구 정보는 공공데이터포탈 정보를 기반으로 산정됩니다.</div>
           </div></div></div>
         `;
@@ -3166,6 +3167,8 @@ function changeMetaTagToDefault() {
  */
 function graphShowHide(obj) {
   if (obj.checked) {
+    // 수정일: 2026-10-05 — 실거래가 그래프 표시 후 차트 크기를 다시 계산합니다.
+    window.requestAnimationFrame(refreshDetailChartsWhenModalShown);
     $(".priceGraph").show();
     $(".popSubPriceTable").css({
       "margin-top": "10px",

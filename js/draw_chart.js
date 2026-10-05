@@ -16,6 +16,61 @@ function drawRoundedScoreTrack(ctx, x, y, width, height) {
   ctx.fill();
 }
 
+// 수정일: 2026-10-05 — 렌더 완료 후 상세 그래프의 로딩 표시를 닫습니다.
+var detailChartLoadingPlugin = {
+  id: 'detailChartLoading',
+  beforeInit: function(chart) {
+    var chartWrapper = chart.canvas.closest('.detail-chart-loading');
+    if (!chartWrapper || chartWrapper.querySelector('.detail-chart-spinner')) return;
+
+    var spinner = document.createElement('div');
+    spinner.className = 'spinner-border spinner-border-sm text-secondary detail-chart-spinner';
+    spinner.setAttribute('role', 'status');
+    spinner.setAttribute('aria-label', '차트 로딩 중');
+    chartWrapper.appendChild(spinner);
+  },
+  afterRender: function(chart) {
+    var chartWrapper = chart.canvas.closest('.detail-chart-loading');
+    var baseModal = document.getElementById('baseModal');
+    if (!chartWrapper || !baseModal || !$(baseModal).is(':visible') || !$(chartWrapper).is(':visible')) return;
+    chartWrapper.classList.remove('is-chart-loading');
+  }
+};
+
+// 수정일: 2026-10-05 — 모달 표시 후 차트를 재측정·재렌더링해 숨김 상태의 누락을 방지합니다.
+function refreshDetailChartsWhenModalShown() {
+  if (typeof Chart === 'undefined') return;
+  var baseModal = document.getElementById('baseModal');
+  if (!baseModal) return;
+
+  var chartInstances = Chart.instances || {};
+  Object.keys(chartInstances).forEach(function(instanceId) {
+    var chart = chartInstances[instanceId];
+    if (!chart.canvas || !baseModal.contains(chart.canvas)) return;
+    if (!chart.canvas.closest('.detail-chart-loading') || !$(chart.canvas).is(':visible')) return;
+    chart.resize();
+    chart.update('none');
+  });
+
+  window.requestAnimationFrame(function() {
+    var currentInstances = Chart.instances || {};
+    var currentCanvases = new Set(Object.keys(currentInstances).map(function(instanceId) {
+      return currentInstances[instanceId].canvas;
+    }));
+    baseModal.querySelectorAll('.detail-chart-loading.is-chart-loading').forEach(function(chartWrapper) {
+      var canvas = chartWrapper.querySelector('canvas');
+      if (!canvas || !currentCanvases.has(canvas)) chartWrapper.classList.remove('is-chart-loading');
+    });
+  });
+}
+
+$(function() {
+  if (typeof Chart !== 'undefined' && typeof Chart.register === 'function') {
+    Chart.register(detailChartLoadingPlugin);
+  }
+  $('#baseModal').on('shown.bs.modal shown.bs.collapse shown.bs.tab', refreshDetailChartsWhenModalShown);
+});
+
 var scoreBarStylePlugin = {
   id: 'scoreBarStyle',
   beforeDatasetsDraw: function(chart) {

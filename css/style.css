@@ -3102,3 +3102,22 @@
       min-height: 600px;
     }
   }
+
+  /* 수정일: 2026-10-05 — 상세 그래프가 렌더링될 때까지 그래프 영역에 로딩 스피너를 표시합니다. */
+  .detail-chart-loading { position: relative; }
+  .detail-chart-loading .detail-chart-spinner { display: none; }
+  .detail-chart-loading.is-chart-loading::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.82);
+  }
+  .detail-chart-loading.is-chart-loading .detail-chart-spinner {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+  }
