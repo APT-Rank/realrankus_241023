@@ -238,6 +238,7 @@ function showHideMarker(zoom, suppressSelectionAnimation) {
   }
 
   setGradeFilter()
+  keepCurrentLocationMarkerOnTop()
 }
 
 function removeAnimation() {
@@ -528,12 +529,19 @@ var marker_z_depth = 1000
 
 var infoWindow
 
+function keepCurrentLocationMarkerOnTop() {
+  if (!currentLocationMarker) return;
+
+  currentLocationMarker.setZIndex(Math.max(1000000, Number(marker_z_depth) || 0) + 1);
+}
+
 function showUpInfo(marker_obj) {
   return function (e) {
     marker_z_depth += 1
     zoom = defaultMap.getZoom()
     marker_last_depth = marker_obj.getZIndex()
     marker_obj.setZIndex(marker_z_depth += 1)
+    keepCurrentLocationMarkerOnTop()
 
     var complex_name = marker_obj['apt_name']
     var complex_address = marker_obj['address']
@@ -2051,9 +2059,11 @@ function updateLocationMarker(lat, lng) {
         size: new naver.maps.Size(32, 32),
         anchor: new naver.maps.Point(16, 16)
       },
-      zIndex: 1000
+      zIndex: (Number(marker_z_depth) || 0) + 1
     });
   }
+
+  keepCurrentLocationMarkerOnTop();
 }
 
 function applyCurrentLocation(lat, lng, accuracy) {
