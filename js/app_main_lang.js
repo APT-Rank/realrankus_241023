@@ -2237,6 +2237,20 @@ function showDetail(index) {
   var transportScore = (Math.round(aptData.data[index]["교통총점"] * 100) / 100).toFixed(2);
   var infraScore = (Math.round(aptData.data[index]["인프라총점"] * 100) / 100).toFixed(2);
   var eduScore = (Math.round(aptData.data[index]["학군총점"] * 100) / 100).toFixed(2);
+  var displayScoreWeightsEnabled = sortSelection != "sortDefault" && selectedRegion != "Korea";
+  var displayTransportWeight = supportsTransportPriority(selectedRegion) ? Number(valTrans) : 0;
+  var displayScoreWeightTotal = Number(valLiving) + displayTransportWeight + Number(valInfra) + Number(valEdu);
+  function applyDisplayScoreWeight(score, weight) {
+    if (!displayScoreWeightsEnabled || !Number.isFinite(displayScoreWeightTotal) || displayScoreWeightTotal <= 0 || !Number.isFinite(Number(score))) {
+      return score;
+    }
+
+    return (Math.round((Number(score) * Number(weight) / displayScoreWeightTotal) * 100) / 100).toFixed(2);
+  }
+  livingScore = applyDisplayScoreWeight(livingScore, valLiving);
+  transportScore = applyDisplayScoreWeight(transportScore, displayTransportWeight);
+  infraScore = applyDisplayScoreWeight(infraScore, valInfra);
+  eduScore = applyDisplayScoreWeight(eduScore, valEdu);
   var area_info = aptData.data[index]["area_info"];
   if (Number(selectedMonth) > 202203) {
     var maintainance = aptData.data[index]["maintenance"];
@@ -2672,7 +2686,7 @@ function showDetail(index) {
     detailHtml += `<div class='comment2'>${tSafe('ui.report.living_score_guide', '주거총점 계산을 위한 정보는 네이버 부동산으로 취득하며, 세대수/평형/난방방식 등의 항목을 상대점수로 산정합니다.')}</div>`;
   }
   detailHtml += `</div></div></div></div>`;
-  avgLivingScore = Math.round((livingSum / itemNum) * 100) / 100;
+  avgLivingScore = applyDisplayScoreWeight(Math.round((livingSum / itemNum) * 100) / 100, valLiving);
 
   if (Number(selectedMonth) > 202207 && apt_type != "분양(예정)") {
     if (floor_noise == "NA" || floor_noise == "" || floor_noise == null || floor_noise == undefined) {
@@ -2759,7 +2773,7 @@ function showDetail(index) {
     }
 
     detailHtml += `</div></div></div></div>`;
-    avgTransportScore = (Math.round((transportSum / itemNum) * 100) / 100).toFixed(2);
+    avgTransportScore = applyDisplayScoreWeight((Math.round((transportSum / itemNum) * 100) / 100).toFixed(2), displayTransportWeight);
   }
 
   //인프라
@@ -2803,7 +2817,7 @@ function showDetail(index) {
     detailHtml += `<div class='comment2'>${tSafe("ui.report.infra_guide_base", "인프라 정보는 각 백화점/마트 홈페이지, 은행연합회, 자원순환정보시스템, 공공데이터 포탈의 정보를 기반으로 산정됩니다.")}</div>`;
   }
   detailHtml += `</div></div></div></div>`;
-  avgInfraScore = (Math.round((infraSum / itemNum) * 100) / 100).toFixed(2);
+  avgInfraScore = applyDisplayScoreWeight((Math.round((infraSum / itemNum) * 100) / 100).toFixed(2), valInfra);
 
   //교육
   detailHtml += `
@@ -2871,7 +2885,7 @@ function showDetail(index) {
     detailHtml += `<div class='comment2'>${tSafe("ui.report.edu_guide_base", "교육 정보는 교육통계서비스 정보를 기반으로 산정됩니다.")}</div>`;
   }
   detailHtml += `</div></div></div></div>`;
-  avgEduScore = (Math.round((eduSum / itemNum) * 100) / 100).toFixed(2);
+  avgEduScore = applyDisplayScoreWeight((Math.round((eduSum / itemNum) * 100) / 100).toFixed(2), valEdu);
 
   //실거래가
   var rent_info_array = rent_info.split(",");
