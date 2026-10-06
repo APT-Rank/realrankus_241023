@@ -9,6 +9,7 @@ from urllib import parse
 from fredapi import Fred
 from pykrx import stock
 from pykrx import bond
+import xml.etree.ElementTree as ET
 import yfinance as yf
 
 path = os.path.dirname( os.path.abspath(__file__) )
@@ -18,7 +19,7 @@ fred_key = "a7d5a17c8b520a7802d3c905fca10131"
 bok_key = "570IL3KK1XG2THUF38RC"
 
 #기준시점 선정
-utcnow = datetime.datetime.utcnow()
+utcnow = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
 now = utcnow + datetime.timedelta(hours=9)
 
 date_7days_ago = now - datetime.timedelta(days=7)
@@ -132,21 +133,33 @@ def save_BOK_currency_info():
     #print("BOK interest saved at " + str(now))
 
 def save_YF_stock_info():
-    df_close = pd.DataFrame()    
-    symbols = ['^KS11', '^KS200', '^KQ11', '^IXIC', '^GSPC', '^DJI']
-    df = yf.download(symbols, str_date_10years_ago_yf, str_now_yf)
+    df_close = pd.DataFrame()
+    symbols = ['^KS11', '^KQ11', '^IXIC', '^GSPC', '^DJI']
+    df = yf.download(tickers = symbols, start = str_date_10years_ago_yf, end = str_now_yf, auto_adjust = False)
     df_close = df.loc[:, 'Close']
     df_close = df_close.reset_index()
     df_close = df_close.astype({'Date':'str'})      
-    df_close['Date'] = df_close['Date'].str[0:10]    
-    df_close.rename(columns = {'^KS11':'yf_KOSPI', '^KS200':'yf_KOSPI200', '^KQ11':'yf_KOSDAQ','^IXIC':'yf_NASDAQ','^GSPC':'yf_SNP','^DJI':'yf_DOW'}, inplace=True)
+    df_close['Date'] = df_close['Date'].str[0:10]
+    df_close.rename(columns = {'^KS11':'yf_KOSPI', '^KQ11':'yf_KOSDAQ','^IXIC':'yf_NASDAQ','^GSPC':'yf_SNP','^DJI':'yf_DOW'}, inplace=True)
+
+    try:
+        print("Start to get Naver KOSPI200")
+        url = 'https://fchart.stock.naver.com/sise.nhn?symbol=KPI200&timeframe=day&count=3000&requestType=0'
+        r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        root = ET.fromstring(r.text)
+        data = [{'Date': f"{v[0][:4]}-{v[0][4:6]}-{v[0][6:8]}", 'yf_KOSPI200': float(v[4])} for v in (item.attrib['data'].split('|') for item in root.findall('.//item'))]
+        df_kpi200 = pd.DataFrame(data)
+        df_close = pd.merge(df_close, df_kpi200, on='Date', how='left')
+    except Exception as e:
+        print("Failed to fetch Naver KPI200:", e)
+        df_close['yf_KOSPI200'] = None
 
     return df_close
 
 def save_YF_metal_info():
     df_close = pd.DataFrame()
     symbols = ['GC=F', 'SI=F', 'HG=F']
-    df = yf.download(symbols, str_date_10years_ago_yf, str_now_yf)
+    df = yf.download(tickers = symbols, start = str_date_10years_ago_yf, end = str_now_yf, auto_adjust = False)
     df_close = df.loc[:, 'Close']
     df_close = df_close.reset_index()
     df_close = df_close.astype({'Date':'str'})      
@@ -158,7 +171,7 @@ def save_YF_metal_info():
 def save_YF_oil_info():
     df_close = pd.DataFrame()
     symbols = ['CL=F', 'BZ=F']
-    df = yf.download(symbols, str_date_10years_ago_yf, str_now_yf)
+    df = yf.download(tickers = symbols, start = str_date_10years_ago_yf, end = str_now_yf, auto_adjust = False)
     df_close = df.loc[:, 'Close']
     df_close = df_close.reset_index()
     df_close = df_close.astype({'Date':'str'})      
@@ -181,7 +194,7 @@ def save_YF_dollar_index_info():
 def save_YF_currency_info():
     df_close = pd.DataFrame()
     symbols = ['KRW=X', 'JPYKRW=X', 'EURKRW=X', 'BTC-USD', 'ETH-USD']
-    df = yf.download(symbols, str_date_10years_ago_yf, str_now_yf)
+    df = yf.download(tickers = symbols, start = str_date_10years_ago_yf, end = str_now_yf, auto_adjust = False)
     df_close = df.loc[:, 'Close']
     df_close = df_close.reset_index()
     df_close = df_close.astype({'Date':'str'})      
