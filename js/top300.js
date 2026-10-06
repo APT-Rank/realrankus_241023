@@ -44,6 +44,7 @@ function updateTopTable(month, region){
       openModal("loginModal")
     }
     $("#pageLoadingBack").remove()
+    if (typeof notifyNativeAppReady === "function") notifyNativeAppReady()
     return
   }
   else{
@@ -203,6 +204,7 @@ function updateTopTable(month, region){
               defaultMap.setZoom(16)
               createTopMarker(top_300_data)
               $("#pageLoadingBack").remove()
+              if (typeof notifyNativeAppReady === "function") notifyNativeAppReady()
             }
           }, 1000)    
         }
@@ -211,9 +213,11 @@ function updateTopTable(month, region){
           defaultMap.setZoom(16)
           createTopMarker(top_300_data)
           $("#pageLoadingBack").remove()
+          if (typeof notifyNativeAppReady === "function") notifyNativeAppReady()
         }        
     })    
     .fail(function(jqXMLHttpRequest,status,error){
+      if (typeof notifyNativeAppLoadFailed === "function") notifyNativeAppLoadFailed()
       /*
       console.log("Table Update Failed : ", status ,  " : ", error)
       $("#gungu option:eq(0)").prop("selected", true);

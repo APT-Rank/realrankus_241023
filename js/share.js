@@ -1,3 +1,11 @@
+(function () {
+  var userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.indexOf('kakaotalk') > -1) {
+    var targetUrl = window.location.href;
+    location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
+  }
+})();
+
 currentLanguage = localStorage.getItem('selectedLanguage')
 const isEn = currentLanguage === 'en';
 const pathPrefix = isEn ? "../" : "./";

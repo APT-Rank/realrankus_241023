@@ -278,12 +278,52 @@ function dateReturn(n) {
   return n < 10 ? "0" + n : n;
 }
 
+var nativeAppReadyNotified = false;
+
+function notifyNativeLoadingState() {
+  if (!window.Android || typeof window.Android.setLoadingState !== "function") return;
+  var hasLoadedBefore = false;
+  try {
+    hasLoadedBefore = localStorage.getItem("realrankus.initialDataLoaded") === "true" ||
+      localStorage.getItem("lastRegion") !== null ||
+      localStorage.getItem("recentSearch") !== null;
+  } catch (error) {
+    console.warn("Unable to read native loading state", error);
+  }
+  window.Android.setLoadingState(hasLoadedBefore ? "update" : "initial", !!isEn);
+}
+
+function notifyNativeAppReady() {
+  if (nativeAppReadyNotified) return;
+  nativeAppReadyNotified = true;
+  try {
+    localStorage.setItem("realrankus.initialDataLoaded", "true");
+  } catch (error) {
+    console.warn("Unable to persist initial data state", error);
+  }
+  if (window.Android && typeof window.Android.onAppReady === "function") {
+    window.Android.onAppReady();
+  }
+}
+
+function notifyNativeAppLoadFailed() {
+  if (window.Android && typeof window.Android.onAppLoadFailed === "function") {
+    window.Android.onAppLoadFailed();
+  }
+}
+
 /**
  * @description 페이지 로드가 완료되었을 때 실행되는 초기화 이벤트 핸들러.
  * Kakao SDK 초기화, URL 파라미터(apt, reg, sub, mon, complex, sort, cpx) 분석 및 상태 복원,
  * IndexedDB를 통한 로컬 데이터 캐싱 및 지도/마커 초기 렌더링, 모달 여닫기 이벤트 감지 등을 수행합니다.
  */
 $(document).ready(function () {
+  notifyNativeLoadingState();
+  $(document).on("ajaxError.nativeStartup", function (_event, _xhr, settings) {
+    if (nativeAppReadyNotified || !settings || !/Searching_list|region_map/.test(settings.url || "")) return;
+    notifyNativeAppLoadFailed();
+  });
+
   Kakao.init(kakaoKey);
 
   countUp(pageName);
@@ -407,7 +447,10 @@ $(document).ready(function () {
   region_url = pathPrefix + selectedMonth + "/region_map.json?v=2.0" + update_ver;
 
   const request = indexedDB.open(DB_Date); // 1. DB 열기
-  request.onerror = (e) => console.log("ERROR : ", e.target.errorCode);
+  request.onerror = (e) => {
+    console.log("ERROR : ", e.target.errorCode);
+    notifyNativeAppLoadFailed();
+  };
   request.onsuccess = (e) => {
     const db = request.result;
     if (db.objectStoreNames.length == 0) {
@@ -2085,9 +2128,11 @@ function updateTable(month, region) {
       complex_list_like_status();
       $("#pageLoadingBack").remove();
       showHideListFiltered(aptData);
+      notifyNativeAppReady();
     })
     .fail(function (jqXMLHttpRequest, status, error) {
       if (requestId !== latestRegionDataRequestId) return;
+      notifyNativeAppLoadFailed();
       $("#pageLoadingBack").remove();
       var loadErrorMessage = isEn ? "Failed to load this region. Please try again." : "지역 정보를 불러오지 못했습니다. 다시 시도해 주세요.";
       $("#dataList").html("<div class='text-center py-3'>" + loadErrorMessage + "<br><button type='button' class='btn btn-outline-secondary btn-sm mt-2' onclick='updateRegion()'>" + (isEn ? "Retry" : "다시 시도") + "</button></div>");
@@ -4108,19 +4153,24 @@ function updateRegionTable(month, region) {
             defaultMap.setCenter(region_center);
             defaultMap.setZoom(13);
             $("#pageLoadingBack").remove();
+            notifyNativeAppReady();
           }
         }, 1000);
       } else {
         defaultMap.setCenter(region_center);
         defaultMap.setZoom(13);
         $("#pageLoadingBack").remove();
+        notifyNativeAppReady();
       }
     } else {
       defaultMap.setCenter({ lat: 36.6778, lng: 127.9564 });
       defaultMap.setZoom(8);
       showHideMarker(8);
       $("#pageLoadingBack").remove();
+      notifyNativeAppReady();
     }
+  }).fail(function () {
+    notifyNativeAppLoadFailed();
   });
 
   saveLocalStorage();

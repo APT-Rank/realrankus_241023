@@ -1,18 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ko">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>No Internet Connection</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <title>오프라인 | 리얼랭커스</title>
     <style>
-      p {
-        margin-top: 30vh;
-        text-align: center;
-        font-size: 42px;
+      :root {
+        color-scheme: light;
+        font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #20242b;
+        background: #f7f8fa;
+        font-synthesis: none;
       }
+      * { box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: radial-gradient(circle at 50% 35%, #fff 0, #f7f8fa 62%);
+      }
+      main {
+        width: min(100%, 420px);
+        padding: 40px 28px 32px;
+        border: 1px solid #eceef2;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, .94);
+        box-shadow: 0 20px 60px rgba(28, 37, 54, .08);
+        text-align: center;
+      }
+      .mark {
+        display: grid;
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 24px;
+        place-items: center;
+        border-radius: 24px;
+        color: #e43b46;
+        background: #fff0f1;
+      }
+      .brand {
+        margin: 0 0 12px;
+        color: #e43b46;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .16em;
+      }
+      h1 { margin: 0; font-size: clamp(23px, 6vw, 28px); letter-spacing: -.04em; }
+      .description {
+        margin: 14px 0 22px;
+        color: #697386;
+        font-size: 15px;
+        line-height: 1.7;
+        word-break: keep-all;
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 26px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        color: #737b88;
+        background: #f2f4f7;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #98a2b3; }
+      button {
+        width: 100%;
+        min-height: 50px;
+        border: 0;
+        border-radius: 14px;
+        color: #fff;
+        background: #e43b46;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .16s ease, transform .16s ease;
+      }
+      button:hover { background: #cc2e3a; }
+      button:active { transform: scale(.985); }
+      button:focus-visible { outline: 3px solid rgba(228, 59, 70, .28); outline-offset: 3px; }
+      .hint { margin: 16px 0 0; color: #98a2b3; font-size: 12px; }
     </style>
   </head>
   <body>
-    <p>네트워크 연결을 확인해 주세요.</p>
+    <main>
+      <div class="mark" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9a14 14 0 0 1 18 0M6 12a9 9 0 0 1 12 0m-9 3a4 4 0 0 1 6 0M12 19h.01" />
+          <path d="m4 4 16 16" />
+        </svg>
+      </div>
+      <p class="brand">REALRANKUS</p>
+      <h1 id="title">인터넷에 연결할 수 없어요</h1>
+      <p class="description" id="description">네트워크 연결을 확인한 뒤 다시 시도해 주세요. 연결이 복구되면 서비스 화면을 다시 불러옵니다.</p>
+      <div class="status"><span class="status-dot"></span><span id="status">오프라인 상태</span></div>
+      <button id="retry" type="button">다시 시도</button>
+      <p class="hint" id="hint">저장된 정보는 기기에 안전하게 보관되어 있어요.</p>
+    </main>
+    <script>
+      const english = new URLSearchParams(location.search).get("lang") === "en" ||
+        (!new URLSearchParams(location.search).has("lang") && navigator.language.startsWith("en"));
+      if (english) {
+        document.documentElement.lang = "en";
+        document.title = "Offline | Realrankus";
+        document.getElementById("title").textContent = "You're offline";
+        document.getElementById("description").textContent = "Check your network connection and try again. Realrankus will reload when you're back online.";
+        document.getElementById("status").textContent = "Offline";
+        document.getElementById("retry").textContent = "Try again";
+        document.getElementById("hint").textContent = "Your saved information remains safely on this device.";
+      }
+      document.getElementById("retry").addEventListener("click", () => location.reload());
+      window.addEventListener("online", () => location.reload());
+      window.addEventListener("load", () => {
+        if (window.Android && typeof window.Android.onOfflineFallbackShown === "function") {
+          window.Android.onOfflineFallbackShown();
+        }
+      });
+    </script>
   </body>
 </html>
