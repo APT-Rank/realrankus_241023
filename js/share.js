@@ -4,11 +4,12 @@
     var targetUrl = window.location.href;
     var isIOS = userAgent.match(/iphone|ipad|ipod/i);
 
-    // 1. 리얼랭커스 앱 실행 (또는 Intent/스킴)
+    // 1. 리얼랭커스 앱 실행 (전체 URL 및 파라미터 전달)
     if (isIOS) {
-      location.href = 'realrankus://main';
+      var query = window.location.search || '';
+      location.href = 'realrankus://main' + query;
     } else {
-      location.href = 'intent://main#Intent;scheme=realrankus;package=com.aptrank.app;S.browser_fallback_url=' + encodeURIComponent(targetUrl) + ';end;';
+      location.href = 'intent://main#Intent;scheme=realrankus;package=com.aptrank.app;S.URL=' + encodeURIComponent(targetUrl) + ';S.browser_fallback_url=' + encodeURIComponent(targetUrl) + ';end;';
     }
 
     // 2. 앱 실행 후 카카오톡 인앱 브라우저 종료 (0.3초 딜레이)
