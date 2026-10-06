@@ -2,7 +2,23 @@
   var userAgent = navigator.userAgent.toLowerCase();
   if (userAgent.indexOf('kakaotalk') > -1) {
     var targetUrl = window.location.href;
-    location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
+    var isIOS = userAgent.match(/iphone|ipad|ipod/i);
+
+    // 1. 리얼랭커스 앱 실행 (또는 Intent/스킴)
+    if (isIOS) {
+      location.href = 'realrankus://main';
+    } else {
+      location.href = 'intent://main#Intent;scheme=realrankus;package=com.aptrank.app;S.browser_fallback_url=' + encodeURIComponent(targetUrl) + ';end;';
+    }
+
+    // 2. 앱 실행 후 카카오톡 인앱 브라우저 종료 (0.3초 딜레이)
+    setTimeout(function () {
+      if (isIOS) {
+        location.href = 'kakaoweb://closeBrowser';
+      } else {
+        location.href = 'kakaotalk://inappbrowser/close';
+      }
+    }, 300);
   }
 })();
 
