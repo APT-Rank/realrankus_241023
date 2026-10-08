@@ -591,10 +591,36 @@ let modalStack = []
 
 function openModal(modalId) {
   $(`#${modalId}`).modal('show');
-  modalStack.push(modalId);
-  history.pushState({ modal: modalId }, '', '');
+  if (!modalStack.includes(modalId)) {
+    modalStack.push(modalId);
+    history.pushState({ modal: modalId }, '', '#' + modalId);
+  }
 
-  //console.log(modalStack)
+  // 앱 다운로드 안내 모달이 기존 모달(공지사항 등) 위에 뜰 때만 전용 백드롭 분리 처리
+  // (다른 일반 모달들의 z-index 및 백드롭에는 일체 간섭하지 않아 사이드 이펙트 0% 보장)
+  if (modalId === 'appDownloadModal') {
+    adjustAppDownloadModalLayer();
+  }
+}
+
+function adjustAppDownloadModalLayer() {
+  // 이미 화면에 다른 모달(예: noticeModal)이 열려 있는지 확인
+  const otherModals = $('.modal.show').not('#appDownloadModal');
+  if (otherModals.length > 0) {
+    // 1. 앱 다운로드 모달은 최상단 (1090)
+    $('#appDownloadModal').css('z-index', 1090);
+
+    // 2. 공지사항 모달(1055) 위에 덮일 수 있도록 앱 다운로드 모달의 백드롭을 1080으로 지정
+    const setBackdropZ = () => {
+      const $backdrops = $('.modal-backdrop');
+      if ($backdrops.length > 1) {
+        $backdrops.last().css('z-index', 1080);
+      }
+    };
+    setBackdropZ();
+    setTimeout(setBackdropZ, 20);
+    setTimeout(setBackdropZ, 100);
+  }
 }
 
 function closeModal(modalId) {
@@ -610,18 +636,33 @@ function closeModal(modalId) {
   if (idx !== -1) {
     modalStack.splice(idx, 1);
   }
-  //console.log(modalStack)
 }
+
+// 앱 다운로드 모달이 닫힐 때 세션스토리지 및 스택 안전 동기화 (다른 모달에는 영향 없음)
+$(document).on('hidden.bs.modal', '#appDownloadModal', function () {
+  sessionStorage.setItem('appDownloadModalShown', 'true');
+  const idx = modalStack.lastIndexOf('appDownloadModal');
+  if (idx !== -1) {
+    modalStack.splice(idx, 1);
+  }
+});
 
 window.addEventListener('popstate', (event) => {
   if (history.state && history.state.radarOpen) {
     history.back();
-    return
+    return;
   }
 
   const modalId = modalStack.pop();
   if (modalId) {
     $(`#${modalId}`).modal('hide');
+    return;
+  }
+
+  // modalStack이 비어있더라도 화면에 열려있는 모달이 있다면 닫기
+  const $visibleModal = $('.modal.show');
+  if ($visibleModal.length > 0) {
+    $visibleModal.modal('hide');
     return;
   }
 });
@@ -1198,9 +1239,9 @@ function setAppDownloadModal() {
   var tAppCancel = tSafe('ui.app_download_cancel', '괜찮아요, 모바일 웹으로 볼게요');
 
   appDownload_html = `      
-      <div class="modal fade" id="appDownloadModal" tabindex="-1" role="dialog" aria-labelledby="appDownloadModalLabel" aria-hidden="true" style="z-index: 1100;">      
+      <div class="modal fade" id="appDownloadModal" tabindex="-1" role="dialog" aria-labelledby="appDownloadModalLabel" aria-hidden="true">      
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" id="appDownloadModaloutline">
+        <div class="modal-content" id="appDownloadModaloutline" style="box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);">
           <div class="modal-body" id="appDownloadModalBody">
             <div><img src="https://www.realrankus.com/apt-rank-152x152.png" width="70px" style="border-radius: 10px;"></div>
             <div id="appDownloadModalDescription">${tAppDesc}</div>            
@@ -1212,15 +1253,14 @@ function setAppDownloadModal() {
     </div>
   `
 
-  $('body').append(appDownload_html)
+  if ($('#appDownloadModal').length === 0) {
+    $('body').append(appDownload_html)
+  }
   $("#appDownloadModaloutline").css({ 'bottom': (-1) * window.innerHeight / 3 + 100 + 'px' })
   //350ms 후에 모달이 올라오도록 설정
   setTimeout(function () {
     openModal("appDownloadModal")
-    backdrop = $('#appDownloadModal').next('.modal-backdrop')
-    backdrop.css({ "z-index": "1090" })
   }, 350);
-  //$(".modal-backdrop").css({"z-index" : "1090"})
 }
 
 function setOffcanvasMenu() {
