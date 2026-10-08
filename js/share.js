@@ -610,12 +610,10 @@ function adjustAppDownloadModalLayer() {
     // 1. 앱 다운로드 모달은 최상단 (1090)
     $('#appDownloadModal').css('z-index', 1090);
 
-    // 2. 공지사항 모달(1055) 위에 덮일 수 있도록 앱 다운로드 모달의 백드롭을 1080으로 지정
+    // 2. backdrop을 뒤쪽 모달(공지사항 1055) 위이자 앞쪽 모달(앱다운로드 1090) 바로 뒤(1080)로 이동
+    // (backdrop이 1개만 관리되더라도 앞쪽 모달 바로 뒤로 올려 공지사항 모달을 어둡게 처리)
     const setBackdropZ = () => {
-      const $backdrops = $('.modal-backdrop');
-      if ($backdrops.length > 1) {
-        $backdrops.last().css('z-index', 1080);
-      }
+      $('.modal-backdrop').last().css('z-index', 1080);
     };
     setBackdropZ();
     setTimeout(setBackdropZ, 20);
@@ -623,12 +621,32 @@ function adjustAppDownloadModalLayer() {
   }
 }
 
+function restoreBackdropLayer() {
+  // 앞쪽 모달이 닫힐 때, 뒤에 남아있는 모달(예: noticeModal)이 있다면 backdrop을 다시 뒤쪽 모달 뒤(1050)로 이동
+  const remainingModals = $('.modal.show').not('#appDownloadModal');
+  if (remainingModals.length > 0) {
+    const resetBackdropZ = () => {
+      const $backdrops = $('.modal-backdrop');
+      if ($backdrops.length > 0) {
+        $backdrops.css('z-index', 1050);
+      } else {
+        // Bootstrap이 1개뿐이던 backdrop을 함께 제거해버린 경우, 남아있는 모달을 위해 backdrop 재생성
+        $('body').append('<div class="modal-backdrop fade show" style="z-index: 1050;"></div>');
+      }
+    };
+    resetBackdropZ();
+    setTimeout(resetBackdropZ, 50);
+    setTimeout(resetBackdropZ, 200);
+  }
+}
+
 function closeModal(modalId) {
   $(`#${modalId}`).modal('hide');
 
-  //modalID가 'appDownloadModal'인 경우, 세션스토리지 저장
+  //modalID가 'appDownloadModal'인 경우, 세션스토리지 저장 및 backdrop 원위치 복원
   if (modalId === 'appDownloadModal') {
     sessionStorage.setItem('appDownloadModalShown', 'true');
+    restoreBackdropLayer();
   }
 
   // 모달이 닫혔을 때 스택에서 제거
@@ -638,13 +656,18 @@ function closeModal(modalId) {
   }
 }
 
-// 앱 다운로드 모달이 닫힐 때 세션스토리지 및 스택 안전 동기화 (다른 모달에는 영향 없음)
+// 앱 다운로드 모달이 닫힐 때 세션스토리지 및 스택/backdrop 안전 동기화 (다른 모달에는 영향 없음)
 $(document).on('hidden.bs.modal', '#appDownloadModal', function () {
   sessionStorage.setItem('appDownloadModalShown', 'true');
   const idx = modalStack.lastIndexOf('appDownloadModal');
   if (idx !== -1) {
     modalStack.splice(idx, 1);
   }
+  restoreBackdropLayer();
+});
+
+$(document).on('hide.bs.modal', '#appDownloadModal', function () {
+  restoreBackdropLayer();
 });
 
 window.addEventListener('popstate', (event) => {
