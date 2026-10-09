@@ -1,14 +1,31 @@
 (function () {
   var userAgent = navigator.userAgent.toLowerCase();
-  if (userAgent.indexOf('kakaotalk') > -1) {
+  var isIOS = /iphone|ipad|ipod/i.test(userAgent);
+
+  // 리얼랭커스 자체 앱이 아니고, 주요 인앱 브라우저(카카오톡, 네이버, 인스타그램, 페이스북, 라인, 밴드, 에브리타임 등)인 경우 감지
+  var isKakao = userAgent.indexOf('kakaotalk') > -1;
+  var isNaver = userAgent.indexOf('naver') > -1;
+  var isFB = userAgent.indexOf('fban') > -1 || userAgent.indexOf('fbav') > -1;
+  var isInstagram = userAgent.indexOf('instagram') > -1;
+  var isLine = userAgent.indexOf('line') > -1;
+  var isBand = userAgent.indexOf('band') > -1;
+  var isEverytime = userAgent.indexOf('everytime') > -1;
+  var isGenericInApp = userAgent.indexOf('inapp') > -1;
+
+  var isOurApp = userAgent.indexOf('_ios_app') > -1 || userAgent.indexOf('aptrank') > -1;
+  var isInApp = (isKakao || isNaver || isFB || isInstagram || isLine || isBand || isEverytime || isGenericInApp) && !isOurApp;
+
+  if (isInApp) {
     var targetUrl = window.location.href;
     var query = window.location.search || '';
-    var isIOS = /iphone|ipad|ipod/i.test(userAgent);
 
     // [Android 미설치자 처리]
-    // 앱이 없어 fallbackUrl로 돌아온 경우 -> Chrome 외부 브라우저 실행 후 카카오톡 인앱 브라우저 닫기
-    if (location.search.indexOf('kakaofallback=1') > -1) {
-      var cleanUrl = targetUrl.replace(/([?&])kakaofallback=1(&|$)/, '$1').replace(/[?&]$/, '');
+    // 앱 미설치로 fallbackUrl로 이동해온 경우 -> Chrome 외부 브라우저로 원본 URL 전체(?cpx=... 포함) 실행 후 인앱 브라우저 닫기
+    if (location.search.indexOf('kakaofallback=1') > -1 || location.search.indexOf('inappfallback=1') > -1) {
+      var cleanUrl = targetUrl
+        .replace(/([?&])kakaofallback=1(&|$)/, '$1')
+        .replace(/([?&])inappfallback=1(&|$)/, '$1')
+        .replace(/[?&]$/, '');
       var cleanUrlNoProtocol = cleanUrl.replace(/^https?:\/\//i, '');
 
       if (window.history && window.history.replaceState) {
@@ -18,9 +35,13 @@
       // 1. Chrome 외부 브라우저로 원본 URL 전체(?cpx=... 포함) 실행
       location.href = 'intent://' + cleanUrlNoProtocol + '#Intent;scheme=https;package=com.android.chrome;end;';
 
-      // 2. Chrome 실행 명령 전달 후 즉시 인앱 브라우저 닫기 (0.2초)
+      // 2. 인앱 브라우저 닫기
       setTimeout(function () {
-        location.href = 'kakaotalk://inappbrowser/close';
+        if (isKakao) {
+          location.href = 'kakaotalk://inappbrowser/close';
+        } else {
+          try { window.close(); } catch (e) { }
+        }
       }, 200);
       return;
     }
@@ -34,31 +55,38 @@
       // 2. 앱 미설치자 또는 실행 후 분기 처리 (0.4초 판단)
       setTimeout(function () {
         if (+new Date() - clickedAt < 1500) {
-          // [앱 미설치자]: 0.4초 후에도 인앱 브라우저에 머물러 있음 -> Safari 외부 브라우저로 열기
-          location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
-
-          // Safari 실행 후 즉시 인앱 브라우저 닫기 (0.2초)
-          setTimeout(function () {
-            location.href = 'kakaoweb://closeBrowser';
-          }, 200);
+          // [앱 미설치자]: 0.4초 후에도 인앱 브라우저에 머물러 있음 -> 외부 브라우저(Safari) 이동 유도
+          if (isKakao) {
+            location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
+            setTimeout(function () {
+              location.href = 'kakaoweb://closeBrowser';
+            }, 200);
+          } else {
+            try { window.open(targetUrl, '_blank'); } catch (e) { }
+          }
         } else {
-          // [앱 설치자]: 앱으로 전환되었으므로 카카오톡 인앱 브라우저 닫기
-          location.href = 'kakaoweb://closeBrowser';
+          // [앱 설치자]: 앱으로 전환되었으므로 인앱 브라우저 닫기
+          if (isKakao) {
+            location.href = 'kakaoweb://closeBrowser';
+          }
         }
       }, 400);
     } else {
       // [Android]
       // 1. 앱 설치자: intent URI(?cpx=...) 및 S.URL(전체 URL)을 담아 리얼랭커스 앱 실행
-      // 2. 앱 미설치자: kakaofallback=1 파라미터를 붙인 fallbackUrl로 이동하여 상단 Chrome 실행 로직으로 연결
+      // 2. 앱 미설치자: inappfallback=1 파라미터를 붙인 fallbackUrl로 이동하여 Chrome 외부 브라우저 로직으로 연결
       var separator = targetUrl.indexOf('?') > -1 ? '&' : '?';
-      var fallbackUrl = targetUrl + separator + 'kakaofallback=1';
+      var fallbackUrl = targetUrl + separator + 'inappfallback=1';
 
       location.href = 'intent://main' + query + '#Intent;scheme=realrankus;package=com.aptrank.app;S.URL=' + encodeURIComponent(targetUrl) + ';S.browser_fallback_url=' + encodeURIComponent(fallbackUrl) + ';end;';
 
       // 3. 앱 설치자의 경우 0.5초 후 인앱 브라우저 닫기
-      // (미설치자는 0.2초 이내에 fallbackUrl로 페이지 이동이 일어나므로 이 타이머는 자동 취소됨)
       setTimeout(function () {
-        location.href = 'kakaotalk://inappbrowser/close';
+        if (isKakao) {
+          location.href = 'kakaotalk://inappbrowser/close';
+        } else {
+          try { window.close(); } catch (e) { }
+        }
       }, 500);
     }
   }
