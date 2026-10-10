@@ -2,7 +2,12 @@
   var userAgent = navigator.userAgent.toLowerCase();
   var isIOS = /iphone|ipad|ipod/i.test(userAgent);
 
-  // 리얼랭커스 자체 앱이 아니고, 주요 인앱 브라우저(카카오톡, 네이버, 인스타그램, 페이스북, 라인, 밴드, 에브리타임 등)인 경우 감지
+  // 리얼랭커스 자체 앱 감지 (Android 네이티브 브릿지 또는 iOS/앱 식별자)
+  var isOurApp = (typeof window !== 'undefined' && Boolean(window.Android)) ||
+    userAgent.indexOf('_ios_app') > -1 ||
+    userAgent.indexOf('aptrank') > -1;
+
+  // 주요 외부 인앱 브라우저(카카오톡, 네이버, 인스타그램, 페이스북, 라인, 밴드, 에브리타임 등) 감지
   var isKakao = userAgent.indexOf('kakaotalk') > -1;
   var isNaver = userAgent.indexOf('naver') > -1;
   var isFB = userAgent.indexOf('fban') > -1 || userAgent.indexOf('fbav') > -1;
@@ -10,10 +15,8 @@
   var isLine = userAgent.indexOf('line') > -1;
   var isBand = userAgent.indexOf('band') > -1;
   var isEverytime = userAgent.indexOf('everytime') > -1;
-  var isGenericInApp = userAgent.indexOf('inapp') > -1;
 
-  var isOurApp = userAgent.indexOf('_ios_app') > -1 || userAgent.indexOf('aptrank') > -1;
-  var isInApp = (isKakao || isNaver || isFB || isInstagram || isLine || isBand || isEverytime || isGenericInApp) && !isOurApp;
+  var isInApp = (isKakao || isNaver || isFB || isInstagram || isLine || isBand || isEverytime) && !isOurApp;
 
   if (isInApp) {
     var targetUrl = window.location.href;
