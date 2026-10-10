@@ -216,7 +216,7 @@ def build_en_index(html, meta, ui):
     # 19.5. share.js 에 버전 파라미터 추가로 브라우저 캐싱 방지
     html = html.replace(
         'src="../js/share.js"',
-        'src="../js/share.js?v=20260524_2"'
+        'src="../js/share.js?v=20261010_1"'
     )
 
     # 19.6. request_report.js 에 버전 파라미터 추가로 브라우저 캐싱 방지

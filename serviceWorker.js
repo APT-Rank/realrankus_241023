@@ -1,4 +1,4 @@
-const offlineCacheName = "realrankus-offline-v1";
+const offlineCacheName = "realrankus-offline-v2";
 const offlineFallbackPage = new URL("offline.html", self.registration.scope).toString();
 
 self.addEventListener("install", (event) => {
