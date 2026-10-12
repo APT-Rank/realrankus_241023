@@ -87,7 +87,7 @@
     if (UserAgent.match(/iPhone|ipad|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null)
     {
       if(scr_width < scr_height){
-        location.href = "https://www.realrankus.com/cityclass/index_m.html"; //모바일 홈페이지 경로
+        location.href = "https://www.realrankus.com/cityclass/index_m.html" + window.location.search; //모바일 홈페이지 경로
       }
     }
   </script> 
@@ -317,8 +317,43 @@
 <script src="../js/i18n.js?v=20260607"></script>
 
 <script>
-  var selectedRegion = "Korea"
-  var selectedSubRegion = "1000000000_Korea"
+  const urlParams = new URLSearchParams(window.location.search);
+  var lastRegion = localStorage.getItem("lastRegion");
+  var lastSubRegion = localStorage.getItem("lastSubRegion");
+
+  var selectedRegion = "Korea";
+  if (urlParams.has("reg")) {
+    selectedRegion = urlParams.get("reg");
+  } else if (lastRegion != null) {
+    selectedRegion = lastRegion;
+  }
+
+  var selectedSubRegion = "1000000000_Korea";
+  if (urlParams.has("sub")) {
+    selectedSubRegion = urlParams.get("sub");
+  } else if (lastSubRegion != null) {
+    selectedSubRegion = lastSubRegion;
+  }
+
+  if (typeof resolveMainRegion === "function") {
+    var resolvedInitial = resolveMainRegion(selectedRegion, selectedSubRegion);
+    selectedRegion = resolvedInitial.reg;
+    selectedSubRegion = resolvedInitial.sub;
+  }
+
+  function saveLocalStorage() {
+    if (typeof resolveMainRegion === "function") {
+      var resolved = resolveMainRegion(selectedRegion, selectedSubRegion);
+      localStorage.setItem("lastRegion", resolved.reg);
+      localStorage.setItem("lastSubRegion", resolved.sub);
+    } else {
+      localStorage.setItem("lastRegion", selectedRegion);
+      localStorage.setItem("lastSubRegion", selectedSubRegion);
+    }
+    localStorage.removeItem("lastMapLat");
+    localStorage.removeItem("lastMapLng");
+  }
+
   var selectedTheme = "under100M"
   var currentMonth = "202610" //수정
 
@@ -365,7 +400,7 @@ $(document).ready(function(){
       option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
     }
     option += "</select></div>"
-    option += "<div onClick='openOuterLink(\"https://www.realrankus.com\")'><div id='poweredBy'>powered by 리얼랭커스</div></div>";
+    option += "<div onClick='openOuterLink(getMainAptrankURL())'><div id='poweredBy'>powered by 리얼랭커스</div></div>";
     $("#costTitle").html(option);
 
     $('div.modal').on('show.bs.modal', function() {

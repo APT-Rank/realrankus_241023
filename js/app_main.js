@@ -298,6 +298,12 @@ $(document).ready(function () {
     selectedRegion = lastRegion;
   }
 
+  if (typeof resolveMainRegion === "function") {
+    var resolvedInitial = resolveMainRegion(selectedRegion, selectedSubRegion);
+    selectedRegion = resolvedInitial.reg;
+    selectedSubRegion = resolvedInitial.sub;
+  }
+
   $("#month").val(selectedMonth).prop("selected", true);
   $("#sido").val(selectedRegion).prop("selected", true);
   $("#gungu").val(selectedSubRegion).prop("selected", true);
@@ -960,17 +966,169 @@ function sidoChange() {
 }
 
 /**
+ * @function resolveMainRegion
+ * @description BIZ 서비스 또는 메인 서비스에서 전달받거나 저장된 시도(reg) 및 구군(sub) 코드를 리얼랭커스 메인(app_main.js)에서 유효한 대표 구 코드로 표준화하여 변환합니다.
+ * @param {string} reg - 상위 시/도 코드
+ * @param {string} sub - 하위 시/군/구 코드
+ * @returns {{ reg: string, sub: string }}
+ */
+function resolveMainRegion(reg, sub) {
+  var resolvedReg = reg;
+  var resolvedSub = sub;
+
+  // 1. 전국 단위 처리
+  if (resolvedReg === "Korea" || resolvedSub === "1000000000_Korea" || (!resolvedReg && !resolvedSub)) {
+    return { reg: "Korea", sub: "1000000000_Korea" };
+  }
+
+  // 2. 광주광역시 구 코드 불일치 보정 (BIZ: 29xxx Gwangju -> 메인: 12xxx Jeonamgwangju)
+  if (resolvedSub && (resolvedSub.indexOf("29") === 0 || resolvedSub.indexOf("Gwangju") > -1)) {
+    if (resolvedSub.indexOf("2920000000_Gwangju_Gwangsan") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1233000000_Jeonamgwangju_Gwangsan" };
+    }
+    if (resolvedSub.indexOf("2911000000_Gwangju_Dong") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1221000000_Jeonamgwangju_Dong" };
+    }
+    if (resolvedSub.indexOf("2917000000_Gwangju_Buk") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1230000000_Jeonamgwangju_Buk" };
+    }
+    if (resolvedSub.indexOf("2914000000_Gwangju_Seo") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1224000000_Jeonamgwangju_Seo" };
+    }
+    return { reg: "Jeonamgwangju", sub: "1227000000_Jeonamgwangju_Nam" };
+  }
+
+  // 3. 특별시 / 광역시 '전체' 코드 보정
+  if (resolvedSub === "Seoul" || resolvedSub === "1100000000_Seoul" || (resolvedReg === "Seoul" && (!resolvedSub || resolvedSub === "Seoul"))) {
+    return { reg: "Seoul", sub: "1168000000_Seoul_Gangnam" };
+  }
+  if (resolvedSub === "Busan" || resolvedSub === "2600000000_Busan" || (resolvedReg === "Busan" && (!resolvedSub || resolvedSub === "Busan"))) {
+    return { reg: "Busan", sub: "2650000000_Busan_Suyeong" };
+  }
+  if (resolvedSub === "Daegu" || resolvedSub === "2700000000_Daegu" || (resolvedReg === "Daegu" && (!resolvedSub || resolvedSub === "Daegu"))) {
+    return { reg: "Daegu", sub: "2726000000_Daegu_Suseong" };
+  }
+  if (resolvedSub === "Incheon" || resolvedSub === "2800000000_Incheon" || (resolvedReg === "Incheon" && (!resolvedSub || resolvedSub === "Incheon"))) {
+    return { reg: "Incheon", sub: "2818500000_Incheon_Yeonsu" };
+  }
+  if (resolvedSub === "Daejeon" || resolvedSub === "3000000000_Daejeon" || (resolvedReg === "Daejeon" && (!resolvedSub || resolvedSub === "Daejeon"))) {
+    return { reg: "Daejeon", sub: "3020000000_Daejeon_Yuseong" };
+  }
+  if (resolvedSub === "Ulsan" || resolvedSub === "3100000000_Ulsan" || (resolvedReg === "Ulsan" && (!resolvedSub || resolvedSub === "Ulsan"))) {
+    return { reg: "Ulsan", sub: "3114000000_Ulsan_Nam" };
+  }
+  if (resolvedSub === "Sejong" || resolvedSub === "3600000000_Sejong" || (resolvedReg === "Sejong" && (!resolvedSub || resolvedSub === "Sejong"))) {
+    return { reg: "Sejong", sub: "3611000000_Sejong_Sejong" };
+  }
+
+  // 4. 경기도 전체 및 시 전체
+  if (resolvedSub === "4100000000_Gyeonggi" || resolvedSub === "Gyeonggi" || (resolvedReg === "Gyeonggi" && (!resolvedSub || resolvedSub === "Gyeonggi"))) {
+    return { reg: "Gyeonggi", sub: "4113500000_Gyeonggi_Seongnam_Bundang" };
+  }
+  if (resolvedSub === "4128000000_Gyeonggi_Goyang") {
+    return { reg: "Gyeonggi", sub: "4128700000_Gyeonggi_Goyang_Ilsanseo" };
+  }
+  if (resolvedSub === "4113000000_Gyeonggi_Seongnam") {
+    return { reg: "Gyeonggi", sub: "4113500000_Gyeonggi_Seongnam_Bundang" };
+  }
+  if (resolvedSub === "4111000000_Gyeonggi_Suwon") {
+    return { reg: "Gyeonggi", sub: "4111700000_Gyeonggi_Suwon_Yeongtong" };
+  }
+  if (resolvedSub === "4127000000_Gyeonggi_Ansan") {
+    return { reg: "Gyeonggi", sub: "4127100000_Gyeonggi_Ansan_Sangnok" };
+  }
+  if (resolvedSub === "4117000000_Gyeonggi_Anyang") {
+    return { reg: "Gyeonggi", sub: "4117300000_Gyeonggi_Anyang_Dongan" };
+  }
+  if (resolvedSub === "4146000000_Gyeonggi_Yongin") {
+    return { reg: "Gyeonggi", sub: "4146500000_Gyeonggi_Yongin_Suji" };
+  }
+  if (resolvedSub === "4119000000_Gyeonggi_Bucheon") {
+    return { reg: "Gyeonggi", sub: "4119200000_Gyeonggi_Bucheon_Wonmi" };
+  }
+  if (resolvedSub === "4159000000_Gyeonggi_Hwaseong" || resolvedSub === "4159700000_Gyeonggi_Hwaseong_Dongtan") {
+    return { reg: "Gyeonggi", sub: "4159700000_Gyeonggi_Hwaseong_dongtan" };
+  }
+
+  // 5. 충청북도 전체 및 청주시 전체
+  if (resolvedSub === "4300000000_Chungcheongbukdo" || resolvedSub === "Chungcheongbukdo" || (resolvedReg === "Chungcheongbukdo" && (!resolvedSub || resolvedSub === "Chungcheongbukdo"))) {
+    return { reg: "Chungcheongbukdo", sub: "4311100000_Chungcheongbukdo_Cheongju_Sangdang" };
+  }
+  if (resolvedSub === "4311000000_Chungcheongbukdo_Cheongju") {
+    return { reg: "Chungcheongbukdo", sub: "4311100000_Chungcheongbukdo_Cheongju_Sangdang" };
+  }
+
+  // 6. 충청남도 전체 및 천안시 전체
+  if (resolvedSub === "4400000000_Chungcheongnamdo" || resolvedSub === "Chungcheongnamdo" || (resolvedReg === "Chungcheongnamdo" && (!resolvedSub || resolvedSub === "Chungcheongnamdo"))) {
+    return { reg: "Chungcheongnamdo", sub: "4413300000_Chungcheongnamdo_Cheonan_Seobuk" };
+  }
+  if (resolvedSub === "4413000000_Chungcheongnamdo_Cheonan") {
+    return { reg: "Chungcheongnamdo", sub: "4413300000_Chungcheongnamdo_Cheonan_Seobuk" };
+  }
+
+  // 7. 강원도 전체
+  if (resolvedSub === "5100000000_Gangwondo" || resolvedSub === "4200000000_Gangwondo" || resolvedSub === "Gangwondo" || (resolvedReg === "Gangwondo" && (!resolvedSub || resolvedSub === "Gangwondo"))) {
+    return { reg: "Gangwondo", sub: "5113000000_Gangwondo_Wonju" };
+  }
+
+  // 8. 전라북도 전체 및 전주시 전체
+  if (resolvedSub === "5200000000_Jeollabukdo" || resolvedSub === "4500000000_Jeollabukdo" || resolvedSub === "Jeollabukdo" || (resolvedReg === "Jeollabukdo" && (!resolvedSub || resolvedSub === "Jeollabukdo"))) {
+    return { reg: "Jeollabukdo", sub: "5211100000_Jeollabukdo_Jeonju_Wansan" };
+  }
+  if (resolvedSub === "5211000000_Jeollabukdo_Jeonju" || resolvedSub === "4511000000_Jeollabukdo_Jeonju") {
+    return { reg: "Jeollabukdo", sub: "5211100000_Jeollabukdo_Jeonju_Wansan" };
+  }
+
+  // 9. 전남광주(전라남도) 전체
+  if (resolvedSub === "1200000000_Jeonamgwangju" || resolvedSub === "4600000000_Jeollanamdo" || resolvedSub === "Jeonamgwangju" || (resolvedReg === "Jeonamgwangju" && (!resolvedSub || resolvedSub === "Jeonamgwangju"))) {
+    return { reg: "Jeonamgwangju", sub: "1215000000_Jeonamgwangju_Suncheon" };
+  }
+
+  // 10. 경상북도 전체 및 포항시 전체
+  if (resolvedSub === "4700000000_Gyeongsangbukdo" || resolvedSub === "Gyeongsangbukdo" || (resolvedReg === "Gyeongsangbukdo" && (!resolvedSub || resolvedSub === "Gyeongsangbukdo"))) {
+    return { reg: "Gyeongsangbukdo", sub: "4711100000_Gyeongsangbukdo_Pohang_Nam" };
+  }
+  if (resolvedSub === "4711000000_Gyeongsangbukdo_Pohang") {
+    return { reg: "Gyeongsangbukdo", sub: "4711100000_Gyeongsangbukdo_Pohang_Nam" };
+  }
+
+  // 11. 경상남도 전체 및 창원시 전체
+  if (resolvedSub === "4800000000_Gyeongsangnamdo" || resolvedSub === "Gyeongsangnamdo" || (resolvedReg === "Gyeongsangnamdo" && (!resolvedSub || resolvedSub === "Gyeongsangnamdo"))) {
+    return { reg: "Gyeongsangnamdo", sub: "4812300000_Gyeongsangnamdo_Changwon_Seongsan" };
+  }
+  if (resolvedSub === "4812000000_Gyeongsangnamdo_Changwon" || resolvedSub === "4812500000_Gyeongsangnamdo_Changwon") {
+    return { reg: "Gyeongsangnamdo", sub: "4812300000_Gyeongsangnamdo_Changwon_Seongsan" };
+  }
+
+  // 12. 제주도 전체
+  if (resolvedSub === "5000000000_Jejudo" || resolvedSub === "5000000000_Jejudoo" || resolvedSub === "Jejudo" || resolvedSub === "Jejudoo" || (resolvedReg === "Jejudo" && (!resolvedSub || resolvedSub === "Jejudo"))) {
+    return { reg: "Jejudo", sub: "5011000000_Jejudo_Jeju" };
+  }
+
+  // reg이 없고 sub에 언더스코어가 있는 경우 reg 추출
+  if (!resolvedReg && resolvedSub.indexOf("_") > -1) {
+    var parts = resolvedSub.split("_");
+    if (parts.length >= 2) {
+      resolvedReg = parts[1];
+    }
+  }
+
+  // 최종 fallback: 비어있을 경우 서울 강남
+  if (!resolvedReg || !resolvedSub) {
+    return { reg: "Seoul", sub: "1168000000_Seoul_Gangnam" };
+  }
+
+  return { reg: resolvedReg, sub: resolvedSub };
+}
+
+/**
  * @function saveLocalStorage
  * @description 사용자가 최종적으로 선택한 상위 지역(시/도)과 하위 지역(군/구) 코드를 로컬 스토리지에 저장하여 다음 방문 시 상태를 유지합니다.
  */
 function saveLocalStorage() {
-  localStorage.setItem("lastRegion", selectedRegion);
-  localStorage.setItem("lastSubRegion", selectedSubRegion);
-  //localStorage.setItem('lastMonth', selectedMonth)
-
-  //sessionStorage.setItem('lastRegion', selectedRegion)
-  //sessionStorage.setItem('lastSubRegion', selectedSubRegion)
-  //sessionStorage.setItem('lastMonth', selectedMonth)
+  var resolved = resolveMainRegion(selectedRegion, selectedSubRegion);
+  localStorage.setItem("lastRegion", resolved.reg);
+  localStorage.setItem("lastSubRegion", resolved.sub);
 }
 
 /**
@@ -989,14 +1147,11 @@ function scrollUp() {
  * @param {string} [upperReion] - 특정 시/도로의 강제 변경이 필요할 경우 지정하는 시/도 코드
  */
 function optionChange(subRegion, upperReion) {
-  selectedSubRegion = subRegion;
-  if (upperReion == null || upperReion == "" || upperReion == undefined) {
-    regionName = $("#sido option:selected").val();
-  } else {
-    regionName = upperReion;
-    $("#gungu").val(selectedSubRegion).prop("selected", true);
-  }
-  selectedRegion = regionName;
+  var targetReg = upperReion || $("#sido option:selected").val();
+  var resolved = resolveMainRegion(targetReg, subRegion);
+  selectedRegion = resolved.reg;
+  selectedSubRegion = resolved.sub;
+  regionName = selectedRegion;
   $("#sido").val(selectedRegion).prop("selected", true);
 
   var changeItem;
@@ -1070,12 +1225,19 @@ function optionChange(subRegion, upperReion) {
     $("#gungu").append(subOption);
   }
 
-  if (selectedSubRegion == undefined) {
-    $("#gungu").val(changeItem[0][1]).prop("selected", true);
-    selectedSubRegion = $("#gungu option:selected").val();
-  } else {
-    $("#gungu").val(selectedSubRegion).prop("selected", true);
+  var subFound = false;
+  if (changeItem && changeItem.length > 0) {
+    for (var i = 0; i < changeItem.length; i++) {
+      if (changeItem[i][1] === selectedSubRegion) {
+        subFound = true;
+        break;
+      }
+    }
+    if (!subFound) {
+      selectedSubRegion = changeItem[0][1];
+    }
   }
+  $("#gungu").val(selectedSubRegion).prop("selected", true);
   //updateRegion()
 }
 
@@ -1116,6 +1278,13 @@ function updateRegion() {
 
   selectedRegion = $("#sido option:selected").val();
   selectedSubRegion = $("#gungu option:selected").val();
+  var resolvedNow = resolveMainRegion(selectedRegion, selectedSubRegion);
+  if (resolvedNow.sub !== selectedSubRegion || resolvedNow.reg !== selectedRegion) {
+    selectedRegion = resolvedNow.reg;
+    selectedSubRegion = resolvedNow.sub;
+    $("#sido").val(selectedRegion).prop("selected", true);
+    $("#gungu").val(selectedSubRegion).prop("selected", true);
+  }
 
   localSearchText = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());
   $("#localSearch").html(localSearchText + " 검색");
@@ -1345,6 +1514,14 @@ var svg_loc = "";
  * @param {string} region - 지역구 법정동 코드 (예: "1168000000_Seoul_Gangnam")
  */
 function updateTable(month, region) {
+  var resolvedTableReg = resolveMainRegion(selectedRegion, region);
+  if (resolvedTableReg.sub !== region) {
+    region = resolvedTableReg.sub;
+    selectedRegion = resolvedTableReg.reg;
+    selectedSubRegion = resolvedTableReg.sub;
+    $("#sido").val(selectedRegion).prop("selected", true);
+    $("#gungu").val(selectedSubRegion).prop("selected", true);
+  }
   removeMarkers();
   $("#rearrangeScore").prop("checked", true);
 

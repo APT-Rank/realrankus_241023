@@ -593,13 +593,19 @@
   }
 
   function sidoChange(){
-    optionChange()
-    updateRegion()
+    optionChange();
+    updateRegion();
+    saveLocalStorage();
   }
 
   function saveLocalStorage(){
-    localStorage.setItem('lastRegion', selectedRegion)
-    localStorage.setItem('lastSubRegion', selectedSubRegion)
+    var resolved = (typeof resolveMainRegion === 'function') 
+      ? resolveMainRegion(selectedRegion, selectedSubRegion)
+      : { reg: selectedRegion, sub: selectedSubRegion };
+    localStorage.setItem('lastRegion', resolved.reg);
+    localStorage.setItem('lastSubRegion', resolved.sub);
+    localStorage.removeItem('lastMapLat');
+    localStorage.removeItem('lastMapLng');
   }
 
   function scrollUp(){
@@ -706,6 +712,7 @@
 
     loadPIR(regionName)
     loadBP(regionName)    
+    saveLocalStorage()
   }
 
   function updateTable(){
@@ -2140,37 +2147,24 @@ function showNotice(info){
   var pcDevice = "win16|win32|win64|mac|macintel"
 
   function openAptrank(){
-    to_subRegion = selectedSubRegion
+    saveLocalStorage();
+    var aURL = (typeof getMainAptrankURL === 'function')
+      ? getMainAptrankURL()
+      : ("https://www.realrankus.com/index.html?reg=" + selectedRegion + "&sub=" + selectedSubRegion);
 
-    if(selectedSubRegion == "4128000000_Gyeonggi_Goyang"){ to_subRegion = "4128700000_Gyeonggi_Goyang_Ilsanseo"}
-    if(selectedSubRegion == "4113000000_Gyeonggi_Seongnam"){ to_subRegion = "4113500000_Gyeonggi_Seongnam_Bundang" }
-    if(selectedSubRegion == "4111000000_Gyeonggi_Suwon"){ to_subRegion = "4111700000_Gyeonggi_Suwon_Yeongtong" }
-    if(selectedSubRegion == "4127000000_Gyeonggi_Ansan"){ to_subRegion = "4127100000_Gyeonggi_Ansan_Sangnok" }
-    if(selectedSubRegion == "4117000000_Gyeonggi_Anyang"){ to_subRegion = "4117300000_Gyeonggi_Anyang_Dongan" }
-    if(selectedSubRegion == "4146000000_Gyeonggi_Yongin"){ to_subRegion = "4146500000_Gyeonggi_Yongin_Suji" }
-    if(selectedSubRegion == "4119000000_Gyeonggi_Bucheon"){ to_subRegion = "4119200000_Gyeonggi_Bucheon_Wonmi" }
-    if(selectedSubRegion == "4159000000_Gyeonggi_Hwaseong"){ to_subRegion = "4159700000_Gyeonggi_Hwaseong_Dongtan" }
-
-    if(selectedSubRegion == "Seoul"){ to_subRegion = "1168000000_Seoul_Gangnam"}
-    if(selectedSubRegion == "Busan"){ to_subRegion = "2650000000_Busan_Suyeong" }
-    if(selectedSubRegion == "Daegu"){ to_subRegion = "2726000000_Daegu_Suseong" }
-    if(selectedSubRegion == "Incheon"){ to_subRegion = "2818500000_Incheon_Yeonsu" }
-    if(selectedSubRegion == "Gwangju"){ to_subRegion = "2915500000_Gwangju_Nam" }
-    if(selectedSubRegion == "Daejeon"){ to_subRegion = "3020000000_Daejeon_Yuseong" }
-    if(selectedSubRegion == "Ulsan"){ to_subRegion = "3114000000_Ulsan_Nam" }
-
-    aURL = "https://www.realrankus.com" + "?reg=" + selectedRegion +"&sub=" + to_subRegion
     if ( navigator.platform ) {
         if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
-          location.href = aURL
+          location.href = aURL;
         } else {
           if(checkMobile() == "ios"){
-            window.location.href = aURL
+            window.location.href = aURL;
           }
           else{
-            window.open(aURL)
+            window.open(aURL);
           }
         }
+    } else {
+      location.href = aURL;
     }    
   }
 </script>

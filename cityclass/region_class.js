@@ -446,6 +446,16 @@ function showRegionInfo(index){
   var sido = region_class[index]["시도"]
   var gungu = region_class[index]["군구"]
   var dong = region_class[index]["읍면동"] 
+  var sidoLink = region_class[index]["sido_link"]
+  var gunguLink = region_class[index]["gungu_link"]
+
+  if (sidoLink && gunguLink) {
+    selectedRegion = sidoLink;
+    selectedSubRegion = gunguLink;
+    if (typeof saveLocalStorage === 'function') {
+      saveLocalStorage();
+    }
+  }
   
   if(menuSelection == "menu_select_price"){
     var percentile = region_class[index]["평단가_백분률"]
@@ -548,18 +558,21 @@ function showRegionInfo(index){
 
   var sidoLink = region_class[index]["sido_link"]
   var gunguLink = region_class[index]["gungu_link"]
-  var RealRankusLink = "https://www.realrankus.com?reg=" + sidoLink + "&sub=" + gunguLink + "&mon=" + currentMonth
-  if(isMobile){
-    var RealRankusBizLink = "https://www.realrankus.com/biz/index_m.html?reg=" + sidoLink + "&sub=" + gunguLink
-  }
-  else{
-    var RealRankusBizLink = "https://www.realrankus.com/biz?reg=" + sidoLink + "&sub=" + gunguLink
-  }
+
+  var RealRankusLink = (typeof getMainAptrankURL === 'function') 
+    ? getMainAptrankURL(sidoLink, gunguLink) 
+    : ("https://www.realrankus.com/index.html?reg=" + encodeURIComponent(sidoLink) + "&sub=" + encodeURIComponent(gunguLink));
+
+  var resolvedBiz = (typeof resolveMainRegion === 'function') 
+    ? resolveMainRegion(sidoLink, gunguLink) 
+    : { reg: sidoLink, sub: gunguLink };
+  var bizBasePath = isMobile ? "https://www.realrankus.com/biz/index_m.html" : "https://www.realrankus.com/biz/index.html";
+  var RealRankusBizLink = bizBasePath + "?reg=" + encodeURIComponent(resolvedBiz.reg) + "&sub=" + encodeURIComponent(resolvedBiz.sub);
 
   footerHtml = ""
   footerHtml += "<div class='footer_wrapper'>"
-  footerHtml += "<div class='goRankus' onClick='openExternalLink(\"" +  RealRankusLink + "\")'>" + gungu + " 아파트 분석 보기</div>"
-  footerHtml += "<div class='goRankusBiz' onClick='openExternalLink(\"" +  RealRankusBizLink + "\")'>" + gungu + " 시장 분석 보기</div>"
+  footerHtml += "<div class='goRankus' onClick='goToAptrankFromCityclass(\"" +  RealRankusLink + "\", \"" + sidoLink + "\", \"" + gunguLink + "\")'>" + gungu + " 아파트 분석 보기</div>"
+  footerHtml += "<div class='goRankusBiz' onClick='goToBizFromCityclass(\"" +  RealRankusBizLink + "\", \"" + sidoLink + "\", \"" + gunguLink + "\")'>" + gungu + " 시장 분석 보기</div>"
   footerHtml += "</div>"
 
   $("#regionTitle").html(title)
@@ -591,6 +604,36 @@ function showRegionInfo(index){
   else{
     $("#infoModal").modal('show')
   }  
+}
+
+function goToAptrankFromCityclass(url, reg, sub) {
+  if (reg && sub) {
+    selectedRegion = reg;
+    selectedSubRegion = sub;
+    if (typeof saveLocalStorage === 'function') {
+      saveLocalStorage();
+    }
+  }
+  if (typeof openExternalLinkWithLoading === 'function') {
+    openExternalLinkWithLoading(url, 'aptrank');
+  } else {
+    location.href = url;
+  }
+}
+
+function goToBizFromCityclass(url, reg, sub) {
+  if (reg && sub) {
+    selectedRegion = reg;
+    selectedSubRegion = sub;
+    if (typeof saveLocalStorage === 'function') {
+      saveLocalStorage();
+    }
+  }
+  if (typeof openExternalLinkWithLoading === 'function') {
+    openExternalLinkWithLoading(url, 'aptrank_biz');
+  } else {
+    location.href = url;
+  }
 }
 
 function setPercentage(percent){
@@ -689,6 +732,15 @@ function region_search(){
   }
 }
 function goPosition(index){
+  var sidoLink = region_class[index]["sido_link"];
+  var gunguLink = region_class[index]["gungu_link"];
+  if (sidoLink && gunguLink) {
+    selectedRegion = sidoLink;
+    selectedSubRegion = gunguLink;
+    if (typeof saveLocalStorage === 'function') {
+      saveLocalStorage();
+    }
+  }
   if(view_mode == "table"){
     goScroll(index)
   }
