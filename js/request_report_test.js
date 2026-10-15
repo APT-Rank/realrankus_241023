@@ -1205,6 +1205,19 @@ function openReportRequestModal(){
   $("#requestReportModalContent").show()
   $("#requestReportConfirmModalContent").hide()
   $("#requestReportModal .modal-dialog").removeClass("modal-md").addClass("modal-lg")
+
+  // 테스트 편의를 위해 기본값이 비어있으면 샘플 데이터 자동 입력
+  if (!$("#customer_name").val()) $("#customer_name").val("홍길동");
+  if (!$("#customer_email").val()) $("#customer_email").val("hong");
+  if (!$("#budget_cash").val() || $("#budget_cash").val() == "0") {
+    $("#budget_cash").val("800,000,000");
+    budget_cash = 800000000;
+  }
+  if (!$("#budget_loan").val() || $("#budget_loan").val() == "0") {
+    $("#budget_loan").val("400,000,000");
+    budget_loan = 400000000;
+  }
+
   openModal("requestReportModal")
   $(".modal-backdrop").css({"width":"100%"})
 }
@@ -1479,21 +1492,28 @@ var REPORT_PRICE = 29900;
 
 function submitReportRequestAndPay() {
   if (typeof TossPayments === 'undefined') {
-    alert('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+    alert('토스페이먼츠 결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
     return;
+  }
+
+  function pad2(n) {
+    return n < 10 ? '0' + n : '' + n;
   }
 
   // 1. 주문 데이터 구성
   var today_order = new Date();
   var str_now_order = today_order.getFullYear().toString() +
-    dateReturn(today_order.getMonth() + 1) +
-    dateReturn(today_order.getDate()) +
-    dateReturn(today_order.getHours()) +
-    dateReturn(today_order.getMinutes()) +
-    dateReturn(today_order.getSeconds());
+    pad2(today_order.getMonth() + 1) +
+    pad2(today_order.getDate()) +
+    pad2(today_order.getHours()) +
+    pad2(today_order.getMinutes()) +
+    pad2(today_order.getSeconds());
 
   var order_id = "REP_" + Date.now();
-  var db_key = db_domain_txt + "_" + str_now_order;
+  var domain_prefix = (report_obj && report_obj.email_full)
+    ? report_obj.email_full.replace(/[@.]/g, '_')
+    : 'guest';
+  var db_key = domain_prefix + "_" + str_now_order;
 
   var current_uid = "";
   if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
@@ -1506,49 +1526,49 @@ function submitReportRequestAndPay() {
     dbKey: db_key,
     uid: current_uid,
 
-    name_val: report_obj.name_val,
-    email_full: report_obj.email_full,
-    phone_val: report_obj.phone_val,
+    name_val: (report_obj && report_obj.name_val) || "홍길동",
+    email_full: (report_obj && report_obj.email_full) || "customer@realrankus.com",
+    phone_val: (report_obj && report_obj.phone_val) || "",
 
-    age_val: report_obj.age_val,
-    age_txt: report_obj.age_txt,
-    age_idx: report_obj.age_idx,
+    age_val: (report_obj && report_obj.age_val) !== undefined ? report_obj.age_val : 2,
+    age_txt: (report_obj && report_obj.age_txt) || "30대",
+    age_idx: (report_obj && report_obj.age_idx) !== undefined ? report_obj.age_idx : 2,
 
-    family_val: report_obj.family_val,
-    family_txt: report_obj.family_txt,
-    family_idx: report_obj.family_idx,
+    family_val: (report_obj && report_obj.family_val) || 3,
+    family_txt: (report_obj && report_obj.family_txt) || "3인",
+    family_idx: (report_obj && report_obj.family_idx) || 2,
 
-    children_val: report_obj.children_val,
-    children_txt: report_obj.children_txt,
-    children_idx: report_obj.children_idx,
+    children_val: (report_obj && report_obj.children_val) || 1,
+    children_txt: (report_obj && report_obj.children_txt) || "1명",
+    children_idx: (report_obj && report_obj.children_idx) || 1,
 
-    children_type_val: report_obj.children_type_val,
-    children_type_txt: report_obj.children_type_txt,
-    children_type_idx: report_obj.children_type_idx,
+    children_type_val: (report_obj && report_obj.children_type_val) || 1,
+    children_type_txt: (report_obj && report_obj.children_type_txt) || "영유아/미취학",
+    children_type_idx: (report_obj && report_obj.children_type_idx) || 1,
 
-    income_val: report_obj.income_val,
-    income_txt: report_obj.income_txt,
-    income_idx: report_obj.income_idx,
+    income_val: (report_obj && report_obj.income_val) || 3,
+    income_txt: (report_obj && report_obj.income_txt) || "7천만~1억원",
+    income_idx: (report_obj && report_obj.income_idx) || 3,
 
-    budget_cash: report_obj.budget_cash,
-    budget_loan: report_obj.budget_loan,
+    budget_cash: (report_obj && report_obj.budget_cash) || 800000000,
+    budget_loan: (report_obj && report_obj.budget_loan) || 400000000,
 
-    trans_method: report_obj.trans_method,
+    trans_method: (report_obj && report_obj.trans_method) || "public",
 
-    fav_point_x: report_obj.fav_point_x,
-    fav_point_y: report_obj.fav_point_y,
-    fav_point_address: report_obj.fav_point_address,
+    fav_point_x: (report_obj && report_obj.fav_point_x) || 127.0473774,
+    fav_point_y: (report_obj && report_obj.fav_point_y) || 37.51733193,
+    fav_point_address: (report_obj && report_obj.fav_point_address) || "서울 강남구 역삼동",
 
-    wanted_region: report_obj.wanted_region,
-    wanted_region_str: report_obj.wanted_region_str,
+    wanted_region: (report_obj && report_obj.wanted_region) || [["Seoul", "1168000000_Seoul_Gangnam"]],
+    wanted_region_str: (report_obj && report_obj.wanted_region_str) || ["서울시 강남구"],
 
-    priority_living: report_obj.priority_living,
-    priority_trans: report_obj.priority_trans,
-    priority_infra: report_obj.priority_infra,
-    priority_edu: report_obj.priority_edu,
+    priority_living: (report_obj && report_obj.priority_living) || 100,
+    priority_trans: (report_obj && report_obj.priority_trans) || 100,
+    priority_infra: (report_obj && report_obj.priority_infra) || 100,
+    priority_edu: (report_obj && report_obj.priority_edu) || 100,
 
-    requestDateStr: report_obj.requestDateStr,
-    requestDate: report_obj.requestDate,
+    requestDateStr: today_order.toISOString().replace('T', ' ').substring(0, 19),
+    requestDate: today_order.toISOString(),
     paid: false,
     progress: 'PaymentReady'
   };
@@ -1559,16 +1579,43 @@ function submitReportRequestAndPay() {
     }
   }
 
-  // 로컬 캐시 및 전역 객체에 저장하여 리다이렉트 후에도 즉시 접근 가능하도록 보장
+  // 로컬 캐시 및 전역 객체에 저장
   window.lastReportOrderData = requestData;
   try {
     localStorage.setItem('last_report_order_' + db_key, JSON.stringify(requestData));
   } catch(e) {}
 
+  // [중요: file:// 로컬 실행 환경 감지]
+  // 토스페이먼츠 SDK는 브라우저 보안 규정상 file:/// 프로토콜에서 successUrl을 지원하지 않습니다.
+  if (window.location.protocol === 'file:') {
+    var proceedSimulated = confirm(
+      "[로컬 file:// 실행 안내]\n\n" +
+      "토스페이먼츠 결제창은 브라우저 보안 규정상 http:// 또는 https:// 환경(웹서버 또는 localhost)에서만 팝업될 수 있습니다.\n\n" +
+      "1) 지금 화면에서 [가상 결제 승인 -> Step 3 리포트 생성 엔진 가동]을 테스트하시려면 [확인]을 누르세요.\n\n" +
+      "2) 실제 토스페이먼츠 결제창을 보시려면 로컬 웹서버(http://localhost:5500/index_test.html)로 접속해 주세요."
+    );
+    if (proceedSimulated) {
+      requestData.paid = true;
+      requestData.progress = 'Paid';
+      if (typeof firebase !== 'undefined' && firebase.database) {
+        try { firebase.database().ref(db_key).set(requestData); } catch(e) {}
+      }
+      if (typeof requestReport_db !== 'undefined' && requestReport_db.database) {
+        try { requestReport_db.database().ref(db_key).set(requestData); } catch(e) {}
+      }
+      closeAllModals();
+      toastMessage('🎉 (로컬 테스트) 결제 승인 완료! 백그라운드 리포트 생성을 시작합니다.', 3000);
+      if (typeof onPaymentCompleted === 'function') {
+        onPaymentCompleted(db_key);
+      }
+      return;
+    }
+    return;
+  }
+
   // 2. 결제 전 DB에 사전 주문 기록 저장
   $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>결제창을 준비하고 있어요...</div></div>");
 
-  // 양쪽 DB에 동시 기록 (안전성 보장)
   if (typeof firebase !== 'undefined' && firebase.database) {
     try { firebase.database().ref(db_key).set(requestData); } catch(e) {}
   }
@@ -1584,26 +1631,33 @@ function submitReportRequestAndPay() {
     var successUrl = currentUrl + '?payment=success&dbKey=' + encodeURIComponent(db_key);
     var failUrl = currentUrl + '?payment=fail&dbKey=' + encodeURIComponent(db_key);
 
+    console.log("[TossPayments 호출]", {
+      amount: REPORT_PRICE,
+      orderId: order_id,
+      successUrl: successUrl
+    });
+
     tossPayments.requestPayment('카드', {
       amount: REPORT_PRICE,
       orderId: order_id,
-      orderName: '리얼랭커스 리얼리포트 (1회권)',
-      customerName: report_obj.name_val || '고객',
-      customerEmail: report_obj.email_full || '',
+      orderName: '리얼랭커스 맞춤형 아파트 리포트 (1회권)',
+      customerName: requestData.name_val || '고객',
+      customerEmail: requestData.email_full || 'customer@realrankus.com',
       successUrl: successUrl,
       failUrl: failUrl,
     }).catch(function(error) {
       if (error.code === 'USER_CANCEL') {
         toastMessage('결제가 취소되었습니다.', 2000);
       } else {
-        toastMessage('결제 오류: ' + error.message, 3000);
+        console.error("토스 결제 오류:", error);
+        toastMessage('결제 오류 (' + error.code + '): ' + error.message, 4000);
       }
     });
   })
   .catch(function(error) {
     $("#pageLoadingBack").remove();
     console.error("주문 생성 오류:", error);
-    toastMessage("주문 생성 중 오류가 발생했습니다. 다시 시도해 주세요.", 2000);
+    toastMessage("주문 생성 중 오류가 발생했습니다: " + error.message, 3000);
   });
 }
 

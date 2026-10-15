@@ -622,6 +622,14 @@
     <button id="graphButton" class="btn" onClick="showGraphChart()">동별 고·저평가 아파트 분석</button>
   </div>
 
+  <!-- [Step 3 테스트] 리포트 발행 / 토스 결제 테스트 바로가기 버튼 -->
+  <div id="testReportPayBtnContainer"
+    style="position: fixed; top: 8px; right: 90px; z-index: 920;">
+    <button class="btn btn-sm btn-light text-danger fw-bold" onclick="openReportRequestModal()" style="box-shadow: 0 4px 12px rgba(0,0,0,0.25); border-radius: 20px; font-size: 12px; padding: 6px 14px; border: 1px solid rgba(228,59,70,0.3);">
+      <i class="fa-solid fa-credit-card text-danger me-1"></i>리포트 발행 (29,900원)
+    </button>
+  </div>
+
   <!-- Graph Modal -->
   <div class="modal fade" id="graphModal" tabindex="-1" aria-labelledby="graphModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
