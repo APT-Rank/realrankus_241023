@@ -23,3 +23,6 @@ export { executeSecondaryTransaction } from './play/market/executeSecondaryTrans
 export { recordComplexDealHistory } from './play/market/recordComplexDealHistory';
 export { getMarketBoard } from './play/market/getMarketBoard';
 export { createSecondaryOrder, cancelSecondaryOrder, cancelSecondaryListing, matchSecondaryOrder } from './play/market/secondaryMarket';
+
+export { generateReportAI } from './report/geminiReportAI';
+export { confirmReportPayment } from './payment/confirmPayment';
