@@ -134,6 +134,7 @@
   <script defer src="./js/rearrange.js" type="text/javascript"></script>
   <script defer src="./js/share.js?v=20261010_1" type="text/javascript"></script>
   <script defer src="./js/request_report_test.js" type="text/javascript"></script>
+  <script defer src="./js/report_generator_engine.js" type="text/javascript"></script>
   <script defer src="./js/weight_cal.js" type="text/javascript"></script>
   <script defer src="./js/weight_array.js" type="text/javascript"></script>
   <script defer src="./js/simulation.js" type="text/javascript"></script>
@@ -151,7 +152,44 @@
   <link href="./css/style_board.css" rel="stylesheet" />
   <link href="./css/jquery-ui.css" rel="stylesheet" />
 </head>
-<style></style>
+<style>
+  .report-floating-badge {
+    position: fixed;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 950;
+    background: rgba(18, 22, 36, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.25s ease;
+    user-select: none;
+  }
+  .report-floating-badge:hover {
+    background: rgba(228, 59, 70, 0.96);
+    transform: translateX(-50%) scale(1.04);
+  }
+  .report-floating-badge-complete {
+    background: rgba(16, 185, 129, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    animation: pulse-badge 2s infinite;
+  }
+  @keyframes pulse-badge {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+</style>
 
 <body ontouchstart="">
   <!-- Google Tag Manager (noscript) -->
@@ -606,6 +644,60 @@
           </div>
           <div id="dongSelectionMenu" class="mt-3 text-center">
             <!-- Grid of outline buttons will be rendered here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [Step 3] 백그라운드 리포트 생성 플로팅 뱃지 -->
+  <div id="reportFloatingProgress" class="report-floating-badge" style="display: none;" onclick="openReportProgressModal()">
+    <span class="spinner-border spinner-border-sm text-light me-1" role="status" id="rfpSpinner"></span>
+    <i class="fa-solid fa-circle-check text-success me-1" id="rfpCheck" style="display: none;"></i>
+    <span id="rfpText">리포트 생성 중... 0%</span>
+  </div>
+
+  <!-- [Step 3] 백그라운드 리포트 생성 진행 상태 중앙 모달 -->
+  <div class="modal fade" id="reportProgressModal" tabindex="-1" aria-labelledby="reportProgressModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 12px 35px rgba(0,0,0,0.3); overflow: hidden;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: #fff; border: none; padding: 18px 22px;">
+          <h5 class="modal-title fs-6 fw-bold" id="reportProgressModalLabel">
+            <i class="fa-solid fa-chart-pie me-2" style="color: #E43B46;"></i>1:1 맞춤형 아파트 추천 리포트 생성
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3 text-secondary" style="font-size: 0.9em;" id="rpmCustomerTitle">
+            고객님의 정보를 기반으로 AI 주거 전략 보고서를 작성하고 있습니다.
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="progress mb-3" style="height: 14px; border-radius: 7px; background-color: #f1f3f5;">
+            <div id="rpmProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 0%; transition: width 0.4s ease;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+
+          <!-- Percentage & Step Info -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span id="rpmStepText" class="fw-bold text-dark" style="font-size: 0.95em;">준비 중...</span>
+            <span id="rpmPercentText" class="badge bg-danger fs-6">0%</span>
+          </div>
+
+          <!-- Detailed Status Alert Box -->
+          <div class="p-3 mb-3 text-start rounded-3" style="background: #f8f9fa; border-left: 4px solid #E43B46; font-size: 0.85em; color: #495057;">
+            <div id="rpmDetailLog" class="mb-1"><i class="fa-solid fa-spinner fa-spin me-1"></i> 데이터 파이프라인 초기화 중...</div>
+            <div class="text-muted" style="font-size: 0.8em; margin-top: 6px;">
+              <i class="fa-solid fa-shield-halved text-success me-1"></i> 창을 닫아도 백그라운드에서 안전하게 리포트가 완성됩니다.
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm py-2" data-bs-dismiss="modal" id="rpmBackgroundBtn">
+              <i class="fa-solid fa-window-minimize me-1"></i> 백그라운드로 실행하기 (화면 둘러보기)
+            </button>
+            <button type="button" class="btn btn-danger btn-sm py-2" id="rpmCompleteBtn" style="display: none;" onclick="openCompletedReportModal()">
+              <i class="fa-solid fa-file-pdf me-1"></i> 리포트 확인하기
+            </button>
           </div>
         </div>
       </div>

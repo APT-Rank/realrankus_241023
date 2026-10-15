@@ -1559,8 +1559,19 @@ function submitReportRequestAndPay() {
     }
   }
 
+  // 로컬 캐시 및 전역 객체에 저장하여 리다이렉트 후에도 즉시 접근 가능하도록 보장
+  window.lastReportOrderData = requestData;
+  try {
+    localStorage.setItem('last_report_order_' + db_key, JSON.stringify(requestData));
+  } catch(e) {}
+
   // 2. 결제 전 DB에 사전 주문 기록 저장
   $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.85em; color: white'><br>결제창을 준비하고 있어요...</div></div>");
+
+  // 양쪽 DB에 동시 기록 (안전성 보장)
+  if (typeof firebase !== 'undefined' && firebase.database) {
+    try { firebase.database().ref(db_key).set(requestData); } catch(e) {}
+  }
 
   requestReport_db.database().ref(db_key).set(requestData)
   .then(function() {
@@ -1647,7 +1658,7 @@ function checkPaymentResultOnLoad() {
         toastMessage('🎉 결제가 성공적으로 완료되었습니다! (29,900원)', 3000);
         console.log("결제 최종 승인 완료:", res.data);
         
-        // [Step 3에서 이어서 진행할 백그라운드 리포트 생성 트리거]
+        // [Step 3] 백그라운드 리포트 생성 자동 트리거
         if (typeof onPaymentCompleted === 'function') {
           onPaymentCompleted(dbKey);
         }
@@ -1660,5 +1671,30 @@ function checkPaymentResultOnLoad() {
       console.error("서버 결제 승인 오류:", error);
       toastMessage('결제 승인 중 오류가 발생했습니다: ' + error.message, 3000);
     });
+  }
+}
+
+// =========================================================================
+// [Step 3] 결제 완료 후 백그라운드 리포트 생성 연동 핸들러
+// =========================================================================
+function onPaymentCompleted(dbKey) {
+  console.log("결제 완료 콜백 실행 -> 백그라운드 리포트 생성 가동:", dbKey);
+  if (typeof startBackgroundReportGenerator === 'function') {
+    startBackgroundReportGenerator(
+      dbKey,
+      function(percent, stepText, detailLog) {
+        console.log(`[리포트 생성 중] ${percent}%: ${stepText}`);
+      },
+      function(reportData) {
+        console.log("[리포트 완성!]:", reportData);
+        toastMessage("🎉 1:1 맞춤형 아파트 추천 리포트가 성공적으로 완성되었습니다!", 4000);
+      },
+      function(error) {
+        console.error("[리포트 생성 오류]:", error);
+        toastMessage("리포트 생성 중 문제가 발생했습니다: " + (error.message || error), 4000);
+      }
+    );
+  } else {
+    console.warn("startBackgroundReportGenerator 엔진을 찾을 수 없습니다.");
   }
 }
