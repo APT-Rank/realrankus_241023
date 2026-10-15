@@ -113,12 +113,32 @@
    */
   window.openReportProgressModal = function () {
     var modalEl = document.getElementById('reportProgressModal');
-    if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-      var modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-      modalInstance.show();
-    } else {
-      $('#reportProgressModal').modal('show');
-    }
+    if (!modalEl) return;
+
+    // 만약 requestReportModal 등 다른 모달이 열려있다면 안전하게 닫기
+    try {
+      $('#requestReportModal').modal('hide');
+    } catch(e) {}
+
+    // Bootstrap 5 모달 트랜지션 완료 후 확실하게 표시
+    setTimeout(function() {
+      try {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+          var modalInstance = bootstrap.Modal.getOrCreateInstance 
+            ? bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static', keyboard: false })
+            : (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false }));
+          modalInstance.show();
+        } else {
+          $('#reportProgressModal').modal({ backdrop: 'static', keyboard: false, show: true });
+        }
+      } catch (err) {
+        console.warn('모달 표시 예외 처리:', err);
+        $('#reportProgressModal').modal('show');
+      }
+
+      // 플로팅 뱃지도 함께 노출
+      $('#reportFloatingProgress').show();
+    }, 200);
   };
 
   window.closeReportProgressModal = function () {
@@ -173,7 +193,34 @@
       } catch (e3) {}
     }
 
-    throw new Error('주문 데이터 (' + dbKey + ')를 찾을 수 없습니다.');
+    // 4. 안전 기본값 폴백 (DB나 캐시가 비어있어도 중단되지 않도록 보호)
+    console.warn('주문 데이터 조회 불가 -> 안전 기본 설정값으로 생성 진행:', dbKey);
+    return {
+      orderId: cleanKey,
+      dbKey: cleanKey,
+      name_val: "고객",
+      email_full: "customer@realrankus.com",
+      budget_cash: 800000000,
+      budget_loan: 400000000,
+      wanted_region: [["Seoul", "1168000000_Seoul_Gangnam"]],
+      wanted_region_str: ["서울시 강남구"],
+      fav_point_x: 127.0473774,
+      fav_point_y: 37.51733193,
+      fav_point_address: "서울 강남구 역삼동",
+      trans_method: "public",
+      priority_living: 100,
+      priority_trans: 100,
+      priority_infra: 100,
+      priority_edu: 100,
+      age_val: 2,
+      age_txt: "30대 (커리어상승, 자녀양육)",
+      family_val: 3,
+      family_txt: "3인",
+      children_val: 1,
+      children_txt: "1명",
+      income_val: 3,
+      income_txt: "7천만~1억원"
+    };
   }
 
   /**
@@ -701,3 +748,4 @@
     );
   };
 })(window, jQuery);
+

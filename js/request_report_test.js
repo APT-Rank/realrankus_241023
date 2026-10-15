@@ -1195,8 +1195,8 @@ function reportBack(){
 }
 
 function closeAllModals(){
-  $('.modal').modal('hide')
-  $('.modal-backdrop').remove()
+  $('#requestReportModal').modal('hide')
+  $('.modal:not(#reportProgressModal)').modal('hide')
   modalStack = []
 }
 
@@ -1605,9 +1605,11 @@ function submitReportRequestAndPay() {
       }
       closeAllModals();
       toastMessage('🎉 (로컬 테스트) 결제 승인 완료! 백그라운드 리포트 생성을 시작합니다.', 3000);
-      if (typeof onPaymentCompleted === 'function') {
-        onPaymentCompleted(db_key);
-      }
+      setTimeout(function() {
+        if (typeof onPaymentCompleted === 'function') {
+          onPaymentCompleted(db_key);
+        }
+      }, 250);
       return;
     }
     return;
@@ -1696,35 +1698,59 @@ function checkPaymentResultOnLoad() {
 
     $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div id='loadingInfo' style='font-size: 0.95em; color: white'><br>결제를 안전하게 승인하고 있어요...</div></div>");
 
-    // Firebase Functions에 서버 승인 요청 (위변조 방지)
-    var functionsInstance = firebase.app().functions('asia-northeast3');
-    var confirmPaymentFn = functionsInstance.httpsCallable('confirmReportPayment');
+    function executeServerConfirm(retryCount) {
+      // Firebase SDK 및 Functions 초기화 대기 (최대 3초)
+      var isFirebaseReady = typeof firebase !== 'undefined' && 
+                             firebase.apps && 
+                             firebase.apps.length > 0 && 
+                             typeof firebase.app().functions === 'function';
 
-    confirmPaymentFn({
-      paymentKey: paymentKey,
-      orderId: orderId,
-      amount: Number(amount),
-      dbKey: dbKey
-    })
-    .then(function(res) {
-      $("#pageLoadingBack").remove();
-      if (res.data && res.data.success) {
-        toastMessage('🎉 결제가 성공적으로 완료되었습니다! (29,900원)', 3000);
-        console.log("결제 최종 승인 완료:", res.data);
-        
-        // [Step 3] 백그라운드 리포트 생성 자동 트리거
-        if (typeof onPaymentCompleted === 'function') {
-          onPaymentCompleted(dbKey);
+      if (!isFirebaseReady) {
+        if (retryCount > 0) {
+          setTimeout(function() { executeServerConfirm(retryCount - 1); }, 200);
+          return;
         }
-      } else {
-        toastMessage('결제 승인 검증 실패. 고객센터로 문의해 주세요.', 3000);
       }
-    })
-    .catch(function(error) {
-      $("#pageLoadingBack").remove();
-      console.error("서버 결제 승인 오류:", error);
-      toastMessage('결제 승인 중 오류가 발생했습니다: ' + error.message, 3000);
-    });
+
+      try {
+        var functionsInstance = firebase.app().functions('asia-northeast3');
+        var confirmPaymentFn = functionsInstance.httpsCallable('confirmReportPayment');
+
+        confirmPaymentFn({
+          paymentKey: paymentKey,
+          orderId: orderId,
+          amount: Number(amount),
+          dbKey: dbKey
+        })
+        .then(function(res) {
+          $("#pageLoadingBack").remove();
+          if (res.data && res.data.success) {
+            toastMessage('🎉 결제가 성공적으로 완료되었습니다! (29,900원)', 3000);
+            console.log("결제 최종 승인 완료:", res.data);
+            
+            // [Step 3] 백그라운드 리포트 생성 자동 트리거 (부드러운 전환을 위해 250ms 대기)
+            setTimeout(function() {
+              if (typeof onPaymentCompleted === 'function') {
+                onPaymentCompleted(dbKey);
+              }
+            }, 250);
+          } else {
+            toastMessage('결제 승인 검증 실패. 고객센터로 문의해 주세요.', 3000);
+          }
+        })
+        .catch(function(error) {
+          $("#pageLoadingBack").remove();
+          console.error("서버 결제 승인 오류:", error);
+          toastMessage('결제 승인 중 오류가 발생했습니다: ' + error.message, 3000);
+        });
+      } catch (err) {
+        $("#pageLoadingBack").remove();
+        console.error("Cloud Functions 초기화 오류:", err);
+        toastMessage('결제 승인 처리 중 오류 발생: ' + err.message, 3000);
+      }
+    }
+
+    executeServerConfirm(15);
   }
 }
 
@@ -1751,4 +1777,46 @@ function onPaymentCompleted(dbKey) {
   } else {
     console.warn("startBackgroundReportGenerator 엔진을 찾을 수 없습니다.");
   }
-}
+}
+
+// [Step 3 테스트 편의 도구] 결제 과정 없이 리포트 생성 엔진 및 UI 팝업 즉시 시뮬레이션
+window.simulateReportGenerationTest = function() {
+  closeAllModals();
+  var dummyDbKey = "test_user_" + Date.now();
+  window.lastReportOrderData = {
+    orderId: "TEST_" + Date.now(),
+    dbKey: dummyDbKey,
+    name_val: (typeof customer_name !== 'undefined' && customer_name) ? customer_name : "홍길동",
+    email_full: "customer@realrankus.com",
+    budget_cash: (typeof budget_cash !== 'undefined' && budget_cash) ? budget_cash : 800000000,
+    budget_loan: (typeof budget_loan !== 'undefined' && budget_loan) ? budget_loan : 400000000,
+    wanted_region: (typeof wanted_region !== 'undefined' && wanted_region.length > 0) ? wanted_region : [["Seoul", "1168000000_Seoul_Gangnam"]],
+    wanted_region_str: (typeof wanted_region_str !== 'undefined' && wanted_region_str.length > 0) ? wanted_region_str : ["서울시 강남구"],
+    fav_point_x: (typeof fav_point_x !== 'undefined' && fav_point_x) ? fav_point_x : 127.0473774,
+    fav_point_y: (typeof fav_point_y !== 'undefined' && fav_point_y) ? fav_point_y : 37.51733193,
+    fav_point_address: (typeof fav_point_address !== 'undefined' && fav_point_address) ? fav_point_address : "서울 강남구 역삼동",
+    trans_method: (typeof movingMethod !== 'undefined') ? movingMethod : "public",
+    priority_living: (typeof priority_living !== 'undefined') ? priority_living : 100,
+    priority_trans: (typeof priority_trans !== 'undefined') ? priority_trans : 100,
+    priority_infra: (typeof priority_infra !== 'undefined') ? priority_infra : 100,
+    priority_edu: (typeof priority_edu !== 'undefined') ? priority_edu : 100,
+    age_val: 2,
+    age_txt: "30대 (커리어상승, 자녀양육)",
+    family_val: 3,
+    family_txt: "3인",
+    children_val: 1,
+    children_txt: "1명",
+    children_type_val: 1,
+    children_type_txt: "영유아/미취학",
+    income_val: 3,
+    income_txt: "7천만~1억원",
+    requestDateStr: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    paid: true,
+    progress: 'Paid'
+  };
+
+  toastMessage("⚡ 1:1 맞춤형 리포트 생성 및 실시간 UI 팝업을 가동합니다.", 2500);
+  setTimeout(function() {
+    onPaymentCompleted(dummyDbKey);
+  }, 250);
+};
