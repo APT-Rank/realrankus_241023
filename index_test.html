@@ -189,6 +189,11 @@
     70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
     100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
   }
+  /* 리포트 신청 및 프로그레스 모달 오픈 시 backdrop 전체화면(100%) 강제 적용 */
+  body:has(#reportProgressModal.show) .modal-backdrop,
+  body:has(#requestReportModal.show) .modal-backdrop {
+    width: 100% !important;
+  }
 </style>
 
 <body ontouchstart="">

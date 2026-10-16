@@ -111,6 +111,10 @@
   /**
    * 모달 열기/닫기 제어
    */
+  $(document).on('show.bs.modal shown.bs.modal', '#reportProgressModal', function () {
+    $('.modal-backdrop').css({ width: '100%' });
+  });
+
   window.openReportProgressModal = function () {
     var modalEl = document.getElementById('reportProgressModal');
     if (!modalEl) return;
@@ -135,6 +139,12 @@
         console.warn('모달 표시 예외 처리:', err);
         $('#reportProgressModal').modal('show');
       }
+
+      // PC 상세정보 모달용 600px 제한을 해제하고 전체화면(100%) backdrop 적용
+      $('.modal-backdrop').css({ width: '100%' });
+      setTimeout(function() {
+        $('.modal-backdrop').css({ width: '100%' });
+      }, 50);
 
       // 플로팅 뱃지도 함께 노출
       $('#reportFloatingProgress').show();
