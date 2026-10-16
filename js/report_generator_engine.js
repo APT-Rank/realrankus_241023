@@ -2004,6 +2004,298 @@
       }
     );
   };
+
+  // ===========================================================================
+  // [Step 5] 내 리포트 보관함 (My Report Archive) 연동 및 관리 함수
+  // ===========================================================================
+
+  /**
+   * 보관함에서 저장된 모든 리포트 목록 로드 (LocalStorage 및 Firebase RTDB 병합)
+   */
+  window.loadMyReportsList = async function (forceRefresh) {
+    var $container = $('#myReportsListContainer');
+    if ($container.length === 0) return;
+
+    $container.html(`
+      <div class="text-center py-5">
+        <div class="spinner-border text-danger" role="status"></div>
+        <div class="mt-2 text-muted" style="font-size: 13px;">내 리포트 보관함을 불러오는 중입니다...</div>
+      </div>
+    `);
+
+    var reportsMap = {};
+
+    // 1. LocalStorage에서 로드
+    try {
+      var localRaw = localStorage.getItem('realrankus_my_reports');
+      if (localRaw) {
+        var localList = JSON.parse(localRaw);
+        if (Array.isArray(localList)) {
+          localList.forEach(function (item) {
+            var k = item.dbKey || item.orderId;
+            if (k) reportsMap[k] = item;
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('LocalStorage 리포트 목록 로드 오류:', e);
+    }
+
+    // 2. Firebase Auth 로그인 사용자일 경우 RTDB의 user_reports/{uid} 에서 추가 로드
+    var uid = '';
+    if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+      uid = firebase.auth().currentUser.uid;
+    }
+
+    if (uid) {
+      try {
+        var rtdbRef = null;
+        if (typeof requestReport_db !== 'undefined' && requestReport_db.database) {
+          rtdbRef = requestReport_db.database().ref('user_reports/' + uid);
+        } else if (typeof firebase !== 'undefined' && firebase.database) {
+          rtdbRef = firebase.database().ref('user_reports/' + uid);
+        }
+
+        if (rtdbRef) {
+          var snap = await rtdbRef.once('value');
+          if (snap.exists() && snap.val()) {
+            var dbReports = snap.val();
+            Object.keys(dbReports).forEach(function (k) {
+              var r = dbReports[k];
+              if (r) {
+                // RTDB 데이터를 우선하거나 병합
+                reportsMap[k] = Object.assign({}, reportsMap[k] || {}, r);
+              }
+            });
+          }
+        }
+      } catch (dbErr) {
+        console.warn('RTDB 내 리포트 목록 동기화 오류:', dbErr);
+      }
+    }
+
+    var reportList = Object.values(reportsMap);
+
+    // 최신 생성순 정렬
+    reportList.sort(function (a, b) {
+      var timeA = new Date(a.generatedAt || a.todayStr || 0).getTime();
+      var timeB = new Date(b.generatedAt || b.todayStr || 0).getTime();
+      return timeB - timeA;
+    });
+
+    $('#myReportsCountBadge').text(reportList.length + '개');
+
+    if (reportList.length === 0) {
+      $container.html(`
+        <div class="my-report-empty">
+          <i class="fa-regular fa-folder-open d-block"></i>
+          <h5 class="fw-bold text-dark mb-2">보관된 리포트가 없습니다</h5>
+          <p class="mb-4" style="font-size: 13.5px;">나의 소득과 가용 예산에 맞춘 1:1 맞춤형 부동산 리포트를 지금 바로 발행해 보세요.</p>
+          <button class="btn btn-danger fw-bold px-4" onclick="$('#myReportsModal').modal('hide'); openReportRequestModal();">
+            <i class="fa-solid fa-plus me-1"></i>새 리포트 발행하기
+          </button>
+        </div>
+      `);
+      return;
+    }
+
+    var html = '';
+    for (var i = 0; i < reportList.length; i++) {
+      var rep = reportList[i];
+      var key = rep.dbKey || rep.orderId || ('report_' + i);
+      var cName = rep.customerName || '고객';
+      var dStr = rep.todayStr || (rep.generatedAt ? rep.generatedAt.slice(0, 10) : '최근');
+      var order = rep.orderData || {};
+
+      var cashNum = Number(order.budget_cash) || 0;
+      var loanNum = Number(order.budget_loan) || 0;
+      var totalStr = formatKoreanCurrency(cashNum + loanNum);
+      var regList = order.wanted_region_str || ['서울'];
+      var regSummary = regList.join(', ');
+
+      var topNames = rep.top10Names || [];
+      if (topNames.length === 0 && Array.isArray(rep.top10)) {
+        topNames = rep.top10.map(function (t) { return t['아파트명']; });
+      }
+
+      var tagsHtml = '';
+      for (var tIdx = 0; tIdx < Math.min(topNames.length, 5); tIdx++) {
+        tagsHtml += `<span class="my-report-top10-tag">${tIdx + 1}. ${topNames[tIdx]}</span>`;
+      }
+      if (topNames.length > 5) {
+        tagsHtml += `<span class="my-report-top10-tag">+${topNames.length - 5}곳 더보기</span>`;
+      }
+
+      var pdfDownloadBtn = '';
+      if (rep.pdfUrl) {
+        pdfDownloadBtn = `
+          <a href="${rep.pdfUrl}" target="_blank" download class="btn btn-sm btn-outline-danger">
+            <i class="fa-solid fa-cloud-arrow-down me-1"></i>클라우드 PDF
+          </a>
+        `;
+      }
+
+      html += `
+        <div class="my-report-card" id="my_report_card_${i}">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="my-report-badge-date"><i class="fa-regular fa-calendar-check me-1"></i>${dStr} 발행</span>
+            <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-circle-check me-1"></i>분석 완료</span>
+          </div>
+          <div class="my-report-title">${cName}님을 위한 맞춤형 추천 보고서</div>
+          <div class="my-report-summary">
+            <div><i class="fa-solid fa-coins text-warning me-1"></i>가용 예산: <strong>${totalStr}원</strong> (현금 ${formatKoreanCurrency(cashNum)}원 + 대출 ${formatKoreanCurrency(loanNum)}원)</div>
+            <div><i class="fa-solid fa-location-dot text-danger me-1"></i>희망 지역: <strong>${regSummary}</strong></div>
+          </div>
+          <div class="mt-2 mb-2">
+            ${tagsHtml}
+          </div>
+          <div class="my-report-actions justify-content-between align-items-center">
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-danger fw-bold px-3" onclick="viewArchivedReport('${key}')">
+                <i class="fa-solid fa-book-open me-1"></i>리포트 열람
+              </button>
+              ${pdfDownloadBtn}
+            </div>
+            <div>
+              <button class="btn btn-sm btn-outline-secondary border-0 text-muted" onclick="deleteArchivedReport('${key}')" title="보관함에서 삭제">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    $container.html(html);
+  };
+
+  /**
+   * 보관함 모달 오픈 함수
+   */
+  window.openMyReportsModal = function () {
+    var modalEl = document.getElementById('myReportsModal');
+    if (!modalEl) return;
+
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      var modalInst = bootstrap.Modal.getOrCreateInstance
+        ? bootstrap.Modal.getOrCreateInstance(modalEl)
+        : bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+      modalInst.show();
+    } else {
+      $('#myReportsModal').modal('show');
+    }
+
+    $('.modal-backdrop').css({ width: '100%' });
+    window.loadMyReportsList();
+  };
+
+  /**
+   * 보관된 특정 리포트 열람 (ID로 조회 후 모달 렌더링)
+   */
+  window.viewArchivedReport = function (reportKey) {
+    if (!reportKey) return;
+
+    var cleanKey = reportKey.startsWith('/') ? reportKey.substring(1) : reportKey;
+    var targetReport = null;
+
+    // 1. LocalStorage 검색
+    try {
+      var localRaw = localStorage.getItem('realrankus_my_reports');
+      if (localRaw) {
+        var localList = JSON.parse(localRaw);
+        if (Array.isArray(localList)) {
+          targetReport = localList.find(function (r) {
+            return r.dbKey === cleanKey || r.orderId === cleanKey;
+          });
+        }
+      }
+    } catch (e) {}
+
+    // 2. 만약 찾았으면 즉시 열기
+    if (targetReport && Array.isArray(targetReport.top10) && targetReport.top10.length > 0) {
+      $('#myReportsModal').modal('hide');
+      setTimeout(function () {
+        window.openCompletedReportModal(targetReport);
+      }, 300);
+      return;
+    }
+
+    // 3. 없으면 RTDB에서 단건 조회 후 열기
+    if (typeof toastMessage === 'function') {
+      toastMessage('클라우드에서 리포트 상세 데이터를 불러오는 중입니다...', 2500);
+    }
+
+    var uid = '';
+    if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+      uid = firebase.auth().currentUser.uid;
+    }
+
+    var rtdbPromise = null;
+    if (uid && typeof firebase !== 'undefined' && firebase.database) {
+      rtdbPromise = firebase.database().ref('user_reports/' + uid + '/' + cleanKey).once('value');
+    } else if (typeof firebase !== 'undefined' && firebase.database) {
+      rtdbPromise = firebase.database().ref(cleanKey).once('value');
+    }
+
+    if (rtdbPromise) {
+      rtdbPromise
+        .then(function (snap) {
+          if (snap.exists() && snap.val()) {
+            var data = snap.val().reportArchive || snap.val();
+            $('#myReportsModal').modal('hide');
+            setTimeout(function () {
+              window.openCompletedReportModal(data);
+            }, 300);
+          } else {
+            alert('해당 리포트의 상세 데이터를 찾을 수 없습니다.');
+          }
+        })
+        .catch(function (err) {
+          console.error('리포트 조회 실패:', err);
+          alert('리포트를 불러오는 중 오류가 발생했습니다.');
+        });
+    } else {
+      alert('저장된 리포트 데이터를 불러올 수 없습니다.');
+    }
+  };
+
+  /**
+   * 보관된 특정 리포트 삭제
+   */
+  window.deleteArchivedReport = function (reportKey) {
+    if (!reportKey) return;
+    if (!confirm('이 리포트를 내 보관함에서 삭제하시겠습니까?')) return;
+
+    var cleanKey = reportKey.startsWith('/') ? reportKey.substring(1) : reportKey;
+
+    // 1. LocalStorage 삭제
+    try {
+      var localRaw = localStorage.getItem('realrankus_my_reports');
+      if (localRaw) {
+        var localList = JSON.parse(localRaw);
+        if (Array.isArray(localList)) {
+          localList = localList.filter(function (r) {
+            return r.dbKey !== cleanKey && r.orderId !== cleanKey;
+          });
+          localStorage.setItem('realrankus_my_reports', JSON.stringify(localList));
+        }
+      }
+    } catch (e) {}
+
+    // 2. RTDB 삭제
+    var uid = '';
+    if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+      uid = firebase.auth().currentUser.uid;
+    }
+    if (uid && typeof firebase !== 'undefined' && firebase.database) {
+      firebase.database().ref('user_reports/' + uid + '/' + cleanKey).remove();
+    }
+
+    if (typeof toastMessage === 'function') {
+      toastMessage('리포트가 보관함에서 삭제되었습니다.', 2000);
+    }
+    window.loadMyReportsList();
+  };
 })(window, jQuery);
 
 

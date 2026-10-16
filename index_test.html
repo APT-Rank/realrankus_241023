@@ -133,8 +133,8 @@
   <script defer src="./js/unfied_search.js" type="text/javascript"></script>
   <script defer src="./js/rearrange.js" type="text/javascript"></script>
   <script defer src="./js/share.js?v=20261010_1" type="text/javascript"></script>
-  <script defer src="./js/request_report_test.js?v=20261016_3" type="text/javascript"></script>
-  <script defer src="./js/report_generator_engine.js?v=20261016_3" type="text/javascript"></script>
+  <script defer src="./js/request_report_test.js?v=20261016_4" type="text/javascript"></script>
+  <script defer src="./js/report_generator_engine.js?v=20261016_4" type="text/javascript"></script>
   <script defer src="./js/weight_cal.js" type="text/javascript"></script>
   <script defer src="./js/weight_array.js" type="text/javascript"></script>
   <script defer src="./js/simulation.js" type="text/javascript"></script>
@@ -463,6 +463,84 @@
     align-items: end;
     text-align: center;
     margin-bottom: 40px;
+  }
+
+  /* ==========================================================================
+     [Step 5] 내 리포트 보관함 (My Report Archive) 모달 및 카드 스타일
+     ========================================================================== */
+  #myReportsModal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+  }
+  #myReportsModal .modal-header {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 22px;
+  }
+  .my-report-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .my-report-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+  .my-report-badge-date {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .my-report-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+  .my-report-summary {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .my-report-top10-tag {
+    display: inline-block;
+    font-size: 11.5px;
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+  .my-report-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .my-report-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #64748b;
+  }
+  .my-report-empty i {
+    font-size: 48px;
+    color: #cbd5e1;
+    margin-bottom: 14px;
   }
 </style>
 
@@ -897,9 +975,12 @@
     <button id="graphButton" class="btn" onClick="showGraphChart()">동별 고·저평가 아파트 분석</button>
   </div>
 
-  <!-- [Step 3 테스트] 리포트 발행 / 토스 결제 및 생성 UI 즉시 테스트 버튼 -->
+  <!-- [Step 3 & Step 5 테스트] 리포트 발행 / 토스 결제 및 생성 UI / 내 리포트 보관함 즉시 테스트 버튼 -->
   <div id="testReportPayBtnContainer"
     style="position: fixed; top: 8px; right: 90px; z-index: 920; display: flex; gap: 6px;">
+    <button class="btn btn-sm btn-dark text-white fw-bold" onclick="openMyReportsModal()" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 20px; font-size: 12px; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2);">
+      <i class="fa-solid fa-folder-open text-warning me-1"></i>내 리포트 보관함
+    </button>
     <button class="btn btn-sm btn-light text-danger fw-bold" onclick="openReportRequestModal()" style="box-shadow: 0 4px 12px rgba(0,0,0,0.25); border-radius: 20px; font-size: 12px; padding: 6px 14px; border: 1px solid rgba(228,59,70,0.3);">
       <i class="fa-solid fa-credit-card text-danger me-1"></i>리포트 결제창 테스트
     </button>
@@ -1026,6 +1107,36 @@
               <div id="user_eod_middle"></div>
               <div id="user_eod_bottom"></div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [Step 5] 내 리포트 보관함 (My Report Archive) 모달 -->
+  <div class="modal fade" id="myReportsModal" tabindex="-1" aria-labelledby="myReportsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex align-items-center gap-2">
+            <h5 class="modal-title fw-bold" id="myReportsModalLabel">
+              <i class="fa-solid fa-folder-open text-warning me-2"></i>내 리포트 보관함
+            </h5>
+            <span id="myReportsCountBadge" class="badge bg-secondary" style="font-size: 11px;">0개</span>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3 p-md-4" style="background: #f8fafc; min-height: 380px;">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted" style="font-size: 13px;">
+              발행하신 1:1 맞춤형 추천 리포트를 언제든지 다시 열람하거나 PDF로 다운로드하실 수 있습니다.
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadMyReportsList(true)">
+              <i class="fa-solid fa-arrows-rotate me-1"></i>새로고침
+            </button>
+          </div>
+          <div id="myReportsListContainer">
+            <!-- 리포트 카드 목록이 동적으로 렌더링됩니다 -->
           </div>
         </div>
       </div>
