@@ -329,11 +329,19 @@
       }
     }
 
+    var aiSimInterval = null;
+    function stopAiSimTicker() {
+      if (aiSimInterval) {
+        clearInterval(aiSimInterval);
+        aiSimInterval = null;
+      }
+    }
+
     try {
       // =========================================================================
-      // [1단계: 10%] 고객 맞춤 상담 정보 확인
+      // [1단계: 5%] 고객 맞춤 상담 정보 확인
       // =========================================================================
-      reportStep(10, '고객 맞춤 상담 정보 확인 중... (10%)', '주문 정보 및 생애주기/예산 설정 데이터를 불러오고 있습니다.');
+      reportStep(5, '고객 맞춤 상담 정보 확인 중... (5%)', '주문 정보 및 생애주기/예산 설정 데이터를 불러오고 있습니다.');
       var orderData = await fetchOrderData(dbKey);
       console.log('[Step 3 Engine] 주문 데이터 로드 완료:', orderData);
 
@@ -343,9 +351,9 @@
       );
 
       // =========================================================================
-      // [2단계: 25%] 후보 지역 빅데이터 수집
+      // [2단계: 10% ~ 16%] 후보 지역 빅데이터 수집
       // =========================================================================
-      reportStep(25, '후보 지역 아파트 실거래 빅데이터 수집 중... (25%)', '선택하신 관심 지역의 최신 실거래 및 가치평가 데이터를 병렬 다운로드합니다.');
+      reportStep(10, '후보 지역 아파트 실거래 빅데이터 수집 중... (10%)', '선택하신 관심 지역의 최신 실거래 및 가치평가 데이터를 병렬 다운로드합니다.');
       
       var targetMonth =
         typeof window.selectedMonth !== 'undefined' && window.selectedMonth
@@ -362,9 +370,10 @@
       for (var r = 0; r < wantedRegions.length; r++) {
         var rCode = wantedRegions[r][1];
         var rName = orderData.wanted_region_str ? orderData.wanted_region_str[r] : rCode;
+        var regPct = 10 + Math.round(((r + 1) / wantedRegions.length) * 6);
         reportStep(
-          25 + Math.round((r / wantedRegions.length) * 15),
-          '후보 지역 아파트 실거래 빅데이터 수집 중...',
+          regPct,
+          `후보 지역 아파트 실거래 빅데이터 수집 중... (${regPct}%)`,
           `[${rName || rCode}] 지역 실거래 빅데이터 수집 중... (${r + 1}/${wantedRegions.length})`
         );
         var regData = await fetchRegionData(rCode, targetMonth);
@@ -388,9 +397,9 @@
       console.log(`[Step 3 Engine] 수집된 고유 단지 수: ${uniqueComplexes.length}개`);
 
       // =========================================================================
-      // [3단계: 45%] 예산 및 4대 가치 가중치 필터링 & 정렬
+      // [3단계: 20%] 예산 및 4대 가치 가중치 필터링 & 정렬
       // =========================================================================
-      reportStep(45, '예산 및 우선순위 알고리즘 단지 필터링 중... (45%)', '가용 예산 범위(현금+대출)와 주거·교통·인프라·교육 가중치를 분석합니다.');
+      reportStep(20, '예산 및 우선순위 알고리즘 단지 필터링 중... (20%)', '가용 예산 범위(현금+대출)와 주거·교통·인프라·교육 가중치를 분석합니다.');
 
       var budgetCash = Number(orderData.budget_cash) || 0;
       var budgetLoan = Number(orderData.budget_loan) || 0;
@@ -478,9 +487,9 @@
       console.log(`[Step 3 Engine] 가중치 정렬 완료. 상위 후보군 추출`);
 
       // =========================================================================
-      // [4단계: 60%] 자주 가는 위치까지의 이동 시간 분석
+      // [4단계: 25%] 자주 가는 위치까지의 이동 시간 분석
       // =========================================================================
-      reportStep(60, '자주 가는 위치까지의 이동 시간 분석 중... (60%)', '출퇴근 및 주요 목적지까지의 경로와 소요 시간을 계산합니다.');
+      reportStep(25, '자주 가는 위치까지의 이동 시간 분석 중... (25%)', '출퇴근 및 주요 목적지까지의 경로와 소요 시간을 계산합니다.');
 
       var favX = Number(orderData.fav_point_x) || 127.0473774;
       var favY = Number(orderData.fav_point_y) || 37.51733193;
@@ -543,9 +552,9 @@
       console.log(`[Step 3 Engine] 최종 추천 10개 단지 선정 완료:`, top10.map(t => t['아파트명']));
 
       // =========================================================================
-      // [5단계: 75%] 상위 10개 단지 상세 스펙 분석 (complex_info)
+      // [5단계: 30%] 상위 10개 단지 상세 스펙 분석 (complex_info)
       // =========================================================================
-      reportStep(75, '상위 10개 추천 단지 상세 스펙 분석 중... (75%)', '단지별 학원가, 상권, 혐오시설, 커뮤니티 등 상세 인프라 데이터를 통합합니다.');
+      reportStep(30, '상위 10개 추천 단지 상세 스펙 분석 중... (30%)', '단지별 학원가, 상권, 혐오시설, 커뮤니티 등 상세 인프라 데이터를 통합합니다.');
 
       if (typeof firebase !== 'undefined' && firebase.database) {
         var rtdb = firebase.database();
@@ -573,9 +582,46 @@
       }
 
       // =========================================================================
-      // [6단계: 90%] Gemini AI 맞춤형 종합 리포트 생성 (Cloud Functions)
+      // [6단계: 32% ~ 98%] Gemini AI 맞춤형 종합 리포트 생성 (균등 분할 프로그레스 시뮬레이션)
       // =========================================================================
-      reportStep(90, 'Gemini AI 수석 멘토 맞춤형 종합 리포트 생성 중... (90%)', 'Google Gemini AI가 고객님의 생애주기 맞춤형 총평과 단지별 브리핑을 집필합니다.');
+      var simPercent = 32;
+      reportStep(
+        simPercent,
+        `Gemini AI 수석 멘토 총평 집필 중... (${simPercent}%)`,
+        `Google Gemini AI가 ${customerName}님의 생애주기와 가용 예산을 종합 분석하여 Consulting Note를 작성하고 있습니다.`
+      );
+
+      // AI 응답 대기 시간(약 15~30초) 동안 32%에서 98%까지 일정한 간격으로 부드럽게 상승
+      aiSimInterval = setInterval(function () {
+        if (!window.reportEngineState.isRunning) {
+          stopAiSimTicker();
+          return;
+        }
+        if (simPercent < 98) {
+          simPercent += 1;
+        }
+
+        var simStepTitle = '';
+        var simDetailMsg = '';
+
+        if (simPercent < 42) {
+          simStepTitle = `Gemini AI 수석 멘토 총평 집필 중... (${simPercent}%)`;
+          simDetailMsg = `Google Gemini AI가 ${customerName}님의 생애주기와 가용 예산을 분석하여 Consulting Note를 작성하고 있습니다.`;
+        } else if (simPercent < 92 && top10.length > 0) {
+          var aptIdx = Math.min(
+            top10.length - 1,
+            Math.floor(((simPercent - 42) / 50) * top10.length)
+          );
+          var curAptName = top10[aptIdx]['아파트명'] || `추천 단지 ${aptIdx + 1}`;
+          simStepTitle = `추천 단지별 1:1 정밀 브리핑 작성 중... (${simPercent}%)`;
+          simDetailMsg = `[${aptIdx + 1}/${top10.length}] '${curAptName}' 단지의 강점·고려사항 및 실거주/투자 가치를 집필하고 있습니다.`;
+        } else {
+          simStepTitle = `리포트 레이아웃 조립 및 최종 검수 중... (${simPercent}%)`;
+          simDetailMsg = `생성된 10개 단지 브리핑과 예상도달가격, 입지 차트 데이터를 보고서 양식으로 통합하고 있습니다.`;
+        }
+
+        reportStep(simPercent, simStepTitle, simDetailMsg);
+      }, 380);
 
       var todayStr = new Date().toISOString().slice(0, 10);
       var ageDesList = [
@@ -624,6 +670,8 @@
             analysis: `${c['아파트명']} 1:1 맞춤 분석|||가용 예산 내에서 우수한 입지 가치와 거주 만족도를 누릴 수 있는 단지입니다.|||<ul><li>우수한 가치 총점 (${Number(c['가치 총점']).toFixed(1)}점)</li><li>안정적인 대단지 환경</li></ul>|||<ul><li>주변 호재 및 실거래 추이 모니터링 권장</li></ul>`,
           };
         });
+      } finally {
+        stopAiSimTicker();
       }
 
       // =========================================================================
@@ -672,6 +720,7 @@
         window.openCompletedReportModal(finalReportData);
       }, 900);
     } catch (error) {
+      stopAiSimTicker();
       console.error('[Step 3 Engine] 리포트 생성 실패:', error);
       window.reportEngineState.isRunning = false;
       window.reportEngineState.error = error;
