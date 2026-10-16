@@ -964,7 +964,8 @@
     var favAddr = orderData.fav_point_address || '주요 목적지';
 
     // 4. TOP 10 추천 단지 카드 조립
-    var complexHtml = `<div style="margin-bottom: 14px;"><span class="reportFocus">${totalKor}원 으로 추천 드리는 단지는 다음과 같습니다.</span></div>`;
+    var complexIntroLineHtml = `<div style="margin-top: 16px;"><span class="reportFocus">${totalKor}원 으로 추천 드리는 단지는 다음과 같습니다.</span></div>`;
+    var complexHtml = '';
 
     for (var i = 0; i < top10.length; i++) {
       var c = top10[i];
@@ -1014,6 +1015,8 @@
         pyListHtml += `<div>${areaText} / ${salesText} <span style="color: #b61313">${targetPriceKor}</span></div>`;
       }
 
+      var pyMultiColClass = possibleArr.length >= 4 ? 'py_multi_col' : '';
+
       // Gemini AI 분석 코멘트 분리 (headline ||| story ||| strength ||| weakness)
       var rawAi =
         c.ai_analysis ||
@@ -1034,7 +1037,7 @@
             <div><i class="fa-solid ${movingIcon}"></i></div>
             <div>${favAddr}까지 <span class="reportFocus">${movingMethodKor}으로 약 ${movingTimeKor} 소요 예상</span></div>
           </div>
-          <div class="report_py_info">
+          <div class="report_py_info ${pyMultiColClass}">
             ${pyListHtml}
           </div>
           <div class="complex_value">
@@ -1077,6 +1080,7 @@
           <div id="user_consulting_note_title">Consulting Note</div>
           <div id="user_consulting_note">${userGuide}</div>
         </div>
+        ${complexIntroLineHtml}
       </div>
       ${complexHtml}
     `;
@@ -1178,8 +1182,10 @@
         $('.modal-backdrop').css({ width: '100%' });
         initReportMapsAndCharts(reportData);
 
-        // 백그라운드 PDF 생성 및 Firebase Storage 업로드 실행
-        uploadReportPDFToStorage(reportData);
+        // 미니맵 타일 및 차트 렌더링이 안정화된 뒤 백그라운드 Storage 업로드 실행
+        setTimeout(function () {
+          uploadReportPDFToStorage(reportData);
+        }, 900);
       }, 350);
     }, 220);
   };
@@ -1298,11 +1304,126 @@
   }
 
   /**
-   * [핵심] 단지별 1페이지(1-Page-Per-Complex) 구조로 정확히 분할된 A4 PDF 객체(jsPDF) 생성
+   * 단지 카드(.report_apt)의 가로 폭은 100%(730px -> PDF 190mm)로 동일하게 고정한 채,
+   * 세로 높이가 A4 1페이지 허용치(maxDomH)를 초과할 경우 내부 여백과 폰트 크기만 단계적으로 조여
+   * 모든 단지 박스의 가로 크기가 완벽히 동일하게 유지되도록 보정합니다.
+   */
+  function fitAptBoxHeightKeepingWidth(aptEl, maxDomH) {
+    var savedStyles = [];
+    function setTempStyle(el, prop, val) {
+      if (!el) return;
+      savedStyles.push({ el: el, prop: prop, oldVal: el.style[prop] });
+      el.style[prop] = val;
+    }
+
+    // 1. 모든 단지 카드의 가로 박스 크기를 동일하게 고정
+    setTempStyle(aptEl, 'width', '730px');
+    setTempStyle(aptEl, 'minWidth', '730px');
+    setTempStyle(aptEl, 'maxWidth', '730px');
+    setTempStyle(aptEl, 'boxSizing', 'border-box');
+    setTempStyle(aptEl, 'marginBottom', '0px');
+
+    if (aptEl.offsetHeight <= maxDomH) {
+      return function restore() {
+        for (var i = savedStyles.length - 1; i >= 0; i--) {
+          var s = savedStyles[i];
+          s.el.style[s.prop] = s.oldVal;
+        }
+      };
+    }
+
+    // 2. 세로 높이가 길 경우 내부 평형표 2단 전환 및 여백/지도 높이 1차 축소 (가로 폭은 730px 고정)
+    var pyEl = aptEl.querySelector('.report_py_info');
+    if (pyEl && pyEl.children && pyEl.children.length >= 3) {
+      setTempStyle(pyEl, 'gridTemplateColumns', '1fr 1fr');
+      setTempStyle(pyEl, 'columnGap', '10px');
+      setTempStyle(pyEl, 'rowGap', '2px');
+      setTempStyle(pyEl, 'fontSize', '11.5px');
+      setTempStyle(pyEl, 'margin', '4px 0');
+      setTempStyle(pyEl, 'paddingBottom', '5px');
+    }
+
+    setTempStyle(aptEl, 'padding', '12px 16px');
+    var infoEl = aptEl.querySelector('.report_apt_info');
+    if (infoEl) {
+      setTempStyle(infoEl, 'margin', '4px 0');
+      setTempStyle(infoEl, 'paddingBottom', '5px');
+      setTempStyle(infoEl, 'rowGap', '3px');
+      setTempStyle(infoEl, 'fontSize', '12.5px');
+    }
+
+    var valEl = aptEl.querySelector('.complex_value');
+    if (valEl) {
+      setTempStyle(valEl, 'margin', '6px 0');
+    }
+    var mapEl = aptEl.querySelector('.complex_map');
+    if (mapEl) {
+      setTempStyle(mapEl, 'height', '215px');
+    }
+    var graphEl = aptEl.querySelector('.complex_score .graph');
+    if (graphEl) {
+      setTempStyle(graphEl, 'height', '128px');
+    }
+
+    // 3. 여전히 maxDomH를 초과하면 코멘트 영역 폰트 크기/줄간격 단계별 축소
+    var fontSteps = [
+      { fontSize: '12.5px', lineHeight: '1.46', margin: '6px' },
+      { fontSize: '11.8px', lineHeight: '1.38', margin: '4px' },
+      { fontSize: '11.0px', lineHeight: '1.30', margin: '3px' },
+      { fontSize: '10.2px', lineHeight: '1.24', margin: '2px' },
+    ];
+
+    var commentEl = aptEl.querySelector('.complex_comment');
+    var contentEls = aptEl.querySelectorAll('.complex_content');
+    var liEls = aptEl.querySelectorAll('.complex_content ul li');
+    var headEl = aptEl.querySelector('.complex_headline');
+    var strEls = aptEl.querySelectorAll('.complex_strength, .complex_weakness');
+
+    for (var step = 0; step < fontSteps.length; step++) {
+      if (aptEl.offsetHeight <= maxDomH) break;
+      var cfg = fontSteps[step];
+      if (commentEl) setTempStyle(commentEl, 'marginTop', cfg.margin);
+      if (headEl) {
+        setTempStyle(headEl, 'marginTop', cfg.margin);
+        setTempStyle(headEl, 'marginBottom', cfg.margin);
+        setTempStyle(headEl, 'paddingTop', cfg.margin);
+        setTempStyle(headEl, 'fontSize', '14px');
+      }
+      for (var cIdx = 0; cIdx < contentEls.length; cIdx++) {
+        setTempStyle(contentEls[cIdx], 'fontSize', cfg.fontSize);
+        setTempStyle(contentEls[cIdx], 'lineHeight', cfg.lineHeight);
+        setTempStyle(contentEls[cIdx], 'marginBottom', cfg.margin);
+      }
+      for (var lIdx = 0; lIdx < liEls.length; lIdx++) {
+        setTempStyle(liEls[lIdx], 'marginBottom', '2px');
+      }
+      for (var sIdx = 0; sIdx < strEls.length; sIdx++) {
+        setTempStyle(strEls[sIdx], 'marginTop', cfg.margin);
+        setTempStyle(strEls[sIdx], 'marginBottom', '2px');
+        setTempStyle(strEls[sIdx], 'fontSize', '13px');
+      }
+    }
+
+    // 4. 극단적으로 긴 텍스트일 경우에도 가로 폭(730px)은 절대 줄이지 않고 높이를 maxDomH로 제한
+    if (aptEl.offsetHeight > maxDomH) {
+      setTempStyle(aptEl, 'maxHeight', maxDomH + 'px');
+      setTempStyle(aptEl, 'overflow', 'hidden');
+    }
+
+    return function restore() {
+      for (var r = savedStyles.length - 1; r >= 0; r--) {
+        var st = savedStyles[r];
+        st.el.style[st.prop] = st.oldVal;
+      }
+    };
+  }
+
+  /**
+   * [핵심] 단지별 1페이지(1-Page-Per-Complex) + 모든 단지 박스 가로폭 100% 동일 + 마지막 맺음말 별도 1페이지 PDF 생성
    * - Page 1: 표지 (#user_cover_page)
    * - Page 2: 고객 정보 + 예산 + 희망지역 + Consulting Note (#user_intro_page)
-   * - Page 3 ~ N+2: 추천 단지 1번 ~ 10번 (.report_apt 각각 무조건 1페이지씩 배정, 높이 초과 시 자동 비율 축소)
-   * - 마지막 Page: 맺음말 (#user_end_of_document)
+   * - Page 3 ~ N+2: 추천 단지 1번 ~ 10번 (.report_apt 각각 1페이지, 모든 단지 페이지의 박스 가로 크기 190mm로 100% 동일)
+   * - 마지막 별도 Page: 감사합니다 / 리얼랭커스 맺음말 (#user_end_of_document)
    */
   async function buildReportPdfPerPage() {
     var JsPDFClass =
@@ -1310,8 +1431,15 @@
       window.jsPDF ||
       null;
 
-    // html2canvas + jsPDF 직접 제어가 가능한 경우: 섹션/단지별 1페이지 100% 보장
-    if (JsPDFClass && typeof html2canvas === 'function') {
+    if (!JsPDFClass || typeof html2canvas !== 'function') {
+      return null;
+    }
+
+    var viewerBody = document.getElementById('reportViewerBody');
+    var prevScrollTop = viewerBody ? viewerBody.scrollTop : 0;
+    if (viewerBody) viewerBody.scrollTop = 0;
+
+    try {
       var pdf = new JsPDFClass({
         orientation: 'portrait',
         unit: 'mm',
@@ -1321,18 +1449,18 @@
 
       var pageNodes = [];
       var coverEl = document.getElementById('user_cover_page');
-      if (coverEl) pageNodes.push({ el: coverEl, fullBleed: true });
+      if (coverEl) pageNodes.push({ el: coverEl, type: 'cover', fullBleed: true });
 
       var introEl = document.getElementById('user_intro_page');
-      if (introEl) pageNodes.push({ el: introEl, fullBleed: false });
+      if (introEl) pageNodes.push({ el: introEl, type: 'intro', fullBleed: false });
 
       var aptEls = document.querySelectorAll('#user_report_area .report_apt');
       for (var i = 0; i < aptEls.length; i++) {
-        pageNodes.push({ el: aptEls[i], fullBleed: false });
+        pageNodes.push({ el: aptEls[i], type: 'apt', fullBleed: false });
       }
 
       var eodEl = document.getElementById('user_end_of_document');
-      if (eodEl) pageNodes.push({ el: eodEl, fullBleed: true });
+      if (eodEl) pageNodes.push({ el: eodEl, type: 'eod', fullBleed: true });
 
       var pageW = 210;
       var pageH = 297;
@@ -1346,40 +1474,88 @@
           pdf.addPage('a4', 'portrait');
         }
 
+        var marginX = item.fullBleed ? 0 : 10;
+        var marginY = item.fullBleed ? 0 : 10;
+        var maxW = pageW - marginX * 2; // 190mm (일반/단지 페이지) 또는 210mm (표지/맺음말)
+        var maxH = pageH - marginY * 2; // 277mm (일반/단지 페이지) 또는 297mm (표지/맺음말)
+
+        var restoreFn = null;
+        var prevEodBorder = '';
+        var prevEodMinH = '';
+        var prevEodH = '';
+
+        if (item.type === 'apt') {
+          // 가로 폭 730px 기준 A4 1페이지 최대 허용 픽셀 높이 (~1064px)
+          var maxDomH = Math.floor(730 * (maxH / maxW));
+          restoreFn = fitAptBoxHeightKeepingWidth(targetEl, maxDomH);
+        } else if (item.type === 'eod') {
+          // 마지막 페이지(감사합니다, 리얼랭커스)는 점선 제거 및 A4 전체 페이지 비율(794 x 1122)로 보정하여 별도 1페이지 구성
+          prevEodBorder = targetEl.style.borderTop;
+          prevEodMinH = targetEl.style.minHeight;
+          prevEodH = targetEl.style.height;
+          targetEl.style.borderTop = 'none';
+          targetEl.style.minHeight = '1122px';
+          targetEl.style.height = '1122px';
+        }
+
         var canvas = await html2canvas(targetEl, {
           scale: 2,
           useCORS: true,
           allowTaint: false,
           backgroundColor: '#ffffff',
           logging: false,
-          scrollY: 0,
+          onclone: function (clonedDoc) {
+            var clonedModal = clonedDoc.getElementById('reportViewerModal');
+            if (clonedModal) {
+              clonedModal.style.position = 'static';
+              clonedModal.style.overflow = 'visible';
+              clonedModal.style.height = 'auto';
+            }
+            var clonedBody = clonedDoc.getElementById('reportViewerBody');
+            if (clonedBody) {
+              clonedBody.scrollTop = 0;
+              clonedBody.style.overflow = 'visible';
+              clonedBody.style.maxHeight = 'none';
+              clonedBody.style.height = 'auto';
+            }
+          },
         });
 
-        var imgData = canvas.toDataURL('image/jpeg', 0.96);
-        var marginX = item.fullBleed ? 0 : 10;
-        var marginY = item.fullBleed ? 0 : 10;
-        var maxW = pageW - marginX * 2;
-        var maxH = pageH - marginY * 2;
+        if (restoreFn) {
+          restoreFn();
+        }
+        if (item.type === 'eod') {
+          targetEl.style.borderTop = prevEodBorder;
+          targetEl.style.minHeight = prevEodMinH;
+          targetEl.style.height = prevEodH;
+        }
 
+        var imgData = canvas.toDataURL('image/jpeg', 0.96);
+
+        // [핵심] 모든 아파트 단지 페이지(type === 'apt')는 가로 크기(renderW)를 maxW(190mm)로 100% 동일하게 고정!
         var renderW = maxW;
         var renderH = (canvas.height * renderW) / canvas.width;
 
-        // 단지 카드(.report_apt)나 인트로가 1페이지 높이(maxH)를 넘어가면 1페이지 안에 들어오도록 비율 축소 및 가로 중앙 정렬
-        if (renderH > maxH) {
+        if (item.type === 'apt') {
+          // fitAptBoxHeightKeepingWidth를 통해 이미 renderH <= maxH 이므로 가로 폭(190mm)을 절대 줄이지 않음
+          if (renderH > maxH) {
+            renderH = maxH;
+          }
+        } else if (renderH > maxH) {
           renderH = maxH;
           renderW = (canvas.width * renderH) / canvas.height;
         }
 
-        var offsetX = marginX + (maxW - renderW) / 2;
+        var offsetX = item.type === 'apt' ? marginX : marginX + (maxW - renderW) / 2;
         var offsetY = marginY;
 
         pdf.addImage(imgData, 'JPEG', offsetX, offsetY, renderW, renderH, undefined, 'FAST');
       }
 
       return pdf;
+    } finally {
+      if (viewerBody) viewerBody.scrollTop = prevScrollTop;
     }
-
-    return null;
   }
 
   /**
@@ -1568,21 +1744,21 @@
             print-color-adjust: exact !important;
           }
           #user_report_area {
-            width: 210mm;
+            width: 194mm;
             margin: 0 auto;
             background: #fff;
           }
           hr { border: 1px solid #aaa; margin: 16px 0; }
           .reportFocus { font-weight: 700; color: #0820a8; }
           #user_cover_page {
-            width: 210mm;
+            width: 100%;
             height: 275mm;
             display: grid;
             grid-template-rows: 1fr 2.2fr 1fr;
             padding: 40px 35px;
             box-sizing: border-box;
             page-break-after: always;
-            break-after: always;
+            break-after: page;
           }
           #user_cover_page_top { font-size: 2.4em; font-weight: 900; padding-left: 10px; padding-top: 40px; line-height: 1.38; }
           #user_cover_page_middle { display: grid; align-content: center; justify-content: center; }
@@ -1592,10 +1768,13 @@
             display: flex; align-items: center; justify-content: center;
           }
           #user_cover_page_bottom { display: grid; align-items: end; text-align: center; margin-bottom: 40px; }
-          #user_print_area { padding: 15px 25px; font-size: 13.8px; line-height: 1.58; }
+          #user_print_area { padding: 10px 0; font-size: 13.8px; line-height: 1.58; width: 100%; box-sizing: border-box; }
           #user_intro_page {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 15px;
             page-break-after: always;
-            break-after: always;
+            break-after: page;
             page-break-inside: avoid;
             break-inside: avoid;
           }
@@ -1606,10 +1785,12 @@
           #user_consulting_note_title { font-size: 1.2em; font-weight: 700; font-style: italic; margin-bottom: 10px; color: #162235; }
           #user_consulting_note { font-size: 0.94em; line-height: 1.6em; color: #334155; }
           .report_apt {
+            width: 100%;
+            box-sizing: border-box;
             margin-bottom: 0; border-radius: 8px; border: 1px solid #cbd5e1;
             padding: 14px 18px; background: #fff;
-            page-break-before: always; break-before: always;
-            page-break-after: always; break-after: always;
+            page-break-before: always; break-before: page;
+            page-break-after: always; break-after: page;
             page-break-inside: avoid; break-inside: avoid;
           }
           .report_apt_name { font-weight: 700; font-size: 1.18em; color: #a80808; margin-bottom: 6px; }
@@ -1621,6 +1802,12 @@
           .report_py_info {
             display: grid; grid-template-columns: 1fr; row-gap: 3px;
             margin: 5px 0; padding-bottom: 6px; border-bottom: 1px solid #ddd; font-size: 0.86em;
+          }
+          .report_py_info.py_multi_col {
+            grid-template-columns: 1fr 1fr;
+            column-gap: 12px;
+            row-gap: 2px;
+            font-size: 0.81em;
           }
           .complex_value { display: grid; grid-template-columns: 280px 1fr; column-gap: 14px; margin: 8px 0; align-items: center; }
           .complex_map { width: 280px; height: 240px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
@@ -1638,10 +1825,11 @@
           .complex_strength, .complex_weakness { font-size: 0.95em; font-weight: 700; margin-top: 8px; margin-bottom: 4px; color: #1e293b; }
           .complex_content { line-height: 1.54em; margin-bottom: 6px; font-size: 0.92em; }
           #user_end_of_document {
-            width: 210mm; height: 270mm; display: grid; grid-template-rows: auto 1fr auto;
-            padding: 40px 35px; box-sizing: border-box; page-break-before: always; break-before: always;
+            width: 100%; height: 275mm; display: grid; grid-template-rows: 1fr 3fr 1fr;
+            padding: 40px 35px; box-sizing: border-box; page-break-before: always; break-before: page;
           }
-          #user_eod_middle { font-size: 2.2em; font-weight: 900; text-align: center; display: grid; align-content: center; justify-content: center; }
+          #user_eod_top { font-size: 0.92em; color: #475569; line-height: 1.75; text-align: left; }
+          #user_eod_middle { font-size: 2.5em; font-weight: 900; text-align: center; display: grid; align-content: center; justify-content: center; }
           #user_eod_bottom { display: grid; align-items: end; text-align: center; margin-bottom: 40px; }
           @page { size: A4 portrait; margin: 8mm; }
           @media print {
