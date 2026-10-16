@@ -1066,16 +1066,18 @@
     }
 
     var printAreaHtml = `
-      ${customerInfoHtml}
-      <hr>
-      <div id="user_consulting_note_wrapper">
-        <div id="user_consulting_note_title">Consulting Note</div>
-        <div id="user_consulting_note">${userGuide}</div>
+      <div id="user_intro_page" class="pdf_page_section">
+        ${customerInfoHtml}
+        <hr>
+        ${budgetHtml}
+        <hr>
+        ${regionHtml}
+        <hr>
+        <div id="user_consulting_note_wrapper">
+          <div id="user_consulting_note_title">Consulting Note</div>
+          <div id="user_consulting_note">${userGuide}</div>
+        </div>
       </div>
-      ${budgetHtml}
-      <hr>
-      ${regionHtml}
-      <hr>
       ${complexHtml}
     `;
 
@@ -1296,11 +1298,95 @@
   }
 
   /**
-   * 백그라운드에서 PDF Blob을 생성하여 Firebase Storage에 자동 업로드
+   * [핵심] 단지별 1페이지(1-Page-Per-Complex) 구조로 정확히 분할된 A4 PDF 객체(jsPDF) 생성
+   * - Page 1: 표지 (#user_cover_page)
+   * - Page 2: 고객 정보 + 예산 + 희망지역 + Consulting Note (#user_intro_page)
+   * - Page 3 ~ N+2: 추천 단지 1번 ~ 10번 (.report_apt 각각 무조건 1페이지씩 배정, 높이 초과 시 자동 비율 축소)
+   * - 마지막 Page: 맺음말 (#user_end_of_document)
+   */
+  async function buildReportPdfPerPage() {
+    var JsPDFClass =
+      (window.jspdf && window.jspdf.jsPDF) ||
+      window.jsPDF ||
+      null;
+
+    // html2canvas + jsPDF 직접 제어가 가능한 경우: 섹션/단지별 1페이지 100% 보장
+    if (JsPDFClass && typeof html2canvas === 'function') {
+      var pdf = new JsPDFClass({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true,
+      });
+
+      var pageNodes = [];
+      var coverEl = document.getElementById('user_cover_page');
+      if (coverEl) pageNodes.push({ el: coverEl, fullBleed: true });
+
+      var introEl = document.getElementById('user_intro_page');
+      if (introEl) pageNodes.push({ el: introEl, fullBleed: false });
+
+      var aptEls = document.querySelectorAll('#user_report_area .report_apt');
+      for (var i = 0; i < aptEls.length; i++) {
+        pageNodes.push({ el: aptEls[i], fullBleed: false });
+      }
+
+      var eodEl = document.getElementById('user_end_of_document');
+      if (eodEl) pageNodes.push({ el: eodEl, fullBleed: true });
+
+      var pageW = 210;
+      var pageH = 297;
+
+      for (var idx = 0; idx < pageNodes.length; idx++) {
+        var item = pageNodes[idx];
+        var targetEl = item.el;
+        if (!targetEl) continue;
+
+        if (idx > 0) {
+          pdf.addPage('a4', 'portrait');
+        }
+
+        var canvas = await html2canvas(targetEl, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#ffffff',
+          logging: false,
+          scrollY: 0,
+        });
+
+        var imgData = canvas.toDataURL('image/jpeg', 0.96);
+        var marginX = item.fullBleed ? 0 : 10;
+        var marginY = item.fullBleed ? 0 : 10;
+        var maxW = pageW - marginX * 2;
+        var maxH = pageH - marginY * 2;
+
+        var renderW = maxW;
+        var renderH = (canvas.height * renderW) / canvas.width;
+
+        // 단지 카드(.report_apt)나 인트로가 1페이지 높이(maxH)를 넘어가면 1페이지 안에 들어오도록 비율 축소 및 가로 중앙 정렬
+        if (renderH > maxH) {
+          renderH = maxH;
+          renderW = (canvas.width * renderH) / canvas.height;
+        }
+
+        var offsetX = marginX + (maxW - renderW) / 2;
+        var offsetY = marginY;
+
+        pdf.addImage(imgData, 'JPEG', offsetX, offsetY, renderW, renderH, undefined, 'FAST');
+      }
+
+      return pdf;
+    }
+
+    return null;
+  }
+
+  /**
+   * 백그라운드에서 PDF Blob을 생성하여 Firebase Storage에 자동 업로드 (단지별 1페이지)
    */
   async function uploadReportPDFToStorage(reportData) {
     if (!reportData || reportData._storageUploaded) return;
-    if (typeof html2pdf === 'undefined') return;
     if (typeof firebase === 'undefined' || typeof firebase.storage !== 'function') return;
 
     var element = document.getElementById('user_report_area');
@@ -1318,26 +1404,28 @@
         '_'
       );
 
-      var opt = {
-        margin: 0,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          allowTaint: false,
-          logging: false,
-          scrollY: 0,
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: {
-          mode: ['avoid-all', 'css', 'legacy'],
-          after: ['#user_cover_page', '#user_consulting_note_wrapper'],
-          before: ['#user_end_of_document'],
-          avoid: ['.report_apt'],
-        },
-      };
+      var pdfBlob = null;
+      var pdfDoc = await buildReportPdfPerPage();
+      if (pdfDoc) {
+        pdfBlob = pdfDoc.output('blob');
+      } else if (typeof html2pdf !== 'undefined') {
+        var opt = {
+          margin: 0,
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, allowTaint: false, logging: false, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: {
+            mode: ['css', 'legacy'],
+            after: ['#user_cover_page', '#user_intro_page', '.report_apt'],
+            before: ['#user_end_of_document'],
+            avoid: ['.report_apt'],
+          },
+        };
+        pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+      }
 
-      var pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+      if (!pdfBlob) return;
+
       var storagePath = `user_reports/${uid}/${cleanOrderId}.pdf`;
       var storageRef = firebase.storage().ref().child(storagePath);
 
@@ -1351,7 +1439,7 @@
 
       var downloadUrl = await uploadSnap.ref.getDownloadURL();
       reportData.pdfUrl = downloadUrl;
-      console.log('[Step 4] Firebase Storage PDF 업로드 성공:', downloadUrl);
+      console.log('[Step 4] Firebase Storage 단지별 1페이지 PDF 업로드 성공:', downloadUrl);
 
       // URL 업데이트 저장
       saveReportToArchive(reportData);
@@ -1361,9 +1449,9 @@
   }
 
   /**
-   * [1클릭 PDF 파일 다운로드] html2pdf를 이용해 즉시 로컬 PDF 파일 다운로드
+   * [1클릭 PDF 파일 다운로드] 단지별로 정확히 1페이지씩 구성된 로컬 PDF 파일 다운로드
    */
-  window.downloadUserReportPDF = function () {
+  window.downloadUserReportPDF = async function () {
     var element = document.getElementById('user_report_area');
     if (!element) {
       alert('출력할 리포트 영역을 찾을 수 없습니다.');
@@ -1375,59 +1463,58 @@
     var todayStr = (reportData.todayStr || new Date().toISOString().slice(0, 10)).replace(/-/g, '');
     var fileName = `${customerName}님을_위한_리얼랭커스_추천보고서_${todayStr}.pdf`;
 
-    if (typeof html2pdf === 'undefined') {
-      window.openPrintReportWindow();
-      return;
-    }
-
     var $btn = $('#btnDownloadReportPdf');
     var origHtml = $btn.html();
-    $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i>PDF 파일 생성 중...');
+    $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i>단지별 PDF 생성 중...');
 
     if (typeof toastMessage === 'function') {
-      toastMessage('📄 고해상도 PDF 파일을 생성하고 있습니다. 잠시만 기다려 주세요 (약 3~5초)...', 3500);
+      toastMessage('📄 단지별 1페이지 A4 고해상도 PDF를 생성 중입니다. 잠시만 기다려 주세요...', 4000);
     }
 
-    var options = {
-      margin: 0,
-      filename: fileName,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        logging: false,
-        letterRendering: true,
-        scrollY: 0,
-      },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: {
-        mode: ['avoid-all', 'css', 'legacy'],
-        after: ['#user_cover_page', '#user_consulting_note_wrapper'],
-        before: ['#user_end_of_document'],
-        avoid: ['.report_apt'],
-      },
-    };
+    try {
+      var pdfDoc = await buildReportPdfPerPage();
+      if (pdfDoc) {
+        pdfDoc.save(fileName);
+        $btn.prop('disabled', false).html(origHtml);
+        if (typeof toastMessage === 'function') {
+          toastMessage('🎉 단지별 1페이지 PDF 파일 다운로드가 완료되었습니다!', 3000);
+        }
+        return;
+      }
 
-    html2pdf()
-      .set(options)
-      .from(element)
-      .save()
-      .then(function () {
+      if (typeof html2pdf !== 'undefined') {
+        var options = {
+          margin: 0,
+          filename: fileName,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, allowTaint: false, logging: false, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: {
+            mode: ['css', 'legacy'],
+            after: ['#user_cover_page', '#user_intro_page', '.report_apt'],
+            before: ['#user_end_of_document'],
+            avoid: ['.report_apt'],
+          },
+        };
+        await html2pdf().set(options).from(element).save();
         $btn.prop('disabled', false).html(origHtml);
         if (typeof toastMessage === 'function') {
           toastMessage('🎉 PDF 파일 다운로드가 완료되었습니다!', 3000);
         }
-      })
-      .catch(function (err) {
-        console.error('PDF 다운로드 오류:', err);
-        $btn.prop('disabled', false).html(origHtml);
-        window.openPrintReportWindow();
-      });
+        return;
+      }
+
+      $btn.prop('disabled', false).html(origHtml);
+      window.openPrintReportWindow();
+    } catch (err) {
+      console.error('PDF 다운로드 오류:', err);
+      $btn.prop('disabled', false).html(origHtml);
+      window.openPrintReportWindow();
+    }
   };
 
   /**
-   * [고화질 A4 인쇄 / 벡터 PDF 저장] 지도 타일과 벡터 폰트가 100% 보존되는 전용 인쇄창 호출
+   * [고화질 A4 인쇄 / 벡터 PDF 저장] 지도 타일과 벡터 폰트가 100% 보존되며 단지별 1페이지로 구성된 인쇄창 호출
    */
   window.openPrintReportWindow = function () {
     var reportData = window.lastGeneratedReportData;
@@ -1485,11 +1572,11 @@
             margin: 0 auto;
             background: #fff;
           }
-          hr { border: 1px solid #aaa; margin: 20px 0; }
+          hr { border: 1px solid #aaa; margin: 16px 0; }
           .reportFocus { font-weight: 700; color: #0820a8; }
           #user_cover_page {
             width: 210mm;
-            height: 290mm;
+            height: 275mm;
             display: grid;
             grid-template-rows: 1fr 2.2fr 1fr;
             padding: 40px 35px;
@@ -1505,46 +1592,53 @@
             display: flex; align-items: center; justify-content: center;
           }
           #user_cover_page_bottom { display: grid; align-items: end; text-align: center; margin-bottom: 40px; }
-          #user_print_area { padding: 25px 30px; font-size: 14.5px; line-height: 1.65; }
-          #user_consulting_note_wrapper {
-            margin: 20px 0; padding: 20px; background: #f8fafc;
-            border-left: 4px solid #0820a8; border-radius: 6px;
-            page-break-after: always; break-after: always;
+          #user_print_area { padding: 15px 25px; font-size: 13.8px; line-height: 1.58; }
+          #user_intro_page {
+            page-break-after: always;
+            break-after: always;
+            page-break-inside: avoid;
+            break-inside: avoid;
           }
-          #user_consulting_note_title { font-size: 1.25em; font-weight: 700; font-style: italic; margin-bottom: 12px; color: #162235; }
-          #user_consulting_note { font-size: 0.95em; line-height: 1.65em; color: #334155; }
+          #user_consulting_note_wrapper {
+            margin: 16px 0; padding: 18px; background: #f8fafc;
+            border-left: 4px solid #0820a8; border-radius: 6px;
+          }
+          #user_consulting_note_title { font-size: 1.2em; font-weight: 700; font-style: italic; margin-bottom: 10px; color: #162235; }
+          #user_consulting_note { font-size: 0.94em; line-height: 1.6em; color: #334155; }
           .report_apt {
-            margin-bottom: 20px; border-radius: 8px; border: 1px solid #cbd5e1;
-            padding: 15px 18px; background: #fff;
+            margin-bottom: 0; border-radius: 8px; border: 1px solid #cbd5e1;
+            padding: 14px 18px; background: #fff;
+            page-break-before: always; break-before: always;
+            page-break-after: always; break-after: always;
             page-break-inside: avoid; break-inside: avoid;
           }
           .report_apt_name { font-weight: 700; font-size: 1.18em; color: #a80808; margin-bottom: 6px; }
           .aptYear { font-size: 0.82em; color: #64748b; font-weight: 500; }
           .report_apt_info {
-            display: grid; grid-template-columns: 28px 1fr; row-gap: 5px;
-            margin: 6px 0; padding-bottom: 8px; border-bottom: 1px solid #ddd; align-items: center; font-size: 0.9em;
+            display: grid; grid-template-columns: 28px 1fr; row-gap: 4px;
+            margin: 5px 0; padding-bottom: 6px; border-bottom: 1px solid #ddd; align-items: center; font-size: 0.88em;
           }
           .report_py_info {
-            display: grid; grid-template-columns: 1fr; row-gap: 4px;
-            margin: 6px 0; padding-bottom: 8px; border-bottom: 1px solid #ddd; font-size: 0.88em;
+            display: grid; grid-template-columns: 1fr; row-gap: 3px;
+            margin: 5px 0; padding-bottom: 6px; border-bottom: 1px solid #ddd; font-size: 0.86em;
           }
-          .complex_value { display: grid; grid-template-columns: 280px 1fr; column-gap: 14px; margin: 10px 0; align-items: center; }
-          .complex_map { width: 280px; height: 250px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
-          .complex_score { display: grid; row-gap: 8px; }
-          .complex_score .graph { height: 150px; width: 100%; }
-          .report_info { display: grid; grid-template-columns: 95px 1fr; column-gap: 10px; border-top: 1px solid #ddd; padding-top: 8px; align-items: center; }
+          .complex_value { display: grid; grid-template-columns: 280px 1fr; column-gap: 14px; margin: 8px 0; align-items: center; }
+          .complex_map { width: 280px; height: 240px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
+          .complex_score { display: grid; row-gap: 6px; }
+          .complex_score .graph { height: 145px; width: 100%; }
+          .report_info { display: grid; grid-template-columns: 95px 1fr; column-gap: 10px; border-top: 1px solid #ddd; padding-top: 6px; align-items: center; }
           .complex_QR { text-align: center; font-size: 0.7em; }
-          .complex_QR_notice { font-size: 0.72em; color: #666; line-height: 1.4; }
+          .complex_QR_notice { font-size: 0.72em; color: #666; line-height: 1.38; }
           .complex_QR_notice ul { padding-left: 16px; margin-bottom: 0; }
-          .complex_comment { font-size: 0.9em; color: #333; margin-top: 8px; }
+          .complex_comment { font-size: 0.88em; color: #333; margin-top: 6px; }
           .complex_headline {
-            font-size: 1.12em; font-weight: 700; margin-top: 10px; font-style: italic;
-            margin-bottom: 8px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px; color: #162235;
+            font-size: 1.08em; font-weight: 700; margin-top: 8px; font-style: italic;
+            margin-bottom: 6px; text-align: center; border-top: 1px solid #ddd; padding-top: 8px; color: #162235;
           }
-          .complex_strength, .complex_weakness { font-size: 0.98em; font-weight: 700; margin-top: 12px; margin-bottom: 5px; color: #1e293b; }
-          .complex_content { line-height: 1.6em; margin-bottom: 10px; }
+          .complex_strength, .complex_weakness { font-size: 0.95em; font-weight: 700; margin-top: 8px; margin-bottom: 4px; color: #1e293b; }
+          .complex_content { line-height: 1.54em; margin-bottom: 6px; font-size: 0.92em; }
           #user_end_of_document {
-            width: 210mm; height: 280mm; display: grid; grid-template-rows: auto 1fr auto;
+            width: 210mm; height: 270mm; display: grid; grid-template-rows: auto 1fr auto;
             padding: 40px 35px; box-sizing: border-box; page-break-before: always; break-before: always;
           }
           #user_eod_middle { font-size: 2.2em; font-weight: 900; text-align: center; display: grid; align-content: center; justify-content: center; }

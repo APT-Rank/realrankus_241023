@@ -269,14 +269,20 @@
     font-size: 15px;
     line-height: 1.68;
   }
+  #user_intro_page {
+    background: #fff;
+    padding: 8px 4px 16px 4px;
+    page-break-after: always;
+    break-after: always;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
   #user_consulting_note_wrapper {
     margin: 20px 0;
     padding: 20px 22px;
     background: #f8fafc;
     border-left: 4px solid #0820a8;
     border-radius: 6px;
-    page-break-after: always;
-    break-after: always;
   }
   #user_consulting_note_title {
     font-size: 1.25em;
@@ -295,8 +301,12 @@
     border-radius: 8px;
     box-shadow: rgba(60, 64, 67, 0.25) 0px 1px 3px 0px, rgba(60, 64, 67, 0.12) 0px 2px 6px 2px;
     border: 1px solid #e2e8f0;
-    padding: 16px 18px;
+    padding: 18px 20px;
     background: #fff;
+    page-break-before: always;
+    break-before: always;
+    page-break-after: always;
+    break-after: always;
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -1088,6 +1098,7 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-functions-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://js.tosspayments.com/v1/payment"></script>
 
