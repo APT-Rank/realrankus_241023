@@ -660,28 +660,17 @@
       window.reportEngineState.reportData = finalReportData;
       window.reportEngineState.isRunning = false;
 
-      // RTDB 상태 업데이트 (Completed)
-      try {
-        var cleanDbKey = dbKey.startsWith('/') ? dbKey.substring(1) : dbKey;
-        var updatePayload = {
-          progress: 'Completed',
-          generatedAt: new Date().toISOString(),
-          top10Names: top10.map(t => t['아파트명']),
-        };
-
-        if (typeof requestReport_db !== 'undefined' && requestReport_db.database) {
-          requestReport_db.database().ref(cleanDbKey).update(updatePayload);
-        }
-        if (typeof firebase !== 'undefined' && firebase.database) {
-          firebase.database().ref(cleanDbKey).update(updatePayload);
-        }
-      } catch (saveErr) {
-        console.warn('RTDB 상태 갱신 경고:', saveErr);
-      }
+      // RTDB 및 로컬 보관함 자동 아카이빙 (Step 4 & Step 5 연동)
+      saveReportToArchive(finalReportData);
 
       if (typeof onComplete === 'function') {
         onComplete(finalReportData);
       }
+
+      // 100% 달성 시 0.9초 후 리포트 열람 뷰어 모달 자동 오픈
+      setTimeout(function () {
+        window.openCompletedReportModal(finalReportData);
+      }, 900);
     } catch (error) {
       console.error('[Step 3 Engine] 리포트 생성 실패:', error);
       window.reportEngineState.isRunning = false;
@@ -701,6 +690,934 @@
         onError(error);
       }
     }
+  };
+
+  // ===========================================================================
+  // [Step 4] 리포트 결과 뷰어 렌더링, PDF 변환 다운로드 & Firebase Storage 보관
+  // ===========================================================================
+
+  var userReportCharts = {};
+
+  /**
+   * 숫자(원)를 한글 금액으로 변환 (numberToKorean 폴백 포함)
+   */
+  function formatKoreanCurrency(num) {
+    var n = Number(num) || 0;
+    if (n <= 0) return '0';
+    if (typeof numberToKorean === 'function') {
+      return numberToKorean(n);
+    }
+    var eok = Math.floor(n / 100000000);
+    var man = Math.floor((n % 100000000) / 10000);
+    var str = '';
+    if (eok > 0) str += eok.toLocaleString() + '억 ';
+    if (man > 0) str += man.toLocaleString() + '만';
+    return str.trim() || n.toLocaleString();
+  }
+
+  /**
+   * 상단 플로팅 뱃지 클릭 핸들러 (100% 완료 시 뷰어 모달, 진행 중일 때 진행 모달)
+   */
+  window.handleFloatingBadgeClick = function () {
+    if (
+      window.reportEngineState &&
+      window.reportEngineState.percent >= 100 &&
+      window.lastGeneratedReportData
+    ) {
+      window.openCompletedReportModal(window.lastGeneratedReportData);
+    } else {
+      window.openReportProgressModal();
+    }
+  };
+
+  /**
+   * 리포트 뷰어 모달 오픈 시에도 backdrop 100% 보장
+   */
+  $(document).on('show.bs.modal shown.bs.modal', '#reportViewerModal', function () {
+    $('.modal-backdrop').css({ width: '100%' });
+  });
+
+  /**
+   * 네이버 미니맵 + 등급 마커 렌더링
+   */
+  function drawUserMinimap(divId, aptValue, coordY, coordX) {
+    var container = document.getElementById(divId);
+    if (!container || typeof naver === 'undefined' || !naver.maps) return;
+
+    var complexGrade = setGrade_overide(aptValue);
+    var detailMapOptions = {
+      center: new naver.maps.LatLng(Number(coordY), Number(coordX)),
+      size: new naver.maps.Size(280, 260),
+      zoom: 16,
+      zoomControl: false,
+      draggable: false,
+      pinchZoom: false,
+      scrollWheel: false,
+      keyboardShortcuts: false,
+      disableDoubleTapZoom: true,
+      disableDoubleClickZoom: true,
+      disableTwoFingerTapZoom: true,
+      tileTransition: false,
+    };
+
+    var miniMap = new naver.maps.Map(divId, detailMapOptions);
+
+    var svgColor = '#CC0000';
+    var strokeColor = '#8F0000';
+    var gradeClass = 'gradeS';
+    if (aptValue >= 70) {
+      svgColor = '#CC0000';
+      strokeColor = '#8F0000';
+      gradeClass = 'gradeS';
+    } else if (aptValue >= 55) {
+      svgColor = '#F72020';
+      strokeColor = '#C50707';
+      gradeClass = 'gradeA';
+    } else if (aptValue >= 40) {
+      svgColor = '#F36637';
+      strokeColor = '#D43E0C';
+      gradeClass = 'gradeB';
+    } else {
+      svgColor = '#ED8618';
+      strokeColor = '#AB5E0D';
+      gradeClass = 'gradeC';
+    }
+
+    var svgLocSmall = `
+      <svg version="1.1" class="small_marker ${gradeClass}" xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 20 20" width="40" height="50">
+        <g class="svg_loc_small">
+          <path fill="${svgColor}" stroke="${strokeColor}" stroke-width="1" d="M17.89,4.43,9.86.31a1.67,1.67,0,0,0-1.55,0L.36,4.43a.48.48,0,0,0-.24.42v9.58c0,.74.35,1.35.76,1.35h1l2.26,3.35,2.25-3.35h11c.41,0,.75-.61.75-1.35V4.86A.48.48,0,0,0,17.89,4.43Z"/>
+          <text fill="#ffffff" font-size="9px" font-weight="600" text-anchor="middle" x="9" y="12">${complexGrade}</text>
+        </g>
+      </svg>
+    `;
+
+    new naver.maps.Marker({
+      position: new naver.maps.LatLng(Number(coordY), Number(coordX)),
+      icon: {
+        content: svgLocSmall,
+        size: new naver.maps.Size(24, 37),
+        anchor: new naver.maps.Point(12, 42),
+      },
+      zIndex: 100,
+      map: miniMap,
+    });
+  }
+
+  /**
+   * 4대 가치 점수 가로 막대 그래프 (Chart.js) 렌더링
+   */
+  function drawUserScoreGraph(canvasId, livingScore, transportScore, infraScore, eduScore) {
+    var canvasEl = document.getElementById(canvasId);
+    if (!canvasEl || typeof Chart === 'undefined') return;
+
+    if (userReportCharts[canvasId]) {
+      try {
+        userReportCharts[canvasId].destroy();
+      } catch (e) {}
+    }
+
+    var lScore = Number(livingScore || 0).toFixed(2);
+    var tScore = transportScore === 'NA' || isNaN(Number(transportScore)) ? 0 : Number(transportScore).toFixed(2);
+    var iScore = Number(infraScore || 0).toFixed(2);
+    var eScore = Number(eduScore || 0).toFixed(2);
+
+    var labels = ['주거', '교통', '인프라', '교육'];
+    var data = [lScore, tScore, iScore, eScore];
+
+    if (Number(tScore) === 0) {
+      labels = ['주거', '인프라', '교육'];
+      data = [lScore, iScore, eScore];
+    }
+
+    var colorArray = [];
+    var alignArray = [];
+    for (var i = 0; i < data.length; i++) {
+      if (Number(data[i]) < 85) {
+        colorArray.push('black');
+        alignArray.push('end');
+      } else {
+        colorArray.push('white');
+        alignArray.push('start');
+      }
+    }
+
+    var pluginsList = typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [];
+    var ctx = canvasEl.getContext('2d');
+    userReportCharts[canvasId] = new Chart(ctx, {
+      type: 'bar',
+      plugins: pluginsList,
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            backgroundColor: ['#e31939', '#e31939', '#e31939', '#e31939'],
+            barThickness: 14,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            display: true,
+            color: colorArray,
+            align: alignArray,
+            anchor: 'end',
+            offset: 2,
+            textAlign: 'center',
+            font: { weight: 'bold' },
+          },
+        },
+        animation: { duration: 0 },
+        scales: {
+          x: {
+            type: 'linear',
+            min: 0,
+            max: 100,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * 리포트 데이터를 HTML로 조립하여 #user_report_area에 렌더링
+   */
+  function renderReportIntoViewer(reportData) {
+    if (!reportData) return;
+
+    var customerName = reportData.customerName || '고객';
+    var todayStr = reportData.todayStr || new Date().toISOString().slice(0, 10);
+    var orderData = reportData.orderData || {};
+    var top10 = reportData.top10 || [];
+    var userGuide = reportData.userGuide || '';
+    var complexAnalyses = reportData.complexAnalyses || [];
+
+    var dateParts = todayStr.split('-');
+    var reportTodayKor =
+      dateParts.length === 3
+        ? `${dateParts[0]}년 ${Number(dateParts[1])}월 ${Number(dateParts[2])}일`
+        : todayStr;
+
+    // 1. 모달 헤더 타이틀
+    $('#reportViewerTitle').text(`${customerName}님을 위한 리얼랭커스 추천 보고서 (${todayStr})`);
+
+    // 2. 표지 (Cover Page)
+    var coverTopHtml = `<div><span style="color:#0b1279">${customerName}</span>님을 위한 <br> 리얼랭커스 추천 보고서</div>`;
+    var coverMiddleHtml = `<div id="user_cover_page_CI"><img src="./apt-rank.png" width="140px" id="user_cover_page_img" crossorigin="anonymous" onerror="this.src='https://www.realrankus.com/apt-rank.png'"></div>`;
+    var coverBottomHtml = `<div><span style="font-size: 1.4em">${todayStr}</span><br><span style="font-weight:700; font-size: 1.9em">리얼랭커스</span></div>`;
+
+    $('#user_cover_page_top').html(coverTopHtml);
+    $('#user_cover_page_middle').html(coverMiddleHtml);
+    $('#user_cover_page_bottom').html(coverBottomHtml);
+
+    // 3. 고객 정보 및 예산/희망지역 요약
+    var ageDesList = [
+      '사회초년, 결혼준비',
+      '신혼, 자녀출산',
+      '커리어상승, 자녀양육',
+      '커리어최고, 자녀학령',
+      '관리/임원급, 자녀성년',
+      '커리어하강/은퇴, 자녀독립',
+      '노후, 후대양성',
+    ];
+    var ageIdx = Number(orderData.age_val) !== undefined ? Number(orderData.age_val) : 2;
+    var ageDes = ageDesList[ageIdx] || '커리어상승, 자녀양육';
+    var ageTxt = orderData.age_txt || '30대';
+    var familyTxt = orderData.family_txt || '3인';
+    var childrenTxt = orderData.children_txt || '1명';
+    var childrenTypeTxt = orderData.children_type_txt || '영유아/미취학';
+    var incomeTxt = orderData.income_txt || '7천만~1억원';
+
+    var customerInfoHtml =
+      `<div>${customerName}님은 ${reportTodayKor} 현재,<br>` +
+      `${ageTxt}의 연령으로 생애주기에서 <span class="reportFocus">'${ageDes}기'</span>를 지나고 있습니다.<br><br>` +
+      `가족 구성은 총 ${familyTxt}으로 자녀는 ${childrenTxt}이고, ${childrenTypeTxt}이네요.<br>` +
+      `가족의 평균 연소득은 ${incomeTxt}으로 가정 경제를 운영하고 계십니다.</div>`;
+
+    var cashNum = Number(orderData.budget_cash) || 0;
+    var loanNum = Number(orderData.budget_loan) || 0;
+    var totalNum = cashNum + loanNum;
+
+    var cashKor = formatKoreanCurrency(cashNum);
+    var loanKor = formatKoreanCurrency(loanNum);
+    var totalKor = formatKoreanCurrency(totalNum);
+
+    var budgetHtml =
+      `<div>${reportTodayKor} 현재 사용가능한 예산은<br>` +
+      `즉시 사용 가능한 현금성 <span class="reportFocus">'${cashKor}원'</span> 과, ` +
+      `대출 가능한 <span class="reportFocus">'${loanKor}원'</span>을 합쳐<br>` +
+      `<span class="reportFocus">총 '${totalKor}원'</span>으로 확인됩니다.</div>`;
+
+    var wantedRegionStrList = orderData.wanted_region_str || ['서울시 강남구'];
+    var regionHtml = `<div>매수를 원하시는 지역은 아래와 같이 총 ${wantedRegionStrList.length}개 지역 이고요,<br>`;
+    for (var r = 0; r < wantedRegionStrList.length; r++) {
+      regionHtml += `<span class="reportFocus">(${r + 1}) ${wantedRegionStrList[r]}</span><br>`;
+    }
+    regionHtml += `</div>`;
+
+    var movingMethodKor = orderData.trans_method === 'driving' ? '자가운전' : '대중교통';
+    var favAddr = orderData.fav_point_address || '주요 목적지';
+
+    // 4. TOP 10 추천 단지 카드 조립
+    var complexHtml = `<div style="margin-bottom: 14px;"><span class="reportFocus">${totalKor}원 으로 추천 드리는 단지는 다음과 같습니다.</span></div>`;
+
+    for (var i = 0; i < top10.length; i++) {
+      var c = top10[i];
+      var aptName = c['아파트명'] || '추천 단지';
+      var aptYears = c['준공년차'] || '';
+      var houseNum = c['세대수'] || '';
+      var aptAddr = c['법정동주소'] || c['도로명주소'] || '';
+      var aptValue = Number(c['가치 총점']) || 0;
+      var grade = c.grade || setGrade_overide(aptValue);
+      var movingTimeKor = c.moving_time_kor || '약 30분';
+      var movingIcon = c.moving_method === 'driving' ? 'fa-car-side' : 'fa-van-shuttle';
+      var sUrl = c['sURL'] || 'https://www.realrankus.com';
+
+      // 평형별 실거래 및 예상도달가격
+      var pyListHtml = '';
+      var possibleArr = c.possible || [];
+      var nowDate = new Date();
+      var minDate = new Date('2021-07-30');
+
+      for (var pIdx = 0; pIdx < possibleArr.length; pIdx++) {
+        var pItem = possibleArr[pIdx];
+        var areaText = pItem[0] || '';
+        var salesText = pItem[1] || '';
+        var comparePrice = Number(pItem[3]) || 0;
+        var targetPriceVal = Number(pItem[4]) || 0;
+
+        var targetPriceEok =
+          targetPriceVal > 0
+            ? (targetPriceVal / 10000).toFixed(2) + '억'
+            : (comparePrice / 10000).toFixed(2) + '억';
+
+        var lastDateStr = salesText.slice(-11, salesText.length - 1);
+        var compareDate = new Date(lastDateStr);
+        var monthDiff = !isNaN(compareDate.getTime())
+          ? Math.ceil((nowDate - compareDate) / (24 * 60 * 60 * 1000 * 30))
+          : 0;
+
+        var targetPriceKor = `→ 예상도달가격 : ${targetPriceEok}`;
+        if (monthDiff > 12) {
+          if (compareDate < minDate) {
+            targetPriceKor = `<i class="fa-solid fa-triangle-exclamation"></i> → 예상도달가격 예측 정보 부족`;
+          } else {
+            targetPriceKor = `<i class="fa-solid fa-triangle-exclamation"></i> → 예상도달가격 : ${targetPriceEok}`;
+          }
+        }
+
+        pyListHtml += `<div>${areaText} / ${salesText} <span style="color: #b61313">${targetPriceKor}</span></div>`;
+      }
+
+      // Gemini AI 분석 코멘트 분리 (headline ||| story ||| strength ||| weakness)
+      var rawAi =
+        c.ai_analysis ||
+        (complexAnalyses[i] && complexAnalyses[i].analysis) ||
+        `${aptName} 맞춤형 분석|||우수한 입지 밸런스를 갖춘 추천 단지입니다.|||<ul><li>우수한 가치 총점 (${aptValue.toFixed(1)}점)</li></ul>|||<ul><li>실거래 추이 확인 권장</li></ul>`;
+      var aiParts = String(rawAi).replace(/\n/g, '').split('|||');
+      var aiHeadline = aiParts[0] || `${aptName} 1:1 입지 브리핑`;
+      var aiStory = aiParts[1] || '';
+      var aiStrength = aiParts[2] || '';
+      var aiWeakness = aiParts[3] || '';
+
+      complexHtml += `
+        <div class="report_apt">
+          <div class="report_apt_name">${aptName} <span class="aptYear">(${aptYears}년차)</span></div>
+          <div class="report_apt_info">
+            <div><i class="fa-solid fa-circle-info"></i></div>
+            <div>RANK ${grade} / ${houseNum}세대 / ${aptAddr}</div>
+            <div><i class="fa-solid ${movingIcon}"></i></div>
+            <div>${favAddr}까지 <span class="reportFocus">${movingMethodKor}으로 약 ${movingTimeKor} 소요 예상</span></div>
+          </div>
+          <div class="report_py_info">
+            ${pyListHtml}
+          </div>
+          <div class="complex_value">
+            <div class="complex_map" id="user_complex_map_${i}"></div>
+            <div class="complex_score">
+              <div class="graph"><canvas id="user_complex_score_${i}"></canvas></div>
+              <div class="report_info">
+                <a href="${sUrl}" target="_blank"><div class="complex_QR" id="user_complex_QR_${i}"></div></a>
+                <div class="complex_QR_notice">
+                  <ul>
+                    <li>입지 점수의 분석 결과는 리얼랭커스 QR코드를 통해 확인할 수 있습니다.</li>
+                    <li>QR코드는 발행일로부터 3개월간 유효합니다.</li>
+                    <li>PDF파일의 경우 QR코드를 클릭하시면 리얼랭커스 분석 결과 페이지로 이동합니다.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="complex_comment">
+            <div class="complex_headline" id="user_complex_headline_${i}">${aiHeadline}</div>
+            <div class="complex_content" id="user_complex_story_${i}">${aiStory}</div>
+            <div class="complex_strength">이 단지의 강점은요,</div>
+            <div class="complex_content" id="user_complex_strength_${i}">${aiStrength}</div>
+            <div class="complex_weakness">고려할 점은요,</div>
+            <div class="complex_content" id="user_complex_weakness_${i}">${aiWeakness}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    var printAreaHtml = `
+      ${customerInfoHtml}
+      <hr>
+      <div id="user_consulting_note_wrapper">
+        <div id="user_consulting_note_title">Consulting Note</div>
+        <div id="user_consulting_note">${userGuide}</div>
+      </div>
+      ${budgetHtml}
+      <hr>
+      ${regionHtml}
+      <hr>
+      ${complexHtml}
+    `;
+
+    $('#user_print_area').html(printAreaHtml);
+
+    // 5. 맺음말 (End of Document)
+    var eodTopHtml = `
+      <div>
+        <ul>
+          <li>리얼랭커스의 추천 보고 결과는 투자지표가 아니며, 투자 판단에 대한 모든 책임은 본인에게 있습니다.</li>
+          <li>보고서의 모든 결과는 발행일 기준으로 설정된 내용이며, 정책 또는 사회적 상황의 변화를 반영하지 않습니다.</li>
+          <li>예상도달가격은 달러와 원화의 총 통화량과 상승률을 반영하여 산출됩니다.</li>
+          <li>보고서의 추천 결과는 최대 10개까지 표시됩니다.</li>
+        </ul>
+      </div>
+    `;
+    var eodMiddleHtml = `<div>감사합니다.</div>`;
+    var eodBottomHtml = `<div><span style="font-size: 1.4em">${todayStr}</span><br><span style="font-weight:700; font-size: 1.9em">리얼랭커스</span></div>`;
+
+    $('#user_eod_top').html(eodTopHtml);
+    $('#user_eod_middle').html(eodMiddleHtml);
+    $('#user_eod_bottom').html(eodBottomHtml);
+  }
+
+  /**
+   * 모달 오픈 후 미니맵, 점수 차트, QR코드 일괄 초기화
+   */
+  function initReportMapsAndCharts(reportData) {
+    if (!reportData || !Array.isArray(reportData.top10)) return;
+    var top10 = reportData.top10;
+    var todayStr = reportData.todayStr || new Date().toISOString().slice(0, 10);
+
+    for (var k = 0; k < top10.length; k++) {
+      var item = top10[k];
+      var mapDivId = 'user_complex_map_' + k;
+      var scoreCanvasId = 'user_complex_score_' + k;
+      var qrDivId = 'user_complex_QR_' + k;
+
+      drawUserMinimap(mapDivId, Number(item['가치 총점']) || 0, item.Y, item.X);
+      drawUserScoreGraph(
+        scoreCanvasId,
+        item['주거총점'],
+        item['교통총점'],
+        item['인프라총점'],
+        item['학군총점']
+      );
+
+      var qrUrl = item['sURL'] || 'https://www.realrankus.com';
+      var qrImgSrc = 'https://quickchart.io/qr?text=' + encodeURIComponent(qrUrl);
+      $('#' + qrDivId).html(
+        `<img src="${qrImgSrc}" height="90px" crossorigin="anonymous" /><br>${todayStr}`
+      );
+    }
+  }
+
+  /**
+   * [핵심] 완성된 리포트 열람 모달 오픈 (Step 4)
+   */
+  window.openCompletedReportModal = function (customReportData) {
+    var reportData =
+      customReportData ||
+      window.lastGeneratedReportData ||
+      (window.reportEngineState && window.reportEngineState.reportData);
+
+    if (!reportData) {
+      if (typeof toastMessage === 'function') {
+        toastMessage('표시할 리포트 데이터가 없습니다. 먼저 리포트를 생성해 주세요.', 3000);
+      } else {
+        alert('표시할 리포트 데이터가 없습니다.');
+      }
+      return;
+    }
+
+    window.lastGeneratedReportData = reportData;
+
+    // 진행 모달 닫기
+    window.closeReportProgressModal();
+
+    // 리포트 DOM 렌더링
+    renderReportIntoViewer(reportData);
+
+    // 리포트 뷰어 모달 열기
+    setTimeout(function () {
+      var viewerEl = document.getElementById('reportViewerModal');
+      if (viewerEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        var viewerInst = bootstrap.Modal.getOrCreateInstance
+          ? bootstrap.Modal.getOrCreateInstance(viewerEl)
+          : bootstrap.Modal.getInstance(viewerEl) || new bootstrap.Modal(viewerEl);
+        viewerInst.show();
+      } else {
+        $('#reportViewerModal').modal('show');
+      }
+
+      $('.modal-backdrop').css({ width: '100%' });
+
+      // 모달이 화면에 완전히 그려진 뒤 네이버 미니맵과 Chart.js 렌더링
+      setTimeout(function () {
+        $('.modal-backdrop').css({ width: '100%' });
+        initReportMapsAndCharts(reportData);
+
+        // 백그라운드 PDF 생성 및 Firebase Storage 업로드 실행
+        uploadReportPDFToStorage(reportData);
+      }, 350);
+    }, 220);
+  };
+
+  /**
+   * RTDB 및 LocalStorage에 완성된 리포트 아카이브 영구 저장 (Step 4 & Step 5 연동)
+   */
+  function saveReportToArchive(reportData) {
+    if (!reportData) return;
+
+    var cleanDbKey = String(reportData.dbKey || reportData.orderId || 'report_' + Date.now());
+    if (cleanDbKey.startsWith('/')) cleanDbKey = cleanDbKey.substring(1);
+
+    var uid = '';
+    if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+      uid = firebase.auth().currentUser.uid;
+    } else if (reportData.orderData && reportData.orderData.uid) {
+      uid = reportData.orderData.uid;
+    }
+
+    // 재열람에 필요한 핵심 단지 데이터 경량화 직렬화
+    var compactTop10 = (reportData.top10 || []).map(function (c) {
+      return {
+        아파트명: c['아파트명'] || '',
+        준공년차: c['준공년차'] || '',
+        세대수: c['세대수'] || '',
+        법정동주소: c['법정동주소'] || '',
+        도로명주소: c['도로명주소'] || '',
+        '가치 총점': c['가치 총점'] || 0,
+        주거총점: c['주거총점'] || 0,
+        교통총점: c['교통총점'] || 0,
+        인프라총점: c['인프라총점'] || 0,
+        학군총점: c['학군총점'] || 0,
+        X: c.X,
+        Y: c.Y,
+        sURL: c.sURL || '',
+        검색코드: c['검색코드'] || '',
+        subRegion: c.subRegion || '',
+        grade: c.grade || setGrade_overide(c['가치 총점']),
+        custom_value: c.custom_value || 0,
+        moving_method: c.moving_method || 'public',
+        moving_time_kor: c.moving_time_kor || '',
+        possible: c.possible || [],
+        ai_analysis: c.ai_analysis || '',
+      };
+    });
+
+    var archiveRecord = {
+      orderId: reportData.orderId || cleanDbKey,
+      dbKey: cleanDbKey,
+      uid: uid,
+      customerName: reportData.customerName || '고객',
+      customerEmail: reportData.customerEmail || '',
+      todayStr: reportData.todayStr || new Date().toISOString().slice(0, 10),
+      generatedAt: reportData.generatedAt || new Date().toISOString(),
+      status: 'Completed',
+      pdfUrl: reportData.pdfUrl || '',
+      top10Names: compactTop10.map(function (t) {
+        return t['아파트명'];
+      }),
+      orderData: reportData.orderData || {},
+      userGuide: reportData.userGuide || '',
+      complexAnalyses: reportData.complexAnalyses || [],
+      top10: compactTop10,
+    };
+
+    // 1. LocalStorage 보관함 저장 (비로그인/게스트 및 즉시 열람용)
+    try {
+      var localListRaw = localStorage.getItem('realrankus_my_reports');
+      var localList = localListRaw ? JSON.parse(localListRaw) : [];
+      localList = localList.filter(function (item) {
+        return item.dbKey !== cleanDbKey && item.orderId !== archiveRecord.orderId;
+      });
+      localList.unshift(archiveRecord);
+      if (localList.length > 15) localList = localList.slice(0, 15);
+      localStorage.setItem('realrankus_my_reports', JSON.stringify(localList));
+    } catch (lsErr) {
+      console.warn('LocalStorage 리포트 아카이브 저장 경고:', lsErr);
+    }
+
+    // 2. Firebase RTDB 저장
+    try {
+      var rtdbPayload = {
+        progress: 'Completed',
+        generatedAt: archiveRecord.generatedAt,
+        top10Names: archiveRecord.top10Names,
+        reportArchive: archiveRecord,
+      };
+
+      if (typeof requestReport_db !== 'undefined' && requestReport_db.database) {
+        requestReport_db.database().ref(cleanDbKey).update(rtdbPayload);
+        if (uid) {
+          requestReport_db
+            .database()
+            .ref('user_reports/' + uid + '/' + cleanDbKey)
+            .set(archiveRecord);
+        }
+      }
+      if (typeof firebase !== 'undefined' && firebase.database) {
+        firebase.database().ref(cleanDbKey).update(rtdbPayload);
+        if (uid) {
+          firebase
+            .database()
+            .ref('user_reports/' + uid + '/' + cleanDbKey)
+            .set(archiveRecord);
+        }
+      }
+    } catch (dbErr) {
+      console.warn('RTDB 아카이브 업데이트 경고:', dbErr);
+    }
+
+    $('#reportStorageStatusBadge')
+      .removeClass('bg-secondary')
+      .addClass('bg-success')
+      .html('<i class="fa-solid fa-cloud-check me-1"></i>내 보관함 자동 저장 완료');
+  }
+
+  /**
+   * 백그라운드에서 PDF Blob을 생성하여 Firebase Storage에 자동 업로드
+   */
+  async function uploadReportPDFToStorage(reportData) {
+    if (!reportData || reportData._storageUploaded) return;
+    if (typeof html2pdf === 'undefined') return;
+    if (typeof firebase === 'undefined' || typeof firebase.storage !== 'function') return;
+
+    var element = document.getElementById('user_report_area');
+    if (!element) return;
+
+    reportData._storageUploaded = true;
+
+    try {
+      var uid =
+        firebase.auth && firebase.auth().currentUser
+          ? firebase.auth().currentUser.uid
+          : (reportData.orderData && reportData.orderData.uid) || 'guest';
+      var cleanOrderId = String(reportData.orderId || reportData.dbKey || 'REP_' + Date.now()).replace(
+        /[^a-zA-Z0-9_-]/g,
+        '_'
+      );
+
+      var opt = {
+        margin: 0,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          logging: false,
+          scrollY: 0,
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: {
+          mode: ['avoid-all', 'css', 'legacy'],
+          after: ['#user_cover_page', '#user_consulting_note_wrapper'],
+          before: ['#user_end_of_document'],
+          avoid: ['.report_apt'],
+        },
+      };
+
+      var pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+      var storagePath = `user_reports/${uid}/${cleanOrderId}.pdf`;
+      var storageRef = firebase.storage().ref().child(storagePath);
+
+      var uploadSnap = await storageRef.put(pdfBlob, {
+        contentType: 'application/pdf',
+        customMetadata: {
+          customerName: reportData.customerName || '고객',
+          orderId: cleanOrderId,
+        },
+      });
+
+      var downloadUrl = await uploadSnap.ref.getDownloadURL();
+      reportData.pdfUrl = downloadUrl;
+      console.log('[Step 4] Firebase Storage PDF 업로드 성공:', downloadUrl);
+
+      // URL 업데이트 저장
+      saveReportToArchive(reportData);
+    } catch (storageErr) {
+      console.info('[Step 4] Storage PDF 클라우드 업로드 참고 (DB 아카이브는 정상 완료됨):', storageErr.message || storageErr);
+    }
+  }
+
+  /**
+   * [1클릭 PDF 파일 다운로드] html2pdf를 이용해 즉시 로컬 PDF 파일 다운로드
+   */
+  window.downloadUserReportPDF = function () {
+    var element = document.getElementById('user_report_area');
+    if (!element) {
+      alert('출력할 리포트 영역을 찾을 수 없습니다.');
+      return;
+    }
+
+    var reportData = window.lastGeneratedReportData || {};
+    var customerName = reportData.customerName || '고객';
+    var todayStr = (reportData.todayStr || new Date().toISOString().slice(0, 10)).replace(/-/g, '');
+    var fileName = `${customerName}님을_위한_리얼랭커스_추천보고서_${todayStr}.pdf`;
+
+    if (typeof html2pdf === 'undefined') {
+      window.openPrintReportWindow();
+      return;
+    }
+
+    var $btn = $('#btnDownloadReportPdf');
+    var origHtml = $btn.html();
+    $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i>PDF 파일 생성 중...');
+
+    if (typeof toastMessage === 'function') {
+      toastMessage('📄 고해상도 PDF 파일을 생성하고 있습니다. 잠시만 기다려 주세요 (약 3~5초)...', 3500);
+    }
+
+    var options = {
+      margin: 0,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        letterRendering: true,
+        scrollY: 0,
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: {
+        mode: ['avoid-all', 'css', 'legacy'],
+        after: ['#user_cover_page', '#user_consulting_note_wrapper'],
+        before: ['#user_end_of_document'],
+        avoid: ['.report_apt'],
+      },
+    };
+
+    html2pdf()
+      .set(options)
+      .from(element)
+      .save()
+      .then(function () {
+        $btn.prop('disabled', false).html(origHtml);
+        if (typeof toastMessage === 'function') {
+          toastMessage('🎉 PDF 파일 다운로드가 완료되었습니다!', 3000);
+        }
+      })
+      .catch(function (err) {
+        console.error('PDF 다운로드 오류:', err);
+        $btn.prop('disabled', false).html(origHtml);
+        window.openPrintReportWindow();
+      });
+  };
+
+  /**
+   * [고화질 A4 인쇄 / 벡터 PDF 저장] 지도 타일과 벡터 폰트가 100% 보존되는 전용 인쇄창 호출
+   */
+  window.openPrintReportWindow = function () {
+    var reportData = window.lastGeneratedReportData;
+    if (!reportData) {
+      alert('출력할 리포트 데이터가 없습니다.');
+      return;
+    }
+
+    var customerName = reportData.customerName || '고객';
+    var todayStr = (reportData.todayStr || new Date().toISOString().slice(0, 10)).replace(/-/g, '');
+    var docTitle = `${customerName}님을_위한_리얼랭커스_추천보고서_${todayStr}`;
+
+    var reportHtmlContent = document.getElementById('user_report_area').innerHTML;
+
+    // 현재 Chart.js 캔버스들을 이미지 데이터 URL로 추출하여 인쇄창에 그대로 주입
+    var canvasDataMap = {};
+    var top10 = reportData.top10 || [];
+    for (var i = 0; i < top10.length; i++) {
+      var cEl = document.getElementById('user_complex_score_' + i);
+      if (cEl && cEl.toDataURL) {
+        try {
+          canvasDataMap['user_complex_score_' + i] = cEl.toDataURL('image/png');
+        } catch (e) {}
+      }
+    }
+
+    var printWin = window.open('', '_blank', 'width=900,height=1000');
+    if (!printWin) {
+      alert('팝업 차단이 설정되어 있습니다. 브라우저의 팝업 차단을 해제해 주세요.');
+      return;
+    }
+
+    var printDoc = `
+      <!DOCTYPE html>
+      <html lang="ko">
+      <head>
+        <meta charset="utf-8" />
+        <title>${docTitle}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #111;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          #user_report_area {
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+          }
+          hr { border: 1px solid #aaa; margin: 20px 0; }
+          .reportFocus { font-weight: 700; color: #0820a8; }
+          #user_cover_page {
+            width: 210mm;
+            height: 290mm;
+            display: grid;
+            grid-template-rows: 1fr 2.2fr 1fr;
+            padding: 40px 35px;
+            box-sizing: border-box;
+            page-break-after: always;
+            break-after: always;
+          }
+          #user_cover_page_top { font-size: 2.4em; font-weight: 900; padding-left: 10px; padding-top: 40px; line-height: 1.38; }
+          #user_cover_page_middle { display: grid; align-content: center; justify-content: center; }
+          #user_cover_page_CI {
+            width: 145px; height: 145px; border-radius: 15px;
+            background: linear-gradient(50deg, rgba(212,20,90,1) 3%, rgba(237,28,36,1) 70%, rgba(237,28,36,1) 100%);
+            display: flex; align-items: center; justify-content: center;
+          }
+          #user_cover_page_bottom { display: grid; align-items: end; text-align: center; margin-bottom: 40px; }
+          #user_print_area { padding: 25px 30px; font-size: 14.5px; line-height: 1.65; }
+          #user_consulting_note_wrapper {
+            margin: 20px 0; padding: 20px; background: #f8fafc;
+            border-left: 4px solid #0820a8; border-radius: 6px;
+            page-break-after: always; break-after: always;
+          }
+          #user_consulting_note_title { font-size: 1.25em; font-weight: 700; font-style: italic; margin-bottom: 12px; color: #162235; }
+          #user_consulting_note { font-size: 0.95em; line-height: 1.65em; color: #334155; }
+          .report_apt {
+            margin-bottom: 20px; border-radius: 8px; border: 1px solid #cbd5e1;
+            padding: 15px 18px; background: #fff;
+            page-break-inside: avoid; break-inside: avoid;
+          }
+          .report_apt_name { font-weight: 700; font-size: 1.18em; color: #a80808; margin-bottom: 6px; }
+          .aptYear { font-size: 0.82em; color: #64748b; font-weight: 500; }
+          .report_apt_info {
+            display: grid; grid-template-columns: 28px 1fr; row-gap: 5px;
+            margin: 6px 0; padding-bottom: 8px; border-bottom: 1px solid #ddd; align-items: center; font-size: 0.9em;
+          }
+          .report_py_info {
+            display: grid; grid-template-columns: 1fr; row-gap: 4px;
+            margin: 6px 0; padding-bottom: 8px; border-bottom: 1px solid #ddd; font-size: 0.88em;
+          }
+          .complex_value { display: grid; grid-template-columns: 280px 1fr; column-gap: 14px; margin: 10px 0; align-items: center; }
+          .complex_map { width: 280px; height: 250px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
+          .complex_score { display: grid; row-gap: 8px; }
+          .complex_score .graph { height: 150px; width: 100%; }
+          .report_info { display: grid; grid-template-columns: 95px 1fr; column-gap: 10px; border-top: 1px solid #ddd; padding-top: 8px; align-items: center; }
+          .complex_QR { text-align: center; font-size: 0.7em; }
+          .complex_QR_notice { font-size: 0.72em; color: #666; line-height: 1.4; }
+          .complex_QR_notice ul { padding-left: 16px; margin-bottom: 0; }
+          .complex_comment { font-size: 0.9em; color: #333; margin-top: 8px; }
+          .complex_headline {
+            font-size: 1.12em; font-weight: 700; margin-top: 10px; font-style: italic;
+            margin-bottom: 8px; text-align: center; border-top: 1px solid #ddd; padding-top: 10px; color: #162235;
+          }
+          .complex_strength, .complex_weakness { font-size: 0.98em; font-weight: 700; margin-top: 12px; margin-bottom: 5px; color: #1e293b; }
+          .complex_content { line-height: 1.6em; margin-bottom: 10px; }
+          #user_end_of_document {
+            width: 210mm; height: 280mm; display: grid; grid-template-rows: auto 1fr auto;
+            padding: 40px 35px; box-sizing: border-box; page-break-before: always; break-before: always;
+          }
+          #user_eod_middle { font-size: 2.2em; font-weight: 900; text-align: center; display: grid; align-content: center; justify-content: center; }
+          #user_eod_bottom { display: grid; align-items: end; text-align: center; margin-bottom: 40px; }
+          @page { size: A4 portrait; margin: 8mm; }
+          @media print {
+            #printActionHeader { display: none !important; }
+          }
+        </style>
+      </head>
+      <body>
+        <div id="printActionHeader" style="position: sticky; top: 0; z-index: 999; background: #162235; color: #fff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;">
+          <div><strong>🖨️ 인쇄 / PDF로 저장</strong> (인쇄 대상에서 <strong>'PDF로 저장'</strong>을 선택하시면 초고화질 원본 PDF로 저장됩니다)</div>
+          <button onclick="window.print()" style="background: #E43B46; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer;">지금 인쇄 / PDF 저장</button>
+        </div>
+        <div id="user_report_area">${reportHtmlContent}</div>
+        <script>
+          var canvasImages = ${JSON.stringify(canvasDataMap)};
+          var top10Data = ${JSON.stringify(
+            top10.map(function (c) {
+              return { Y: c.Y, X: c.X, score: c['가치 총점'], grade: c.grade };
+            })
+          )};
+
+          window.onload = function() {
+            // 1. 캔버스 차트 이미지 복원
+            for (var cid in canvasImages) {
+              var cEl = document.getElementById(cid);
+              if (cEl && cEl.parentNode) {
+                var img = document.createElement('img');
+                img.src = canvasImages[cid];
+                img.style.width = '100%';
+                img.style.height = '150px';
+                img.style.objectFit = 'contain';
+                cEl.parentNode.replaceChild(img, cEl);
+              }
+            }
+
+            // 2. 네이버 미니맵 렌더링
+            for (var i = 0; i < top10Data.length; i++) {
+              var d = top10Data[i];
+              var mapEl = document.getElementById('user_complex_map_' + i);
+              if (mapEl && typeof naver !== 'undefined' && naver.maps) {
+                mapEl.innerHTML = '';
+                var m = new naver.maps.Map(mapEl, {
+                  center: new naver.maps.LatLng(Number(d.Y), Number(d.X)),
+                  size: new naver.maps.Size(280, 250),
+                  zoom: 16,
+                  zoomControl: false,
+                  draggable: false,
+                  tileTransition: false
+                });
+                var svgPin = '<div style="background:#CC0000;color:#fff;font-weight:700;font-size:11px;padding:4px 7px;border-radius:6px;border:1.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.35);">' + (d.grade || 'S') + '</div>';
+                new naver.maps.Marker({
+                  position: new naver.maps.LatLng(Number(d.Y), Number(d.X)),
+                  icon: { content: svgPin, anchor: new naver.maps.Point(16, 16) },
+                  map: m
+                });
+              }
+            }
+
+            setTimeout(function() {
+              window.print();
+            }, 900);
+          };
+        <\/script>
+      </body>
+      </html>
+    `;
+
+    printWin.document.open();
+    printWin.document.write(printDoc);
+    printWin.document.close();
   };
 
   /**
@@ -749,7 +1666,6 @@
       },
       function (res) {
         console.log('[테스트 완료! 생성된 리포트 데이터]:', res);
-        alert('🎉 리포트 생성이 완료되었습니다! (콘솔 확인)');
       },
       function (err) {
         console.error('[테스트 에러]:', err);
@@ -758,4 +1674,5 @@
     );
   };
 })(window, jQuery);
+
 
