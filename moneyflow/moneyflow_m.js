@@ -1,6 +1,22 @@
 var prev_selected = ""
 
+function get_currency_source(key_prefix) {
+  var bok_key = 'BOK_Currency_' + key_prefix;
+  var yf_map = { 'US': 'yf_USDKRW', 'JP': 'yf_JPYKRW', 'EU': 'yf_EURKRW' };
+  var yf_key = yf_map[key_prefix];
+  var data = (typeof daily_market !== 'undefined' && daily_market) ? daily_market[bok_key] : null;
+  if (!data || Object.values(data).filter(function(v) { return v !== null && v !== undefined && v !== 0 && v !== "0"; }).length === 0) {
+    if (daily_market && yf_key && daily_market[yf_key]) {
+      return daily_market[yf_key];
+    }
+  }
+  return data || {};
+}
+
 function goScroll_m(dest_id){
+  if (!menu_position || menu_position.length === 0 || typeof menu_position[0] === 'undefined') {
+    return false;
+  }
   dest_offset = menu_position[0].toFixed(0)
   dest = menu_position[dest_id]
   prev_selected = menu_all[dest_id]  
