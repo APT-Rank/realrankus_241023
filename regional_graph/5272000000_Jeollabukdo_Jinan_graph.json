@@ -1,0 +1,96 @@
+{
+    "region_code": "5272000000",
+    "region_name": "Jeollabukdo_Jinan",
+    "region_key": "5272000000_Jeollabukdo_Jinan",
+    "supply_score": 50.0,
+    "dongs": {
+        "진안읍": {
+            "summary_metrics": {
+                "r_simple": -0.12056941036468316,
+                "r_multi": 1.0,
+                "r_squared": "100.0%",
+                "price_per_gli_point": 0.2921027806150134,
+                "std_error": 48.50162275508463,
+                "remarks": "통계 유의성 부족"
+            },
+            "chart_boundaries": {
+                "min_gli": 16.0807780184,
+                "max_gli": 34.6700310324,
+                "simple_trendline": [
+                    {
+                        "gli": 16.0807780184,
+                        "price": 445.6750958504973
+                    },
+                    {
+                        "gli": 34.6700310324,
+                        "price": 401.48500977835874
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 16.0807780184,
+                        "price": 421.1494695925903
+                    },
+                    {
+                        "gli": 34.6700310324,
+                        "price": 426.5794420875359
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 16.0807780184,
+                        "price": 445.40028097013266
+                    },
+                    {
+                        "gli": 34.6700310324,
+                        "price": 450.8302534650782
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 16.0807780184,
+                        "price": 396.898658215048
+                    },
+                    {
+                        "gli": 34.6700310324,
+                        "price": 402.32863070999355
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "군상주공2차",
+                    "gli_score": 16.0807780184,
+                    "price_per_pyung": 531.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 26,
+                    "household_count": 200
+                },
+                {
+                    "complex_name": "남광진솔",
+                    "gli_score": 34.6700310324,
+                    "price_per_pyung": 243.5,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 35,
+                    "household_count": 95
+                },
+                {
+                    "complex_name": "대아월랑",
+                    "gli_score": 18.7427007078,
+                    "price_per_pyung": 298.3333333333333,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 31,
+                    "household_count": 173
+                },
+                {
+                    "complex_name": "진안군상고향마을",
+                    "gli_score": 31.5819226468,
+                    "price_per_pyung": 622.5,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 318
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+</body>
+<script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="../js/login_240308.js"></script>
+<script>
+  // 네이버 사용자 프로필 조회 이후 프로필 정보를 처리할 callback function
+
+  var naverLogin = new naver.LoginWithNaverId(
+		{
+			clientId: NAVER_CLIENT_KEY,
+			//callbackUrl: "http://127.0.0.1:5500/login/callback.html",
+			callbackUrl: "https://www.realrankus.com/login/callback.html",
+			isPopup: false,
+			callbackHandle: true
+			/* callback 페이지가 분리되었을 경우에 callback 페이지에서는 callback처리를 해줄수 있도록 설정합니다. */
+		}
+	);
+
+	/* (3) 네아로 로그인 정보를 초기화하기 위하여 init을 호출 */
+	naverLogin.init();
+	//console.log(naverLogin)
+
+	/* (4) Callback의 처리. 정상적으로 Callback 처리가 완료될 경우 main page로 redirect(또는 Popup close) */
+	window.addEventListener('load', function () {
+		naverLogin.getLoginStatus(function (status) {
+			if (status) {
+				/* (5) 필수적으로 받아야하는 프로필 정보가 있다면 callback처리 시점에 체크 */
+				var nickName = naverLogin.user.getNickName();
+				if( nickName === undefined || nickName === null) {
+					alert("별명이 필요합니다. 정보제공을 동의해주세요.");
+					/* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
+					naverLogin.reprompt();
+					return;
+				}				
+				pageName = localStorage.getItem('pageName')
+				var redirect = setLogoutDest(pageName)
+				//var redirect = "http://127.0.0.1:5500"
+				window.location.replace(redirect);
+				//window.close();
+				//location.reload()
+				/*
+				var opener = null;
+				if (window.opener) {
+					opener = window.opener;
+				} else {
+					opener = window.open('', 'opener');
+				}
+				pageName = localStorage.getItem('pageName')
+				replace_dest = setLogoutDest(pageName)
+				//var pageName = "http://127.0.0.1:5500";
+				if (opener) {
+					opener.location.replace(replace_dest + location.hash);
+					//opener.location.reload();
+					window.close();
+				} else {
+					window.location.replace(pageName);
+					//location.reload();
+				}
+				*/
+			} else {
+				alert("callback 처리에 실패하였습니다.");
+			}
+		});
+	});
+
+</script>
+</body>
+</html>

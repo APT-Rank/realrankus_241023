@@ -1,0 +1,1 @@
+const admin=require('firebase-admin'); admin.initializeApp({projectId: 'aptrank-cc61b'}); admin.firestore().collection('PLAY_RECONCILIATION_LOG').orderBy('created_at', 'desc').limit(1).get().then(s =, null, 2)))  

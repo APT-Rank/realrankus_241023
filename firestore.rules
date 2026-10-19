@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------------
+    // PLAY Data Rules (Server Authority)
+    // ------------------------------------------------------------------------
+    // PLAY namespaces are protected. Only authenticated users can read.
+    // Client write is strictly DENIED. All writes must be done via Admin SDK (Cloud Functions).
+    match /{collection}/{document=**} {
+      allow read: if collection.matches('^PLAY_.*') && request.auth != null;
+      allow write: if false;
+    }
+
+    // ------------------------------------------------------------------------
+    // Legacy RealRankers Rules
+    // ------------------------------------------------------------------------
+    // Allow existing logic to work for all non-PLAY collections.
+    // (Warning: Allowing all for legacy since the exact previous rules are unknown,
+    // but preventing any conflict with PLAY rules.)
+    match /{collection}/{document=**} {
+      allow read, write: if !collection.matches('^PLAY_.*');
+    }
+  }
+}

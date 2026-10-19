@@ -1,0 +1,27 @@
+{
+    "name": "리얼랭커스_TEST",
+    "short_name": "리얼랭커스_TEST",
+    "description": "우리가 찾던 진짜 부동산 입지 분석",
+    "dir": "ltr",
+    "start_url": "/index_test.html",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ff3d38",
+    "orientation": "any",
+    "icons": [{
+      "src": "https://www.realrankus.com/apt-rank-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },{
+      "src": "https://www.realrankus.com/apt-rank-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }, {
+      "src": "https://www.realrankus.com/apt-rank-114x114.png",
+      "sizes": "114x114",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }]
+}

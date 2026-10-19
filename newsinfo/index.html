@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KNL2VQN');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-218993952-1">
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-218993952-1');
+
+    if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('serviceWorker_news.js')
+      .then((reg) => {
+        console.log('Service Worker Registered!', reg);
+      });
+    }
+  </script>
+
+  <title>리얼랭커스 NEWS</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="리얼랭커스:NEWS">
+  <meta property="og:description" content="리얼랭커스 뉴스">
+  <meta property="og:image" content="https://www.realrankus.com/newsinfo/thumbnail_newsinfo.png">
+  <meta property="og:url" content="https://www.realrankus.com/newsinfo/">
+  <meta name="keyword" content="부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수">
+  <meta name="description" content="리얼랭커스 뉴스">
+  <meta name="author" content="리얼랭커스">
+  <meta name="robots" content="index,follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta charset="utf-8">
+
+  <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- 상태 바의 스타일을 지정 -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#fff">
+  <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+  <meta name="apple-mobile-web-app-title" content="리얼랭커스:NEWS">
+  <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+  <link rel="apple-touch-icon" href="https://www.realrankus.com/newsinfo/apt-rank-news-152x152.png">
+  <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+  <link rel="manifest" href="manifest_news.json">  
+
+  <link rel="canonical" href="https://www.realrankus.com/newsinfo/">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="shortcut icon" href="https://www.realrankus.com/newsinfo/apt-rank-news.png"/>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"  crossorigin="anonymous"></script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>  
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=uod39kursd"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
+  
+  <script src="../js/menu_select_box.js" type="text/javascript"></script>
+  <script src="../js/draw_chart.js" type="text/javascript"></script>
+  <script src="../js/sort.js" type="text/javascript"></script>
+  <script src="../js/search_theme.js" type="text/javascript"></script>
+  <script src="../js/rearrange_theme.js" type="text/javascript"></script>
+  <script src="../js/share.js?v=20261010_1" type="text/javascript" charset='utf-8'></script>
+  <script src="../js/distance.js" type="text/javascript"></script>
+  <script src="../js/ad_aptrank_news.js" type="text/javascript"></script>
+  <script src="../js/i18n.js?v=20260607"></script>
+
+  <link href="../css/style_common.css" rel="stylesheet"/>
+  <link href="../css/style_news.css" rel="stylesheet"/>
+</head>
+<style>
+</style>
+
+<body ontouchstart="">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KNL2VQN"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="container">
+    <div id="centerBox">
+      <div id="titleBar_theme">
+        <!--검색 버튼 표시-->
+        <div id='themeShare'></div>        
+        <div id="rearrange"></div>
+        <!--타이틀 표시-->
+        <div id="title" onClick='scrollUp()'><img src="../apt-rank-news_blank.png" height="34px"/></div>
+        <!--공유 버튼-->
+        <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
+        <div id="guide_and_search">          
+        </div>
+        <!--단지 가중치 설정 버튼 표시-->
+        <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right" aria-controls="offcanvasRight"><i class="fa-solid fa-ellipsis"></i></div>
+
+      </div>
+      <!--단지 가중치 표시창-->
+      <div id="weight">업데이트 확인 중...</div>
+
+      <!-- 마켓 티커 바 (지수, 환율, 원자재) -->
+      <div id="currencyBar">
+        <div id="currencyTrack">
+          <div style="padding: 0 15px; color: #888;">금융 시장 정보 로딩 중...</div>
+        </div>
+      </div>
+
+      <!--리스트 데이터 붙여넣는 영역-->
+      <div id="themeDataList"></div>      
+
+      <!--리얼랭커스 연결-->      
+      <div id="linkToAptrank_bottom"></div>
+    </div>
+  </div>
+
+  <!-- Vertically centered scrollable modal -->
+  <!-- Button trigger modal -->
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id='aptDetail'></div>
+        <div id='footer'></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggle Modal -->
+  <div class="modal fade" id="toggleModal1" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id='distanceDetail'></div>
+        <div id='toggle1footer'></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="toggleModal2" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id='distanceDetail'></div>
+        <div id='footer'></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offcanvas Right -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">MENU</h5>
+      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!-- Offcanvas Profile -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel"></h5><i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>  
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div>   
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+  
+  <script src="../js/con_counter_js.js"></script>
+  <script src="../js/apple.js" type="text/javascript"></script>
+  <script src="../js/login_260522.js" type="text/javascript"></script>  
+
+</body>
+
+<script>
+  var updated_ver = "?v=1.2"
+  var blank_height = "3em"
+
+  var pageName = "aptrank_NEWS" //20231020  
+
+  var regionName = ""
+
+  var linked = ""
+  var regionValue = ""
+
+  var itemNum = 0;
+  var aptData = "";
+  var aptData_original = "";
+  var sortData = "";
+  var prevValue = 0;
+  var regData = "";
+  var regSortData = "";
+
+  var currentMenu = ""
+
+  var modalState = 0;
+  var searchState = 0;
+  var popupHistory = [];
+  var routeArray = []
+
+  var popMsg = "클립보드에 복사되었습니다."
+
+  var today = new Date()
+  var today_year = today.getFullYear();
+  var today_month = dateReturn( (today.getMonth() + 1))
+  var today_day = dateReturn( today.getDate() );
+  var today_num = Number("" + today_year + today_month + today_day)
+  var today_str = today_year + "-" + today_month + "-" + today_day
+  var today_str2 = today_year + "년 " + today_month + "월 " + today_day + "일"
+
+  function dateReturn(n){
+    return n<10 ? "0"+n : n
+  }
+
+  $(document).ready(function(){
+
+    Kakao.init(kakaoKey);
+    countUp(pageName)
+
+    var option = ""
+    for(i = 1 ; i < regions.length ; i++){
+        option += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>"
+    }
+    $('#sido').html(option)
+
+    $('#themeDataList').css({'padding-top': '110px'})
+
+    const url = new URL(window.location.href)
+    const urlParams = url.searchParams
+
+    $('#themeDataList').html("");
+
+    $('div.modal').on('show.bs.modal', function() {
+      var modal = this;
+      var hash = modal.id;
+      window.location.hash = hash;
+      window.onhashchange = function() {
+        if (!location.hash){
+          $(modal).modal('hide');
+        }
+      }
+    });
+
+    $('div.modal').on('hidden.bs.modal', function() {
+      var hash = this.id;
+      history.replaceState('', document.title, window.location.pathname);
+    })    
+
+    if(checkMobile() == "ios"){
+      shareHtml = "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+    }
+    else{      
+      shareHtml = "<div class='tShare' onClick='kakaoShare(shareTitle, kakaoShareText, shareURL)'><img src=\"kakao_icon.png\" height=\"28px\"/></div>"
+    }    
+    $('#themeShare').html(shareHtml)    
+
+    shareHtml2 = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+    $('#rearrange').html(shareHtml2)    
+
+    if(checkMobile() == "ios"){ blank_height = "3em" }
+    else{ blank_height = "3em" }
+    $("#linkToAptrank").css('height', blank_height)
+    $("#linkToAptrank").css('line-height', blank_height)
+    
+    currentMenu = "aptrank_news"  //offcanvas  
+    setOffcanvasMenu() //offcanvas
+    //login_checker() //LOGIN
+    setBottomMenu()
+    setAppDownloadModal();
+
+    if(!isMobile){
+      $("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
+    }  
+
+    load_currency_bar();
+    ListUp();
+});
+
+  function scrollUp(){
+    $( 'html, body' ).animate( { scrollTop : 0 }, 50 );
+  }
+
+  function ListUp(){
+    $('html').scrollTop(0)    
+    $('#themeDataList').html("");
+    $('div.modal').modal("hide");
+    $('html').scrollTop(0)
+
+    initSorting()
+
+    url = "https://www.realrankus.com/newsinfo/news.json?v=" + Math.random()
+    $('#themeDataList').html("");
+
+    //광고정보 로딩
+    $.ajaxSetup({ async: false }); 
+    load_parrtnership()
+    $.ajaxSetup({ async: true }); 
+
+
+    //광고정보표시
+    show_partnership()
+
+    addon_html = ""
+
+    shareText += today_str2 + " 리얼랭커스 NEWS" + "\n"
+    shareText += "https://www.realrankus.com/newsinfo" + "\n\n"
+
+    kakaoShareText = shareText
+
+    $.getJSON(url, function(json) {          
+        newsData = json;
+        itemNum = json.items.length;
+
+        var buildDate = newsData['lastBuildDate']
+        formatted_build_date = dateFormat(buildDate)
+        $("#weight").html("업데이트 : " + formatted_build_date + " | 네이버 뉴스")
+    
+        for(var i = 0 ; i < itemNum ; i++){
+          var newsTitle = newsData.items[i]["title"]
+          var newsLink = newsData.items[i]["originallink"]
+          var newsNaverLink = newsData.items[i]["link"]
+          var newsDescription = newsData.items[i]["description"]
+          var pubDate = newsData.items[i]["pubDate"]
+
+          formatted_date = dateFormat(pubDate)
+
+          newsTitle = newsTitle.replaceAll("<b>", "")
+          newsTitle = newsTitle.replaceAll("</b>", "")
+
+          newsDescription = newsDescription.replaceAll("<b>", "")
+          newsDescription = newsDescription.replaceAll("</b>", "")
+
+          newsNaverLink = newsNaverLink.replaceAll("http:", "https:")
+         
+          addon_html = "<div class='themeListBox' onClick='openOuterLink(\"" + newsNaverLink + "\")'>";
+          addon_html += "<div class='content'>";
+          addon_html += "<div class='news_title'>" + "<span id='themeLogo'>" + (i+1) + "</span>" + newsTitle + "</div>";          
+          addon_html += "<div class='news_description'>"+ newsDescription + "</div>";
+          addon_html += "<div class='news_date'>" + formatted_date + "</div>";
+          addon_html += "</div></div>"
+
+          cleared_title = newsTitle.replaceAll("&apos;", "")
+          cleared_title = cleared_title.replaceAll("&quot;", "")
+          cleared_title = cleared_title.replaceAll("&lt;", "")
+          cleared_title = cleared_title.replaceAll("&gt;", "")
+
+          //shareText += "ㆍ" + cleared_title + " (" + formatted_date + ")" + "\n"          
+          //if(today_str == formatted_date.substr(0, 10)){
+            shareText += "ㆍ" + cleared_title + "\n\n"
+
+            if( i < 10){
+              kakaoShareText += "ㆍ" + cleared_title + "\n\n"
+            }
+            //shareText += newsLink + "\n\n"
+          //}          
+          $('#themeDataList').append(addon_html);
+        }
+
+        shareText += "[리얼랭커스 앱 다운로드]\n"
+        shareText += "▶안드로이드\nhttps://me2.do/5te9IEA7\n"
+        shareText += "▶iOS\nhttps://me2.do/FRc6OZm4\n\n"        
+
+        $('#themeDataList').append("<div style='height: " + blank_height + "'></div>");
+
+      })
+
+    shareTitle = "[리얼랭커스:News]\n"    
+    shareURL = "https://www.realrankus.com/newsinfo"    
+  }
+
+  var tickerAnimId = null;
+  var isTickerDragging = false;
+  var isTickerInteracting = false;
+  var isTickerHovered = false;
+  var tickerResumeTimer = null;
+  var tickerGroupWidth = 0;
+  var tickerSubpixel = 0;
+
+  function load_currency_bar(){
+    var hourlyUrl = "../moneyflow/market_hourly_info.json?v=" + Math.random();
+    $.getJSON(hourlyUrl)
+      .done(function(data){
+        render_currency_bar(data);
+      })
+      .fail(function(){
+        $.getJSON("https://www.realrankus.com/moneyflow/market_hourly_info.json?v=" + Math.random(), function(data){
+          render_currency_bar(data);
+        }).fail(function(){
+          $("#currencyTrack").html("<span style='padding: 0 15px; color:#888;'>시황 정보를 불러올 수 없습니다.</span>");
+        });
+      });
+  }
+
+  function render_currency_bar(data){
+    if(!data) return;
+    var itemsConfig = [
+      { key: "KOSPI", name: "코스피", unit: "", link: "https://www.realrankus.com/moneyflow/#KO_Stock" },
+      { key: "KOSDAQ", name: "코스닥", unit: "", link: "https://www.realrankus.com/moneyflow/#KO_Stock" },
+      { key: "SNP", name: "S&P500", unit: "", link: "https://www.realrankus.com/moneyflow/#US_Stock" },
+      { key: "NAS", name: "나스닥", unit: "", link: "https://www.realrankus.com/moneyflow/#US_Stock" },
+      { key: "DOW", name: "다우", unit: "", link: "https://www.realrankus.com/moneyflow/#US_Stock" },
+      { key: "USDKRW", name: "달러", unit: "원", link: "https://www.realrankus.com/moneyflow/#Currency" },
+      { key: "JPYKRW", name: "100엔", unit: "원", link: "https://www.realrankus.com/moneyflow/#Currency" },
+      { key: "EURKRW", name: "유로", unit: "원", link: "https://www.realrankus.com/moneyflow/#Currency" },
+      { key: "CNYKRW", name: "위안", unit: "원", link: "https://www.realrankus.com/moneyflow/#Currency" },
+      { key: "WTI", name: "WTI유", unit: "$", link: "https://www.realrankus.com/moneyflow/#Oil" },
+      { key: "YF_Gold", name: "금", unit: "$", link: "https://www.realrankus.com/moneyflow/#Material" },
+      { key: "USDT-BTC", name: "비트코인", unit: "$", link: "https://www.realrankus.com/moneyflow/#Coin" }
+    ];
+
+    var groupHtml = "<div class='tickerGroup'>";
+    itemsConfig.forEach(function(c){
+      var item = data[c.key];
+      if(!item) return;
+
+      var valNum = parseFloat(String(item.value).replace(/,/g, ''));
+      var rateNum = parseFloat(String(item.rate).replace(/,/g, ''));
+      if(isNaN(valNum) || isNaN(rateNum)) return;
+
+      var diffClass = rateNum > 0 ? "currDiffUp" : (rateNum < 0 ? "currDiffDown" : "currDiffSame");
+      var rateSign = rateNum > 0 ? "▲ +" : (rateNum < 0 ? "▼ " : "- ");
+      var digits = (c.key === "USDT-BTC") ? 1 : 2;
+      var formattedVal = valNum.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+
+      var valDisplay = "";
+      if(c.unit === "$") {
+        valDisplay = "$" + formattedVal;
+      } else if(c.unit === "원") {
+        valDisplay = formattedVal + "원";
+      } else {
+        valDisplay = formattedVal;
+      }
+
+      groupHtml += "<div class='currItem' data-link='" + c.link + "' title='" + c.name + " 상세 차트 바로가기'>";
+      groupHtml += "<span class='currLabel'>" + c.name + "</span> ";
+      groupHtml += "<span class='currPrice'>" + valDisplay + "</span> ";
+      groupHtml += "<span class='" + diffClass + "'>" + rateSign + Math.abs(rateNum).toFixed(2) + "%</span>";
+      groupHtml += "</div>";
+    });
+    groupHtml += "</div>";
+
+    // 3개 그룹을 연속 배치하여 좌우 어느 방향으로 스크롤해도 무한 순환
+    var trackHtml = groupHtml + groupHtml + groupHtml;
+    $("#currencyTrack").html(trackHtml);
+
+    // 렌더링 후 레이아웃 잡힐 수 있도록 requestAnimationFrame / setTimeout
+    setTimeout(initTickerScroll, 50);
+  }
+
+  function initTickerScroll(){
+    var bar = document.getElementById("currencyBar");
+    if(!bar) return;
+    var $bar = $(bar);
+    var firstGroup = bar.querySelector(".tickerGroup");
+    if(!firstGroup) return;
+
+    tickerGroupWidth = firstGroup.offsetWidth;
+    if(tickerGroupWidth <= 0){
+      setTimeout(initTickerScroll, 100);
+      return;
+    }
+
+    // 중앙 그룹(Group 1)에서 시작
+    bar.scrollLeft = tickerGroupWidth;
+    tickerSubpixel = tickerGroupWidth;
+
+    if(tickerAnimId){
+      cancelAnimationFrame(tickerAnimId);
+      tickerAnimId = null;
+    }
+
+    var speed = 0.65; // 초당 약 40px 이동 (가독성 최적 속도)
+
+    function step(){
+      if(!isTickerInteracting && !isTickerHovered && !isTickerDragging){
+        tickerSubpixel += speed;
+        bar.scrollLeft = tickerSubpixel;
+
+        if(bar.scrollLeft >= tickerGroupWidth * 2){
+          bar.scrollLeft -= tickerGroupWidth;
+          tickerSubpixel = bar.scrollLeft;
+        }
+      }
+      tickerAnimId = requestAnimationFrame(step);
+    }
+    tickerAnimId = requestAnimationFrame(step);
+
+    function pauseTicker(){
+      isTickerInteracting = true;
+      if(tickerResumeTimer){
+        clearTimeout(tickerResumeTimer);
+      }
+    }
+
+    function resumeTickerDelayed(ms){
+      if(tickerResumeTimer){
+        clearTimeout(tickerResumeTimer);
+      }
+      tickerResumeTimer = setTimeout(function(){
+        isTickerInteracting = false;
+        tickerSubpixel = bar.scrollLeft;
+      }, ms || 2000);
+    }
+
+    function handleLoopWrap(){
+      if(tickerGroupWidth <= 0) return;
+      if(bar.scrollLeft >= tickerGroupWidth * 2){
+        bar.scrollLeft -= tickerGroupWidth;
+        tickerSubpixel = bar.scrollLeft;
+      } else if(bar.scrollLeft <= 0){
+        bar.scrollLeft += tickerGroupWidth;
+        tickerSubpixel = bar.scrollLeft;
+      }
+    }
+
+    // 마우스 드래그 (데스크톱)
+    var startX = 0;
+    var startScrollLeft = 0;
+    var hasMoved = false;
+    var isPointerDown = false;
+
+    $bar.off('.ticker');
+    $(window).off('.tickerWindow');
+
+    $bar.on('mousedown.ticker', function(e){
+      if(e.button !== 0) return;
+      isPointerDown = true;
+      hasMoved = false;
+      startX = e.pageX;
+      startScrollLeft = bar.scrollLeft;
+      pauseTicker();
+    });
+
+    $(window).on('mousemove.tickerWindow', function(e){
+      if(!isPointerDown) return;
+      var dx = e.pageX - startX;
+      if(Math.abs(dx) > 4){
+        hasMoved = true;
+        isTickerDragging = true;
+      }
+      bar.scrollLeft = startScrollLeft - dx;
+      tickerSubpixel = bar.scrollLeft;
+      handleLoopWrap();
+    });
+
+    $(window).on('mouseup.tickerWindow', function(){
+      if(!isPointerDown) return;
+      isPointerDown = false;
+      setTimeout(function(){
+        isTickerDragging = false;
+      }, 50);
+      resumeTickerDelayed(2000);
+    });
+
+    // 터치 스와이프 (모바일)
+    $bar.on('touchstart.ticker', function(e){
+      pauseTicker();
+      hasMoved = false;
+      if(e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.length > 0){
+        startX = e.originalEvent.touches[0].pageX;
+      }
+    });
+
+    $bar.on('touchmove.ticker', function(e){
+      pauseTicker();
+      if(e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.length > 0){
+        if(Math.abs(e.originalEvent.touches[0].pageX - startX) > 6){
+          hasMoved = true;
+          isTickerDragging = true;
+        }
+      }
+    });
+
+    $bar.on('touchend.ticker touchcancel.ticker', function(){
+      setTimeout(function(){
+        isTickerDragging = false;
+      }, 100);
+      resumeTickerDelayed(2000);
+    });
+
+    // 네이티브 스크롤 (휠, 트랙패드, 모바일 관성)
+    $bar.on('scroll.ticker', function(){
+      tickerSubpixel = bar.scrollLeft;
+      handleLoopWrap();
+      if(isTickerInteracting){
+        resumeTickerDelayed(2000);
+      }
+    });
+
+    // 데스크톱 호버 시 일시 정지
+    $bar.on('mouseenter.ticker', function(){
+      isTickerHovered = true;
+    });
+
+    $bar.on('mouseleave.ticker', function(){
+      isTickerHovered = false;
+    });
+
+    // 클릭 시 MoneyFlow 차트 이동 (드래그 중에는 클릭 방지)
+    $bar.on('click.ticker', '.currItem', function(e){
+      if(hasMoved || isTickerDragging){
+        e.preventDefault();
+        return;
+      }
+      var link = $(this).attr('data-link');
+      if(link){
+        openOuterLink(link);
+      }
+    });
+
+    // 화면 크기 변경 시 폭 재계산
+    $(window).on('resize.tickerWindow', function(){
+      if(firstGroup && firstGroup.offsetWidth > 0){
+        tickerGroupWidth = firstGroup.offsetWidth;
+      }
+    });
+  }
+
+  var pcDevice = "win16|win32|win64|mac|macintel"  
+
+  function openNaver(code, y, x){
+    nURL = "https://new.land.naver.com/complexes/" + code
+    if(checkMobile() == "ios"){
+      window.location.href = nURL
+    }
+    else{
+      window.open(nURL)
+    }    
+  }
+
+  function openAptrank(url){
+    aURL = url
+    location.href = aURL
+    /*
+    if ( navigator.platform ) {
+        if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+          location.href = aURL
+        } else {
+          window.open(aURL)
+        }
+    }
+    */ 
+  }
+  function showNotice(){
+    $(".offcanvas").offcanvas("hide") //offcanvas
+
+    var titleHtml = "<div class='popupTitle'> 리얼랭커스 NEWS </div>";
+    var footerHtml = ""        
+    var detailHtml = "<div class='notice'>'리얼랭커스 NEWS'은 부동산, 금융, 경제 분야에 관련된 뉴스를 모아서 제공합니다.</div>"
+    detailHtml += "<div class='notice'>뉴스 정보는 네이버 뉴스를 사용하고 있으며, 지속적으로 확대할 계획입니다.</div>"
+    detailHtml += "<div class='notice'>문의사항, 오류수정, 개선제안은 카카오톡 채널 또는 카카오톡 1:1을 통해 문의해 주세요.</div></li>";    
+
+    footerHtml += "<div class='modal-footer'>"    
+    footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://play.google.com/store/apps/details?id=com.aptrank.app\")'>Android 앱 설치</button></div>"
+    //footerHtml += " <div><a href='https://open.kakao.com/o/sPYY0LZd' target='_blank'><button type='button' class='gokakao'>카카오톡 문의하기</button></a></div>"    
+    footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://apps.apple.com/kr/app/%EC%95%84%ED%8C%8C%ED%8A%B8%EB%9E%AD%ED%81%AC/id6448044104\")'>iOS 앱 설치</button></div>"
+    footerHtml += " <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink(\"https://pf.kakao.com/_vESNb\")'>카카오톡 채널</button></div>"
+    footerHtml += " <div id='footerBtn3'><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink(\"https://pf.kakao.com/_vESNb/chat\")'>카카오톡 1:1 문의</button></div>"
+    footerHtml += "</div>"
+
+    $('#exampleModalLabel').html(titleHtml);
+    $('#aptDetail').html(detailHtml);
+    $('#footer').html(footerHtml);
+
+    $("#exampleModal").modal("show"); //offcanvas
+}
+
+function dateFormat(date) {
+  fDate = new Date(date)
+  let month = fDate.getMonth() + 1;
+  let day = fDate.getDate();
+  let hour = fDate.getHours();
+  let minute = fDate.getMinutes();
+  let second = fDate.getSeconds();
+
+  month = month >= 10 ? month : '0' + month;
+  day = day >= 10 ? day : '0' + day;
+  hour = hour >= 10 ? hour : '0' + hour;
+  minute = minute >= 10 ? minute : '0' + minute;
+  second = second >= 10 ? second : '0' + second;
+
+  return fDate.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+}
+
+</script>
+</html>

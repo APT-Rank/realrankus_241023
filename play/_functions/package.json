@@ -1,0 +1,35 @@
+{
+  "name": "play-functions",
+  "version": "1.0.0",
+  "description": "PLAY Backend Infrastructure",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "npm run build && firebase emulators:start --project demo-play --only auth,firestore,functions,hosting",
+    "serve": "npm run dev",
+    "test": "npm run build && node --test",
+    "build:map-tiles": "node scripts/build_play_map_tiles.js",
+    "seed:exchange-emulator": "node scripts/seed_market_emulator.js --target=demo-play",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@google-cloud/tasks": "^5.0.0",
+    "@google/generative-ai": "^0.24.1",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0",
+    "firebase-tools": "^14.0.0",
+    "typescript": "^5.0.0"
+  },
+  "private": true
+}

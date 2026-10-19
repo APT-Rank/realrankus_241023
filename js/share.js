@@ -1,0 +1,2401 @@
+(function () {
+  var userAgent = navigator.userAgent.toLowerCase();
+  var isIOS = /iphone|ipad|ipod/i.test(userAgent);
+
+  // 리얼랭커스 자체 앱 감지 (Android 네이티브 브릿지 또는 iOS/앱 식별자)
+  var isOurApp = (typeof window !== 'undefined' && Boolean(window.Android)) ||
+    userAgent.indexOf('_ios_app') > -1 ||
+    userAgent.indexOf('aptrank') > -1;
+
+  // 주요 외부 인앱 브라우저(카카오톡, 네이버, 인스타그램, 페이스북, 라인, 밴드, 에브리타임 등) 감지
+  var isKakao = userAgent.indexOf('kakaotalk') > -1;
+  var isNaver = userAgent.indexOf('naver') > -1;
+  var isFB = userAgent.indexOf('fban') > -1 || userAgent.indexOf('fbav') > -1;
+  var isInstagram = userAgent.indexOf('instagram') > -1;
+  var isLine = userAgent.indexOf('line') > -1;
+  var isBand = userAgent.indexOf('band') > -1;
+  var isEverytime = userAgent.indexOf('everytime') > -1;
+
+  var isInApp = (isKakao || isNaver || isFB || isInstagram || isLine || isBand || isEverytime) && !isOurApp;
+
+  if (isInApp) {
+    var targetUrl = window.location.href;
+    var query = window.location.search || '';
+
+    // [Android 미설치자 처리]
+    // 앱 미설치로 fallbackUrl로 이동해온 경우 -> Chrome 외부 브라우저로 원본 URL 전체(?cpx=... 포함) 실행 후 인앱 브라우저 닫기
+    if (location.search.indexOf('kakaofallback=1') > -1 || location.search.indexOf('inappfallback=1') > -1) {
+      var cleanUrl = targetUrl
+        .replace(/([?&])kakaofallback=1(&|$)/, '$1')
+        .replace(/([?&])inappfallback=1(&|$)/, '$1')
+        .replace(/[?&]$/, '');
+      var cleanUrlNoProtocol = cleanUrl.replace(/^https?:\/\//i, '');
+
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', cleanUrl);
+      }
+
+      // 1. Chrome 외부 브라우저로 원본 URL 전체(?cpx=... 포함) 실행
+      location.href = 'intent://' + cleanUrlNoProtocol + '#Intent;scheme=https;package=com.android.chrome;end;';
+
+      // 2. 인앱 브라우저 닫기
+      setTimeout(function () {
+        if (isKakao) {
+          location.href = 'kakaotalk://inappbrowser/close';
+        } else {
+          try { window.close(); } catch (e) { }
+        }
+      }, 200);
+      return;
+    }
+
+    if (isIOS) {
+      // [iOS]
+      // 1. 앱 설치자: URL 파라미터 전체를 포함하여 리얼랭커스 앱 실행
+      var clickedAt = +new Date();
+      location.href = 'realrankus://main' + query;
+
+      // 2. 앱 미설치자 또는 실행 후 분기 처리 (0.4초 판단)
+      setTimeout(function () {
+        if (+new Date() - clickedAt < 1500) {
+          // [앱 미설치자]: 0.4초 후에도 인앱 브라우저에 머물러 있음 -> 외부 브라우저(Safari) 이동 유도
+          if (isKakao) {
+            location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
+            setTimeout(function () {
+              location.href = 'kakaoweb://closeBrowser';
+            }, 200);
+          } else {
+            try { window.open(targetUrl, '_blank'); } catch (e) { }
+          }
+        } else {
+          // [앱 설치자]: 앱으로 전환되었으므로 인앱 브라우저 닫기
+          if (isKakao) {
+            location.href = 'kakaoweb://closeBrowser';
+          }
+        }
+      }, 400);
+    } else {
+      // [Android]
+      // 1. 앱 설치자: intent URI(?cpx=...) 및 S.URL(전체 URL)을 담아 리얼랭커스 앱 실행
+      // 2. 앱 미설치자: inappfallback=1 파라미터를 붙인 fallbackUrl로 이동하여 Chrome 외부 브라우저 로직으로 연결
+      var separator = targetUrl.indexOf('?') > -1 ? '&' : '?';
+      var fallbackUrl = targetUrl + separator + 'inappfallback=1';
+
+      location.href = 'intent://main' + query + '#Intent;scheme=realrankus;package=com.aptrank.app;S.URL=' + encodeURIComponent(targetUrl) + ';S.browser_fallback_url=' + encodeURIComponent(fallbackUrl) + ';end;';
+
+      // 3. 앱 설치자의 경우 0.5초 후 인앱 브라우저 닫기
+      setTimeout(function () {
+        if (isKakao) {
+          location.href = 'kakaotalk://inappbrowser/close';
+        } else {
+          try { window.close(); } catch (e) { }
+        }
+      }, 500);
+    }
+  }
+})();
+
+currentLanguage = localStorage.getItem('selectedLanguage')
+const isEn = currentLanguage === 'en';
+const pathPrefix = isEn ? "../" : "./";
+
+var tSafe = (key, fallback) => {
+  if (typeof window.t === 'function') {
+    var val = window.t(key);
+    return val !== key ? val : fallback;
+  }
+  return fallback;
+};
+
+var shareTitle = ""
+var shareText = ""
+var shareURL = ""
+var kakaoShareURL = ""
+var kakaoShareText = []
+var kakaoKey = "a8a036bfb275fc87317e07f76dccecb2"
+var NAVER_CLIENT_KEY = "QCL0Cjpsn2RIarmMDeKA"
+var isMobile = false
+var test_status = false
+
+var login_status = false
+var kakao_login_status = false
+var naver_login_status = false
+var apple_login_status = false
+const expireTime = 180 * 24 * 60 * 60 * 1000
+
+var temp_email = 'abc@abc.com'
+var shown_email = ''
+var temp_uid = 'abcdefghijklmnopqrstuvwxyz'
+var blocked = 'false'
+var block_start = '1976-1-1 00:00:00'
+var block_end = '1976-1-1 00:00:00'
+
+var UserAgent = navigator.userAgent;
+var scr_width = screen.width
+var scr_height = screen.height
+var days_ago_num = 30
+
+var user_stat = new Object({
+  accused: 0,
+  blocked: 'false',
+  block_days: 0,
+  block_start: '1976-1-1',
+  block_end: '1976-1-1',
+  like: "",
+  dislike: "",
+  accusing: ""
+})
+
+var codeMap = [
+  ['sotp', 'Korea', '1100000000_Seoul'],
+  ['sogn', 'Seoul', '1168000000_Seoul_Gangnam'],
+  ['sogd', 'Seoul', '1174000000_Seoul_Gangdong'],
+  ['sogb', 'Seoul', '1130500000_Seoul_Gangbuk'],
+  ['sogs', 'Seoul', '1150000000_Seoul_Gangseo'],
+  ['soga', 'Seoul', '1162000000_Seoul_Gwanak'],
+  ['sogj', 'Seoul', '1121500000_Seoul_Gwangjin'],
+  ['sogr', 'Seoul', '1153000000_Seoul_Guro'],
+  ['sogc', 'Seoul', '1154500000_Seoul_Geumcheon'],
+  ['sonw', 'Seoul', '1135000000_Seoul_Nowon'],
+  ['sodb', 'Seoul', '1132000000_Seoul_Dobong'],
+  ['sodd', 'Seoul', '1123000000_Seoul_Dongdaemun'],
+  ['sodj', 'Seoul', '1159000000_Seoul_Dongjak'],
+  ['somp', 'Seoul', '1144000000_Seoul_Mapo'],
+  ['sosm', 'Seoul', '1141000000_Seoul_Seodaemun'],
+  ['sosc', 'Seoul', '1165000000_Seoul_Seocho'],
+  ['sosd', 'Seoul', '1120000000_Seoul_Seongdong'],
+  ['sosb', 'Seoul', '1129000000_Seoul_Seongbuk'],
+  ['sosp', 'Seoul', '1171000000_Seoul_Songpa'],
+  ['soyc', 'Seoul', '1147000000_Seoul_Yangcheon'],
+  ['soyd', 'Seoul', '1156000000_Seoul_Yeongdeungpo'],
+  ['soys', 'Seoul', '1117000000_Seoul_Yongsan'],
+  ['soep', 'Seoul', '1138000000_Seoul_Eunpyeong'],
+  ['sojr', 'Seoul', '1111000000_Seoul_Jongno'],
+  ['sojg', 'Seoul', '1114000000_Seoul_Jung'],
+  ['sojn', 'Seoul', '1126000000_Seoul_Jungnang'],
+
+  ['ggtp', 'Korea', '4100000000_Gyeonggi'],
+  ['ggga', 'Gyeonggi', '4182000000_Gyeonggi_Gapyeong'],
+  ['ggdy', 'Gyeonggi', '4128100000_Gyeonggi_Goyang_Deogyang'],
+  ['ggid', 'Gyeonggi', '4128500000_Gyeonggi_Goyang_Ilsandong'],
+  ['ggis', 'Gyeonggi', '4128700000_Gyeonggi_Goyang_Ilsanseo'],
+  ['gggc', 'Gyeonggi', '4129000000_Gyeonggi_Gwacheon'],
+  ['gggm', 'Gyeonggi', '4121000000_Gyeonggi_Gwangmyeong'],
+  ['gggj', 'Gyeonggi', '4161000000_Gyeonggi_Gwangju'],
+  ['gggr', 'Gyeonggi', '4131000000_Gyeonggi_Guri'],
+  ['gggu', 'Gyeonggi', '4141000000_Gyeonggi_Gunpo'],
+  ['gggp', 'Gyeonggi', '4157000000_Gyeonggi_Gimpo'],
+  ['ggny', 'Gyeonggi', '4136000000_Gyeonggi_Namyangju'],
+  ['ggdd', 'Gyeonggi', '4125000000_Gyeonggi_Dongducheon'],
+  ['ggss', 'Gyeonggi', '4119400000_Gyeonggi_Bucheon_Sosa'],
+  ['ggoj', 'Gyeonggi', '4119600000_Gyeonggi_Bucheon_Ojeong'],
+  ['ggwm', 'Gyeonggi', '4119200000_Gyeonggi_Bucheon_Wonmi'],
+  ['ggbd', 'Gyeonggi', '4113500000_Gyeonggi_Seongnam_Bundang'],
+  ['ggsu', 'Gyeonggi', '4113100000_Gyeonggi_Seongnam_Sujeong'],
+  ['ggjw', 'Gyeonggi', '4113300000_Gyeonggi_Seongnam_Jungwon'],
+  ['gggs', 'Gyeonggi', '4111300000_Gyeonggi_Suwon_Gwonseon'],
+  ['ggyt', 'Gyeonggi', '4111700000_Gyeonggi_Suwon_Yeongtong'],
+  ['ggja', 'Gyeonggi', '4111100000_Gyeonggi_Suwon_Jangan'],
+  ['ggpd', 'Gyeonggi', '4111500000_Gyeonggi_Suwon_Paldal'],
+  ['ggsh', 'Gyeonggi', '4139000000_Gyeonggi_Siheung'],
+  ['ggdw', 'Gyeonggi', '4127300000_Gyeonggi_Ansan_Danwon'],
+  ['ggsn', 'Gyeonggi', '4127100000_Gyeonggi_Ansan_Sangnok'],
+  ['ggas', 'Gyeonggi', '4155000000_Gyeonggi_Anseong'],
+  ['ggda', 'Gyeonggi', '4117300000_Gyeonggi_Anyang_Dongan'],
+  ['ggma', 'Gyeonggi', '4117100000_Gyeonggi_Anyang_Manan'],
+  ['ggyj', 'Gyeonggi', '4163000000_Gyeonggi_Yangju'],
+  ['ggyp', 'Gyeonggi', '4183000000_Gyeonggi_Yangpyeong'],
+  ['ggye', 'Gyeonggi', '4167000000_Gyeonggi_Yeoju'],
+  ['ggyc', 'Gyeonggi', '4180000000_Gyeonggi_Yeoncheon'],
+  ['ggos', 'Gyeonggi', '4137000000_Gyeonggi_Osan'],
+  ['gggh', 'Gyeonggi', '4146300000_Gyeonggi_Yongin_Giheung'],
+  ['ggsj', 'Gyeonggi', '4146500000_Gyeonggi_Yongin_Suji'],
+  ['ggci', 'Gyeonggi', '4146100000_Gyeonggi_Yongin_Cheoin'],
+  ['gguw', 'Gyeonggi', '4143000000_Gyeonggi_Uiwang'],
+  ['gguj', 'Gyeonggi', '4115000000_Gyeonggi_Uijeongbu'],
+  ['ggic', 'Gyeonggi', '4150000000_Gyeonggi_Icheon'],
+  ['ggpj', 'Gyeonggi', '4148000000_Gyeonggi_Paju'],
+  ['ggpt', 'Gyeonggi', '4122000000_Gyeonggi_Pyeongtaek'],
+  ['ggpc', 'Gyeonggi', '4165000000_Gyeonggi_Pocheon'],
+  ['gghn', 'Gyeonggi', '4145000000_Gyeonggi_Hanam'],
+  ['gghs', 'Gyeonggi', '4159000000_Gyeonggi_Hwaseong'],
+  ['gghm', 'Gyeonggi', '4159100000_Gyeonggi_Hwaseong_manse'],
+  ['gghh', 'Gyeonggi', '4159300000_Gyeonggi_Hwaseong_hyohaeng'],
+  ['gghb', 'Gyeonggi', '4159500000_Gyeonggi_Hwaseong_byungjeom'],
+  ['gghd', 'Gyeonggi', '4159700000_Gyeonggi_Hwaseong_dongtan'],
+
+  ['intp', 'Korea', '2800000000_Incheon'],
+  ['ingh', 'Incheon', '2871000000_Incheon_Ganghwa'],
+  ['ingy', 'Incheon', '2824500000_Incheon_Gyeyang'],
+  ['innd', 'Incheon', '2820000000_Incheon_Namdong'],
+  ['injp', 'Incheon', '2812500000_Incheon_Jemulpo'],
+  ['inmh', 'Incheon', '2817700000_Incheon_Michuhol'],
+  ['inbp', 'Incheon', '2823700000_Incheon_Bupyeong'],
+  ['insh', 'Incheon', '2827500000_Incheon_Seohae'],
+  ['ingd', 'Incheon', '2829000000_Incheon_Geomdan'],
+  ['inys', 'Incheon', '2818500000_Incheon_Yeonsu'],
+  ['inyj', 'Incheon', '2815500000_Incheon_Yeongjong'],
+
+  ['dgtp', 'Korea', '2700000000_Daegu'],
+  ['dgna', 'Daegu', '2720000000_Daegu_Nam'],
+  ['dgds', 'Daegu', '2729000000_Daegu_Dalseo'],
+  ['dgdg', 'Daegu', '2771000000_Daegu_Dalseong'],
+  ['dgdo', 'Daegu', '2714000000_Daegu_Dong'],
+  ['dgbu', 'Daegu', '2723000000_Daegu_Buk'],
+  ['dgse', 'Daegu', '2717000000_Daegu_Seo'],
+  ['dgss', 'Daegu', '2726000000_Daegu_Suseong'],
+  ['dgju', 'Daegu', '2711000000_Daegu_Jung'],
+  ['dggw', 'Daegu', '2772000000_Daegu_Gunwi'],
+
+  ['djtp', 'Korea', '3000000000_Daejeon'],
+  ['djdd', 'Daejeon', '3023000000_Daejeon_Daedeok'],
+  ['djdo', 'Daejeon', '3011000000_Daejeon_Dong'],
+  ['djse', 'Daejeon', '3017000000_Daejeon_Seo'],
+  ['djys', 'Daejeon', '3020000000_Daejeon_Yuseong'],
+  ['djju', 'Daejeon', '3014000000_Daejeon_Jung'],
+
+  ['bstp', 'Korea', '2600000000_Busan'],
+  ['bsgs', 'Busan', '2644000000_Busan_Gangseo'],
+  ['bsgj', 'Busan', '2641000000_Busan_Geumjeong'],
+  ['bsgi', 'Busan', '2671000000_Busan_Gijangn'],
+  ['bsna', 'Busan', '2629000000_Busan_Nam'],
+  ['bsdo', 'Busan', '2617000000_Busan_Dong'],
+  ['bsdn', 'Busan', '2626000000_Busan_Dongnae'],
+  ['bsbj', 'Busan', '2623000000_Busan_Busanjin'],
+  ['bsbu', 'Busan', '2632000000_Busan_Buk'],
+  ['bsss', 'Busan', '2653000000_Busan_Sasang'],
+  ['bssh', 'Busan', '2638000000_Busan_Saha'],
+  ['bsse', 'Busan', '2614000000_Busan_Seo'],
+  ['bssy', 'Busan', '2650000000_Busan_Suyeong'],
+  ['bsyj', 'Busan', '2647000000_Busan_Yeonje'],
+  ['bsyd', 'Busan', '2620000000_Busan_Yeongdo'],
+  ['bsju', 'Busan', '2611000000_Busan_Jung'],
+  ['bshd', 'Busan', '2635000000_Busan_Haeundae'],
+
+  ['gwtp', 'Korea', '5100000000_Gangwondo'],
+  ['gwgn', 'Gangwondo', '5115000000_Gangwondo_Gangneung'],
+  ['gwgs', 'Gangwondo', '5182000000_Gangwondo_Goseong'],
+  ['gwdh', 'Gangwondo', '5117000000_Gangwondo_Donghae'],
+  ['gwsa', 'Gangwondo', '5123000000_Gangwondo_Samcheok'],
+  ['gwsc', 'Gangwondo', '5121000000_Gangwondo_Sokcho'],
+  ['gwyg', 'Gangwondo', '5180000000_Gangwondo_Yanggu'],
+  ['gwyy', 'Gangwondo', '5183000000_Gangwondo_Yangyang'],
+  ['gwyw', 'Gangwondo', '5175000000_Gangwondo_Yeongwol'],
+  ['gwwj', 'Gangwondo', '5113000000_Gangwondo_Wonju'],
+  ['gwij', 'Gangwondo', '5181000000_Gangwondo_Inje'],
+  ['gwjs', 'Gangwondo', '5177000000_Gangwondo_Jeongseon'],
+  ['gwcw', 'Gangwondo', '5178000000_Gangwondo_Cheorwon'],
+  ['gwcc', 'Gangwondo', '5111000000_Gangwondo_Chuncheon'],
+  ['gwtb', 'Gangwondo', '5119000000_Gangwondo_Taebaek'],
+  ['gwpc', 'Gangwondo', '5176000000_Gangwondo_Pyeongchang'],
+  ['gwhc', 'Gangwondo', '5172000000_Gangwondo_Hongcheon'],
+  ['gwhw', 'Gangwondo', '5179000000_Gangwondo_Hwacheon'],
+  ['gwhs', 'Gangwondo', '5173000000_Gangwondo_Hoengseong'],
+
+  ['gntp', 'Korea', '4800000000_Gyeongsangnamdo'],
+  ['gngj', 'Gyeongsangnamdo', '4831000000_Gyeongsangnamdo_Geoje'],
+  ['gngc', 'Gyeongsangnamdo', '4888000000_Gyeongsangnamdo_Geochang'],
+  ['gngs', 'Gyeongsangnamdo', '4882000000_Gyeongsangnamdo_Goseong'],
+  ['gngh', 'Gyeongsangnamdo', '4825000000_Gyeongsangnamdo_Gimhae'],
+  ['gnnh', 'Gyeongsangnamdo', '4884000000_Gyeongsangnamdo_Namhae'],
+  ['gnmy', 'Gyeongsangnamdo', '4827000000_Gyeongsangnamdo_Miryang'],
+  ['gnsa', 'Gyeongsangnamdo', '4824000000_Gyeongsangnamdo_Sacheon'],
+  ['gnsc', 'Gyeongsangnamdo', '4886000000_Gyeongsangnamdo_Sancheong'],
+  ['gnys', 'Gyeongsangnamdo', '4833000000_Gyeongsangnamdo_Yangsan'],
+  ['gnur', 'Gyeongsangnamdo', '4872000000_Gyeongsangnamdo_Uiryeong'],
+  ['gnjj', 'Gyeongsangnamdo', '4817000000_Gyeongsangnamdo_Jinju'],
+  ['gncn', 'Gyeongsangnamdo', '4874000000_Gyeongsangnamdo_Changnyeong'],
+  ['gnmp', 'Gyeongsangnamdo', '4812500000_Gyeongsangnamdo_Changwon_Masanhappo'],
+  ['gnmh', 'Gyeongsangnamdo', '4812700000_Gyeongsangnamdo_Changwon_Masanhoewon'],
+  ['gnss', 'Gyeongsangnamdo', '4812300000_Gyeongsangnamdo_Changwon_Seongsan'],
+  ['gnuc', 'Gyeongsangnamdo', '4812100000_Gyeongsangnamdo_Changwon_Uichang'],
+  ['gnjh', 'Gyeongsangnamdo', '4812900000_Gyeongsangnamdo_Changwon_Jinhae'],
+  ['gnty', 'Gyeongsangnamdo', '4822000000_Gyeongsangnamdo_Tongyeong'],
+  ['gnhd', 'Gyeongsangnamdo', '4885000000_Gyeongsangnamdo_Hadong'],
+  ['gnha', 'Gyeongsangnamdo', '4873000000_Gyeongsangnamdo_Haman'],
+  ['gnhy', 'Gyeongsangnamdo', '4887000000_Gyeongsangnamdo_Hamyang'],
+  ['gnhc', 'Gyeongsangnamdo', '4889000000_Gyeongsangnamdo_Hapcheon'],
+
+  ['gbtp', 'Korea', '4700000000_Gyeongsangbukdo'],
+  ['gbgs', 'Gyeongsangbukdo', '4729000000_Gyeongsangbukdo_Gyeongsan'],
+  ['gbgj', 'Gyeongsangbukdo', '4713000000_Gyeongsangbukdo_Gyeongju'],
+  ['gbgr', 'Gyeongsangbukdo', '4783000000_Gyeongsangbukdo_Goryeong'],
+  ['gbgm', 'Gyeongsangbukdo', '4719000000_Gyeongsangbukdo_Gumi'],
+  ['gbgc', 'Gyeongsangbukdo', '4715000000_Gyeongsangbukdo_Gimcheon'],
+  ['gbmg', 'Gyeongsangbukdo', '4728000000_Gyeongsangbukdo_Mungyeong'],
+  ['gbbh', 'Gyeongsangbukdo', '4792000000_Gyeongsangbukdo_Bonghwa'],
+  ['gbsj', 'Gyeongsangbukdo', '4725000000_Gyeongsangbukdo_Sangju'],
+  ['gbse', 'Gyeongsangbukdo', '4784000000_Gyeongsangbukdo_Seongju'],
+  ['gbad', 'Gyeongsangbukdo', '4717000000_Gyeongsangbukdo_Andong'],
+  ['gbyd', 'Gyeongsangbukdo', '4777000000_Gyeongsangbukdo_Yeongdeok'],
+  ['gbyy', 'Gyeongsangbukdo', '4776000000_Gyeongsangbukdo_Yeongyang'],
+  ['gbyj', 'Gyeongsangbukdo', '4721000000_Gyeongsangbukdo_Yeongju'],
+  ['gbyc', 'Gyeongsangbukdo', '4723000000_Gyeongsangbukdo_Yeongcheon'],
+  ['gbye', 'Gyeongsangbukdo', '4790000000_Gyeongsangbukdo_Yecheon'],
+  ['gbuj', 'Gyeongsangbukdo', '4793000000_Gyeongsangbukdo_Uljin'],
+  ['gbus', 'Gyeongsangbukdo', '4773000000_Gyeongsangbukdo_Uiseong'],
+  ['gbcd', 'Gyeongsangbukdo', '4782000000_Gyeongsangbukdo_Cheongdo'],
+  ['gbcs', 'Gyeongsangbukdo', '4775000000_Gyeongsangbukdo_Cheongsong'],
+  ['gbcg', 'Gyeongsangbukdo', '4785000000_Gyeongsangbukdo_Chilgok'],
+  ['gbpn', 'Gyeongsangbukdo', '4711100000_Gyeongsangbukdo_Pohang_Nam'],
+  ['gbpb', 'Gyeongsangbukdo', '4711300000_Gyeongsangbukdo_Pohang_Buk'],
+
+  ['sjtp', 'Korea', '3600000000_Sejong'],
+  ['sjsj', 'Sejong', '3611000000_Sejong_Sejong'],
+
+  ['ustp', 'Korea', '3100000000_Ulsan'],
+  ['usna', 'Ulsan', '3114000000_Ulsan_Nam'],
+  ['usdo', 'Ulsan', '3117000000_Ulsan_Dong'],
+  ['usbu', 'Ulsan', '3120000000_Ulsan_Buk'],
+  ['usuj', 'Ulsan', '3171000000_Ulsan_Ulju'],
+  ['usju', 'Ulsan', '3111000000_Ulsan_Jung'],
+
+  ['jntp', 'Korea', '1200000000_Jeonamgwangju'],
+  ['gjgs', 'Jeonamgwangju', '1233000000_Jeonamgwangju_Gwangsan'],
+  ['gjna', 'Jeonamgwangju', '1227000000_Jeonamgwangju_Nam'],
+  ['gjdo', 'Jeonamgwangju', '1221000000_Jeonamgwangju_Dong'],
+  ['gjbu', 'Jeonamgwangju', '1230000000_Jeonamgwangju_Buk'],
+  ['gjse', 'Jeonamgwangju', '1224000000_Jeonamgwangju_Seo'],  
+  ['jngj', 'Jeonamgwangju', '1278000000_Jeonamgwangju_Gangjin'],
+  ['jngh', 'Jeonamgwangju', '1274000000_Jeonamgwangju_Goheung'],
+  ['jngs', 'Jeonamgwangju', '1272000000_Jeonamgwangju_Gokseong'],
+  ['jngy', 'Jeonamgwangju', '1219000000_Jeonamgwangju_Gwangyang'],
+  ['jngr', 'Jeonamgwangju', '1273000000_Jeonamgwangju_Gurye'],
+  ['jnnj', 'Jeonamgwangju', '1217000000_Jeonamgwangju_Naju'],
+  ['jndy', 'Jeonamgwangju', '1271000000_Jeonamgwangju_Damyang'],
+  ['jnmp', 'Jeonamgwangju', '1211000000_Jeonamgwangju_Mokpo'],
+  ['jnma', 'Jeonamgwangju', '1281000000_Jeonamgwangju_Muan'],
+  ['jnbs', 'Jeonamgwangju', '1275000000_Jeonamgwangju_Boseong'],
+  ['jnsc', 'Jeonamgwangju', '1215000000_Jeonamgwangju_Suncheon'],
+  ['jnys', 'Jeonamgwangju', '1213000000_Jeonamgwangju_Yeosu'],
+  ['jnyg', 'Jeonamgwangju', '1283000000_Jeonamgwangju_Yeonggwang'],
+  ['jnyn', 'Jeonamgwangju', '1280000000_Jeonamgwangju_Yeongam'],
+  ['jnwd', 'Jeonamgwangju', '1285000000_Jeonamgwangju_Wando'],
+  ['jnjs', 'Jeonamgwangju', '1284000000_Jeonamgwangju_Jangseong'],
+  ['jnjh', 'Jeonamgwangju', '1277000000_Jeonamgwangju_Jangheung'],
+  ['jnjd', 'Jeonamgwangju', '1286000000_Jeonamgwangju_Jindo'],
+  ['jnhp', 'Jeonamgwangju', '1282000000_Jeonamgwangju_Hampyeong'],
+  ['jnhn', 'Jeonamgwangju', '1279000000_Jeonamgwangju_Haenam'],
+  ['jnhs', 'Jeonamgwangju', '1276000000_Jeonamgwangju_Hwasun'],
+
+  ['jbtp', 'Korea', '5200000000_Jeollabukdo'],
+  ['jbgc', 'Jeollabukdo', '5279000000_Jeollabukdo_Gochang'],
+  ['jbgs', 'Jeollabukdo', '5213000000_Jeollabukdo_Gunsan'],
+  ['jbgj', 'Jeollabukdo', '5221000000_Jeollabukdo_Gimje'],
+  ['jbnw', 'Jeollabukdo', '5219000000_Jeollabukdo_Namwon'],
+  ['jbmj', 'Jeollabukdo', '5273000000_Jeollabukdo_Muju'],
+  ['jbba', 'Jeollabukdo', '5280000000_Jeollabukdo_Buan'],
+  ['jbsc', 'Jeollabukdo', '5277000000_Jeollabukdo_Sunchang'],
+  ['jbwj', 'Jeollabukdo', '5271000000_Jeollabukdo_Wanju'],
+  ['jbis', 'Jeollabukdo', '5214000000_Jeollabukdo_Iksan'],
+  ['jbim', 'Jeollabukdo', '5275000000_Jeollabukdo_Imsil'],
+  ['jbjs', 'Jeollabukdo', '5274000000_Jeollabukdo_Jangsu'],
+  ['jbdj', 'Jeollabukdo', '5211300000_Jeollabukdo_Jeonju_Deokjin'],
+  ['jbws', 'Jeollabukdo', '5211100000_Jeollabukdo_Jeonju_Wansan'],
+  ['jbje', 'Jeollabukdo', '5218000000_Jeollabukdo_Jeongeup'],
+  ['jbja', 'Jeollabukdo', '5272000000_Jeollabukdo_Jinan'],
+
+  ['jjtp', 'Korea', '5000000000_Jejudo'],
+  ['jjjj', 'Jejudo', '5011000000_Jejudo_Jeju'],
+  ['jjsp', 'Jejudo', '5013000000_Jejudo_Seogwipo'],
+
+  ['cntp', 'Korea', '4400000000_Chungcheongnamdo'],
+  ['cngr', 'Chungcheongnamdo', '4425000000_Chungcheongnamdo_Gyeryong'],
+  ['cngj', 'Chungcheongnamdo', '4415000000_Chungcheongnamdo_Gongju'],
+  ['cngs', 'Chungcheongnamdo', '4471000000_Chungcheongnamdo_Geumsan'],
+  ['cnns', 'Chungcheongnamdo', '4423000000_Chungcheongnamdo_Nonsan'],
+  ['cndj', 'Chungcheongnamdo', '4427000000_Chungcheongnamdo_Dangjin'],
+  ['cnbr', 'Chungcheongnamdo', '4418000000_Chungcheongnamdo_Boryeong'],
+  ['cnby', 'Chungcheongnamdo', '4476000000_Chungcheongnamdo_Buyeo'],
+  ['cnss', 'Chungcheongnamdo', '4421000000_Chungcheongnamdo_Seosan'],
+  ['cnsc', 'Chungcheongnamdo', '4477000000_Chungcheongnamdo_Seocheon'],
+  ['cnas', 'Chungcheongnamdo', '4420000000_Chungcheongnamdo_Asan'],
+  ['cnys', 'Chungcheongnamdo', '4481000000_Chungcheongnamdo_Yesan'],
+  ['cndn', 'Chungcheongnamdo', '4413100000_Chungcheongnamdo_Cheonan_Dongnam'],
+  ['cnsb', 'Chungcheongnamdo', '4413300000_Chungcheongnamdo_Cheonan_Seobuk'],
+  ['cncy', 'Chungcheongnamdo', '4479000000_Chungcheongnamdo_Cheongyang'],
+  ['cnta', 'Chungcheongnamdo', '4482500000_Chungcheongnamdo_Taean'],
+  ['cnhs', 'Chungcheongnamdo', '4480000000_Chungcheongnamdo_Hongseong'],
+
+  ['cbtp', 'Korea', '4300000000_Chungcheongbukdo'],
+  ['cbgs', 'Chungcheongbukdo', '4376000000_Chungcheongbukdo_Goesan'],
+  ['cbdy', 'Chungcheongbukdo', '4380000000_Chungcheongbukdo_Danyang'],
+  ['cbbe', 'Chungcheongbukdo', '4372000000_Chungcheongbukdo_Boeun'],
+  ['cbyd', 'Chungcheongbukdo', '4374000000_Chungcheongbukdo_Yeongdong'],
+  ['cboc', 'Chungcheongbukdo', '4373000000_Chungcheongbukdo_Okcheon'],
+  ['cbes', 'Chungcheongbukdo', '4377000000_Chungcheongbukdo_Eumseong'],
+  ['cbje', 'Chungcheongbukdo', '4315000000_Chungcheongbukdo_Jecheon'],
+  ['cbjp', 'Chungcheongbukdo', '4374500000_Chungcheongbukdo_Jeungpyeong'],
+  ['cbjc', 'Chungcheongbukdo', '4375000000_Chungcheongbukdo_Jincheon'],
+  ['cbsd', 'Chungcheongbukdo', '4311100000_Chungcheongbukdo_Cheongju_Sangdang'],
+  ['cbsw', 'Chungcheongbukdo', '4311200000_Chungcheongbukdo_Cheongju_Seowon'],
+  ['cbcw', 'Chungcheongbukdo', '4311400000_Chungcheongbukdo_Cheongju_Cheongwon'],
+  ['cbhd', 'Chungcheongbukdo', '4311300000_Chungcheongbukdo_Cheongju_Heungdeok'],
+  ['cbcj', 'Chungcheongbukdo', '4313000000_Chungcheongbukdo_Chungju']
+]
+var yearMap = [
+  ['a', '2024'], ['b', '2025'], ['c', '2026'], ['d', '2027'], ['e', '2028'], ['f', '2029'], ['g', '2030'], ['h', '2031'], ['i', '2032'],
+  ['j', '2033'], ['k', '2034'], ['l', '2035']
+]
+var monthMap = [
+  ['a', '01'], ['b', '02'], ['c', '03'], ['d', '04'], ['e', '05'], ['f', '06'], ['g', '07'], ['h', '08'], ['i', '09'], ['j', '10'], ['k', '11'], ['l', '12']
+]
+
+//2022년 2월 1일부터 현재까지의 년차 계산
+var launchDate = new Date(2022, 1, 1);
+var currentDate = new Date();
+var yearsDifference = currentDate.getFullYear() - launchDate.getFullYear();
+
+String.prototype.phoneNoRep = function () {
+  const str = this;
+  return str.replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/, "$1-$2-$3").replace("--", "-");
+}
+
+function checkMobile() {
+  var varUA = UserAgent.toLowerCase(); //userAgent 값 얻기
+  if (varUA.indexOf('android') > -1) {
+    //안드로이드
+    return "android";
+  } else if (varUA.indexOf("iphone") > -1 || varUA.indexOf("ipad") > -1 || varUA.indexOf("ipod") > -1) {
+    //IOS
+    return "ios";
+  } else if (varUA.indexOf("macintosh") > -1) {
+    //매킨토시 외
+    return "mac";
+  } else if (varUA.indexOf("window") > -1) {
+    //윈도우 외
+    return "window";
+  } else {
+    return "other";
+  }
+}
+
+if (UserAgent.match(/iPhone|ipad|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null) {
+  if (scr_width < scr_height) {
+    isMobile = true
+  }
+}
+
+var connectionOS = ""
+var connectionWebApp = ""
+
+function connectionInfo() {
+  if (checkMobile() == "android") {
+    connectionOS = "Android"
+  }
+  else if (checkMobile() == "ios") {
+    connectionOS = "iOS"
+  }
+  else if (checkMobile() == "window") {
+    connectionOS = "Windows"
+  }
+  else if (checkMobile() == "mac") {
+    connectionOS = "Macintosh"
+  }
+  else {
+    connectionOS = "Others"
+  }
+
+  if (UserAgent.indexOf('inApp') > -1 || UserAgent.indexOf('_iOS_App') > -1) {
+    connectionWebApp = "App"
+  }
+  else {
+    connectionWebApp = "Web"
+  }
+}
+
+connectionInfo()
+
+const tlgm_token = "7006157322:AAFF0FeURUed_OgSxpIbZGGTYjiB9ZifZsI"
+const tlgm_sendto = "1572186775"
+
+function sendTelegram_single_message(comment) {
+  var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+  var tlgm_msg = comment
+  tlgm_msg = tlgm_msg.replaceAll("<br>", "%0A")
+  //tlgm_msg = tlgm_msg.replaceAll("\n", "%0A")  
+
+  var w_date_set = new Date()
+  var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth() + 1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+    + dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+  tlgm_msg += "%0A"
+  tlgm_msg += "ㆍ " + w_date_str
+
+  var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+  fetch(request_tlgm_url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(res => res.json())
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+function sendTelegram_blog(comment) {
+  var current_region = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());
+  var current_region_id = selectedSubRegion
+
+  var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+
+  var tlgm_msg = "리얼포스팅이 등록되었습니다!" + "%0A%0A"
+
+  tlgm_msg += "[" + current_region + "]" + "%0A"
+  tlgm_msg += "(" + current_region_id + ")" + "%0A%0A"
+
+  var w_date_set = new Date()
+  var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth() + 1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+    + dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+  tlgm_msg += "ㆍComplex : " + current_apt_name + "%0A"
+  tlgm_msg += "ㆍCode : " + comment[1] + "%0A"
+  tlgm_msg += "ㆍTitle : " + comment[2] + "%0A"
+  tlgm_msg += "ㆍURL : " + comment[3] + "%0A"
+  tlgm_msg += "ㆍBy : " + comment[4] + "%0A"
+  tlgm_msg += "ㆍDate : " + w_date_str + "%0A"
+  tlgm_msg += "ㆍURL : " + shareURL + "%0A"
+
+  var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+  fetch(request_tlgm_url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(res => res.json())
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+function sendTelegram_message(comment) {
+  var current_region = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text());
+  var current_region_id = selectedSubRegion
+
+  var tlgm_url = "https://api.telegram.org/bot" + tlgm_token + "/sendMessage?"
+  var tlgm_msg = "[" + current_region + "]" + "%0A"
+  tlgm_msg += "(" + current_region_id + ")" + "%0A%0A"
+
+  var comment_arr = Object.entries(comment)
+  if (comment_arr.length < 2) {
+    var w_email = comment_arr[0][1]['email']
+    var w_comment = comment_arr[0][1]['comment']
+    var w_date = comment_arr[0][1]['written']
+    var w_complex_name = comment_arr[0][1]['complex_name']
+    var w_complex_code = comment_arr[0][1]['complex_code']
+  }
+  else {
+    var w_email = comment['email']
+    var w_comment = comment['comment']
+    var w_date = comment['written']
+    var w_complex_name = comment['complex_name']
+    var w_complex_code = comment['complex_code']
+  }
+  var w_date_set = new Date(w_date)
+  var w_date_str = w_date_set.getFullYear() + "-" + dateReturn((w_date_set.getMonth() + 1)) + "-" + dateReturn(w_date_set.getDate()) + ", "
+    + dateReturn(w_date_set.getHours()) + ":" + dateReturn(w_date_set.getMinutes()) + ":" + dateReturn(w_date_set.getSeconds())
+
+  w_comment = w_comment.replaceAll("\n", "%0A")
+  w_comment = w_comment.replaceAll("<br>", "%0A")
+
+  tlgm_msg += "ㆍ " + w_email + "%0A"
+  tlgm_msg += "ㆍ " + w_complex_name + "%0A"
+  tlgm_msg += "ㆍ " + w_complex_code + "%0A"
+  tlgm_msg += "ㆍ " + w_comment + "%0A"
+  tlgm_msg += "ㆍ " + w_date_str + "%0A"
+  tlgm_msg += "ㆍ " + shareURL + "%0A"
+
+  var request_tlgm_url = tlgm_url + "chat_id=" + tlgm_sendto + "&parse_mode=HTML" + "&text=" + tlgm_msg
+
+  fetch(request_tlgm_url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(res => res.json())
+    .catch(error => {
+      console.log(error)
+    })
+}
+
+let modalStack = []
+
+function openModal(modalId) {
+  $(`#${modalId}`).modal('show');
+  if (!modalStack.includes(modalId)) {
+    modalStack.push(modalId);
+    history.pushState({ modal: modalId }, '', '#' + modalId);
+  }
+
+  // 앱 다운로드 안내 모달이 기존 모달(공지사항 등) 위에 뜰 때만 전용 백드롭 분리 처리
+  // (다른 일반 모달들의 z-index 및 백드롭에는 일체 간섭하지 않아 사이드 이펙트 0% 보장)
+  if (modalId === 'appDownloadModal') {
+    adjustAppDownloadModalLayer();
+  }
+}
+
+function adjustAppDownloadModalLayer() {
+  // 이미 화면에 다른 모달(예: noticeModal)이 열려 있는지 확인
+  const otherModals = $('.modal.show').not('#appDownloadModal');
+  if (otherModals.length > 0) {
+    // 1. 앱 다운로드 모달은 최상단 (1090)
+    $('#appDownloadModal').css('z-index', 1090);
+
+    // 2. backdrop을 뒤쪽 모달(공지사항 1055) 위이자 앞쪽 모달(앱다운로드 1090) 바로 뒤(1080)로 이동
+    // (backdrop이 1개만 관리되더라도 앞쪽 모달 바로 뒤로 올려 공지사항 모달을 어둡게 처리)
+    const setBackdropZ = () => {
+      $('.modal-backdrop').last().css('z-index', 1080);
+    };
+    setBackdropZ();
+    setTimeout(setBackdropZ, 20);
+    setTimeout(setBackdropZ, 100);
+  }
+}
+
+function restoreBackdropLayer() {
+  // 앞쪽 모달이 닫힐 때, 뒤에 남아있는 모달(예: noticeModal)이 있다면 backdrop을 다시 뒤쪽 모달 뒤(1050)로 이동
+  const remainingModals = $('.modal.show').not('#appDownloadModal');
+  if (remainingModals.length > 0) {
+    const resetBackdropZ = () => {
+      const $backdrops = $('.modal-backdrop');
+      if ($backdrops.length > 0) {
+        $backdrops.css('z-index', 1050);
+      } else {
+        // Bootstrap이 1개뿐이던 backdrop을 함께 제거해버린 경우, 남아있는 모달을 위해 backdrop 재생성
+        $('body').append('<div class="modal-backdrop fade show" style="z-index: 1050;"></div>');
+      }
+    };
+    resetBackdropZ();
+    setTimeout(resetBackdropZ, 50);
+    setTimeout(resetBackdropZ, 200);
+  }
+}
+
+function closeModal(modalId) {
+  $(`#${modalId}`).modal('hide');
+
+  //modalID가 'appDownloadModal'인 경우, 세션스토리지 저장 및 backdrop 원위치 복원
+  if (modalId === 'appDownloadModal') {
+    sessionStorage.setItem('appDownloadModalShown', 'true');
+    restoreBackdropLayer();
+  }
+
+  // 모달이 닫혔을 때 스택에서 제거
+  const idx = modalStack.lastIndexOf(modalId);
+  if (idx !== -1) {
+    modalStack.splice(idx, 1);
+  }
+}
+
+// 앱 다운로드 모달이 닫힐 때 세션스토리지 및 스택/backdrop 안전 동기화 (다른 모달에는 영향 없음)
+$(document).on('hidden.bs.modal', '#appDownloadModal', function () {
+  sessionStorage.setItem('appDownloadModalShown', 'true');
+  const idx = modalStack.lastIndexOf('appDownloadModal');
+  if (idx !== -1) {
+    modalStack.splice(idx, 1);
+  }
+  restoreBackdropLayer();
+});
+
+$(document).on('hide.bs.modal', '#appDownloadModal', function () {
+  restoreBackdropLayer();
+});
+
+window.addEventListener('popstate', (event) => {
+  if (history.state && history.state.radarOpen) {
+    history.back();
+    return;
+  }
+
+  const modalId = modalStack.pop();
+  if (modalId) {
+    $(`#${modalId}`).modal('hide');
+    return;
+  }
+
+  // modalStack이 비어있더라도 화면에 열려있는 모달이 있다면 닫기
+  const $visibleModal = $('.modal.show');
+  if ($visibleModal.length > 0) {
+    $visibleModal.modal('hide');
+    return;
+  }
+});
+
+function deepCopy(object) {
+  if (object === null || typeof object !== "object") {
+    return object;
+  } // 객체인지 배열인지 판단
+  const copy = Array.isArray(object) ? [] : {};
+  for (let key of Object.keys(object)) {
+    copy[key] = deepCopy(object[key]);
+  }
+  return copy;
+}
+
+function cookieVal(cookieName) {
+  if ($.cookie(cookieName) != undefined) {
+    return $.cookie(cookieName)
+  }
+  return 0
+}
+
+async function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function countUp(pageName) {
+  const updates = {};
+  updates["DailyConnection/" + today_str + "/" + pageName + "/DayCount"] = firebase.database.ServerValue.increment(1);
+  firebase.database().ref().update(updates);
+}
+
+function regionCountUp(pageName, regionName) {
+  const updates = {};
+  updates["DailyConnection/" + today_str + "/" + pageName + "/region/" + regionName] = firebase.database.ServerValue.increment(1);
+  firebase.database().ref().update(updates);
+}
+
+function setGrade(score) {
+  let complex_grade = "";
+
+  if (login_status) {
+    // 세분화된 등급 (로그인 유저)
+    if (score >= 87.9769) {
+      complex_grade = "S+";
+    } else if (score >= 78.6962) {
+      complex_grade = "S";
+    } else if (score >= 68.6018) {
+      complex_grade = "A+";
+    } else if (score >= 62.3136) {
+      complex_grade = "A";
+    } else if (score >= 53.3691) {
+      complex_grade = "A-";
+    } else if (score >= 46.7447) {
+      complex_grade = "B+";
+    } else if (score >= 38.6711) {
+      complex_grade = "B";
+    } else if (score >= 31.9721) {
+      complex_grade = "B-";
+    } else if (score >= 25.5973) {
+      complex_grade = "C+";
+    } else if (score >= 17.8501) {
+      complex_grade = "C";
+    } else {
+      complex_grade = "C-";
+    }
+  } else {
+    // 포괄적 등급 (비로그인 유저)
+    // 기존 로직의 기준점(S, A-, B- 컷오프)을 동일하게 적용
+    if (score >= 78.6962) {
+      complex_grade = "S";
+    } else if (score >= 53.3691) {
+      complex_grade = "A";
+    } else if (score >= 31.9721) {
+      complex_grade = "B";
+    } else {
+      complex_grade = "C";
+    }
+  }
+
+  return complex_grade;
+}
+
+function share_dict(share_dict) {
+  this_title = share_dict['title']
+  this_text = share_dict['content']
+  this_url = share_dict['url']
+  this_text_all = share_dict['all_content']
+
+  if (navigator.share) {
+    navigator.share({
+      title: this_titl,
+      text: this_text_all,
+      url: this_url
+    }).then(() => {
+      console.log('Thanks for sharing!');
+    })
+      .catch(console.error);
+  } else {
+    // fallback
+    shareDialog.classList.add('is-open');
+  }
+}
+
+function share(shareTitle, shareText, shareURL) {
+  shareText = shareText.replaceAll('<br>', '\n')
+
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareURL
+    }).then(() => {
+      console.log('Thanks for sharing!');
+    })
+      .catch(console.error);
+  } else {
+    // fallback
+    shareDialog.classList.add('is-open');
+  }
+}
+
+function kakaoShare_dict(share_dict) {
+  this_title = share_dict['title']
+  this_text = share_dict['content']
+  this_url = share_dict['url']
+  this_text_all = share_dict['all_content']
+
+  Kakao.Share.sendDefault({
+    objectType: 'text',
+    text: this_text,
+    link: {
+      mobileWebUrl: this_url,
+      webUrl: this_url,
+    },
+    buttons: [
+      {
+        title: '자세히 보기',
+        link: {
+          mobileWebUrl: this_url,
+          webUrl: this_url,
+        },
+      },
+      {
+        title: '앱으로 이동',
+        link: {
+          androidExecutionParams: 'https://play.google.com/store/apps/details?id=com.aptrank.app'
+        },
+      },
+    ]
+  });
+}
+
+function kakaoShare(shareTitle, shareText, shareURL) {
+  Kakao.Share.sendDefault({
+    objectType: 'text',
+    text: shareText,
+    link: {
+      mobileWebUrl: shareURL,
+      webUrl: shareURL,
+    },
+    buttons: [
+      {
+        title: '자세히 보기',
+        link: {
+          mobileWebUrl: shareURL,
+          webUrl: shareURL,
+        },
+      },
+      {
+        title: '앱으로 이동',
+        link: {
+          androidExecutionParams: 'https://play.google.com/store/apps/details?id=com.aptrank.app'
+        },
+      },
+    ]
+  });
+}
+
+function kakaoShareButton(shareTitle, shareText, shareURL) {
+  Kakao.Link.createDefaultButton({
+    container: '#kakao-link-btn',
+    objectType: 'text',
+    text: shareTitle + shareText,
+    link: {
+      mobileWebUrl: shareURL,
+      webUrl: shareURL,
+    },
+    buttons: [
+      {
+        title: '자세히 보기',
+        link: {
+          mobileWebUrl: shareURL,
+          webUrl: shareURL,
+        },
+      },
+      {
+        title: '앱으로 이동',
+        link: {
+          androidExecutionParams: 'https://play.google.com/store/apps/details?id=com.aptrank.app'
+        },
+      },
+    ]
+  });
+}
+
+function CopyToClipboard(copied_text, msg_pop) {
+  var txt = copied_text
+  var t = document.createElement("textarea");
+  t.value = txt;
+  document.body.appendChild(t);
+  t.select();
+  t.focus();
+  document.execCommand('copy');
+  document.body.removeChild(t);
+
+  toastr.options = {
+    closeButton: false,
+    progressBar: false,
+    showMethod: 'fadeIn',
+    closeMethod: 'fadeOut',
+    positionClass: "toast-bottom-center",
+    timeOut: 1000
+  };
+  output = msg_pop
+  toastr.success(output);
+}
+
+function toastMessage(msg_pop, delayTime) {
+  toastr.options = {
+    closeButton: false,
+    progressBar: false,
+    showMethod: 'fadeIn',
+    closeMethod: 'fadeOut',
+    positionClass: "toast-top-center",
+    timeOut: delayTime
+  };
+  output = msg_pop
+  toastr.success(output);
+}
+
+function toastMessageNotice(msg_pop, delayTime) {
+  toastr.options = {
+    closeButton: false,
+    progressBar: false,
+    showMethod: 'fadeIn',
+    closeMethod: 'fadeOut',
+    positionClass: "toast-bottom-center",
+    timeOut: delayTime
+  };
+  output = msg_pop
+  toastr.info(output).css({
+      "width": "100%",
+      "max-width": "400px",
+      "bottom": "50px"
+  })
+}
+
+function CopyToClipboard2(copied_text, msg_pop) {
+  var txt = copied_text
+
+  window.navigator.clipboard.writeText(txt).then(() => {
+    toastr.options = {
+      closeButton: false,
+      progressBar: false,
+      showMethod: 'fadeIn',
+      closeMethod: 'fadeOut',
+      positionClass: "toast-bottom-center",
+      timeOut: 1000
+    };
+    output = msg_pop
+    toastr.success(output);
+  })
+}
+
+function openOuterLink(url) {
+  if (checkMobile() == "ios") {
+    window.location.href = url
+  }
+  else {
+    window.open(url)
+  }
+}
+
+function openExternalLink(url) {
+  window.location.href = url
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+
+function openExternalLinkWithLoading(url, targetMenu) {
+  var tPageMoving = tSafe('ui.page_moving', '페이지 이동 중입니다');
+  $('body').append("<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'><br>" + tPageMoving + "</div></div>")
+  //targetMenu가 currentMenu와 같으면 새로고침을 함
+  if (currentMenu == targetMenu) {
+    location.reload()
+  }
+  else {
+    window.location.href = url
+  }
+}
+
+function resolveMainRegion(reg, sub) {
+  var resolvedReg = reg || "";
+  var resolvedSub = sub || "";
+
+  // 1. 전국
+  if (resolvedReg === "Korea" || resolvedSub === "1000000000_Korea" || resolvedSub === "Korea" || resolvedReg === "1000000000_Korea") {
+    return { reg: "Korea", sub: "1000000000_Korea" };
+  }
+
+  // 2. 광주광역시 (BIZ의 Gwangju / 29... 코드를 메인의 Jeonamgwangju / 12... 코드로 매핑)
+  if (resolvedReg === "Gwangju" || (resolvedSub && resolvedSub.indexOf("Gwangju") > -1 && resolvedSub.indexOf("Jeonamgwangju") === -1 && resolvedSub.indexOf("Gyeonggi_Gwangju") === -1)) {
+    if (resolvedSub === "Gwangju" || resolvedSub === "2900000000_Gwangju" || !resolvedSub) {
+      return { reg: "Jeonamgwangju", sub: "1227000000_Jeonamgwangju_Nam" };
+    }
+    if (resolvedSub.indexOf("2920000000_Gwangju_Gwangsan") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1233000000_Jeonamgwangju_Gwangsan" };
+    }
+    if (resolvedSub.indexOf("2915500000_Gwangju_Nam") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1227000000_Jeonamgwangju_Nam" };
+    }
+    if (resolvedSub.indexOf("2911000000_Gwangju_Dong") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1221000000_Jeonamgwangju_Dong" };
+    }
+    if (resolvedSub.indexOf("2917000000_Gwangju_Buk") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1230000000_Jeonamgwangju_Buk" };
+    }
+    if (resolvedSub.indexOf("2914000000_Gwangju_Seo") > -1) {
+      return { reg: "Jeonamgwangju", sub: "1224000000_Jeonamgwangju_Seo" };
+    }
+    return { reg: "Jeonamgwangju", sub: "1227000000_Jeonamgwangju_Nam" };
+  }
+
+  // 3. 특별시 / 광역시 '전체' 코드 보정
+  if (resolvedSub === "Seoul" || resolvedSub === "1100000000_Seoul" || (resolvedReg === "Seoul" && (!resolvedSub || resolvedSub === "Seoul"))) {
+    return { reg: "Seoul", sub: "1168000000_Seoul_Gangnam" };
+  }
+  if (resolvedSub === "Busan" || resolvedSub === "2600000000_Busan" || (resolvedReg === "Busan" && (!resolvedSub || resolvedSub === "Busan"))) {
+    return { reg: "Busan", sub: "2650000000_Busan_Suyeong" };
+  }
+  if (resolvedSub === "Daegu" || resolvedSub === "2700000000_Daegu" || (resolvedReg === "Daegu" && (!resolvedSub || resolvedSub === "Daegu"))) {
+    return { reg: "Daegu", sub: "2726000000_Daegu_Suseong" };
+  }
+  if (resolvedSub === "Incheon" || resolvedSub === "2800000000_Incheon" || (resolvedReg === "Incheon" && (!resolvedSub || resolvedSub === "Incheon"))) {
+    return { reg: "Incheon", sub: "2818500000_Incheon_Yeonsu" };
+  }
+  if (resolvedSub === "Daejeon" || resolvedSub === "3000000000_Daejeon" || (resolvedReg === "Daejeon" && (!resolvedSub || resolvedSub === "Daejeon"))) {
+    return { reg: "Daejeon", sub: "3020000000_Daejeon_Yuseong" };
+  }
+  if (resolvedSub === "Ulsan" || resolvedSub === "3100000000_Ulsan" || (resolvedReg === "Ulsan" && (!resolvedSub || resolvedSub === "Ulsan"))) {
+    return { reg: "Ulsan", sub: "3114000000_Ulsan_Nam" };
+  }
+  if (resolvedSub === "Sejong" || resolvedSub === "3600000000_Sejong" || (resolvedReg === "Sejong" && (!resolvedSub || resolvedSub === "Sejong"))) {
+    return { reg: "Sejong", sub: "3611000000_Sejong_Sejong" };
+  }
+
+  // 4. 경기도 전체 및 시 전체
+  if (resolvedSub === "4100000000_Gyeonggi" || resolvedSub === "Gyeonggi" || (resolvedReg === "Gyeonggi" && (!resolvedSub || resolvedSub === "Gyeonggi"))) {
+    return { reg: "Gyeonggi", sub: "4113500000_Gyeonggi_Seongnam_Bundang" };
+  }
+  if (resolvedSub === "4128000000_Gyeonggi_Goyang") {
+    return { reg: "Gyeonggi", sub: "4128700000_Gyeonggi_Goyang_Ilsanseo" };
+  }
+  if (resolvedSub === "4113000000_Gyeonggi_Seongnam") {
+    return { reg: "Gyeonggi", sub: "4113500000_Gyeonggi_Seongnam_Bundang" };
+  }
+  if (resolvedSub === "4111000000_Gyeonggi_Suwon") {
+    return { reg: "Gyeonggi", sub: "4111700000_Gyeonggi_Suwon_Yeongtong" };
+  }
+  if (resolvedSub === "4127000000_Gyeonggi_Ansan") {
+    return { reg: "Gyeonggi", sub: "4127100000_Gyeonggi_Ansan_Sangnok" };
+  }
+  if (resolvedSub === "4117000000_Gyeonggi_Anyang") {
+    return { reg: "Gyeonggi", sub: "4117300000_Gyeonggi_Anyang_Dongan" };
+  }
+  if (resolvedSub === "4146000000_Gyeonggi_Yongin") {
+    return { reg: "Gyeonggi", sub: "4146500000_Gyeonggi_Yongin_Suji" };
+  }
+  if (resolvedSub === "4119000000_Gyeonggi_Bucheon") {
+    return { reg: "Gyeonggi", sub: "4119200000_Gyeonggi_Bucheon_Wonmi" };
+  }
+  if (resolvedSub === "4159000000_Gyeonggi_Hwaseong" || resolvedSub === "4159700000_Gyeonggi_Hwaseong_Dongtan") {
+    return { reg: "Gyeonggi", sub: "4159700000_Gyeonggi_Hwaseong_dongtan" };
+  }
+
+  // 5. 충청북도 전체 및 청주시 전체
+  if (resolvedSub === "4300000000_Chungcheongbukdo" || resolvedSub === "Chungcheongbukdo" || (resolvedReg === "Chungcheongbukdo" && (!resolvedSub || resolvedSub === "Chungcheongbukdo"))) {
+    return { reg: "Chungcheongbukdo", sub: "4311100000_Chungcheongbukdo_Cheongju_Sangdang" };
+  }
+  if (resolvedSub === "4311000000_Chungcheongbukdo_Cheongju") {
+    return { reg: "Chungcheongbukdo", sub: "4311100000_Chungcheongbukdo_Cheongju_Sangdang" };
+  }
+
+  // 6. 충청남도 전체 및 천안시 전체
+  if (resolvedSub === "4400000000_Chungcheongnamdo" || resolvedSub === "Chungcheongnamdo" || (resolvedReg === "Chungcheongnamdo" && (!resolvedSub || resolvedSub === "Chungcheongnamdo"))) {
+    return { reg: "Chungcheongnamdo", sub: "4413300000_Chungcheongnamdo_Cheonan_Seobuk" };
+  }
+  if (resolvedSub === "4413000000_Chungcheongnamdo_Cheonan") {
+    return { reg: "Chungcheongnamdo", sub: "4413300000_Chungcheongnamdo_Cheonan_Seobuk" };
+  }
+
+  // 7. 강원도 전체
+  if (resolvedSub === "5100000000_Gangwondo" || resolvedSub === "4200000000_Gangwondo" || resolvedSub === "Gangwondo" || (resolvedReg === "Gangwondo" && (!resolvedSub || resolvedSub === "Gangwondo"))) {
+    return { reg: "Gangwondo", sub: "5113000000_Gangwondo_Wonju" };
+  }
+
+  // 8. 전라북도 전체 및 전주시 전체
+  if (resolvedSub === "5200000000_Jeollabukdo" || resolvedSub === "4500000000_Jeollabukdo" || resolvedSub === "Jeollabukdo" || (resolvedReg === "Jeollabukdo" && (!resolvedSub || resolvedSub === "Jeollabukdo"))) {
+    return { reg: "Jeollabukdo", sub: "5211100000_Jeollabukdo_Jeonju_Wansan" };
+  }
+  if (resolvedSub === "5211000000_Jeollabukdo_Jeonju" || resolvedSub === "4511000000_Jeollabukdo_Jeonju") {
+    return { reg: "Jeollabukdo", sub: "5211100000_Jeollabukdo_Jeonju_Wansan" };
+  }
+
+  // 9. 전남광주(전라남도) 전체
+  if (resolvedSub === "1200000000_Jeonamgwangju" || resolvedSub === "4600000000_Jeollanamdo" || resolvedSub === "Jeonamgwangju" || (resolvedReg === "Jeonamgwangju" && (!resolvedSub || resolvedSub === "Jeonamgwangju"))) {
+    return { reg: "Jeonamgwangju", sub: "1215000000_Jeonamgwangju_Suncheon" };
+  }
+
+  // 10. 경상북도 전체 및 포항시 전체
+  if (resolvedSub === "4700000000_Gyeongsangbukdo" || resolvedSub === "Gyeongsangbukdo" || (resolvedReg === "Gyeongsangbukdo" && (!resolvedSub || resolvedSub === "Gyeongsangbukdo"))) {
+    return { reg: "Gyeongsangbukdo", sub: "4711100000_Gyeongsangbukdo_Pohang_Nam" };
+  }
+  if (resolvedSub === "4711000000_Gyeongsangbukdo_Pohang" || resolvedSub === "4711000000_Gyeongsangbukdo_Pohang_Nam") {
+    return { reg: "Gyeongsangbukdo", sub: "4711100000_Gyeongsangbukdo_Pohang_Nam" };
+  }
+
+  // 11. 경상남도 전체 및 창원시 전체
+  if (resolvedSub === "4800000000_Gyeongsangnamdo" || resolvedSub === "Gyeongsangnamdo" || (resolvedReg === "Gyeongsangnamdo" && (!resolvedSub || resolvedSub === "Gyeongsangnamdo"))) {
+    return { reg: "Gyeongsangnamdo", sub: "4812300000_Gyeongsangnamdo_Changwon_Seongsan" };
+  }
+  if (resolvedSub === "4812000000_Gyeongsangnamdo_Changwon" || resolvedSub === "4812500000_Gyeongsangnamdo_Changwon") {
+    return { reg: "Gyeongsangnamdo", sub: "4812300000_Gyeongsangnamdo_Changwon_Seongsan" };
+  }
+
+  // 12. 제주도 전체
+  if (resolvedSub === "5000000000_Jejudo" || resolvedSub === "5000000000_Jejudoo" || resolvedSub === "Jejudo" || resolvedSub === "Jejudoo" || (resolvedReg === "Jejudo" && (!resolvedSub || resolvedSub === "Jejudo"))) {
+    return { reg: "Jejudo", sub: "5011000000_Jejudo_Jeju" };
+  }
+
+  // reg이 없고 sub에 언더스코어가 있는 경우 reg 추출
+  if (!resolvedReg && resolvedSub.indexOf("_") > -1) {
+    var parts = resolvedSub.split("_");
+    if (parts.length >= 2) {
+      resolvedReg = parts[1];
+    }
+  }
+
+  // 최종 fallback: 비어있을 경우 서울 강남
+  if (!resolvedReg || !resolvedSub) {
+    return { reg: "Seoul", sub: "1168000000_Seoul_Gangnam" };
+  }
+
+  return { reg: resolvedReg, sub: resolvedSub };
+}
+
+function getMainAptrankURL(customReg, customSub) {
+  var curReg = customReg || ((typeof selectedRegion !== 'undefined' && selectedRegion) ? selectedRegion : localStorage.getItem('lastRegion'));
+  var curSub = customSub || ((typeof selectedSubRegion !== 'undefined' && selectedSubRegion) ? selectedSubRegion : localStorage.getItem('lastSubRegion'));
+  var resolved = resolveMainRegion(curReg, curSub);
+  return "https://www.realrankus.com/index.html?reg=" + encodeURIComponent(resolved.reg) + "&sub=" + encodeURIComponent(resolved.sub);
+}
+
+function openAptrank() {
+  var aURL = getMainAptrankURL();
+  location.href = aURL;
+}
+
+function openAptrankTHEME() {
+  aURL = "https://www.realrankus.com/theme/index.html" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion
+  location.href = aURL
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+
+function openOprank() {
+  aURL = "https://www.realrankus.com/op/index.html" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion
+  location.href = aURL
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+function openAptrankBIZ2() {
+  aURL = "https://www.realrankus.com/biz/index.html"
+  if (checkMobile() == "ios") {
+    window.location.href = aURL
+  }
+  else {
+    window.open(aURL)
+  }
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+
+function openAptrankBIZ() {
+  aURL = "https://www.realrankus.com/biz/index.html" + "?reg=" + selectedRegion + "&sub=" + selectedSubRegion
+  location.href = aURL
+  /*
+  if(checkMobile() == "ios"){
+    window.location.href = aURL
+  }
+  else{
+    window.open(aURL)
+  }
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+function openAptrankNEWS() {
+  aURL = "https://www.realrankus.com/newsinfo/index.html"
+  location.href = aURL
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+function openAptrankPRICE() {
+  aURL = "https://www.realrankus.com/price/index.html"
+  location.href = aURL
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+function openAptrankMoneyFlow() {
+  aURL = "https://www.realrankus.com/moneyflow/index.html"
+  location.href = aURL
+  /*
+  if ( navigator.platform ) {
+      if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
+        location.href = aURL
+      } else {
+        window.open(aURL)
+      }
+  }
+  */
+}
+
+function setBottomMenu() {
+  var tSafe = function (key, fallback) {
+    return (typeof t === 'function') ? t(key, fallback) : fallback;
+  };
+
+  var mainAptrankLink = (typeof getMainAptrankURL === 'function') ? getMainAptrankURL() : "https://www.realrankus.com";
+
+  bottomMenu_html = `
+    <div id='bottom_memu_wrapper'>
+      <div class='bottom_tab' id='tab1' onClick='openExternalLinkWithLoading("${mainAptrankLink}", "aptrank")'>${tSafe('ui.menu.aptrank', '아파트분석')}</div>
+      <div class='bottom_tab' id='tab2' onClick='openExternalLinkWithLoading("https://www.realrankus.com/price", "aptrank_price")'>${tSafe('ui.menu.price', '실거래가')}</div>
+      <div class='bottom_tab' id='tab6' onClick='openExternalLinkWithLoading("https://www.realrankus.com/biz", "aptrank_biz")'>${tSafe('ui.menu.biz', '지역분석')}</div>
+      <div class='bottom_tab' id='tab9' onClick='openExternalLinkWithLoading("https://www.realrankus.com/cityclass", "cityclass")'>${tSafe('ui.menu.cityclass', '급지표')}</div>
+      <div class='bottom_tab' id='tab8' onClick='openExternalLinkWithLoading("https://www.realrankus.com/moneyflow", "moneyflow")'>${tSafe('ui.menu.moneyflow', '시장지표')}</div>      
+      <div class='bottom_tab' id='tab3' onClick='openExternalLinkWithLoading("https://www.realrankus.com/theme", "aptrank_theme")'>${tSafe('ui.menu.theme', '테마검색')}</div>      
+      <div class='bottom_tab' id='tab5' onClick='openExternalLinkWithLoading("https://www.realrankus.com/newsinfo", "aptrank_news")'>${tSafe('ui.menu.newsinfo', '뉴스')}</div>      
+      <div class='bottom_tab' id='tab7' onClick='openExternalLinkWithLoading("https://www.realrankus.com/priceCal", "aptrank_priceCal")'>${tSafe('ui.menu.priceCal', '분양가계산')}</div>
+      <div class='bottom_tab' id='tab4' onClick='openExternalLinkWithLoading("https://www.realrankus.com/op", "aptrank_op")'>${tSafe('ui.menu.op', '오피스텔분석')}</div>
+    </div>
+  `
+  $('#linkToAptrank_bottom').html(bottomMenu_html)
+  var tabWidth = 75
+  var bottom_menu_width = (tabWidth * 9) + "px"
+  //$('.bottom_tab').css({'width' : tabWidth + 'px'})
+  if (isMobile) {
+    $('#bottom_memu_wrapper').css({ 'width': bottom_menu_width, 'overflow': 'auto' })
+  }
+  setupBottomMenu(currentMenu)
+}
+
+function setupBottomMenu(currentMenu) {
+  var selectedClass = ""
+  var bgColor = "#E43B46"
+
+  if (currentMenu == "aptrank") {
+    selectedClass = "#tab1"
+    bgColor = "#E43B46"
+  }
+  if (currentMenu == "aptrank_price") {
+    selectedClass = "#tab2"
+    bgColor = "#E43B46"
+  }
+  if (currentMenu == "aptrank_theme") {
+    selectedClass = "#tab3"
+    bgColor = "#E43B46"
+  }
+  if (currentMenu == "aptrank_op") {
+    selectedClass = "#tab4"
+    bgColor = "#162235"
+  }
+  if (currentMenu == "aptrank_news") {
+    selectedClass = "#tab5"
+    bgColor = "#E43B46"
+  }
+  if (currentMenu == "aptrank_biz") {
+    selectedClass = "#tab6"
+    bgColor = "#162235"
+  }
+  if (currentMenu == "aptrank_priceCal") {
+    selectedClass = "#tab7"
+    bgColor = "#162235"
+  }
+  if (currentMenu == "moneyflow") {
+    selectedClass = "#tab8"
+    bgColor = "#162235"
+  }
+  if (currentMenu == "cityclass") {
+    selectedClass = "#tab9"
+    bgColor = "#162235"
+  }
+  if (currentMenu == "aptrank_Guider") {
+    selectedClass = ""
+    bgColor = "#162235"
+  }
+
+  $(selectedClass).css({ 'background': bgColor, 'color': 'white' })
+  //$(selectedClass).prop('onclick', '').unbind('click');
+  $(".bottom_tab").css({ 'border-top': "2px solid " + bgColor })
+
+  //var scrollLeft = $(selectedClass).offset().left  
+  //$("#linkToAptrank_bottom").scrollLeft(scrollLeft - 170);
+
+  var scrollLeft = $(selectedClass).offset().left - $('#linkToAptrank_bottom').width() / 2 + $(selectedClass).width() / 2
+  if (scrollLeft == undefined) {
+    scrollLeft = 0
+  }
+  $("#linkToAptrank_bottom").scrollLeft(scrollLeft);
+
+  //PC 화면에서 innerHeight가 하단Bar를 수용할 수 없으면 표시하지 않음 (2024-01-09)
+
+  var heightMargin = 0
+  if (currentMenu == "aptrank_biz") {
+    heightMargin = 1005
+  }
+  if (currentMenu == "aptrank_priceCal") {
+    heightMargin = 1030
+  }
+  if (currentMenu == "moneyflow") {
+    heightMargin = 1000
+  }
+  if (currentMenu == "cityclass") {
+    heightMargin = 986
+  }
+
+  if (!isMobile && (currentMenu == "aptrank_biz" || currentMenu == "aptrank_priceCal" || currentMenu == "moneyflow" || currentMenu == "cityclass")) {
+    if (window.innerHeight <= heightMargin) {
+      $("#linkToAptrank_bottom").css({ "display": "none" })
+    }
+    else {
+      $("#linkToAptrank_bottom").css({ "width": "100%", "z-index": "150" })
+    }
+    let delay = 150;
+    let timer = null;
+    $(window).on('resize', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        if (window.innerHeight > heightMargin) {
+          $("#linkToAptrank_bottom").css({ "display": "inline-block", "z-index": "150" })
+        }
+        if (window.innerHeight <= heightMargin) {
+          $("#linkToAptrank_bottom").css({ "display": "none" })
+        }
+      }, delay);
+    });
+  }
+}
+
+function setAppDownloadModal() {
+  appDownloadLink = ""
+  if (connectionOS == "iOS" && connectionWebApp == "Web") {
+    appDownloadLink = "https://apps.apple.com/kr/app/%EB%A6%AC%EC%96%BC%EB%9E%AD%EC%BB%A4%EC%8A%A4/id6448044104"
+  }
+  else if (connectionOS == "Android" && connectionWebApp == "Web") {
+    appDownloadLink = "https://play.google.com/store/apps/details?id=com.aptrank.app"
+  }
+  else {
+    return
+  }
+
+  //세션스토리지에 앱다운로드 모달을 띄운 기록이 있으면 띄우지 않음
+  if (sessionStorage.getItem('appDownloadModalShown')) {
+    return
+  }
+
+  var tAppDesc = tSafe('ui.app_download_desc', '리얼랭커스 앱을 설치하시면,<br>더 넓은 화면으로 볼 수 있어요!<br><span style=\'font-size: 0.75em; color: #999;\'>(앱 크기가 5메가도 안 돼요!)</span>');
+  var tAppBtn = tSafe('ui.app_download_btn', '앱 설치하기');
+  var tAppCancel = tSafe('ui.app_download_cancel', '괜찮아요, 모바일 웹으로 볼게요');
+
+  appDownload_html = `      
+      <div class="modal fade" id="appDownloadModal" tabindex="-1" role="dialog" aria-labelledby="appDownloadModalLabel" aria-hidden="true">      
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="appDownloadModaloutline" style="box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);">
+          <div class="modal-body" id="appDownloadModalBody">
+            <div><img src="https://www.realrankus.com/apt-rank-152x152.png" width="70px" style="border-radius: 10px;"></div>
+            <div id="appDownloadModalDescription">${tAppDesc}</div>            
+            <div class="app-download-link" id="appDownloadLink" onClick="openOuterLink('${appDownloadLink}')">${tAppBtn}</div>
+            <div id="appDownloadModalCancel" onClick="closeModal('appDownloadModal')">${tAppCancel}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+
+  if ($('#appDownloadModal').length === 0) {
+    $('body').append(appDownload_html)
+  }
+  $("#appDownloadModaloutline").css({ 'bottom': (-1) * window.innerHeight / 3 + 100 + 'px' })
+  //350ms 후에 모달이 올라오도록 설정
+  setTimeout(function () {
+    openModal("appDownloadModal")
+  }, 350);
+}
+
+function setOffcanvasMenu() {
+  if (isMobile == false) {
+    $('.offcanvas').css({ 'width': '400px' }) //offcanvas    
+  }
+  else {
+    $('.offcanvas').css({ 'width': '300px' }) //offcanvas
+    $('.offcanvas-body').css({ 'padding': '5px' }) //offcanvas    
+  }
+
+  $("div.offcanvas").on("show.bs.offcanvas", function () {
+    var offcanvas = this;
+    var hash = offcanvas.id;
+    window.location.hash = hash;
+    window.onhashchange = function () {
+      if (!location.hash) {
+        $(offcanvas).offcanvas("hide");
+      }
+    };
+  });
+
+  var mainAptrankLink = (typeof getMainAptrankURL === 'function') ? getMainAptrankURL() : "https://www.realrankus.com";
+
+  offcanvas_html = `
+        <div id="offcanvas_menu">
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('${mainAptrankLink}')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.aptrank', '아파트분석')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.aptrank_desc', '대한민국 아파트 입지, 리얼랭커스')}</div>
+            </div>
+          </div>
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/price')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.price', '실거래가')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.price_desc', '보기 편한 실거래가, 리얼랭커스PRICE')}</div>
+            </div>
+          </div>
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/biz')">          
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.biz', '지역분석')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.biz_desc', '지역단위 부동산 시장 현황, 리얼랭커스BIZ')}</div>
+            </div>
+          </div>
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/cityclass')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.cityclass', '부동산 급지표')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.cityclass_desc', '전국의 도시별 백분위표, City Class')}</div>
+            </div>
+          </div>
+          
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/moneyflow')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.moneyflow', '경제시장지표')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.moneyflow_desc', '하루 한 번 시장 지표를 읽는 습관, Money Flow')}</div>
+            </div>
+          </div>          
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/theme')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.theme', '테마검색')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.theme_desc', '공시 1억, 5층 이하 / 분양권 / 재건축 모아보기')}</div>
+            </div>
+          </div>
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/newsinfo')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.newsinfo', '경제뉴스')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.newsinfo_desc', '부동산, 금융, 경제 뉴스 모아보기, 리얼랭커스 NEWS')}</div>
+            </div>
+          </div> 
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/priceCal')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.priceCal', '분양가계산기')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.priceCal_desc', '적정 분양가의 합리적 계산, 분양가 GENERATOR')}</div>
+            </div>
+          </div>
+
+          <div class='offcanvas_link' onClick="openExternalLinkWithLoading('https://www.realrankus.com/op')">
+            <div class="offcanvas_direction"></div>
+            <div class="offcanvas_sub_menu">
+              <div class="offcanvas_sub_menu_title">${tSafe('ui.menu.op', '오피스텔분석')}</div>
+              <div class="offcanvas_sub_menu_description">${tSafe('ui.menu.op_desc', '대한민국 오피스텔 입지, 오피스텔랭크')}</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="offcanvas_footer_link">
+          <div class="offcanvas_footer_icon"><i class="fa-solid fa-earth-asia"></i></div>
+          <div id="offcanvas_footer1" onClick="switchLanguage()">${tSafe('ui.menu.lang_switch_desc', 'English / 한국어')}</div>
+        </div>          
+
+        </div>
+        <div id="offcanvas_footer_link">
+          <div class="offcanvas_footer_icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div id="offcanvas_footer1" onClick="showNotice()">${tSafe('ui.menu.notice', '공지사항 / 업데이트')}</div>
+
+          <div class="offcanvas_footer_icon"><i class="fa-solid fa-mug-saucer"></i></div>
+          <div id="offcanvas_footer4" onClick="openOuterLink('https://cafe.naver.com/aptrankkr')">${tSafe('ui.menu.cafe', '네이버 카페')}</div>
+
+          <div class="offcanvas_footer_icon"><i class="fa-brands fa-youtube"></i></div>
+          <div id="offcanvas_footer2" onClick="openOuterLink('https://youtube.com/@realrankus')">${tSafe('ui.menu.youtube', '유튜브: @realrankus')}</div>
+
+          <div class="offcanvas_footer_icon"><i class="fa-brands fa-instagram"></i> </div>
+          <div id="offcanvas_footer3" onClick="openOuterLink('https://www.instagram.com/realrankus/')">${tSafe('ui.menu.instagram', '인스타그램: @realrankus')}</div>         
+
+          <div class="offcanvas_footer_icon"><i class="fa-brands fa-facebook"></i></div>
+          <div id="offcanvas_footer5" onClick="openOuterLink('https://www.facebook.com/profile.php?id=61575248181914')">${tSafe('ui.menu.facebook', '페이스북')}</div>
+        </div>
+  `
+  offcanvas_android_app_download_html = `
+    <div id="offcanvas_app_download">
+      <div class="offcanvas_footer_icon"><i class="fa-brands fa-google-play"></i></div>
+      <div id="offcanvas_footer6" onClick="openOuterLink('https://play.google.com/store/apps/details?id=com.aptrank.app')">${tSafe('ui.menu.app_download', '앱 다운로드')}</div>
+    </div>
+  `
+  offcanvas_iOS_app_download_html = `
+    <div id="offcanvas_app_download">
+      <div class="offcanvas_footer_icon"><i class="fa-brands fa-app-store-ios"></i></i></div>
+      <div id="offcanvas_footer7" onClick="openOuterLink('https://apps.apple.com/kr/app/%EB%A6%AC%EC%96%BC%EB%9E%AD%EC%BB%A4%EC%8A%A4/id6448044104')">${tSafe('ui.menu.app_download', '앱 다운로드')}</div>
+    </div>
+  `
+  offcanvas_footer_html = `
+    <div id="offcanvas_footer"></div>
+  `
+
+  var tCoffeeTitle = tSafe('ui.menu.coffeechat_title', `"${yearsDifference}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스"`).replace('{years}', yearsDifference);
+  var tCoffeeDesc = tSafe('ui.menu.coffeechat_desc', '2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.');
+  var tCoffeeLink = tSafe('ui.menu.coffeechat_link', '커피챗 : ');
+  var tCompanyTitle = tSafe('ui.menu.company_title', '서비스명');
+  var tContactTitle = tSafe('ui.menu.contact_title', '제휴문의');
+
+  offcanvas_info_html = `
+    <div id="offcanvas_company_long">
+      <div style='font-size: 1.2em; font-weight: 400; margin-bottom: 10px;'>
+        <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>${tCoffeeTitle}</div>      
+        <div class='notice'><strong>${tCoffeeDesc}</strong></div>
+        <div class='notice' onClick='openOuterLink("https://open.kakao.com/me/realrankus")'>${tCoffeeLink}<a href="#">https://open.kakao.com/me/realrankus </a></div>
+      </div>
+      <hr>
+      <div id="company_info_detail">
+        <div class="company_info_text">${tCompanyTitle}</div>
+        <div>${tSafe('ui.menu.company_name', '리얼랭커스')}</div>
+
+        <div class="company_info_text">${tContactTitle}</div>
+        <div style='text-decoration:none; color: #888;' onClick='openOuterLink("mailto:aptranking@gmail.com")'>aptranking@gmail.com</div>
+
+      </div>
+      <hr>
+      <div id='company_CI'>
+        <div style='margin-bottom:5px'>ⓒ Copyright 2022. RealRankus All Rights Reserved.</div>        
+      </div>
+    </div>
+  `
+
+  var tCEOTitle = tSafe('ui.menu.ceo_title', '대표자');
+  var tCEOName = tSafe('ui.menu.ceo_name', '김선우');
+  var tPlannerTitle = tSafe('ui.menu.planner_title', '기획자');
+  var tPlannerName = tSafe('ui.menu.planner_name', '원문정');
+  var tBizRegTitle = tSafe('ui.menu.biz_reg_title', '사업자번호');
+  var tEcommerceTitle = tSafe('ui.menu.ecommerce_title', '통신판매번호');
+  var tOfficeTitle = tSafe('ui.menu.office_title', '소재지');
+  var tOfficeAddress = tSafe('ui.menu.office_address', '서울시 강남구 테헤란로77길 11-9, A동 113호(삼성동)');
+
+  offcanvas_info_html_eng = `
+    <div id="offcanvas_company_long">
+      <div id="company_info_detail">
+        <div class="company_info_text">${tCompanyTitle}</div>
+        <div onClick="openOuterLink('')">${tSafe('ui.menu.company_name', 'Realrankus')}</div>
+
+        <div class="company_info_text">${tCEOTitle}</div>
+        <div>${tCEOName}</div>
+
+        <div class="company_info_text">${tPlannerTitle}</div>
+        <div>${tPlannerName}</div>
+
+        <div class="company_info_text">${tBizRegTitle}</div>
+        <div>725-86-02829</div>
+
+        <div class="company_info_text">${tEcommerceTitle}</div>
+        <div>Je2023-SeoulGangnam-05016ho</div>
+
+        <div class="company_info_text">${tContactTitle}</div>
+        <div style='text-decoration:none; color: #888;' onClick='openOuterLink("mailto:aptranking@gmail.com")'>aptranking@gmail.com</div>
+
+        <div class="company_info_text">${tOfficeTitle}</div>
+        <div onClick="openOuterLink('https://naver.me/FiOAp7R4')">${tOfficeAddress}</div>
+      </div>
+      <hr>
+      <div id='company_CI'>        
+        <div style='margin-bottom:5px'>ⓒ Copyright 2022. RealRankus All Rights Reserved.</div>        
+      </div>
+    </div>
+  `
+
+  $(".offcanvas-body").html(offcanvas_html)
+  //$(".offcanvas-body").append(offcanvas_info_html)
+  //connectionOS가 "Android"이고 connectionWebApp가 "Web"이면 구글 플레이스토어 링크 표시
+  if (connectionOS == "Android" && connectionWebApp == "Web") {
+    $(".offcanvas-body").append(offcanvas_android_app_download_html)
+  }
+  if (connectionOS == "iOS" && connectionWebApp == "Web") {
+    $(".offcanvas-body").append(offcanvas_iOS_app_download_html)
+  }
+
+  $(".offcanvas-body").append(offcanvas_footer_html)
+
+  if (isEn) {
+    $(".offcanvas-body").append(offcanvas_info_html)
+  } else {
+    $(".offcanvas-body").append(offcanvas_info_html)
+  }
+  setupOffcanvas(currentMenu)
+}
+
+/**
+ * @function switchLanguage
+ * @description Preserves the current page query parameters (state) and redirects to the alternative language index.html.
+ */
+function switchLanguage() {
+  const currentParams = window.location.search;  
+  if (isEn) {
+    localStorage.setItem('selectedLanguage', 'ko');
+    window.location.href = '../index.html' + currentParams;
+  } else {
+    localStorage.setItem('selectedLanguage', 'en');
+    window.location.href = './en/index.html' + currentParams;
+  }
+}
+
+window.name = 'opener';
+
+var naverLogin = new naver.LoginWithNaverId(
+  {
+    clientId: NAVER_CLIENT_KEY,
+    //callbackUrl: "http://127.0.0.1:5500/login/callback.html",
+    callbackUrl: "https://www.realrankus.com/login/callback.html",
+    isPopup: false,
+    loginButton: { color: "green", type: 3, height: 60 }
+  }
+);
+
+/* (4) 네아로 로그인 정보를 초기화하기 위하여 init을 호출 */
+naverLogin.init();
+
+function setupOffcanvas(currentMenu) {
+  localStorage.setItem('pageName', pageName)
+  /*
+  $('.offcanvas_link').on('mousedown', function(e){
+    $(this).addClass('offcanvas_active')
+  })
+  $('.offcanvas_link').on('mouseleave', function(e){
+    $(this).removeClass('offcanvas_active')
+  })
+  */
+  if (currentMenu == "aptrank") {
+    $('.offcanvas-header').css({ 'background': '#f23351', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(0).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(0).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(0).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(0).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(0).css('color', '#f23351')
+  }
+
+  if (currentMenu == "aptrank_price") {
+    $('.offcanvas-header').css({ 'background': '#f23351', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(1).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(1).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(1).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(1).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(1).css('color', '#f23351')
+  }
+
+  if (currentMenu == "aptrank_biz") {
+    $('.offcanvas-header').css({ 'background': '#1b3680', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(2).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(2).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(2).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(2).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(2).css('color', '#1b3680')
+
+    $('#offcanvas_footer_link').children('.offcanvas_footer_icon').eq(0).css('visibility', 'hidden')
+    $('#offcanvas_footer_link').children('#offcanvas_footer1').eq(0).css('visibility', 'hidden')
+  }
+
+  if (currentMenu == "cityclass") {
+    $('.offcanvas-header').css({ 'background': '#1b3680', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(3).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(3).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(3).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(3).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(3).css('color', '#1b3680')
+
+    $('#offcanvas_footer_link').children('.offcanvas_footer_icon').eq(0).css('visibility', 'hidden')
+    $('#offcanvas_footer_link').children('#offcanvas_footer1').eq(0).css('visibility', 'hidden')
+  }
+
+  if (currentMenu == "moneyflow") {
+    $('.offcanvas-header').css({ 'background': '#1b3680', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(4).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(4).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(4).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(4).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(4).css('color', '#1b3680')
+
+    $('#offcanvas_footer_link').children('.offcanvas_footer_icon').eq(0).css('visibility', 'hidden')
+    $('#offcanvas_footer_link').children('#offcanvas_footer1').eq(0).css('visibility', 'hidden')
+  }
+
+  if (currentMenu == "aptrank_theme") {
+    $('.offcanvas-header').css({ 'background': '#f23351', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(5).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(5).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(5).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(5).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(5).css('color', '#f23351')
+  }
+
+  if (currentMenu == "aptrank_news") {
+    $('.offcanvas-header').css({ 'background': '#f23351', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(6).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(6).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(6).css('color', '#f23351')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(6).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(6).css('color', '#f23351')
+  }
+
+  if (currentMenu == "aptrank_priceCal") {
+    $('.offcanvas-header').css({ 'background': '#1b3680', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(7).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(7).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(7).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(7).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(7).css('color', '#1b3680')
+
+    $('#offcanvas_footer_link').children('.offcanvas_footer_icon').eq(0).css('visibility', 'hidden')
+    $('#offcanvas_footer_link').children('#offcanvas_footer1').eq(0).css('visibility', 'hidden')
+  }
+
+  if (currentMenu == "aptrank_op") {
+    $('.offcanvas-header').css({ 'background': '#1b3680', 'color': 'white' })
+
+    $('#offcanvas_menu').children('.offcanvas_link').eq(8).prop('onclick', '').unbind('click');
+    $('#offcanvas_menu').children('.offcanvas_link').eq(8).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(8).css('color', '#1b3680')
+    $('#offcanvas_menu').children('.offcanvas_link').eq(8).children('.offcanvas_direction').html("▶")
+    $('#offcanvas_menu').children('.offcanvas_sub_menu_description').eq(8).css('color', '#1b3680')
+  }
+
+  if (currentMenu == "aptrank_Guider") {
+    $('.offcanvas-header').css({ 'background': '#1b3680', 'color': 'white' })
+
+    $('#offcanvas_footer_link').children('.offcanvas_footer_icon').eq(0).css('visibility', 'hidden')
+    $('#offcanvas_footer_link').children('#offcanvas_footer1').eq(0).css('visibility', 'hidden')
+  }
+
+  login_checker()
+}
+
+function setOffcanvasProfile(userID, userName, userEmail, userAge, userBirthday, userBirthyear, userGender, userMobile, userNickName, provider) {
+  var tSafe = function (key, fallback) {
+    return (typeof t === 'function') ? t(key, fallback) : fallback;
+  };
+  temp_email = userEmail
+  temp_uid = userID
+
+  if (isMobile == false) {
+    $('.offcanvas').css({ 'width': '400px' }) //offcanvas    
+  }
+  else {
+    $('.offcanvas').css({ 'width': '300px' }) //offcanvas
+    $('.offcanvas-body').css({ 'padding': '5px' }) //offcanvas
+  }
+
+  var offcanvas_html = ""
+
+  var displayProvider = ""
+
+  if (provider == "NAVER") {
+    displayProvider = `
+    <div style='display:grid; align-content:center; justify-content:center; background:#03C75A; border-radius: 5px; margin-top: 5px'>
+    <img src='https://www.realrankus.com/image/naver_CI.png' height='15'></div>
+    <div style='margin-left: 5px; margin-top: 5px'>${tSafe('ui.profile.naver', '네이버')}</div>
+    `
+  }
+  if (provider == "KAKAO") {
+    displayProvider = `
+    <div style='display:grid; align-content:center; justify-content:center; background:#FEE500; border-radius: 50%; margin-top: 5px'>
+    <img src='https://www.realrankus.com/image/kakao_CI.png' height='15'></div>
+    <div style='margin-left: 5px; margin-top: 5px'>${tSafe('ui.profile.kakao', '카카오')}</div>
+    `
+  }
+  if (provider == "APPLE") {
+    displayProvider = `
+    <div style='display:grid; align-content:center; justify-content:center; background:#000000; border-radius: 5px; margin-top: 5px'>
+    <img src='https://www.realrankus.com/image/apple_CI.png' height='15'></div>
+    <div style='margin-left: 5px; margin-top: 5px'>Apple</div>
+    `
+  }
+
+  offcanvas_html += `
+  <div id="offcanvas_menu">  
+  `
+
+  var displayName = ""
+  if (userName == null || userName == undefined || userName == "") { }
+  else {
+    if (userName.length == 2) {
+      displayName = userName.substr(0, 1) + "*"
+    }
+    else if (userName.length >= 3) {
+      displayName = userName.substr(0, 1)
+      for (i = 0; i < userName.length - 2; i++) {
+        displayName += "*"
+      }
+      displayName += userName.substr(userName.length - 1, 1)
+    }
+    else {
+      displayName = userName
+    }
+
+    offcanvas_html += `    
+      <div class='offcanvas_info'>        
+        <div class="offcanvas_sub_menu">
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.name', '이름')}</div>
+          <div class="offcanvas_sub_menu_title">${displayName}</div>
+        </div>
+      </div>
+      `
+  }
+
+  if (userNickName == null || userNickName == undefined || userNickName == "") { }
+  else {
+    offcanvas_html += `
+      <div class='offcanvas_info'>        
+        <div class="offcanvas_sub_menu">
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.nickname', '별명')}</div>
+          <div class="offcanvas_sub_menu_title">${userNickName}</div>
+        </div>
+      </div>
+      `
+  }
+
+  offcanvas_html += `
+      <div class='offcanvas_info'>        
+        <div class="offcanvas_sub_menu">
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.email', '이메일')}</div>
+          <div class="offcanvas_sub_menu_title">${userEmail}</div>
+        </div>
+      </div>
+      `
+
+  if (userBirthday == null || userBirthday == undefined || userBirthday == "") { }
+  else {
+    var displayBirth = ""
+    var displayBirthday = ""
+    if (provider == "NAVER") {
+      displayBirthday = userBirthday
+    }
+    if (provider == "KAKAO") {
+      displayBirthday = userBirthday.substr(0, 2) + "-" + userBirthday.substr(2, 2)
+    }
+
+    if (userBirthyear == null || userBirthyear == undefined || userBirthyear == "") {
+      displayBirth = displayBirthday
+    }
+    else {
+      displayBirth = userBirthyear + "-" + displayBirthday
+    }
+    offcanvas_html += `
+        <div class='offcanvas_info'>          
+          <div class="offcanvas_sub_menu">
+            <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.birthday', '생년월일')}</div>
+            <div class="offcanvas_sub_menu_title">${displayBirth}</div>
+          </div>
+        </div>
+        `
+  }
+
+  if (userGender == null || userGender == undefined || userGender == "") { }
+  else {
+    var displayGender = ""
+    if (provider == "NAVER") {
+      if (userGender == "M") {
+        displayGender = tSafe('ui.profile.gender_m', '남성')
+      }
+      else if (userGender == "F") {
+        displayGender = tSafe('ui.profile.gender_f', '여성')
+      }
+      else {
+        displayGender = tSafe('ui.profile.gender_none', '제공 안 함')
+      }
+    }
+    if (provider == "KAKAO") {
+      if (userGender == "male") {
+        displayGender = tSafe('ui.profile.gender_m', '남성')
+      }
+      else if (userGender == "femail") {
+        displayGender = tSafe('ui.profile.gender_f', '여성')
+      }
+      else {
+        displayGender = tSafe('ui.profile.gender_none', '제공 안 함')
+      }
+    }
+    offcanvas_html += `
+      <div class='offcanvas_info'>        
+        <div class="offcanvas_sub_menu">
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.gender', '성별')}</div>
+          <div class="offcanvas_sub_menu_title">${displayGender}</div>
+        </div>
+      </div>
+      `
+  }
+
+  offcanvas_html += `
+      <div class='offcanvas_info'>        
+        <div class="offcanvas_sub_menu">
+          <div class="offcanvas_sub_menu_description">${tSafe('ui.profile.provider', '로그인 제공')}</div>
+          <div class="offcanvas_sub_menu_title" style='display:grid; grid-template-columns:30px 1fr'>${displayProvider}</div>
+        </div>
+      </div>
+    `
+
+  $("#offcanvasProfile > .offcanvas-header > #offcanvasRightLabel").html(tSafe('ui.profile.title', '사용자정보'))
+  $("#offcanvasProfile > .offcanvas-body").html(offcanvas_html)
+  $("#offcanvasProfile > .offcanvas-header").attr({ "data-bs-toggle": "offcanvas", "data-bs-target": "#offcanvasRight", "aria-controls": "offcanvasRight" })
+}
+
+function numberFormat(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function numberToKorean(number) {
+  var inputNumber = number < 0 ? false : number;
+  var unitWords = ['', '만', '억', '조', '경'];
+  var splitUnit = 10000;
+  var splitCount = unitWords.length;
+  var resultArray = [];
+  var resultString = '';
+
+  for (var i = 0; i < splitCount; i++) {
+    var unitResult = (inputNumber % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
+    unitResult = Math.floor(unitResult);
+    if (unitResult > 0) {
+      resultArray[i] = unitResult;
+    }
+  }
+
+  for (var i = 0; i < resultArray.length; i++) {
+    if (!resultArray[i]) continue;
+    resultString = String(numberFormat(resultArray[i])) + unitWords[i] + " " + resultString;
+  }
+
+  return resultString;
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array
+}
+
+function arrayChunk(arr, chunk) {
+  // 빈 배열 생성
+  const result = [];
+
+  for (index = 0; index < arr.length; index += chunk) {
+    let tempArray;
+    // slice() 메서드를 사용하여 특정 길이만큼 배열을 분리함
+    tempArray = arr.slice(index, index + chunk);
+    // 빈 배열에 특정 길이만큼 분리된 배열을 추가
+    result.push(tempArray);
+  }
+
+  return result;
+}
+
+function realrankus_visit(complex, sido, gungu, dong) {
+  //firebase의 realrankus_visit에 접속해서 전역변수 'today_str'을 사용하여 db가 없으면 생성한다.
+  //today_str하위에 complex, region, dong을 생성하고 해당하는 값을 1씩 증가시킨다.
+  //이때, complex, region, dong은 각각의 변수로 받아서 사용한다.
+  //이후, 해당하는 값을 1씩 증가시킨다.
+
+  sido = sido.replaceAll(" ", "_")
+  gungu = gungu.replaceAll(" ", "_")
+  dong = dong.replaceAll(" ", "_")
+
+  //DEFAULT DB
+  firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        firebase.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  firebase.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        firebase.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        firebase.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  firebase.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        firebase.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        firebase.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        firebase.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  //SUB01 DB
+  sub01_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub01_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        sub01_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub01_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub01_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        sub01_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub01_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub01_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        sub01_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub01_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub01_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        sub01_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  //SUB02 DB
+  sub02_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub02_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        sub02_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub02_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub02_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        sub02_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub02_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub02_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        sub02_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub02_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub02_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        sub02_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  //SUB03 DB
+  sub03_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub03_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        sub03_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub03_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub03_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        sub03_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub03_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub03_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        sub03_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub03_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub03_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        sub03_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  //SUB04 DB
+  sub04_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub04_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        sub04_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub04_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub04_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        sub04_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub04_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub04_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        sub04_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub04_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub04_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        sub04_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  //SUB05 DB
+  sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        sub05_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+  sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        sub05_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub05_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub05_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        sub05_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        sub05_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  //SUB06 DB
+  sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(1)
+      }
+      else {
+        sub06_db.database().ref("realrankus_visit/" + "complex_" + complex + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+    .then(function () {
+      setTimeout(function () {
+        firebase.database().ref().child("realrankus_visit").child("complex_" + complex).get()
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              visit_obj = snapshot.val()
+              visit_count = 0
+              for (var i in visit_obj) {
+                //날짜가 30일 이전의 날짜보다 큰 경우만 count
+                compare_days = Number(i.replaceAll("-", ""))
+                if (days_ago_num <= compare_days) {
+                  visit_count += visit_obj[i]
+                }
+              }
+              //var isEn = (window.LANG === 'en');
+              var visitSuffix = isEn ? " visits" : "명 방문";
+              if (visit_count == 1) {
+                $("#visit_complex_" + complex).html(visit_count.toLocaleString() + (isEn ? " visit" : "명 방문"))
+                $("#visit_complex_" + complex).animate({ opacity: '1', marginTop: '0px' }, 150);
+                $("#complex_visit_info").html(isEn ? "This is the first visit!" : "첫 번째 방문이네요!")
+              }
+              else {
+                $("#visit_complex_" + complex).html(visit_count.toLocaleString() + visitSuffix)
+                var ordinalStr = isEn ? (function(n){
+                  var s=["th","st","nd","rd"], v=n%100;
+                  return n + (s[(v-20)%10]||s[v]||s[0]);
+                })(visit_count) + " visit!" : visit_count.toLocaleString() + "번째 방문이예요!";
+                $("#complex_visit_info").html(ordinalStr)
+              }
+            }
+          })
+      }, 350)
+    })
+
+  sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(1)
+      }
+      else {
+        sub06_db.database().ref("realrankus_visit/" + sido + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub06_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub06_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(1)
+      }
+      else {
+        sub06_db.database().ref("realrankus_visit/" + gungu + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+
+  sub06_db.database().ref("realrankus_visit/" + dong + "/" + today_str).once("value")
+    .then(function (snapshot) {
+      if (snapshot.val() === null) {
+        sub06_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(1)
+      }
+      else {
+        sub06_db.database().ref("realrankus_visit/" + dong + "/" + today_str).set(snapshot.val() + 1)
+      }
+    })
+}

@@ -1,0 +1,18 @@
+{
+  "target_collections": [
+    "PLAY_SEASON",
+    "PLAY_PRIMARY_SUPPLY",
+    "PLAY_PROPERTY_OWNERSHIP",
+    "PLAY_SECONDARY_LISTING",
+    "PLAY_PROPERTY_TRANSACTION",
+    "PLAY_DECISION_LOG",
+    "RESEARCH_EVENTS",
+    "RESEARCH_EVENTS_DLQ",
+    "PLAY_IDEMPOTENCY_LOGS"
+  ],
+  "protected_collections": [
+    "PLAY_PROPERTY_MASTER",
+    "USERS"
+  ],
+  "target_count": 0
+}

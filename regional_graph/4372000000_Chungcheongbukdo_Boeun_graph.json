@@ -1,0 +1,128 @@
+{
+    "region_code": "4372000000",
+    "region_name": "Chungcheongbukdo_Boeun",
+    "region_key": "4372000000_Chungcheongbukdo_Boeun",
+    "supply_score": 50.0,
+    "dongs": {
+        "보은읍": {
+            "summary_metrics": {
+                "r_simple": 0.7501637782508812,
+                "r_multi": 0.8715206207899884,
+                "r_squared": "76.0%",
+                "price_per_gli_point": 2.30604924297364,
+                "std_error": 79.17552091467019,
+                "remarks": ""
+            },
+            "chart_boundaries": {
+                "min_gli": 20.0770972822,
+                "max_gli": 55.4805302267,
+                "simple_trendline": [
+                    {
+                        "gli": 20.0770972822,
+                        "price": 398.14896359435585
+                    },
+                    {
+                        "gli": 55.4805302267,
+                        "price": 728.0732287324697
+                    }
+                ],
+                "corrected_trendline": [
+                    {
+                        "gli": 20.0770972822,
+                        "price": 494.07232700001504
+                    },
+                    {
+                        "gli": 55.4805302267,
+                        "price": 575.7143867403473
+                    }
+                ],
+                "stable_zone_upper": [
+                    {
+                        "gli": 20.0770972822,
+                        "price": 533.6600874573501
+                    },
+                    {
+                        "gli": 55.4805302267,
+                        "price": 615.3021471976824
+                    }
+                ],
+                "stable_zone_lower": [
+                    {
+                        "gli": 20.0770972822,
+                        "price": 454.48456654267994
+                    },
+                    {
+                        "gli": 55.4805302267,
+                        "price": 536.1266262830122
+                    }
+                ]
+            },
+            "scatter_points": [
+                {
+                    "complex_name": "강변리츠빌",
+                    "gli_score": 31.6011935386,
+                    "price_per_pyung": 726.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 20,
+                    "household_count": 83
+                },
+                {
+                    "complex_name": "거성(주상복합)",
+                    "gli_score": 31.8856218859,
+                    "price_per_pyung": 380.6666666666667,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 105
+                },
+                {
+                    "complex_name": "극동",
+                    "gli_score": 20.0770972822,
+                    "price_per_pyung": 335.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 29,
+                    "household_count": 220
+                },
+                {
+                    "complex_name": "남양리츠빌",
+                    "gli_score": 22.3541653438,
+                    "price_per_pyung": 408.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 25,
+                    "household_count": 106
+                },
+                {
+                    "complex_name": "대동",
+                    "gli_score": 20.9535635421,
+                    "price_per_pyung": 394.0,
+                    "age_category": "노후 (25년이상)",
+                    "construction_age": 32,
+                    "household_count": 130
+                },
+                {
+                    "complex_name": "두진하트리움",
+                    "gli_score": 45.4388256846,
+                    "price_per_pyung": 692.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 88
+                },
+                {
+                    "complex_name": "보은신한헤센",
+                    "gli_score": 55.4805302267,
+                    "price_per_pyung": 649.0,
+                    "age_category": "준신축 (5~10년)",
+                    "construction_age": 8,
+                    "household_count": 492
+                },
+                {
+                    "complex_name": "프리미엄뷰",
+                    "gli_score": 42.2501789687,
+                    "price_per_pyung": 620.25,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
+                    "household_count": 123
+                }
+            ]
+        }
+    }
+}

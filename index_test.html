@@ -1,0 +1,1237 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('selectedLanguage');
+      if (savedLang === 'en') {
+        var currentParams = window.location.search;
+        window.location.replace('./en/index.html' + currentParams);
+      }
+    })();
+  </script>
+  <!-- Google Tag Manager -->
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
+      j.async = true;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, "script", "dataLayer", "GTM-KNL2VQN");
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TEV7JMPP7S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-TEV7JMPP7S");
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("serviceWorker.js").then((reg) => {
+        //console.log('Service Worker Registered!', reg);
+      });
+    }
+  </script>
+
+  <title>리얼랭커스 - 입지 분석의 표준 | 아파트 실거래가</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="리얼랭커스" />
+  <meta property="og:description" content="입지 분석의 표준 | 아파트 실거래가" />
+  <meta property="og:image" content="https://www.realrankus.com/thumbnail_5.jpg" />
+  <meta property="og:url" content="https://www.realrankus.com/" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:url" content="https://www.realrankus.com/" />
+  <meta name="twitter:title" content="리얼랭커스" />
+  <meta name="twitter:description" content="입지 분석의 표준 | 숫자로 보는 아파트 입지 분석, 리얼랭커스 | 아파트 실거래가" />
+
+  <meta name="keyword"
+    content="리얼랭커스, 아파트순위, 부동산, 아파트, 입지, 순위, 아파트입지, 우리동네, 호가, 대장아파트, 최고가, 신고가, 호재, AI, 등수, 아파트 실거래가, 아파트 시세, 재건축, 재개발, 실거래가, 시세, 호가, 매매, 전세, 월세" />
+  <meta name="description" content="입지 분석의 표준 | 숫자로 보는 아파트 입지 분석, 리얼랭커스 | 아파트 실거래가" />
+  <meta name="author" content="리얼랭커스" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover" />
+  <meta charset="utf-8" />
+
+  <!-- 주소창 등의 웹 브라우저 UI를 표시하지 않기 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <!-- 상태 바의 스타일을 지정 -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#fff" />
+  <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
+  <meta name="apple-mobile-web-app-title" content="리얼랭커스" />
+  <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
+  <link rel="apple-touch-icon" href="https://www.realrankus.com/apt-rank-152x152.png" />
+  <!-- 웹 앱 매니페스트를 읽어 들이기 -->
+  <link rel="manifest" href="manifest.json" />
+
+  <link rel="canonical" href="https://www.realrankus.com/" />
+  <link rel="alternate" hreflang="ko" href="https://www.realrankus.com/" />
+  <link rel="alternate" hreflang="en" href="https://www.realrankus.com/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.realrankus.com/" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+  <link rel="shortcut icon" href="https://www.realrankus.com/apr-rank.png" />
+
+  <link rel="preconnect" href="https://code.jquery.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="preconnect" href="https://developers.kakao.com" />
+  <link rel="preconnect" href="https://static.nid.naver.com" />
+  <link rel="preconnect" href="https://oapi.map.naver.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/css/SpoqaHanSansNeo.min.css" rel="stylesheet"
+    type="text/css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script defer src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"
+    integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"
+    integrity="sha512-0bEtK0USNd96MnO4XhH8jhv3nyRF0eK87pJke6pkYf3cM0uDIhNJy9ltuzqgypoIFXw3JSuiy04tVk4AjpZdZw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script defer src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script defer src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/linkifyjs@4.3.2/dist/linkify.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/linkify-html@4.3.2/dist/linkify-html.min.js"></script>
+  <!-- <script defer src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script> -->
+  <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pwacompat/2.0.17/pwacompat.min.js" integrity="sha512-4Dg9Iq0/VM+AW4tfM+/LLLX+Yopudo7SEsMyfTJzG/x7brKQ+NAMELrhA517cA2wFVOHo0m+n06XWCdE70Qsew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+  <script defer src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.min.css" />
+
+  <script defer src="./js/menu_select_box.js?ver=1.32" type="text/javascript"></script>
+  <script defer src="./js/draw_chart.js" type="text/javascript"></script>
+  <script defer src="./js/doubleSlider.js?v=20260524_2" type="text/javascript"></script>
+  <script defer src="./js/sort.js?v=20261004-1" type="text/javascript"></script>
+  <script defer src="./js/search.js" type="text/javascript"></script>
+  <script defer src="./js/unfied_search.js" type="text/javascript"></script>
+  <script defer src="./js/rearrange.js" type="text/javascript"></script>
+  <script defer src="./js/share.js?v=20261010_1" type="text/javascript"></script>
+  <script defer src="./js/request_report_test.js?v=20261016_4" type="text/javascript"></script>
+  <script defer src="./js/report_generator_engine.js?v=20261016_4" type="text/javascript"></script>
+  <script defer src="./js/weight_cal.js" type="text/javascript"></script>
+  <script defer src="./js/weight_array.js" type="text/javascript"></script>
+  <script defer src="./js/simulation.js" type="text/javascript"></script>
+  <script defer src="./js/top300.js" type="text/javascript"></script>
+  <script defer src="./js/kakao_sendtome.js" type="text/javascript"></script>
+  <script defer src="./js/notice_aptrank.js" type="text/javascript"></script>
+  <script defer src="./js/ad_aptrank.js" type="text/javascript"></script>
+  <script defer src="./js/restrict_words.js" type="text/javascript"></script>
+  <script defer src="./js/map_control.js?v=20261004-4" type="text/javascript"></script>
+  <script defer src="./js/distance.js?v=20260902" type="text/javascript"></script>
+
+  <link href="./css/style_common.css" rel="stylesheet" />
+  <link href="./css/style.css?v=20260903" rel="stylesheet" />
+  <link href="./css/slider.css" rel="stylesheet" />
+  <link href="./css/style_board.css" rel="stylesheet" />
+  <link href="./css/jquery-ui.css" rel="stylesheet" />
+</head>
+<style>
+  .report-floating-badge {
+    position: fixed;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 950;
+    background: rgba(18, 22, 36, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.25s ease;
+    user-select: none;
+  }
+  .report-floating-badge:hover {
+    background: rgba(228, 59, 70, 0.96);
+    transform: translateX(-50%) scale(1.04);
+  }
+  .report-floating-badge-complete {
+    background: rgba(16, 185, 129, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    animation: pulse-badge 2s infinite;
+  }
+  @keyframes pulse-badge {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+  /* 리포트 신청, 프로그레스 및 리포트 뷰어 모달 오픈 시 backdrop 전체화면(100%) 강제 적용 */
+  body:has(#reportProgressModal.show) .modal-backdrop,
+  body:has(#requestReportModal.show) .modal-backdrop,
+  body:has(#reportViewerModal.show) .modal-backdrop {
+    width: 100% !important;
+  }
+
+  /* [Step 4] 리포트 뷰어 모달 및 A4 리포트 전용 스타일 */
+  #reportViewerModal .modal-dialog {
+    max-width: 900px;
+    width: 95%;
+  }
+  #user_report_area {
+    width: 210mm;
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #ffffff;
+    color: #111111;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    border-radius: 6px;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  #user_report_area hr {
+    border: 1px solid #aaa;
+    margin: 22px 0;
+  }
+  #user_report_area .reportFocus {
+    font-weight: 700;
+    color: #0820a8;
+  }
+  #user_cover_page {
+    background-color: #fff;
+    width: 100%;
+    min-height: 860px;
+    display: grid;
+    grid-template-rows: 1fr 2.2fr 1fr;
+    padding: 40px 35px;
+    border-bottom: 2px dashed #e2e8f0;
+    page-break-after: always;
+    break-after: always;
+  }
+  #user_cover_page_top {
+    font-size: 2.3em;
+    font-weight: 900;
+    padding-left: 10px;
+    padding-top: 30px;
+    line-height: 1.38;
+    text-align: left;
+  }
+  #user_cover_page_middle {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+  }
+  #user_cover_page_CI {
+    width: 145px;
+    height: 145px;
+    border-radius: 15px;
+    background: rgb(212,20,90);
+    background: linear-gradient(50deg, rgba(212,20,90,1) 3%, rgba(237,28,36,1) 70%, rgba(237,28,36,1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #user_cover_page_bottom {
+    display: grid;
+    align-items: end;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  #user_print_area {
+    background: #fff;
+    padding: 32px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.68;
+  }
+  #user_intro_page {
+    background: #fff;
+    padding: 8px 4px 16px 4px;
+    page-break-after: always;
+    break-after: always;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  #user_consulting_note_wrapper {
+    margin: 20px 0;
+    padding: 20px 22px;
+    background: #f8fafc;
+    border-left: 4px solid #0820a8;
+    border-radius: 6px;
+  }
+  #user_consulting_note_title {
+    font-size: 1.25em;
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 12px;
+    color: #162235;
+  }
+  #user_consulting_note {
+    font-size: 0.95em;
+    line-height: 1.65em;
+    color: #334155;
+  }
+  #user_report_area .report_apt {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    box-shadow: rgba(60, 64, 67, 0.25) 0px 1px 3px 0px, rgba(60, 64, 67, 0.12) 0px 2px 6px 2px;
+    border: 1px solid #cbd5e1;
+    padding: 16px 20px;
+    background: #fff;
+    page-break-before: always;
+    break-before: page;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  #user_report_area .report_apt_name {
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #a80808;
+    margin-bottom: 6px;
+  }
+  #user_report_area .aptYear {
+    font-size: 0.82em;
+    color: #64748b;
+    font-weight: 500;
+  }
+  #user_report_area .report_apt_info {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    row-gap: 5px;
+    margin: 6px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+    font-size: 0.91em;
+  }
+  #user_report_area .report_py_info {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+    margin: 6px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.88em;
+  }
+  #user_report_area .report_py_info.py_multi_col {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 12px;
+    row-gap: 3px;
+    font-size: 0.82em;
+  }
+  #user_report_area .complex_value {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    column-gap: 14px;
+    margin: 10px 0;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    #user_report_area .complex_value {
+      grid-template-columns: 1fr;
+      row-gap: 12px;
+    }
+  }
+  #user_report_area .complex_map {
+    width: 280px;
+    height: 250px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    margin: 0 auto;
+  }
+  #user_report_area .complex_score {
+    display: grid;
+    row-gap: 8px;
+  }
+  #user_report_area .complex_score .graph {
+    height: 150px;
+    width: 100%;
+    position: relative;
+  }
+  #user_report_area .report_info {
+    display: grid;
+    grid-template-columns: 95px 1fr;
+    column-gap: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+    align-items: center;
+  }
+  #user_report_area .complex_QR {
+    text-align: center;
+    font-size: 0.7em;
+  }
+  #user_report_area .complex_QR_notice {
+    font-size: 0.74em;
+    color: #777;
+    line-height: 1.45;
+  }
+  #user_report_area .complex_QR_notice ul {
+    padding-left: 16px;
+    margin-bottom: 0;
+  }
+  #user_report_area .complex_comment {
+    font-size: 0.91em;
+    color: #444;
+    margin-top: 8px;
+  }
+  #user_report_area .complex_headline {
+    font-size: 1.13em;
+    font-weight: 700;
+    margin-top: 10px;
+    font-style: italic;
+    margin-bottom: 8px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    color: #162235;
+  }
+  #user_report_area .complex_strength,
+  #user_report_area .complex_weakness {
+    text-align: left;
+    font-size: 0.98em;
+    font-weight: 700;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    color: #1e293b;
+  }
+  #user_report_area .complex_content {
+    line-height: 1.6em;
+    margin-bottom: 10px;
+  }
+  #user_report_area .complex_content ul li {
+    margin-bottom: 5px;
+  }
+  #user_end_of_document {
+    background-color: #fff;
+    width: 100%;
+    min-height: 1050px;
+    display: grid;
+    grid-template-rows: 1fr 3fr 1fr;
+    padding: 50px 40px;
+    box-sizing: border-box;
+    border-top: 2px dashed #e2e8f0;
+    page-break-before: always;
+    break-before: page;
+  }
+  #user_eod_top {
+    font-size: 0.92em;
+    color: #475569;
+    line-height: 1.75;
+    text-align: left;
+  }
+  #user_eod_middle {
+    font-size: 2.5em;
+    font-weight: 900;
+    text-align: center;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    padding: 40px 0;
+  }
+  #user_eod_bottom {
+    display: grid;
+    align-items: end;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  /* ==========================================================================
+     [Step 5] 내 리포트 보관함 (My Report Archive) 모달 및 카드 스타일
+     ========================================================================== */
+  #myReportsModal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+  }
+  #myReportsModal .modal-header {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 22px;
+  }
+  .my-report-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .my-report-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+  .my-report-badge-date {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .my-report-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+  .my-report-summary {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .my-report-top10-tag {
+    display: inline-block;
+    font-size: 11.5px;
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+  .my-report-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .my-report-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #64748b;
+  }
+  .my-report-empty i {
+    font-size: 48px;
+    color: #cbd5e1;
+    margin-bottom: 14px;
+  }
+</style>
+
+<body ontouchstart="">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KNL2VQN" height="0" width="0"
+      style="display: none; visibility: hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="container">
+    <div id="centerBox">
+      <div id="titleBar">
+        <!--검색 버튼 표시-->
+        <div id="search" onClick="showSearchBar(this)">
+          <i class="fas fa-search"></i>
+        </div>
+        <!--재정렬 버튼 표시-->
+        <div id="rearrange" class="position-relative" onClick="showRearrangeBar(this)">
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+        <!--타이틀 표시-->
+        <!-- <div id="title" onClick="scrollUp()"> -->
+        <!-- <div id="title" onClick="location.reload()"><img src="./apt-rank_blank2.png" height="32px" /></div> -->
+        <div id="title_div" onClick="location.reload()">
+          <div id="title_logo">
+            <img src="./apt-rank_blank2.png" height="26px" />
+          </div>
+          <div id="title_text">리얼랭커스</div>
+        </div>
+        <!--공유 버튼-->
+        <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
+        <!--단지 가중치 설정 버튼 표시-->
+        <div id="sort" onClick="showSorting()">
+          <i class="fa-solid fa-sliders"></i>
+        </div>
+        <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right"
+          aria-controls="offcanvasRight">
+          <i class="fa-solid fa-ellipsis"></i>
+        </div>
+      </div>
+
+      <div id="selections">
+        <div id="sido_selection">
+          <select id="sido" onChange="sidoChange()"></select>
+        </div>
+        <div id="gungu_selection">
+          <select id="gungu" onChange="updateRegion()"></select>
+        </div>
+        <div id="month_selection">
+          <!-- 수정 -->
+          <select id="month" onChange="updateMonth()">
+            <option value="202610" selected>2026년 10월</option>
+            <option value="202609">2026년 09월</option>
+            <option value="202608">2026년 08월</option>
+            <option value="202607">2026년 07월</option>
+            <option value="202606">2026년 06월</option>
+            <option value="202605">2026년 05월</option>
+            <option value="202604">2026년 04월</option>
+            <option value="202603">2026년 03월</option>
+            <option value="202602">2026년 02월</option>
+            <!--
+              <option value="202601">2026년 01월</option>            
+              <option value="202512">2025년 12월</option>            
+              <option value="202511">2025년 11월</option>              
+              <option value="202510">2025년 10월</option>              
+              <option value="202509">2025년 09월</option>
+              <option value="202508">2025년 08월</option>
+              <option value="202507">2025년 07월</option>
+              <option value="202506">2025년 06월</option>
+              <option value="202505">2025년 05월</option>
+              <option value="202504">2025년 04월</option>
+              <option value="202503">2025년 03월</option>
+              <option value="202502">2025년 02월</option>
+              <option value="202501">2025년 01월</option>
+              -->
+          </select>
+        </div>
+      </div>
+
+      <!--단지 가중치 표시창-->
+      <!-- <div id="weight" data-bs-toggle='modal' data-bs-target='#baseModal' onClick='showSorting()'></div> -->
+      <div id="weight"></div>
+
+      <!--단지 검색창-->
+      <div id="searchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="searchGuide">
+          <div id="searchNotice"></div>
+          <div id="inputBox">
+            <input id="inputSearch" type="text" placeholder="어느 단지를 찾아볼까요?" onkeyup="aptSearch()" />
+          </div>
+          <div id="searchExample">예) 강남 래미안, 래미안 힐스테이트, 주공</div>
+        </div>
+        <div id="closeSearch" onClick="closeSearch()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--통합 검색창-->
+      <div id="unifiedSearchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="unifiedSearchGuide">
+          <div id="unifiedSearchNotice">
+            <div>
+              <label>
+                <input type="radio" class="searchRadio" name="options" id="option1" autocomplete="off" value="global"
+                  checked onchange="radioActive(this.value)" />
+                <span style="padding-left: 5px; vertical-align: middle">전국검색</span>
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="radio" class="searchRadio" name="options" id="option2" autocomplete="off" value="local"
+                  onchange="radioActive(this.value)" />
+                <span id="localSearch" style="padding-left: 5px; vertical-align: middle">지역내검색</span>
+              </label>
+            </div>
+          </div>
+          <div id="unifiedInputBox">
+            <input id="inputUnifiedSearch" type="text" placeholder="두 글자 이상 입력해 주세요" onkeyup="goSearchBySearchType()" />
+          </div>
+          <div id="unifiedSearchExample">예) 강남 래미안, 래미안 힐스테이트, 주공</div>
+        </div>
+        <div id="closeUnifiedSearch" onClick="closeUnifiedSearch()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--시군구 검색창-->
+      <div id="regionSearchCard">
+        <div id="iconSearch"><i class="fas fa-search"></i></div>
+        <div id="regionSearchGuide">
+          <div id="regionSearchNotice">전국 시군구 이름으로 검색합니다.</div>
+          <div id="regionInputBox">
+            <input id="regionInputSearch" type="text" placeholder="어느 시군구를 찾아볼까요?" onkeyup="regionSearch()" />
+          </div>
+          <div id="regionSearchExample">예) 서울, 창원, 강남, 서구</div>
+        </div>
+        <div id="closeRegionSearch" onClick="closeRegionSearch()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--단지 정렬창-->
+      <div id="rearrangeCard">
+        <div id="iconRearrange">
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+        <div id="rearrangeContatiner">
+          <div id="rearrangeNotice"></div>
+          <div class="rearrangeArea">
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeScore"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeScore">등급순</label></div>
+
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangePrice"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangePrice">실거래가순</label></div>
+
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeNew"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger" for="rearrangeNew">신축순</label>
+            </div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeHouse"
+                onClick="rearrangeAPTList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeHouse">세대수순</label></div>
+          </div>
+        </div>
+        <div id="closeRearrange" onClick="closeRearrange()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!--시군구 정렬창-->
+      <div id="rearrangeRegionCard">
+        <div id="iconRearrange">
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+        <div id="rearrangeContatiner">
+          <div id="rearrangeRegionNotice"></div>
+          <div class="rearrangeArea">
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionScore"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionScore">총점순</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionRank"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionRank">순위변동순</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionPop"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionPop">인구순</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off"
+                id="rearrangeRegionPopUpDown" onClick="rearrangeRegionList(this)" /><label
+                class="btn btn-outline-danger" for="rearrangeRegionPopUpDown">인구증감순</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionJob"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionJob">일자리순</label></div>
+            <div><input type="radio" class="btn-check" name="btnRearrange" autocomplete="off" id="rearrangeRegionIncome"
+                onClick="rearrangeRegionList(this)" /><label class="btn btn-outline-danger"
+                for="rearrangeRegionIncome">소득순</label></div>
+          </div>
+        </div>
+        <div id="closeRegionRearrange" onClick="closeRegionRearrange()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <!--리스트 데이터 붙여넣는 영역-->
+      <div id="dataList_wrapper">
+        <div id="dataList"></div>
+      </div>
+      <div id="dataMap"></div>
+
+      <!--댓글서비스창
+        <div id="commentBack" onClick="commentbox_animate()"></div>
+        <div id="commentWrapper" style='display:none'>
+          <div id="commentBox">
+            <div id="comment_head" onClick="commentbox_animate()">
+              <div id="comment_light"></div>
+              <div id="comment_title">
+                <div id="recent_comment_num"></div>
+              </div>
+            </div>
+            <div id="comment_list"></div>
+            <div id="writeBox"></div>
+          </div>
+        </div>
+        -->
+
+      <!--리얼랭커스 연결-->
+      <div id="linkToAptrank_bottom"></div>
+
+      <!--단지 검색창 닫기 플로팅 버튼-->
+      <div id="closeSearch_floating" onClick="closeSearch()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">검색닫기</div>
+        </div>
+      </div>
+      <!--통합 검색창 닫기 플로팅 버튼-->
+      <div id="closeUnifiedSearch_floating" onClick="closeUnifiedSearch()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">검색닫기</div>
+        </div>
+      </div>
+      <!--시군구 검색창 닫기 플로팅 버튼-->
+      <div id="closeRegionSearch_floating" onClick="closeRegionSearch()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">검색닫기</div>
+        </div>
+      </div>
+      <!--단지 재정렬창 닫기 플로팅 버튼-->
+      <div id="closeRearrange_floating" onClick="closeRearrange()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">정렬닫기</div>
+        </div>
+      </div>
+      <!--지역 재정렬창 닫기 플로팅 버튼-->
+      <div id="closeRegionRearrange_floating" onClick="closeRegionRearrange()">
+        <div id="closeSearch_floting_wraper">
+          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
+          <div id="clostText_floating">정렬닫기</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--단지비교 검색창-->
+  <div id="complex_compare_search">
+    <div id="close_compare1_modal" onClick="closeComplexSearch(1, '')">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div id="close_compare2_modal" onClick="closeComplexSearch(2, '')">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="complex_compare_search_bar">
+      <div><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div id="compareSearchInputBox">
+        <input id="compareInputSearch1" type="text" placeholder="전국 단지를 검색하세요" onkeyup="compareSearch(1)" />
+        <input id="compareInputSearch2" type="text" placeholder="전국 단지를 검색하세요" onkeyup="compareSearch(2)" />
+      </div>
+      <div id="close_compare1_search" onClick="clearInput(1)">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </div>
+      <div id="close_compare2_search" onClick="clearInput(2)">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </div>
+    </div>
+    <div id="complex_compare_search_list_wrapper">
+      <div id="complex_compare1_search_list"></div>
+      <div id="complex_compare2_search_list"></div>
+    </div>
+  </div>
+
+  <!-- Compare modal -->
+  <div class="modal fade" id="compareModal" tabindex="-1" aria-labelledby="compareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div id="compareModal_close">
+        <a class="compareModalclose" data-bs-dismiss="modal" data-keyboard="false" aria-label="Close"><i
+            class="fa-solid fa-xmark"></i></a>
+      </div>
+      <div class="modal-content">
+        <div class="modal-body" id="compareDetail"></div>
+        <div id="compareFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="baseModal" tabindex="-1" aria-labelledby="baseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="baseModalLabel">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="aptDetail"></div>
+        <div id="footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="toggleModal1" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabel">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="simulDetail"></div>
+        <div id="toggle1footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="toggleModal2" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleModalLabe2">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="simulResult"></div>
+        <div id="toggle2footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="loginDetail"></div>
+        <div id="loginfooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment_Modal -->
+  <div class="modal fade" id="commentListModal" tabindex="-1" role="dialog" aria-labelledby="commentListLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="comment_title">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="comment_list"></div>
+        <div class="modal-footer" id="writeBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="commentModalLabel"></div>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="commentModifyModal" tabindex="-1" role="dialog" aria-labelledby="commentModifyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="commentModifyModalLabel"></div>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="noticeModal" tabindex="-1" aria-labelledby="noticeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" id="noticeModaloutline">
+        <div class="modal-header">
+          <h5 class="modal-title" id="noticeModalLabel">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="noticeDetail"></div>
+        <div id="noticeFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="blogModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" id="blogModaloutline">
+        <div class="modal-header">
+          <h5 class="modal-title" id="blogModalLabel">잠시만 기다려 주세요</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="blogDetail"></div>
+        <div id="blogFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!--화면 중앙 상단 고정 영역에 "그래프 보기" 버튼-->
+  <div id="graphButtonContainer"
+    style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 900">
+    <button id="graphButton" class="btn" onClick="showGraphChart()">동별 고·저평가 아파트 분석</button>
+  </div>
+
+  <!-- [Step 3 & Step 5 테스트] 리포트 발행 / 토스 결제 및 생성 UI / 내 리포트 보관함 즉시 테스트 버튼 -->
+  <div id="testReportPayBtnContainer"
+    style="position: fixed; top: 8px; right: 90px; z-index: 920; display: flex; gap: 6px;">
+    <button class="btn btn-sm btn-dark text-white fw-bold" onclick="openMyReportsModal()" style="box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-radius: 20px; font-size: 12px; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2);">
+      <i class="fa-solid fa-folder-open text-warning me-1"></i>내 리포트 보관함
+    </button>
+    <button class="btn btn-sm btn-light text-danger fw-bold" onclick="openReportRequestModal()" style="box-shadow: 0 4px 12px rgba(0,0,0,0.25); border-radius: 20px; font-size: 12px; padding: 6px 14px; border: 1px solid rgba(228,59,70,0.3);">
+      <i class="fa-solid fa-credit-card text-danger me-1"></i>리포트 결제창 테스트
+    </button>
+    <button class="btn btn-sm btn-danger text-white fw-bold" onclick="simulateReportGenerationTest()" style="box-shadow: 0 4px 12px rgba(228,59,70,0.4); border-radius: 20px; font-size: 12px; padding: 6px 14px; border: none;">
+      <i class="fa-solid fa-bolt me-1"></i>리포트 생성 UI 즉시 테스트
+    </button>
+  </div>
+
+  <!-- Graph Modal -->
+  <div class="modal fade" id="graphModal" tabindex="-1" aria-labelledby="graphModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content bg-dark">
+        <div class="modal-header border-0">
+          <h5 class="modal-title text-white" id="graphModalLabel">동별 고·저평가 아파트 분석</h5>
+          <div class="ms-auto d-flex align-items-center">
+            <button type="button" class="btn btn-outline-light btn-sm me-2" id="gliDownloadBtn" title="이미지 다운로드">
+              <i class="fa-solid fa-download"></i>
+            </button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-body bg-dark">
+          <div id="chartWrapper" class="bg-white p-3" style="position: relative;">
+            <h5 id="gliChartTitle" class="text-center font-weight-bold" style="color: #000; font-size: 1.25rem;"></h5>
+            <div id="gliChartContainer" style="position: relative; width: 100%; height: 650px;">
+              <!-- Canvas and custom legend/watermark overlay will be rendered here -->
+            </div>
+          </div>
+          <div id="dongSelectionMenu" class="mt-3 text-center">
+            <!-- Grid of outline buttons will be rendered here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [Step 3] 백그라운드 리포트 생성 플로팅 뱃지 -->
+  <div id="reportFloatingProgress" class="report-floating-badge" style="display: none;" onclick="handleFloatingBadgeClick()">
+    <span class="spinner-border spinner-border-sm text-light me-1" role="status" id="rfpSpinner"></span>
+    <i class="fa-solid fa-circle-check text-success me-1" id="rfpCheck" style="display: none;"></i>
+    <span id="rfpText">리포트 생성 중... 0%</span>
+  </div>
+
+  <!-- [Step 3] 백그라운드 리포트 생성 진행 상태 중앙 모달 -->
+  <div class="modal fade" id="reportProgressModal" tabindex="-1" aria-labelledby="reportProgressModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 12px 35px rgba(0,0,0,0.3); overflow: hidden;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1f2937, #111827); color: #fff; border: none; padding: 18px 22px;">
+          <h5 class="modal-title fs-6 fw-bold" id="reportProgressModalLabel">
+            <i class="fa-solid fa-chart-pie me-2" style="color: #E43B46;"></i>1:1 맞춤형 아파트 추천 리포트 생성
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3 text-secondary" style="font-size: 0.9em;" id="rpmCustomerTitle">
+            고객님의 정보를 기반으로 AI 주거 전략 보고서를 작성하고 있습니다.
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="progress mb-3" style="height: 14px; border-radius: 7px; background-color: #f1f3f5;">
+            <div id="rpmProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 0%; transition: width 0.4s ease;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+
+          <!-- Percentage & Step Info -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span id="rpmStepText" class="fw-bold text-dark" style="font-size: 0.95em;">준비 중...</span>
+            <span id="rpmPercentText" class="badge bg-danger fs-6">0%</span>
+          </div>
+
+          <!-- Detailed Status Alert Box -->
+          <div class="p-3 mb-3 text-start rounded-3" style="background: #f8f9fa; border-left: 4px solid #E43B46; font-size: 0.85em; color: #495057;">
+            <div id="rpmDetailLog" class="mb-1"><i class="fa-solid fa-spinner fa-spin me-1"></i> 데이터 파이프라인 초기화 중...</div>
+            <div class="text-muted" style="font-size: 0.8em; margin-top: 6px;">
+              <i class="fa-solid fa-shield-halved text-success me-1"></i> 창을 닫아도 백그라운드에서 안전하게 리포트가 완성됩니다.
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm py-2" data-bs-dismiss="modal" id="rpmBackgroundBtn">
+              <i class="fa-solid fa-window-minimize me-1"></i> 백그라운드로 실행하기 (화면 둘러보기)
+            </button>
+            <button type="button" class="btn btn-danger btn-sm py-2 fw-bold" id="rpmCompleteBtn" style="display: none;" onclick="openCompletedReportModal()">
+              <i class="fa-solid fa-file-pdf me-1"></i> 리포트 확인 및 PDF 다운로드
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [Step 4] 완성된 리포트 전체 열람 및 PDF 다운로드 모달 -->
+  <div class="modal fade" id="reportViewerModal" tabindex="-1" aria-labelledby="reportViewerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 16px 48px rgba(0,0,0,0.4); overflow: hidden; background: #e2e8f0;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #162235, #0f172a); color: #fff; border: none; padding: 14px 20px; position: sticky; top: 0; z-index: 10;">
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <h5 class="modal-title fs-6 fw-bold mb-0" id="reportViewerModalLabel">
+              <i class="fa-solid fa-book-open-reader me-2" style="color: #E43B46;"></i><span id="reportViewerTitle">리얼랭커스 1:1 추천 보고서</span>
+            </h5>
+            <span id="reportStorageStatusBadge" class="badge bg-secondary" style="font-size: 0.75em; font-weight: 500;">
+              <i class="fa-solid fa-cloud-arrow-up me-1"></i>보관함 자동 저장 중...
+            </span>
+          </div>
+          <div class="ms-auto d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-danger btn-sm fw-bold px-3" id="btnDownloadReportPdf" onclick="downloadUserReportPDF()">
+              <i class="fa-solid fa-file-arrow-down me-1"></i>PDF 다운로드
+            </button>
+            <button type="button" class="btn btn-light btn-sm fw-bold px-3 text-dark" id="btnPrintReportVector" onclick="openPrintReportWindow()">
+              <i class="fa-solid fa-print me-1"></i>고화질 인쇄 / PDF 저장
+            </button>
+            <button type="button" class="btn-close btn-close-white ms-1" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-body p-2 p-md-4" id="reportViewerBody" style="background: #cbd5e1; overflow-y: auto;">
+          <div id="user_report_area">
+            <div id="user_cover_page" class="user_print_page">
+              <div id="user_cover_page_top"></div>
+              <div id="user_cover_page_middle"></div>
+              <div id="user_cover_page_bottom"></div>
+            </div>
+            <div id="user_print_area" class="user_print_page"></div>
+            <div id="user_end_of_document" class="user_print_page">
+              <div id="user_eod_top"></div>
+              <div id="user_eod_middle"></div>
+              <div id="user_eod_bottom"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [Step 5] 내 리포트 보관함 (My Report Archive) 모달 -->
+  <div class="modal fade" id="myReportsModal" tabindex="-1" aria-labelledby="myReportsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex align-items-center gap-2">
+            <h5 class="modal-title fw-bold" id="myReportsModalLabel">
+              <i class="fa-solid fa-folder-open text-warning me-2"></i>내 리포트 보관함
+            </h5>
+            <span id="myReportsCountBadge" class="badge bg-secondary" style="font-size: 11px;">0개</span>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3 p-md-4" style="background: #f8fafc; min-height: 380px;">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted" style="font-size: 13px;">
+              발행하신 1:1 맞춤형 추천 리포트를 언제든지 다시 열람하거나 PDF로 다운로드하실 수 있습니다.
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadMyReportsList(true)">
+              <i class="fa-solid fa-arrows-rotate me-1"></i>새로고침
+            </button>
+          </div>
+          <div id="myReportsListContainer">
+            <!-- 리포트 카드 목록이 동적으로 렌더링됩니다 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offcanvas Right -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">MENU</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!-- Offcanvas Profile -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel"></h5>
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+
+  <!--모바일 지도/리스트 변환 버튼-->
+  <div id="mobile_map_list" onClick="mapListModeChange()">
+    <div id="mobile_map_list_wraper">
+      <div id="mobile_map_list_icon"></div>
+      <div id="mobile_map_list_text"></div>
+    </div>
+  </div>
+
+  <!--검색 결과 표시해 주는 리스트-->
+  <div id="searchingBox"></div>
+
+  <!--지도에 등급 표시 필터-->
+  <div id="gradeSelector">
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_S" value="S"
+        checked onChange="setGradeFilter()" /><label id="check_grade_S_text" for="check_grade_S">S</label></div>
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_A" value="A"
+        checked onChange="setGradeFilter()" /><label id="check_grade_A_text" for="check_grade_A">A</label></div>
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_B" value="B"
+        checked onChange="setGradeFilter()" /><label id="check_grade_B_text" for="check_grade_B">B</label></div>
+    <div class="gradeSelector_check"><input class="form-check-input" type="checkbox" id="check_grade_C" value="C"
+        checked onChange="setGradeFilter()" /><label id="check_grade_C_text" for="check_grade_C">C</label></div>
+  </div>
+
+  <!--지도에 필터 표시 -->
+  <div id="filterOnOff" onClick="filterOnOff()">필터</div>
+  <div id="filterSelector"></div>
+
+  <!--지도 위 배너-->
+  <div id="map_banner" onClick="openReportRequestModal()">리포트 발행</div>
+
+  <div id="map_banner2" onClick="compareCheck()">단지 비교하기</div>
+
+  <!--지도 위 플레이 버튼
+  <div id="map_banner_play" style="position:fixed; bottom: 80px; left: 20px; z-index:900; background-color:#0d6efd; color:white; padding:10px 15px; border-radius:8px; cursor:pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight:bold; text-align:center;" onClick="location.href='./play/index.html'"><i class="fa-solid fa-earth-asia me-1"></i> PLAY 시작</div>
+  -->
+
+  <div id="radar-container"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 1500; overscroll-behavior: none;">
+    <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none; visibility: hidden; -webkit-transform: translate3d(0, 0, 0); transform: translateZ(0);"></iframe>
+  </div>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-functions-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://js.tosspayments.com/v1/payment"></script>
+
+  <script type="text/javascript" defer src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+  <script defer src="./js/con_counter_js.js?v=20260710"></script>
+  <script defer src="./js/apple.js" type="text/javascript"></script>
+  <script defer src="./js/login_260522.js" type="text/javascript"></script>
+  <script defer src="./js/board.js?v=20260710" type="text/javascript"></script>
+  <script defer src="./js/complex_compare.js?v=20260710" type="text/javascript"></script>
+
+  <script src="./js/i18n.js?v=20260604"></script>
+  <script defer src="./js/gli_chart_renderer.js?v=20260614"></script>
+  <script defer src="./js/app_main_lang.js?v=20261006-1"></script>
+</body>
+
+</html>

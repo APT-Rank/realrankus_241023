@@ -1,0 +1,1 @@
+const { initializeApp } = require('firebase-admin/app'); const { getFunctions } = require('firebase-admin/functions'); initializeApp({ projectId: 'aptrank-cc61b' }); const q = getFunctions().taskQueue('aggregateBatch'); console.log(q);  

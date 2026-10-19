@@ -1,0 +1,27 @@
+{
+    "name": "리얼랭커스Price",
+    "short_name": "리얼랭커스Price",
+    "description": "대한민국 아파트 실거래가",
+    "dir": "ltr",
+    "start_url": "https://www.realrankus.com/price/index.html",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ff3d38",
+    "orientation": "portrait",
+    "icons": [{
+      "src": "https://www.realrankus.com/price/apt-rank-price-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },{
+      "src": "https://www.realrankus.com/price/apt-rank-price-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }, {
+      "src": "https://www.realrankus.com/price/apt-rank-price-114x114.png",
+      "sizes": "114x114",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }]
+}

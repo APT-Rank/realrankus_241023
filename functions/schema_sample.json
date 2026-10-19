@@ -1,0 +1,108 @@
+{
+  "PLAY_SEASON": {
+    "season_id": "S_AI1_L100_1790436007990",
+    "status": "ACTIVE",
+    "clock_status": "RUNNING",
+    "scenario_id": "SCENARIO_3",
+    "scenario_version": "1.0",
+    "rule_version": "1.0",
+    "transaction_status": "NORMAL",
+    "created_at": {
+      "_seconds": 1790436014,
+      "_nanoseconds": 305000000
+    },
+    "last_successful_period": 359,
+    "updated_at": {
+      "_seconds": 1790442603,
+      "_nanoseconds": 934000000
+    },
+    "current_simulation_period": 360,
+    "last_successful_batch_id": "S_AI1_L100_1790436007990_359_MONTHLY"
+  },
+  "PLAY_PLAYER": {
+    "player_id": "S_AI1_L100_1790436007990_p0",
+    "season_id": "S_AI1_L100_1790436007990",
+    "status": "ACTIVE",
+    "user_id": "ai_user_0"
+  },
+  "PLAY_PLAYER_ASSET": {
+    "player_id": "S_AI1_L100_1790436007990_p0",
+    "season_id": "S_AI1_L100_1790436007990",
+    "cash_locked": 0,
+    "property_count": 1,
+    "processed_batches": [
+      "S_AI1_L100_1790436007990_359_MONTHLY"
+    ],
+    "net_worth": 357078480,
+    "last_processed_batch_id": "S_AI1_L100_1790436007990_359_MONTHLY",
+    "updated_at": {
+      "_seconds": 1790442591,
+      "_nanoseconds": 735000000
+    },
+    "last_processed_at": {
+      "_seconds": 1790442591,
+      "_nanoseconds": 735000000
+    },
+    "last_processed_period": 359,
+    "cash_available": 357078480,
+    "cash_total": 357078480
+  },
+  "PLAY_DECISION_LOG": {
+    "season_id": "S_AI1_L100_1790436007990",
+    "player_id": "S_AI1_L100_1790436007990_p68",
+    "simulation_period": 235,
+    "batch_id": "S_AI1_L100_1790436007990_235_MONTHLY",
+    "chunk_id": "S_AI1_L100_1790436007990_235_MONTHLY_c6",
+    "event_type": "MONTHLY_ECONOMIC_UPDATE",
+    "before_cash": 269891317,
+    "income": 5873208,
+    "living_expense": 4654713,
+    "after_cash": 271109812,
+    "before_net_worth": 269891317,
+    "after_net_worth": 271109812,
+    "created_at": {
+      "_seconds": 1790440357,
+      "_nanoseconds": 820000000
+    },
+    "request_id": "S_AI1_L100_1790436007990_235_MONTHLY_c6_dispatch",
+    "trace_id": "4ee37e4dec5c5971eef55964edb3a2e9/9750839444595388422",
+    "scenario_id": "SCENARIO_3",
+    "scenario_version": "1.0",
+    "rule_version": "1.0",
+    "idempotency_key": "S_AI1_L100_1790436007990_235_MONTHLY_S_AI1_L100_1790436007990_p68"
+  },
+  "PLAY_PROPERTY_TRANSACTION": {
+    "transaction_id": "0NqewZ63L9NzGzYKu2bB",
+    "season_id": "S_AI1_L100_1790436007990",
+    "property_id": "8093",
+    "transaction_type": "PRIMARY_PURCHASE",
+    "buyer_player_id": "S_AI1_L100_1790436007990_p3",
+    "seller_player_id": null,
+    "price": 675000000,
+    "buyer_fee": 13500000,
+    "seller_fee": 0,
+    "total_buyer_cash_change": -688500000,
+    "total_seller_cash_change": 0,
+    "status": "COMPLETED",
+    "idempotency_key": "S_AI1_L100_1790436007990_p90_a23",
+    "created_at": {
+      "_seconds": 1790437785,
+      "_nanoseconds": 446000000
+    }
+  },
+  "PLAY_PRIMARY_SUPPLY": {
+    "supply_id": "S_AI1_L100_1790436007990_supply_10002",
+    "season_id": "S_AI1_L100_1790436007990",
+    "property_id": "10002",
+    "initial_price": 780000000,
+    "remaining_supply": 1,
+    "created_at": {
+      "_seconds": 1790436584,
+      "_nanoseconds": 634000000
+    },
+    "updated_at": {
+      "_seconds": 1790436584,
+      "_nanoseconds": 634000000
+    }
+  }
+}
