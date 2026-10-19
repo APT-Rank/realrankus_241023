@@ -977,6 +977,9 @@ function resolveMainRegion(reg, sub) {
   var resolvedSub = sub;
 
   // 1. 전국 단위 처리
+  if (resolvedSub && resolvedSub.endsWith("_Top300")) {
+    return { reg: "Korea", sub: resolvedSub };
+  }
   if (resolvedReg === "Korea" || resolvedSub === "1000000000_Korea" || (!resolvedReg && !resolvedSub)) {
     return { reg: "Korea", sub: "1000000000_Korea" };
   }

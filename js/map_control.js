@@ -1966,6 +1966,7 @@ function mapListModeChange() {
     $("#filterOnOff").hide()
     $("#gradeSelector").hide()
     $("#graphButtonContainer").hide()
+    $("#map_banner").hide()
 
     mobile_mode = "list"
   }
@@ -1983,6 +1984,7 @@ function mapListModeChange() {
     }
     if (typeof selectedSubRegion !== "undefined" && selectedSubRegion !== "1000000000_Korea" && !selectedSubRegion.endsWith("_Top300")) {
       $("#graphButtonContainer").show()
+      $("#map_banner").show()
     }
 
     mobile_mode = "map"

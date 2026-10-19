@@ -1222,6 +1222,9 @@ function resolveMainRegion(reg, sub) {
   var resolvedSub = sub || "";
 
   // 1. 전국
+  if (resolvedSub && resolvedSub.endsWith("_Top300")) {
+    return { reg: "Korea", sub: resolvedSub };
+  }
   if (resolvedReg === "Korea" || resolvedSub === "1000000000_Korea" || resolvedSub === "Korea" || resolvedReg === "1000000000_Korea") {
     return { reg: "Korea", sub: "1000000000_Korea" };
   }
@@ -1565,6 +1568,8 @@ function updateRegion() {
       $("#filterOnOff").hide();
       $("#filterSelector").hide();
       $("#graphButtonContainer").hide();
+      $("#map_banner").hide();
+      $("#map_banner2").hide();
       updateTopTable(selectedMonth, selectedSubRegion);
     } else {
       //로딩
@@ -1575,6 +1580,10 @@ function updateRegion() {
       }
       if (!isMobile || mobile_mode === "map") {
         $("#graphButtonContainer").show();
+        $("#map_banner").show();
+        if (!isMobile) {
+          $("#map_banner2").show();
+        }
       }
       $("#dataList").html("");
 
@@ -1585,6 +1594,8 @@ function updateRegion() {
     $("#filterOnOff").hide();
     $("#filterSelector").hide();
     $("#graphButtonContainer").hide();
+    $("#map_banner").hide();
+    $("#map_banner2").hide();
     updateRegionTable(selectedMonth, selectedSubRegion);
   }
   showWeight();
