@@ -37,6 +37,7 @@ jobs:
     - name: get News Update
       run: |
         python ./newsinfo/naver_news_generate.py
+        python ./newsinfo/update_cafe_briefing.py
     - name: Commits
       run: |        
         git pull
@@ -45,6 +46,7 @@ jobs:
         git add ./newsinfo/news.json
         git add ./newsinfo/blogs.json
         git add ./moneyflow/market_hourly_info.json
+        git add ./ad/1000000000_Korea_ad.json
         git commit -m "News, Blog, Hourly Market Update"
     - name: Push
       uses: ad-m/github-push-action@master
