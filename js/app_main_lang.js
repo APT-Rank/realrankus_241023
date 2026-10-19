@@ -1564,6 +1564,7 @@ function updateRegion() {
       $("#gradeSelector").hide();
       $("#filterOnOff").hide();
       $("#filterSelector").hide();
+      $("#graphButtonContainer").hide();
       updateTopTable(selectedMonth, selectedSubRegion);
     } else {
       //로딩
@@ -1571,6 +1572,9 @@ function updateRegion() {
       if (filter_ui) {
         $("#gradeSelector").show();
         $("#filterSelector").show();
+      }
+      if (!isMobile || mobile_mode === "map") {
+        $("#graphButtonContainer").show();
       }
       $("#dataList").html("");
 
@@ -1580,6 +1584,7 @@ function updateRegion() {
     $("#gradeSelector").hide();
     $("#filterOnOff").hide();
     $("#filterSelector").hide();
+    $("#graphButtonContainer").hide();
     updateRegionTable(selectedMonth, selectedSubRegion);
   }
   showWeight();
