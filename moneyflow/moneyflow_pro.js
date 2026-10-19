@@ -1075,6 +1075,9 @@ function return_MoneyFlow_time(obj_val, duration){
   if(duration == '20Y'){
     return_arr_val = arr_val.slice(-240)
   }
+  if(duration == '30Y'){
+    return_arr_val = arr_val.slice(-360)
+  }
 
   return return_arr_val
 }
@@ -1107,8 +1110,12 @@ function return_MoneyFlow_arr(obj_val, duration){
   if(duration == '20Y'){
     return_arr_val = arr_val.slice(-240)
   }
+  if(duration == '30Y'){
+    return_arr_val = arr_val.slice(-360)
+  }
 
   return_arr_val = return_arr_val.map( x => {    
+    if(x === null || x === undefined || isNaN(x)){ return null }
     x = Math.round(x*1000) / 1000
     return x
   })
@@ -1255,15 +1262,13 @@ function show_daily_info(){
   addon_html += "<div class='daily_title_mf'>"
     addon_html += "<div><img src='MoneyFlow.svg' height='15px' width='50px' /> MoneyFlow <span style='font-size: 0.7em'> (2019년 6월 = 1.00)</span></div>"    
     addon_html += "<div class='subSelection'>"              
-      addon_html += "<div></div>"
-      addon_html += "<div></div>"
-      addon_html += "<div></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_1Y_MONEY_FLOW' onClick='redraw_graph(this, \"1Y\")'><label class='btn btn-outline-danger' id='label_1Y' for='redraw_1Y_MONEY_FLOW'>1Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_3Y_MONEY_FLOW' onClick='redraw_graph(this, \"3Y\")'><label class='btn btn-outline-danger' id='label_3Y' for='redraw_3Y_MONEY_FLOW'>3Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_5Y_MONEY_FLOW' onClick='redraw_graph(this, \"5Y\")' checked><label class='btn btn-outline-danger' id='label_5Y' for='redraw_5Y_MONEY_FLOW'>5Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_10Y_MONEY_FLOW' onClick='redraw_graph(this, \"10Y\")'><label class='btn btn-outline-danger' id='label_10Y' for='redraw_10Y_MONEY_FLOW'>10Y</label></div>"
-      addon_html += "<div style='display:none;'><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_15Y_MONEY_FLOW' onClick='redraw_graph(this, \"15Y\")'><label class='btn btn-outline-danger' id='label_15Y' for='redraw_15Y_MONEY_FLOW'>15Y</label></div>"
-      addon_html += "<div style='display:none;'><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_20Y_MONEY_FLOW' onClick='redraw_graph(this, \"20Y\")'><label class='btn btn-outline-danger' id='label_20Y' for='redraw_20Y_MONEY_FLOW'>20Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_15Y_MONEY_FLOW' onClick='redraw_graph(this, \"15Y\")'><label class='btn btn-outline-danger' id='label_15Y' for='redraw_15Y_MONEY_FLOW'>15Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_20Y_MONEY_FLOW' onClick='redraw_graph(this, \"20Y\")'><label class='btn btn-outline-danger' id='label_20Y' for='redraw_20Y_MONEY_FLOW'>20Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_30Y_MONEY_FLOW' onClick='redraw_graph(this, \"30Y\")'><label class='btn btn-outline-danger' id='label_30Y' for='redraw_30Y_MONEY_FLOW'>30Y</label></div>"
     addon_html += "</div>"
     addon_html += "<div class='daily_sub_mf'>" + moneyflow_updated + "</div>"
   addon_html += "</div>"
