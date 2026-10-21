@@ -1,23 +1,48 @@
 import os
 import sys
 import time
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import boto3
-from botocore.config import Config
+
+try:
+    import boto3
+    from botocore.config import Config
+except ImportError:
+    print("[*] boto3 is not installed. Installing boto3 automatically...")
+    import subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "boto3"])
+    import boto3
+    from botocore.config import Config
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 def get_env_var(name, default=None):
+    # 1. System environment variable
     val = os.getenv(name)
     if val:
         return val.strip()
-    if os.path.exists('.env'):
-        with open('.env', 'r', encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    k, v = line.split('=', 1)
-                    if k.strip() == name:
-                        return v.strip()
+
+    # 2. .env file in CWD or REPO_ROOT
+    for env_candidate in ['.env', os.path.join(REPO_ROOT, '.env')]:
+        if os.path.exists(env_candidate):
+            with open(env_candidate, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        if k.strip() == name:
+                            return v.strip().strip('"').strip("'")
+
+    # 3. Fallback to Real_Estate config.py
+    for conf_dir in ['c:/Real_Estate', 'd:/real_estate_data', '//desktop-u3chenn/Real_Estate']:
+        if os.path.exists(conf_dir) and conf_dir not in sys.path:
+            sys.path.append(conf_dir)
+    try:
+        import config
+        if hasattr(config, name):
+            return str(getattr(config, name)).strip()
+    except Exception:
+        pass
+
     return default
 
 def get_r2_client():
@@ -26,7 +51,7 @@ def get_r2_client():
     secret_access_key = get_env_var('R2_SECRET_ACCESS_KEY')
 
     if not endpoint_url or not access_key_id or not secret_access_key:
-        raise ValueError("Missing R2 credentials in environment or .env file.")
+        raise ValueError("Missing R2 credentials in environment, .env file, or config.py.")
 
     return boto3.client(
         service_name='s3',
@@ -54,15 +79,19 @@ def fetch_existing_r2_objects(s3, bucket_name, prefix='price/recent/'):
     print(f"[*] Found {count} existing objects in R2 under '{prefix}'.")
     return existing
 
-def collect_local_files(base_dir='price/recent', filter_str=None):
+def collect_local_files(base_dir=None, filter_str=None):
+    if base_dir is None:
+        base_dir = os.path.join(REPO_ROOT, 'price', 'recent')
     local_files = []
     norm_base = os.path.normpath(base_dir)
+    if not os.path.exists(norm_base):
+        print(f"[!] Warning: Base directory not found: {norm_base}")
+        return local_files
+
     for root, dirs, files in os.walk(norm_base):
         for f in files:
             full_path = os.path.join(root, f)
-            rel_path = os.path.normpath(full_path).replace('\\', '/')
-            if rel_path.startswith('./'):
-                rel_path = rel_path[2:]
+            rel_path = os.path.relpath(full_path, REPO_ROOT).replace('\\', '/')
             if filter_str and filter_str not in rel_path:
                 continue
             size = os.path.getsize(full_path)
@@ -89,7 +118,7 @@ def sync_price_to_r2(force=False, max_workers=20, dry_run=False, filter_str=None
     if not force:
         existing_r2 = fetch_existing_r2_objects(s3, bucket_name, prefix)
 
-    local_files = collect_local_files('price/recent', filter_str=filter_str)
+    local_files = collect_local_files(filter_str=filter_str)
     total_files = len(local_files)
     total_bytes = sum(f[2] for f in local_files)
     print(f"[*] Local files found: {total_files} files ({total_bytes / (1024*1024):.2f} MB)")
