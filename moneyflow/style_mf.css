@@ -221,6 +221,40 @@
     background-color: #f3f3f3;
     border-bottom: 1px solid #ccc;
     gap: 8px;
+    min-height: 2.6em;
+  }  
+  #Money_Flow > div.daily_title_mf > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: normal;
+  }
+  #Money_Flow > div.daily_title_mf > div.subSelection {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    align-items: center;
+    justify-items: center;
+    margin: 0;
+    padding: 0 5px;
+    height: 100%;
+  }
+  #Money_Flow > div.daily_title_mf > div.subSelection > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+  }
+  #Money_Flow > div.daily_title_mf > div.subSelection > div > label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    line-height: 1.4;
+    vertical-align: middle;
   }  
   .daily_sub{
     text-align: right;
