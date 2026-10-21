@@ -338,7 +338,8 @@
   }
 
   function loadStandardInterest_KO(){
-    url = "https://www.realrankus.com/BOK_standatd_interest.json"
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/BOK_standatd_interest.json"
     $.getJSON(url, function(json) {
         ko_interest = json;
         time_obj = ko_interest['DATA_VALUE']
@@ -352,7 +353,8 @@
   }
 
   function loadStandardInterest_US(){
-    url = "https://www.realrankus.com/FED_standatd_interest.json"
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/FED_standatd_interest.json"
     $.getJSON(url, function(json) {
         us_interest = json;
         time_obj = us_interest['DATE']
@@ -366,7 +368,8 @@
   }
 
   function loadPIR(loc){
-    url = "https://www.realrankus.com/PIR.json"
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/PIR.json"
     $.getJSON(url, function(json) {
         PIR_list = json;
         PIR_locations = Object.values(PIR_list['Location'])
@@ -392,7 +395,8 @@
     })
   }
   function loadBP(loc){
-    url = "https://www.realrankus.com/BP.json"
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/BP.json"
     $.getJSON(url, function(json) {
         BP_list = json;
         BP_locations = Object.values(BP_list['Location'])

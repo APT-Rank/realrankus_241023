@@ -67,6 +67,7 @@
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
 
+  <script src="../js/r2_config.js"></script>
   <script src="../js/menu_select_box_BIZ.js" type="text/javascript"></script>
   <script src="../js/draw_chart_BIZ.js" type="text/javascript"></script>
   <script src="../js/sort.js" type="text/javascript"></script>
@@ -513,7 +514,8 @@
   }
 
   function loadStandardInterest_KO(){
-    url = "https://www.realrankus.com/BOK_standatd_interest.json"    
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/BOK_standatd_interest.json"    
     $.getJSON(url, function(json) {
         ko_interest = json;
         time_obj = ko_interest['TIME']
@@ -527,7 +529,8 @@
   }
 
   function loadStandardInterest_US(){
-    url = "https://www.realrankus.com/FED_standatd_interest.json"    
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/FED_standatd_interest.json"    
     $.getJSON(url, function(json) {
         us_interest = json;
         time_obj = us_interest['DATE']
@@ -542,7 +545,8 @@
 
   function loadPIR(loc){
     //url = "https://www.realrankus.com/PIR.json"
-    url = "../PIR.json"
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/PIR.json"
 
     $.getJSON(url, function(json) {
         PIR_list = json;
@@ -571,7 +575,8 @@
   }
   function loadBP(loc){
     //url = "https://www.realrankus.com/BP.json"
-    url = "../BP.json"
+    var r2_base = (typeof R2_DATA_BASE_URL !== "undefined") ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/BP.json"
     $.getJSON(url, function(json) {
         BP_list = json;
         BP_locations = Object.values(BP_list['Location'])
