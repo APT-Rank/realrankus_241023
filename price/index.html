@@ -85,8 +85,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
     integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"
-    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
@@ -116,6 +115,50 @@
   <script src="https://cdn.jsdelivr.net/npm/@fnando/sparkline/dist/sparkline.min.js"></script>
 </head>
 <style>
+  /* 실거래가 카드 하단 영역 및 다운로드 버튼 (A안) */
+  .compare_price_container {
+    grid-area: compare;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .compare_price_container .compare_price {
+    flex: 1;
+  }
+  .card_download_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 4px;
+  }
+  .btn_card_download {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    color: #475569;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn_card_download:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+  }
+  .btn_card_download:active {
+    background-color: #cbd5e1;
+    transform: scale(0.92);
+  }
 </style>
 
 <body ontouchstart="">
@@ -583,7 +626,7 @@
   function simple_and_detail() {
     if (isMobile) {
       if (simple_view == 0) {
-        $(".compare_price").slideUp(450)
+        $(".compare_price_container, .compare_price").slideUp(450)
         $(".hided_ratio").fadeIn(450)
         $(".price_content").animate({
           'margin-top': '0px'
@@ -593,7 +636,7 @@
         simple_view = 1
       }
       else {
-        $(".compare_price").slideDown(450)
+        $(".compare_price_container, .compare_price").slideDown(450)
         $(".hided_ratio").fadeOut(450)
         $(".price_content").animate({
           'margin-top': '5px'
@@ -1169,7 +1212,7 @@
             lowerDeal++
           }
 
-          addon_html += "<div class='" + list_class_name + "' data-bs-toggle='modal' data-bs-target='#baseModal' id='aptSelect' onClick='showDetail(" + i + ",\"" + exp_region + "\")'>";
+          addon_html += "<div class='" + list_class_name + " aptSelect' data-bs-toggle='modal' data-bs-target='#baseModal' id='apt_card_" + i + "' onClick='showDetail(" + i + ",\"" + exp_region + "\")'>";
 
           addon_html += "<div class='content'>";
           if (deal_new_old == "BYG") {
@@ -1201,6 +1244,7 @@
           addon_html += "</div>"
           addon_html += "</div>"
 
+          addon_html += "<div class='compare_price_container'>"
           addon_html += "<div class='compare_price'>"
           if (last_dealed_date == undefined) {
             addon_html += "<div>직전거래 대비</div>" + "<div>" + compare_last_tag + "</div>" + "<div>" + Korean_price(last_dealed_price) + " (정보없음)</div>"
@@ -1210,6 +1254,13 @@
           }
           addon_html += "<div>최고가 대비</div>" + "<div>" + compare_max_tag + "</div>" + "<div>" + Korean_price(max_price_deal[1]) + " (" + max_price_deal[0] + ")</div>"
           addon_html += "<div>최저가 대비</div>" + "<div>" + compare_min_tag + "</div>" + "<div>" + Korean_price(min_price_deal[1]) + " (" + min_price_deal[0] + ")</div>"
+          addon_html += "</div>"
+
+          addon_html += "<div class='card_download_wrapper' data-html2canvas-ignore='true'>"
+          addon_html += "<button type='button' class='btn_card_download' title='카드 이미지 다운로드' onClick='downloadCardImage(this, " + i + ", event)'>"
+          addon_html += "<i class='fa-solid fa-camera'></i>"
+          addon_html += "</button>"
+          addon_html += "</div>"
           addon_html += "</div>"
 
           addon_html += "<div class='sparkline_container'>"
@@ -1282,14 +1333,27 @@
             'grid-row': 'auto',
             'height': '100%'
           })
+          $(".compare_price_container").css({
+            'grid-area': 'auto',
+            'display': 'grid',
+            'grid-template-columns': '1fr 0.4fr',
+            'align-items': 'center',
+            'padding-top': '8px',
+            'border-top': '1px solid #eee'
+          })
           $(".compare_price").css({
             'grid-area': 'auto',
             'display': 'grid',
-            'grid-template-columns': '0.2fr 0.2fr 0.6fr',
+            'grid-template-columns': '0.26fr 0.22fr 0.52fr',
             'font-size': '0.7em',
             'font-weight': '600',
-            'padding-top': '10px',
-            'border-top': '1px solid #eee'
+            'border-top': '0px',
+            'padding-top': '0px'
+          })
+          $(".card_download_wrapper").css({
+            'display': 'flex',
+            'justify-content': 'center',
+            'align-items': 'center'
           })
           $(".price_num").css({ 'line-height': '1.2em', 'font-size': '1em' })
           $(".apt_name").css('font-size', '0.9em')
@@ -2643,6 +2707,90 @@
       $(".lower").fadeIn(450)
       $(".hidden_saperator_text").html("#하락 " + count + "건")
       $(".hidden_saperator").slideDown(450)
+    }
+  }
+
+  // 실거래가 카드 고해상도 이미지 다운로드 (A안: 카메라 아이콘, 출처 표기 포함)
+  async function downloadCardImage(btnEl, index, event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if (event.stopImmediatePropagation) {
+        event.stopImmediatePropagation();
+      }
+    }
+
+    var $btn = $(btnEl);
+    var $card = $btn.closest('.listBox');
+    if ($card.length === 0) return;
+
+    // 단지 메타데이터 (파일명 생성)
+    var item = (typeof aptData !== 'undefined' && aptData && aptData.data) ? aptData.data[index] : null;
+    var aptName = (item && item["단지명"]) ? item["단지명"].replace(/[/\\?%*:|"<>]/g, "") : "실거래가";
+    var dealDate = (item && item["거래일자"]) ? item["거래일자"].replace(/[^0-9]/g, "") : "";
+    var aptP = (item && item["전용면적"]) ? Math.round(Number(item["전용면적"]) / 3.3058) + "평" : "";
+    var filename = "실거래_" + aptName + (aptP ? "_" + aptP : "") + (dealDate ? "_" + dealDate : "") + ".png";
+
+    // 버튼 로딩 상태 전환
+    var originalBtnHtml = $btn.html();
+    $btn.prop('disabled', true).html("<i class='fa-solid fa-spinner fa-spin'></i>");
+
+    if (typeof toastr !== 'undefined') {
+      toastr.info("카드 이미지를 생성 중입니다...", "", { timeOut: 1500 });
+    }
+
+    try {
+      var cardDom = $card[0];
+      var canvas = await html2canvas(cardDom, {
+        scale: 3,                 // 고해상도 (Retina/인쇄급 3배수 선명도)
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        onclone: function (clonedDoc) {
+          var clonedCard = clonedDoc.getElementById('apt_card_' + index);
+          if (clonedCard) {
+            clonedCard.style.backgroundColor = '#ffffff';
+            clonedCard.style.padding = '14px 16px';
+            clonedCard.style.borderRadius = '8px';
+            clonedCard.style.boxShadow = 'none';
+            clonedCard.style.borderBottom = 'none';
+
+            // 출처 표기 (워터마크)
+            var footer = clonedDoc.createElement('div');
+            footer.className = 'card_capture_footer';
+            footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
+            footer.innerHTML = '<div style="display:flex; align-items:center; gap:5px;"><span style="font-weight:700; color:#E43B46; font-size:12px;">리얼랭커스</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div><div style="color:#94a3b8; font-size:10px;">대한민국 아파트 실거래가 순위</div>';
+            clonedCard.appendChild(footer);
+          }
+        }
+      });
+
+      var base64Data = canvas.toDataURL('image/png');
+
+      // 안드로이드 하이브리드 앱 웹뷰 환경 검사
+      if (window.Android && typeof window.Android.downloadImage === 'function') {
+        window.Android.downloadImage(base64Data, filename);
+      } else {
+        // 일반 브라우저 환경 (모바일 Safari, Chrome 등)
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = base64Data;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      if (typeof toastr !== 'undefined') {
+        toastr.success("실거래가 카드가 이미지로 저장되었습니다.");
+      }
+    } catch (err) {
+      console.error("카드 이미지 캡처 실패:", err);
+      if (typeof toastr !== 'undefined') {
+        toastr.error("이미지 저장에 실패했습니다.");
+      }
+    } finally {
+      $btn.prop('disabled', false).html(originalBtnHtml);
     }
   }
 
