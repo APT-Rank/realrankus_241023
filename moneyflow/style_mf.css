@@ -215,10 +215,12 @@
   }
   .daily_title_mf{
     display:grid;
-    grid-template-columns: 2fr 1fr 0.5fr;    
+    grid-template-columns: auto 1fr auto;
+    align-items: center;    
     padding-left: 10px;
     background-color: #f3f3f3;
     border-bottom: 1px solid #ccc;
+    gap: 8px;
   }  
   .daily_sub{
     text-align: right;
@@ -229,11 +231,47 @@
     border-bottom: 1px solid #ccc;
   } 
   .daily_sub_mf{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
     text-align: right;
     padding-right: 10px;
     font-size: 0.85em;
     background-color: #f3f3f3;
     color:#999;    
+  }
+  .card_download_wrapper {
+    display: inline-flex;
+    align-items: center;
+  }
+  .btn_card_download {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #475569;
+    font-size: 13px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    padding: 0;
+    line-height: 1;
+  }
+  .btn_card_download:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    border-color: #94a3b8;
+  }
+  .btn_card_download:active {
+    background-color: #e2e8f0;
+    transform: scale(0.92);
   }  
   .hourly_header{
     display:grid;

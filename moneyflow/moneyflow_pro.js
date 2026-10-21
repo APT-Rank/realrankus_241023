@@ -1270,7 +1270,14 @@ function show_daily_info(){
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_20Y_MONEY_FLOW' onClick='redraw_graph(this, \"20Y\")'><label class='btn btn-outline-danger' id='label_20Y' for='redraw_20Y_MONEY_FLOW'>20Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_30Y_MONEY_FLOW' onClick='redraw_graph(this, \"30Y\")'><label class='btn btn-outline-danger' id='label_30Y' for='redraw_30Y_MONEY_FLOW'>30Y</label></div>"
     addon_html += "</div>"
-    addon_html += "<div class='daily_sub_mf'>" + moneyflow_updated + "</div>"
+    addon_html += "<div class='daily_sub_mf'>"
+    addon_html += "<span>" + moneyflow_updated + "</span>"
+    addon_html += "<div class='card_download_wrapper' data-html2canvas-ignore='true'>"
+    addon_html += "<button type='button' class='btn_card_download' title='MoneyFlow 이미지 다운로드' onClick='downloadMoneyFlowImage(this, event)' onpointerdown='event.stopPropagation()' ontouchstart='event.stopPropagation()' onmousedown='event.stopPropagation()' onpointerup='event.stopPropagation()' ontouchend='event.stopPropagation()'>"
+    addon_html += "<i class='fa-solid fa-camera'></i>"
+    addon_html += "</button>"
+    addon_html += "</div>"
+    addon_html += "</div>"
   addon_html += "</div>"
 
   addon_html += "<div class='graph_item_mf'>"
@@ -3958,5 +3965,101 @@ function redraw_graph(obj, duration){
     //console.log(moneyflow_dataset)
     myMoneyFlow_Chart.destroy()
     drawMoneyFlowChart(mf_time_arr, moneyflow_dataset, "MoneyFlow_Chart")
+  }
+}
+// MoneyFlow 영역 고해상도 캡처 및 이미지 다운로드 함수
+async function downloadMoneyFlowImage(btnEl, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (event.stopImmediatePropagation) {
+      event.stopImmediatePropagation();
+    }
+  }
+
+  var $btn = $(btnEl);
+  var targetDom = document.getElementById('Money_Flow');
+  if (!targetDom) {
+    alert('Money_Flow 요소를 찾을 수 없습니다.');
+    return;
+  }
+
+  // 파일명 포맷: MoneyFlow_YYYYMDD_HHMMSS (두 자리 패딩 적용: MoneyFlow_YYYYMMDD_HHMMSS.png)
+  var now = new Date();
+  var YYYY = now.getFullYear();
+  var MM = String(now.getMonth() + 1).padStart(2, '0');
+  var DD = String(now.getDate()).padStart(2, '0');
+  var hh = String(now.getHours()).padStart(2, '0');
+  var mm = String(now.getMinutes()).padStart(2, '0');
+  var ss = String(now.getSeconds()).padStart(2, '0');
+  var timestamp = YYYY + MM + DD + "_" + hh + mm + ss;
+  var captureDateTimeStr = YYYY + "-" + MM + "-" + DD + " " + hh + ":" + mm + ":" + ss;
+  var filename = "MoneyFlow_" + timestamp + ".png";
+
+  var originalBtnHtml = $btn.html();
+  $btn.prop('disabled', true).html("<i class='fa-solid fa-spinner fa-spin'></i>");
+
+  try {
+    var canvas = await html2canvas(targetDom, {
+      scale: 3,                 // Retina/인쇄급 3배수 고해상도
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      onclone: function (clonedDoc) {
+        var clonedTarget = clonedDoc.getElementById('Money_Flow');
+        if (clonedTarget) {
+          clonedTarget.style.backgroundColor = '#ffffff';
+          clonedTarget.style.boxShadow = 'none';
+          clonedTarget.style.border = '1px solid #1355ac';
+          clonedTarget.style.borderRadius = '4px';
+          clonedTarget.style.padding = '10px 14px 16px 14px';
+          clonedTarget.style.margin = '0px';
+
+          // Chart.js 원본 캔버스 비트맵을 복제본 캔버스에 1:1 보존 복사
+          var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
+          var clonedCanvas = clonedDoc.getElementById('MoneyFlow_Chart');
+          if (origCanvas && clonedCanvas) {
+            clonedCanvas.width = origCanvas.width;
+            clonedCanvas.height = origCanvas.height;
+            var ctx = clonedCanvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(origCanvas, 0, 0);
+            }
+          }
+
+          // 워터마크 추가 (왼쪽: Captured at 2줄, 오른쪽: 리얼랭커스 | realrankus.com)
+          var footer = clonedDoc.createElement('div');
+          footer.className = 'mf_capture_footer';
+          footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
+          footer.innerHTML = '<div style="display:flex; flex-direction:column; line-height:1.25; font-size:8px; color:#cbd5e1; font-weight:400; letter-spacing:-0.2px;"><span>Captured at</span><span>' + captureDateTimeStr + '</span></div>' +
+            '<div style="display:flex; align-items:center; gap:4px;"><span style="font-weight:700; color:#1355ac; font-size:11px;">리얼랭커스</span><span style="color:#cbd5e1; font-size:10px;">|</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div>';
+          clonedTarget.appendChild(footer);
+        }
+      }
+    });
+
+    var base64Data = canvas.toDataURL('image/png');
+
+    // 하이브리드 앱 웹뷰 환경 검사
+    if (window.Android && typeof window.Android.downloadImage === 'function') {
+      window.Android.downloadImage(base64Data, filename);
+    } else {
+      var link = document.createElement('a');
+      link.href = base64Data;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    if (typeof toastr !== 'undefined') {
+      toastr.success('MoneyFlow 이미지가 저장되었습니다.');
+    }
+  } catch (err) {
+    console.error('MoneyFlow capture error:', err);
+    alert('이미지 저장 중 문제가 발생했습니다: ' + (err.message || err));
+  } finally {
+    $btn.prop('disabled', false).html(originalBtnHtml);
   }
 }
