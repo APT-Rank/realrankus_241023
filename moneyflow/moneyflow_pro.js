@@ -4009,7 +4009,12 @@ function downloadMoneyFlowImage(btnEl, event) {
   var currentWidth = targetDom.offsetWidth || 1200;
   var dynamicScale = Math.min(5, Math.max(3, targetWidth / currentWidth));
 
-  // 3. 임시로 Chart.js 해상도(devicePixelRatio)를 높이고 resize/update 실행
+  // 3. 캡처 전 외부 마진/그림자 임시 제거 및 Chart.js 해상도(devicePixelRatio)를 높이고 resize/update 실행
+  var originalMargin = targetDom.style.margin;
+  var originalBoxShadow = targetDom.style.boxShadow;
+  targetDom.style.margin = '0px';
+  targetDom.style.boxShadow = 'none';
+
   var canvasEl = document.getElementById('MoneyFlow_Chart');
   var chart = (canvasEl && window.Chart && typeof window.Chart.getChart === 'function')
     ? window.Chart.getChart(canvasEl)
@@ -4024,6 +4029,8 @@ function downloadMoneyFlowImage(btnEl, event) {
   }
 
   function restoreOriginals() {
+    targetDom.style.margin = originalMargin;
+    targetDom.style.boxShadow = originalBoxShadow;
     if (chart) {
       try {
         chart.options.devicePixelRatio = originalDPR;
@@ -4045,14 +4052,18 @@ function downloadMoneyFlowImage(btnEl, event) {
       backgroundColor: '#ffffff',
       logging: false,
       onclone: function (clonedDoc) {
+        clonedDoc.body.style.margin = '0px';
+        clonedDoc.body.style.padding = '0px';
+
         var clonedTarget = clonedDoc.getElementById('Money_Flow');
         if (clonedTarget) {
           clonedTarget.style.backgroundColor = '#ffffff';
           clonedTarget.style.boxShadow = 'none';
-          clonedTarget.style.border = '1px solid #1355ac';
-          clonedTarget.style.borderRadius = '4px';
-          clonedTarget.style.padding = '10px 14px 16px 14px';
           clonedTarget.style.margin = '0px';
+          clonedTarget.style.padding = '0px 0px 12px 0px'; // 불필요한 상하좌우 마진/여백 제거, 하단만 워터마크용 여백 확보
+          clonedTarget.style.border = '1px solid #cbd5e1';
+          clonedTarget.style.borderRadius = '4px';
+          clonedTarget.style.boxSizing = 'border-box';
 
           // SVG 로고가 <img> 태그일 경우 깨짐 방지를 위해 인라인 SVG로 보존
           var svgImgs = clonedTarget.querySelectorAll('img[src*="MoneyFlow.svg"]');
@@ -4077,7 +4088,7 @@ function downloadMoneyFlowImage(btnEl, event) {
           // 워터마크 추가 (왼쪽: Captured at 2줄, 오른쪽: 리얼랭커스 | realrankus.com)
           var footer = clonedDoc.createElement('div');
           footer.className = 'mf_capture_footer';
-          footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
+          footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin:10px 14px 0 14px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
           footer.innerHTML = '<div style="display:flex; flex-direction:column; line-height:1.25; font-size:8px; color:#cbd5e1; font-weight:400; letter-spacing:-0.2px;"><span>Captured at</span><span>' + captureDateTimeStr + '</span></div>' +
             '<div style="display:flex; align-items:center; gap:4px;"><span style="font-weight:700; color:#1355ac; font-size:11px;">리얼랭커스</span><span style="color:#cbd5e1; font-size:10px;">|</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div>';
           clonedTarget.appendChild(footer);
