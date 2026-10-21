@@ -126,6 +126,13 @@
     padding-top: 8px;
     margin-top: 4px;
   }
+  @media screen and (min-width: 800px) {
+    .compare_price_container {
+      border-top: none;
+      padding-top: 0px;
+      margin-top: 0px;
+    }
+  }
   .compare_price_container .compare_price {
     flex: 1;
   }
@@ -1379,6 +1386,12 @@
           })
           $(".price_num").css({ 'line-height': '1.2em', 'font-size': '1em' })
           $(".apt_name").css('font-size', '0.9em')
+        } else {
+          $(".compare_price_container").css({
+            'border-top': 'none',
+            'padding-top': '0px',
+            'margin-top': '0px'
+          });
         }
         $(".hided_ratio").hide()
         $(".hidden_saperator").hide()
