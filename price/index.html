@@ -2789,7 +2789,7 @@
     var mm = String(now.getMinutes()).padStart(2, '0');
     var ss = String(now.getSeconds()).padStart(2, '0');
     var timestamp = YYYY + MM + DD + "_" + hh + mm + ss;
-    var captureDateTimeStr = YYYY + "." + MM + "." + DD + " " + hh + ":" + mm + ":" + ss;
+    var captureDateTimeStr = YYYY + "-" + MM + "-" + DD + " " + hh + ":" + mm + ":" + ss;
     var filename = "리얼랭커스_" + aptName + (aptP ? "_" + aptP : "") + "_실거래_" + timestamp + ".png";
 
     // 버튼 로딩 상태 전환
