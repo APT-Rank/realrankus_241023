@@ -14,6 +14,19 @@ function get_direction(val){
   return val_result
 }
 
+function get_currency_source(key_prefix) {
+  var bok_key = 'BOK_Currency_' + key_prefix;
+  var yf_map = { 'US': 'yf_USDKRW', 'JP': 'yf_JPYKRW', 'EU': 'yf_EURKRW' };
+  var yf_key = yf_map[key_prefix];
+  var data = (typeof daily_market !== 'undefined' && daily_market) ? daily_market[bok_key] : null;
+  if (!data || Object.values(data).filter(function(v) { return v !== null && v !== undefined && v !== 0 && v !== "0"; }).length === 0) {
+    if (daily_market && yf_key && daily_market[yf_key]) {
+      return daily_market[yf_key];
+    }
+  }
+  return data || {};
+}
+
 function set_color_tag(val){
   returnVal = ""
   val_result = ""
@@ -1492,18 +1505,6 @@ addon_html += "</div>"
   addon_html += "</div>"
   
 //환율
-function get_currency_source(key_prefix) {
-  var bok_key = 'BOK_Currency_' + key_prefix;
-  var yf_map = { 'US': 'yf_USDKRW', 'JP': 'yf_JPYKRW', 'EU': 'yf_EURKRW' };
-  var yf_key = yf_map[key_prefix];
-  var data = (typeof daily_market !== 'undefined' && daily_market) ? daily_market[bok_key] : null;
-  if (!data || Object.values(data).filter(function(v) { return v !== null && v !== undefined && v !== 0 && v !== "0"; }).length === 0) {
-    if (daily_market && yf_key && daily_market[yf_key]) {
-      return daily_market[yf_key];
-    }
-  }
-  return data || {};
-}
 
 addon_html += "<div class='daily_header' id='Currency'>"
 addon_html += "<div class='daily_title'>환율</div>"
