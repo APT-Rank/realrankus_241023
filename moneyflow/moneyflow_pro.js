@@ -1260,7 +1260,7 @@ function show_daily_info(){
 
   addon_html += "<div class='daily_header_mf' id='Money_Flow'>"
   addon_html += "<div class='daily_title_mf'>"
-    addon_html += "<div><img src='MoneyFlow.svg' height='15px' width='50px' /> MoneyFlow <span style='font-size: 0.7em'> (2019년 6월 = 1.00)</span></div>"    
+    addon_html += "<div><svg viewBox='0 0 388 102' width='50' height='15' style='vertical-align: middle; margin-right: 4px;'><path fill='none' stroke='#1355ac' stroke-width='4' stroke-miterlimit='10' d='M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43'></path><path fill='none' stroke='#1355ac' stroke-width='8' stroke-miterlimit='10' d='M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43'></path></svg> MoneyFlow <span style='font-size: 0.7em'> (2019년 6월 = 1.00)</span></div>"    
     addon_html += "<div class='subSelection'>"              
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_1Y_MONEY_FLOW' onClick='redraw_graph(this, \"1Y\")'><label class='btn btn-outline-danger' id='label_1Y' for='redraw_1Y_MONEY_FLOW'>1Y</label></div>"
       addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_3Y_MONEY_FLOW' onClick='redraw_graph(this, \"3Y\")'><label class='btn btn-outline-danger' id='label_3Y' for='redraw_3Y_MONEY_FLOW'>3Y</label></div>"
@@ -4015,6 +4015,14 @@ async function downloadMoneyFlowImage(btnEl, event) {
           clonedTarget.style.borderRadius = '4px';
           clonedTarget.style.padding = '10px 14px 16px 14px';
           clonedTarget.style.margin = '0px';
+
+          // SVG 로고가 <img> 태그일 경우 깨짐 방지를 위해 인라인 SVG로 치환
+          var svgImgs = clonedTarget.querySelectorAll('img[src*="MoneyFlow.svg"]');
+          svgImgs.forEach(function (img) {
+            var svgWrapper = clonedDoc.createElement('span');
+            svgWrapper.innerHTML = "<svg viewBox='0 0 388 102' width='50' height='15' style='vertical-align: middle; margin-right: 4px;'><path fill='none' stroke='#1355ac' stroke-width='4' stroke-miterlimit='10' d='M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43'></path><path fill='none' stroke='#1355ac' stroke-width='8' stroke-miterlimit='10' d='M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43'></path></svg>";
+            img.parentNode.replaceChild(svgWrapper.firstChild, img);
+          });
 
           // Chart.js 원본 캔버스 비트맵을 복제본 캔버스에 1:1 보존 복사
           var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
