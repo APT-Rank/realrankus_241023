@@ -1,6 +1,7 @@
 @echo off
 set GIT_TERMINAL_PROMPT=0
 cd /d C:\Users\anito\APT-Rank_Git
+python scripts/sync_price_to_r2.py
 git config --global core.autocrlf true
 git config --global credential.helper manager
 git add *

@@ -91,6 +91,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+  <script src="../js/r2_config.js"></script>
   <script src="../js/menu_select_box_price.js?ver=1.2" type="text/javascript"></script>
   <script src="../js/draw_chart_price.js" type="text/javascript"></script>
   <script src="../js/sort.js" type="text/javascript"></script>
@@ -853,7 +854,8 @@
     }
 
     $.ajaxSetup({ async: false });
-    count_url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/daily_count.json?v=" + Math.random()
+    var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    count_url = r2_base + "/price/recent/" + selectedMonth + "/daily_count.json?v=" + Math.random()
 
     $.getJSON(count_url, function (json) {
       count_data = json
@@ -895,7 +897,7 @@
     })
 
     if (regData == undefined || regData == "") {
-      url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+      url = r2_base + "/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
       //url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
       $.getJSON(url, function (json) {
         regData = json;
@@ -957,7 +959,8 @@
       shareText_all = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
     }
 
-    url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
+    var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
     //url = "./recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
     $.getJSON(url, function (json) {
       aptData = json;
@@ -1903,7 +1906,8 @@
     //shareURL = "https://www.realrankus.com/price" + "?preg=" + $("#sido option:selected").val() + "&psub=" + $("#gungu option:selected").val() + "&pmon=" + selectedMonth
 
     //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-    url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
+    var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+    url = r2_base + "/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
     $('#dataList').html("");
 
     count_Korea = 0
