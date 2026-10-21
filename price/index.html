@@ -128,20 +128,29 @@
   .compare_price_container .compare_price {
     flex: 1;
   }
+  .apt_header_wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  .apt_header_wrapper .apt_name {
+    flex: 1;
+  }
   .card_download_wrapper {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 0 6px 0 0;
+    padding: 0 4px 0 0;
   }
   .btn_card_download {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: 1px solid #e2e8f0;
     background-color: #f8fafc;
     color: #475569;
-    font-size: 14px;
+    font-size: 13px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1215,6 +1224,7 @@
           addon_html += "<div class='" + list_class_name + " aptSelect' id='apt_card_" + i + "' onClick='showDetail(" + i + ",\"" + exp_region + "\", event)'>";
 
           addon_html += "<div class='content'>";
+          addon_html += "<div class='apt_header_wrapper'>";
           if (deal_new_old == "BYG") {
             apt_type_tag = "<span class='BYG_mark'>분양권</span> "
             addon_html += "<div class='apt_name'>" + aptName + apt_type_tag + "<span style='color: gray; font-size: 0.75em'> / " + lawed_address + "</span></div>";
@@ -1223,6 +1233,12 @@
             apt_type_tag = ""
             addon_html += "<div class='apt_name'>" + aptName + apt_type_tag + "<span style='color: gray; font-size: 0.75em'> / " + year_gap + "년차 / " + lawed_address + "</span></div>";
           }
+          addon_html += "<div class='card_download_wrapper' data-html2canvas-ignore='true'>";
+          addon_html += "<button type='button' class='btn_card_download' title='카드 이미지 다운로드' onClick='downloadCardImage(this, " + i + ", event)' onpointerdown='event.stopPropagation()' ontouchstart='event.stopPropagation()' onmousedown='event.stopPropagation()' onpointerup='event.stopPropagation()' ontouchend='event.stopPropagation()'>";
+          addon_html += "<i class='fa-solid fa-camera'></i>";
+          addon_html += "</button>";
+          addon_html += "</div>";
+          addon_html += "</div>";
 
           addon_html += "<div class='price_content'>"
 
@@ -1254,12 +1270,6 @@
           }
           addon_html += "<div>최고가 대비</div>" + "<div>" + compare_max_tag + "</div>" + "<div>" + Korean_price(max_price_deal[1]) + " (" + max_price_deal[0] + ")</div>"
           addon_html += "<div>최저가 대비</div>" + "<div>" + compare_min_tag + "</div>" + "<div>" + Korean_price(min_price_deal[1]) + " (" + min_price_deal[0] + ")</div>"
-          addon_html += "</div>"
-
-          addon_html += "<div class='card_download_wrapper' data-html2canvas-ignore='true'>"
-          addon_html += "<button type='button' class='btn_card_download' title='카드 이미지 다운로드' onClick='downloadCardImage(this, " + i + ", event)' onpointerdown='event.stopPropagation()' ontouchstart='event.stopPropagation()' onmousedown='event.stopPropagation()' onpointerup='event.stopPropagation()' ontouchend='event.stopPropagation()'>"
-          addon_html += "<i class='fa-solid fa-camera'></i>"
-          addon_html += "</button>"
           addon_html += "</div>"
           addon_html += "</div>"
 
@@ -1354,7 +1364,7 @@
             'display': 'flex',
             'justify-content': 'flex-end',
             'align-items': 'center',
-            'padding-right': '6px'
+            'padding-right': '2px'
           })
           $(".price_num").css({ 'line-height': '1.2em', 'font-size': '1em' })
           $(".apt_name").css('font-size', '0.9em')
@@ -2742,12 +2752,19 @@
     var $card = $btn.closest('.listBox');
     if ($card.length === 0) return;
 
-    // 단지 메타데이터 (파일명 생성)
+    // 단지 메타데이터 (파일명 생성: 리얼랭커스_{단지명}_{평형}_실거래_{YYYYMMDD_HHMMSS}.png)
     var item = (typeof aptData !== 'undefined' && aptData && aptData.data) ? aptData.data[index] : null;
-    var aptName = (item && item["단지명"]) ? item["단지명"].replace(/[/\\?%*:|"<>]/g, "") : "실거래가";
-    var dealDate = (item && item["거래일자"]) ? item["거래일자"].replace(/[^0-9]/g, "") : "";
+    var aptName = (item && item["단지명"]) ? item["단지명"].replace(/[/\\?%*:|"<>]/g, "") : "단지";
     var aptP = (item && item["전용면적"]) ? Math.round(Number(item["전용면적"]) / 3.3058) + "평" : "";
-    var filename = "실거래_" + aptName + (aptP ? "_" + aptP : "") + (dealDate ? "_" + dealDate : "") + ".png";
+    var now = new Date();
+    var YYYY = now.getFullYear();
+    var MM = String(now.getMonth() + 1).padStart(2, '0');
+    var DD = String(now.getDate()).padStart(2, '0');
+    var hh = String(now.getHours()).padStart(2, '0');
+    var mm = String(now.getMinutes()).padStart(2, '0');
+    var ss = String(now.getSeconds()).padStart(2, '0');
+    var timestamp = YYYY + MM + DD + "_" + hh + mm + ss;
+    var filename = "리얼랭커스_" + aptName + (aptP ? "_" + aptP : "") + "_실거래_" + timestamp + ".png";
 
     // 버튼 로딩 상태 전환
     var originalBtnHtml = $btn.html();
