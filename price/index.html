@@ -144,8 +144,8 @@
     padding: 0 4px 0 0;
   }
   .btn_card_download {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 1px solid #e2e8f0;
     background-color: #f8fafc;
@@ -1343,6 +1343,14 @@
             'grid-row': 'auto',
             'height': '100%'
           })
+          $(".card_download_wrapper").each(function () {
+            var $btnWrap = $(this);
+            var $content = $btnWrap.closest('.content');
+            var $compareContainer = $content.find('.compare_price_container');
+            if ($compareContainer.length > 0) {
+              $btnWrap.detach().appendTo($compareContainer);
+            }
+          });
           $(".compare_price_container").css({
             'grid-area': 'auto',
             'display': 'grid',
@@ -1364,7 +1372,7 @@
             'display': 'flex',
             'justify-content': 'flex-end',
             'align-items': 'center',
-            'padding-right': '2px'
+            'padding-right': '6px'
           })
           $(".price_num").css({ 'line-height': '1.2em', 'font-size': '1em' })
           $(".apt_name").css('font-size', '0.9em')
