@@ -2789,6 +2789,7 @@
     var mm = String(now.getMinutes()).padStart(2, '0');
     var ss = String(now.getSeconds()).padStart(2, '0');
     var timestamp = YYYY + MM + DD + "_" + hh + mm + ss;
+    var captureDateTimeStr = YYYY + "." + MM + "." + DD + " " + hh + ":" + mm + ":" + ss;
     var filename = "리얼랭커스_" + aptName + (aptP ? "_" + aptP : "") + "_실거래_" + timestamp + ".png";
 
     // 버튼 로딩 상태 전환
@@ -2815,11 +2816,12 @@
             clonedCard.style.border = '1px solid #E43B46';
             clonedCard.style.boxSizing = 'border-box';
 
-            // 출처 표기 (워터마크: 리얼랭커스 | realrankus.com)
+            // 출처 표기 (워터마크: 왼쪽 캡처 일시, 오른쪽 리얼랭커스 | realrankus.com)
             var footer = clonedDoc.createElement('div');
             footer.className = 'card_capture_footer';
-            footer.style.cssText = 'display:flex; justify-content:flex-end; align-items:center; margin-top:12px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
-            footer.innerHTML = '<div style="display:flex; align-items:center; gap:4px;"><span style="font-weight:700; color:#E43B46; font-size:11px;">리얼랭커스</span><span style="color:#cbd5e1; font-size:10px;">|</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div>';
+            footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
+            footer.innerHTML = '<span style="color:#94a3b8; font-size:10px; font-weight:400; letter-spacing:-0.2px;">' + captureDateTimeStr + '</span>' +
+              '<div style="display:flex; align-items:center; gap:4px;"><span style="font-weight:700; color:#E43B46; font-size:11px;">리얼랭커스</span><span style="color:#cbd5e1; font-size:10px;">|</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div>';
             clonedCard.appendChild(footer);
           }
         }
