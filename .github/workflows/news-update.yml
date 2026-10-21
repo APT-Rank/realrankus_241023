@@ -6,6 +6,7 @@ name: Hourly Update
 on:
   schedule:    
     - cron: "5 */1 * * *"
+  workflow_dispatch:
 
 permissions:
   actions: write
@@ -38,6 +39,14 @@ jobs:
       run: |
         python ./newsinfo/naver_news_generate.py
         python ./newsinfo/update_cafe_briefing.py
+    - name: Upload to Cloudflare R2
+      env:
+        R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+        R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+        R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        R2_BUCKET_NAME: "realrankus-data"
+      run: |
+        python ./scripts/upload_to_r2.py ./newsinfo/news.json ./newsinfo/blogs.json ./moneyflow/market_hourly_info.json ./ad/1000000000_Korea_ad.json
     - name: Commits
       run: |        
         git pull
