@@ -265,19 +265,19 @@
     });
 
     $.ajaxSetup({ async: false });
-    daily_url = "https://www.realrankus.com/moneyflow/market_daily_info.json"
+    daily_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_daily_info.json"
     $.getJSON(daily_url, function(json) {
         daily_market = json;
         daily_updated = (daily_market["GENERATE"][0]).substr(0, 19)
     })
 
-    monthly_url = "https://www.realrankus.com/moneyflow/market_monthly_info.json"
+    monthly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_monthly_info.json"
     $.getJSON(monthly_url, function(json) {
         monthly_market = json;
         monthly_updated = (monthly_market["GENERATE"][0]).substr(0, 19)
     })
 
-    moneyflow_url = "https://www.realrankus.com/moneyflow/market_moneyflow.json"
+    moneyflow_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_moneyflow.json"
     $.getJSON(moneyflow_url, function(json) {
         moneyflow_market = json;
         moneyflow_updated = (moneyflow_market["GENERATE"][0]).substr(0, 19)

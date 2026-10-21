@@ -6,6 +6,7 @@ name: Daily Update
 on:
   schedule:    
     - cron: "0 19 * * *"
+  workflow_dispatch:
 
 permissions:
   actions: write
@@ -37,6 +38,14 @@ jobs:
     - name: get Standatd interest, Market daily
       run: |
         python BOK_Standard_Interest.py
+    - name: Upload to Cloudflare R2
+      env:
+        R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+        R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+        R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        R2_BUCKET_NAME: "realrankus-data"
+      run: |
+        python ./scripts/upload_to_r2.py BOK_standatd_interest.json FED_standatd_interest.json ./moneyflow/market_daily_info.json
     - name: Commits
       run: |        
         git pull
@@ -51,4 +60,3 @@ jobs:
       with:
         branch: 'master'
         github_token: '${{ secrets.GITHUB_TOKEN }}'
-        
