@@ -42,6 +42,19 @@ def fetch_ecos_data(url, max_retries=3, delay=2):
         time.sleep(delay)
     return None
 
+def fetch_fred_series(series_id, max_retries=3, delay=2):
+    for attempt in range(max_retries):
+        try:
+            fred = Fred(api_key=fred_key)
+            data = fred.get_series(series_id)
+            if data is not None and not data.empty:
+                return data
+        except Exception as e:
+            print(f"[FRED Warning] Attempt {attempt+1}/{max_retries} for {series_id} failed: {e}")
+        if attempt < max_retries - 1:
+            time.sleep(delay)
+    return None
+
 #기준시점 선정
 utcnow = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
 now = utcnow + datetime.timedelta(hours=9)
@@ -93,18 +106,24 @@ def save_BOK_interest_info():
 def save_FED_interest_info():
     print("Start to get FED interest")
 
-    #https://api.stlouisfed.org/fred/series/observations?series_id=DFEDTARU&api_key=a7d5a17c8b520a7802d3c905fca10131&file_type=json&frequency=bw&observation_start=2019-10-14&observation_end=2022-10-01
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('DFEDTARU')
+    out_file = os.path.join(path, "FED_standatd_interest.json")
+    data = fetch_fred_series('DFEDTARU')
 
+    if data is None or data.empty:
+        print("[Warning] Failed to fetch FED interest data.")
+        if os.path.exists(out_file):
+            print(f"Preserving existing {out_file}")
+            return
+        else:
+            raise RuntimeError("Failed to fetch FED interest data and no cached file exists.")
+
+    data_result = pd.DataFrame()
     data = data[data.index > date_7days_ago]
     data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
     data_result['INTEREST'] = data.values.tolist()
     data_result['GENERATE'] = str(now)
 
-    #data_result.to_csv(path + "/FED_standatd_interest.csv", encoding='cp949')
-    data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
+    data_result.to_json(out_file, force_ascii=False, indent=4)
     print("FED interest saved at " + str(now))
 
 save_BOK_interest_info()
@@ -248,103 +267,55 @@ def save_YF_currency_info():
 
     return df_close
 
-def save_FED_interest_info():
-    print("Start to get FED interest")
-    
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('DFEDTARU')
+def _fetch_fred_series_df(series_id, col_name, label):
+    print(f"Start to get {label}")
+    data = fetch_fred_series(series_id)
+    if data is not None and not data.empty:
+        data = data[data.index > date_10years_ago]
+        df = pd.DataFrame({
+            'DATE': data.index.strftime('%Y-%m-%d').tolist(),
+            col_name: data.values.tolist()
+        })
+        df = df.drop_duplicates(subset=['DATE'], keep='last')
+        return df
+    else:
+        print(f"[Warning] Failed to fetch {label} ({series_id})")
+        cached_json = os.path.join(path, "moneyflow", "market_daily_info.json")
+        if os.path.exists(cached_json):
+            try:
+                with open(cached_json, 'r', encoding='utf-8') as f:
+                    cdata = json.load(f)
+                    if col_name in cdata and 'TIME' in cdata:
+                        cdf = pd.DataFrame({
+                            'DATE': list(cdata['TIME'].values()),
+                            col_name: list(cdata[col_name].values())
+                        })
+                        cdf = cdf.dropna(subset=[col_name])
+                        cdf = cdf.drop_duplicates(subset=['DATE'], keep='last')
+                        if len(cdf) > 0:
+                            print(f"[Info] Preserved {len(cdf)} records for {col_name} from cache.")
+                            return cdf
+            except Exception as e:
+                print(f"[Warning] Could not load {col_name} from cache: {e}")
+        return pd.DataFrame(columns=['DATE', col_name])
 
-    data = data[data.index > date_10years_ago]
-    data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
-    data_result['FRED_Interest'] = data.values.tolist()
-    #data_result['GENERATE'] = str(now)
-
-    return data_result
-
-    #data_result.to_csv(path + "/FED_standatd_interest.csv", encoding='cp949')    
-    #data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
-    #print("FED interest saved at " + str(now))
+def save_FED_interest_info_daily():
+    return _fetch_fred_series_df('DFEDTARU', 'FRED_Interest', 'FED interest')
 
 def save_FED_TotalAsset_info():
-    print("Start to get FED TotalAsset")
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('WALCL')    
-
-    data = data[data.index > date_10years_ago]
-    data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
-    data_result['FRED_Total_Asset'] = data.values.tolist()
-
-    return data_result
-
-    #data_result.to_csv(path + "/FED_total_asset.csv", encoding='cp949')
-    #data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
-    #print("FED interest saved at " + str(now))
+    return _fetch_fred_series_df('WALCL', 'FRED_Total_Asset', 'FED TotalAsset')
 
 def save_FED_BondYield_3year_info():
-    print("Start to get FED 3 years Bond Yield")
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('DGS3')    
-
-    data = data[data.index > date_10years_ago]
-    data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
-    data_result['FRED_BondYield03'] = data.values.tolist()
-
-    return data_result
-
-    #data_result.to_csv(path + "/FED_total_asset.csv", encoding='cp949')
-    #data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
-    #print("FED interest saved at " + str(now))
+    return _fetch_fred_series_df('DGS3', 'FRED_BondYield03', 'FED 3 years Bond Yield')
 
 def save_FED_BondYield_5year_info():
-    print("Start to get FED 3 years Bond Yield")
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('DGS5')
-
-    data = data[data.index > date_10years_ago]
-    data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
-    data_result['FRED_BondYield05'] = data.values.tolist()
-
-    return data_result
-
-    #data_result.to_csv(path + "/FED_total_asset.csv", encoding='cp949')
-    #data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
-    #print("FED interest saved at " + str(now))     
+    return _fetch_fred_series_df('DGS5', 'FRED_BondYield05', 'FED 5 years Bond Yield')
 
 def save_FED_BondYield_10year_info():
-    print("Start to get FED 10 years Bond Yield")
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('DGS10')    
-
-    data = data[data.index > date_10years_ago]
-    data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
-    data_result['FRED_BondYield10'] = data.values.tolist()
-
-    return data_result
-
-    #data_result.to_csv(path + "/FED_total_asset.csv", encoding='cp949')
-    #data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
-    #print("FED interest saved at " + str(now))
+    return _fetch_fred_series_df('DGS10', 'FRED_BondYield10', 'FED 10 years Bond Yield')
 
 def save_FED_BondYield_30year_info():
-    print("Start to get FED 30 years Bond Yield")
-    data_result = pd.DataFrame()
-    fred = Fred(api_key=fred_key)
-    data = fred.get_series('DGS30')    
-
-    data = data[data.index > date_10years_ago]
-    data_result['DATE'] = data.index.strftime('%Y-%m-%d').tolist()
-    data_result['FRED_BondYield30'] = data.values.tolist()
-
-    return data_result
-
-    #data_result.to_csv(path + "/FED_total_asset.csv", encoding='cp949')
-    #data_result.to_json(path + "/FED_standatd_interest.json", force_ascii=False, indent=4)
-    #print("FED interest saved at " + str(now))
+    return _fetch_fred_series_df('DGS30', 'FRED_BondYield30', 'FED 30 years Bond Yield')
 
 def _fetch_bond_yield(url, col_name, label):
     print(f"Start to get {label}")
@@ -397,7 +368,7 @@ def market_daily_info():
     df_YF_Dollar_Index = save_YF_dollar_index_info()
     df_YF_Currency = save_YF_currency_info()
     df_BOK_Currency = save_BOK_currency_info()
-    df_FRED_Interest = save_FED_interest_info()
+    df_FRED_Interest = save_FED_interest_info_daily()
     df_FRED_TotalAsset = save_FED_TotalAsset_info()
     df_FRED_BondYield03 = save_FED_BondYield_3year_info()
     df_FRED_BondYield05 = save_FED_BondYield_5year_info()

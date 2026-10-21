@@ -15,6 +15,19 @@ key = "a4e0de06940548baa56ef556c78cb6d5"
 bok_key = "570IL3KK1XG2THUF38RC"
 fred_key = "a7d5a17c8b520a7802d3c905fca10131"
 
+def fetch_fred_series(series_id, max_retries=3, delay=2):
+    for attempt in range(max_retries):
+        try:
+            fred = Fred(api_key=fred_key)
+            data = fred.get_series(series_id)
+            if data is not None and not data.empty:
+                return data
+        except Exception as e:
+            print(f"[FRED Warning] Attempt {attempt+1}/{max_retries} for {series_id} failed: {e}")
+        if attempt < max_retries - 1:
+            time.sleep(delay)
+    return None
+
 #기준시점 선정
 utcnow = datetime.datetime.utcnow()
 now = utcnow + datetime.timedelta(hours=9)
@@ -468,31 +481,47 @@ def save_BOK_Housing_info():
 
 def save_FED_Oil_info():
     print("Start to get FED Oil")
-    fred = Fred(api_key=fred_key)
+    data_WTI = fetch_fred_series('POILWTIUSDM')
+    data_Brent = fetch_fred_series('POILBREUSDM')
+    data_Dubai = fetch_fred_series('POILDUBUSDM')
 
-    data_result_WTI = pd.DataFrame()    
-    data_WTI = fred.get_series('POILWTIUSDM')
-    data_WTI = data_WTI[data_WTI.index > date_10years_ago]
-    data_result_WTI['DATE'] = data_WTI.index.strftime('%Y-%m-%d').tolist()
-    data_result_WTI['FRED_WTI'] = data_WTI.values.tolist()    
+    if data_WTI is not None and data_Brent is not None and data_Dubai is not None:
+        data_WTI = data_WTI[data_WTI.index > date_10years_ago]
+        data_Brent = data_Brent[data_Brent.index > date_10years_ago]
+        data_Dubai = data_Dubai[data_Dubai.index > date_10years_ago]
 
-    data_result_Brent = pd.DataFrame() 
-    data_Brent = fred.get_series('POILBREUSDM')
-    data_Brent = data_Brent[data_Brent.index > date_10years_ago]    
-    data_result_Brent['DATE'] = data_Brent.index.strftime('%Y-%m-%d').tolist()
-    data_result_Brent['FRED_Brent'] = data_Brent.values.tolist()
-    data_result_Brent.drop(['DATE'], axis=1, inplace=True)    
+        df_wti = pd.DataFrame({'DATE': data_WTI.index.strftime('%Y-%m-%d').tolist(), 'FRED_WTI': data_WTI.values.tolist()})
+        df_brent = pd.DataFrame({'DATE': data_Brent.index.strftime('%Y-%m-%d').tolist(), 'FRED_Brent': data_Brent.values.tolist()})
+        df_dubai = pd.DataFrame({'DATE': data_Dubai.index.strftime('%Y-%m-%d').tolist(), 'FRED_Dubai': data_Dubai.values.tolist()})
 
-    data_result_Dubai = pd.DataFrame() 
-    data_Dubai = fred.get_series('POILDUBUSDM')
-    data_Dubai = data_Dubai[data_Dubai.index > date_10years_ago]    
-    data_result_Dubai['DATE'] = data_Dubai.index.strftime('%Y-%m-%d').tolist()
-    data_result_Dubai['FRED_Dubai'] = data_Dubai.values.tolist()
-    data_result_Dubai.drop(['DATE'], axis=1, inplace=True)
-
-    df = pd.concat([data_result_WTI, data_result_Brent, data_result_Dubai], axis=1)
-    #df = df.astype({'DATE', 'str'})
-    return df
+        df = pd.merge(df_wti, df_brent, on='DATE', how='outer')
+        df = pd.merge(df, df_dubai, on='DATE', how='outer')
+        df = df.drop_duplicates(subset=['DATE'], keep='last')
+        return df
+    else:
+        print("[Warning] Failed to fetch live FED Oil series. Checking cache...")
+        cached_json = os.path.join(path, "moneyflow", "market_monthly_info.json")
+        if os.path.exists(cached_json):
+            try:
+                with open(cached_json, 'r', encoding='utf-8') as f:
+                    cdata = json.load(f)
+                time_list = list(cdata.get('TIME', {}).values())
+                wti_list = list(cdata.get('FRED_WTI', {}).values())
+                brent_list = list(cdata.get('FRED_Brent', {}).values())
+                dubai_list = list(cdata.get('FRED_Dubai', {}).values())
+                df = pd.DataFrame({
+                    'DATE': time_list,
+                    'FRED_WTI': wti_list,
+                    'FRED_Brent': brent_list,
+                    'FRED_Dubai': dubai_list
+                })
+                df = df.dropna(subset=['FRED_WTI', 'FRED_Brent', 'FRED_Dubai'], how='all')
+                df = df.drop_duplicates(subset=['DATE'], keep='last')
+                print(f"[Info] Preserved {len(df)} records for FRED Oil from cache.")
+                return df
+            except Exception as e:
+                print(f"[Warning] Failed to load FRED Oil from cache: {e}")
+        return pd.DataFrame(columns=['DATE', 'FRED_WTI', 'FRED_Brent', 'FRED_Dubai'])
     #df['GENERATE'] = str(now)
     #df.to_csv(path + "/FED_Oil_Price.csv", encoding='cp949')
 
