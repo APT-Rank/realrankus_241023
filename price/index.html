@@ -1212,7 +1212,7 @@
             lowerDeal++
           }
 
-          addon_html += "<div class='" + list_class_name + " aptSelect' data-bs-toggle='modal' data-bs-target='#baseModal' id='apt_card_" + i + "' onClick='showDetail(" + i + ",\"" + exp_region + "\")'>";
+          addon_html += "<div class='" + list_class_name + " aptSelect' id='apt_card_" + i + "' onClick='showDetail(" + i + ",\"" + exp_region + "\")'>";
 
           addon_html += "<div class='content'>";
           if (deal_new_old == "BYG") {
@@ -1257,7 +1257,7 @@
           addon_html += "</div>"
 
           addon_html += "<div class='card_download_wrapper' data-html2canvas-ignore='true'>"
-          addon_html += "<button type='button' class='btn_card_download' title='카드 이미지 다운로드' onClick='downloadCardImage(this, " + i + ", event)' onpointerdown='event.stopPropagation()' ontouchstart='event.stopPropagation()'>"
+          addon_html += "<button type='button' class='btn_card_download' title='카드 이미지 다운로드' onClick='downloadCardImage(this, " + i + ", event)' onpointerdown='event.stopPropagation()' ontouchstart='event.stopPropagation()' onmousedown='event.stopPropagation()' onpointerup='event.stopPropagation()' ontouchend='event.stopPropagation()'>"
           addon_html += "<i class='fa-solid fa-camera'></i>"
           addon_html += "</button>"
           addon_html += "</div>"
@@ -1489,6 +1489,7 @@
     if (typeof isDownloadingCard !== 'undefined' && isDownloadingCard) {
       return;
     }
+    $('#baseModal').modal('show');
     titleHtml = "";
     detailHtml = "";
     footerHtml = "";
@@ -2716,6 +2717,7 @@
 
   // 실거래가 카드 고해상도 이미지 다운로드 (A안: 카메라 아이콘, 출처 표기 포함)
   var isDownloadingCard = false;
+  $('#baseModal').on('show.bs.modal', function(e) { if (isDownloadingCard) { e.preventDefault(); return false; } });
 
   async function downloadCardImage(btnEl, index, event) {
     if (event) {
@@ -2727,9 +2729,10 @@
     }
 
     isDownloadingCard = true;
+    $('#baseModal').modal('hide');
     setTimeout(function () {
       isDownloadingCard = false;
-    }, 800);
+    }, 1200);
 
     var $btn = $(btnEl);
     var $card = $btn.closest('.listBox');
