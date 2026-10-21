@@ -2768,9 +2768,10 @@
           if (clonedCard) {
             clonedCard.style.backgroundColor = '#ffffff';
             clonedCard.style.padding = '14px 16px';
-            clonedCard.style.borderRadius = '8px';
+            clonedCard.style.borderRadius = '0px';
             clonedCard.style.boxShadow = 'none';
-            clonedCard.style.borderBottom = 'none';
+            clonedCard.style.border = '1px solid #E43B46';
+            clonedCard.style.boxSizing = 'border-box';
 
             // 출처 표기 (워터마크: 리얼랭커스 | realrankus.com)
             var footer = clonedDoc.createElement('div');
