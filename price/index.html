@@ -2111,31 +2111,50 @@
               str_prev_month = Number(prev_month.slice(-2)) + "월"
               str_this_month = Number(this_month.slice(-2)) + "월"
 
-              addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + (Number(reg_vol_prev_month_end_predition.toFixed(0))).toLocaleString() + "건</div>"
-              addon_html += "<div>" + str_this_month + " 거래량 예측 </div>" + "<div></div>" + "<div>" + (Number(reg_vol_month_end_predition.toFixed(0))).toLocaleString() + "건</div>"
+              var prev_pred_val = (reg_vol_prev_month_end_predition != null && !isNaN(Number(reg_vol_prev_month_end_predition)))
+                ? (Number(Number(reg_vol_prev_month_end_predition).toFixed(0))).toLocaleString() + "건"
+                : "-";
+              var this_pred_val = (reg_vol_month_end_predition != null && !isNaN(Number(reg_vol_month_end_predition)))
+                ? (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건"
+                : "-";
+
+              addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + prev_pred_val + "</div>"
+              addon_html += "<div>" + str_this_month + " 거래량 예측 </div>" + "<div></div>" + "<div>" + this_pred_val + "</div>"
             }
 
             if (selectedMonth == this_month || selectedMonth == prev_month) {
-              addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + (Number(reg_vol_month_end_predition.toFixed(0))).toLocaleString() + "건</div>"
+              var month_pred_val = (reg_vol_month_end_predition != null && !isNaN(Number(reg_vol_month_end_predition)))
+                ? (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건"
+                : "-";
+              addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + month_pred_val + "</div>"
             }
 
             if (reg_ratio_yoy > 0) { reg_ratio_yoy_tag = "<span style='color:#eb5050'>▲" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
             else if (reg_ratio_yoy < 0) { reg_ratio_yoy_tag = "<span style='color:#3d7fca'>▼" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
-            else { reg_ratio_yoy_tag = "<span style='color:black'>= " + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
+            else { reg_ratio_yoy_tag = "<span style='color:black'>= " + (reg_ratio_yoy != null && !isNaN(Number(reg_ratio_yoy)) ? (Math.abs(reg_ratio_yoy)).toFixed(2) : "0.00") + "%</span>" }
 
             if (reg_ratio_3y_avg > 0) { reg_ratio_3y_avg_tag = "<span style='color:#eb5050'>▲" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%</span>" }
             else if (reg_ratio_3y_avg < 0) { reg_ratio_3y_avg_tag = "<span style='color:#3d7fca'>▼" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%</span>" }
-            else { reg_ratio_3y_avg_tag = "<span style='color:black'>= " + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%</span>" }
+            else { reg_ratio_3y_avg_tag = "<span style='color:black'>= " + (reg_ratio_3y_avg != null && !isNaN(Number(reg_ratio_3y_avg)) ? (Math.abs(reg_ratio_3y_avg)).toFixed(2) : "0.00") + "%</span>" }
 
-            addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>" + "<div>" + (Number(reg_vol_yoy.toFixed(0))).toLocaleString() + "건</div>"
-            addon_html += "<div>3년평균 대비</div>" + "<div>" + reg_ratio_3y_avg_tag + "</div>" + "<div>" + (Number(reg_vol_3y_avg.toFixed(0))).toLocaleString() + "건</div>"
+            var yoy_vol_val = (reg_vol_yoy != null && !isNaN(Number(reg_vol_yoy)))
+              ? (Number(Number(reg_vol_yoy).toFixed(0))).toLocaleString() + "건"
+              : "-";
+            var avg3y_vol_val = (reg_vol_3y_avg != null && !isNaN(Number(reg_vol_3y_avg)))
+              ? (Number(Number(reg_vol_3y_avg).toFixed(0))).toLocaleString() + "건"
+              : "-";
+
+            addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>" + "<div>" + yoy_vol_val + "</div>"
+            addon_html += "<div>3년평균 대비</div>" + "<div>" + reg_ratio_3y_avg_tag + "</div>" + "<div>" + avg3y_vol_val + "</div>"
             addon_html += "</div>"
 
             if (Number(this_month) == Number(selectedMonth) || Number(prev_month) == Number(selectedMonth)) {
               //shareText += "ㆍ국토부 신규 등록 : " + deal_vol + "건 (+" + count_gap + ")\n"
               shareText += "ㆍ국토부 신규 등록 : " + (Number(Number(deal_this_vol) + Number(deal_prev_vol))).toLocaleString() + "건\n"
               //shareText += "ㆍ당월거래량 : " + (Number(Number(reg_vol_this_month).toFixed(0))).toLocaleString() + "건\n"
-              shareText += "ㆍ월말거래량 예측 : " + (Number(Number(reg_vol_month_end_predition.toFixed(0)))).toLocaleString() + "건\n"
+              if (reg_vol_month_end_predition != null && !isNaN(Number(reg_vol_month_end_predition))) {
+                shareText += "ㆍ월말거래량 예측 : " + (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건\n"
+              }
             }
             else {
               if (reg_ratio_yoy > 0) { reg_ratio_yoy_share = "▲" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%" }
@@ -2252,31 +2271,50 @@
               str_prev_month = Number(prev_month.slice(-2)) + "월"
               str_this_month = Number(this_month.slice(-2)) + "월"
 
-              addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + (Number(reg_vol_prev_month_end_predition.toFixed(0))).toLocaleString() + "건</div>"
-              addon_html += "<div>" + str_this_month + " 거래량 예측 </div>" + "<div></div>" + "<div>" + (Number(reg_vol_month_end_predition.toFixed(0))).toLocaleString() + "건</div>"
+              var prev_pred_val = (reg_vol_prev_month_end_predition != null && !isNaN(Number(reg_vol_prev_month_end_predition)))
+                ? (Number(Number(reg_vol_prev_month_end_predition).toFixed(0))).toLocaleString() + "건"
+                : "-";
+              var this_pred_val = (reg_vol_month_end_predition != null && !isNaN(Number(reg_vol_month_end_predition)))
+                ? (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건"
+                : "-";
+
+              addon_html += "<div class='prev_sales_vol'>" + str_prev_month + " 거래량 예측 </div>" + "<div class='prev_sales_vol'></div>" + "<div class='prev_sales_vol'>" + prev_pred_val + "</div>"
+              addon_html += "<div>" + str_this_month + " 거래량 예측 </div>" + "<div></div>" + "<div>" + this_pred_val + "</div>"
             }
 
             if (selectedMonth == this_month || selectedMonth == prev_month) {
-              addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + (Number(reg_vol_month_end_predition.toFixed(0))).toLocaleString() + "건</div>"
+              var month_pred_val = (reg_vol_month_end_predition != null && !isNaN(Number(reg_vol_month_end_predition)))
+                ? (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건"
+                : "-";
+              addon_html += "<div>월말거래량 예측 </div>" + "<div></div>" + "<div>" + month_pred_val + "</div>"
             }
 
             if (reg_ratio_yoy > 0) { reg_ratio_yoy_tag = "<span style='color:#eb5050'>▲" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
             else if (reg_ratio_yoy < 0) { reg_ratio_yoy_tag = "<span style='color:#3d7fca'>▼" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
-            else { reg_ratio_yoy_tag = "<span style='color:black'>= " + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%</span>" }
+            else { reg_ratio_yoy_tag = "<span style='color:black'>= " + (reg_ratio_yoy != null && !isNaN(Number(reg_ratio_yoy)) ? (Math.abs(reg_ratio_yoy)).toFixed(2) : "0.00") + "%</span>" }
 
             if (reg_ratio_3y_avg > 0) { reg_ratio_3y_avg_tag = "<span style='color:#eb5050'>▲" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%</span>" }
             else if (reg_ratio_3y_avg < 0) { reg_ratio_3y_avg_tag = "<span style='color:#3d7fca'>▼" + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%</span>" }
-            else { reg_ratio_3y_avg_tag = "<span style='color:black'>= " + (Math.abs(reg_ratio_3y_avg)).toFixed(2) + "%</span>" }
+            else { reg_ratio_3y_avg_tag = "<span style='color:black'>= " + (reg_ratio_3y_avg != null && !isNaN(Number(reg_ratio_3y_avg)) ? (Math.abs(reg_ratio_3y_avg)).toFixed(2) : "0.00") + "%</span>" }
 
-            addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>" + "<div>" + (Number(reg_vol_yoy.toFixed(0))).toLocaleString() + "건</div>"
-            addon_html += "<div>3년평균 대비</div>" + "<div>" + reg_ratio_3y_avg_tag + "</div>" + "<div>" + (Number(reg_vol_3y_avg.toFixed(0))).toLocaleString() + "건</div>"
+            var yoy_vol_val = (reg_vol_yoy != null && !isNaN(Number(reg_vol_yoy)))
+              ? (Number(Number(reg_vol_yoy).toFixed(0))).toLocaleString() + "건"
+              : "-";
+            var avg3y_vol_val = (reg_vol_3y_avg != null && !isNaN(Number(reg_vol_3y_avg)))
+              ? (Number(Number(reg_vol_3y_avg).toFixed(0))).toLocaleString() + "건"
+              : "-";
+
+            addon_html += "<div>전년동월 대비</div>" + "<div>" + reg_ratio_yoy_tag + "</div>" + "<div>" + yoy_vol_val + "</div>"
+            addon_html += "<div>3년평균 대비</div>" + "<div>" + reg_ratio_3y_avg_tag + "</div>" + "<div>" + avg3y_vol_val + "</div>"
             addon_html += "</div>"
 
             if (this_month == Number(selectedMonth) || prev_month == Number(selectedMonth)) {
               //shareText += "ㆍ국토부 신규 등록 : " + t_vol.toLocaleString() + "건 (+" + count_vol_gap + ")\n"
               shareText += "ㆍ국토부 신규 등록 : " + (today_count_this_month + today_count_prev_month).toLocaleString() + "건\n"
               //shareText += "ㆍ당월거래량 : " + (Number(Number(reg_vol_this_month).toFixed(0))).toLocaleString() + "건\n"
-              shareText += "ㆍ월말거래량 예측 : " + (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건\n"
+              if (reg_vol_month_end_predition != null && !isNaN(Number(reg_vol_month_end_predition))) {
+                shareText += "ㆍ월말거래량 예측 : " + (Number(Number(reg_vol_month_end_predition).toFixed(0))).toLocaleString() + "건\n"
+              }
             }
             else {
               if (reg_ratio_yoy > 0) { reg_ratio_yoy_share = "△" + (Math.abs(reg_ratio_yoy)).toFixed(2) + "%" }
