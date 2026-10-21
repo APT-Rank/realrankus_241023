@@ -2779,8 +2779,27 @@
 
     // 단지 메타데이터 (파일명 생성: 리얼랭커스_{단지명}_{평형}_실거래_{YYYYMMDD_HHMMSS}.png)
     var item = (typeof aptData !== 'undefined' && aptData && aptData.data) ? aptData.data[index] : null;
-    var aptName = (item && item["단지명"]) ? item["단지명"].replace(/[/\\?%*:|"<>]/g, "") : "단지";
-    var aptP = (item && item["전용면적"]) ? Math.round(Number(item["전용면적"]) / 3.3058) + "평" : "";
+    var rawAptName = (item && (item["아파트"] || item["단지명"])) ? (item["아파트"] || item["단지명"]) : "";
+    if (!rawAptName) {
+      var domAptName = $card.find(".apt_name").clone().children().remove().end().text().trim();
+      rawAptName = domAptName || "아파트";
+    }
+    var aptName = rawAptName.replace(/[/\\?%*:|"<>]/g, "").trim();
+
+    var aptP = "";
+    if (item && item["전용면적"]) {
+      var apt_m = Number(item["전용면적"]);
+      var usingArea = item["usingArea"];
+      var calc_p = 0;
+      if (usingArea == null || usingArea == "" || usingArea == undefined) {
+        calc_p = apt_m / 3.3058;
+        if (apt_m < 84) { calc_p += 7; }
+        else { calc_p += 8; }
+      } else {
+        calc_p = (apt_m * (100 / Number(usingArea))) / 3.3058;
+      }
+      aptP = Math.round(calc_p) + "평";
+    }
     var now = new Date();
     var YYYY = now.getFullYear();
     var MM = String(now.getMonth() + 1).padStart(2, '0');
