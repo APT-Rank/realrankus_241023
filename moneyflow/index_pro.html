@@ -283,7 +283,7 @@
         moneyflow_updated = (moneyflow_market["GENERATE"][0]).substr(0, 19)
     })    
     
-    hourly_url = "https://www.realrankus.com/moneyflow/market_hourly_info.json"
+    hourly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json"
     $.getJSON(hourly_url, function(json) {
         hourly_market = json;
         hourly_updated = (hourly_market["GENERATE"]["value"]).substr(0, 19)

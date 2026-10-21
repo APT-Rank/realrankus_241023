@@ -74,7 +74,7 @@ function goMap(url){
 }
 
 function load_parrtnership(){
-    part_url = "https://www.realrankus.com/ad/1000000000_Korea_ad.json"
+    part_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/ad/1000000000_Korea_ad.json"
     $.getJSON(part_url, function(part_json) {
         partData = part_json;
         part_detail = partData.data

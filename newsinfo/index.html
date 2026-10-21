@@ -333,7 +333,7 @@
 
     initSorting()
 
-    url = "https://www.realrankus.com/newsinfo/news.json?v=" + Math.random()
+    url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/newsinfo/news.json?v=" + Math.random()
     $('#themeDataList').html("");
 
     //광고정보 로딩
@@ -422,13 +422,13 @@
   var tickerSubpixel = 0;
 
   function load_currency_bar(){
-    var hourlyUrl = "../moneyflow/market_hourly_info.json?v=" + Math.random();
+    var hourlyUrl = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json?v=" + Math.random();
     $.getJSON(hourlyUrl)
       .done(function(data){
         render_currency_bar(data);
       })
       .fail(function(){
-        $.getJSON("https://www.realrankus.com/moneyflow/market_hourly_info.json?v=" + Math.random(), function(data){
+        $.getJSON("https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json?v=" + Math.random(), function(data){
           render_currency_bar(data);
         }).fail(function(){
           $("#currencyTrack").html("<span style='padding: 0 15px; color:#888;'>시황 정보를 불러올 수 없습니다.</span>");
