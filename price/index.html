@@ -1212,7 +1212,7 @@
             lowerDeal++
           }
 
-          addon_html += "<div class='" + list_class_name + " aptSelect' id='apt_card_" + i + "' onClick='showDetail(" + i + ",\"" + exp_region + "\")'>";
+          addon_html += "<div class='" + list_class_name + " aptSelect' id='apt_card_" + i + "' onClick='showDetail(" + i + ",\"" + exp_region + "\", event)'>";
 
           addon_html += "<div class='content'>";
           if (deal_new_old == "BYG") {
@@ -1485,7 +1485,11 @@
     return { 'last_dealed_date': last_dealed_date, 'last_dealed_price': last_dealed_price, 'compare_last_ratio': compare_last_ratio, 'compare_last_tag': compare_last_tag, 'compare_max_tag': compare_max_tag, 'compare_min_tag': compare_min_tag }
   }
 
-  function showDetail(index, addr_gungu) {
+  function showDetail(index, addr_gungu, event) {
+    var evt = event || window.event;
+    if (evt && evt.target && (evt.target.closest('.btn_card_download') || evt.target.closest('.card_download_wrapper'))) {
+      return;
+    }
     if (typeof isDownloadingCard !== 'undefined' && isDownloadingCard) {
       return;
     }
