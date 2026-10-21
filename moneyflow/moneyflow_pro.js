@@ -3999,7 +3999,28 @@ async function downloadMoneyFlowImage(btnEl, event) {
   var originalBtnHtml = $btn.html();
   $btn.prop('disabled', true).html("<i class='fa-solid fa-spinner fa-spin'></i>");
 
+  // 1. 캡처 순간만 Chart.js 해상도를 3배율로 극대화
+  var hasChart = (typeof myMoneyFlow_Chart !== 'undefined' && myMoneyFlow_Chart);
+  var originalDPR = 1;
+  var chartHighResDataUrl = null;
+  var origHeight = 0;
+
   try {
+    if (hasChart) {
+      originalDPR = (myMoneyFlow_Chart.options && myMoneyFlow_Chart.options.devicePixelRatio) || window.devicePixelRatio || 1;
+      // devicePixelRatio를 3으로 설정하여 벡터/곡선/숫자/폰트를 초고해상도로 재렌더링
+      myMoneyFlow_Chart.options.devicePixelRatio = 3;
+      myMoneyFlow_Chart.update('none'); // 애니메이션 없이 즉시 렌더링
+
+      var origCanvas = document.getElementById('MoneyFlow_Chart');
+      if (origCanvas) {
+        origHeight = origCanvas.offsetHeight || origCanvas.clientHeight || 0;
+        chartHighResDataUrl = (typeof myMoneyFlow_Chart.toBase64Image === 'function')
+          ? myMoneyFlow_Chart.toBase64Image('image/png', 1.0)
+          : origCanvas.toDataURL('image/png');
+      }
+    }
+
     var canvas = await html2canvas(targetDom, {
       scale: 3,                 // Retina/인쇄급 3배수 고해상도
       useCORS: true,
@@ -4024,15 +4045,24 @@ async function downloadMoneyFlowImage(btnEl, event) {
             img.parentNode.replaceChild(svgWrapper.firstChild, img);
           });
 
-          // Chart.js 원본 캔버스 비트맵을 복제본 캔버스에 1:1 보존 복사
-          var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
+          // 고해상도로 렌더링된 Chart.js 비트맵 이미지를 복제 캔버스 위치에 고품질 <img>로 교체 (캔버스 리샘플링 왜곡 방지)
           var clonedCanvas = clonedDoc.getElementById('MoneyFlow_Chart');
-          if (origCanvas && clonedCanvas) {
-            clonedCanvas.width = origCanvas.width;
-            clonedCanvas.height = origCanvas.height;
-            var ctx = clonedCanvas.getContext('2d');
-            if (ctx) {
-              ctx.drawImage(origCanvas, 0, 0);
+          if (clonedCanvas && chartHighResDataUrl) {
+            var highResImg = clonedDoc.createElement('img');
+            highResImg.src = chartHighResDataUrl;
+            highResImg.style.width = '100%';
+            highResImg.style.height = origHeight ? (origHeight + 'px') : 'auto';
+            highResImg.style.display = 'block';
+            clonedCanvas.parentNode.replaceChild(highResImg, clonedCanvas);
+          } else if (clonedCanvas) {
+            var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
+            if (origCanvas) {
+              clonedCanvas.width = origCanvas.width;
+              clonedCanvas.height = origCanvas.height;
+              var ctx = clonedCanvas.getContext('2d');
+              if (ctx) {
+                ctx.drawImage(origCanvas, 0, 0);
+              }
             }
           }
 
@@ -4068,6 +4098,15 @@ async function downloadMoneyFlowImage(btnEl, event) {
     console.error('MoneyFlow capture error:', err);
     alert('이미지 저장 중 문제가 발생했습니다: ' + (err.message || err));
   } finally {
+    // 2. 캡처 종료 후 Chart.js 해상도를 원래의 devicePixelRatio로 즉시 복원
+    if (hasChart) {
+      try {
+        myMoneyFlow_Chart.options.devicePixelRatio = originalDPR;
+        myMoneyFlow_Chart.update('none');
+      } catch (e) {
+        console.error('Error restoring chart DPR:', e);
+      }
+    }
     $btn.prop('disabled', false).html(originalBtnHtml);
   }
 }
