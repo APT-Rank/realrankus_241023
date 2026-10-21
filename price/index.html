@@ -176,6 +176,37 @@
     background-color: #cbd5e1;
     transform: scale(0.92);
   }
+  /* 실거래가 로딩 인디케이터 */
+  .price_loading_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 70px 20px 90px 20px;
+    text-align: center;
+  }
+  .price_loading_spinner {
+    margin-bottom: 18px;
+  }
+  .price_loading_spinner .spinner-border {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-width: 0.28rem;
+    color: #dc3545 !important;
+  }
+  .price_loading_title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .price_loading_subtitle {
+    font-size: 12.5px;
+    color: #94a3b8;
+    letter-spacing: -0.2px;
+  }
 </style>
 
 <body ontouchstart="">
@@ -843,7 +874,35 @@
     regionName = $("#sido option:selected").text()
     //saveLocalStorage()
   }
+    function showPriceLoading(customTitle, customSubtitle) {
+    var title = customTitle || "실거래가 데이터를 불러오는 중입니다";
+    var subtitle = customSubtitle || "잠시만 기다려 주세요...";
+    var loadingHtml =
+      "<div id='tableLoading' class='price_loading_container'>" +
+        "<div class='price_loading_spinner'>" +
+          "<div class='spinner-border text-danger' role='status'>" +
+            "<span class='visually-hidden'>Loading...</span>" +
+          "</div>" +
+        "</div>" +
+        "<div class='price_loading_title'>" + title + "</div>" +
+        "<div class='price_loading_subtitle'>" + subtitle + "</div>" +
+      "</div>";
+    $('#dataList').html(loadingHtml);
+    $('html, body').scrollTop(0);
+  }
+
+  var updateRegionTimer = null;
   function updateRegion() {
+    showPriceLoading();
+    if (updateRegionTimer) {
+      clearTimeout(updateRegionTimer);
+    }
+    updateRegionTimer = setTimeout(function () {
+      _loadRegionData();
+    }, 25);
+  }
+
+  function _loadRegionData() {
     reportBannerHtml()
 
     selectedRegion = $("#sido option:selected").val()
@@ -929,13 +988,14 @@
 
   function updateTable(region) {
     //$('div.modal').modal("hide");    
-    $('#sort').css("visibility", "visible")
-    $('#rearrange').css("visibility", "visible")
-    $('html').scrollTop(0)
+    $('#sort').css("visibility", "visible");
+    $('#rearrange').css("visibility", "visible");
+    $('html').scrollTop(0);
     //initSorting()
 
-    $('#dataList').html("");
-    $("#dataList").html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-danger' role='status'></div></div>")
+    if ($('#tableLoading').length === 0) {
+      showPriceLoading();
+    }
 
     //광고정보 로딩
     $.ajaxSetup({ async: false });
@@ -1438,6 +1498,15 @@
 
         $('#dataList').append("<div style='height: " + blank_height + "'></div>");
       })
+      .fail(function () {
+        $('#dataList').html(
+          "<div class='data_empty' style='padding: 60px 20px; text-align: center; color: #64748b;'>" +
+            "<i class='fa-solid fa-triangle-exclamation' style='font-size: 2rem; color: #ef4444; margin-bottom: 12px;'></i><br>" +
+            "데이터를 불러오는 중 문제가 발생했습니다.<br>" +
+            "<span style='font-size: 0.85em; color: #94a3b8;'>잠시 후 다시 시도해 주세요.</span>" +
+          "</div>"
+        );
+      })
     showWeight()
     //saveLocalStorage()    
   }
@@ -1897,7 +1966,10 @@
 
 
   function updateRegionTable(region) {
-    $('html').scrollTop(0)
+    $('html').scrollTop(0);
+    if ($('#tableLoading').length === 0) {
+      showPriceLoading();
+    }
     //$('#sort').css("visibility", "hidden")
     //$('#rearrange').css("visibility", "visible")
 
@@ -1921,7 +1993,7 @@
     //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
     var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
     url = r2_base + "/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-    $('#dataList').html("");
+    // Keep #tableLoading visible until all region rows are assembled
 
     count_Korea = 0
     count_prev_Korea = 0
@@ -2028,6 +2100,7 @@
 
       //광고정보표시
       show_partnership()
+      var full_region_html = "";
 
       for (var i = 0; i < itemNum; i++) {
         var regName = regData.data[i]["시군구"]
@@ -2162,8 +2235,8 @@
 
             popMsg = "'" + "전체시도" + "'" + " 거래량 정보가 복사되었습니다."
 
-            if (i == 1) { $('#dataList').append(report_banner_html); }
-            $('#dataList').append(addon_html);
+            if (i == 1) { full_region_html += report_banner_html; }
+            full_region_html += addon_html;
 
             //scrollTo(0, lastScrollY_d00)
           }
@@ -2304,11 +2377,12 @@
 
             popMsg = "'" + regionName + "'" + " 거래량 정보가 복사되었습니다."
 
-            $('#dataList').append(addon_html);
-            if ((regCode.split("_")).length == 2) { $('#dataList').append(report_banner_html); }
+            full_region_html += addon_html;
+            if ((regCode.split("_")).length == 2) { full_region_html += report_banner_html; }
           }
         }
       }
+      $('#dataList').html(full_region_html);
       checkFav()
 
       shareText += "[리얼랭커스 앱 다운로드]\n"
