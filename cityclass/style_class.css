@@ -2264,7 +2264,20 @@
       margin-right: 6px;      
     }
   }
+  /* 2026-10-23: 캡쳐 진행률(0%~100%) 변경 시 버튼 및 텍스트 가로 길이가 흔들리지 않도록 고정폭 및 고정숫자폭(tabular-nums) 적용 */
   #btnCaptureSummary span {
     white-space: nowrap;
     font-size: 0.85rem;
+  }
+  #btnCaptureSummary .summary-capture-status {
+    display: inline-block;
+    width: 146px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  #btnCaptureSummary .summary-capture-pct {
+    display: inline-block;
+    width: 34px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
   }

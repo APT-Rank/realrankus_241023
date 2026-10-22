@@ -1913,7 +1913,21 @@ async function downloadClassSummaryImage(btnEl, event) {
 
   var originalBtnHtml = btnEl.innerHTML;
   var isAllGungu = ($("#summaryGungu").val() || "ALL") === "ALL";
-  btnEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span>" + (isAllGungu ? "고해상도 저장 중..." : "저장 중...") + "</span>";
+  // 2026-10-23: 스피너(<i>)와 텍스트/퍼센트(<span>) DOM을 분리하여 진행률 갱신 시 스피너 리셋(깜빡임) 및 버튼 가로폭 변동 방지
+  btnEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span class='summary-capture-status'>" +
+    (isAllGungu ? "고해상도 저장 중 (<span class='summary-capture-pct'>0%</span>)" : "저장 중...") +
+    "</span>";
+  var statusSpanEl = btnEl.querySelector(".summary-capture-status");
+  var pctSpanEl = btnEl.querySelector(".summary-capture-pct");
+  var updateCaptureProgress = function(pctVal) {
+    if (!pctSpanEl && statusSpanEl) {
+      statusSpanEl.innerHTML = "고해상도 저장 중 (<span class='summary-capture-pct'>0%</span>)";
+      pctSpanEl = btnEl.querySelector(".summary-capture-pct");
+    }
+    if (pctSpanEl) {
+      pctSpanEl.textContent = pctVal + "%";
+    }
+  };
   btnEl.style.pointerEvents = "none";
 
   var offscreenWrapper = null;
@@ -2169,7 +2183,7 @@ async function downloadClassSummaryImage(btnEl, event) {
           for (var tx = 0; tx < captureW; tx += tileStepX) {
             var curTileW = Math.min(tileStepX, captureW - tx);
             var pct = Math.round((doneTiles / Math.max(totalTiles, 1)) * 100);
-            btnEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span>고해상도 저장 중 (" + pct + "%)</span>";
+            updateCaptureProgress(pct);
             await new Promise(function(r) { setTimeout(r, 15); });
 
             var tileCvs = await renderTileWithRetry(tx, ty, curTileW, curTileH, streamScale);
@@ -2290,7 +2304,7 @@ async function downloadClassSummaryImage(btnEl, event) {
             for (var tx2 = 0; tx2 < captureW; tx2 += tileStepX2) {
               var curTileW2 = Math.min(tileStepX2, captureW - tx2);
               var pct2 = Math.round((doneTiles2 / Math.max(totalTiles2, 1)) * 100);
-              btnEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span>고해상도 저장 중 (" + pct2 + "%)</span>";
+              updateCaptureProgress(pct2);
               await new Promise(function(r) { setTimeout(r, 10); });
 
               var tileCanvas = await renderTileWithRetry(tx2, ty2, curTileW2, curTileH2, chosenScale);
@@ -2341,7 +2355,7 @@ async function downloadClassSummaryImage(btnEl, event) {
       });
     }
 
-    btnEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span>파일 생성 중...</span>";
+    if (statusSpanEl) { statusSpanEl.textContent = "파일 생성 중..."; }
     await new Promise(function(resolve) { setTimeout(resolve, 20); });
 
     if (!finalBlob && finalCanvas) {
