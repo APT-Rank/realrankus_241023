@@ -15,6 +15,7 @@ key = "a4e0de06940548baa56ef556c78cb6d5"
 bok_key = "570IL3KK1XG2THUF38RC"
 fred_key = "a7d5a17c8b520a7802d3c905fca10131"
 
+# 2026-10-22: FRED API 일시 장애(점검) 대비 재시도(Retry) 및 예외 처리 함수 추가
 def fetch_fred_series(series_id, max_retries=3, delay=2):
     for attempt in range(max_retries):
         try:
@@ -479,6 +480,7 @@ def save_BOK_Housing_info():
     #df.to_json(path + "/BOK_standatd_interest.json", force_ascii=False, indent=4)
     #print("BOK interest saved at " + str(now))
 
+# 2026-10-22: FRED 유가 시리즈 호출 실패 시 market_monthly_info.json 캐시 데이터 보존 및 결측치 안전 병합
 def save_FED_Oil_info():
     print("Start to get FED Oil")
     data_WTI = fetch_fred_series('POILWTIUSDM')

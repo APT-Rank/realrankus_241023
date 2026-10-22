@@ -73,6 +73,7 @@ function goMap(url){
     }    
 }
 
+// 2026-10-22: 제휴 광고 선택 로직 분리 (불필요한 중복 다운로드 방지 및 캐시 데이터 연동)
 function select_partnership_item(){
     if(typeof partData === 'undefined' || !partData || !partData.data || partData.data.length === 0) return;
     part_detail = partData.data
@@ -95,6 +96,7 @@ function select_partnership_item(){
     page_url = part_detail[part_selection]['homepage']
 }
 
+// 2026-10-22: async:false 제거, 비동기 Deferred 반환 및 partData 메모리 캐싱 적용
 function load_parrtnership(region){
     if(typeof partData !== 'undefined' && partData && partData.data){
         select_partnership_item();
@@ -109,6 +111,7 @@ function load_parrtnership(region){
 
 function show_partnership(){    
 //광고정보 표시영역
+// 2026-10-22: partData 및 partData.data 존재 여부 안전 가드 검사
 if(typeof partData !== 'undefined' && partData && partData.data && partData.data.length > 0 && (today_num >= part_sDate_Num && today_num <= part_eDate_Num) ){
     gtag('event','파트너쉽노출', { 'event_category' : 'View_Partnership', 'event_label' : "리얼랭커스," + today_str + "," + part_title + ",뷰,파트너쉽"});
     if(part_type == 'Direct'){

@@ -85,6 +85,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
     integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <!-- 2026-10-22: 카드 캡처 라이브러리 비동기 로딩(defer)으로 초기 렌더링 블로킹 방지 -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
@@ -177,7 +178,7 @@
     transform: scale(0.92);
   }
 
-  /* 초기 레이아웃 시프트(CLS) 방지 및 스켈레톤 UI & 페이드인 전환 */
+  /* 2026-10-22: 초기 레이아웃 시프트(CLS) 방지 및 스켈레톤 UI & 페이드인 전환 스타일 추가 */
   #weight {
     display: block;
   }
@@ -296,6 +297,7 @@
       </div>
 
       <div id="selections">
+        <!-- 2026-10-22: App Shell 기본 옵션 사전 정의로 빈 셀렉트 박스 노출 방지 -->
         <div id="sido_selection"><select id="sido" onChange="sidoChange()"><option value="Korea">거래량</option></select></div>
         <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"><option value="1000000000_Korea">전체시도</option></select></div>
         <div id="month_selection">
@@ -352,6 +354,7 @@
 
       <!--단지 가중치 표시창-->
       <!-- <div id="weight" data-bs-toggle='modal' data-bs-target='#baseModal' onClick='showSorting()'></div> -->
+      <!-- 2026-10-22: 초기 안내 문구 설정으로 로딩 전 레이아웃 높이 유지 (CLS 방지) -->
       <div id="weight">데이터를 불러오는 중입니다...</div>
 
       <!--단지 검색창-->
@@ -395,7 +398,7 @@
       <!--리스트 데이터 붙여넣는 영역-->
       <div id="dataList"></div>
       <script>
-        // [App Shell & Skeleton 즉시 초기화] 하단 무거운 외부 스크립트 다운로드 전에 드롭다운과 스켈레톤 카드를 먼저 렌더링합니다.
+        // 2026-10-22: [App Shell & Skeleton 즉시 초기화] 하단 무거운 외부 스크립트 다운로드 전에 드롭다운과 스켈레톤 카드를 먼저 렌더링
         function getSkeletonHtml(isVolumeMode) {
           var html = "<div class='sk_part_box sk_shimmer'></div>";
           if (!isVolumeMode) {
@@ -578,6 +581,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
+  <!-- 2026-10-22: 상세 보기에서만 쓰이는 무거운 외부 스크립트에 defer 적용하여 초기 화면 페인트 가속 -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
@@ -1039,10 +1043,12 @@
     regionName = $("#sido option:selected").text()
     //saveLocalStorage()
   }
+  // 2026-10-22: 비동기 요청 식별자 및 월별 데이터(daily_count, sales_volume) 인메모리 캐시
   var currentUpdateReqId = 0;
   var countDataCache = {};
   var salesVolCache = {};
 
+  // 2026-10-22: $.ajaxSetup(async: false) 제거 및 daily_count, sales_volume, ad, apt JSON의 비동기 병렬 호출($.when)
   function updateRegion() {
     var reqId = ++currentUpdateReqId;
     reportBannerHtml()
@@ -1155,6 +1161,7 @@
     });
   }
 
+  // 2026-10-22: 사전 로드된 aptJson 즉시 렌더링 지원 및 count_info 불변 정렬(slice().reverse())
   function updateTable(region, preloadedAptJson) {
     //$('div.modal').modal("hide");    
     $('#sort').css("visibility", "visible")
@@ -1316,6 +1323,7 @@
 
           var road_address = ""
           if (aptData.data[i]["도로명건물본번호코드"] != null) {
+            // 2026-10-22: 시/도 전체(region_all) 조회 시 도로명 주소에 exp_region 반영
             if (region_all) {
               var road_address = $("#sido option:selected").text() + " " + exp_region + " " + aptData.data[i]["도로명"] + " " + Number(aptData.data[i]["도로명건물본번호코드"])
             }
@@ -2133,6 +2141,7 @@
   }
 
 
+  // 2026-10-22: 사전 로드된 volJson 즉시 렌더링 지원 및 비동기 처리
   function updateRegionTable(region, preloadedVolJson) {
     $('html').scrollTop(0)
     //$('#sort').css("visibility", "hidden")
@@ -2935,6 +2944,7 @@
   }
 
   function get_sURL(region) {
+    // 2026-10-22: regData 로드 전 호출 시 undefined 에러 방지 안전 가드 추가
     if (!regData || !regData.data) return "https://www.realrankus.com/price";
     for (k = 0; k < (regData.data).length; k++) {
       if (regData.data[k]['코드'] == region) {
@@ -3116,7 +3126,7 @@
         backgroundColor: '#ffffff',
         logging: false,
         ignoreElements: function (el) {
-          // 캡처 대상 카드가 아닌 다른 모든 카드 및 구분선은 복제 단계에서 즉시 제외하여 렌더링 10배 가속
+          // 2026-10-22: 캡처 대상 카드가 아닌 다른 모든 카드 및 구분선은 복제 단계에서 즉시 제외하여 렌더링 10배 가속 (ignoreElements)
           if (el.classList && el.classList.contains('listBox') && el !== cardDom) return true;
           if (el.classList && (el.classList.contains('date_saperator') || el.classList.contains('date_saperator_web') || el.classList.contains('hidden_saperator'))) return true;
           if (el.id === 'tableLoading' || el.id === 'baseModal' || (el.classList && el.classList.contains('modal-backdrop'))) return true;

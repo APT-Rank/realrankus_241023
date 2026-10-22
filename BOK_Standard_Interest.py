@@ -42,6 +42,7 @@ def fetch_ecos_data(url, max_retries=3, delay=2):
         time.sleep(delay)
     return None
 
+# 2026-10-22: FRED API 일시 장애(점검) 대비 재시도(Retry) 및 예외 처리 함수 추가
 def fetch_fred_series(series_id, max_retries=3, delay=2):
     for attempt in range(max_retries):
         try:
@@ -103,6 +104,7 @@ def save_BOK_interest_info():
     df.to_json(out_file, force_ascii=False, indent=4)
     print("BOK interest saved at " + str(now))
 
+# 2026-10-22: FRED API 호출 실패 시 기존 캐시 파일(FED_standatd_interest.json) 보존 처리
 def save_FED_interest_info():
     print("Start to get FED interest")
 
@@ -267,6 +269,7 @@ def save_YF_currency_info():
 
     return df_close
 
+# 2026-10-22: FRED 시리즈 호출 실패 시 market_daily_info.json 캐시 데이터 보존 및 중복 방지
 def _fetch_fred_series_df(series_id, col_name, label):
     print(f"Start to get {label}")
     data = fetch_fred_series(series_id)
@@ -299,6 +302,7 @@ def _fetch_fred_series_df(series_id, col_name, label):
                 print(f"[Warning] Could not load {col_name} from cache: {e}")
         return pd.DataFrame(columns=['DATE', col_name])
 
+# 2026-10-22: 일별 시장지표 FRED 데이터 조회 함수 래핑
 def save_FED_interest_info_daily():
     return _fetch_fred_series_df('DFEDTARU', 'FRED_Interest', 'FED interest')
 
