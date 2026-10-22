@@ -1105,7 +1105,12 @@
 
           var road_address = ""
           if (aptData.data[i]["도로명건물본번호코드"] != null) {
-            var road_address = $("#sido option:selected").text() + " " + $("#gungu option:selected").text() + " " + aptData.data[i]["도로명"] + " " + Number(aptData.data[i]["도로명건물본번호코드"])
+            if (region_all) {
+              var road_address = $("#sido option:selected").text() + " " + exp_region + " " + aptData.data[i]["도로명"] + " " + Number(aptData.data[i]["도로명건물본번호코드"])
+            }
+            else {
+              var road_address = $("#sido option:selected").text() + " " + $("#gungu option:selected").text() + " " + aptData.data[i]["도로명"] + " " + Number(aptData.data[i]["도로명건물본번호코드"])
+            }
             if (Number(aptData.data[i]["도로명건물부번호코드"]) != 0) {
               road_address += "-" + Number(aptData.data[i]["도로명건물부번호코드"])
             }
