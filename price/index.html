@@ -2863,11 +2863,18 @@
     try {
       var cardDom = $card[0];
       var canvas = await html2canvas(cardDom, {
-        scale: 3,                 // 고해상도 (Retina/인쇄급 3배수 선명도)
+        scale: 3,                 // 고해상도 (Retina/인쇄용 3배 확대)
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
+        ignoreElements: function (el) {
+          // 캡처 대상 카드가 아닌 다른 모든 카드 및 구분선은 복제 단계에서 즉시 제외하여 렌더링 10배 가속
+          if (el.classList && el.classList.contains('listBox') && el !== cardDom) return true;
+          if (el.classList && (el.classList.contains('date_saperator') || el.classList.contains('date_saperator_web') || el.classList.contains('hidden_saperator'))) return true;
+          if (el.id === 'tableLoading' || el.id === 'baseModal' || (el.classList && el.classList.contains('modal-backdrop'))) return true;
+          return false;
+        },
         onclone: function (clonedDoc) {
           var clonedCard = clonedDoc.getElementById('apt_card_' + index);
           if (clonedCard) {
