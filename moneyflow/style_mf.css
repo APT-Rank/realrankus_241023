@@ -224,10 +224,10 @@
     min-height: 2.6em;
   }  
   #Money_Flow > div.daily_title_mf > div:first-child {
-    display: flex;
-    align-items: center;
+    /* display: flex; */
+    /* align-items: center; */
     gap: 4px;
-    line-height: normal;
+    line-height: 2.6em;
   }
   #Money_Flow > div.daily_title_mf > div.subSelection {
     display: grid;
@@ -236,15 +236,15 @@
     justify-items: center;
     margin: 0;
     padding: 0 5px;
-    height: 100%;
+    height: 2.7em;
   }
   #Money_Flow > div.daily_title_mf > div.subSelection > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
     width: 100%;
     height: 100%;
-    line-height: 1;
+    line-height: 2.4em;
     margin: 0;
     padding: 0;
   }
@@ -253,7 +253,7 @@
     align-items: center;
     justify-content: center;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.4em;
     vertical-align: middle;
   }  
   .daily_sub{
