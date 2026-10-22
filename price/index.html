@@ -85,7 +85,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
     integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
@@ -176,6 +176,98 @@
     background-color: #cbd5e1;
     transform: scale(0.92);
   }
+
+  /* 초기 레이아웃 시프트(CLS) 방지 및 스켈레톤 UI & 페이드인 전환 */
+  #weight {
+    display: block;
+  }
+  #dataList {
+    padding-top: 115px;
+  }
+  @keyframes priceShimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes priceCardFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .listBox,
+  .partBox,
+  .data_selection,
+  .date_saperator,
+  .date_saperator_web {
+    animation: priceCardFadeIn 0.22s ease-out;
+  }
+  .sk_shimmer {
+    background: linear-gradient(90deg, #eef1f6 25%, #f8fafc 50%, #eef1f6 75%);
+    background-size: 200% 100%;
+    animation: priceShimmer 1.35s infinite linear;
+    border-radius: 5px;
+  }
+  .sk_part_box {
+    height: 65px;
+    margin: 0.5em 0.3em 0.2em 0.3em;
+    border-radius: 8px;
+  }
+  .sk_filter_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 6px;
+    column-gap: 8px;
+    padding: 8px 14px;
+  }
+  .sk_pill {
+    height: 26px;
+    border-radius: 16px;
+  }
+  .sk_sep_bar {
+    height: 30px;
+    background-color: #f3f4f6;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+  }
+  .sk_card {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .sk_card_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .sk_card_body {
+    display: grid;
+    grid-template-columns: 105px 1fr;
+    column-gap: 14px;
+    align-items: center;
+  }
+  .sk_left_col {
+    border-right: 1px solid #e5e7eb;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .sk_right_col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 </style>
 
 <body ontouchstart="">
@@ -204,8 +296,8 @@
       </div>
 
       <div id="selections">
-        <div id="sido_selection"><select id="sido" onChange="sidoChange()"></select></div>
-        <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"></select></div>
+        <div id="sido_selection"><select id="sido" onChange="sidoChange()"><option value="Korea">거래량</option></select></div>
+        <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"><option value="1000000000_Korea">전체시도</option></select></div>
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <option value="latest_deal" id="recent_deal" selected>오늘 등록된</option>
@@ -260,7 +352,7 @@
 
       <!--단지 가중치 표시창-->
       <!-- <div id="weight" data-bs-toggle='modal' data-bs-target='#baseModal' onClick='showSorting()'></div> -->
-      <div id="weight"></div>
+      <div id="weight">데이터를 불러오는 중입니다...</div>
 
       <!--단지 검색창-->
       <div id="searchCard">
@@ -302,6 +394,112 @@
 
       <!--리스트 데이터 붙여넣는 영역-->
       <div id="dataList"></div>
+      <script>
+        // [App Shell & Skeleton 즉시 초기화] 하단 무거운 외부 스크립트 다운로드 전에 드롭다운과 스켈레톤 카드를 먼저 렌더링합니다.
+        function getSkeletonHtml(isVolumeMode) {
+          var html = "<div class='sk_part_box sk_shimmer'></div>";
+          if (!isVolumeMode) {
+            html += "<div class='sk_filter_row'>"
+              + "<div class='sk_pill sk_shimmer'></div>"
+              + "<div class='sk_pill sk_shimmer'></div>"
+              + "<div class='sk_pill sk_shimmer'></div>"
+              + "<div class='sk_pill sk_shimmer'></div>"
+              + "<div class='sk_pill sk_shimmer'></div>"
+              + "</div>"
+              + "<div class='sk_sep_bar'><div class='sk_shimmer' style='width:95px;height:13px;'></div></div>";
+          }
+          for (var s = 0; s < 6; s++) {
+            html += "<div class='sk_card'>"
+              + "<div class='sk_card_header'>"
+              + "<div class='sk_shimmer' style='width:" + (isVolumeMode ? "32%" : "58%") + ";height:17px;'></div>"
+              + "<div class='sk_shimmer' style='width:24px;height:17px;border-radius:50%;'></div>"
+              + "</div>"
+              + "<div class='sk_card_body'>"
+              + "<div class='sk_left_col'>"
+              + "<div class='sk_shimmer' style='width:80%;height:22px;'></div>"
+              + "<div class='sk_shimmer' style='width:60%;height:11px;'></div>"
+              + "<div class='sk_shimmer' style='width:55%;height:11px;'></div>"
+              + "</div>"
+              + "<div class='sk_right_col'>"
+              + "<div class='sk_shimmer' style='width:92%;height:12px;'></div>"
+              + "<div class='sk_shimmer' style='width:86%;height:12px;'></div>"
+              + "<div class='sk_shimmer' style='width:89%;height:12px;'></div>"
+              + "</div>"
+              + "</div>"
+              + "</div>";
+          }
+          return html;
+        }
+        (function initAppShellImmediately() {
+          try {
+            if (typeof regions !== "undefined") {
+              var optHtml = "";
+              for (var r = 0; r < regions.length; r++) {
+                optHtml += "<option value='" + regions[r][1] + "'>" + regions[r][0] + "</option>";
+              }
+              document.getElementById("sido").innerHTML = optHtml;
+            }
+            var initReg = localStorage.getItem("lastRegion_price") || "Korea";
+            var initSub = localStorage.getItem("lastSubRegion_price") || "1000000000_Korea";
+            var initMon = localStorage.getItem("lastMonth_price") || "latest_deal";
+            var params = new URLSearchParams(window.location.search);
+            if (params.has("preg")) initReg = params.get("preg");
+            if (params.has("psub")) initSub = params.get("psub");
+            if (params.has("pmon")) initMon = params.get("pmon");
+            if (params.has("cpx") && typeof codeMap !== "undefined") {
+              var cpxVal = params.get("cpx");
+              for (var c = 0; c < codeMap.length; c++) {
+                if (codeMap[c][0] == cpxVal) {
+                  initReg = codeMap[c][1];
+                  initSub = codeMap[c][2];
+                  break;
+                }
+              }
+            }
+            if (initReg !== "Korea" && !params.has("pmon")) {
+              initMon = "latest_deal";
+            }
+            var sidoEl = document.getElementById("sido");
+            var gunguEl = document.getElementById("gungu");
+            var monthEl = document.getElementById("month");
+            if (sidoEl) sidoEl.value = initReg;
+            if (monthEl) monthEl.value = initMon;
+            var regionMap = {
+              Korea: typeof inKorea !== "undefined" ? inKorea : [],
+              Seoul: typeof inSeoul !== "undefined" ? inSeoul : [],
+              Busan: typeof inBusan !== "undefined" ? inBusan : [],
+              Incheon: typeof inIncheon !== "undefined" ? inIncheon : [],
+              Daegu: typeof inDaegu !== "undefined" ? inDaegu : [],
+              Gwangju: typeof inGwangju !== "undefined" ? inGwangju : [],
+              Daejeon: typeof inDaejeon !== "undefined" ? inDaejeon : [],
+              Ulsan: typeof inUlsan !== "undefined" ? inUlsan : [],
+              Sejong: typeof inSejong !== "undefined" ? inSejong : [],
+              Gyeonggi: typeof inGyeonggi !== "undefined" ? inGyeonggi : [],
+              Gangwondo: typeof inGangwondo !== "undefined" ? inGangwondo : [],
+              Chungcheongbukdo: typeof inChungcheongbukdo !== "undefined" ? inChungcheongbukdo : [],
+              Chungcheongnamdo: typeof inChungcheongnamdo !== "undefined" ? inChungcheongnamdo : [],
+              Jeollabukdo: typeof inJeollabukdo !== "undefined" ? inJeollabukdo : [],
+              Jeonamgwangju: typeof inJeonamgwangju !== "undefined" ? inJeonamgwangju : [],
+              Gyeongsangbukdo: typeof inGyeongsangbukdo !== "undefined" ? inGyeongsangbukdo : [],
+              Gyeongsangnamdo: typeof inGyeongsangnamdo !== "undefined" ? inGyeongsangnamdo : [],
+              Jejudo: typeof inJejudo !== "undefined" ? inJejudo : []
+            };
+            var subList = regionMap[initReg] || [];
+            if (gunguEl && subList.length > 0) {
+              var gHtml = "";
+              for (var g = 0; g < subList.length; g++) {
+                gHtml += "<option value='" + subList[g][1] + "'>" + subList[g][0] + "</option>";
+              }
+              gunguEl.innerHTML = gHtml;
+              gunguEl.value = initSub || subList[0][1];
+            }
+            var dataListEl = document.getElementById("dataList");
+            if (dataListEl) {
+              dataListEl.innerHTML = getSkeletonHtml(initReg === "Korea");
+            }
+          } catch (e) {}
+        })();
+      </script>
 
       <!--리얼랭커스 연결-->
       <div id="linkToAptrank_bottom"></div>
@@ -380,8 +578,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics-compat.js"></script>
@@ -389,7 +587,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
 
-  <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+  <script defer type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
 
 
 </body>
@@ -594,8 +792,6 @@
     $("#month").val(selectedMonth).prop("selected", true);
     $("#sido").val(selectedRegion).prop("selected", true);
     regionName = $("#sido option:selected").val();
-
-    $('#dataList').html("");
 
     optionChange(selectedSubRegion, selectedRegion);
     updateRegion()
@@ -843,7 +1039,12 @@
     regionName = $("#sido option:selected").text()
     //saveLocalStorage()
   }
+  var currentUpdateReqId = 0;
+  var countDataCache = {};
+  var salesVolCache = {};
+
   function updateRegion() {
+    var reqId = ++currentUpdateReqId;
     reportBannerHtml()
 
     selectedRegion = $("#sido option:selected").val()
@@ -860,90 +1061,106 @@
       $("#month option:contains('20')").prop('hidden', false)
     }
 
-    $.ajaxSetup({ async: false });
-    var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
-    count_url = r2_base + "/price/recent/" + selectedMonth + "/daily_count.json?v=" + Math.random()
-
-    $.getJSON(count_url, function (json) {
-      count_data = json
-      updated_info = count_data['data'][1]['daily_count']
-      updated_datetime = updated_info[updated_info.length - 1][2]
-
-      /*
-      //업데이트 날짜를 오늘 날짜로 표시해 주는 변환 시작
-      updated_time = updated_datetime.split(',')[1]
-      updated_year = Number( updated_datetime.substr(0, 4) )
-      updated_month = Number( updated_datetime.substr(5, 2) )-1
-      updated_date = Number( updated_datetime.substr(8, 2) )      
-      var updated_datetime_today = new Date(updated_year, updated_month, updated_date)     
-
-      updated_datetime_today.setDate(updated_datetime_today.getDate() + 1)
-      display_year = updated_datetime_today.getFullYear()
-      display_month = dateReturn(updated_datetime_today.getMonth()+1)
-      display_day = dateReturn(updated_datetime_today.getDate())
-
-      display_date = display_year + "-" + display_month + "-" + display_day
-      updated_datetime = display_date + ", " + updated_time
-      //업데이트 날짜를 오늘 날짜로 표시해 주는 변환 끝
-      */
-
-      if (updated_datetime == undefined) {
-        //updated_datetime = updated_info[0][0].substr(0, 4) + "-" + updated_info[0][0].substr(4, 2) + "-" + updated_info[0][0].substr(6, 2) + ", 23:59"
-        updated_datetime = display_date + ", 23:59"
-      }
-
-      for (var y = 0; y < count_data['data'].length; y++) {
-        if (count_data['data'][y]['file_name'] == selectedSubRegion) {
-          count_info = count_data['data'][y]['daily_count']
-          BYG_count_info = count_data['data'][y]['daily_count_BYG']
-          region_count_info = count_data['data'][y]['region_count']
-          latest_count_info = count_data['data'][y]['new_deal_count']
-          break;
-        }
-      }
-    })
-
-    if (regData == undefined || regData == "") {
-      url = r2_base + "/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-      //url = "./recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-      $.getJSON(url, function (json) {
-        regData = json;
-        regSortData = regData;
-      })
-    }
-    $.ajaxSetup({ async: true });
+    var currentMonthKey = selectedMonth;
+    var currentRegionKey = selectedRegion;
+    var currentSubRegionKey = selectedSubRegion;
 
     localSearchText = shortRegionName($("#sido option:selected").text() + " " + $("#gungu option:selected").text())
     $("#localSearch").html(localSearchText + " 검색")
 
-    if (selectedRegion == "Korea") {
-      //$("#recent_deal").hide()
-      updateRegionTable(selectedSubRegion)
+    // 스켈레톤 UI 즉시 렌더링 (동기 통신 블로킹 없이 화면 즉시 전환)
+    $('html').scrollTop(0);
+    if (typeof getSkeletonHtml === "function") {
+      $("#dataList").html(getSkeletonHtml(currentRegionKey === "Korea"));
     }
-    else {
-      //$("#recent_deal").show()
-      updateTable(selectedSubRegion)
+
+    var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+
+    var countPromise;
+    if (countDataCache[currentMonthKey]) {
+      countPromise = $.Deferred().resolve(countDataCache[currentMonthKey]).promise();
+    } else {
+      count_url = r2_base + "/price/recent/" + currentMonthKey + "/daily_count.json?v=" + Math.random();
+      countPromise = $.getJSON(count_url).then(function (json) {
+        countDataCache[currentMonthKey] = json;
+        return json;
+      });
     }
-    showWeight()
+
+    var volPromise;
+    if (salesVolCache[currentMonthKey]) {
+      volPromise = $.Deferred().resolve(salesVolCache[currentMonthKey]).promise();
+    } else {
+      url = r2_base + "/price/recent/" + currentMonthKey + "/sales_volume.json?v=" + Math.random();
+      volPromise = $.getJSON(url).then(function (json) {
+        salesVolCache[currentMonthKey] = json;
+        return json;
+      });
+    }
+
+    var adDeferred = $.Deferred();
+    if (typeof load_parrtnership === "function") {
+      var adReq = load_parrtnership(currentSubRegionKey);
+      if (adReq && typeof adReq.always === "function") {
+        adReq.always(function () { adDeferred.resolve(); });
+      } else {
+        adDeferred.resolve();
+      }
+    } else {
+      adDeferred.resolve();
+    }
+
+    var aptPromise;
+    if (currentRegionKey == "Korea") {
+      aptPromise = $.Deferred().resolve(null).promise();
+    } else {
+      var apt_url = r2_base + "/price/recent/" + currentMonthKey + "/" + currentSubRegionKey + ".json?v=" + Math.random();
+      aptPromise = $.getJSON(apt_url).then(function (json) {
+        return json;
+      });
+    }
+
+    $.when(countPromise, volPromise, adDeferred.promise(), aptPromise).done(function (countJson, volJson, _ad, aptJson) {
+      if (reqId !== currentUpdateReqId) return;
+
+      count_data = countJson;
+      updated_info = count_data['data'][1]['daily_count'];
+      updated_datetime = updated_info[updated_info.length - 1][2];
+
+      if (updated_datetime == undefined) {
+        updated_datetime = (typeof display_date !== 'undefined' ? display_date : today_str) + ", 23:59";
+      }
+
+      for (var y = 0; y < count_data['data'].length; y++) {
+        if (count_data['data'][y]['file_name'] == currentSubRegionKey) {
+          count_info = count_data['data'][y]['daily_count'];
+          BYG_count_info = count_data['data'][y]['daily_count_BYG'];
+          region_count_info = count_data['data'][y]['region_count'];
+          latest_count_info = count_data['data'][y]['new_deal_count'];
+          break;
+        }
+      }
+
+      regData = volJson;
+      regSortData = regData;
+
+      showWeight();
+
+      if (currentRegionKey == "Korea") {
+        updateRegionTable(currentSubRegionKey, volJson);
+      }
+      else {
+        updateTable(currentSubRegionKey, aptJson);
+      }
+    });
   }
 
-  function updateTable(region) {
+  function updateTable(region, preloadedAptJson) {
     //$('div.modal').modal("hide");    
     $('#sort').css("visibility", "visible")
     $('#rearrange').css("visibility", "visible")
     $('html').scrollTop(0)
     //initSorting()
-
-    $('#dataList').html("");
-    $("#dataList").html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-danger' role='status'></div></div>")
-
-    //광고정보 로딩
-    $.ajaxSetup({ async: false });
-    load_parrtnership(region)
-    $.ajaxSetup({ async: true });
-
-    //prev_url = "https://www.realrankus.com/price/recent/" + load_this_month + "/" + region + ".json?v=" + Math.random()
-    //this_url = "https://www.realrankus.com/price/recent/" + load_prev_month + "/" + region + ".json?v=" + Math.random()
 
     regionName = $("#sido option:selected").text() + " " + $("#gungu option:selected").text()
     if (selectedMonth == 'latest_deal') {
@@ -966,13 +1183,8 @@
       shareText_all = "[" + regionName + ", " + start_date_str + "~" + end_date_str + " 실거래]\n"
     }
 
-    var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
-    url = r2_base + "/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
-    //url = "./recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random()
-    $.getJSON(url, function (json) {
+    function renderAptData(json) {
       aptData = json;
-      //sortData = json;
-      //aptData.data = Object.assign(aptData.data, this_apt_data.data)
       itemNum = aptData.data.length;
 
       newHigh = 0
@@ -980,13 +1192,12 @@
       newDeal = 0
       higherDeal = 0
       lowerDeal = 0
-    })
-      .done(function () {
-        $('#dataList').html("");
-        regionCountUp(pageName, region) //20231020
 
-        //aptData.data = (aptData.data).reverse()
-        reverse_count_info = count_info.reverse()
+      $('#dataList').html("");
+      regionCountUp(pageName, region) //20231020
+
+      //aptData.data = (aptData.data).reverse()
+      reverse_count_info = count_info.slice().reverse()
 
         if (selectedMonth == 'latest_deal') {
           region_deal_count_info = latest_count_info
@@ -1442,7 +1653,28 @@
         }
 
         $('#dataList').append("<div style='height: " + blank_height + "'></div>");
-      })
+    }
+
+    if (preloadedAptJson) {
+      renderAptData(preloadedAptJson);
+    } else {
+      if (typeof getSkeletonHtml === "function") {
+        $("#dataList").html(getSkeletonHtml(false));
+      }
+      var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
+      url = r2_base + "/price/recent/" + selectedMonth + "/" + region + ".json?v=" + Math.random();
+      var adDef = $.Deferred();
+      if (typeof load_parrtnership === "function") {
+        var req = load_parrtnership(region);
+        if (req && typeof req.always === "function") req.always(function () { adDef.resolve(); });
+        else adDef.resolve();
+      } else {
+        adDef.resolve();
+      }
+      $.when($.getJSON(url).then(function (j) { return j; }), adDef.promise()).done(function (json) {
+        renderAptData(json);
+      });
+    }
     showWeight()
     //saveLocalStorage()    
   }
@@ -1901,7 +2133,7 @@
   }
 
 
-  function updateRegionTable(region) {
+  function updateRegionTable(region, preloadedVolJson) {
     $('html').scrollTop(0)
     //$('#sort').css("visibility", "hidden")
     //$('#rearrange').css("visibility", "visible")
@@ -1926,7 +2158,6 @@
     //url = "https://www.realrankus.com/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
     var r2_base = (typeof R2_DATA_BASE_URL !== 'undefined') ? R2_DATA_BASE_URL : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev";
     url = r2_base + "/price/recent/" + selectedMonth + "/sales_volume.json?v=" + Math.random()
-    $('#dataList').html("");
 
     count_Korea = 0
     count_prev_Korea = 0
@@ -2019,12 +2250,8 @@
       //gap_count_Korea += sido_gap['gap_count_' + sido_name]      
     }
 
-    //광고정보 로딩
-    $.ajaxSetup({ async: false });
-    load_parrtnership(region)
-    $.ajaxSetup({ async: true });
-
-    $.getJSON(url, function (json) {
+    function renderVolData(json) {
+      $('#dataList').html("");
       regData = json;
       regSortData = regData;
       itemNum = json.data.length;
@@ -2410,7 +2637,26 @@
           //$('html, body').animate({scrollTop: lastScrollY_d01}, 0);            
         }
       }
-    })
+    }
+
+    if (preloadedVolJson) {
+      renderVolData(preloadedVolJson);
+    } else {
+      if (typeof getSkeletonHtml === "function") {
+        $("#dataList").html(getSkeletonHtml(true));
+      }
+      var adDef = $.Deferred();
+      if (typeof load_parrtnership === "function") {
+        var req = load_parrtnership(region);
+        if (req && typeof req.always === "function") req.always(function () { adDef.resolve(); });
+        else adDef.resolve();
+      } else {
+        adDef.resolve();
+      }
+      $.when($.getJSON(url).then(function (j) { return j; }), adDef.promise()).done(function (json) {
+        renderVolData(json);
+      });
+    }
   }
 
   function showFavorite() {
@@ -2689,6 +2935,7 @@
   }
 
   function get_sURL(region) {
+    if (!regData || !regData.data) return "https://www.realrankus.com/price";
     for (k = 0; k < (regData.data).length; k++) {
       if (regData.data[k]['코드'] == region) {
         return regData.data[k]['sURL']

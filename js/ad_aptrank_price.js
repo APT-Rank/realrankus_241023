@@ -73,34 +73,43 @@ function goMap(url){
     }    
 }
 
+function select_partnership_item(){
+    if(typeof partData === 'undefined' || !partData || !partData.data || partData.data.length === 0) return;
+    part_detail = partData.data
+    part_selection = Math.floor(Math.random() * (part_detail.length))
+    part_title = part_detail[part_selection]['shop_name'] 
+    part_type = part_detail[part_selection]['request_type']
+    part_main_title = part_detail[part_selection]['main_title']
+    sub_title = part_detail[part_selection]['sub_title']
+    sub_comment = part_detail[part_selection]['sub_comment']
+    cell_num = "0" + part_detail[part_selection]['cellphone']          
+    phone_num = "0" + part_detail[part_selection]['phone']
+    cell_num_with_pyphen = cell_num.phoneNoRep()
+    phone_num_with_pyphen = phone_num.phoneNoRep()
+    img_url = part_detail[part_selection]['icon']
+    part_sDate = part_detail[part_selection]['start_date']
+    part_sDate_Num = Number(part_sDate.replace(/-/gi, ""))
+    part_eDate = part_detail[part_selection]['end_date']
+    part_eDate_Num = Number(part_eDate.replace(/-/gi, ""))
+    //img_url = "apt-rank_blank2"
+    page_url = part_detail[part_selection]['homepage']
+}
+
 function load_parrtnership(region){
+    if(typeof partData !== 'undefined' && partData && partData.data){
+        select_partnership_item();
+        return $.Deferred().resolve(partData).promise();
+    }
     part_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/ad/1000000000_Korea_ad.json" + update_ver
-    $.getJSON(part_url, function(part_json) {
+    return $.getJSON(part_url, function(part_json) {
         partData = part_json;
-        part_detail = partData.data
-        part_selection = Math.floor(Math.random() * (part_detail.length))
-        part_title = part_detail[part_selection]['shop_name'] 
-        part_type = part_detail[part_selection]['request_type']
-        part_main_title = part_detail[part_selection]['main_title']
-        sub_title = part_detail[part_selection]['sub_title']
-        sub_comment = part_detail[part_selection]['sub_comment']
-        cell_num = "0" + part_detail[part_selection]['cellphone']          
-        phone_num = "0" + part_detail[part_selection]['phone']
-        cell_num_with_pyphen = cell_num.phoneNoRep()
-        phone_num_with_pyphen = phone_num.phoneNoRep()
-        img_url = part_detail[part_selection]['icon']
-        part_sDate = part_detail[part_selection]['start_date']
-        part_sDate_Num = Number(part_sDate.replace(/-/gi, ""))
-        part_eDate = part_detail[part_selection]['end_date']
-        part_eDate_Num = Number(part_eDate.replace(/-/gi, ""))
-        //img_url = "apt-rank_blank2"
-        page_url = part_detail[part_selection]['homepage']
-    })
+        select_partnership_item();
+    });
 }
 
 function show_partnership(){    
 //광고정보 표시영역
-if(partData.data.length > 0 && (today_num >= part_sDate_Num && today_num <= part_eDate_Num) ){
+if(typeof partData !== 'undefined' && partData && partData.data && partData.data.length > 0 && (today_num >= part_sDate_Num && today_num <= part_eDate_Num) ){
     gtag('event','파트너쉽노출', { 'event_category' : 'View_Partnership', 'event_label' : "리얼랭커스," + today_str + "," + part_title + ",뷰,파트너쉽"});
     if(part_type == 'Direct'){
         $('#dataList').append(part_info);
