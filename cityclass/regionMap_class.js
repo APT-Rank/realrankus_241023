@@ -190,6 +190,7 @@ function drawDataMap_price(region_data, zoom){
       var price_marker_id = 'price_marker_' + i
 
       //value_percentage가 1보다 작은 경우 소수점 3자리까지 표시, 10보다 작은 경우 소수점 2자리까지 표시, 그 외는 정수로 표시
+      /* 2026-10-23: 마커에 퍼센티지 대신 급지 표시 (퍼센티지 복원 시 아래 주석 해제)
       var str_value_percentage = ""
       if(value_percentage < 0.001){
         str_value_percentage = "< 0.001%"
@@ -200,11 +201,24 @@ function drawDataMap_price(region_data, zoom){
       } else {
         str_value_percentage = Number(value_percentage).toFixed(1) + "%"
       }
+      */
+      var str_value_percentage = ""
+      if(value_percentage >= 0 && value_percentage < 0.1){ str_value_percentage = "특1급지" }
+      else if(value_percentage >= 0.1 && value_percentage < 0.5){ str_value_percentage = "특2급지" }
+      else if(value_percentage >= 0.5 && value_percentage < 1.0){ str_value_percentage = "특3급지" }
+      else if(value_percentage >= 1.0 && value_percentage < 5.0){ str_value_percentage = "1급지" }
+      else if(value_percentage >= 5.0 && value_percentage < 10.0){ str_value_percentage = "2급지" }
+      else if(value_percentage >= 10.0 && value_percentage < 20.0){ str_value_percentage = "3급지" }
+      else if(value_percentage >= 20.0 && value_percentage < 30.0){ str_value_percentage = "4급지" }
+      else if(value_percentage >= 30.0 && value_percentage < 40.0){ str_value_percentage = "5급지" }
+      else if(value_percentage >= 40.0 && value_percentage < 50.0){ str_value_percentage = "6급지" }
+      else if(value_percentage >= 50.0 && value_percentage < 70.0){ str_value_percentage = "7급지" }
+      else if(value_percentage >= 70.0){ str_value_percentage = "8급지" }
       var price_marker_html = `
       <div class='price_marker ${class_name}'>
         <div class='price_marker_dong_name'>${dong_name}</div>        
         <div class='price_marker_percentage'>${str_value_percentage}</div>
-        <div class='price_marker_price'>${price_per}</div>
+        <div class='price_marker_price'>${price_per}만원</div>
       </div>      
       `
       var price_marker_on_map = new naver.maps.Marker({
@@ -290,22 +304,29 @@ function drawDataMap(region_data, zoom){
     if(mapBounds.hasLatLng(region_point) && value_percentage != "NA") {
       full_name = region_data[i]['시도'] + " " + region_data[i]['군구'] + " " + region_data[i]['읍면동']
       dong_name = region_data[i]['읍면동']
-      str_value_percentage = Number(value_percentage).toFixed(2) + "%"
+      // 2026-10-23: 평단가가 아닌 경우 0~5% 1급, 5~10% 2급, ~20% 3급, ~30% 4급, ~40% 5급, ~50% 6급, ~70% 7급, ~100% 8급 표시 (퍼센티지 복원 시 아래 주석 해제)
+      // str_value_percentage = Number(value_percentage).toFixed(2) + "%"
+      str_value_percentage = ""
+      if(value_percentage >= 0 && value_percentage < 5.0){ str_value_percentage = "1급" }
+      else if(value_percentage >= 5.0 && value_percentage < 10.0){ str_value_percentage = "2급" }
+      else if(value_percentage >= 10.0 && value_percentage < 20.0){ str_value_percentage = "3급" }
+      else if(value_percentage >= 20.0 && value_percentage < 30.0){ str_value_percentage = "4급" }
+      else if(value_percentage >= 30.0 && value_percentage < 40.0){ str_value_percentage = "5급" }
+      else if(value_percentage >= 40.0 && value_percentage < 50.0){ str_value_percentage = "6급" }
+      else if(value_percentage >= 50.0 && value_percentage < 70.0){ str_value_percentage = "7급" }
+      else if(value_percentage >= 70.0){ str_value_percentage = "8급" }
       value_score = value_score.toFixed(2)      
       index = region_data[i]['index']
 
       class_name = ""
-      if(value_percentage >= 0 && value_percentage < 0.1){ class_name = "CL01" }
-      else if(value_percentage >= 0.1 && value_percentage < 0.5){ class_name = "CL02" }
-      else if(value_percentage >= 0.5 && value_percentage < 1.0){ class_name = "CL03" }
-      else if(value_percentage >= 1.0 && value_percentage < 5.0){ class_name = "CL04" }
+      if(value_percentage >= 0 && value_percentage < 5.0){ class_name = "CL04" }
       else if(value_percentage >= 5.0 && value_percentage < 10.0){ class_name = "CL05" }
-      else if(value_percentage >= 10.0 && value_percentage < 20.0){ class_name = "CL07" }
-      else if(value_percentage >= 20.0 && value_percentage < 30.0){ class_name = "CL08" }
-      else if(value_percentage >= 30.0 && value_percentage < 40.0){ class_name = "CL09" }
-      else if(value_percentage >= 40.0 && value_percentage < 50.0){ class_name = "CL10" }
+      else if(value_percentage >= 10.0 && value_percentage < 20.0){ class_name = "CL06" }
+      else if(value_percentage >= 20.0 && value_percentage < 30.0){ class_name = "CL07" }
+      else if(value_percentage >= 30.0 && value_percentage < 40.0){ class_name = "CL08" }
+      else if(value_percentage >= 40.0 && value_percentage < 50.0){ class_name = "CL09" }
       else if(value_percentage >= 50.0 && value_percentage < 70.0){ class_name = "CL10" }
-      else if(value_percentage >= 70.0){ class_name = " CL11" }
+      else if(value_percentage >= 70.0){ class_name = "CL11" }
 
 
       var region_marker_id = 'region_marker_' + i
@@ -453,7 +474,8 @@ function last_zoom_control(zoom){
 
 function priceMarkerAction(index){
   return function(e){
-    showRegionInfo(index)()
+    // 2026-10-23: 지도 마커 클릭 시 infoModal 표시 및 불필요한 이중 함수 호출 제거
+    showRegionInfo(index);
   }
 }
 

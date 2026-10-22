@@ -63,6 +63,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <!-- 2026-10-22: infoModal_m 고해상도 이미지 캡처용 html2canvas 라이브러리 추가 -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>  
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
@@ -122,6 +124,7 @@
     <div id="searchInputBox">
       <input id="inputSearch" type="text" placeholder="지역을 검색하세요" onkeyup="region_search()" />
     </div>
+    <div id="class_summary_m" onClick="showClassSummary()"><i class="fa-solid fa-layer-group"></i> 급지요약</div>
     <div id="searchingBox"></div>
   </div>
 
@@ -132,52 +135,54 @@
         <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'></table>
       </div>
       <div id="map_area">
+        <!-- 2026-10-22: 마커 인덱스 타이틀 및 급지/상위 퍼센티지 표기 업데이트 -->
         <div id="marker_index">
-          <div id="marker_index_title">상위 퍼센티지</div>
+          <div id="marker_index_title">급지 / 상위 퍼센티지</div>
           <div class="marker_index_list">
             <div class="marker_color CL01"></div>
-            <div id="marker_index_CL01">0~0.1%</div>
+            <div id="marker_index_CL01">특1급 : 0~0.1%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL02"></div>
-            <div id="marker_index_CL02">0.1~0.5%</div>
+            <div id="marker_index_CL02">특2급 : 0.1~0.5%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL03"></div>
-            <div id="marker_index_CL03">0.5~1%</div>
+            <div id="marker_index_CL03">특3급 : 0.5~1%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL04"></div>
-            <div id="marker_index_CL04">1~5%</div>
+            <div id="marker_index_CL04">1급 : 1~5%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL05"></div>
-            <div id="marker_index_CL05">5~10%</div>
+            <div id="marker_index_CL05">2급 : 5~10%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL06"></div>
-            <div id="marker_index_CL06">10~20%</div>
+            <div id="marker_index_CL06">3급 : 10~20%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL07"></div>
-            <div id="marker_index_CL07">20~30%</div>
+            <div id="marker_index_CL07">4급 : 20~30%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL08"></div>
-            <div id="marker_index_CL08">30~40%</div>
+            <div id="marker_index_CL08">5급 : 30~40%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL09"></div>
-            <div id="marker_index_CL09">40~50%</div>
+            <div id="marker_index_CL09">6급 : 40~50%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL10"></div>
-            <div id="marker_index_CL10">50~70%</div>
+            <div id="marker_index_CL10">7급 : 50~70%</div>
           </div>
           <div class="marker_index_list">
             <div class="marker_color CL11"></div>
-            <div id="marker_index_CL11">70~100%</div>
+            <div id="marker_index_CL11">8급 : 70~100%</div>
           </div>
+          <div id="marker_index_summary_btn" onClick="showClassSummary()">지역별 급지요약 &gt;</div>
         </div>
       </div>
       <!--리얼랭커스 연결-->
@@ -234,6 +239,24 @@
         </div>
         <div class="modal-body" id='costDetail'></div>
         <div id='costfooter'></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2026-10-23: 지역별 급지요약 모달 (#summaryModal) 추가 -->
+  <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable" id="summaryModalDialog">
+      <div class="modal-content" id="summaryModalContent">
+        <div class="modal-header" id="summaryModalHeader" style="background: #eee;">
+          <div id="summaryTitleWrapper"></div>
+          <div class="summary-header-actions">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-body" id="summaryDetail"></div>
+        <button type="button" id="btnCaptureSummary" class="summary-capture-btn" onClick="downloadClassSummaryImage(this, event)" title="이미지 저장" data-html2canvas-ignore="true">
+          <i class="fa-solid fa-camera"></i>
+        </button>
       </div>
     </div>
   </div>   
@@ -386,16 +409,7 @@
     option += "<div id='poweredBy_m' onClick='openOuterLink(getMainAptrankURL())'>powered by 리얼랭커스</div>";
     $("#costTitle").html(option);    
 
-    $('div.modal').on('show.bs.modal', function() {
-      var modal = this;
-      var hash = modal.id;
-      window.location.hash = hash;
-      window.onhashchange = function() {
-        if (!location.hash){
-          $(modal).modal('hide');
-        }
-      }
-    });
+    // 2026-10-23: 모달 중첩 표시 및 Back 버튼 히스토리 스택 관리는 region_class.js에서 통합 처리
 
     if(isMobile){
       $("#costDetail").css({"padding-left":"3px", "padding-right":"3px"})
