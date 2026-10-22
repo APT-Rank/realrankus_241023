@@ -2086,6 +2086,7 @@
     font-weight: 600;
   }
   .summary-dong-badge {
+    position: relative;
     border-radius: 5px;
     padding: 4px 5px;
     margin-bottom: 4px;
@@ -2140,17 +2141,45 @@
     align-items: center;
   }
   .summary-single-dong-item {
+    position: relative;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-width: 96px;
-    padding: 6px 10px;
+    padding: 6px 14px;
     border-radius: 6px;
     color: #fff;
     font-weight: 600;
     font-size: 0.84rem;
     cursor: pointer;
+  }
+  /* 2026-10-23: 단지수 2개 이하 동 버튼 우측 하단 주의(삼각형 느낌표) 뱃지 및 상단 안내 문구 스타일 */
+  .summary-dong-warn {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+  }
+  .summary-single-dong-item .summary-dong-warn {
+    right: 3px;
+    bottom: 3px;
+  }
+  .summary-warn-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    font-size: 0.74rem;
+    color: #64748b;
+  }
+  .summary-warn-notice svg {
+    flex-shrink: 0;
   }
   /* 2026-10-23: 급지요약 모달 위에 동 상세 모달(#infoModal, #infoModal_m) 중첩 표시 시 입체감 강조 */
   #infoModal .modal-content,

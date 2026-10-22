@@ -1769,7 +1769,15 @@ function renderClassSummary() {
       return avgB - avgA;
     });
 
-    html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px;' data-html2canvas-ignore='true'>시군구 이름을 클릭하면 해당 군구 요약이 표시되며, 동 이름을 클릭하면 상세 정보가 표시됩니다.</div>";
+    // 2026-10-23: 단지수 2개 이하 동 우측 하단 주의(삼각형 느낌표) 뱃지 SVG 및 안내 문구 추가
+    var warnSvgHtml = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
+    var warnBadgeHtml = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml + "</span>";
+    var warnNoticeLineHtml = "<div class='summary-warn-notice'>" + warnSvgHtml + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
+
+    html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45;' data-html2canvas-ignore='true'>";
+    html += "<div>시군구 이름을 클릭하면 해당 군구 요약이 표시되며, 동 이름을 클릭하면 상세 정보가 표시됩니다.</div>";
+    html += warnNoticeLineHtml;
+    html += "</div>";
     html += "<div class='summary-table-scroll'>";
     html += "<table class='summary-matrix-table'>";
     html += "<thead><tr>";
@@ -1823,9 +1831,11 @@ function renderClassSummary() {
           var dSub = isPriceTheme
             ? (Number(Number(dObj["평단가"]).toFixed(0)).toLocaleString() + "만")
             : (Number(dObj[themeMeta.valKey]).toFixed(1) + "점");
+          var isLowComplex = Number(dObj["단지수"] || 0) <= 2;
           html += "<div class='summary-dong-badge " + tier.cl + "' onClick='openRegionInfoFromSummary(" + dObj["index"] + ")'>";
           html += "<div>" + dObj["읍면동"] + "</div>";
           html += "<div class='summary-dong-sub'>" + dSub + "</div>";
+          if (isLowComplex) html += warnBadgeHtml;
           html += "</div>";
         }
         html += "</td>";
@@ -1836,8 +1846,11 @@ function renderClassSummary() {
     html += "</tbody></table></div>";
   } else {
     // 특정 시군구 단독 선택 시: 한눈에 들어오는 카드형 요약표
-    html += "<div style='margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;' data-html2canvas-ignore='true'>";
-    html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.78rem; font-weight: 600;' onClick='selectSummaryGungu(\"ALL\")'>← " + selectedSido + " 전체로 돌아가기</button>";    
+    var warnSvgHtml2 = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
+    var warnBadgeHtml2 = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml2 + "</span>";
+    html += "<div style='margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px;' data-html2canvas-ignore='true'>";
+    html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.78rem; font-weight: 600;' onClick='selectSummaryGungu(\"ALL\")'>← " + selectedSido + " 전체로 돌아가기</button>";
+    html += "<div class='summary-warn-notice'>" + warnSvgHtml2 + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
     html += "</div>";
 
     html += "<div class='summary-table-scroll'><table class='summary-single-table'><tbody>";
@@ -1865,9 +1878,11 @@ function renderClassSummary() {
         var dSub2 = isPriceTheme
           ? ("평당 " + Number(Number(dObj2["평단가"]).toFixed(0)).toLocaleString() + "만원")
           : (themeMeta.name + " " + Number(dObj2[themeMeta.valKey]).toFixed(2) + "점");
+        var isLowComplex2 = Number(dObj2["단지수"] || 0) <= 2;
         html += "<div class='summary-single-dong-item " + tier2.cl + "' onClick='openRegionInfoFromSummary(" + dObj2["index"] + ")'>";
         html += "<div>" + dObj2["읍면동"] + "</div>";
         html += "<div class='summary-dong-sub'>" + dSub2 + " · 상위 " + setPercentage(Number(dObj2[themeMeta.pctKey])) + "</div>";
+        if (isLowComplex2) html += warnBadgeHtml2;
         html += "</div>";
       }
 
