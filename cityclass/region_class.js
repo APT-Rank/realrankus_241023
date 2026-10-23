@@ -799,6 +799,24 @@ async function downloadRegionModalImage(btnEl, index, event) {
         clonedEl.style.border = '1px solid #e2e8f0';
         clonedEl.style.backgroundColor = '#ffffff';
 
+        // 2026-10-23: 바텀시트 캡쳐 시 transform/최대높이/내부 스크롤로 내용이 잘리지 않도록 해제
+        clonedEl.style.transform = 'none';
+        clonedEl.style.maxHeight = 'none';
+        clonedEl.style.height = 'auto';
+        var sheetBody = clonedEl.querySelector('.summary-sheet-body');
+        if (sheetBody) {
+          sheetBody.style.overflow = 'visible';
+          sheetBody.style.maxHeight = 'none';
+          sheetBody.style.height = 'auto';
+          sheetBody.style.flex = 'none';
+        }
+        // 2026-10-23: 상위 바텀시트 컨테이너(#summaryBottomSheet)의 opacity/숨김 상태 영향 제거
+        var sheetWrap = clonedDoc.getElementById('summaryBottomSheet');
+        if (sheetWrap) {
+          sheetWrap.style.opacity = '1';
+          sheetWrap.style.display = 'flex';
+        }
+
         // 2026-10-23: 닫기 버튼, 공유 버튼 영역, 하단 이동 버튼 영역(#summarySheetFooter, .summary-sheet-close 포함) 숨김
         var hideSelectors = ['.btn-close', '.summary-sheet-close', '.regionShare', '.regionShare_m', '#Infofooter', '#summarySheetFooter'];
         hideSelectors.forEach(function(sel) {
