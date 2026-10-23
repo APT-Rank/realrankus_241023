@@ -4002,7 +4002,12 @@ function downloadMoneyFlowImage(btnEl, event) {
   var filename = "MoneyFlow_" + timestamp + ".png";
 
   var originalBtnHtml = $btn.html();
-  $btn.prop('disabled', true).html("<i class='fa-solid fa-spinner fa-spin'></i>");
+  // 2026-10-23: 지도 현위치 버튼과 일원화된 Bootstrap 스피너 적용 및 다크 배경 전환
+  $btn.css({
+    "background-color": "#333",
+    "border-color": "#333"
+  });
+  $btn.prop('disabled', true).html('<div class="spinner-border spinner-border-sm text-white" role="status"></div>');
 
   // 2. GLIChartRenderer 패턴: 화면 너비 기반 동적 고해상도 배율 계산 (가로 2400px 이상 목표)
   var targetWidth = 2400;
@@ -4040,6 +4045,11 @@ function downloadMoneyFlowImage(btnEl, event) {
         console.error('Error restoring chart DPR:', e);
       }
     }
+    // 2026-10-23: 버튼 배경 및 상태 복원
+    $btn.css({
+      "background-color": "",
+      "border-color": ""
+    });
     $btn.prop('disabled', false).html(originalBtnHtml);
   }
 

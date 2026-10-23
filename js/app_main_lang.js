@@ -5339,8 +5339,12 @@ function showGraphChart() {
     // 첫 번째 동 기본 렌더링
     renderDongChart(activeDong);
 
-    // 다운로드 버튼 이벤트 바인딩
+    // 2026-10-23: 지도 현위치 버튼과 일원화된 Bootstrap 스피너 적용
     $("#gliDownloadBtn").off("click").on("click", function () {
+      var $btn = $(this);
+      if ($btn.prop("disabled")) return;
+      var originalHtml = $btn.html();
+      $btn.prop("disabled", true).html('<div class="spinner-border spinner-border-sm text-white" role="status"></div>');
       var now = new Date();
       var pad = function (n) { return String(n).padStart(2, '0'); };
       var dateStr = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
@@ -5348,7 +5352,9 @@ function showGraphChart() {
       var filename = isEn
         ? 'GLI_Analysis_' + activeDong + '_' + dateStr + '_' + timeStr + '.png'
         : 'GLI_분석_' + activeDong + '_' + dateStr + '_' + timeStr + '.png';
-      GLIChartRenderer.downloadChartImage('chartWrapper', filename);
+      GLIChartRenderer.downloadChartImage('chartWrapper', filename, function () {
+        $btn.prop("disabled", false).html(originalHtml);
+      });
     });
 
     // 3. 모달이 닫힐 때 자원 및 이벤트 해제

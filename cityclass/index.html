@@ -223,9 +223,26 @@
           </div>
         </div>
         <div id="table_area">
-          <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'></table>
+          <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'>
+            <!-- 2026-10-23: [테이블 스켈레톤 UI] 데이터 로드 전 레이아웃 유지 -->
+            <tbody id="data_table_skeleton">
+              <tr>
+                <td colspan="5" style="padding: 10px 0;">
+                  <div class="sk_table_row" style="background:#f8fafc; height:34px;"><div class="sk_shimmer" style="height:14px; width:50px;"></div><div class="sk_shimmer" style="height:14px; width:80px;"></div><div class="sk_shimmer" style="height:14px; width:80px;"></div><div class="sk_shimmer" style="height:14px; width:60px;"></div></div>
+                  <div class="sk_table_row"><div class="sk_shimmer" style="height:16px; width:50px;"></div><div class="sk_shimmer" style="height:16px; width:75%;"></div><div class="sk_shimmer" style="height:16px; width:75%;"></div><div class="sk_shimmer" style="height:16px; width:50px;"></div></div>
+                  <div class="sk_table_row"><div class="sk_shimmer" style="height:16px; width:50px;"></div><div class="sk_shimmer" style="height:16px; width:75%;"></div><div class="sk_shimmer" style="height:16px; width:75%;"></div><div class="sk_shimmer" style="height:16px; width:50px;"></div></div>
+                  <div class="sk_table_row"><div class="sk_shimmer" style="height:16px; width:50px;"></div><div class="sk_shimmer" style="height:16px; width:75%;"></div><div class="sk_shimmer" style="height:16px; width:75%;"></div><div class="sk_shimmer" style="height:16px; width:50px;"></div></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div id="map_area">
+          <!-- 2026-10-23: [지도 로딩 오버레이 & 스켈레톤] 지도 및 급지 데이터 로드 중 자연스러운 안내 -->
+          <div id="map_loading_overlay" class="sk_shimmer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 800; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; color: #475569; font-weight: 600; font-size: 0.95rem; pointer-events: none; transition: opacity 0.3s ease;">
+            <i class="fa-solid fa-map-location-dot fa-fade" style="font-size: 2.2rem; color: #162235;"></i>
+            <span>급지 지도를 불러오는 중입니다...</span>
+          </div>
           <!-- 2026-10-22: 마커 인덱스 타이틀 및 급지/상위 퍼센티지 표기 업데이트 -->
           <div id="marker_index">
             <div id="marker_index_title">급지 / 상위 퍼센티지</div>
@@ -427,8 +444,9 @@ $(document).ready(function(){
 
     // 2026-10-23: 모달 중첩 표시 및 Back 버튼 히스토리 스택 관리는 region_class.js에서 통합 처리
     
-    msg = "<div class='spinner-border' role='status'></div><div id = 'modalMsg'></div>"
-    showModal(msg)
+    // 2026-10-23: 모달 팝업 대신 지도 영역 자체 스켈레톤 오버레이(#map_loading_overlay)로 자연스럽게 표시
+    // msg = "<div class='spinner-border' role='status'></div><div id = 'modalMsg'></div>"
+    // showModal(msg)
 
     currentMenu = "cityclass"  //offcanvas  
     setOffcanvasMenu() //offcanvas

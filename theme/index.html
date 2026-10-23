@@ -185,7 +185,53 @@
       </div>
 
       <!--리스트 데이터 붙여넣는 영역-->
-      <div id="themeDataList"></div>      
+      <div id="themeDataList"></div>
+      <!-- 2026-10-23: [App Shell & Skeleton 즉시 초기화] 테마 데이터 로딩 중 자연스러운 shimmer 카드 노출 -->
+      <script>
+        function getThemeSkeletonHtml() {
+          var html = "<div class='sk_card' style='height:48px; margin-bottom:8px;'><div class='sk_shimmer' style='height:100%; width:100%;'></div></div>";
+          for (var i = 0; i < 6; i++) {
+            html += "<div class='sk_card' style='margin-bottom:8px;'>"
+                  + "<div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;'>"
+                  + "<div class='sk_shimmer' style='height:20px; width:50%;'></div>"
+                  + "<div class='sk_shimmer' style='height:18px; width:45px; border-radius:4px;'></div>"
+                  + "</div>"
+                  + "<div style='display:grid; grid-template-columns:105px 1fr; gap:12px; align-items:center;'>"
+                  + "<div style='border-right:1px solid #eef2f6; padding-right:8px; display:flex; flex-direction:column; gap:6px;'>"
+                  + "<div class='sk_shimmer' style='height:20px; width:75%;'></div>"
+                  + "<div class='sk_shimmer' style='height:11px; width:55%;'></div>"
+                  + "<div class='sk_shimmer' style='height:11px; width:50%;'></div>"
+                  + "</div>"
+                  + "<div style='display:flex; flex-direction:column; gap:6px;'>"
+                  + "<div class='sk_shimmer' style='height:12px; width:92%;'></div>"
+                  + "<div class='sk_shimmer' style='height:12px; width:86%;'></div>"
+                  + "<div class='sk_shimmer' style='height:12px; width:88%;'></div>"
+                  + "</div>"
+                  + "</div>"
+                  + "</div>";
+          }
+          return html;
+        }
+
+        (function initThemeAppShellImmediately() {
+          try {
+            var params = new URLSearchParams(window.location.search);
+            var reg = params.get('reg') || localStorage.getItem('lastRegion') || 'Seoul';
+            if (typeof regions !== 'undefined') {
+              var opt = '';
+              for (var i = 0; i < regions.length; i++) {
+                opt += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
+              }
+              var sidoEl = document.getElementById('sido');
+              if (sidoEl) { sidoEl.innerHTML = opt; sidoEl.value = reg; }
+            }
+            var listEl = document.getElementById('themeDataList');
+            if (listEl) {
+              listEl.innerHTML = getThemeSkeletonHtml();
+            }
+          } catch(e) {}
+        })();
+      </script>      
 
       <!--리얼랭커스 연결-->      
       <div id="linkToAptrank_bottom"></div>
@@ -683,8 +729,12 @@
     url = "../theme/" + updatedMonth + "/" + region + ".json"
     url2 = "../theme/" + updatedMonth + "/" + region + "_ratio.json"
     url3 = "../theme/" + updatedMonth + "/" + region + "_ratioFrom202107.json"
-    $('#themeDataList').html("");
-    $("#themeDataList").html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-theme' role='status'></div></div>")
+    // 2026-10-23: 테마 스켈레톤 UI 표시
+    if (typeof getThemeSkeletonHtml === 'function') {
+      $('#themeDataList').html(getThemeSkeletonHtml());
+    } else {
+      $('#themeDataList').html("<div id='tableLoading' style='display: grid; text-align: center; justify-items: center;'><br><br><br><div class='spinner-border text-theme' role='status'></div></div>");
+    }
 
     //광고정보 로딩
     $.ajaxSetup({ async: false }); 

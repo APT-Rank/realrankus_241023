@@ -560,7 +560,8 @@
      * @param {string} wrapperId - 캡처할 래퍼 요소의 ID (기본: 'chartWrapper')
      * @param {string} filename - 다운로드 파일명
      */
-    GLIChartRenderer.downloadChartImage = function (wrapperId, filename) {
+    // 2026-10-23: onComplete 콜백 추가 (다운로드 완료 시 호출)
+    GLIChartRenderer.downloadChartImage = function (wrapperId, filename, onComplete) {
         const wrapper = document.getElementById(wrapperId || 'chartWrapper');
         if (!wrapper) {
             console.error('캡처할 래퍼를 찾을 수 없습니다.');
@@ -593,6 +594,10 @@
                 chart.options.devicePixelRatio = originalDPR;
                 chart.resize();
                 chart.update('none');
+            }
+            // 2026-10-23: 완료 콜백 호출
+            if (typeof onComplete === 'function') {
+                onComplete();
             }
         }
 

@@ -134,6 +134,33 @@
         <div id = "graph_area"></div>
         <div id = "shortcut"></div>
       </div>
+      <!-- 2026-10-23: [스켈레톤 UI 즉시 초기화] 시장지표 로딩 중 자연스러운 shimmer 카드 노출 -->
+      <script>
+        function getMoneyflowSkeletonHtml() {
+          var html = "<div style='display:flex; justify-content:space-between; align-items:center; padding:8px 12px; margin-bottom:6px;'>"
+                   + "<div class='sk_shimmer' style='height:28px; width:40px; border-radius:5px;'></div>"
+                   + "<div class='sk_shimmer' style='height:14px; width:130px;'></div>"
+                   + "</div>";
+          for (var i = 0; i < 3; i++) {
+            html += "<div class='sk_card' style='margin-bottom:12px;'>"
+                  + "<div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;'>"
+                  + "<div class='sk_shimmer' style='height:18px; width:80px;'></div>"
+                  + "<div class='sk_shimmer' style='height:12px; width:60px;'></div>"
+                  + "</div>";
+            for (var j = 0; j < 3; j++) {
+              html += "<div style='display:grid; grid-template-columns:80px 1fr 1fr 1fr; gap:8px; align-items:center; height:34px; border-bottom:1px solid #f1f5f9;'>"
+                    + "<div class='sk_shimmer' style='height:15px; width:60px;'></div>"
+                    + "<div class='sk_shimmer' style='height:16px; width:80%;'></div>"
+                    + "<div class='sk_shimmer' style='height:16px; width:70%;'></div>"
+                    + "<div class='sk_shimmer' style='height:16px; width:70%;'></div>"
+                    + "</div>";
+            }
+            html += "</div>";
+          }
+          return html;
+        }
+        document.getElementById('hourly_area').innerHTML = getMoneyflowSkeletonHtml();
+      </script>
 
       <!--리얼랭커스 연결-->
       <div id="linkToAptrank_bottom"></div>
@@ -233,7 +260,10 @@
 
   $(document).ready(function(){    
     $('#dataList').html("");
-    $('#hourly_area').html("<div id='loading_back'><br><br><br><br><br><br><br><br><div class='spinner-border' role='status'></div></div>")    
+    // 2026-10-23: 스켈레톤 유지
+    if ($('#hourly_area').is(':empty')) {
+      $('#hourly_area').html(getMoneyflowSkeletonHtml());
+    }    
 
     Kakao.init(kakaoKey);
     countUp(pageName)

@@ -134,6 +134,12 @@ async function drawMap(region_data, sido_list, gungu_list){
     drawDataMap(region_data)
   }
 
+  // 2026-10-23: 마커 렌더링 완료 시 로딩 오버레이 부드럽게 페이드아웃
+  $('#map_loading_overlay').fadeOut(300, function() { $(this).remove(); });
+  if ($('#noticeModal').hasClass('show')) {
+    $('#noticeModal').modal('hide');
+  }
+
   //$("#marker_index").show()
   //$("#map_table_m").show()
 }

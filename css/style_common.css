@@ -671,3 +671,70 @@
   }
 }
 */
+
+/* 2026-10-23: [공통 스켈레톤 UI & 자연스러운 로딩 애니메이션] (price/index.html 벤치마킹) */
+@keyframes appRankShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes appRankFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sk_shimmer {
+  background: linear-gradient(90deg, #eef1f6 25%, #f8fafc 50%, #eef1f6 75%) !important;
+  background-size: 200% 100% !important;
+  animation: appRankShimmer 1.35s infinite linear !important;
+  border-radius: 6px;
+}
+
+.sk_fade_in {
+  animation: appRankFadeIn 0.22s ease-out;
+}
+
+/* 범용 스켈레톤 카드 및 로우 기본 구조 */
+.sk_card {
+  padding: 12px 14px;
+  margin: 8px 6px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sk_map_box {
+  height: 220px;
+  margin: 8px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #94a3b8;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.sk_table_row {
+  height: 48px;
+  margin: 4px 6px;
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 80px;
+  gap: 10px;
+  align-items: center;
+  padding: 0 10px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}

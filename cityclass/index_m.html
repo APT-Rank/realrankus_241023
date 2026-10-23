@@ -135,6 +135,11 @@
         <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'></table>
       </div>
       <div id="map_area">
+        <!-- 2026-10-23: [지도 로딩 오버레이 & 스켈레톤] 지도 및 급지 데이터 로드 중 자연스러운 안내 -->
+        <div id="map_loading_overlay" class="sk_shimmer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 800; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; color: #475569; font-weight: 600; font-size: 0.95rem; pointer-events: none; transition: opacity 0.3s ease;">
+          <i class="fa-solid fa-map-location-dot fa-fade" style="font-size: 2.2rem; color: #162235;"></i>
+          <span>급지 지도를 불러오는 중입니다...</span>
+        </div>
         <!-- 2026-10-22: 마커 인덱스 타이틀 및 급지/상위 퍼센티지 표기 업데이트 -->
         <div id="marker_index">
           <div id="marker_index_title">급지 / 상위 퍼센티지</div>
@@ -393,7 +398,10 @@
 
   $(document).ready(function(){
     $('#dataList').html("");
-    $('#data_table').html("<div id='loading_back'><br><br><br><br><br><br><br><br><div class='spinner-border' role='status'></div></div>")
+    // 2026-10-23: [테이블 스켈레톤 UI] 급지 데이터 로드 전 자연스러운 스켈레톤 표 표시
+    var skTableHtml = "<div class='sk_table_row' style='background:#f8fafc; height:34px;'><div class='sk_shimmer' style='height:14px; width:50px;'></div><div class='sk_shimmer' style='height:14px; width:80px;'></div><div class='sk_shimmer' style='height:14px; width:80px;'></div><div class='sk_shimmer' style='height:14px; width:60px;'></div></div>";
+    for(var s=0; s<8; s++) { skTableHtml += "<div class='sk_table_row'><div class='sk_shimmer' style='height:16px; width:50px;'></div><div class='sk_shimmer' style='height:16px; width:75%;'></div><div class='sk_shimmer' style='height:16px; width:75%;'></div><div class='sk_shimmer' style='height:16px; width:50px;'></div></div>"; }
+    $('#data_table').html(skTableHtml)
     $('#data_table').css({'text-align' : 'center', 'width':'100%', 'background':'none'})    
     $('#table_area_m').css({'height':screen.availHeight})
 

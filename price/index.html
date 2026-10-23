@@ -3111,9 +3111,13 @@
     var captureDateTimeStr = YYYY + "-" + MM + "-" + DD + " " + hh + ":" + mm + ":" + ss;
     var filename = "리얼랭커스_" + aptName + (aptP ? "_" + aptP : "") + "_실거래_" + timestamp + ".png";
 
-    // 버튼 로딩 상태 전환
+    // 2026-10-23: 버튼 로딩 상태 전환 (지도 현위치 버튼과 일원화된 스피너 및 다크 전환)
     var originalBtnHtml = $btn.html();
-    $btn.prop('disabled', true).html("<i class='fa-solid fa-spinner fa-spin'></i>");
+    $btn.css({
+      "background-color": "#333",
+      "border-color": "#333"
+    });
+    $btn.prop('disabled', true).html('<div class="spinner-border spinner-border-sm text-white" role="status"></div>');
 
 
 
@@ -3173,6 +3177,11 @@
       console.error("카드 이미지 캡처 실패:", err);
 
     } finally {
+      // 2026-10-23: 버튼 스타일 및 내용 복원
+      $btn.css({
+        "background-color": "",
+        "border-color": ""
+      });
       $btn.prop('disabled', false).html(originalBtnHtml);
     }
   }

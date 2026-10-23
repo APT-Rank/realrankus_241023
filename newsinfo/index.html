@@ -121,7 +121,26 @@
       </div>
 
       <!--리스트 데이터 붙여넣는 영역-->
-      <div id="themeDataList"></div>      
+      <div id="themeDataList"></div>
+      <!-- 2026-10-23: [스켈레톤 UI 즉시 초기화] 뉴스 데이터 로딩 중 자연스러운 shimmer 카드 노출 -->
+      <script>
+        function getNewsSkeletonHtml() {
+          var html = '';
+          for (var i = 0; i < 6; i++) {
+            html += "<div class='sk_card' style='margin-bottom:10px;'>"
+                  + "<div style='display:flex; gap:8px; align-items:center; margin-bottom:8px;'>"
+                  + "<div class='sk_shimmer' style='height:20px; width:28px; border-radius:4px;'></div>"
+                  + "<div class='sk_shimmer' style='height:18px; width:85%;'></div>"
+                  + "</div>"
+                  + "<div class='sk_shimmer' style='height:14px; width:95%; margin-bottom:6px;'></div>"
+                  + "<div class='sk_shimmer' style='height:14px; width:70%; margin-bottom:10px;'></div>"
+                  + "<div class='sk_shimmer' style='height:11px; width:90px;'></div>"
+                  + "</div>";
+          }
+          return html;
+        }
+        document.getElementById('themeDataList').innerHTML = getNewsSkeletonHtml();
+      </script>      
 
       <!--리얼랭커스 연결-->      
       <div id="linkToAptrank_bottom"></div>
@@ -273,7 +292,8 @@
     const url = new URL(window.location.href)
     const urlParams = url.searchParams
 
-    $('#themeDataList').html("");
+    // 2026-10-23: 스켈레톤 유지 (데이터 도착 시 교체)
+    // $('#themeDataList').html("");
 
     $('div.modal').on('show.bs.modal', function() {
       var modal = this;

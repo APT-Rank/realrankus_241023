@@ -175,6 +175,73 @@
         <!--리얼랭커스 연결-->
         <div id="linkToAptrank_bottom"></div>
       </div>
+      <!-- 2026-10-23: [App Shell & Skeleton 즉시 초기화] 외부 무거운 라이브러리 다운로드 전에 드롭다운과 스켈레톤을 먼저 렌더링 -->
+      <script>
+        function getBizSkeletonHtml(isKorea) {
+          var html = '';
+          if (isKorea) {
+            html += "<div class='sk_table_row' style='background:#f8fafc; height:36px; border-bottom:1px solid #cbd5e1;'>"
+                  + "<div class='sk_shimmer' style='height:14px; width:45px;'></div>"
+                  + "<div class='sk_shimmer' style='height:14px; width:70px;'></div>"
+                  + "<div class='sk_shimmer' style='height:14px; width:70px;'></div>"
+                  + "<div class='sk_shimmer' style='height:14px; width:80px;'></div>"
+                  + "</div>";
+            for (var r = 0; r < 7; r++) {
+              html += "<div class='sk_table_row'>"
+                    + "<div class='sk_shimmer' style='height:18px; width:50px;'></div>"
+                    + "<div class='sk_shimmer' style='height:16px; width:80%;'></div>"
+                    + "<div class='sk_shimmer' style='height:16px; width:80%;'></div>"
+                    + "<div class='sk_shimmer' style='height:14px; width:85%; border-radius:10px;'></div>"
+                    + "</div>";
+            }
+          } else {
+            html += "<div class='sk_card'>"
+                  + "<div style='display:flex; gap:12px; align-items:center;'>"
+                  + "<div class='sk_shimmer' style='width:50px; height:50px; border-radius:50%;'></div>"
+                  + "<div style='flex:1; display:flex; flex-direction:column; gap:8px;'>"
+                  + "<div class='sk_shimmer' style='height:18px; width:45%;'></div>"
+                  + "<div class='sk_shimmer' style='height:14px; width:80%;'></div>"
+                  + "</div></div></div>";
+            for (var c = 0; c < 3; c++) {
+              html += "<div class='sk_card' style='height:95px; display:flex; flex-direction:column; justify-content:space-between;'>"
+                    + "<div class='sk_shimmer' style='height:16px; width:35%;'></div>"
+                    + "<div class='sk_shimmer' style='height:24px; width:70%;'></div>"
+                    + "<div class='sk_shimmer' style='height:12px; width:90%;'></div>"
+                    + "</div>";
+            }
+          }
+          return html;
+        }
+
+        (function initBizAppShellImmediately() {
+          try {
+            var params = new URLSearchParams(window.location.search);
+            var reg = params.get('reg') || localStorage.getItem('lastRegion') || 'Korea';
+            var sub = params.get('sub') || localStorage.getItem('lastSubRegion') || '1000000000_Korea';
+
+            if (typeof regions !== 'undefined') {
+              var opt = '';
+              for (var i = 0; i < regions.length; i++) {
+                opt += "<option value='" + regions[i][1] + "'>" + regions[i][0] + "</option>";
+              }
+              var sidoEl = document.getElementById('sido');
+              if (sidoEl) { sidoEl.innerHTML = opt; sidoEl.value = reg; }
+            }
+
+            var mapEl = document.getElementById('svg_map');
+            if (mapEl) {
+              mapEl.innerHTML = "<div class='sk_map_box sk_shimmer'>"
+                + "<i class='fa-solid fa-map-location-dot fa-fade' style='font-size:1.8rem;'></i>"
+                + "<span>시장 분석 지도를 준비하고 있습니다...</span></div>";
+            }
+
+            var listEl = document.getElementById('dataList');
+            if (listEl) {
+              listEl.innerHTML = getBizSkeletonHtml(reg === 'Korea');
+            }
+          } catch(e) {}
+        })();
+      </script>
 
       <!--뒤로가기 플로팅 버튼-->
       <div id="closeSearch_floating" onClick='go_Korea()'>

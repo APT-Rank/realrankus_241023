@@ -699,7 +699,8 @@ async function downloadRegionModalImage(btnEl, index, event) {
   if (!modalContentEl) return;
 
   var originalBtnHtml = btnEl.innerHTML;
-  btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  // 2026-10-23: 지도 현위치 버튼과 일원화된 Bootstrap 소형 스피너 적용
+  btnEl.innerHTML = '<div class="spinner-border spinner-border-sm text-white" role="status"></div>';
   btnEl.style.pointerEvents = 'none';
 
   try {
@@ -2026,7 +2027,7 @@ async function downloadClassSummaryImage(btnEl, event) {
   var originalBtnHtml = btnEl.innerHTML;
   var isAllGungu = ($("#summaryGungu").val() || "ALL") === "ALL";
   // 2026-10-23: 스피너(<i>)와 텍스트/퍼센트(<span>) DOM을 분리하여 진행률 갱신 시 스피너 리셋(깜빡임) 및 버튼 가로폭 변동 방지
-  btnEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span class='summary-capture-status'>" +
+  btnEl.innerHTML = "<div class='spinner-border spinner-border-sm text-white' role='status' style='margin-right: 4px; vertical-align: middle;'></div><span class='summary-capture-status'>" +
     (isAllGungu ? "고해상도 저장 중 (<span class='summary-capture-pct'>0%</span>)" : "저장 중...") +
     "</span>";
   var statusSpanEl = btnEl.querySelector(".summary-capture-status");
