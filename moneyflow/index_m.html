@@ -359,9 +359,7 @@
         hourly_month = Number(hourly_updated.substr(5, 2));
         hourly_day = Number(hourly_updated.substr(8, 2));
         shareTitle = "MoneyFlow 시장지표 (" + hourly_updated + ")";
-        shareText = shareTitle + "
-
-";
+        shareText = shareTitle + "\n\n";
 
         monthly_updated = (monthly_market["GENERATE"] && monthly_market["GENERATE"][0]) ? (monthly_market["GENERATE"][0]).substr(0, 19) : "";
 
