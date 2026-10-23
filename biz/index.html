@@ -773,16 +773,34 @@
     saveLocalStorage()
   }
 
+  // 2026-10-23: 최초 로딩 플래그 (지역 전환 시 #map_area 깜빡임/순간 사라짐 방지)
+  var isBizInitialLoaded = false;
+
   function updateTable(){
     $('div.modal').modal("hide");
     //$('#sort').css("visibility", "visible")
     $('html').scrollTop(0)
-    // 2026-10-23: 지역 전환 시 지도 영역 숨김 및 스피너 로딩 표시 후 완료 시 페이드인 전환
-    $('#map_area').hide();
-    if (typeof getBizLoadingHtml === 'function') {
-      $('#dataList').html(getBizLoadingHtml());
-    }    
-    
+
+    // 2026-10-23: 최초 로딩 완료 전까지만 #map_area 숨김 및 스피너 유지, 지역 변경 시에는 지도 hide()하지 않아 깜빡임 제거
+    if (!isBizInitialLoaded) {
+      $('#map_area').hide();
+      if (typeof getBizLoadingHtml === 'function') {
+        $('#dataList').html(getBizLoadingHtml());
+      }
+    }
+
+    // 이미 데이터가 메모리에 로드되어 있는 경우 즉시 화면 및 지도 갱신 (네트워크 재대기 및 깜빡임 차단)
+    if (aptData && aptData.data) {
+      ListUp(aptData.data);
+      region_coloring(aptData.data);
+      if (!isBizInitialLoaded) {
+        isBizInitialLoaded = true;
+        $('#map_area').fadeIn(250);
+        $('#contentBox').removeClass('biz-init-loading');
+      }
+      return;
+    }
+
     //url = "https://www.realrankus.com/biz/" + region + ".json"
     //url = "https://www.realrankus.com/biz/Location_Build_Valuated.json"
     //url = "https://www.realrankus.com/biz/BIZ_Valuated_202410.json"
@@ -795,11 +813,19 @@
 
         ListUp(aptData.data)
         region_coloring(aptData.data)
-        // 2026-10-23: 데이터 및 지도 렌더링 완료 후 지도/범례 일괄 페이드인
-        $('#map_area').fadeIn(250);
-        // 2026-10-23: 최초 로딩 완료 시 콘텐츠 박스 페이드인
-        $('#contentBox').removeClass('biz-init-loading');
+        // 2026-10-23: 최초 1회 로딩 완료 시에만 지도 페이드인 및 콘텐츠 박스 스타일 복원
+        if (!isBizInitialLoaded) {
+          isBizInitialLoaded = true;
+          $('#map_area').fadeIn(250);
+          $('#contentBox').removeClass('biz-init-loading');
+        } else {
+          $('#map_area').show();
+        }
   }).fail(function() {
+        if (!isBizInitialLoaded) {
+          isBizInitialLoaded = true;
+          $('#map_area').show();
+        }
         $('#contentBox').removeClass('biz-init-loading');
   })}
 
