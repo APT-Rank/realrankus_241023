@@ -422,9 +422,8 @@ $(document).ready(function () {
     } else {
       selectedComplex = Number(complex_code).toString();
     }
-  } else if (lastRegion != null) {
-    selectedRegion = lastRegion;
   }
+  // 2026-10-23: cpx 없이 ?reg= 로 진입 시 lastRegion이 URL reg를 덮어쓰던 버그 제거 (lastRegion 폴백은 위 reg 처리에서 이미 수행)
 
   var resolvedInitial = resolveMainRegion(selectedRegion, selectedSubRegion);
   selectedRegion = resolvedInitial.reg;
