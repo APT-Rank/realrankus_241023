@@ -1637,6 +1637,20 @@ $(document).ready(function() {
 
     scheduleModalLayerSync(activeModalOrder.length > 0);
 
+    // 2026-10-23: infoModal 등 상위 모달이 닫힌 뒤 summaryModal 복귀 시 모바일 브라우저의 sticky 헤더 좌표 재계산 리플로우 강제 트리거
+    if ($('#summaryModal').hasClass('show')) {
+      var forceSummaryHeaderReflow = function() {
+        var $summaryScroll = $('#summaryModal .summary-table-scroll');
+        if ($summaryScroll.length) {
+          var curSt = $summaryScroll.scrollTop();
+          $summaryScroll.scrollTop(curSt);
+        }
+      };
+      forceSummaryHeaderReflow();
+      setTimeout(forceSummaryHeaderReflow, 50);
+      setTimeout(forceSummaryHeaderReflow, 150);
+    }
+
     if (activeModalOrder.length > 0 || $('.modal.show').length > 0) {
       $('body').addClass('modal-open').css('overflow', 'hidden');
     } else if (Object.keys(closingModalIds).length === 0) {
