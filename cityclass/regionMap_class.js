@@ -10,6 +10,21 @@ function removeMarkers(){
   all_markers = []
 }
 
+// 2026-10-23: [지도 마커 fade-out/fade-in 애니메이션] 라디오 탭 전환 시 기존 마커 부드럽게 페이드아웃 후 콜백(새 마커 생성) 실행
+function fadeAndRemoveMarkers(callback) {
+  var $markers = $('.price_marker');
+  if ($markers.length > 0 && typeof view_mode !== 'undefined' && view_mode === 'map') {
+    $markers.addClass('marker-fade-out');
+    setTimeout(function() {
+      removeMarkers();
+      if (typeof callback === 'function') callback();
+    }, 180);
+  } else {
+    removeMarkers();
+    if (typeof callback === 'function') callback();
+  }
+}
+
 async function drawMap(region_data, sido_list, gungu_list){
   if(isMobile){
     $("#table_area_m").hide()

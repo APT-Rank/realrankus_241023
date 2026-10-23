@@ -72,35 +72,52 @@ function change_menu(menu){
   }
 
   function runMenuAction() {
-    if(menu_name == "menu_select_price"){        
-      setTimeout(() => drawTable(price_index, sido_list, gungu_list), 300);
+    // 2026-10-23: [지도 마커 fade-out/fade-in 처리] 지도 상태에서는 기존 마커 fade-out 후 새 마커 fade-in 렌더링
+    var applyMap = function() {
+      if(menu_name == "menu_select_price"){        
+        drawDataMap_price(region_class, current_zoom);
+      }
+      if(menu_name == "menu_select_balanced"){
+        drawDataMap(region_class, current_zoom);
+      }
+      if(menu_name == "menu_select_edu"){
+        drawDataMap(region_class, current_zoom);
+      }
+      if(menu_name == "menu_select_living"){
+        drawDataMap(region_class, current_zoom);
+      }
+      if(menu_name == "menu_select_infra"){
+        drawDataMap(region_class, current_zoom);
+      }
+      if(menu_name == "menu_select_trans"){
+        drawDataMap(region_class, current_zoom);
+      }
+    };
+
+    if (typeof fadeAndRemoveMarkers === 'function') {
+      fadeAndRemoveMarkers(applyMap);
+    } else {
       removeMarkers();
-      setTimeout(() => drawDataMap_price(region_class, current_zoom), 300);
+      applyMap();
+    }
+
+    if(menu_name == "menu_select_price"){        
+      setTimeout(() => drawTable(price_index, sido_list, gungu_list), 180);
     }
     if(menu_name == "menu_select_balanced"){
-      setTimeout(() => drawTable(balanced_index, sido_list, gungu_list), 300);
-      removeMarkers();
-      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+      setTimeout(() => drawTable(balanced_index, sido_list, gungu_list), 180);
     }
     if(menu_name == "menu_select_edu"){
-      setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 300);
-      removeMarkers();
-      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+      setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 180);
     }
     if(menu_name == "menu_select_living"){
-      setTimeout(() => drawTable(living_index, sido_list, gungu_list), 300);
-      removeMarkers();
-      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+      setTimeout(() => drawTable(living_index, sido_list, gungu_list), 180);
     }
     if(menu_name == "menu_select_infra"){
-      setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 300);
-      removeMarkers();
-      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+      setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 180);
     }
     if(menu_name == "menu_select_trans"){
-      setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 300);
-      removeMarkers();
-      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+      setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 180);
     }
   }
 
