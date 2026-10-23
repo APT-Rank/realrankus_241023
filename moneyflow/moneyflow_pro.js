@@ -710,19 +710,22 @@ function show_hourly_info(){
   $('#hourly_area').append(addon_html);
 }
 
+// 2026-10-23: [개선안 1] 차트 데이터 지연 로딩 시 obj 미수신 상태에서도 크래시 없이 안전하게 [0, 0, 0] 반환
 function get_last_value(obj){
-  arr = Object.values(obj)
+  if (!obj) return [0, 0, 0];
+  var arr = Object.values(obj);
 
-  filtered_arr = arr.filter(function(item) {
+  var filtered_arr = arr.filter(function(item) {
     return item !== null && item !== undefined && item !== '';
   });
 
-  last = filtered_arr[filtered_arr.length-1]
-  prev = filtered_arr[filtered_arr.length-2]
-  gap = last - prev
-  rate = 1 - last/prev
+  if (filtered_arr.length === 0) return [0, 0, 0];
+  var last = filtered_arr[filtered_arr.length-1];
+  var prev = filtered_arr.length > 1 ? filtered_arr[filtered_arr.length-2] : last;
+  var gap = last - prev;
+  var rate = (prev !== 0 && prev !== null) ? (1 - last/prev) : 0;
   
-  return [last, gap, rate]
+  return [last, gap, rate];
 }
 
 function return_10year_arr(obj_val, obj_time){

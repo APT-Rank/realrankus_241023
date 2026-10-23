@@ -296,56 +296,103 @@
     setAppDownloadModal();
   });
 
+  var chartDataLoaded = false;
+  var chartDataPromise = null;
+
+  // 2026-10-23: [개선안 1: 차트 데이터 지연/백그라운드 로드]
+  // 3.12MB 대용량 daily 데이터는 첫 화면(오늘의 지수) 표시 후 백그라운드에서 비동기 수신
+  function loadChartDataInBackground() {
+    if (chartDataLoaded) return Promise.resolve();
+    if (chartDataPromise) return chartDataPromise;
+
+    chartDataPromise = $.getJSON(daily_url)
+      .then(function(json) {
+        daily_market = json;
+        daily_updated = (daily_market["GENERATE"] && daily_market["GENERATE"][0]) ? daily_market["GENERATE"][0].substr(0, 19) : "";
+        chartDataLoaded = true;
+
+        // 1. 만약 현재 사용자가 오늘의 지수 탭을 보고 있다면, US 지표(미국 기준금리, 미국 통화량) 갱신
+        if ($('#menu_select_list').is(':checked')) {
+          $('#hourly_area').html("");
+          show_hourly_info();
+        }
+
+        // 2. 로그인 사용자라면 백그라운드에서 차트 뷰 미리 렌더링
+        if (login_status) {
+          $('#shortcut').empty();
+          $('#graph_area').empty();
+          show_daily_info_m();
+          if ($('#menu_select_chart').is(':checked')) {
+            $('#shortcut').show();
+            $('#graph_area').show();
+          }
+        }
+      })
+      .catch(function(err) {
+        console.error("daily_market 백그라운드 수신 실패:", err);
+      });
+
+    return chartDataPromise;
+  }
+
   function draw(){
-    //$.ajaxSetup({ async: false }); 
-    daily_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_daily_info.json"
-    monthly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_monthly_info.json"
-    hourly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json"
-    $.getJSON(hourly_url, function(json) {
-        hourly_market = json;
-        hourly_updated = (hourly_market["GENERATE"]["value"]).substr(0, 19)
-        hourly_year = hourly_updated.substr(2, 2)
-        hourly_month = Number(hourly_updated.substr(5, 2))
-        hourly_day = Number(hourly_updated.substr(8, 2))
-        shareTitle = "MoneyFlow 시장지표 (" + hourly_updated + ")"
-        shareText = shareTitle + "\n\n"
+    daily_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_daily_info.json";
+    monthly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_monthly_info.json";
+    hourly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json";
+
+    // 2026-10-23: [개선안 1: 화면 우선 렌더링]
+    // 3.1KB의 hourly와 81KB의 monthly를 병렬(Parallel)로 즉시 수신하여 첫 화면(오늘의 지수)을 0.1초 내 초고속 렌더링
+    var fetchHourly = $.getJSON(hourly_url).catch(function() {
+      return $.getJSON("./market_hourly_info.json");
+    });
+    var fetchMonthly = $.getJSON(monthly_url).catch(function() {
+      return $.getJSON("./market_monthly_info.json");
+    });
+
+    Promise.all([fetchHourly, fetchMonthly])
+      .then(function(results) {
+        hourly_market = results[0];
+        monthly_market = results[1];
+
+        hourly_updated = (hourly_market["GENERATE"]["value"]).substr(0, 19);
+        hourly_year = hourly_updated.substr(2, 2);
+        hourly_month = Number(hourly_updated.substr(5, 2));
+        hourly_day = Number(hourly_updated.substr(8, 2));
+        shareTitle = "MoneyFlow 시장지표 (" + hourly_updated + ")";
+        shareText = shareTitle + "
+
+";
+
+        monthly_updated = (monthly_market["GENERATE"] && monthly_market["GENERATE"][0]) ? (monthly_market["GENERATE"][0]).substr(0, 19) : "";
 
         if(isMobile){ interaction_mode = "point" }
         else{ interaction_mode = "index" }
-    })
-    .then(()=>{
-      $.getJSON(daily_url, function(json) {
-          daily_market = json;
-          daily_updated = (daily_market["GENERATE"][0]).substr(0, 19)
-      })    
-      .then(()=>{      
-        $.getJSON(monthly_url, function(json) {
-            monthly_market = json;
-            monthly_updated = (monthly_market["GENERATE"][0]).substr(0, 19)
-        })    
-        .then(()=>{
-            $('#hourly_area').html("")
-            show_hourly_info()            
-            if(!login_status){
-              var loginHtml = "<div class='loginBox'>"
-              loginHtml += "<div style='height:130px'></div>"
-              loginHtml += "<div id='aptrankLoginGuide'>시장 지표의 시계열과 그래프를 확인하세요</div>"
-              loginHtml += "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>리얼랭커스 로그인</div>"
-              loginHtml += "</div>"
-              loginHtml += "<div style='height:130px'></div>"
-              $('#graph_area').html(loginHtml)
-            }
-            else{
-              show_daily_info_m()
-            }            
-            $('#update_info').html("업데이트 : " + hourly_updated)
-            $('#graph_area').hide()
-            $('#shortcut').hide()
-            scrollUp()
-        })
+
+        // 첫 화면(오늘의 지수) 즉시 렌더링 및 스켈레톤 해제
+        $('#hourly_area').html("");
+        show_hourly_info();
+        $('#update_info').html("업데이트 : " + hourly_updated);
+        $('#graph_area').hide();
+        $('#shortcut').hide();
+        scrollUp();
+
+        // 비로그인 사용자용 로그인 가이드 박스 준비
+        if(!login_status){
+          var loginHtml = "<div class='loginBox'>"
+            + "<div style='height:130px'></div>"
+            + "<div id='aptrankLoginGuide'>시장 지표의 시계열과 그래프를 확인하세요</div>"
+            + "<div id='aptrankLoginButton' data-bs-toggle='modal' data-bs-target='#loginModal' onClick='showLogin()'>리얼랭커스 로그인</div>"
+            + "</div>"
+            + "<div style='height:130px'></div>";
+          $('#graph_area').html(loginHtml);
+        }
+
+        // 첫 화면 노출 완료 후 3.12MB 대용량 차트 데이터 백그라운드 수신 시작
+        loadChartDataInBackground();
       })
-    })
-    //$.ajaxSetup({ async: true });
+      .catch(function(err) {
+        console.error("초기 시장지표 수신 실패:", err);
+      });
   }  
 
   function openURL(url){    
@@ -357,35 +404,47 @@
     }
   }
 
-function saveLocalStorage(){
-  localStorage.setItem('lastRegion', selectedRegion)
-  localStorage.setItem('lastSubRegion', selectedSubRegion)
-  localStorage.setItem('lastTheme', selectedTheme)
-}
-
-function scrollUp(){
-  $( 'html, body' ).animate( { scrollTop : 0 }, 50 );
-}
-
-function change_menu(menu){
-  scrollUp() 
-
-  menu_name = menu.id
-  if(menu_name == "menu_select_list"){
-    $('#hourly_area').show()
-    $('#map_banner').show()
-    $('#graph_area').hide()
-    $('#shortcut').hide()
+  function saveLocalStorage(){
+    localStorage.setItem('lastRegion', selectedRegion)
+    localStorage.setItem('lastSubRegion', selectedSubRegion)
+    localStorage.setItem('lastTheme', selectedTheme)
   }
-  if(menu_name == "menu_select_chart"){
-      $('#hourly_area').hide()
-      $('#map_banner').hide()
-      $('#graph_area').show()
-      $('#shortcut').show()
-  }
-}
 
-function showNotice(info){
+  function scrollUp(){
+    $( 'html, body' ).animate( { scrollTop : 0 }, 50 );
+  }
+
+  function change_menu(menu){
+    scrollUp();
+
+    menu_name = menu.id;
+    if(menu_name == "menu_select_list"){
+      $('#hourly_area').show();
+      $('#map_banner').show();
+      $('#graph_area').hide();
+      $('#shortcut').hide();
+    }
+    if(menu_name == "menu_select_chart"){
+      $('#hourly_area').hide();
+      $('#map_banner').hide();
+      $('#graph_area').show();
+
+      // 2026-10-23: [개선안 1] 차트 탭 진입 시 로그인 여부 및 데이터 수신 상태에 따라 지연 로딩 처리
+      if (!login_status) {
+        $('#shortcut').hide();
+      } else {
+        if (!chartDataLoaded) {
+          $('#shortcut').hide();
+          $('#graph_area').html("<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 280px; gap: 14px; color: #475569; padding-top: 50px;'><div class='spinner-border' role='status' style='width: 2.2rem; height: 2.2rem; color: #334155;'></div><div style='font-size: 0.92rem; font-weight: 500; color: #475569;'>차트 데이터를 불러오는 중입니다...</div></div>");
+          loadChartDataInBackground();
+        } else {
+          $('#shortcut').show();
+        }
+      }
+    }
+  }
+
+  function showNotice(info){
   modal_title = ""
   modal_info= ""
 

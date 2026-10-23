@@ -454,8 +454,9 @@ function show_hourly_info(){
   addon_html += "</div>"  
 
   //금리
-  KOR_interest = get_last_value(monthly_market['BOK_Standard_Interest'])
-  US_interest = get_last_value(daily_market['FRED_Interest'])
+  // 2026-10-23: [개선안 1] daily_market 지연 로드 대응 안전 참조
+  KOR_interest = get_last_value(monthly_market ? monthly_market['BOK_Standard_Interest'] : null);
+  US_interest = get_last_value((typeof daily_market !== 'undefined' && daily_market) ? daily_market['FRED_Interest'] : null);
 
   addon_html += "<div class='hourly_container'>"
 
@@ -484,9 +485,10 @@ function show_hourly_info(){
   addon_html += "</div>"
 
   //통화량/외환보유고
-  KOR_totalasset = get_last_value(monthly_market['BOK_Total_Asset'])
-  US_totalasset = get_last_value(daily_market['FRED_Total_Asset'])
-  KOR_externalmoney = get_last_value(monthly_market['BOK_External_Money'])
+  // 2026-10-23: [개선안 1] daily_market 지연 로드 대응 안전 참조
+  KOR_totalasset = get_last_value(monthly_market ? monthly_market['BOK_Total_Asset'] : null);
+  US_totalasset = get_last_value((typeof daily_market !== 'undefined' && daily_market) ? daily_market['FRED_Total_Asset'] : null);
+  KOR_externalmoney = get_last_value(monthly_market ? monthly_market['BOK_External_Money'] : null);
 
   addon_html += "<div class='hourly_container'>"  
 
@@ -713,19 +715,22 @@ function show_hourly_info(){
   $('#hourly_area').append(addon_html);
 }
 
+// 2026-10-23: [개선안 1] 차트 데이터 지연 로딩 시 obj 미수신 상태에서도 크래시 없이 안전하게 [0, 0, 0] 반환
 function get_last_value(obj){
-  arr = Object.values(obj)
+  if (!obj) return [0, 0, 0];
+  var arr = Object.values(obj);
 
-  filtered_arr = arr.filter(function(item) {
+  var filtered_arr = arr.filter(function(item) {
     return item !== null && item !== undefined && item !== '';
   });
 
-  last = filtered_arr[filtered_arr.length-1]
-  prev = filtered_arr[filtered_arr.length-2]
-  gap = last - prev
-  rate = 1 - last/prev
+  if (filtered_arr.length === 0) return [0, 0, 0];
+  var last = filtered_arr[filtered_arr.length-1];
+  var prev = filtered_arr.length > 1 ? filtered_arr[filtered_arr.length-2] : last;
+  var gap = last - prev;
+  var rate = (prev !== 0 && prev !== null) ? (1 - last/prev) : 0;
   
-  return [last, gap, rate]
+  return [last, gap, rate];
 }
 
 function return_10year_arr(obj_val, obj_time){
