@@ -479,6 +479,14 @@ var shareURL = "https://www.realrankus.com/cityclass"
 var popMsg = ""
 
 // 2026-10-23: [방안 2] 지역 상세 정보 데이터 생성 로직 분리 (infoModal 및 summaryBottomSheet 공용)
+// 2026-10-23: 점수 필드가 "교육" 또는 "교육총점" 키로 존재하므로 undefined 방어 (toFixed 에러 방지)
+function getScoreVal(row, name) {
+  var v = row[name];
+  if (v === undefined || v === null) v = row[name + "총점"];
+  v = Number(v);
+  return isNaN(v) ? 0 : v;
+}
+
 function getRegionInfoContent(index, themeOverride) {
   var activeMenu = themeOverride || menuSelection || "menu_select_price";
   var sido = region_class[index]["시도"];
@@ -504,27 +512,27 @@ function getRegionInfoContent(index, themeOverride) {
   }
   if(activeMenu == "menu_select_balanced"){
     percentile = region_class[index]["가치_백분률"];
-    score = region_class[index]["가치총점"];
+    score = getScoreVal(region_class[index], "가치");
     selection = "가치";
   }  
   if(activeMenu == "menu_select_edu"){
     percentile = region_class[index]["교육_백분률"];
-    score = region_class[index]["교육"];
+    score = getScoreVal(region_class[index], "교육");
     selection = "교육";
   }
   if(activeMenu == "menu_select_living"){
     percentile = region_class[index]["주거_백분률"];
-    score = region_class[index]["주거"];
+    score = getScoreVal(region_class[index], "주거");
     selection = "주거";
   }
   if(activeMenu == "menu_select_infra"){
     percentile = region_class[index]["인프라_백분률"];
-    score = region_class[index]["인프라"];
+    score = getScoreVal(region_class[index], "인프라");
     selection = "인프라";
   }
   if(activeMenu == "menu_select_trans"){
     percentile = region_class[index]["교통_백분률"];
-    score = region_class[index]["교통"];
+    score = getScoreVal(region_class[index], "교통");
     selection = "교통";
   }
 
@@ -630,7 +638,8 @@ function getRegionInfoContent(index, themeOverride) {
 
   var shareContainerCl = isMobile ? "regionShare_m" : "regionShare";
   bodyHtml += "<div class='" + shareContainerCl + "' data-html2canvas-ignore='true'>";
-  bodyHtml += "<div></div>" + share1Html + share2Html + share3Html;
+  // 2026-10-23: #share1~3 ID 래퍼 복원 (style_class.css의 #share2,#share3 원형 배경 스타일 적용)
+  bodyHtml += "<div></div><div id='share1'>" + share1Html + "</div><div id='share2'>" + share2Html + "</div><div id='share3'>" + share3Html + "</div>";
   bodyHtml += "</div>";
 
   var RealRankusLink = (typeof getMainAptrankURL === 'function') 
@@ -835,7 +844,10 @@ function goToAptrankFromCityclass(url, reg, sub) {
       saveLocalStorage();
     }
   }
-  if (typeof openExternalLinkWithLoading === 'function') {
+  // 2026-10-23: PC는 새창(openOuterLink), 모바일은 기존 동작 유지
+  if (!isMobile && typeof openOuterLink === 'function') {
+    openOuterLink(url);
+  } else if (typeof openExternalLinkWithLoading === 'function') {
     openExternalLinkWithLoading(url, 'aptrank');
   } else {
     location.href = url;
@@ -850,7 +862,10 @@ function goToBizFromCityclass(url, reg, sub) {
       saveLocalStorage();
     }
   }
-  if (typeof openExternalLinkWithLoading === 'function') {
+  // 2026-10-23: PC는 새창(openOuterLink), 모바일은 기존 동작 유지
+  if (!isMobile && typeof openOuterLink === 'function') {
+    openOuterLink(url);
+  } else if (typeof openExternalLinkWithLoading === 'function') {
     openExternalLinkWithLoading(url, 'aptrank_biz');
   } else {
     location.href = url;
