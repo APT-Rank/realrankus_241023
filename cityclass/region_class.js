@@ -48,18 +48,16 @@ function change_menu(menu){
   menuSelection = menu_name
   searchingDB = []
   
+  // 2026-10-23: [방안 2 적용] 화면 전체를 가리는 모달 팝업 및 고정 오버레이 제거, 테이블 영역 인라인 페이드 전환 적용
   if(isMobile){
-    $('#data_table').html("<div id='loading_back' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 1050; pointer-events: none;'><div class='spinner-border' role='status' style='width: 2.4rem; height: 2.4rem; color: #334155;'></div><div style='font-size: 0.95rem; font-weight: 600; color: #475569; white-space: nowrap;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>")
-    $('#data_table').css({'text-align' : 'center', 'width':'100%'})    
-    $('#table_area_m').css({'height':screen.availHeight-148})
-    $('#table_area_m').scrollTop(0)
-    $('#table_area_m').scrollLeft(0)
-    $('#data_table').css({'background':'none'}) 
+    $('#table_area_m').scrollTop(0);
+    $('#table_area_m').scrollLeft(0);
+    $('#data_table').css({'opacity': 0.4});
   }
   else{
-    $('#table_area').scrollTop(0)
-    $('#table_area').scrollLeft(0)
-    $('#exampleModal').modal('show')
+    $('#table_area').scrollTop(0);
+    $('#table_area').scrollLeft(0);
+    $('#data_table').css({'opacity': 0.4});
   }
 
   current_zoom = defaultMap.getZoom()
@@ -106,8 +104,9 @@ function change_menu(menu){
     }
   }
 
-  // 2026-10-23: [지연 로딩 방어] 백그라운드 수신 중 탭 전환 시 완료 후 안전하게 렌더링
+  // 2026-10-23: [지연 로딩 방어 및 인라인 스피너] 백그라운드 수신 중 탭 전환 시 인라인 안내 표시 후 완료 시 안전하게 렌더링
   if (menu_name !== "menu_select_price" && typeof loadAuxiliaryDataInBackground === 'function' && !auxDataLoaded) {
+    $('#data_table').html("<div style='display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:260px; gap:12px; color:#475569;'><div class='spinner-border' role='status' style='width:2rem; height:2rem; color:#334155;'></div><div style='font-size:0.88rem; font-weight:600; color:#475569;'>지표 데이터를 불러오는 중입니다...</div></div>").css('opacity', 1);
     loadAuxiliaryDataInBackground().then(runMenuAction);
   } else {
     runMenuAction();
@@ -115,15 +114,9 @@ function change_menu(menu){
 }
 
 async function drawTable(indexData, sido_list, gungu_list){
-  //console.log(indexData)
-  //console.log(sido_list)
-  //console.log(gungu_list)
-
   if(isMobile){
-    $('#data_table').html("<div id='loading_back' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 1050; pointer-events: none;'><div class='spinner-border' role='status' style='width: 2.4rem; height: 2.4rem; color: #334155;'></div><div style='font-size: 0.95rem; font-weight: 600; color: #475569; white-space: nowrap;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>")
-    $('#data_table').css({'text-align' : 'center', 'width':'100%'})    
-    $('#table_area_m').css({'height':screen.availHeight-148})
-    $('#data_table').css({'background':'none'})
+    $('#data_table').css({'text-align' : 'center', 'width':'100%'});    
+    $('#table_area_m').css({'height':screen.availHeight-148});
   }
 
   tableHtml = ""
@@ -197,7 +190,6 @@ async function drawTable(indexData, sido_list, gungu_list){
 
   // 2026-10-23: 고정 로딩 스피너 부드럽게 해제
   $('#cityclass_loading').fadeOut(250, function() { $(this).remove(); });
-  $('#loading_back').remove();
   $("#data_table").html(tableHtml)
 
   $("#data_table").append("<tbody>")
@@ -231,27 +223,8 @@ async function drawTable(indexData, sido_list, gungu_list){
 
   $("#data_table").append("</tbody>")
 
-  if(isMobile){
-  }
-  else{
-    setTimeout(() => {
-      var hideExampleModal = function() {
-        $("#exampleModal").modal("hide");
-        if (window.location.hash === '#exampleModal') {
-          window.history.replaceState(null, null, ' ');
-        }
-      };
-      
-      hideExampleModal();
-      
-      // In case it was transitioning and ignored the hide command
-      $("#exampleModal").on('shown.bs.modal', function() {
-        hideExampleModal();
-        $(this).off('shown.bs.modal');
-      });
-    }, 500);
-  }
-  $('#data_table').css({'background':'white'}) 
+  // 2026-10-23: [방안 2 적용] 불필요한 모달 hide 타이머 제거 및 테이블 배경/투명도(opacity: 1) 복원
+  $('#data_table').css({'background':'white', 'opacity': 1}) 
   
 }
 

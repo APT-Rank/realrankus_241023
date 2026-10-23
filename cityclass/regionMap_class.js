@@ -256,7 +256,7 @@ function drawDataMap_price(region_data, zoom){
 }
 
 function drawDataMap(region_data, zoom){
-  console.log(region_data)
+  //console.log(region_data)
   var indexList = []
   var min = 0
   var max = 0
