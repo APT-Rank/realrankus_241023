@@ -2019,13 +2019,29 @@
     color: #64748b;
   }
 
+  /* 2026-10-23: 단일 스크롤 컨테이너 보장 (중첩 overflow-y 충돌 제거) */
+  #summaryDetail {
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    padding: 0 !important;
+  }
+  #summaryCaptureTarget {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
   .summary-table-scroll {
-    overflow: auto;
+    overflow: auto !important;
     width: 100%;
-    flex: 1;
-    min-height: 0;
-    max-height: calc(88vh - 150px);
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: none !important;
     position: relative;
+    -webkit-overflow-scrolling: touch;
   }
   /* 2026-10-23: 화면(sticky 셀 포함) 및 html2canvas 캡쳐 시 테두리가 2px로 겹치지 않도록 1px 단방향 테두리로 통일 */
   .summary-matrix-table {
@@ -2061,6 +2077,7 @@
   .summary-matrix-table td:first-child {
     border-left: 1px solid #cbd5e1;
   }
+  /* 2026-10-23: [헤더 유실 방지] 개별 셀 GPU transform 분리 레이어 제거하여 단일 렌더링 컨텍스트 유지 */
   .summary-matrix-table thead th {
     position: sticky !important;
     top: 0 !important;
@@ -2072,10 +2089,6 @@
     vertical-align: middle;
     min-width: 96px;
     width: 105px;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
   .summary-matrix-table thead th.summary-tier-col {
     width: 92px;
@@ -2086,10 +2099,6 @@
     left: 0 !important;
     z-index: 25 !important;
     background: #e2e8f0;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
   .summary-gungu-header-sub {
     font-size: 0.7rem;
@@ -2106,10 +2115,6 @@
     font-weight: 700;
     font-size: 0.82rem;
     color: #1e293b;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
   .summary-tier-badge {
     display: inline-block;
@@ -2180,19 +2185,46 @@
     gap: 8px;
     align-items: center;
   }
+  /* 2026-10-23: [2번 요구사항] 단일 시군구 동 카드 균일 고정폭(웹: 210px) 및 텍스트 좌측 정렬 */
   .summary-single-dong-item {
     position: relative;
     display: inline-flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    min-width: 96px;
-    padding: 6px 14px;
+    text-align: left;
+    width: 210px;
+    box-sizing: border-box;
+    padding: 7px 12px;
     border-radius: 6px;
     color: #fff;
     font-weight: 600;
     font-size: 0.84rem;
     cursor: pointer;
+  }
+  .summary-single-dong-item .summary-dong-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+  .summary-single-dong-item .summary-dong-sub {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+    line-height: 1.35;
+    margin-top: 2px;
+    width: 100%;
+    text-align: left;
+  }
+  .summary-single-dong-item .summary-dong-sub .summary-sub-sep {
+    display: inline;
+  }
+  .summary-single-dong-item .summary-dong-sub .summary-sub-pct {
+    display: inline;
   }
   /* 2026-10-23: 단지수 2개 이하 동 버튼 우측 하단 주의(삼각형 느낌표) 뱃지 및 상단 안내 문구 스타일 */
   .summary-dong-warn {
@@ -2250,6 +2282,120 @@
     font-size: 1.05rem;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   }
+  /* 2026-10-23: [방안 2] summaryModal 내부 인라인 바텀시트 / 슬라이드업 상세 카드 */
+  .summary-bottom-sheet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    opacity: 0;
+  }
+  .summary-bottom-sheet.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .summary-sheet-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    cursor: pointer;
+  }
+  .summary-sheet-panel {
+    position: relative;
+    background: #ffffff;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.25);
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
+    overflow: hidden;
+  }
+  .summary-bottom-sheet.show .summary-sheet-panel {
+    transform: translateY(0);
+  }
+  .summary-sheet-handle-bar {
+    width: 36px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    margin: 8px auto 4px auto;
+  }
+  .summary-sheet-header {
+    padding: 0 16px 8px 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .summary-sheet-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .summary-sheet-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .summary-sheet-body {
+    padding: 14px 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+  }
+  .summary-sheet-footer {
+    padding: 8px 16px 14px 16px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+
+  /* 데스크톱(웹)에서는 바텀시트 대신 중앙 모달 카드 형태로 표시 */
+  @media only screen and (min-width: 769px) {
+    .summary-bottom-sheet {
+      justify-content: center;
+      align-items: center;
+    }
+    .summary-sheet-panel {
+      width: 480px;
+      max-width: 90vw;
+      border-radius: 14px;
+      transform: scale(0.92);
+      transition: transform 0.22s ease-out, opacity 0.22s ease-out;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+    }
+    .summary-bottom-sheet.show .summary-sheet-panel {
+      transform: scale(1);
+    }
+    .summary-sheet-handle-bar {
+      display: none;
+    }
+    .summary-sheet-header {
+      padding: 12px 18px;
+    }
+    .summary-sheet-body {
+      padding: 18px 20px;
+      max-height: 65vh;
+    }
+  }
+
   #summaryCaptureTarget > div:nth-child(2) > button{
     color: #fff;
     background-color: #777;
@@ -2290,6 +2436,28 @@
       width: 90px;
       min-width: 85px;
       padding: 8px 6px !important;
+    }
+    /* 2026-10-23: [2번 요구사항] 모바일 단일 시군구 동 카드 균일 고정폭(130px), 좌측 정렬 및 평단가-상위% 줄바꿈 */
+    .summary-single-dong-item {
+      width: 130px !important;
+      padding: 6px 8px !important;
+      align-items: flex-start !important;
+      text-align: left !important;
+    }
+    .summary-single-dong-item .summary-dong-name {
+      font-size: 0.82rem !important;
+      text-align: left !important;
+    }
+    .summary-single-dong-item .summary-dong-sub {
+      font-size: 0.65rem !important;
+      line-height: 1.25 !important;
+      text-align: left !important;
+    }
+    .summary-single-dong-item .summary-dong-sub .summary-sub-sep {
+      display: none !important;
+    }
+    .summary-single-dong-item .summary-dong-sub .summary-sub-pct {
+      display: block !important;
     }
     #summaryModalHeader {      
       gap: 4px;

@@ -478,14 +478,14 @@ var shareText = ""
 var shareURL = "https://www.realrankus.com/cityclass"
 var popMsg = ""
 
-function showRegionInfo(index, themeOverride){
-  // 2026-10-23: 호이스팅으로 인해 activeMenu가 undefined가 되어 지도 마커/테이블 클릭 시 모달이 열리지 않던 버그 수정
+// 2026-10-23: [방안 2] 지역 상세 정보 데이터 생성 로직 분리 (infoModal 및 summaryBottomSheet 공용)
+function getRegionInfoContent(index, themeOverride) {
   var activeMenu = themeOverride || menuSelection || "menu_select_price";
-  var sido = region_class[index]["시도"]
-  var gungu = region_class[index]["군구"]
-  var dong = region_class[index]["읍면동"] 
-  var sidoLink = region_class[index]["sido_link"]
-  var gunguLink = region_class[index]["gungu_link"]
+  var sido = region_class[index]["시도"];
+  var gungu = region_class[index]["군구"];
+  var dong = region_class[index]["읍면동"];
+  var sidoLink = region_class[index]["sido_link"];
+  var gunguLink = region_class[index]["gungu_link"];
 
   if (sidoLink && gunguLink) {
     selectedRegion = sidoLink;
@@ -494,49 +494,51 @@ function showRegionInfo(index, themeOverride){
       saveLocalStorage();
     }
   }
-  
+
+  var percentile = 0;
+  var score = 0;
+  var selection = "";
+
   if(activeMenu == "menu_select_price"){
-    var percentile = region_class[index]["평단가_백분률"]
+    percentile = region_class[index]["평단가_백분률"];
   }
   if(activeMenu == "menu_select_balanced"){
-    var percentile = region_class[index]["가치_백분률"]
-    var score = region_class[index]["가치총점"]
-    var selection = "균형"
+    percentile = region_class[index]["가치_백분률"];
+    score = region_class[index]["가치총점"];
+    selection = "가치";
   }  
   if(activeMenu == "menu_select_edu"){
-    var percentile = region_class[index]["교육_백분률"]
-    var score = region_class[index]["교육총점"]
-    var selection = "교육"
+    percentile = region_class[index]["교육_백분률"];
+    score = region_class[index]["교육"];
+    selection = "교육";
   }
   if(activeMenu == "menu_select_living"){
-    var percentile = region_class[index]["주거_백분률"]
-    var score = region_class[index]["주거총점"]
-    var selection = "주거"
+    percentile = region_class[index]["주거_백분률"];
+    score = region_class[index]["주거"];
+    selection = "주거";
   }
   if(activeMenu == "menu_select_infra"){
-    var percentile = region_class[index]["인프라_백분률"]
-    var score = region_class[index]["인프라총점"]
-    var selection = "인프라"
+    percentile = region_class[index]["인프라_백분률"];
+    score = region_class[index]["인프라"];
+    selection = "인프라";
   }
   if(activeMenu == "menu_select_trans"){
-    var percentile = region_class[index]["교통_백분률"]
-    var score = region_class[index]["교통총점"]
-    var selection = "교통"
+    percentile = region_class[index]["교통_백분률"];
+    score = region_class[index]["교통"];
+    selection = "교통";
   }
 
-  var complex_num = region_class[index]["단지수"]
-  var house_num = region_class[index]["세대수"]
-  var pyeong_price = region_class[index]["평단가"]
-  var total_amount = region_class[index]["총액"]
-  cleared_total_amount = Math.round(total_amount) * 100000000
+  var complex_num = region_class[index]["단지수"];
+  var house_num = region_class[index]["세대수"];
+  var pyeong_price = region_class[index]["평단가"];
+  var total_amount = region_class[index]["총액"];
+  cleared_total_amount = Math.round(total_amount) * 100000000;
 
-  title = "<span style='font-weight: 600'>" + sido + " " + gungu + " " + dong + "</span>"
+  title = "<span style='font-weight: 600'>" + sido + " " + gungu + " " + dong + "</span>";
+  popMsg = "'" + sido + " " + gungu + " " + dong+ "'" + " 복사되었습니다.";
 
-  popMsg = "'" + sido + " " + gungu + " " + dong+ "'" + " 정보가 복사되었습니다."
-
-  // 2026-10-23: 백분위에 따른 급지명 및 급지별 폰트 컬러 매핑 (평단가 vs 그 외 탭 구분)
-  var className = ""
-  var classColor = "#162235"
+  var className = "";
+  var classColor = "#162235";
   if(activeMenu == "menu_select_price"){
     if(percentile >= 0 && percentile < 0.1){ className = "특1급지"; classColor = "#800000"; }
     else if(percentile >= 0.1 && percentile < 0.5){ className = "특2급지"; classColor = "#991111"; }
@@ -561,71 +563,66 @@ function showRegionInfo(index, themeOverride){
     else if(percentile >= 70.0){ className = "8급지"; classColor = "#777777"; }
   }
 
-  var classHtml = "<span style='color: " + classColor + "; font-weight: 700;'>" + className + " (상위 " + setPercentage(percentile) + ")</span>"
+  var classHtml = "<span style='color: " + classColor + "; font-weight: 700;'>" + className + " (상위 " + setPercentage(percentile) + ")</span>";
 
-  bodyHtml = ""
+  bodyHtml = "";
   if(isMobile){
-    bodyHtml += "<div class='regionTable_m'>"
+    bodyHtml += "<div class='regionTable_m'>";
   }
   else{
-    bodyHtml += "<div class='regionTable'>"
+    bodyHtml += "<div class='regionTable'>";
   }
 
   if(activeMenu == "menu_select_price"){
-    bodyHtml += "<div class='regionTable_title'>급지</div>" + "<div class='regionTable_content'>" + classHtml + "</div>"
-    bodyHtml += "<div class='regionTable_title'>평균 평단가</div>" + "<div class='regionTable_content'>평당 " + ( Number(pyeong_price.toFixed(0)) ).toLocaleString() + "만원</div>"
-    bodyHtml += "<div class='regionTable_title'>단지 수</div>" + "<div class='regionTable_content'>총 " + complex_num.toLocaleString() + "개 단지</div>"
-    bodyHtml += "<div class='regionTable_title'>총 세대수</div>" + "<div class='regionTable_content'>총 " + house_num.toLocaleString() + "세대</div>"    
-    bodyHtml += "<div class='regionTable_title'>시가 총액</div>" + "<div class='regionTable_content'>약 " + setPrice(cleared_total_amount) + "</div>"
+    bodyHtml += "<div class='regionTable_title'>급지</div>" + "<div class='regionTable_content'>" + classHtml + "</div>";
+    bodyHtml += "<div class='regionTable_title'>평균 평단가</div>" + "<div class='regionTable_content'>평당 " + ( Number(pyeong_price.toFixed(0)) ).toLocaleString() + "만원</div>";
+    bodyHtml += "<div class='regionTable_title'>단지 수</div>" + "<div class='regionTable_content'>총 " + complex_num.toLocaleString() + "개 단지</div>";
+    bodyHtml += "<div class='regionTable_title'>총 세대수</div>" + "<div class='regionTable_content'>총 " + house_num.toLocaleString() + "세대</div>";    
+    bodyHtml += "<div class='regionTable_title'>시가 총액</div>" + "<div class='regionTable_content'>약 " + setPrice(cleared_total_amount) + "</div>";
   }
   else{
-    bodyHtml += "<div class='regionTable_title'>급지</div>" + "<div class='regionTable_content'>" + classHtml + "</div>"
+    bodyHtml += "<div class='regionTable_title'>급지</div>" + "<div class='regionTable_content'>" + classHtml + "</div>";
     if(isMobile){
-      bodyHtml += "<div class='regionTable_title'>R랭커스</div>" + "<div class='regionTable_content'>" + selection + " " + score.toFixed(2) + "점</div>"
+      bodyHtml += "<div class='regionTable_title'>R점수</div>" + "<div class='regionTable_content'>" + selection + " " + score.toFixed(2) + "점</div>";
     }
     else{
-      bodyHtml += "<div class='regionTable_title'>리얼랭커스 점수</div>" + "<div class='regionTable_content'>" + selection + " " + score.toFixed(2) + "점</div>"
+      bodyHtml += "<div class='regionTable_title'>리얼랭커스 점수</div>" + "<div class='regionTable_content'>" + selection + " " + score.toFixed(2) + "점</div>";
     }
-    bodyHtml += "<div class='regionTable_title'>단지 수</div>" + "<div class='regionTable_content'>총 " + complex_num.toLocaleString() + "개 단지</div>"
-    bodyHtml += "<div class='regionTable_title'>총 세대수</div>" + "<div class='regionTable_content'>총 " + house_num.toLocaleString() + "세대</div>"    
-    bodyHtml += "<div class='regionTable_title'>평균 평단가</div>" + "<div class='regionTable_content'>평당 " + ( Number(pyeong_price.toFixed(0)) ).toLocaleString() + "만원</div>"
-    bodyHtml += "<div class='regionTable_title'>시가 총액</div>" + "<div class='regionTable_content'>약 " + setPrice(cleared_total_amount) + "</div>"
+    bodyHtml += "<div class='regionTable_title'>단지 수</div>" + "<div class='regionTable_content'>총 " + complex_num.toLocaleString() + "개 단지</div>";
+    bodyHtml += "<div class='regionTable_title'>총 세대수</div>" + "<div class='regionTable_content'>총 " + house_num.toLocaleString() + "세대</div>";    
+    bodyHtml += "<div class='regionTable_title'>평균 평단가</div>" + "<div class='regionTable_content'>평당 " + ( Number(pyeong_price.toFixed(0)) ).toLocaleString() + "만원</div>";
+    bodyHtml += "<div class='regionTable_title'>시가 총액</div>" + "<div class='regionTable_content'>약 " + setPrice(cleared_total_amount) + "</div>";
   }
-  bodyHtml += "</div>"
+  bodyHtml += "</div>";
 
   if(activeMenu == "menu_select_price"){
-    shareTitle = "CityClass 평단가 급지 분석"    
+    shareTitle = "CityClass 평단가 급지 분석";    
   }
   else{
-    shareTitle = "CityClass " + selection + " 급지 분석"
+    shareTitle = "CityClass " + selection + " 급지 분석";
   }
-  shareText = shareTitle
+  shareText = shareTitle;
 
-  shareText += "\n" + "『" + sido + " " + gungu + " " + dong + "』\n\n"
-
-  shareText += "ㆍ급지 : " + className + " (상위 " + setPercentage(percentile) + ")\n"
+  shareText += "\n" + "■ " + sido + " " + gungu + " " + dong + " ■\n\n";
+  shareText += "▶급지 : " + className + " (상위 " + setPercentage(percentile) + ")\n";
 
   if(activeMenu != "menu_select_price"){  
-    shareText += "ㆍ리얼랭커스 " +  selection + " 점수 : " + score.toFixed(2) + "점\n"
+    shareText += "▶리얼랭커스 " +  selection + " 점수 : " + score.toFixed(2) + "점\n";
   }
-  shareText += "ㆍ평균 평단가 : 평당 " + ( Number(pyeong_price.toFixed(0)) ).toLocaleString() + "만원\n"
-  shareText += "ㆍ단지 수 : 총 " + complex_num.toLocaleString() + "개 단지\n"
-  shareText += "ㆍ총 세대수 : 총 " + house_num.toLocaleString() + "세대\n"
-  shareText += "ㆍ시가 총액 : 약 " + setPrice(cleared_total_amount) + "\n\n"
-  shareText += "https://www.realrankus.com/cityclass\npowered by 리얼랭커스"  
+  shareText += "▶평균 평단가 : 평당 " + ( Number(pyeong_price.toFixed(0)) ).toLocaleString() + "만원\n";
+  shareText += "▶단지 수: 총 " + complex_num.toLocaleString() + "개 단지\n";
+  shareText += "▶총 세대수: 총 " + house_num.toLocaleString() + "세대\n";
+  shareText += "▶시가 총액 : 약 " + setPrice(cleared_total_amount) + "\n\n";
+  shareText += "https://www.realrankus.com/cityclass\npowered by 리얼랭커스";  
   
-  // 2026-10-22: regionShare 제일 우측에 모달 캡쳐 버튼(#share3) 영역 추가
   if(isMobile){
-    bodyHtml += "<div class='regionShare_m' data-html2canvas-ignore='true'>"
+    bodyHtml += "<div class='regionShare_m' data-html2canvas-ignore='true'>";
   }
   else{
-    bodyHtml += "<div class='regionShare' data-html2canvas-ignore='true'>"
+    bodyHtml += "<div class='regionShare' data-html2canvas-ignore='true'>";
   }
-  bodyHtml += "<div></div><div id='share1'></div><div id='share2'></div><div id='share3'></div>"
-  bodyHtml += "</div>"
-
-  var sidoLink = region_class[index]["sido_link"]
-  var gunguLink = region_class[index]["gungu_link"]
+  bodyHtml += "<div></div><div id='share1'></div><div id='share2'></div><div id='share3'></div>";
+  bodyHtml += "</div>";
 
   var RealRankusLink = (typeof getMainAptrankURL === 'function') 
     ? getMainAptrankURL(sidoLink, gunguLink) 
@@ -637,45 +634,104 @@ function showRegionInfo(index, themeOverride){
   var bizBasePath = isMobile ? "https://www.realrankus.com/biz/index_m.html" : "https://www.realrankus.com/biz/index.html";
   var RealRankusBizLink = bizBasePath + "?reg=" + encodeURIComponent(resolvedBiz.reg) + "&sub=" + encodeURIComponent(resolvedBiz.sub);
 
-  footerHtml = ""
-  footerHtml += "<div class='footer_wrapper'>"
-  footerHtml += "<div class='goRankus' onClick='goToAptrankFromCityclass(\"" +  RealRankusLink + "\", \"" + sidoLink + "\", \"" + gunguLink + "\")'>" + gungu + " 아파트 분석 보기</div>"
-  footerHtml += "<div class='goRankusBiz' onClick='goToBizFromCityclass(\"" +  RealRankusBizLink + "\", \"" + sidoLink + "\", \"" + gunguLink + "\")'>" + gungu + " 시장 분석 보기</div>"
-  footerHtml += "</div>"
+  footerHtml = "";
+  footerHtml += "<div class='footer_wrapper'>";
+  footerHtml += "<div class='goRankus' onClick='goToAptrankFromCityclass(\'" +  RealRankusLink + "\', \'" + sidoLink + "\', \'" + gunguLink + "\')'>" + gungu + " 아파트 분석 보기</div>";
+  footerHtml += "<div class='goRankusBiz' onClick='goToBizFromCityclass(\'" +  RealRankusBizLink + "\', \'" + sidoLink + "\', \'" + gunguLink + "\')'>" + gungu + " 시장 분석 보기</div>";
+  footerHtml += "</div>";
 
-  $("#regionTitle").html(title)
-  $("#regionDetail").html(bodyHtml)
-  $("#Infofooter").html(footerHtml)
-
+  var share1Html = "";
   if(checkMobile() == "ios"){
-    share1Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+    share1Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
   }
   else{
-    share1Html = "<div class='tShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"./kakao_icon.png\" height=\"35px\"/></div>"
+    share1Html = "<div class='tShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"./kakao_icon.png\" height=\"35px\"/></div>";
   }    
-  $('#share1').html(share1Html)
 
+  var share2Html = "";
   if(UserAgent.indexOf("inApp")>-1){
-    share2Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+    share2Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
   }
   else{
-    //share2Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-solid fa-copy'></i></div>"
-    share2Html = "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
+    share2Html = "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
   }
 
-  $('#share2').html(share2Html)
+  var share3Html = "<div class='tShare' title='모달 이미지 저장' onClick='downloadRegionModalImage(this, " + index + ", event)'><i class='fa-solid fa-camera'></i></div>";
 
-  // 2026-10-22: regionShare 제일 우측(#share3)에 모달 고해상도 이미지 캡쳐 버튼 추가
-  var share3Html = "<div class='tShare' title='모달 이미지 저장' onClick='downloadRegionModalImage(this, " + index + ", event)'><i class='fa-solid fa-camera'></i></div>"
-  $('#share3').html(share3Html)
+  return {
+    title: title,
+    bodyHtml: bodyHtml,
+    footerHtml: footerHtml,
+    share1Html: share1Html,
+    share2Html: share2Html,
+    share3Html: share3Html
+  };
+}
+
+function showRegionInfo(index, themeOverride){
+  var data = getRegionInfoContent(index, themeOverride);
+  if (!data) return;
+
+  $("#regionTitle").html(data.title);
+  $("#regionDetail").html(data.bodyHtml);
+  $("#Infofooter").html(data.footerHtml);
+  $('#share1').html(data.share1Html);
+  $('#share2').html(data.share2Html);
+  $('#share3').html(data.share3Html);
 
   if(isMobile){
-    $(".footer_wrapper").css({'padding-left': "20px", 'padding-right': "20px"}) 
-    $("#infoModal_m").modal('show')
+    $(".footer_wrapper").css({'padding-left': "20px", 'padding-right': "20px"});
+    $("#infoModal_m").modal('show');
   }
   else{
-    $("#infoModal").modal('show')
+    $("#infoModal").modal('show');
   }  
+}
+
+// 2026-10-23: [방안 2] summaryModal 내부 인라인 바텀시트 / 슬라이드업 상세 카드 열기
+function openSummaryBottomSheet(index, themeOverride) {
+  var data = getRegionInfoContent(index, themeOverride);
+  if (!data) return;
+
+  $("#summarySheetTitle").html(data.title);
+  $("#summarySheetDetail").html(data.bodyHtml);
+  $("#summarySheetFooter").html(data.footerHtml);
+
+  // 바텀시트 내부 공유 및 이미지 캡쳐 버튼 바인딩
+  $("#summarySheetDetail #share1").html(data.share1Html);
+  $("#summarySheetDetail #share2").html(data.share2Html);
+  $("#summarySheetDetail #share3").html(
+    "<div class='tShare' title='모달 이미지 저장' onClick='downloadRegionModalImage(this, " + index + ", event)'><i class='fa-solid fa-camera'></i></div>"
+  );
+
+  var $sheet = $("#summaryBottomSheet");
+  $sheet.css("display", "flex");
+  requestAnimationFrame(function() {
+    $sheet.addClass("show");
+  });
+
+  pushModalHistoryState("summaryBottomSheet");
+}
+
+// 2026-10-23: [방안 2] summaryModal 내부 인라인 바텀시트 닫기
+function closeSummaryBottomSheet(fromPopState) {
+  var $sheet = $("#summaryBottomSheet");
+  if (!$sheet.hasClass("show") && $sheet.css("display") === "none") return;
+  $sheet.removeClass("show");
+  setTimeout(function() {
+    if (!$sheet.hasClass("show")) {
+      $sheet.hide();
+    }
+  }, 280);
+
+  if (!fromPopState) {
+    var idx = modalHistoryStack.lastIndexOf("summaryBottomSheet");
+    if (idx !== -1) {
+      modalHistoryStack.splice(idx, 1);
+      suppressHistoryBackCount += 1;
+      window.history.back();
+    }
+  }
 }
 
 // 2026-10-22: #infoModal / #infoModal_m 고해상도 이미지 캡쳐 및 다운로드 함수
@@ -690,8 +746,9 @@ async function downloadRegionModalImage(btnEl, index, event) {
     return;
   }
 
-  var modalSelector = isMobile ? '#infoModal_m .modal-content' : '#infoModal .modal-content';
-  var modalContentEl = document.querySelector(modalSelector);
+  // 2026-10-23: [방안 2] 바텀시트 활성 시 summary-sheet-panel 캡쳐, 일반 모달 시 기존 modal-content 캡쳐
+  var modalContentEl = document.querySelector('#summaryBottomSheet.show .summary-sheet-panel') ||
+                       document.querySelector(isMobile ? '#infoModal_m .modal-content' : '#infoModal .modal-content');
   if (!modalContentEl) return;
 
   var originalBtnHtml = btnEl.innerHTML;
@@ -1475,6 +1532,13 @@ window.addEventListener('popstate', function(event) {
 
   var topState = modalHistoryStack[modalHistoryStack.length - 1];
 
+  // 0) 2026-10-23: [방안 2] summaryBottomSheet가 열려있는 상태에서 뒤로가기 시 바텀시트만 닫기
+  if (topState === "summaryBottomSheet") {
+    modalHistoryStack.pop();
+    closeSummaryBottomSheet(true);
+    return;
+  }
+
   // 1) 시가총액 MAP에서 전국 시도 -> 특정 시도로 드릴다운한 경우: 모달을 닫지 않고 전국 시도로 복귀
   if (topState === "costModal" && is_drilldown_from_korea) {
     is_drilldown_from_korea = false;
@@ -1640,18 +1704,9 @@ $(document).ready(function() {
 
     scheduleModalLayerSync(activeModalOrder.length > 0);
 
-    // 2026-10-23: infoModal 등 상위 모달이 닫힌 뒤 summaryModal 복귀 시 모바일 브라우저의 sticky 헤더 좌표 재계산 리플로우 강제 트리거
-    if ($('#summaryModal').hasClass('show')) {
-      var forceSummaryHeaderReflow = function() {
-        var $summaryScroll = $('#summaryModal .summary-table-scroll');
-        if ($summaryScroll.length) {
-          var curSt = $summaryScroll.scrollTop();
-          $summaryScroll.scrollTop(curSt);
-        }
-      };
-      forceSummaryHeaderReflow();
-      setTimeout(forceSummaryHeaderReflow, 50);
-      setTimeout(forceSummaryHeaderReflow, 150);
+    // 2026-10-23: [방안 2] summaryModal이 닫힐 경우 내부 바텀시트 잔여 상태 정리
+    if (modalId === 'summaryModal') {
+      closeSummaryBottomSheet(true);
     }
 
     if (activeModalOrder.length > 0 || $('.modal.show').length > 0) {
@@ -1798,9 +1853,9 @@ function selectSummaryGungu(gunguName) {
 }
 
 function openRegionInfoFromSummary(dongIdx) {
-  // 2026-10-23: 급지요약 모달(#summaryModal)을 닫지 않고 유지한 채 상위에 동 상세 모달(#infoModal / #infoModal_m)을 중첩 표시
+  // 2026-10-23: [방안 2] 다중 Bootstrap 모달 충돌 방지 - summaryModal 내부 인라인 바텀시트/상세 팝업 카드 호출
   var summaryTheme = $("#summaryTheme").val() || menuSelection;
-  showRegionInfo(dongIdx, summaryTheme);
+  openSummaryBottomSheet(dongIdx, summaryTheme);
 }
 function renderClassSummary() {
   var selectedSido = $("#summarySido").val() || "서울시";
@@ -1996,9 +2051,14 @@ function renderClassSummary() {
           ? ("평당 " + Number(Number(dObj2["평단가"]).toFixed(0)).toLocaleString() + "만원")
           : (themeMeta.name + " " + Number(dObj2[themeMeta.valKey]).toFixed(2) + "점");
         var isLowComplex2 = Number(dObj2["단지수"] || 0) <= 2;
+        // 2026-10-23: [2번 요구사항] 단일 시군구 동 카드 균일 고정폭(웹 210px, 모바일 130px), 좌측 정렬 및 모바일 평단가-상위퍼센트 줄바꿈
         html += "<div class='summary-single-dong-item " + tier2.cl + "' onClick='openRegionInfoFromSummary(" + dObj2["index"] + ")'>";
-        html += "<div>" + dObj2["읍면동"] + "</div>";
-        html += "<div class='summary-dong-sub'>" + dSub2 + " · 상위 " + setPercentage(Number(dObj2[themeMeta.pctKey])) + "</div>";
+        html += "<div class='summary-dong-name'>" + dObj2["읍면동"] + "</div>";
+        html += "<div class='summary-dong-sub'>" +
+                  "<span class='summary-sub-val'>" + dSub2 + "</span>" +
+                  "<span class='summary-sub-sep'> · </span>" +
+                  "<span class='summary-sub-pct'>상위 " + setPercentage(Number(dObj2[themeMeta.pctKey])) + "</span>" +
+                "</div>";
         if (isLowComplex2) html += warnBadgeHtml2;
         html += "</div>";
       }

@@ -247,7 +247,7 @@
 
   <!-- 2026-10-23: 지역별 급지요약 모달 (#summaryModal) 추가 -->
   <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable" id="summaryModalDialog">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered" id="summaryModalDialog">
       <div class="modal-content" id="summaryModalContent">
         <div class="modal-header" id="summaryModalHeader" style="background: #eee;">
           <div id="summaryTitleWrapper"></div>
@@ -259,9 +259,26 @@
         <button type="button" id="btnCaptureSummary" class="summary-capture-btn" onClick="downloadClassSummaryImage(this, event)" title="이미지 저장" data-html2canvas-ignore="true">
           <i class="fa-solid fa-camera"></i>
         </button>
-      </div>
-    </div>
-  </div>   
+      
+
+              <!-- 2026-10-23: [방안 2] summaryModal 내부 인라인 바텀시트/상세 팝업 카드 (다중 Bootstrap 모달 충돌 원천 차단) -->
+              <div id="summaryBottomSheet" class="summary-bottom-sheet" style="display: none;" data-html2canvas-ignore="true">
+                <div class="summary-sheet-backdrop" onClick="closeSummaryBottomSheet()"></div>
+                <div class="summary-sheet-panel">
+                  <div class="summary-sheet-header">
+                    <div class="summary-sheet-handle-bar"></div>
+                    <div class="summary-sheet-title-row">
+                      <h5 class="summary-sheet-title" id="summarySheetTitle">지역 상세</h5>
+                      <button type="button" class="btn-close" onClick="closeSummaryBottomSheet()" aria-label="Close"></button>
+                    </div>
+                  </div>
+                  <div class="summary-sheet-body" id="summarySheetDetail"></div>
+                  <div class="summary-sheet-footer" id="summarySheetFooter"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>   
 
   <!-- Offcanvas Right -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
