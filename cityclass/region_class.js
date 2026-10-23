@@ -615,13 +615,22 @@ function getRegionInfoContent(index, themeOverride) {
   shareText += "▶시가 총액 : 약 " + setPrice(cleared_total_amount) + "\n\n";
   shareText += "https://www.realrankus.com/cityclass\npowered by 리얼랭커스";  
   
-  if(isMobile){
-    bodyHtml += "<div class='regionShare_m' data-html2canvas-ignore='true'>";
-  }
-  else{
-    bodyHtml += "<div class='regionShare' data-html2canvas-ignore='true'>";
-  }
-  bodyHtml += "<div></div><div id='share1'></div><div id='share2'></div><div id='share3'></div>";
+  // 2026-10-23: UserAgent 미정의 환경(모바일 등) 방어 및 공유/캡쳐 버튼 생성 일원화
+  var ua = (typeof UserAgent !== "undefined" ? UserAgent : navigator.userAgent);
+  var isIos = (typeof checkMobile === "function" && checkMobile() === "ios");
+  var share1Html = isIos
+    ? "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+    : "<div class='tShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"./kakao_icon.png\" height=\"35px\"/></div>";
+
+  var share2Html = (ua.indexOf("inApp") > -1)
+    ? "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
+    : "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+
+  var share3Html = "<div class='tShare' title='모달 이미지 저장' onClick='downloadRegionModalImage(this, " + index + ", event)'><i class='fa-solid fa-camera'></i></div>";
+
+  var shareContainerCl = isMobile ? "regionShare_m" : "regionShare";
+  bodyHtml += "<div class='" + shareContainerCl + "' data-html2canvas-ignore='true'>";
+  bodyHtml += "<div></div>" + share1Html + share2Html + share3Html;
   bodyHtml += "</div>";
 
   var RealRankusLink = (typeof getMainAptrankURL === 'function') 
@@ -636,27 +645,10 @@ function getRegionInfoContent(index, themeOverride) {
 
   footerHtml = "";
   footerHtml += "<div class='footer_wrapper'>";
-  footerHtml += "<div class='goRankus' onClick='goToAptrankFromCityclass(\'" +  RealRankusLink + "\', \'" + sidoLink + "\', \'" + gunguLink + "\')'>" + gungu + " 아파트 분석 보기</div>";
-  footerHtml += "<div class='goRankusBiz' onClick='goToBizFromCityclass(\'" +  RealRankusBizLink + "\', \'" + sidoLink + "\', \'" + gunguLink + "\')'>" + gungu + " 시장 분석 보기</div>";
+  // 2026-10-23: onClick 속성 내 단일 따옴표 이스케이프 버그 수정 (바깥 큰따옴표, 내부 함수인자 작은따옴표로 분리)
+  footerHtml += '<div class="goRankus" onClick="goToAptrankFromCityclass(\'' + RealRankusLink + '\', \'' + sidoLink + '\', \'' + gunguLink + '\')">' + gungu + ' 아파트 분석 보기</div>';
+  footerHtml += '<div class="goRankusBiz" onClick="goToBizFromCityclass(\'' + RealRankusBizLink + '\', \'' + sidoLink + '\', \'' + gunguLink + '\')">' + gungu + ' 시장 분석 보기</div>';
   footerHtml += "</div>";
-
-  var share1Html = "";
-  if(checkMobile() == "ios"){
-    share1Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
-  }
-  else{
-    share1Html = "<div class='tShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src=\"./kakao_icon.png\" height=\"35px\"/></div>";
-  }    
-
-  var share2Html = "";
-  if(UserAgent.indexOf("inApp")>-1){
-    share2Html = "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
-  }
-  else{
-    share2Html = "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
-  }
-
-  var share3Html = "<div class='tShare' title='모달 이미지 저장' onClick='downloadRegionModalImage(this, " + index + ", event)'><i class='fa-solid fa-camera'></i></div>";
 
   return {
     title: title,
@@ -697,12 +689,7 @@ function openSummaryBottomSheet(index, themeOverride) {
   $("#summarySheetDetail").html(data.bodyHtml);
   $("#summarySheetFooter").html(data.footerHtml);
 
-  // 바텀시트 내부 공유 및 이미지 캡쳐 버튼 바인딩
-  $("#summarySheetDetail #share1").html(data.share1Html);
-  $("#summarySheetDetail #share2").html(data.share2Html);
-  $("#summarySheetDetail #share3").html(
-    "<div class='tShare' title='모달 이미지 저장' onClick='downloadRegionModalImage(this, " + index + ", event)'><i class='fa-solid fa-camera'></i></div>"
-  );
+  // 2026-10-23: bodyHtml 내부에 share1, share2, share3가 일원화되어 자동 포함됨
 
   var $sheet = $("#summaryBottomSheet");
   $sheet.css("display", "flex");
@@ -779,12 +766,19 @@ async function downloadRegionModalImage(btnEl, index, event) {
       logging: false,
       ignoreElements: function(el) {
         if (!el) return false;
+        // 2026-10-23: summaryModal 내부의 summaryBottomSheet 캡쳐 시 대상의 부모인 summaryModal이 제외되어 캡쳐 불가되는 버그 방지
+        if (el.id === 'summaryModal' && el.contains(modalContentEl)) {
+          return false;
+        }
+        if (el.classList && el.classList.contains('summary-sheet-backdrop')) {
+          return true;
+        }
         if (el.id === 'map_area' || el.id === 'table_area' || el.id === 'table_area_m' ||
             el.id === 'costModal' || el.id === 'summaryModal' || el.id === 'exampleModal' || el.id === 'noticeModal' ||
             el.id === 'info_area' || el.id === 'title_bar') {
           return true;
         }
-        if (el.classList && (el.classList.contains('modal-backdrop') || el.classList.contains('btn-close'))) {
+        if (el.classList && (el.classList.contains('modal-backdrop') || el.classList.contains('btn-close') || el.classList.contains('summary-sheet-close'))) {
           return true;
         }
         return false;
@@ -796,8 +790,8 @@ async function downloadRegionModalImage(btnEl, index, event) {
         clonedEl.style.border = '1px solid #e2e8f0';
         clonedEl.style.backgroundColor = '#ffffff';
 
-        // 닫기 버튼, 공유 버튼 영역, 하단 이동 버튼 영역 숨김
-        var hideSelectors = ['.btn-close', '.regionShare', '.regionShare_m', '#Infofooter'];
+        // 2026-10-23: 닫기 버튼, 공유 버튼 영역, 하단 이동 버튼 영역(#summarySheetFooter, .summary-sheet-close 포함) 숨김
+        var hideSelectors = ['.btn-close', '.summary-sheet-close', '.regionShare', '.regionShare_m', '#Infofooter', '#summarySheetFooter'];
         hideSelectors.forEach(function(sel) {
           var els = clonedEl.querySelectorAll(sel);
           els.forEach(function(node) { node.style.display = 'none'; });
