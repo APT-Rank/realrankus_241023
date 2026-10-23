@@ -101,6 +101,19 @@
 
 </head>
 <style>
+  /* 2026-10-23: 초기 로딩 중에는 좌측 흰색 박스(#contentBox)와 지역 선택 영역을 숨기고 스피너만 표시, 로딩 완료 시 페이드인 */
+  #contentBox, #themeSelections, #linkToAptrank_bottom {
+    transition: opacity 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  #contentBox.biz-init-loading {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+  #contentBox.biz-init-loading #themeSelections,
+  #contentBox.biz-init-loading #linkToAptrank_bottom {
+    opacity: 0;
+    visibility: hidden;
+  }
 </style>
 
 <body ontouchstart="">
@@ -215,7 +228,7 @@
       </div>      
 
       <!--리스트 데이터 붙여넣는 영역-->
-      <div id='contentBox'>
+      <div id='contentBox' class="biz-init-loading">
         <div id="themeSelections">        
           <div id="sido_selection"><select id="sido" onChange="sidoChange()"></select></div>
           <div id="gungu_selection" style="width: 330px"><select id="gungu" onChange="updateRegion()"></select></div>          
@@ -784,6 +797,10 @@
         region_coloring(aptData.data)
         // 2026-10-23: 데이터 및 지도 렌더링 완료 후 지도/범례 일괄 페이드인
         $('#map_area').fadeIn(250);
+        // 2026-10-23: 최초 로딩 완료 시 콘텐츠 박스 페이드인
+        $('#contentBox').removeClass('biz-init-loading');
+  }).fail(function() {
+        $('#contentBox').removeClass('biz-init-loading');
   })}
 
 function go_Korea(){    
