@@ -73,41 +73,44 @@ function change_menu(menu){
     $("#marker_index_CL04").text("1급 : 0~5%");
   }
 
-  if(menu_name == "menu_select_price"){        
-    //drawTable(price_index, sido_list, gungu_list); 
-    setTimeout(() => drawTable(price_index, sido_list, gungu_list), 300);
-    removeMarkers()
-    setTimeout(() => drawDataMap_price(region_class, current_zoom), 300);
+  function runMenuAction() {
+    if(menu_name == "menu_select_price"){        
+      setTimeout(() => drawTable(price_index, sido_list, gungu_list), 300);
+      removeMarkers();
+      setTimeout(() => drawDataMap_price(region_class, current_zoom), 300);
+    }
+    if(menu_name == "menu_select_balanced"){
+      setTimeout(() => drawTable(balanced_index, sido_list, gungu_list), 300);
+      removeMarkers();
+      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+    }
+    if(menu_name == "menu_select_edu"){
+      setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 300);
+      removeMarkers();
+      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+    }
+    if(menu_name == "menu_select_living"){
+      setTimeout(() => drawTable(living_index, sido_list, gungu_list), 300);
+      removeMarkers();
+      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+    }
+    if(menu_name == "menu_select_infra"){
+      setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 300);
+      removeMarkers();
+      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+    }
+    if(menu_name == "menu_select_trans"){
+      setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 300);
+      removeMarkers();
+      setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+    }
   }
-  if(menu_name == "menu_select_balanced"){
-    //drawTable(balanced_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(balanced_index, sido_list, gungu_list), 300);
-    removeMarkers()
-    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
-  }
-  if(menu_name == "menu_select_edu"){
-    //drawTable(edu_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(edu_index, sido_list, gungu_list), 300);
-    removeMarkers()
-    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
-  }
-  if(menu_name == "menu_select_living"){
-    //drawTable(living_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(living_index, sido_list, gungu_list), 300);
-    removeMarkers()
-    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
-  }
-  if(menu_name == "menu_select_infra"){
-    //drawTable(infra_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(infra_index, sido_list, gungu_list), 300);
-    removeMarkers()
-    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
-  }
-  if(menu_name == "menu_select_trans"){
-    //drawTable(trans_index, sido_list, gungu_list)
-    setTimeout(() => drawTable(trans_index, sido_list, gungu_list), 300);
-    removeMarkers()
-    setTimeout(() => drawDataMap(region_class, current_zoom), 300);
+
+  // 2026-10-23: [지연 로딩 방어] 백그라운드 수신 중 탭 전환 시 완료 후 안전하게 렌더링
+  if (menu_name !== "menu_select_price" && typeof loadAuxiliaryDataInBackground === 'function' && !auxDataLoaded) {
+    loadAuxiliaryDataInBackground().then(runMenuAction);
+  } else {
+    runMenuAction();
   }
 }
 
@@ -1147,6 +1150,12 @@ function setTreeMap(){
 }
 
 function showCostsum(){
+  // 2026-10-23: [시가총액 트리맵 지연 로딩 방어] 백그라운드 수신 완료 전 클릭 시 안전하게 대기
+  if ((!cost_treemap || typeof treemap_data === 'undefined') && typeof loadAuxiliaryDataInBackground === 'function' && !auxDataLoaded) {
+    loadAuxiliaryDataInBackground().then(function() { showCostsum(); });
+    return;
+  }
+
   if(isMobile){
     current_selection = $("#sidogungu_m option:selected").val()
   }
