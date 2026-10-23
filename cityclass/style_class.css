@@ -1921,8 +1921,28 @@
     transform: translateY(1px);
   }
 
+  /* 2026-10-23: #summaryModal 화면 규격에 따른 세로 높이 고정 (스크롤 외부 이탈 및 팝업 위치 어긋남 방지) */
+  #summaryModal {
+    overflow: hidden !important;
+  }
   #summaryModalDialog {
-    max-width: 92vw;
+    width: 92vw;
+    max-width: 1400px;
+    height: calc(100vh - 40px);
+    height: calc(100dvh - 40px);
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+  }
+  #summaryModalContent {
+    position: relative;
+    height: 100% !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
   }
   #summaryModalHeader {
     display: flex;
@@ -1930,6 +1950,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
+    flex-shrink: 0;
   }
   #summaryTitleWrapper {
     display: flex;
@@ -2195,11 +2216,11 @@
     text-align: left;
     width: 210px;
     box-sizing: border-box;
-    padding: 7px 12px;
+    padding: 7px 10px;
     border-radius: 6px;
     color: #fff;
     font-weight: 600;
-    font-size: 0.84rem;
+    font-size: 0.85rem;
     cursor: pointer;
   }
   .summary-single-dong-item .summary-dong-name {
@@ -2402,9 +2423,18 @@
     border: none;
   }
   @media only screen and (max-width: 768px) {
+    /* 2026-10-23: 모바일 뷰포트 규격(100dvh)에 맞춘 전체화면 고정 */
     #summaryModalDialog {
-      max-width: 100vw;
-      margin: 0;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      height: 100% !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100% !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
     }
     #summaryDetail {
       padding: 0 !important;

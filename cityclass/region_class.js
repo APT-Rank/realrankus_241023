@@ -1945,7 +1945,7 @@ function renderClassSummary() {
     var warnNoticeLineHtml = "<div class='summary-warn-notice'>" + warnSvgHtml + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
 
     // 2026-10-23: 이미지 캡쳐 시 클릭 조작 안내만 제외하고 느낌표(주의) 안내는 캡쳐 이미지에 포함되도록 분리
-    html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45;'>";
+    html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45; flex-shrink: 0;'>";
     html += "<div data-html2canvas-ignore='true'>시군구 또는 동 이름을 클릭하면 상세 정보가 표시됩니다.</div>";
     html += warnNoticeLineHtml;
     html += "</div>";
@@ -2020,7 +2020,7 @@ function renderClassSummary() {
     var warnSvgHtml2 = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
     var warnBadgeHtml2 = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml2 + "</span>";
     // 2026-10-23: 단일 시군구 캡쳐 시에도 돌아가기 버튼만 제외하고 느낌표(주의) 안내는 캡쳐 이미지에 포함
-    html += "<div style='margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px;'>";
+    html += "<div style='margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; flex-shrink: 0;'>";
     html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.78rem; font-weight: 600;' onClick='selectSummaryGungu(\"ALL\")' data-html2canvas-ignore='true'>← " + selectedSido + " 전체로 돌아가기</button>";
     html += "<div class='summary-warn-notice'>" + warnSvgHtml2 + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
     html += "</div>";
