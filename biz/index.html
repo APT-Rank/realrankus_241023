@@ -2188,6 +2188,22 @@ function ListUp(listData){
   saveLocalStorage()
 }
 
+
+  // 2026-10-23: 이메일 문의하기 핸들러 (클립보드 복사 안내 + mailto 링크 호출)
+  function contactByEmail(email) {
+    email = email || 'aptranking@gmail.com';
+    if (typeof CopyToClipboard === 'function') {
+      CopyToClipboard(email, "이메일 주소(" + email + ")가 복사되었습니다.");
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email);
+    }
+    setTimeout(function() {
+      try {
+        location.href = 'mailto:' + email;
+      } catch (e) {}
+    }, 150);
+  }
+
 function showNotice(info){
   modal_title = ""
   modal_info= ""
@@ -2233,10 +2249,11 @@ function showNotice(info){
     var footerHtml = ""
     var detailHtml = "<div class='notice'>" + modal_info + "</div>"
     
+    // 2026-10-23: a 태그 내 button 중첩 제거, 클립보드 복사+mailto 동시 연동 및 openOuterLink 적용
     footerHtml += "<div class='modal-footer'>"
     footerHtml += "<div class='notice' id='footerCheck' ><strong>업무 협업, 데이터 커스터마이징 문의는 '이메일 문의하기' 또는 '카카오톡 1:1 문의하기'를 통해 진행해 주세요.</strong></div>"
-    footerHtml += "<div id='footerBtn2'><a href='mailto:aptranking@gmail.com'><button type='button' class='goApt' style='font-size: 0.85em'>이메일 문의하기</button></a></div>"
-    footerHtml += "<div id='footerBtn2'><a href='https://pf.kakao.com/_vESNb/chat' target='_blank'><button type='button' class='gokakao' style='font-size: 0.85em'>카카오톡 1:1 문의하기</button></a></div>"
+    footerHtml += "<div><button type='button' class='goApt' style='font-size: 0.85em' onClick='contactByEmail(\"aptranking@gmail.com\")'>이메일 문의하기</button></div>"
+    footerHtml += "<div><button type='button' class='gokakao' style='font-size: 0.85em' onClick='openOuterLink(\"https://pf.kakao.com/_vESNb/chat\")'>카카오톡 1:1 문의하기</button></div>"
     footerHtml += "</div>"  
 
 
