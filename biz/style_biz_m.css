@@ -1,9 +1,10 @@
+  /* 2026-10-23: 모바일 상단 빈 공간 제거 - margin/padding 0 초기화 */
   body{
+    margin: 0;
+    padding: 0;
     -ms-overflow-style: none;
     background-color: #ddd;
     font-family: 'Noto Sans KR', sans-serif;
-    padding-top: constant(safe-area-inset-top);
-    padding-top: env(safe-area-inset-top);    
     min-height: 100vh;
     min-height: -webkit-fill-available; 
   }
@@ -250,8 +251,14 @@
     margin-top: -60px;
   }
 
+  /* 2026-10-23: 타이틀바를 뷰포트 최상단(top: 0)에 정확히 고정하여 상단 빈 틈 발생 방지 */
   #titleBar_theme{   
     position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 42px;
+    line-height: 42px;
     display: grid;
     grid-template-columns: 50px 50px 1fr 50px 50px;
     width: 100%;    
