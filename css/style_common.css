@@ -738,3 +738,19 @@
   background: #ffffff;
   border-bottom: 1px solid #f1f5f9;
 }
+
+/* 2026-10-23: [콘텐츠 페이드인 애니메이션 일원화] price/index.html과 동일한 자연스러운 진입 효과(fade-in) 적용 */
+#dataList > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer),
+#themeDataList > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer),
+#hourly_area > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer),
+#data_table tr:not(#data_table_skeleton tr),
+#svg_map svg,
+.themeListBox,
+.listBox,
+.biz_card,
+.distanceTable,
+.distanceTable2,
+#Money_Flow {
+  animation: appRankFadeIn 0.22s ease-out;
+}
+
