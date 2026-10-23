@@ -175,49 +175,19 @@
         <!--리얼랭커스 연결-->
         <div id="linkToAptrank_bottom"></div>
       </div>
-      <!-- 2026-10-23: [App Shell & Skeleton 즉시 초기화] 외부 무거운 라이브러리 다운로드 전에 드롭다운과 스켈레톤을 먼저 렌더링 -->
+      <!-- 2026-10-23: [스피너 로딩 및 App Shell 즉시 초기화] 로딩 중 스피너 표시 후 완료 시 페이드인 전환 -->
       <script>
-        function getBizSkeletonHtml(isKorea) {
-          var html = '';
-          if (isKorea) {
-            html += "<div class='sk_table_row' style='background:#f8fafc; height:36px; border-bottom:1px solid #cbd5e1;'>"
-                  + "<div class='sk_shimmer' style='height:14px; width:45px;'></div>"
-                  + "<div class='sk_shimmer' style='height:14px; width:70px;'></div>"
-                  + "<div class='sk_shimmer' style='height:14px; width:70px;'></div>"
-                  + "<div class='sk_shimmer' style='height:14px; width:80px;'></div>"
-                  + "</div>";
-            for (var r = 0; r < 7; r++) {
-              html += "<div class='sk_table_row'>"
-                    + "<div class='sk_shimmer' style='height:18px; width:50px;'></div>"
-                    + "<div class='sk_shimmer' style='height:16px; width:80%;'></div>"
-                    + "<div class='sk_shimmer' style='height:16px; width:80%;'></div>"
-                    + "<div class='sk_shimmer' style='height:14px; width:85%; border-radius:10px;'></div>"
-                    + "</div>";
-            }
-          } else {
-            html += "<div class='sk_card'>"
-                  + "<div style='display:flex; gap:12px; align-items:center;'>"
-                  + "<div class='sk_shimmer' style='width:50px; height:50px; border-radius:50%;'></div>"
-                  + "<div style='flex:1; display:flex; flex-direction:column; gap:8px;'>"
-                  + "<div class='sk_shimmer' style='height:18px; width:45%;'></div>"
-                  + "<div class='sk_shimmer' style='height:14px; width:80%;'></div>"
-                  + "</div></div></div>";
-            for (var c = 0; c < 3; c++) {
-              html += "<div class='sk_card' style='height:95px; display:flex; flex-direction:column; justify-content:space-between;'>"
-                    + "<div class='sk_shimmer' style='height:16px; width:35%;'></div>"
-                    + "<div class='sk_shimmer' style='height:24px; width:70%;'></div>"
-                    + "<div class='sk_shimmer' style='height:12px; width:90%;'></div>"
-                    + "</div>";
-            }
-          }
-          return html;
+        function getBizLoadingHtml() {
+          return "<div id='bizLoading' style='display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 280px; gap: 14px; color: #64748b; padding-top: 50px;'>"
+               + "<div class='spinner-border text-primary' role='status' style='width: 2.2rem; height: 2.2rem;'></div>"
+               + "<div style='font-size: 0.9rem; font-weight: 500;'>시장 분석 데이터를 불러오는 중입니다...</div>"
+               + "</div>";
         }
 
         (function initBizAppShellImmediately() {
           try {
             var params = new URLSearchParams(window.location.search);
             var reg = params.get('reg') || localStorage.getItem('lastRegion') || 'Korea';
-            var sub = params.get('sub') || localStorage.getItem('lastSubRegion') || '1000000000_Korea';
 
             if (typeof regions !== 'undefined') {
               var opt = '';
@@ -228,16 +198,9 @@
               if (sidoEl) { sidoEl.innerHTML = opt; sidoEl.value = reg; }
             }
 
-            var mapEl = document.getElementById('svg_map');
-            if (mapEl) {
-              mapEl.innerHTML = "<div class='sk_map_box sk_shimmer'>"
-                + "<i class='fa-solid fa-map-location-dot fa-fade' style='font-size:1.8rem;'></i>"
-                + "<span>시장 분석 지도를 준비하고 있습니다...</span></div>";
-            }
-
             var listEl = document.getElementById('dataList');
             if (listEl) {
-              listEl.innerHTML = getBizSkeletonHtml(reg === 'Korea');
+              listEl.innerHTML = getBizLoadingHtml();
             }
           } catch(e) {}
         })();
@@ -745,7 +708,11 @@
   function updateTable(){
     $('div.modal').modal("hide");
     //$('#sort').css("visibility", "visible")
-    $('html').scrollTop(0)    
+    $('html').scrollTop(0)
+    // 2026-10-23: 지역 전환 시 스피너 로딩 표시 후 완료 시 페이드인 전환
+    if (typeof getBizLoadingHtml === 'function') {
+      $('#dataList').html(getBizLoadingHtml());
+    }    
     
     //url = "https://www.realrankus.com/biz/" + region + ".json"
     //url = "https://www.realrankus.com/biz/Location_Build_Valuated.json"
