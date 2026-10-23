@@ -697,7 +697,17 @@
       $('#gungu').append(subOption);
     }    
 
-    if(selectedSubRegion == undefined){
+    // 2026-10-23: reg/sub 불일치(예: reg만 URL, sub는 다른 지역의 lastSubRegion) 시 해당 지역 첫 항목으로 보정
+
+    var subExists = false
+
+    for(var si = 0 ; si < changeItem.length; si++){
+
+      if(changeItem[si][1] === selectedSubRegion){ subExists = true; break }
+
+    }
+
+    if(selectedSubRegion == undefined || !subExists){
       $("#gungu").val(changeItem[0][1]).prop("selected", true);
       selectedSubRegion = $("#gungu option:selected").val()
     }
