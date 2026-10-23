@@ -1501,16 +1501,78 @@ window.addEventListener('popstate', function(event) {
   isClosingFromPopState = false;
 }, true);
 
+// 2026-10-23: 다중 모달 중첩 및 닫힘 후 재오픈 시 modal-backdrop z-index 꼬임(전면 가림) 방지 동기화
+var activeModalOrder = [];
+var openingModalIds = {};
+var closingModalIds = {};
+
+function syncModalAndBackdropLayers(ensureFallbackBackdrop) {
+  activeModalOrder = activeModalOrder.filter(function(id) {
+    if (closingModalIds[id]) return false;
+    var el = document.getElementById(id);
+    return el && (el.classList.contains("show") || openingModalIds[id]);
+  });
+
+  $('div.modal.show').each(function() {
+    var id = this.id;
+    if (id && !closingModalIds[id] && activeModalOrder.indexOf(id) === -1) {
+      activeModalOrder.push(id);
+    }
+  });
+
+  for (var i = 0; i < activeModalOrder.length; i++) {
+    $("#" + activeModalOrder[i]).css("z-index", 1055 + (i * 10));
+  }
+
+  var $backdrops = $('.modal-backdrop');
+  if (activeModalOrder.length === 0) {
+    $backdrops.each(function() {
+      if (this.classList.contains("cityclass-shared-backdrop")) {
+        $(this).remove();
+      } else {
+        $(this).css("z-index", 1050).removeClass("modal-stack");
+      }
+    });
+    return;
+  }
+
+  if ($backdrops.length > activeModalOrder.length) {
+    $('.modal-backdrop.cityclass-shared-backdrop').remove();
+    $backdrops = $('.modal-backdrop');
+  } else if (ensureFallbackBackdrop && $backdrops.length === 0) {
+    $('body').append('<div class="modal-backdrop fade show cityclass-shared-backdrop" style="z-index: 1050;"></div>');
+    $backdrops = $('.modal-backdrop');
+  }
+
+  var topModalZ = 1055 + ((activeModalOrder.length - 1) * 10);
+  var maxBackdropZ = topModalZ - 5;
+  var totalBackdrops = $backdrops.length;
+
+  $backdrops.each(function(bIdx) {
+    var targetZ = (bIdx === totalBackdrops - 1) ? maxBackdropZ : Math.min(1050 + (bIdx * 10), maxBackdropZ);
+    $(this).css("z-index", targetZ).removeClass("modal-stack");
+  });
+}
+
+function scheduleModalLayerSync(ensureFallback) {
+  syncModalAndBackdropLayers(ensureFallback);
+  setTimeout(function() { syncModalAndBackdropLayers(ensureFallback); }, 0);
+  setTimeout(function() { syncModalAndBackdropLayers(ensureFallback); }, 25);
+  setTimeout(function() { syncModalAndBackdropLayers(ensureFallback); }, 100);
+}
+
 $(document).ready(function() {
-  // 모달 열릴 때: 중첩 z-index 계산 및 히스토리 스택 push
+  // 모달 열릴 때: 활성 모달 순서 등록, z-index 동기화 및 히스토리 스택 push
   $('div.modal').on('show.bs.modal', function() {
     var modalId = this.id;
-    var openModalsCount = $('.modal.show').not(this).length;
-    var zIndex = 1055 + (10 * openModalsCount);
-    $(this).css('z-index', zIndex);
-    setTimeout(function() {
-      $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 5).addClass('modal-stack');
-    }, 0);
+    delete closingModalIds[modalId];
+    openingModalIds[modalId] = true;
+    var existingIdx = activeModalOrder.indexOf(modalId);
+    if (existingIdx !== -1) {
+      activeModalOrder.splice(existingIdx, 1);
+    }
+    activeModalOrder.push(modalId);
+    scheduleModalLayerSync(false);
 
     if (modalId === "exampleModal" || modalId === "noticeModal") {
       return;
@@ -1518,9 +1580,23 @@ $(document).ready(function() {
     pushModalHistoryState(modalId);
   });
 
-  // 모달 닫힐 때(X 버튼 또는 배경 클릭 등): 히스토리 스택 동기화
+  $('div.modal').on('shown.bs.modal', function() {
+    var modalId = this.id;
+    delete openingModalIds[modalId];
+    scheduleModalLayerSync(true);
+  });
+
+  // 모달 닫힐 때(X 버튼 또는 배경 클릭 등): 즉시 레이어 하향 동기화 및 히스토리 스택 동기화
   $('div.modal').on('hide.bs.modal', function() {
     var modalId = this.id;
+    delete openingModalIds[modalId];
+    closingModalIds[modalId] = true;
+    var activeIdx = activeModalOrder.indexOf(modalId);
+    if (activeIdx !== -1) {
+      activeModalOrder.splice(activeIdx, 1);
+    }
+    scheduleModalLayerSync(false);
+
     if (modalId === "exampleModal" || modalId === "noticeModal") {
       return;
     }
@@ -1540,10 +1616,32 @@ $(document).ready(function() {
     }
   });
 
-  // 상위 모달(#infoModal 등)이 닫힌 뒤 하위 모달(#summaryModal 등)이 열려 있으면 스크롤 잠금/활성 상태 유지
+  // 모달이 완전히 닫힌 뒤: 캐싱된 Bootstrap backdrop의 잔여 인라인 z-index 초기화 및 하위 모달 활성 상태 유지
   $('div.modal').on('hidden.bs.modal', function() {
-    if ($('.modal.show').length > 0) {
+    var modalId = this.id;
+    delete openingModalIds[modalId];
+    delete closingModalIds[modalId];
+    var activeIdx = activeModalOrder.indexOf(modalId);
+    if (activeIdx !== -1) {
+      activeModalOrder.splice(activeIdx, 1);
+    }
+    $(this).css('z-index', '');
+
+    if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+      var bsInst = bootstrap.Modal.getInstance(this);
+      if (bsInst && bsInst._backdrop && bsInst._backdrop._element) {
+        bsInst._backdrop._element.style.zIndex = "";
+        bsInst._backdrop._element.classList.remove("modal-stack");
+      }
+    }
+
+    scheduleModalLayerSync(activeModalOrder.length > 0);
+
+    if (activeModalOrder.length > 0 || $('.modal.show').length > 0) {
       $('body').addClass('modal-open').css('overflow', 'hidden');
+    } else if (Object.keys(closingModalIds).length === 0) {
+      $('.modal-backdrop.cityclass-shared-backdrop').remove();
+      $('body').removeClass('modal-open').css('overflow', '');
     }
   });
 });
