@@ -397,7 +397,7 @@
     $('#dataList').html("");
     // 2026-10-23: [화면 중앙 고정 로딩 스피너] 화면 전환 직전 흔들림 없이 정중앙에 고정 노출
     if ($('#cityclass_loading').length === 0) {
-      $('body').append("<div id='cityclass_loading' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 1050; pointer-events: none;'><div class='spinner-border' role='status' style='width: 2.4rem; height: 2.4rem; color: #334155;'></div><div style='font-size: 0.95rem; font-weight: 600; color: #475569; white-space: nowrap;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>");
+      $('body').append("<div id='cityclass_loading' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 1050; pointer-events: none;'><div class='spinner-border' role='status' style='width: 2rem; height: 2rem; color: #334155;'></div><div style='font-size: 0.85rem; font-weight: 600; color: #475569; white-space: nowrap;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>");
     }
     $('#data_table').css({'text-align' : 'center', 'width':'100%', 'background':'none'})    
     $('#table_area_m').css({'height':screen.availHeight})

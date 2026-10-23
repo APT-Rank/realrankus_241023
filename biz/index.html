@@ -486,7 +486,7 @@
     $('#themeDataList').html("");
 
     optionChange(selectedSubRegion, selectedRegion);
-    updateRegion()
+    // 2026-10-23: optionChange 내부에서 updateRegion()을 이미 호출하므로 중복 호출 제거
 
     loadStandardInterest_KO()
     loadStandardInterest_US()
@@ -988,36 +988,44 @@ console.log("실제 DOM 존재 여부:", document.getElementById(selectedSubRegi
                 if(selectedSubRegion == "4159000000_Gyeonggi_Hwaseong"){ changeRegion('4159700000_Gyeonggi_Hwaseong_dongtan') }
               })
 
-              let svg = document.querySelector("svg");
-              selected_region = document.getElementById(selectedSubRegion)
-              selected_region_copy = selected_region
-              selected_region_copy.id = pointed_region
-              $("#" + pointed_region).css("stroke", "rgba(0, 64, 255, 0.7)")
-              $("#" + pointed_region).css("stroke-width", "5")
-              $("#" + pointed_region).css("fill-opacity", "1")
-              svg.appendChild(selected_region_copy);
+              // 2026-10-23: [안전한 SVG 선택 영역 처리] null 방어 코드 추가 및 요소 재참조 허용
+              let svg = document.querySelector("#svg_map svg") || document.querySelector("svg");
+              selected_region = document.getElementById(selectedSubRegion) || document.getElementById(pointed_region);
+              if (selected_region) {
+                selected_region_copy = selected_region;
+                selected_region_copy.id = pointed_region;
+                $("#" + pointed_region).css("stroke", "rgba(0, 64, 255, 0.7)");
+                $("#" + pointed_region).css("stroke-width", "5");
+                $("#" + pointed_region).css("fill-opacity", "1");
+                if (svg) svg.appendChild(selected_region_copy);
+              }
 
-              selected_region_text = document.getElementById("txt_" + selectedSubRegion)            
-              selected_region_text_copy = selected_region_text
-              selected_region_text_copy.id = pointed_text  
-              
-              svg.appendChild(selected_region_text_copy);
+              selected_region_text = document.getElementById("txt_" + selectedSubRegion) || document.getElementById(pointed_text);            
+              if (selected_region_text) {
+                selected_region_text_copy = selected_region_text;
+                selected_region_text_copy.id = pointed_text;
+                if (svg) svg.appendChild(selected_region_text_copy);
+              }
             }
             else{
-              let svg = document.querySelector("svg");
-              selected_region = document.getElementById(selectedSubRegion)
-              selected_region_copy = selected_region
-              selected_region_copy.id = pointed_region
-              $("#" + pointed_region).css("stroke", "rgba(0, 64, 255, 0.7)")
-              $("#" + pointed_region).css("stroke-width", "5")
-              $("#" + pointed_region).css("fill-opacity", "1")
-              svg.appendChild(selected_region_copy);
+              // 2026-10-23: [안전한 SVG 선택 영역 처리] null 방어 코드 추가 및 요소 재참조 허용
+              let svg = document.querySelector("#svg_map svg") || document.querySelector("svg");
+              selected_region = document.getElementById(selectedSubRegion) || document.getElementById(pointed_region);
+              if (selected_region) {
+                selected_region_copy = selected_region;
+                selected_region_copy.id = pointed_region;
+                $("#" + pointed_region).css("stroke", "rgba(0, 64, 255, 0.7)");
+                $("#" + pointed_region).css("stroke-width", "5");
+                $("#" + pointed_region).css("fill-opacity", "1");
+                if (svg) svg.appendChild(selected_region_copy);
+              }
 
-              selected_region_text = document.getElementById("txt_" + selectedSubRegion)            
-              selected_region_text_copy = selected_region_text
-              selected_region_text_copy.id = pointed_text  
-              
-              svg.appendChild(selected_region_text_copy);
+              selected_region_text = document.getElementById("txt_" + selectedSubRegion) || document.getElementById(pointed_text);            
+              if (selected_region_text) {
+                selected_region_text_copy = selected_region_text;
+                selected_region_text_copy.id = pointed_text;
+                if (svg) svg.appendChild(selected_region_text_copy);
+              }
             }
             
           }
