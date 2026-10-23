@@ -178,9 +178,9 @@
       <!-- 2026-10-23: [스피너 로딩 및 App Shell 즉시 초기화] 로딩 중 스피너 표시 후 완료 시 페이드인 전환 -->
       <script>
         function getBizLoadingHtml() {
-          return "<div id='bizLoading' style='display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 280px; gap: 14px; color: #475569; padding-top: 50px;'>"
-               + "<div class='spinner-border' role='status' style='width: 2.2rem; height: 2.2rem; color: #334155;'></div>"
-               + "<div style='font-size: 0.92rem; font-weight: 500; color: #475569;'>핵심 부동산 시장 리포트를 준비 중입니다</div>"
+          return "<div id='bizLoading' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 1050; pointer-events: none;'>"
+               + "<div class='spinner-border' role='status' style='width: 2.4rem; height: 2.4rem; color: #334155;'></div>"
+               + "<div style='font-size: 0.95rem; font-weight: 600; color: #475569; white-space: nowrap;'>핵심 부동산 시장 리포트를 준비 중입니다</div>"
                + "</div>";
         }
 

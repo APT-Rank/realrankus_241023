@@ -135,11 +135,8 @@
         <table id='data_table' style='table-layout: fixed; background: white; border-spacing: 0;'></table>
       </div>
       <div id="map_area">
-        <!-- 2026-10-23: [지도 로딩 오버레이 & 스피너] 지도 및 급지 데이터 로드 중 스피너 표시 후 페이드아웃 -->
-        <div id="map_loading_overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 800; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.95); color: #334155; font-weight: 600; font-size: 0.92rem; pointer-events: none; transition: opacity 0.3s ease;">
-          <div class="spinner-border" role="status" style="width: 2.2rem; height: 2.2rem; color: #334155;"></div>
-          <span>급지 분석 지도를 준비 중입니다</span>
-        </div>
+        <!-- 2026-10-23: [지도 로딩 오버레이] 지도 렌더링 중 부드러운 배경 오버레이 (스피너는 화면 중앙 고정) -->
+        <div id="map_loading_overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 800; background: rgba(255, 255, 255, 0.95); pointer-events: none; transition: opacity 0.3s ease;"></div>
         <!-- 2026-10-22: 마커 인덱스 타이틀 및 급지/상위 퍼센티지 표기 업데이트 -->
         <div id="marker_index">
           <div id="marker_index_title">급지 / 상위 퍼센티지</div>
@@ -398,8 +395,10 @@
 
   $(document).ready(function(){
     $('#dataList').html("");
-    // 2026-10-23: [스피너 로딩] 급지 데이터 로드 전 스피너 표시 후 완료 시 페이드인 전환
-    $('#data_table').html("<div id='loading_back' style='display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 250px; gap: 12px; color: #475569; padding-top: 50px;'><div class='spinner-border' role='status' style='width: 2rem; height: 2rem; color: #334155;'></div><div style='font-size: 0.9rem; font-weight: 500; color: #475569;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>");
+    // 2026-10-23: [화면 중앙 고정 로딩 스피너] 화면 전환 직전 흔들림 없이 정중앙에 고정 노출
+    if ($('#cityclass_loading').length === 0) {
+      $('body').append("<div id='cityclass_loading' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 1050; pointer-events: none;'><div class='spinner-border' role='status' style='width: 2.4rem; height: 2.4rem; color: #334155;'></div><div style='font-size: 0.95rem; font-weight: 600; color: #475569; white-space: nowrap;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>");
+    }
     $('#data_table').css({'text-align' : 'center', 'width':'100%', 'background':'none'})    
     $('#table_area_m').css({'height':screen.availHeight})
 

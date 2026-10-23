@@ -740,7 +740,7 @@
 }
 
 /* 2026-10-23: [콘텐츠 페이드인 애니메이션 일원화] price/index.html과 동일한 자연스러운 진입 효과(fade-in) 적용 */
-#dataList > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer):not(#bizLoading),
+#dataList > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer):not(#bizLoading):not(#cityclass_loading):not(#loading_back),
 #themeDataList > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer),
 #hourly_area > :not(.sk_table_row):not(.sk_card):not(.sk_map_box):not(.sk_shimmer),
 #data_table tr:not(#data_table_skeleton tr),
