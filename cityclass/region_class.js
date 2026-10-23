@@ -49,7 +49,7 @@ function change_menu(menu){
   searchingDB = []
   
   if(isMobile){
-    $('#data_table').html("<div id='loading_back'><br><br><br><br><br><br><br><br><div class='spinner-border' role='status'></div></div>")
+    $('#data_table').html("<div id='loading_back' style='display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 250px; gap: 12px; color: #475569; padding-top: 50px;'><div class='spinner-border' role='status' style='width: 2rem; height: 2rem; color: #334155;'></div><div style='font-size: 0.9rem; font-weight: 500; color: #475569;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>")
     $('#data_table').css({'text-align' : 'center', 'width':'100%'})    
     $('#table_area_m').css({'height':screen.availHeight-148})
     $('#table_area_m').scrollTop(0)
@@ -117,7 +117,7 @@ async function drawTable(indexData, sido_list, gungu_list){
   //console.log(gungu_list)
 
   if(isMobile){
-    $('#data_table').html("<div id='loading_back'><br><br><br><br><br><br><br><br><div class='spinner-border' role='status'></div></div>")
+    $('#data_table').html("<div id='loading_back' style='display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 250px; gap: 12px; color: #475569; padding-top: 50px;'><div class='spinner-border' role='status' style='width: 2rem; height: 2rem; color: #334155;'></div><div style='font-size: 0.9rem; font-weight: 500; color: #475569;'>동별 아파트 급지 랭킹을 집계 중입니다</div></div>")
     $('#data_table').css({'text-align' : 'center', 'width':'100%'})    
     $('#table_area_m').css({'height':screen.availHeight-148})
     $('#data_table').css({'background':'none'})
