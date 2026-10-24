@@ -15,6 +15,26 @@ function get_currency_source(key_prefix) {
 
 // 2026-10-24: 모바일 시장지표 ScrollSpy 및 퀵메뉴 네비게이션 개선
 var isUserScrollingByClick = false;
+var mfScrollRaf_m = null;
+
+function getWindowScrollTop() {
+  return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+}
+
+function setWindowScrollTop(y) {
+  window.scrollTo(0, y);
+}
+
+// 터치 제스처 시 진행 중인 스크롤 애니메이션 즉시 중단하여 자연스러운 반응 보장
+if (typeof window !== 'undefined') {
+  window.addEventListener('touchstart', function() {
+    if (mfScrollRaf_m) {
+      cancelAnimationFrame(mfScrollRaf_m);
+      mfScrollRaf_m = null;
+      isUserScrollingByClick = false;
+    }
+  }, { passive: true });
+}
 
 function updateActiveQuickBtn(index) {
   var $targetBtn = $('#btnQuick_' + index);
@@ -28,6 +48,7 @@ function goScroll_m(dest_id) {
     return false;
   }
   var targetId = menu_all[dest_id];
+  var yoffset = (targetId === "KO_Stock") ? 0 : 12;
   var $target = $('#' + targetId);
   if ($target.length === 0) return false;
 
@@ -35,14 +56,46 @@ function goScroll_m(dest_id) {
 
   // 상단 고정 헤더(#titleBar_theme + #update_info + #menu_selector = 약 110px) 고려하여 타이틀이 헤더 밑에 온전히 노출되도록 보정
   var headerOffset = 110;
-  var targetTop = (dest_id === 0) ? 0 : ($target.offset().top - headerOffset);
+  var targetTop = (dest_id === 0) ? 0 : ($target.offset().top - headerOffset + yoffset);
+  var scrollDest = Math.max(0, Math.round(targetTop));
+
+  // 멈칫거림 없는 즉각적인 60fps/120fps easeOutCubic 커스텀 스무스 스크롤 애니메이션 (index.html과 동일 엔진)
+  if (mfScrollRaf_m) {
+    cancelAnimationFrame(mfScrollRaf_m);
+    mfScrollRaf_m = null;
+  }
+
+  var startTop = getWindowScrollTop();
+  var distance = scrollDest - startTop;
+
+  if (Math.abs(distance) < 2) {
+    setWindowScrollTop(scrollDest);
+    return false;
+  }
 
   isUserScrollingByClick = true;
-  $('html, body').stop().animate({ scrollTop: Math.max(0, targetTop) }, 260, function() {
-    setTimeout(function() {
-      isUserScrollingByClick = false;
-    }, 50);
-  });
+  var startTime = performance.now();
+  var duration = 850; // index.html(PC)과 일원화된 850ms easeOutCubic 부드러운 스크롤
+
+  function step(currentTime) {
+    var elapsed = currentTime - startTime;
+    var progress = Math.min(elapsed / duration, 1);
+    // easeOutCubic: 출발 프레임부터 최고 속도로 즉각 반응하여 지연/멈칫거림 완전 제거
+    var ease = 1 - Math.pow(1 - progress, 3);
+    setWindowScrollTop(Math.round(startTop + distance * ease));
+
+    if (progress < 1) {
+      mfScrollRaf_m = requestAnimationFrame(step);
+    } else {
+      setWindowScrollTop(scrollDest);
+      mfScrollRaf_m = null;
+      setTimeout(function() {
+        isUserScrollingByClick = false;
+      }, 50);
+    }
+  }
+
+  mfScrollRaf_m = requestAnimationFrame(step);
   return false;
 }
 

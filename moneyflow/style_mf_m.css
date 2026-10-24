@@ -102,7 +102,7 @@
   .btnQuick{
     font-weight: 600;
     color: #475569;
-    padding: 3px 2px;
+    padding: 2px 1px;
     border-radius: 4px;
     cursor: pointer;
     transition: color 0.15s ease, background-color 0.15s ease;
@@ -116,7 +116,7 @@
   .btnQuick.active{
     font-weight: 700 !important;
     color: #d12145 !important;
-    background-color: rgba(209, 33, 69, 0.08);
+    /* background-color: rgba(209, 33, 69, 0.08); */
   }
 
   .btn{

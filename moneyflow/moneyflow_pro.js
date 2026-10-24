@@ -1174,7 +1174,7 @@ function goScroll(dest_id){
 
   mfSpyLock = true;
   var startTime = performance.now();
-  var duration = 280; // 280ms: 멈칫 없이 즉각 반응하는 쾌적한 스크롤
+  var duration = 850; // 850ms: 멈칫 없이 즉각 반응하는 부드러운 스크롤
 
   function step(currentTime) {
     var elapsed = currentTime - startTime;
