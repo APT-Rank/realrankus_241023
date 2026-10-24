@@ -1073,14 +1073,62 @@ function return_1month_arr(obj_val, obj_time){
   return [return_arr_time, return_arr_val]  
 }
 
+// 2026-10-24: 웹페이지(PC) ScrollSpy 및 멈칫 없는 즉각 스무스 스크롤 최적화
+var mfSpyLock = false;
+var mfScrollRaf = null;
+
 function goScroll(dest_id){
   if (typeof menu_all === 'undefined' || !menu_all || dest_id >= menu_all.length) return false;
   var targetId = menu_all[dest_id];
   var $target = $('#' + targetId);
-  if ($target.length === 0) return false;
-  var scrollDest = $target.position().top + $('#graph_area').scrollTop();
-  $('#graph_area').stop().animate({ scrollTop: scrollDest }, 350);
+  var ga = document.getElementById('graph_area');
+  if ($target.length === 0 || !ga) return false;
+
+  // #Currency 등 각 카테고리 헤더(daily_header)의 최상단 타이틀(#daily_title)이 정확히 노출되도록 계산
+  var currentGaScroll = ga.scrollTop;
+  var topDiff = $target[0].getBoundingClientRect().top - ga.getBoundingClientRect().top - ga.clientTop;
+  // margin-top(10px)을 감안하여 헤더 타이틀이 상단에 시원하게 완벽히 노출되도록 4px 여유 적용
+  var scrollDest = Math.max(0, Math.round(currentGaScroll + topDiff - 4));
+
   $("#shortcut_" + targetId).prop("checked", true);
+
+  // 멈칫거림 없는 즉각적인 60fps/120fps easeOutCubic 커스텀 스무스 스크롤 애니메이션
+  if (mfScrollRaf) {
+    cancelAnimationFrame(mfScrollRaf);
+    mfScrollRaf = null;
+  }
+
+  var startTop = ga.scrollTop;
+  var distance = scrollDest - startTop;
+
+  if (Math.abs(distance) < 2) {
+    ga.scrollTop = scrollDest;
+    return false;
+  }
+
+  mfSpyLock = true;
+  var startTime = performance.now();
+  var duration = 280; // 280ms: 멈칫 없이 즉각 반응하는 쾌적한 스크롤
+
+  function step(currentTime) {
+    var elapsed = currentTime - startTime;
+    var progress = Math.min(elapsed / duration, 1);
+    // easeOutCubic: 출발 프레임부터 최고 속도로 즉각 반응하여 지연/멈칫거림 완전 제거
+    var ease = 1 - Math.pow(1 - progress, 3);
+    ga.scrollTop = Math.round(startTop + distance * ease);
+
+    if (progress < 1) {
+      mfScrollRaf = requestAnimationFrame(step);
+    } else {
+      ga.scrollTop = scrollDest;
+      mfScrollRaf = null;
+      setTimeout(function() {
+        mfSpyLock = false;
+      }, 50);
+    }
+  }
+
+  mfScrollRaf = requestAnimationFrame(step);
   return false;
 }
 
@@ -2483,6 +2531,8 @@ addon_html += "</div>"
   }
 
   $('#graph_area').off('scroll.mfSpy').on('scroll.mfSpy', function() {
+    // 2026-10-24: 퀵메뉴 클릭 이동 중에는 선택 상태 변경 생략 (멈칫거림 방지)
+    if (mfSpyLock) return;
     var $ga = $(this);
     var gaScrollTop = $ga.scrollTop();
     var gaHeight = $ga.innerHeight();
@@ -2495,10 +2545,11 @@ addon_html += "</div>"
     }
 
     var currentIdx = 0;
+    var gaTop = this.getBoundingClientRect().top + this.clientTop;
     for (var k = 0; k < menu_all.length; k++) {
       var $el = $('#' + menu_all[k]);
       if ($el.length > 0) {
-        var relTop = $el.position().top;
+        var relTop = $el[0].getBoundingClientRect().top - gaTop;
         if (relTop <= 40) {
           currentIdx = k;
         } else {

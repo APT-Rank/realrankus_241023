@@ -33,12 +33,12 @@ function goScroll_m(dest_id) {
 
   updateActiveQuickBtn(dest_id);
 
-  // 상단 고정 헤더(#navBar + #update_info + #menu_selector = 약 98px) 고려
-  var headerOffset = 98;
+  // 상단 고정 헤더(#titleBar_theme + #update_info + #menu_selector = 약 110px) 고려하여 타이틀이 헤더 밑에 온전히 노출되도록 보정
+  var headerOffset = 110;
   var targetTop = (dest_id === 0) ? 0 : ($target.offset().top - headerOffset);
 
   isUserScrollingByClick = true;
-  $('html, body').stop().animate({ scrollTop: Math.max(0, targetTop) }, 300, function() {
+  $('html, body').stop().animate({ scrollTop: Math.max(0, targetTop) }, 260, function() {
     setTimeout(function() {
       isUserScrollingByClick = false;
     }, 50);
