@@ -13,36 +13,88 @@ function get_currency_source(key_prefix) {
   return data || {};
 }
 
-function goScroll_m(dest_id){
-  if (!menu_position || menu_position.length === 0 || typeof menu_position[0] === 'undefined') {
+// 2026-10-24: 모바일 시장지표 ScrollSpy 및 퀵메뉴 네비게이션 개선
+var isUserScrollingByClick = false;
+
+function updateActiveQuickBtn(index) {
+  var $targetBtn = $('#btnQuick_' + index);
+  if ($targetBtn.length === 0 || $targetBtn.hasClass('active')) return;
+  $('.btnQuick').removeClass('active');
+  $targetBtn.addClass('active');
+}
+
+function goScroll_m(dest_id) {
+  if (typeof menu_all === 'undefined' || !menu_all || dest_id >= menu_all.length) {
     return false;
   }
-  dest_offset = menu_position[0].toFixed(0)
-  dest = menu_position[dest_id]
-  prev_selected = menu_all[dest_id]  
-  scrollTo(0, dest-dest_offset)
-  //$('#graph_area').animate( {scrollTop: (dest-145)}, 350 )
+  var targetId = menu_all[dest_id];
+  var $target = $('#' + targetId);
+  if ($target.length === 0) return false;
+
+  updateActiveQuickBtn(dest_id);
+
+  // 상단 고정 헤더(#navBar + #update_info + #menu_selector = 약 98px) 고려
+  var headerOffset = 98;
+  var targetTop = (dest_id === 0) ? 0 : ($target.offset().top - headerOffset);
+
+  isUserScrollingByClick = true;
+  $('html, body').stop().animate({ scrollTop: Math.max(0, targetTop) }, 300, function() {
+    setTimeout(function() {
+      isUserScrollingByClick = false;
+    }, 50);
+  });
   return false;
+}
+
+function initMoneyflowScrollSpy_m() {
+  $(window).off('scroll.mfSpy').on('scroll.mfSpy', function() {
+    if (isUserScrollingByClick) return;
+    if (!$('#menu_select_chart').is(':checked') || $('#graph_area').is(':hidden')) return;
+
+    var scrollPos = $(window).scrollTop();
+    var windowHeight = $(window).height();
+    var docHeight = $(document).height();
+
+    // 1. 페이지 맨 하단 도달 시 마지막 항목 활성화
+    if (scrollPos + windowHeight >= docHeight - 40) {
+      updateActiveQuickBtn(menu_all.length - 1);
+      return;
+    }
+
+    // 2. 뷰포트 상단 기준 임계선 (고정 헤더 98px + 감지 여유 40px = 138px)
+    var threshold = scrollPos + 138;
+    var currentIdx = 0;
+
+    for (var k = 0; k < menu_all.length; k++) {
+      var $el = $('#' + menu_all[k]);
+      if ($el.length > 0) {
+        var top = $el.offset().top;
+        if (top <= threshold) {
+          currentIdx = k;
+        } else {
+          break;
+        }
+      }
+    }
+
+    updateActiveQuickBtn(currentIdx);
+  });
 }
 
 function show_daily_info_m(){
   shortcut_html = ""  
   shortcut_html += "<div id='shortcut_menu'>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(0)'>#국내 증시</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(1)'>#미국 증시</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(2)'>#환율</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(3)'>#코인</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(4)'>#금/원자재</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(5)'>#국제유가</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(6)'>#채권수익률</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(7)'>#금리</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(8)'>#통화/외환</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(9)'>#채권</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(10)'>#무역</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(11)'>#소득</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(12)'>#부동산</div>"
-    shortcut_html +="<div class='btnQuick' onClick='goScroll_m(13)'>#심리지표</div>"
-  shortcut_html +="</div>"  
+  var menu_labels_m = [
+    '#국내 증시', '#미국 증시', '#환율', '#코인',
+    '#금/원자재', '#국제유가', '#채권수익률', '#금리',
+    '#통화/외환', '#채권', '#무역', '#소득',
+    '#부동산', '#심리지표'
+  ];
+  for (var m = 0; m < menu_all.length; m++) {
+    var activeCls = (m === 0) ? " active" : "";
+    shortcut_html += "<div class='btnQuick" + activeCls + "' id='btnQuick_" + m + "' data-index='" + m + "' onClick='goScroll_m(" + m + ")'>" + menu_labels_m[m] + "</div>";
+  }
+  shortcut_html += "</div>"  
   
   $('#shortcut').append(shortcut_html);
 
@@ -1465,4 +1517,6 @@ addon_html += "<div style='height:135px'></div>"
   for(var k = 0 ; k < menu_all.length ; k++){
     menu_position[k] = $('#' + menu_all[k]).offset().top    
   }
+  // 2026-10-24: 렌더링 완료 후 ScrollSpy 이벤트 리스너 등록
+  initMoneyflowScrollSpy_m();
 }

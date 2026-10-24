@@ -1074,8 +1074,13 @@ function return_1month_arr(obj_val, obj_time){
 }
 
 function goScroll(dest_id){
-  dest = menu_position[dest_id]
-  $('#graph_area').animate( {scrollTop: (dest-145)}, 350 )
+  if (typeof menu_all === 'undefined' || !menu_all || dest_id >= menu_all.length) return false;
+  var targetId = menu_all[dest_id];
+  var $target = $('#' + targetId);
+  if ($target.length === 0) return false;
+  var scrollDest = $target.position().top + $('#graph_area').scrollTop();
+  $('#graph_area').stop().animate({ scrollTop: scrollDest }, 350);
+  $("#shortcut_" + targetId).prop("checked", true);
   return false;
 }
 
@@ -2477,23 +2482,32 @@ addon_html += "</div>"
     //console.log(menu_position[k])
   }
 
-  $('#graph_area').scroll(function() {
-    for(var k = 0 ; k < menu_all.length ; k++){
-      menu_current_position[k] = $('#' + menu_all[k]).offset().top - 145
-    }
-    
-    for (var j = 0 ; j < menu_current_position.length ; j++){
-      if( menu_current_position[j] < 10){        
-        if( 440 < menu_current_position[menu_current_position.length-1] && menu_current_position[menu_current_position.length-1] < 443 ){
-          $("#shortcut_" + menu_all[menu_current_position.length-1]).prop("checked", true);
-        }
-        else{
-          $("#shortcut_" + menu_all[j]).prop("checked", true);
-        }
-      }      
+  $('#graph_area').off('scroll.mfSpy').on('scroll.mfSpy', function() {
+    var $ga = $(this);
+    var gaScrollTop = $ga.scrollTop();
+    var gaHeight = $ga.innerHeight();
+    var gaScrollHeight = this.scrollHeight;
+
+    // 맨 아래 도달 시 마지막 항목 활성화
+    if (gaScrollTop + gaHeight >= gaScrollHeight - 30) {
+      $("#shortcut_" + menu_all[menu_all.length - 1]).prop("checked", true);
+      return;
     }
 
-  })
+    var currentIdx = 0;
+    for (var k = 0; k < menu_all.length; k++) {
+      var $el = $('#' + menu_all[k]);
+      if ($el.length > 0) {
+        var relTop = $el.position().top;
+        if (relTop <= 40) {
+          currentIdx = k;
+        } else {
+          break;
+        }
+      }
+    }
+    $("#shortcut_" + menu_all[currentIdx]).prop("checked", true);
+  });
 }
 
 function redraw_graph(obj, duration){

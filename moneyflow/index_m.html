@@ -82,6 +82,25 @@
 
 </head>
 <style>
+  /* 2026-10-24: 시장지표 모바일 퀵메뉴 ScrollSpy 활성 스타일 */
+  .btnQuick {
+    font-weight: 600;
+    color: #475569;
+    padding: 3px 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btnQuick:active {
+    font-weight: 700;
+    color: #d12145;
+  }
+  .btnQuick.active {
+    font-weight: 700 !important;
+    color: #d12145 !important;
+    background-color: rgba(209, 33, 69, 0.08);
+  }
 </style>
 
 <body ontouchstart="">
@@ -437,6 +456,13 @@
           loadChartDataInBackground();
         } else {
           $('#shortcut').show();
+          // 2026-10-24: 차트 탭 전환 시 첫 번째 항목 활성화 및 ScrollSpy 리스너 활성화
+          if (typeof updateActiveQuickBtn === 'function') {
+            updateActiveQuickBtn(0);
+          }
+          if (typeof initMoneyflowScrollSpy_m === 'function') {
+            initMoneyflowScrollSpy_m();
+          }
         }
       }
     }

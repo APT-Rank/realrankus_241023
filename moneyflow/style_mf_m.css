@@ -101,11 +101,22 @@
   }
   .btnQuick{
     font-weight: 600;
-    color: black;
+    color: #475569;
+    padding: 3px 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
   .btnQuick:active{
-    font-weight: 600;
+    font-weight: 700;
     color: #d12145;
+  }
+  /* 2026-10-24: 퀵메뉴 ScrollSpy 활성 스타일 */
+  .btnQuick.active{
+    font-weight: 700 !important;
+    color: #d12145 !important;
+    background-color: rgba(209, 33, 69, 0.08);
   }
 
   .btn{
