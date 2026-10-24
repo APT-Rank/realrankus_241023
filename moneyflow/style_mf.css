@@ -54,7 +54,8 @@
   #graph_area{
     position: relative;
     height: 760px;
-    overflow-y: auto;    
+    overflow-y: auto;
+    scroll-behavior: auto;
   }
 
   .hr-dashed{

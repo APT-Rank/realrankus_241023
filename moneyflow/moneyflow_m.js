@@ -84,8 +84,8 @@ function goScroll_m(dest_id) {
     }
     var elapsed = currentTime - startTime;
     var progress = Math.min(elapsed / duration, 1);
-    // easeOutQuad (1 - (1 - progress)^2): 모바일 화면 크기에 최적화된 부드러운 감속 곡선
-    var ease = 1 - Math.pow(1 - progress, 2);
+    // PC와 동일한 easeOutCubic 감속 곡선
+    var ease = 1 - Math.pow(1 - progress, 3);
     setWindowScrollTop(Math.round(startTop + distance * ease));
 
     if (progress < 1) {
