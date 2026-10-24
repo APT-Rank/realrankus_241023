@@ -97,6 +97,8 @@ function show_daily_info_m(){
   shortcut_html += "</div>"  
   
   $('#shortcut').append(shortcut_html);
+  // 2026-10-24: 퀵메뉴 생성 직후 ScrollSpy 바인딩 (이후 차트 렌더링 중 예외가 발생해도 동작 보장)
+  initMoneyflowScrollSpy_m();
 
   
   addon_html = ""  
