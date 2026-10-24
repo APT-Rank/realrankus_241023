@@ -166,15 +166,15 @@
     position: fixed;
     bottom: 3.7em;
     width: 100%;
-    padding-top: 10px;
+    padding-top: 6px;
     padding-bottom: 10px;
     font-size: 0.8em;    
     display:grid;
     background: #efefef;
     text-align: center;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    row-gap: 3px;
-    border-top: 1px solid #ddd;
+    row-gap: 0;
+    /* border-top: 1px solid #ddd;*/
     box-shadow: rgba(50, 50, 93, 0.25) 0px -5px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   }
   .index_title{
