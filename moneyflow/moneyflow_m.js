@@ -15,24 +15,32 @@ function get_currency_source(key_prefix) {
 
 // 2026-10-24: 모바일 시장지표 ScrollSpy 및 퀵메뉴 네비게이션 개선
 var isUserScrollingByClick = false;
-var mfScrollRaf_m = null;
+var mfScrollSpyUnlockTimer_m = null;
 
-function getWindowScrollTop() {
-  return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+function scheduleScrollSpyUnlock_m(delay) {
+  if (mfScrollSpyUnlockTimer_m) {
+    clearTimeout(mfScrollSpyUnlockTimer_m);
+  }
+  mfScrollSpyUnlockTimer_m = setTimeout(function() {
+    isUserScrollingByClick = false;
+    mfScrollSpyUnlockTimer_m = null;
+  }, delay);
 }
 
-function setWindowScrollTop(y) {
-  window.scrollTo(0, y);
-}
-
-// 터치 제스처 시 진행 중인 스크롤 애니메이션 즉시 중단하여 자연스러운 반응 보장
+// 네이티브 스크롤이 끝난 뒤 ScrollSpy를 다시 활성화하고, 터치 제스처에는 즉시 반응
 if (typeof window !== 'undefined') {
-  window.addEventListener('touchstart', function() {
-    if (mfScrollRaf_m) {
-      cancelAnimationFrame(mfScrollRaf_m);
-      mfScrollRaf_m = null;
-      isUserScrollingByClick = false;
+  window.addEventListener('scroll', function() {
+    if (isUserScrollingByClick) {
+      scheduleScrollSpyUnlock_m(180);
     }
+  }, { passive: true });
+
+  window.addEventListener('touchstart', function() {
+    if (mfScrollSpyUnlockTimer_m) {
+      clearTimeout(mfScrollSpyUnlockTimer_m);
+      mfScrollSpyUnlockTimer_m = null;
+    }
+    isUserScrollingByClick = false;
   }, { passive: true });
 }
 
@@ -59,47 +67,10 @@ function goScroll_m(dest_id) {
   var targetTop = (dest_id === 0) ? 0 : ($target.offset().top - headerOffset + yoffset);
   var scrollDest = Math.max(0, Math.round(targetTop));
 
-  // 멈칫거림 없는 즉각적인 60fps/120fps easeOutCubic 커스텀 스무스 스크롤 애니메이션 (index.html과 동일 엔진)
-  if (mfScrollRaf_m) {
-    cancelAnimationFrame(mfScrollRaf_m);
-    mfScrollRaf_m = null;
-  }
-
-  var startTop = getWindowScrollTop();
-  var distance = scrollDest - startTop;
-
-  if (Math.abs(distance) < 2) {
-    setWindowScrollTop(scrollDest);
-    return false;
-  }
-
+  // 브라우저의 네이티브 smooth scroll을 사용해 모바일의 JS 프레임별 스크롤 갱신을 피함
   isUserScrollingByClick = true;
-  // 2026-10-24 [방안 1]: 첫 프레임 지연 누적 방지를 위해 첫 RAF 콜백 시점(currentTime)과 동기화
-  var startTime = null;
-  var duration = 850; // index.html(PC)과 통일된 스크롤 시간
-
-  function step(currentTime) {
-    if (!startTime) {
-      startTime = currentTime; // 실제 첫 렌더링 시점을 0으로 동기화 (초기 멈칫 및 첫 프레임 급발진 제거)
-    }
-    var elapsed = currentTime - startTime;
-    var progress = Math.min(elapsed / duration, 1);
-    // PC와 동일한 easeOutCubic 감속 곡선
-    var ease = 1 - Math.pow(1 - progress, 3);
-    setWindowScrollTop(Math.round(startTop + distance * ease));
-
-    if (progress < 1) {
-      mfScrollRaf_m = requestAnimationFrame(step);
-    } else {
-      setWindowScrollTop(scrollDest);
-      mfScrollRaf_m = null;
-      setTimeout(function() {
-        isUserScrollingByClick = false;
-      }, 50);
-    }
-  }
-
-  mfScrollRaf_m = requestAnimationFrame(step);
+  scheduleScrollSpyUnlock_m(180);
+  window.scrollTo(0, scrollDest);
   return false;
 }
 
