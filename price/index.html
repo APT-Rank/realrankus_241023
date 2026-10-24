@@ -137,6 +137,29 @@
   .compare_price_container .compare_price {
     flex: 1;
   }
+  /* 2026-10-24: 비교가격 줄바꿈 방지 스타일 */
+  .compare_price {
+    white-space: nowrap;
+  }
+  .compare_price > div {
+    white-space: nowrap;
+  }
+  /* 2026-10-24: 거래가격 우측 신고가 배지 스타일 */
+  .badge_highest {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+    padding: 1px 5px;
+    font-size: 0.65em;
+    font-weight: 700;
+    line-height: 1.25;
+    border-radius: 4px;
+    background-color: #E43B46;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    position: relative;
+    top: -1px;
+  }
   .apt_header_wrapper {
     display: flex;
     justify-content: space-between;
@@ -1399,7 +1422,9 @@
           compare_list = compare_price(deal_price_num, max_price_deal, min_price_deal, dealed_history_date, dealed_history_price, dealed_date)
 
           list_class_name = "listBox"
-          if (Number(deal_price) > Number(max_price_deal[1])) {
+          // 2026-10-24: 신고가 여부 판별 (기존 최고가 초과 여부)
+          var isHighest = (max_price_deal && max_price_deal[1] != null && Number(deal_price) > Number(max_price_deal[1]));
+          if (isHighest) {
             list_class_name += " highest"
             if (newHigh < 5) {
               shareText_highest += "『" + aptName
@@ -1488,7 +1513,9 @@
           addon_html += "<div class='price_table2'>"
           addon_html += "<div class='price_table2_left'>"
           addon_html += "<div class='price_info'>"
-          addon_html += "<div class='price_num'>" + Korean_price(deal_price_num) + "</div>"
+          // 2026-10-24: 신고가의 경우 거래가격 우측에 [신고가] 배지 표시
+          var highest_badge_html = isHighest ? "<span class='badge_highest'>신고가</span>" : "";
+          addon_html += "<div class='price_num'>" + Korean_price(deal_price_num) + highest_badge_html + "</div>"
           addon_html += "<div class='hided_ratio'>직전대비 " + compare_last_tag + "</div>"
           addon_html += "</div>"
           addon_html += "<div class='complex_table'>"
@@ -1594,10 +1621,12 @@
               $btnWrap.detach().appendTo($compareContainer);
             }
           });
+          // 2026-10-24: 모바일 3단 비교가격 줄바꿈 방지 (방안1: grid 컬럼 재배치 및 자동 폭 할당)
           $(".compare_price_container").css({
             'grid-area': 'auto',
             'display': 'grid',
-            'grid-template-columns': '1fr 0.4fr',
+            'grid-template-columns': '1fr auto',
+            'column-gap': '8px',
             'align-items': 'center',
             'padding-top': '8px',
             'border-top': '1px solid #eee'
@@ -1605,17 +1634,21 @@
           $(".compare_price").css({
             'grid-area': 'auto',
             'display': 'grid',
-            'grid-template-columns': '0.26fr 0.22fr 0.52fr',
-            'font-size': '0.7em',
+            'grid-template-columns': 'auto auto 1fr',
+            'column-gap': '8px',
+            'font-size': '0.72em',
             'font-weight': '600',
             'border-top': '0px',
             'padding-top': '0px'
+          })
+          $(".compare_price > div").css({
+            'white-space': 'nowrap'
           })
           $(".card_download_wrapper").css({
             'display': 'flex',
             'justify-content': 'flex-end',
             'align-items': 'center',
-            'padding-right': '6px'
+            'padding-right': '4px'
           })
           $(".price_num").css({ 'line-height': '1.2em', 'font-size': '1em' })
           $(".apt_name").css('font-size', '0.9em')
@@ -3154,6 +3187,23 @@
             clonedCard.style.boxShadow = 'none';
             clonedCard.style.border = '1px solid #E43B46';
             clonedCard.style.boxSizing = 'border-box';
+
+            // 2026-10-24: 캡처 시 카드 다운로드 버튼 무시로 인한 우측 여백 낭비 제거 및 3단 비교가격 전체 폭 활용
+            var clonedCompareContainer = clonedCard.querySelector('.compare_price_container');
+            if (clonedCompareContainer) {
+              clonedCompareContainer.style.gridTemplateColumns = '1fr';
+              clonedCompareContainer.style.width = '100%';
+            }
+            var clonedComparePrice = clonedCard.querySelector('.compare_price');
+            if (clonedComparePrice) {
+              clonedComparePrice.style.gridTemplateColumns = 'auto auto 1fr';
+              clonedComparePrice.style.columnGap = '8px';
+              clonedComparePrice.style.width = '100%';
+              var divs = clonedComparePrice.querySelectorAll('div');
+              for (var d = 0; d < divs.length; d++) {
+                divs[d].style.whiteSpace = 'nowrap';
+              }
+            }
 
             // 출처 표기 (워터마크: 왼쪽 캡처 일시, 오른쪽 리얼랭커스 | realrankus.com)
             var footer = clonedDoc.createElement('div');

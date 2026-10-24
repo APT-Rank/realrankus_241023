@@ -50,6 +50,23 @@
     color: #cc233f
   }
 
+  /* 2026-10-24: 거래가격 우측 신고가 배지 스타일 */
+  .badge_highest {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+    padding: 1px 5px;
+    font-size: 0.65em;
+    font-weight: 700;
+    line-height: 1.25;
+    border-radius: 4px;
+    background-color: #E43B46;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    position: relative;
+    top: -1px;
+  }
+
   .hided_ratio {
     font-size: 0.6em;
     font-weight: 600;
@@ -94,6 +111,11 @@
     grid-template-columns: 110px 70px 1fr;
     font-size: 0.8em;
     align-items: center;
+  }
+
+  /* 2026-10-24: 3단 비교가격 줄바꿈 방지 */
+  .compare_price > div {
+    white-space: nowrap;
   }
 
   .sparkline_container {
