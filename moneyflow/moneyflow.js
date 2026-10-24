@@ -1107,10 +1107,11 @@ function goScroll(dest_id){
   }
 
   mfSpyLock = true;
-  var startTime = performance.now();
+  var startTime = null;
   var duration = 850; // 850ms: 멈칫 없이 즉각 반응하는 부드러운 스크롤
 
   function step(currentTime) {
+    if (!startTime) startTime = currentTime;
     var elapsed = currentTime - startTime;
     var progress = Math.min(elapsed / duration, 1);
     // easeOutCubic: 출발 프레임부터 최고 속도로 즉각 반응하여 지연/멈칫거림 완전 제거

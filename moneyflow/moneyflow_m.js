@@ -74,14 +74,18 @@ function goScroll_m(dest_id) {
   }
 
   isUserScrollingByClick = true;
-  var startTime = performance.now();
-  var duration = 850; // index.html(PC)과 일원화된 850ms easeOutCubic 부드러운 스크롤
+  // 2026-10-24 [방안 1]: 첫 프레임 지연 누적 방지를 위해 첫 RAF 콜백 시점(currentTime)과 동기화
+  var startTime = null;
+  var duration = 850; // index.html(PC)과 통일된 스크롤 시간
 
   function step(currentTime) {
+    if (!startTime) {
+      startTime = currentTime; // 실제 첫 렌더링 시점을 0으로 동기화 (초기 멈칫 및 첫 프레임 급발진 제거)
+    }
     var elapsed = currentTime - startTime;
     var progress = Math.min(elapsed / duration, 1);
-    // easeOutCubic: 출발 프레임부터 최고 속도로 즉각 반응하여 지연/멈칫거림 완전 제거
-    var ease = 1 - Math.pow(1 - progress, 3);
+    // easeOutQuad (1 - (1 - progress)^2): 모바일 화면 크기에 최적화된 부드러운 감속 곡선
+    var ease = 1 - Math.pow(1 - progress, 2);
     setWindowScrollTop(Math.round(startTop + distance * ease));
 
     if (progress < 1) {
@@ -1014,7 +1018,6 @@ FRED_time_monthly_arr = Object.assign({}, FRED_time_monthly_arr)
 FRED_interest_arr = return_1year_monthly_arr(FRED_interest_monthly_arr, FRED_time_monthly_arr)
 FRED_interest_val_arr = FRED_interest_arr[1]
 
-console.log(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
 FRED_interest_val_arr.push(FRED_interest_daily_arr[(FRED_time_daily_arr.length)-1])
 
 addon_html += "<div class='graph_item'>"
