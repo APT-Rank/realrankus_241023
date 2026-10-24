@@ -160,6 +160,28 @@
     position: relative;
     top: -1px;
   }
+  /* 2026-10-24: 카드 이미지 캡처 카메라 플래시 이펙트 */
+  @keyframes cameraFlashEffect {
+    0% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+    30% {
+      opacity: 0.45;
+      filter: brightness(1.75);
+    }
+    70% {
+      opacity: 0.9;
+      filter: brightness(1.1);
+    }
+    100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+  }
+  .camera-flash-active {
+    animation: cameraFlashEffect 0.35s ease-out !important;
+  }
   .apt_header_wrapper {
     display: flex;
     justify-content: space-between;
@@ -3161,7 +3183,14 @@
     });
     $btn.prop('disabled', true).html('<div class="spinner-border spinner-border-sm text-white" role="status"></div>');
 
+    // 2026-10-24: 화면 카메라 플래시 깜빡임 이펙트 트리거
+    $card.addClass('camera-flash-active');
+    setTimeout(function () {
+      $card.removeClass('camera-flash-active');
+    }, 400);
 
+    // 플래시 애니메이션의 첫 프레임과 버튼 스피너 렌더링이 화면에 즉시 노출되도록 브라우저 렌더링 대기 (100ms)
+    await new Promise(function (resolve) { setTimeout(resolve, 100); });
 
     try {
       var cardDom = $card[0];
@@ -3179,8 +3208,19 @@
           return false;
         },
         onclone: function (clonedDoc) {
+          // 2026-10-24: 캡처 클론 문서 내 모든 애니메이션 무력화 및 투명도 100% 강제 (깜빡이는 도중 연하게 캡처되는 현상 방지)
+          var noAnimStyle = clonedDoc.createElement('style');
+          noAnimStyle.innerHTML = '* { animation: none !important; transition: none !important; } .listBox, #apt_card_' + index + ' { opacity: 1 !important; transform: none !important; filter: none !important; }';
+          clonedDoc.head.appendChild(noAnimStyle);
+
           var clonedCard = clonedDoc.getElementById('apt_card_' + index);
           if (clonedCard) {
+            clonedCard.classList.remove('camera-flash-active');
+            clonedCard.style.animation = 'none';
+            clonedCard.style.transition = 'none';
+            clonedCard.style.opacity = '1';
+            clonedCard.style.filter = 'none';
+            clonedCard.style.transform = 'none';
             clonedCard.style.backgroundColor = '#ffffff';
             clonedCard.style.padding = '14px 16px';
             clonedCard.style.borderRadius = '0px';
@@ -3237,6 +3277,7 @@
 
     } finally {
       // 2026-10-23: 버튼 스타일 및 내용 복원
+      $card.removeClass('camera-flash-active');
       $btn.css({
         "background-color": "",
         "border-color": ""
