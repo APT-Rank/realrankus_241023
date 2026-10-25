@@ -176,7 +176,8 @@ body:has(#rearrangeNew:checked) #dataList .apt_year { color:#0047ab !important; 
   #titleBar, #selections, #weight { left: 0; right: 0; width: 100%; margin: 0; }
   #titleBar { top: 0; }
   #selections { top: 51px; }
-  #weight { top: 97px; }
+  /* 2026-10-26: Overlap the mobile selection strip by 1px to hide fractional-pixel seams. */
+  #weight { top: 96px; }
   #v2Workspace { position: fixed; z-index: 2; top: 122px; right: 0; bottom: 0; left: 0; height: calc(100vh - 122px); height: calc(100dvh - 122px); }
   #v2GlobalSearchPanel { position: fixed; z-index: 1060; top:-220px; right:1%; left:1%; width:98%; max-height:none; overflow:visible; }
   #v2GlobalSearchPanel.is-visible { top:0; }

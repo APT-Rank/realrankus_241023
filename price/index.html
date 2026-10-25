@@ -110,7 +110,7 @@
   <script src="../js/request_report.js" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet" />
-  <link href="../css/style_price.css?v=20261026_1" rel="stylesheet" />
+  <link href="../css/style_price.css?v=20261026_2" rel="stylesheet" />
   <link href="../css/slider.css" rel="stylesheet" />
 
   <script src="../js/doubleSlider.js" type="text/javascript"></script>
@@ -3198,7 +3198,7 @@
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        windowWidth: 400,         // 2026-10-26: 모바일 뷰포트 기준 렌더링 (PC/태블릿에서도 모바일 미디어 쿼리 활성화)
+        windowWidth: 412,         // 2026-10-26: 모바일 뷰포트 기준 렌더링 (PC/태블릿에서도 모바일 미디어 쿼리 활성화)
         ignoreElements: function (el) {
           // 2026-10-22: 캡처 대상 카드가 아닌 다른 모든 카드 및 구분선은 복제 단계에서 즉시 제외하여 렌더링 10배 가속 (ignoreElements)
           if (el.classList && el.classList.contains('listBox') && el !== cardDom) return true;
@@ -3227,10 +3227,10 @@
             clonedCard.style.border = '1px solid #E43B46';
             clonedCard.style.boxSizing = 'border-box';
 
-            // 2026-10-26: PC/태블릿에서도 모바일과 동일한 컴팩트 카드 규격(폭 360px) 강제
-            clonedCard.style.width = '360px';
-            clonedCard.style.maxWidth = '360px';
-            clonedCard.style.minWidth = '360px';
+            // 2026-10-26: 모바일 원본 규격(1236x675 @3x -> 412x225px)과 100% 일치하도록 카드 폭 412px 강제
+            clonedCard.style.width = '412px';
+            clonedCard.style.maxWidth = '412px';
+            clonedCard.style.minWidth = '412px';
             clonedCard.style.margin = '0 auto';
 
             // 2026-10-26: PC 환경에서는 sparkline_container가 price_table2 외부에 있으므로 모바일처럼 price_table2 내부로 재배치
@@ -3308,7 +3308,7 @@
             var clonedPriceNum = clonedCard.querySelector('.price_num');
             if (clonedPriceNum) {
               clonedPriceNum.style.lineHeight = '1.2em';
-              clonedPriceNum.style.fontSize = '1.15em';
+              clonedPriceNum.style.fontSize = '1.25em';
             }
             var clonedAptName = clonedCard.querySelector('.apt_name');
             if (clonedAptName) {
