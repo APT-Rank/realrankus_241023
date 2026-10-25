@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
+<!-- 2026-10-25: V2 is promoted as the primary /op/ service; the previous implementation is preserved in /op_backup/. -->
+<!-- 2026-10-25: The promoted interface includes responsive map/list layout, marker details, nationwide sorting, and navy charts. -->
 <head>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -20,7 +22,8 @@
     gtag('config', 'UA-218993952-1');
 
     if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('serviceWorker_op.js')
+    // 2026-10-25: Register the promoted worker at the final /op/ application path.
+    navigator.serviceWorker.register('/op/serviceWorker_v2.js')
       .then((reg) => {
         console.log('Service Worker Registered!', reg);
       });
@@ -50,7 +53,7 @@
   <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
   <link rel="apple-touch-icon" href="https://www.realrankus.com/op/op-rank-152x152.png">
   <!-- 웹 앱 매니페스트를 읽어 들이기 -->
-  <link rel="manifest" href="manifest_op.json">  
+  <link rel="manifest" href="/op/manifest_v2.json">
 
   <link rel="canonical" href="https://www.realrankus.com/op/">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
@@ -70,22 +73,23 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
 
-  <script src="../js/menu_select_box.js?ver=1.3" type="text/javascript"></script>
-  <script src="../js/draw_chart.js" type="text/javascript"></script>
-  <script src="../js/sort_op.js" type="text/javascript"></script>
-  <script src="../js/search_op.js" type="text/javascript"></script>
-  <script src="../js/rearrange_op.js" type="text/javascript"></script>
-  <script src="../js/share.js?v=20261010_1" type="text/javascript"></script>
-  <script src="../js/weight_cal.js" type="text/javascript"></script>
-  <script src="../js/weight_array.js" type="text/javascript"></script>
-  <script src="../js/simulation.js" type="text/javascript"></script>
-  <script src="../js/ad_oprank.js" type="text/javascript"></script>
+  <script src="/js/menu_select_box.js?ver=1.3" type="text/javascript"></script>
+  <script src="/js/draw_chart.js?v=20261026_4" type="text/javascript"></script>
+  <script src="/js/sort_op.js" type="text/javascript"></script>
+  <script src="/op/search_op_v2.js?v=20261026_4" type="text/javascript"></script>
+  <script src="/js/rearrange_op.js" type="text/javascript"></script>
+  <script src="/js/share.js?v=20261010_1" type="text/javascript"></script>
+  <script src="/js/weight_cal.js" type="text/javascript"></script>
+  <script src="/js/weight_array.js" type="text/javascript"></script>
+  <script src="/js/simulation.js" type="text/javascript"></script>
+  <script src="/js/ad_oprank.js?v=20261025_1" type="text/javascript"></script>
 
-  <link href="../css/style_common.css" rel="stylesheet"/>
-  <link href="../css/style_op.css" rel="stylesheet"/>
-  <link href="../css/slider_op.css" rel="stylesheet"/>
+  <link href="/css/style_common.css" rel="stylesheet"/>
+  <link href="/css/style_op.css" rel="stylesheet"/>
+  <link href="/css/slider_op.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/op/op_v2.css?v=20261026_54">
 
-  <script src="../js/doubleSlider.js" type="text/javascript"></script>
+  <script src="/js/doubleSlider.js" type="text/javascript"></script>
 </head>
 <style>
 </style>
@@ -100,9 +104,9 @@
     <div id="centerBox">
       <div id="titleBar">
         <!--검색 버튼 표시-->
-        <div id='search' onClick='showAptSearchBar()'><i class="fas fa-search"></i></div>
+        <div id='search' role='button' tabindex='0' aria-label='통합 검색'><i class="fas fa-search"></i></div>
         <!--재정렬 버튼 표시-->
-        <div id="rearrange" class="position-relative" onClick='showRearrangeBar(this)'><i class="fa-solid fa-arrow-down-wide-short"></i></div>
+        <div id="rearrange" class="position-relative" role="button" tabindex="0" aria-label="정렬"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
         <!--타이틀 표시-->
         <div id="title" onClick='scrollUp()'>오피스텔랭크</div>
         <!--공유 버튼-->
@@ -118,59 +122,17 @@
         <div id="gungu_selection"><select id="gungu" onChange="updateRegion()"></select></div>
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
-            <!-- 수정 -->
-            <option value="202609" selected>2026년 09월</option>
+            <!-- 2026-10-25: Keep only the active 2026-10 dataset selectable; retain older months in comments for later release. -->
+            <option value="202610" selected>2026년 10월</option>
+            <!--
             <option value="202608">2026년 08월</option>
             <option value="202607">2026년 07월</option>
             <option value="202606">2026년 06월</option>
             <option value="202605">2026년 05월</option>
-            <!--
-            <option value="202604">2026년 04월</option>            
+            <option value="202604">2026년 04월</option>
             <option value="202603">2026년 03월</option>            
             <option value="202602">2026년 02월</option>            
-            <option value="202601">2026년 01월</option>            
-            <option value="202512">2025년 12월</option>            
-            <option value="202511">2025년 11월</option>            
-            <option value="202510">2025년 10월</option>            
-            <option value="202509">2025년 09월</option>
-            <option value="202508">2025년 08월</option>            
-            <option value="202507">2025년 07월</option>
-            <option value="202506">2025년 06월</option>
-            <option value="202505">2025년 05월</option>            
-            <option value="202504">2025년 04월</option>            
-            <option value="202503">2025년 03월</option>            
-            <option value="202502">2025년 02월</option>            
-            <option value="202501">2025년 01월</option>            
-            <option value="202412">2024년 12월</option>            
-            <option value="202411">2024년 11월</option>            
-            <option value="202410">2024년 10월</option>            
-            <option value="202409">2024년 09월</option>            
-            <option value="202408">2024년 08월</option>
-            <option value="202407">2024년 07월</option>
-            <option value="202406">2024년 06월</option>            
-            <option value="202405">2024년 05월</option>            
-            <option value="202404">2024년 04월</option>            
-            <option value="202403">2024년 03월</option>            
-            <option value="202402">2024년 02월</option>            
-            <option value="202401">2024년 01월</option>            
-            <option value="202312">2023년 12월</option>            
-            <option value="202311">2023년 11월</option>
-            <option value="202310">2023년 10월</option>            
-            <option value="202309">2023년 09월</option>            
-            <option value="202308">2023년 08월</option>
-            <option value="202307">2023년 07월</option>
-            <option value="202306">2023년 06월</option>            
-            <option value="202305">2023년 05월</option>            
-            <option value="202304">2023년 04월</option>
-            <option value="202303">2023년 03월</option>
-            <option value="202302">2023년 02월</option>
-            <option value="202301">2023년 01월</option>            
-            <option value="202212">2022년 12월</option>
-            <option value="202211">2022년 11월</option>
-            <option value="202210">2022년 10월</option>
-            <option value="202209">2022년 09월</option>
-            <option value="202208">2022년 08월</option>
-            <option value="202207">2022년 07월</option>
+            <option value="202601">2026년 01월</option>
             -->
           </select>
         </div>
@@ -209,9 +171,9 @@
         <div id="iconRearrange"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
         <div id="rearrangeContatiner">
             <div id="rearrangeNotice"></div>
+            <!-- 2026-10-25: Nationwide sorting omits rank-change and rebuilds rows in the V2 INVEST layout. -->
             <div class='rearrangeArea'>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeScore' onClick='rearrangeAPTList(this)'><label class='btn btn-outline-primary' for='rearrangeScore'>총점순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRank' onClick='rearrangeAPTList(this)'><label class='btn btn-outline-primary' for='rearrangeRank'>순위변동순</label></div>
+              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeScore' onClick='rearrangeAPTList(this)' checked><label class='btn btn-outline-primary' for='rearrangeScore'>등급순</label></div>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangePrice' onClick='rearrangeAPTList(this)'><label class='btn btn-outline-primary' for='rearrangePrice'>실거래가순</label></div>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeNew' onClick='rearrangeAPTList(this)'><label class='btn btn-outline-primary' for='rearrangeNew'>신축순</label></div>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeHouse' onClick='rearrangeAPTList(this)'><label class='btn btn-outline-primary' for='rearrangeHouse'>세대수순</label></div>
@@ -227,7 +189,6 @@
             <div id="rearrangeRegionNotice"></div>
             <div class='rearrangeArea'>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionScore' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-primary' for='rearrangeRegionScore'>총점순</label></div>
-              <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionRank' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-primary' for='rearrangeRegionRank'>순위변동순</label></div>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPop' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-primary' for='rearrangeRegionPop'>인구순</label></div>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionPopUpDown' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-primary' for='rearrangeRegionPopUpDown'>인구증감순</label></div>
               <div><input type='radio' class='btn-check' name='btnRearrange' autocomplete='off' id='rearrangeRegionJob' onClick='rearrangeRegionList(this)'><label class='btn btn-outline-primary' for='rearrangeRegionJob'>일자리순</label></div>
@@ -238,7 +199,7 @@
       </div>
 
       <!--리스트 데이터 붙여넣는 영역-->
-      <div id="dataList"></div>
+      <div id="dataList" aria-live="polite" aria-busy="true"></div>
       <!-- 2026-10-23: [App Shell & Skeleton 즉시 초기화] 오피스텔 데이터 로딩 중 자연스러운 shimmer 카드 노출 -->
       <script>
         function getOpSkeletonHtml() {
@@ -310,14 +271,6 @@
           <div id="clostText_floating">정렬닫기</div>
         </div>
       </div>
-      <!--단지 재정렬창 닫기 플로팅 버튼-->
-      <div id="closeRegionRearrange_floating" onClick='closeRegionRearrange()'>
-        <div id='closeSearch_floting_wraper'>
-          <div id="closeIcon_floating"><i class="fas fa-times"></i></div>
-          <div id="clostText_floating">정렬닫기</div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -404,20 +357,20 @@
 
   <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
 
-  <script src="../js/con_counter_js.js"></script>
-  <script src="../js/apple.js" type="text/javascript"></script>
-  <script src="../js/i18n.js?v=20260607"></script>
-  <script src="../js/login_260522.js" type="text/javascript"></script>  
+  <script src="/js/con_counter_js.js"></script>
+  <script src="/js/apple.js" type="text/javascript"></script>
+  <script src="/js/i18n.js?v=20260607"></script>
+  <script src="/js/login_260522.js" type="text/javascript"></script>
   
 </body>
 
 <script>
-  var selectedMonth = "202609" //수정
+  var selectedMonth = "202610" //수정
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
   var update_ver = "?v=1.0"
 
-  var pageName = "aptrank_OP" //20231020  
+  var pageName = "aptrank_OP" //20231020
 
   var regionName = ""
   var valueSum = 0;
@@ -443,6 +396,11 @@
   var regData = "";
   var regSortData = "";
   var blank_height = "3em"
+
+  function normalizeOpRoomType(value) {
+    var numeric = Number(value);
+    return Number.isFinite(numeric) && numeric >= 10 && numeric % 10 === 0 ? numeric / 10 : value;
+  }
 
   var modalState = 0;
   var searchState = 0;
@@ -484,11 +442,11 @@
     }
     $('#sido').html(option)
 
-    var lastRegion = localStorage.getItem('lastRegion_op')
-    var lastSubRegion = localStorage.getItem('lastSubRegion_op')
-    var lastMonth = localStorage.getItem('lastMonth_op')
-    var lastNoticed = localStorage.getItem('lastNoticed_op')
-    alwaysSortingPop = localStorage.getItem('lastSortingPop_op')
+    var lastRegion = localStorage.getItem('lastRegion_op_v2')
+    var lastSubRegion = localStorage.getItem('lastSubRegion_op_v2')
+    var lastMonth = localStorage.getItem('lastMonth_op_v2')
+    var lastNoticed = localStorage.getItem('lastNoticed_op_v2')
+    alwaysSortingPop = localStorage.getItem('lastSortingPop_op_v2')
 
     //var lastRegion = sessionStorage.getItem('lastRegion')
     //var lastSubRegion = sessionStorage.getItem('lastSubRegion')
@@ -601,15 +559,14 @@
 
     currentMenu = "aptrank_op"  //offcanvas  
     setOffcanvasMenu() //offcanvas
+    // 2026-10-25: Do not retain the temporary V2 login_status=true test override in the production route.
     //login_checker() //LOGIN
+
     if(!login_status){
       $('#sort').attr("data-bs-target", "#loginModal")
     }
     setBottomMenu()
     setAppDownloadModal();
-    if(!isMobile){
-      $("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
-    }
   });
 
   function showWeight(){
@@ -672,8 +629,8 @@
   }
 
   function saveLocalStorage(){
-    localStorage.setItem('lastRegion_op', selectedRegion)
-    localStorage.setItem('lastSubRegion_op', selectedSubRegion)
+    localStorage.setItem('lastRegion_op_v2', selectedRegion)
+    localStorage.setItem('lastSubRegion_op_v2', selectedSubRegion)
     //localStorage.setItem('lastMonth', selectedMonth)
 
     //sessionStorage.setItem('lastRegion', selectedRegion)
@@ -815,6 +772,8 @@
   }
 
   function updateTable(month, region){
+    document.body.classList.remove('v2-national-region');
+    if (window.refreshV2Layout) window.refreshV2Layout();
     //$('div.modal').modal("hide");    
     $('#sort').css("visibility", "visible")
     $('html').scrollTop(0)
@@ -832,8 +791,9 @@
 
     //console.log("AAAAAAAAAA", region)
     //url = "https://www.realrankus.com/op/" + month + "/" + region + "_OPST.json"
-    url = "./" + month + "/" + region + "_OPST.json"
+    url = "/op/" + month + "/" + region + "_OPST.json"
     // 2026-10-23: 오피스텔 스켈레톤 UI 표시
+    $('#dataList').attr('aria-busy', 'true');
     if (typeof getOpSkeletonHtml === 'function') {
       $('#dataList').html(getOpSkeletonHtml());
     } else {
@@ -869,7 +829,7 @@
         eduSum = 0;
     })
     .done(function(){
-      $('#dataList').html("");
+      $('#dataList').html("").attr('aria-busy', 'false');
       //광고정보표시
       show_partnership()
 
@@ -941,23 +901,25 @@
           addon_html += "<div class='apt_name'>" + aptName;
 
           if(apt_type == "오피스텔"){
-            addon_html += "<span class='aptYear'> (" + aptData.data[i]["준공년차"] + "년차)</span></div>";
+                  addon_html += "<span class='aptYear apt_year'> (" + aptData.data[i]["준공년차"] + "년차)</span></div>";
           }
           if(apt_type == "재건축"){
-            addon_html += "<span class='aptYear'> (" + aptData.data[i]["준공년차"] + "년차, 재건축)</span></div>";
+                  addon_html += "<span class='aptYear apt_year'> (" + aptData.data[i]["준공년차"] + "년차, 재건축)</span></div>";
           }
           if(apt_type == "분양권"){
-            addon_html += "<span class='aptYear'> (분양권, " + aptData.data[i]["준공년월"].substr(0, 7) + " 예정)</span></div>";
+            addon_html += "<span class='aptYear apt_year'> (분양권, " + aptData.data[i]["준공년월"].substr(0, 7) + " 예정)</span></div>";
           }
           if(apt_type == "분양(예정)"){
-            addon_html += "<span class='aptYear'> (분양예정)</span></div>";
+            addon_html += "<span class='aptYear apt_year'> (분양예정)</span></div>";
           }
 
           if(room_type == null || room_type == "" || room_type == undefined){
             room_type = "정보없음"
+          } else if(Array.isArray(room_type)) {
+            room_type = room_type.map(normalizeOpRoomType).join(", ") + "룸"
           }
           else{
-            room_type = room_type + "룸"
+            room_type = normalizeOpRoomType(room_type) + "룸"
           }
           if(floor_high == null || floor_high == "" || floor_high == undefined){
             floor_high = "--"
@@ -999,7 +961,15 @@
       console.log("Table Update Failed : ", status ,  " : ", error)
       $("#gungu option:eq(0)").prop("selected", true);
       var changeRegion = $("#gungu > option:selected").val();
-      updateTable(month, changeRegion);
+      if (changeRegion && changeRegion !== region) {
+        updateTable(month, changeRegion);
+        return;
+      }
+      $('#dataList').attr('aria-busy', 'false').html(
+        "<section class='v2-load-state' role='alert'><strong>목록을 불러오지 못했습니다.</strong>"
+        + "<p>잠시 후 다시 시도해 주세요. 문제가 계속되면 다른 지역을 선택해 주세요.</p>"
+        + "<button type='button' class='v2-retry-button' onclick='updateRegion()'>다시 불러오기</button></section>"
+      );
     })
 
     showWeight()
@@ -1147,7 +1117,6 @@
     if (sortSelection == "sortEdu"){ sortName = "교육우선" }
     if (sortSelection == "sortCustom"){ sortName = "커스텀" }
 
-    if(rearrangeAPTSelection == "rearrangeRank"){ sortName = "순위변동순" }    
     if(rearrangeAPTSelection == "rearrangePrice"){ sortName = "실거래가순" }    
     if(rearrangeAPTSelection == "rearrangeNew"){ sortName = "신축순" }
     if(rearrangeAPTSelection == "rearrangeHouse"){ sortName = "세대수순" }
@@ -1156,7 +1125,7 @@
       detailHtml += "<div class='popupSubtitle' style='font-size: 0.75em; text-align: center'>- " + $('#sido option:selected').text() + " " + $('#gungu option:selected').text() + " -</div>"
       detailHtml += "<div class='popRank'>Rank " + complex_grade
 
-      if (sortSelection == "sortDefault" && (rearrangeAPTSelection == "rearrangeScore" || rearrangeAPTSelection == "rearrangeRank")) {
+      if (sortSelection == "sortDefault" && rearrangeAPTSelection == "rearrangeScore") {
         detailHtml += "<span class='ranksame'></div></div>"
       }
       else{
@@ -1166,7 +1135,7 @@
       /*
       detailHtml += "<div class='popRank'><i class='fas fa-trophy'></i> " + aptRank;
 
-      if(sortSelection == "sortDefault" && (rearrangeAPTSelection == "rearrangeScore" || rearrangeAPTSelection == "rearrangeRank")){
+      if(sortSelection == "sortDefault" && rearrangeAPTSelection == "rearrangeScore"){
         if(aptData.data[index]["rank_gap"] == 0){
           detailHtml += "<span class='ranksame'> (--) </span>"
         }
@@ -1218,8 +1187,10 @@
       }else{
         go_url = "https://new.land.naver.com/complexes/" + searchCode
       } 
+      // 2026-10-25: Show the loader until the modal is visible and the detail map can be created at its actual size.
       detailHtml += "<div id='part_map_wrap' onClick='goMap(go_url)'>"
-      detailHtml += "<div id='detail_map' ></div>"
+      detailHtml += "<div id='detail_map' aria-label='단지 위치 지도'></div>"
+      detailHtml += "<div class='v2-detail-map-loading' role='status'><span class='v2-detail-map-spinner'></span><span>지도 불러오는 중</span></div>"
       detailHtml += "</div>"
       detailHtml += "</div></div></div>"
     }
@@ -1312,12 +1283,14 @@
       detailHtml += "<div class='popSubTable'><div class='popContent'>" + "해운대 프리미엄" + "</div>" + "<div class='popResult'>적용</div></div>";
     }
     room_type_str = []
-    for(var h = 0 ; h < room_type.length ; h++){      
-      room_type_str.push( (" " + room_type[h] + "룸") )
+    if(Array.isArray(room_type)){
+      for(var h = 0 ; h < room_type.length ; h++){
+        room_type_str.push(" " + normalizeOpRoomType(room_type[h]) + "룸")
+      }
+    } else if(room_type != null && room_type !== "") {
+      room_type_str.push(" " + normalizeOpRoomType(room_type) + "룸")
     }
-    if(room_type_str != null && room_type_str != undefined){
-      room_type_str = "미정"
-    }
+    room_type_str = room_type_str.length ? room_type_str.join(",") : "미정"
     if(house_num == null || house_num == undefined || house_num == 0){
       house_num = "미정"
     }
@@ -1545,8 +1518,8 @@
     }
     shareText += "\nㆍ5km 이내 대형병원 : " + bigHospital_5km
     shareText += "\nㆍ중학교 학업성취도 : " + mSchool_edu
-    shareText += "\n" + "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "\n"
-    shareURL = "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
+    shareText += "\n" + "https://www.realrankus.com/op/" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "\n"
+    shareURL = "https://www.realrankus.com/op/" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
 
     if (UserAgent.indexOf("inApp") > -1) {
       if (apt_type == "분양(예정)") {
@@ -1558,7 +1531,7 @@
       if (checkMobile() == "ios") {
         footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
       } else {
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '../kakao_icon.png' height='32px'></div>";
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '/kakao_icon.png' height='32px'></div>";
       }
 
       footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
@@ -1572,7 +1545,7 @@
       if (checkMobile() == "ios") {
         footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
       } else {
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '../kakao_icon.png' height='32px'></div>";
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '/kakao_icon.png' height='32px'></div>";
       }
 
       footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
@@ -1583,38 +1556,52 @@
     $('#aptDetail').html(detailHtml);
     $('#footer').html(footerHtml);
 
-    //지도 그리는 함수
-    if ( pcDevice.indexOf(navigator.platform.toLowerCase()) < 0 ) {
-      var dw = $(window).width() - 40;	 
-      //var w = 430;	 
-    }
-    else{
-      var dw = 460;	 
-    }    
-    var dh = 150;
-
-    if(Number(selectedMonth) > 202212){      
-      var detailMapOptions = {
-        center: new naver.maps.LatLng(String(coord_y), String(coord_x)),
-	      size: new naver.maps.Size(dw, dh),
-        zoom: 15, //지도의 초기 줌 레벨
-        zoomControl: false, //줌 컨트롤의 표시 여부
-        draggable: false,
-        pinchZoom: false,
-        scrollWheel: false,
-        keyboardShortcuts: false,
-        disableDoubleTapZoom: true,
-        disableDoubleClickZoom: true,
-        disableTwoFingerTapZoom: true,
-      };
-
-      var detailMap = new naver.maps.Map('detail_map', detailMapOptions);
-      
-      var detailMarker = new naver.maps.Marker({
-          position: new naver.maps.LatLng(String(coord_y), String(coord_x)),
+    // 2026-10-25: Create the detail map after the modal opens at its measured size to prevent a visible reposition.
+    var dh = 200;
+    if(Number(selectedMonth) > 202212){
+      var detailItem = aptData.data[index];
+      // 2026-10-25: Match main-map mobile sizing and enlarge this detail-only marker to 1.5x.
+      var detailMobileMarkerLayout = typeof window.isMobile === 'boolean'
+        ? window.isMobile
+        : window.matchMedia('(max-width: 799px)').matches;
+      var detailMarkerIcon = typeof window.createOpLargeMarkerIcon === 'function'
+        ? window.createOpLargeMarkerIcon(detailItem, index, detailMobileMarkerLayout, 1.5)
+        : undefined;
+      if (detailMarkerIcon && detailMarkerIcon.anchor) {
+        // Lower the marker graphic without panning the map when the modal opens.
+        detailMarkerIcon.anchor = new naver.maps.Point(detailMarkerIcon.anchor.x, detailMarkerIcon.anchor.y - 10);
+      }
+      var detailMapPosition = new naver.maps.LatLng(String(coord_y), String(coord_x));
+      var detailModal = $('#exampleModal');
+      detailModal.off('shown.bs.modal.v2DetailMap').one('shown.bs.modal.v2DetailMap', function () {
+        var mapElement = document.getElementById('detail_map');
+        var mapWrap = document.getElementById('part_map_wrap');
+        if (!mapElement || !mapWrap || mapWrap.clientWidth <= 0) return;
+        var actualWidth = mapWrap.clientWidth;
+        var actualHeight = mapWrap.clientHeight || dh;
+        var detailMap = new naver.maps.Map(mapElement, {
+          center: detailMapPosition,
+          size: new naver.maps.Size(actualWidth, actualHeight),
+          zoom: 15,
+          zoomControl: false,
+          draggable: false,
+          pinchZoom: false,
+          scrollWheel: false,
+          keyboardShortcuts: false,
+          disableDoubleTapZoom: true,
+          disableDoubleClickZoom: true,
+          disableTwoFingerTapZoom: true
+        });
+        new naver.maps.Marker({
+          position: detailMapPosition,
+          icon: detailMarkerIcon || undefined,
+          zIndex: 100,
           map: detailMap
+        });
+        var loading = mapWrap.querySelector('.v2-detail-map-loading');
+        if (loading) loading.remove();
       });
-    } 
+    }
 
     //if(UserAgent.indexOf("inApp")>-1){
     //  $('.modal-footer').css({"grid-template-columns" : "0.2fr 1fr 0.2fr", "text-align":"center", "text-align": "-webkit-center"})
@@ -1650,18 +1637,21 @@
     */
 
     if(login_status){
-      drawChart_op(aptValue, transportScore, infraScore, livingScore, eduScore)
-      drawSubChart(livingScore, avgLivingScore, "주거총점", "지역평균", "#293249", "#4f5e84",  "livingChart")
+      // 2026-10-25: Preserve the navy chart style while ordering scores as transport, infra, living, education.
+      drawChart(aptValue, livingScore, transportScore, infraScore, eduScore, "#293249", ["교통", "인프라", "주거", "교육"])
+      drawSubChart(livingScore, avgLivingScore, "주거총점", "지역평균", "#293249", "#9f9f9f", "livingChart", "#293249")
       if(isNaN(transportScore) == false){
-        drawSubChart(transportScore, avgTransportScore, "교통총점", "지역평균", "#293249", "#4f5e84", "transportChart")
+        drawSubChart(transportScore, avgTransportScore, "교통총점", "지역평균", "#293249", "#9f9f9f", "transportChart", "#293249")
       }
-      drawSubChart(infraScore, avgInfraScore, "인프라총점", "지역평균", "#293249", "#4f5e84", "infraChart")
-      drawSubChart(eduScore, avgEduScore, "교육총점", "지역평균", "#293249", "#4f5e84", "eduChart")
-      drawSubChart(eduScore, avgEduScore, "인구총점", "일자리총점", "#293249", "#293249", "regionChart")
+      drawSubChart(infraScore, avgInfraScore, "인프라총점", "지역평균", "#293249", "#9f9f9f", "infraChart", "#293249")
+      drawSubChart(eduScore, avgEduScore, "교육총점", "지역평균", "#293249", "#9f9f9f", "eduChart", "#293249")
+      drawSubChart(eduScore, avgEduScore, "인구총점", "일자리총점", "#293249", "#293249", "regionChart", "#293249")
     }
   }
 
   function updateRegionTable(month){
+    document.body.classList.add('v2-national-region');
+    if (window.refreshV2Layout) window.refreshV2Layout();
     $('html').scrollTop(0)
     $('#sort').css("visibility", "hidden")
     url = "https://www.realrankus.com/" + month + "/1000000000_Korea.json"
@@ -1695,7 +1685,6 @@
           var regPop = regData.data[i]["인구수"]
           var regIncome = regData.data[i]["소득수준"]
           var regValue = Math.round( regData.data[i]["가치 총점"] * 100 ) / 100;
-          var regRank = regData.data[i]["rank"]
           var regJob = regData.data[i]["일자리"]
 
           regValueSum += regData.data[i]["가치 총점"]
@@ -1703,31 +1692,9 @@
           regPopSum += regData.data[i]["인구총점"]
           regJobSum += regData.data[i]["일자리총점"]
 
+          var regionGrade = regValue >= 60 ? "S" : regValue >= 40 ? "A" : regValue >= 15 ? "B" : "C";
           var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showRegionDetail(" + i + ")'>";
-
-          if(selectedMonth == "202201"){
-            addon_html += "<div class='rank_content'>"
-            addon_html += "<div class='rank'>" + regRank + "위</div>";
-            addon_html += "</div>"
-          }
-          else{
-            addon_html += "<div class='rank_content'>"
-            addon_html += "<div class='rank'>" + regRank + "위</div>";
-            if(regData.data[i]["rank_gap"] == 0){
-              addon_html += "<div class='ranksame'> -- </div>"
-            }
-            else if(regData.data[i]["rank_gap"] == 9999){
-              addon_html += "<div class='ranksame'> NEW! </div>"
-            }
-            else if(regData.data[i]["rank_gap"] > 0){
-              addon_html += "<div class='rankup'> ▲" + Math.abs(regData.data[i]["rank_gap"]) + "</div>"
-            }
-            else if(regData.data[i]["rank_gap"] < 0){
-              addon_html += "<div class='rankdown'> ▼" + Math.abs(regData.data[i]["rank_gap"]) + "</div>"
-            }
-
-            addon_html += "</div>"
-          }
+          addon_html += "<div class='rank_content'><div class='ranksame'>INVEST</div><div class='rank'>" + regionGrade + "</div></div>";
 
           addon_html += "<div class='content'>";
           addon_html += "<div class='apt_name'>" + regName + "</div>";
@@ -1752,10 +1719,10 @@
           else{
             addon_html += "<span class='regionPopDown'>(" + popChange + ")</span></div>";
           }
-          addon_html += "<div class='apt_address'><span class='regionJob'>일자리 " + regJob.toLocaleString() + "개</span></div>";
-          addon_html += "<div class='apt_address'>소득 " + regIncome.toLocaleString() + "원</div>";
+          addon_html += "<div class='apt_address'><span class='regionJob'>일자리 " + Number(Number(regJob).toFixed(0)).toLocaleString() + "개</span></div>";
+          addon_html += "<div class='apt_address'><span class='regionIncome'>소득 " + regIncome.toLocaleString() + "원</span></div>";
           addon_html += "</div></div>";
-          addon_html += "<div class='value_score'>" + ( Math.round( regValue * 100 ) / 100 ).toFixed(2) + "점</div>"
+          addon_html += "<div class='value_score'></div>"
           addon_html += "</div>"
 
           $('#dataList').append(addon_html);
@@ -1770,6 +1737,10 @@
     titleHtml = "";
     detailHtml = "";
     footerHtml = "";
+    // 2026-10-25: Selecting a nationwide region row moves the map to that region's own coordinates.
+    if (window.focusV2MapOnNationwideRegion) {
+      window.focusV2MapOnNationwideRegion(regData.data[index]["y"], regData.data[index]["x"]);
+    }
     var regRank = regData.data[index]["rank"] + "/" + regData.data[itemNum-1]["rank"] + "위"
     var regName = regData.data[index]["시도"]
     var regValue = ( Math.round(regData.data[index]["가치 총점"] * 100) / 100).toFixed(2)
@@ -1803,26 +1774,12 @@
     //총점,순위
     detailHtml += "<div class='card'>";
     detailHtml += "<div class='card-header'>";
-
-    detailHtml += "<div class='popRank'><i class='fas fa-trophy'></i> " + regRank;
-    if(regData.data[index]["rank_gap"] == 0){
-      detailHtml += "<span class='ranksame'> (--) </span>"
-    }
-    else if(regData.data[index]["rank_gap"] == 9999){
-      detailHtml += "<span class='ranksame'> (NEW!) </span>"
-    }
-    else if(regData.data[index]["rank_gap"] > 0){
-      detailHtml += "<span class='rankup'> (▲" + Math.abs(regData.data[index]["rank_gap"]) + ")</span>"
-    }
-    else if(regData.data[index]["rank_gap"] < 0){
-      detailHtml += "<span class='rankdown'>(▼" + Math.abs(regData.data[index]["rank_gap"]) + ")</span>"
-    }
-    detailHtml += "</div></div>"
+    var region_grade = regValue >= 60 ? "S" : regValue >= 40 ? "A" : regValue >= 15 ? "B" : "C";
+    detailHtml += "<div class='popRank'>Invest '" + region_grade + "'</div></div>";
 
     detailHtml += "<div class='card-body'>";
     detailHtml += "<div class='graph' style='height: 200px'> <canvas id='valueChart'></canvas></div>"
     detailHtml += "<div class='comment'>(전국 모든 시군구에 대해 100점으로 환산한 상대 점수 입니다.)</div>"
-    detailHtml += "<hr><div class='graph' style='height: 120px;'> <canvas id='rankChart'></canvas></div>"
 
     detailHtml += "</div></div>"
 
@@ -1935,7 +1892,7 @@
 
     //매매, 전세가격지수
     if(rateExist.includes(regName) && Number(selectedMonth) > 202203){
-      url = "https://www.realrankus.com/" + month + "/Price_Rate/" + regName + ".json"
+      url = "https://www.realrankus.com/" + selectedMonth + "/Price_Rate/" + regName + ".json" + update_ver
 
       detailHtml += "<div class='card'>";
       detailHtml += "<div class='card-header'>";
@@ -1967,7 +1924,7 @@
     shareText += "\nㆍ공급량 : " + ( Math.round(regSupplyUpDown) ).toLocaleString() + "세대 " + regSupplyLevel
     shareText += "\nㆍ일자리 : " + regJob.toLocaleString() + "개"
     shareText += "\n\n"
-    shareURL = "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
+    shareURL = "https://www.realrankus.com/op/" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
 
     footerHtml += "<div class='modal-footer'>"
     //footerHtml += "<div></div>"
@@ -1979,7 +1936,7 @@
         footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
       }
       else{
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '../kakao_icon.png' height='32px'></div>"
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '/kakao_icon.png' height='32px'></div>"
       }      
       footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
     }
@@ -1988,7 +1945,7 @@
         footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
       }
       else{
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '../kakao_icon.png' height='32px'></div>"
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '/kakao_icon.png' height='32px'></div>"
       }
       footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
     }
@@ -2005,35 +1962,10 @@
       $('.modal-footer').css({"grid-template-columns" : "1fr 0.15fr 0.15fr", "text-align":"center"})
     }
 
-    if(Number(selectedMonth) > 202203){
-      rank_history = regData.data[index]["rank_history"]
-      rankMonth = [""]
-      rankData = [null]
-      for(var j = 0 ; j < rank_history.length ; j++){
-        if(rank_history[j][1] == 9999){
-        }
-        else if(rank_history[j][1] == 0){
-          rankMonth.push(rank_history[j][0])
-          rankData.push(regData.data[index]["rank"])
-        }
-        else{
-          rankMonth.push(rank_history[j][0])
-          rankData.push(rank_history[j][1])
-        }
-      }
-      rankMonth.push("")
-      rankData.push(null)
-
-      rankMonth.reverse()
-      rankData.reverse()
-
-      drawRankChart_op(rankMonth, rankData, regData.data[itemNum-1]["rank"])
-    }
-    
-    drawChart_op(regValue, regPopScore, regJobScore, regSupplyScore, "region")
+    drawChart(regValue, regSupplyScore, regPopScore, regJobScore, "region", "#293249")
     //drawSubChart(regSupplyScore, avgSupplyScore, "공급량총점", "전국평균", "#fe4040", "#9f9f9f", "supplyChart")
-    drawSubChart(regPopScore, avgPopScore, "인구총점", "전국평균", "#293249", "#4f5e84", "popChart")
-    drawSubChart(regJobScore, avgJobScore, "일자리총점", "전국평균", "#293249", "#4f5e84", "jobChart")
+    drawSubChart(regPopScore, avgPopScore, "인구총점", "전국평균", "#293249", "#9f9f9f", "popChart", "#293249")
+    drawSubChart(regJobScore, avgJobScore, "일자리총점", "전국평균", "#293249", "#9f9f9f", "jobChart", "#293249")
     //drawPriceRateChart(dateArray, salesArray, rentArray)
 
     if(Number(selectedMonth) > 202203){
@@ -2043,8 +1975,9 @@
 
       $.getJSON(url, function(json) {
         rateData = json
-        for (var i = 0 ; i < (rateData.data).length ; i++){
-          dateArray.push(rateData.data[i]["Date"])
+        for (var i = Math.max(0, rateData.data.length - 36); i < rateData.data.length; i++){
+          var rateMonth = rateData.data[i]["Date"].toString();
+          dateArray.push("'" + rateMonth.substr(2, 2) + "." + rateMonth.substr(4, 2))
           salesArray.push(rateData.data[i]["Sales"])
           rentArray.push(rateData.data[i]["Rent"])
         }
@@ -2082,11 +2015,6 @@
     $("#rearrangeRegionCard").animate({
         opacity: 0.0,
         top: '-150px'
-      }, 400, 'easeInQuad'
-    );
-    $("#closeRegionRearrange_floating").animate({
-        opacity: 0.0,
-        right: '-200px'
       }, 400, 'easeInQuad'
     );
     rearrangeSelection = "rearrangeRegionScore"
@@ -2188,4 +2116,4 @@
     $("#exampleModal").modal("show"); //offcanvas
   }
 </script>
-</html>
+<script src="/op/op_v2.js?v=20261026_52"></script>

@@ -1,4 +1,5 @@
-var SCORE_CHART_COLOR = '#e43b46';
+// 2026-10-25: The promoted /op service uses navy as its chart color; other pages keep the red default.
+var SCORE_CHART_COLOR = window.location.pathname.indexOf('/op/') >= 0 ? '#293249' : '#e43b46';
 
 function drawRoundedScoreTrack(ctx, x, y, width, height) {
   var radius = Math.min(height / 2, 5);
@@ -140,7 +141,7 @@ function normalizeScoreLabel(label) {
   return String(label).replace(/총점/g, '').trim();
 }
 
-function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
+function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore, barColor, categoryOrder){
     /*
     var label = ["총점", "주거", "교통", "인프라", "교육"]
     var data = [aptValue, livingScore, transportScore, infraScore, eduScore]    
@@ -166,6 +167,21 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
       data = [livingScore, transportScore, infraScore]        
     }
 
+    // 2026-10-25: Optional order and color arguments let OP match its reference sequence without changing chart styling.
+    if(Array.isArray(categoryOrder) && eduScore !== "region"){
+      var scoreByCategory = { "주거": livingScore, "교통": transportScore, "인프라": infraScore, "교육": eduScore };
+      var categoryNames = categoryOrder.filter(function (name) {
+        return name !== "교통" || (!isNaN(transportScore) && Number(transportScore) !== 0);
+      });
+      label = categoryNames.map(function (name) {
+        if (typeof isEn !== 'undefined' && isEn) {
+          return { "주거": "Living", "교통": "Transport", "인프라": "Infra", "교육": "Education" }[name] || name;
+        }
+        return name;
+      });
+      data = categoryNames.map(function (name) { return scoreByCategory[name]; });
+    }
+
     var ctx = document.getElementById("valueChart").getContext('2d');
     var myChart = new Chart(ctx, {
       type: 'bar',
@@ -174,7 +190,7 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
         labels: label,
         datasets: [{                
           data: data,
-          backgroundColor: SCORE_CHART_COLOR,
+          backgroundColor: barColor || SCORE_CHART_COLOR,
           borderRadius: 999,
           borderSkipped: false,
           borderColor: [
@@ -219,111 +235,9 @@ function drawChart(aptValue, livingScore, transportScore, infraScore, eduScore){
   });
 }
 
-function drawChart_op(aptValue, transportScore, infraScore, livingScore, eduScore){
-  /*
-  var label = ["총점", "교통", "인프라", "주거", "교육"]
-  var data = [aptValue, transportScore, infraScore, livingScore, eduScore]      
-  var color = 'white'
-  var align = 'start'
-
-  if(isNaN(transportScore)){
-    label = ["총점", "인프라", "주거", "교육"]
-    data = [aptValue, infraScore, livingScore, eduScore]        
-  }
-  if(eduScore == "region"){
-    label = ["총점", "공급필요", "인구수", "일자리수"]
-    data = [aptValue, livingScore, transportScore, infraScore]        
-  }
-  */
-
-  var label = (typeof isEn !== 'undefined' && isEn) ? ["Transport", "Infra", "Living", "Education"] : ["교통", "인프라", "주거", "교육"]
-  var data = [transportScore, infraScore, livingScore, eduScore]      
-  var color = 'white'
-  var align = 'start'
-
-  if(isNaN(transportScore)){
-    label = (typeof isEn !== 'undefined' && isEn) ? ["Infra", "Living", "Education"] : ["인프라", "주거", "교육"]
-    data = [infraScore, livingScore, eduScore]        
-  }
-  if(eduScore == "region"){
-    label = (typeof isEn !== 'undefined' && isEn) ? ["Supply", "Population", "Jobs"] : ["공급필요", "인구수", "일자리수"]
-    data = [livingScore, transportScore, infraScore]        
-  }
-
-  var colorArray = []
-  var alignArray = []
-  for (var i = 0; i < data.length ; i++){
-    if(data[i] < 85){
-      colorArray.push('black')
-      alignArray.push('end')
-    }
-    else{
-      colorArray.push('white')
-      alignArray.push('start')
-    }
-  }
-
-  var ctx = document.getElementById("valueChart").getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    plugins:[ChartDataLabels],
-    data: {          
-      labels: label,
-      datasets: [{                
-        data: data,
-        backgroundColor: [
-            //'#293249',
-            '#4f5e84',
-            '#4f5e84',
-            '#4f5e84',
-            '#4f5e84',
-        ],
-        borderColor: [
-            'rgba(255,99,132, 0)',
-            'rgba(54, 162, 235, 0)',
-        ],                
-        barThickness: 17,            
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      maintainAspectRatio: false,          
-      plugins:{
-        legend:{
-          display: false
-        },            
-        datalabels: {
-          display: true,
-          color: colorArray,
-          align: alignArray,
-          anchor: 'end',              
-          offset: 2,
-          textAlign: 'center',
-          font: {
-            weight: 'bold'
-          },              
-        },                      
-      },
-      animation: {            
-        x:{
-          from: 100
-        }
-      },
-      scales: {
-        x:{
-          type: 'linear',
-          min: 0,
-          max: 100,
-        },
-        myScale: {              
-          position: 'left', // `axis` is determined by the position as `'y'`
-        }
-      }          
-    }
-});
-}
-
-function drawSubChart(score, avgScore, label1, label2, color1, color2, className){
+// 2026-10-25: Removed the unused legacy drawChart_op; OP calls drawChart with an explicit category order.
+// 2026-10-25: Allow OP detail charts to specify navy for the score series and gray for the regional average.
+function drawSubChart(score, avgScore, label1, label2, color1, color2, className, scoreColor){
   var element = document.getElementById(className);
   if (!element) return;
 
@@ -336,7 +250,7 @@ function drawSubChart(score, avgScore, label1, label2, color1, color2, className
       labels: [normalizeScoreLabel(label1), normalizeScoreLabel(label2)],
       datasets: [{
         data: data,
-        backgroundColor: [SCORE_CHART_COLOR, color2],
+        backgroundColor: [scoreColor || SCORE_CHART_COLOR, color2],
         borderRadius: 999,
         borderSkipped: false,
         barThickness: 9

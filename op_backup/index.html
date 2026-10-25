@@ -20,22 +20,22 @@
     gtag('config', 'UA-218993952-1');
 
     if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/op/v2/serviceWorker_v2.js')
+    navigator.serviceWorker.register('serviceWorker_op.js')
       .then((reg) => {
         console.log('Service Worker Registered!', reg);
       });
     }
   </script>
 
-  <title>오피스텔랭크 개선버전 - 입지 분석의 표준</title>
+  <title>오피스텔랭크 - 입지 분석의 표준</title>
   <meta property="og:type" content="website">
-  <meta property="og:title" content="오피스텔랭크 개선버전">
+  <meta property="og:title" content="오피스텔랭크">
   <meta property="og:description" content="입지 분석의 표준">
   <meta property="og:image" content="https://www.realrankus.com/thumbnail_op3.jpg">
-  <meta property="og:url" content="https://www.realrankus.com/op/v2/">
+  <meta property="og:url" content="https://www.realrankus.com/op/">
   <meta name="keyword" content="부동산, 오피스텔, 입지, 순위, 오피스텔입지, 우리동네, 호가, 최고가, 신고가, 호재, AI, 등수">
   <meta name="description" content="입지 분석의 표준">
-  <meta name="author" content="오피스텔랭크 개선버전">
+  <meta name="author" content="오피스텔랭크">
   <meta name="robots" content="index,follow">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
   <meta charset="utf-8">
@@ -45,14 +45,14 @@
   <!-- 상태 바의 스타일을 지정 -->
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <!-- 홈 화면에서 표시되는 앱 이름을 지정 -->
-  <meta name="apple-mobile-web-app-title" content="오피스텔랭크 개선버전">
+  <meta name="apple-mobile-web-app-title" content="오피스텔랭크">
   <meta name="theme-color" content="#fff">
   <!-- 홈 화면에서 표시되는 앱 아이콘을 지정 -->
   <link rel="apple-touch-icon" href="https://www.realrankus.com/op/op-rank-152x152.png">
   <!-- 웹 앱 매니페스트를 읽어 들이기 -->
-  <link rel="manifest" href="/op/v2/manifest_v2.json">  
+  <link rel="manifest" href="manifest_op.json">  
 
-  <link rel="canonical" href="https://www.realrankus.com/op/v2/">
+  <link rel="canonical" href="https://www.realrankus.com/op/">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
@@ -70,23 +70,22 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  
 
-  <script src="/js/menu_select_box.js?ver=1.3" type="text/javascript"></script>
-  <script src="/js/draw_chart.js" type="text/javascript"></script>
-  <script src="/js/sort_op.js" type="text/javascript"></script>
-  <script src="/op/v2/search_op_v2.js" type="text/javascript"></script>
-  <script src="/js/rearrange_op.js" type="text/javascript"></script>
-  <script src="/js/share.js?v=20261010_1" type="text/javascript"></script>
-  <script src="/js/weight_cal.js" type="text/javascript"></script>
-  <script src="/js/weight_array.js" type="text/javascript"></script>
-  <script src="/js/simulation.js" type="text/javascript"></script>
-  <script src="/js/ad_oprank.js" type="text/javascript"></script>
+  <script src="../js/menu_select_box.js?ver=1.3" type="text/javascript"></script>
+  <script src="../js/draw_chart.js" type="text/javascript"></script>
+  <script src="../js/sort_op.js" type="text/javascript"></script>
+  <script src="../js/search_op.js" type="text/javascript"></script>
+  <script src="../js/rearrange_op.js" type="text/javascript"></script>
+  <script src="../js/share.js?v=20261010_1" type="text/javascript"></script>
+  <script src="../js/weight_cal.js" type="text/javascript"></script>
+  <script src="../js/weight_array.js" type="text/javascript"></script>
+  <script src="../js/simulation.js" type="text/javascript"></script>
+  <script src="../js/ad_oprank.js" type="text/javascript"></script>
 
-  <link href="/css/style_common.css" rel="stylesheet"/>
-  <link href="/css/style_op.css" rel="stylesheet"/>
-  <link href="/css/slider_op.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="/op/v2/op_v2.css?v=20261025_10">
+  <link href="../css/style_common.css" rel="stylesheet"/>
+  <link href="../css/style_op.css" rel="stylesheet"/>
+  <link href="../css/slider_op.css" rel="stylesheet"/>
 
-  <script src="/js/doubleSlider.js" type="text/javascript"></script>
+  <script src="../js/doubleSlider.js" type="text/javascript"></script>
 </head>
 <style>
 </style>
@@ -101,11 +100,11 @@
     <div id="centerBox">
       <div id="titleBar">
         <!--검색 버튼 표시-->
-        <div id='search' onClick='showV2UnifiedSearch()' aria-label='통합 검색'><i class="fas fa-search"></i></div>
+        <div id='search' onClick='showAptSearchBar()'><i class="fas fa-search"></i></div>
         <!--재정렬 버튼 표시-->
         <div id="rearrange" class="position-relative" onClick='showRearrangeBar(this)'><i class="fa-solid fa-arrow-down-wide-short"></i></div>
         <!--타이틀 표시-->
-        <div id="title" onClick='scrollUp()'>오피스텔랭크 <span class="v2-brand-tag">개선버전</span></div>
+        <div id="title" onClick='scrollUp()'>오피스텔랭크</div>
         <!--공유 버튼-->
         <!-- <div id="search" onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div> -->
         <!--단지 가중치 설정 버튼 표시-->
@@ -120,7 +119,7 @@
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <!-- 수정 -->
-            <option value="202610" selected>2026년 10월</option>
+            <option value="202609" selected>2026년 09월</option>
             <option value="202608">2026년 08월</option>
             <option value="202607">2026년 07월</option>
             <option value="202606">2026년 06월</option>
@@ -239,7 +238,7 @@
       </div>
 
       <!--리스트 데이터 붙여넣는 영역-->
-      <div id="dataList" aria-live="polite" aria-busy="true"></div>
+      <div id="dataList"></div>
       <!-- 2026-10-23: [App Shell & Skeleton 즉시 초기화] 오피스텔 데이터 로딩 중 자연스러운 shimmer 카드 노출 -->
       <script>
         function getOpSkeletonHtml() {
@@ -405,20 +404,20 @@
 
   <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
 
-  <script src="/js/con_counter_js.js"></script>
-  <script src="/js/apple.js" type="text/javascript"></script>
-  <script src="/js/i18n.js?v=20260607"></script>
-  <script src="/js/login_260522.js" type="text/javascript"></script>  
+  <script src="../js/con_counter_js.js"></script>
+  <script src="../js/apple.js" type="text/javascript"></script>
+  <script src="../js/i18n.js?v=20260607"></script>
+  <script src="../js/login_260522.js" type="text/javascript"></script>  
   
 </body>
 
 <script>
-  var selectedMonth = "202610" //수정
+  var selectedMonth = "202609" //수정
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
   var update_ver = "?v=1.0"
 
-  var pageName = "aptrank_OP_v2" //20231020  
+  var pageName = "aptrank_OP" //20231020  
 
   var regionName = ""
   var valueSum = 0;
@@ -485,11 +484,11 @@
     }
     $('#sido').html(option)
 
-    var lastRegion = localStorage.getItem('lastRegion_op_v2')
-    var lastSubRegion = localStorage.getItem('lastSubRegion_op_v2')
-    var lastMonth = localStorage.getItem('lastMonth_op_v2')
-    var lastNoticed = localStorage.getItem('lastNoticed_op_v2')
-    alwaysSortingPop = localStorage.getItem('lastSortingPop_op_v2')
+    var lastRegion = localStorage.getItem('lastRegion_op')
+    var lastSubRegion = localStorage.getItem('lastSubRegion_op')
+    var lastMonth = localStorage.getItem('lastMonth_op')
+    var lastNoticed = localStorage.getItem('lastNoticed_op')
+    alwaysSortingPop = localStorage.getItem('lastSortingPop_op')
 
     //var lastRegion = sessionStorage.getItem('lastRegion')
     //var lastSubRegion = sessionStorage.getItem('lastSubRegion')
@@ -608,6 +607,9 @@
     }
     setBottomMenu()
     setAppDownloadModal();
+    if(!isMobile){
+      $("#linkToAptrank_bottom").css({'width':'800px', 'margin':'0 auto'})
+    }
   });
 
   function showWeight(){
@@ -670,8 +672,8 @@
   }
 
   function saveLocalStorage(){
-    localStorage.setItem('lastRegion_op_v2', selectedRegion)
-    localStorage.setItem('lastSubRegion_op_v2', selectedSubRegion)
+    localStorage.setItem('lastRegion_op', selectedRegion)
+    localStorage.setItem('lastSubRegion_op', selectedSubRegion)
     //localStorage.setItem('lastMonth', selectedMonth)
 
     //sessionStorage.setItem('lastRegion', selectedRegion)
@@ -829,10 +831,9 @@
     }
 
     //console.log("AAAAAAAAAA", region)
-    //url = "https://www.realrankus.com/op/v2/" + month + "/" + region + "_OPST.json"
-    url = "/op/" + month + "/" + region + "_OPST.json"
+    //url = "https://www.realrankus.com/op/" + month + "/" + region + "_OPST.json"
+    url = "./" + month + "/" + region + "_OPST.json"
     // 2026-10-23: 오피스텔 스켈레톤 UI 표시
-    $('#dataList').attr('aria-busy', 'true');
     if (typeof getOpSkeletonHtml === 'function') {
       $('#dataList').html(getOpSkeletonHtml());
     } else {
@@ -868,7 +869,7 @@
         eduSum = 0;
     })
     .done(function(){
-      $('#dataList').html("").attr('aria-busy', 'false');
+      $('#dataList').html("");
       //광고정보표시
       show_partnership()
 
@@ -998,15 +999,7 @@
       console.log("Table Update Failed : ", status ,  " : ", error)
       $("#gungu option:eq(0)").prop("selected", true);
       var changeRegion = $("#gungu > option:selected").val();
-      if (changeRegion && changeRegion !== region) {
-        updateTable(month, changeRegion);
-        return;
-      }
-      $('#dataList').attr('aria-busy', 'false').html(
-        "<section class='v2-load-state' role='alert'><strong>목록을 불러오지 못했습니다.</strong>"
-        + "<p>잠시 후 다시 시도해 주세요. 문제가 계속되면 다른 지역을 선택해 주세요.</p>"
-        + "<button type='button' class='v2-retry-button' onclick='updateRegion()'>다시 불러오기</button></section>"
-      );
+      updateTable(month, changeRegion);
     })
 
     showWeight()
@@ -1552,8 +1545,8 @@
     }
     shareText += "\nㆍ5km 이내 대형병원 : " + bigHospital_5km
     shareText += "\nㆍ중학교 학업성취도 : " + mSchool_edu
-    shareText += "\n" + "https://www.realrankus.com/op/v2/" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "\n"
-    shareURL = "https://www.realrankus.com/op/v2/" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
+    shareText += "\n" + "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth + "\n"
+    shareURL = "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
 
     if (UserAgent.indexOf("inApp") > -1) {
       if (apt_type == "분양(예정)") {
@@ -1565,7 +1558,7 @@
       if (checkMobile() == "ios") {
         footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
       } else {
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '/kakao_icon.png' height='32px'></div>";
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '../kakao_icon.png' height='32px'></div>";
       }
 
       footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
@@ -1579,7 +1572,7 @@
       if (checkMobile() == "ios") {
         footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>";
       } else {
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '/kakao_icon.png' height='32px'></div>";
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, kakaoShareURL)'><img src = '../kakao_icon.png' height='32px'></div>";
       }
 
       footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
@@ -1974,7 +1967,7 @@
     shareText += "\nㆍ공급량 : " + ( Math.round(regSupplyUpDown) ).toLocaleString() + "세대 " + regSupplyLevel
     shareText += "\nㆍ일자리 : " + regJob.toLocaleString() + "개"
     shareText += "\n\n"
-    shareURL = "https://www.realrankus.com/op/v2/" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
+    shareURL = "https://www.realrankus.com/op" + "?reg=" + selectedRegion +"&sub=" + selectedSubRegion + "&mon=" + selectedMonth
 
     footerHtml += "<div class='modal-footer'>"
     //footerHtml += "<div></div>"
@@ -1986,7 +1979,7 @@
         footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
       }
       else{
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '/kakao_icon.png' height='32px'></div>"
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '../kakao_icon.png' height='32px'></div>"
       }      
       footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
     }
@@ -1995,7 +1988,7 @@
         footerHtml += "<div class='tShare' onClick='CopyToClipboard(shareText, popMsg)'><i class='fa-regular fa-copy'></i></div>"
       }
       else{
-        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '/kakao_icon.png' height='32px'></div>"
+        footerHtml += "<div class='kakaoShare' onClick='kakaoShare(shareTitle, shareText, shareURL)'><img src = '../kakao_icon.png' height='32px'></div>"
       }
       footerHtml += "<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>"
     }
@@ -2195,4 +2188,4 @@
     $("#exampleModal").modal("show"); //offcanvas
   }
 </script>
-<script src="/op/v2/op_v2.js?v=20261025_7"></script>
+</html>

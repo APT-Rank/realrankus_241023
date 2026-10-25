@@ -1,5 +1,6 @@
-const OP_V2_CACHE = "op-v2-shell-20261025";
-const OP_V2_OFFLINE = "/op/v2/offline.html";
+const OP_V2_CACHE = "op-v2-shell-20261026";
+// 2026-10-25: Keep the offline fallback inside the promoted /op/ application scope.
+const OP_V2_OFFLINE = "/op/offline.html";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(OP_V2_CACHE).then((cache) => cache.add(OP_V2_OFFLINE)));

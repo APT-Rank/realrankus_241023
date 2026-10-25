@@ -1,3 +1,4 @@
+// 2026-10-25: V2 search and nationwide-list rendering preserve the promoted /op UI when results are rebuilt.
 function goMap(url){
   if(checkMobile() == "ios"){
     window.location.href = url
@@ -7,7 +8,12 @@ function goMap(url){
   }
 }
 
+// 2026-10-25: Keep a compatibility entry point for legacy callers; the active #search control opens the unified V2 panel.
 function showSearchBar(){  
+  if(typeof window.showV2UnifiedSearch === "function"){
+    window.showV2UnifiedSearch();
+    return;
+  }
   if(selectedRegion == "Korea"){
     showRegionSearchBar()
   }
@@ -59,6 +65,35 @@ function showSearchBar(){
     else{
       return false
     }
+  }
+
+  function highlightAptListTextNodes(root, query) {
+    if (!root || !query) return;
+    var escaped = String(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    var matcher = new RegExp(escaped, "ig");
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    var textNodes = [];
+    var current;
+    while ((current = walker.nextNode())) textNodes.push(current);
+    textNodes.forEach(function (textNode) {
+      var source = textNode.nodeValue;
+      matcher.lastIndex = 0;
+      if (!matcher.test(source)) return;
+      matcher.lastIndex = 0;
+      var fragment = document.createDocumentFragment();
+      var cursor = 0;
+      var match;
+      while ((match = matcher.exec(source))) {
+        if (match.index > cursor) fragment.appendChild(document.createTextNode(source.slice(cursor, match.index)));
+        var highlighted = document.createElement("span");
+        highlighted.className = "colorTxt";
+        highlighted.textContent = match[0];
+        fragment.appendChild(highlighted);
+        cursor = match.index + match[0].length;
+      }
+      if (cursor < source.length) fragment.appendChild(document.createTextNode(source.slice(cursor)));
+      textNode.parentNode.replaceChild(fragment, textNode);
+    });
   }
 
   function aptSearch(){
@@ -234,17 +269,17 @@ function showSearchBar(){
 
               if(Number(selectedMonth) > 202203){
                 if(apt_type == "오피스텔"){
-                  addon_html += "<span class='aptYear'> (" + sortData.data[i]["준공년차"] + "년차)</span></div>";
+                  addon_html += "<span class='aptYear apt_year'> (" + sortData.data[i]["준공년차"] + "년차)</span></div>";
                 }
                 if(apt_type == "재건축"){
-                  addon_html += "<span class='aptYear'> (" + sortData.data[i]["준공년차"] + "년차, 재건축)</span></div>";
+                  addon_html += "<span class='aptYear apt_year'> (" + sortData.data[i]["준공년차"] + "년차, 재건축)</span></div>";
                 }
                 if(apt_type == "분양권"){
-                  addon_html += "<span class='aptYear'> (분양권, " + sortData.data[i]["준공년월"].substr(0, 7) + " 예정)</span></div>";
+                  addon_html += "<span class='aptYear apt_year'> (분양권, " + sortData.data[i]["준공년월"].substr(0, 7) + " 예정)</span></div>";
                 }      
               }
               else{
-                addon_html += "<span class='aptYear'> (" + sortData.data[i]["준공년차"] + "년차)</span></div>";
+                addon_html += "<span class='aptYear apt_year'> (" + sortData.data[i]["준공년차"] + "년차)</span></div>";
               }
 
               addon_html += "<div class='apt_info'>룸타입: " + room_type + "룸 / 최고 " + floor_high + "층 - 최저 " + floor_low + "층</div>";
@@ -281,14 +316,9 @@ function showSearchBar(){
 
         }
 
-        $(".apt_name:contains('" + input + "')").each(function(){
-          var regex = new RegExp(input, 'gi')
-          $(this).html( $(this).text().replace(regex, "<span class='colorTxt'>"+input+"</span>") );
-        })
-        $(".apt_address:contains('" + input + "')").each(function(){
-          var regex2 = new RegExp(input, 'gi')
-          $(this).html( $(this).text().replace(regex2, "<span class='colorTxt'>"+input+"</span>") );
-        })
+        document.querySelectorAll("#dataList .apt_name, #dataList .apt_address").forEach(function (node) {
+          highlightAptListTextNodes(node, input);
+        });
 
       $('#dataList').append("<div style='height: 3em'></div>");
       $('html').scrollTop(0)
@@ -324,6 +354,7 @@ function showSearchBar(){
   }
 
   var regionInput = ""
+  // 2026-10-25: Rebuild nationwide rows in the V2 INVEST layout after reference sorting and region filtering.
   function regionSearch(){
     $('#dataList').html("");
     input = $('#regionInputSearch').val()      
@@ -338,7 +369,6 @@ function showSearchBar(){
           var regPop = regSortData.data[i]["인구수"]
           var regIncome = regSortData.data[i]["소득수준"]
           var regValue = Math.round( regSortData.data[i]["가치 총점"] * 100 ) / 100;
-          var regRank = regSortData.data[i]["rank"]
           var regJob = regSortData.data[i]["일자리"]
 
           regValueSum += regSortData.data[i]["가치 총점"]
@@ -346,49 +376,15 @@ function showSearchBar(){
           regPopSum += regSortData.data[i]["인구총점"]
           regJobSum += regSortData.data[i]["일자리총점"]
 
-          var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showRegionDetail(" + i + ")'>";          
-
-          if(selectedMonth == "202201"){
-            addon_html += "<div class='rank_content'>"
-            addon_html += "<div class='rank'>" + regRank + "위</div>";            
-            addon_html += "</div>"
-          }
-          else{
-            addon_html += "<div class='rank_content'>"
-            addon_html += "<div class='rank'>" + regRank + "위</div>";
-            if(regSortData.data[i]["rank_gap"] == 0){
-              addon_html += "<div class='ranksame'> -- </div>"
-            }
-            else if(regSortData.data[i]["rank_gap"] == 9999){
-              addon_html += "<div class='ranksame'> NEW! </div>"
-            }
-            else if(regSortData.data[i]["rank_gap"] > 0){
-              addon_html += "<div class='rankup'> ▲" + Math.abs(regSortData.data[i]["rank_gap"]) + "</div>"
-            }
-            else if(regSortData.data[i]["rank_gap"] < 0){
-              addon_html += "<div class='rankdown'> ▼" + Math.abs(regSortData.data[i]["rank_gap"]) + "</div>"
-            }
-
-            addon_html += "</div>"
-          }
-
-          addon_html += "<div class='content'>";          
+          var regionGrade = regValue >= 60 ? "S" : regValue >= 40 ? "A" : regValue >= 15 ? "B" : "C";
+          var addon_html = "<div class='listBox' data-bs-toggle='modal' data-bs-target='#exampleModal' id='myModal' onClick='showRegionDetail(" + i + ")'>";
+          addon_html += "<div class='rank_content'><div class='ranksame'>INVEST</div><div class='rank'>" + regionGrade + "</div></div>";
+          addon_html += "<div class='content'>";
           addon_html += "<div class='apt_name'>" + regName + "</div>";
           addon_html += "<div class='reg_subTable'>";
-
           addon_html += "<div class='apt_address'>아파트 공급량 <span style='font-weight:900; color:#0f0f0f'>" + regSuplyLevel + "</span></div>";
-
-          var upDown = ""
-          var popChange = ""
-          if (regPopChange < 0){
-            upDown = "감소"
-            popChange = "▼" + (Math.abs(regPopChange)).toLocaleString()
-          }
-          else{
-            upDown = "증가"
-            popChange = "▲" + (Math.abs(regPopChange)).toLocaleString()
-          }        
-          addon_html += "<div class='apt_address'><span class='regionPop'>인구 " + (Math.abs(regPop)).toLocaleString() + "명 </span>"
+          var popChange = (regPopChange < 0 ? "▼" : "▲") + Math.abs(regPopChange).toLocaleString();
+          addon_html += "<div class='apt_address'><span class='regionPop'>인구 " + Math.abs(regPop).toLocaleString() + "명</span> ";
           if(regPopChange >= 0){
             addon_html += "<span class='regionPopUp'>(" + popChange + ")</span></div>";
           }
@@ -396,25 +392,26 @@ function showSearchBar(){
             addon_html += "<span class='regionPopDown'>(" + popChange + ")</span></div>";
           }
           addon_html += "<div class='apt_address'><span class='regionJob'>일자리 " + regJob.toLocaleString() + "개</span></div>";
-          addon_html += "<div class='apt_address'><span class='regionIncome'>소득 " + regIncome.toLocaleString() + "원</span></div>";          
+          addon_html += "<div class='apt_address'><span class='regionIncome'>소득 " + regIncome.toLocaleString() + "원</span></div>";
           addon_html += "</div></div>";
-          addon_html += "<div class='value_score'>" + ( Math.round( regValue * 100 ) / 100 ).toFixed(2) + "점</div>"
+          addon_html += "<div class='value_score'></div>";
           addon_html += "</div>"
 
           $('#dataList').append(addon_html);
         }
-        if(rearrangeRegionSelection == "rearrangeRegionPop"){            
-          $(".regionPop").css({'color': '#293249', 'font-weight': '600'})
+        // 2026-10-25: Use the existing bright-blue accent for every selected nationwide sort field.
+        if(rearrangeRegionSelection == "rearrangeRegionPop"){
+          $(".regionPop").css({'color': '#0047ab', 'font-weight': '600'})
         }
         if(rearrangeRegionSelection == "rearrangeRegionPopUpDown"){
-          $(".regionPopUp").css({'color': '#293249', 'font-weight': '600'})
-          $(".regionPopDown").css({'color': 'blue', 'font-weight': '600'})
+          $(".regionPopUp").css({'color': '#0047ab', 'font-weight': '600'})
+          $(".regionPopDown").css({'color': '#0047ab', 'font-weight': '600'})
         }
         if(rearrangeRegionSelection == "rearrangeRegionJob"){
-          $(".regionJob").css({'color': '#293249', 'font-weight': '600'})
+          $(".regionJob").css({'color': '#0047ab', 'font-weight': '600'})
         }
         if(rearrangeRegionSelection == "rearrangeRegionIncome"){
-          $(".regionIncome").css({'color': '#293249', 'font-weight': '600'})
+          $(".regionIncome").css({'color': '#0047ab', 'font-weight': '600'})
         }        
       }
       $('html').scrollTop(0)

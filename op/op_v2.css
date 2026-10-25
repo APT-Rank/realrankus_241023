@@ -1,0 +1,193 @@
+/* 2026-10-25: Primary /op V2 interface styles, including responsive map/list panes, marker controls and detail-modal layout. */
+#v2GlobalSearchPanel { position:fixed; z-index:1060; top:-220px; left:0; right:0; display:grid; grid-template-columns:45px minmax(0,1fr) 40px; align-items:center; justify-content:center; width:98%; height:90px; margin:0 auto; padding:0; background:var(--v2-accent); border:0; border-radius:0 0 15px 15px; box-shadow:0 3px 6px rgba(0,0,0,.24); text-align:center; opacity:0; visibility:hidden; pointer-events:none; transition:top .4s ease,opacity .4s ease,visibility 0s linear .4s; }
+#v2GlobalSearchPanel.is-visible { top:0; opacity:1; visibility:visible; pointer-events:auto; transition:top .4s ease,opacity .4s ease,visibility 0s; }
+.v2-search-icon { grid-column:1; grid-row:1; color:#fff; text-align:center; font-size:1.5rem; }
+.v2-search-guide { grid-column:2; grid-row:1; min-width:0; }
+.v2-search-modes { display:grid; grid-template-columns:100px minmax(0,1fr); margin:0; color:#fff; font-size:.8rem; text-align:left; }
+.v2-search-modes label { display:flex; align-items:center; gap:5px; margin:0; white-space:nowrap; }
+.v2-search-mode { appearance:none; flex:none; width:1em; height:1em; margin:0; border:1px solid #fff; border-radius:50%; background:transparent; }
+.v2-search-mode:checked { border:2px solid var(--v2-accent); outline:1px solid #fff; background:#fff; }
+.v2-search-input-wrap { margin:5px 0; text-align:left; }
+#v2GlobalSearchInput { width:95%; height:2em; padding:0 10px; border:0; border-radius:5px; background:#fff; color:#222; font:inherit; font-size:1rem; text-align:left; }
+.v2-search-example { padding-left:5px; color:#fff; font-size:.7em; text-align:left; }
+.v2-search-close { grid-column:3; grid-row:1; width:40px; padding:0; border:0; background:transparent; color:#fff; font-size:1.5rem; text-align:left; }
+#v2GlobalSearchResults { position:fixed; z-index:1010; top:115px; right:0; bottom:calc(48px + env(safe-area-inset-bottom,0px)); left:0; display:none; width:100%; overflow:auto; background:#fff; color:#111; }
+#v2GlobalSearchResults.is-visible { display:block; }
+#v2GlobalSearchHint { padding:30px 10px 0; color:#111; font-size:.9rem; font-weight:600; line-height:1.45; text-align:center; }
+#v2GlobalSearchResults.has-query #v2GlobalSearchHint { display:none; }
+#v2GlobalSearchResultItems { min-height:1px; }
+.searchedListBox { align-items:center; padding:.5em 1em; border-bottom:1px solid #ccc; color:#111; }
+.searchedListBox:active { background:#e7ebf2; }
+.recentListBox { display:grid; grid-template-columns:minmax(0,1fr) 40px; align-items:center; padding:.5em 0 .5em 1em; border-bottom:1px solid #ccc; }
+.recentListBox_complex { display:block; width:100%; padding:0; border:0; background:transparent; color:#111; text-align:left; }
+.recentListBox_complex:active { color:var(--v2-accent); }
+.deleteRecent { padding:0; border:0; background:transparent; color:#aaa; text-align:center; }
+.searched_apt_name { font-size:.9em; font-weight:600; }
+.searched_apt_info { color:gray; font-size:.7em; }
+.searched_apt_date { margin-top:5px; color:#ccc; font-size:.7em; }
+.colorTxt, .colorTxt2 { color:var(--v2-accent); }
+#recent_search_box { margin-top:2em; padding:3px 0 3px 15px; border-top:1px solid #ddd; border-bottom:1px solid #ddd; background:#eee; font-size:.8em; font-weight:600; }
+#v2Map { display: none; width: 100%; height: min(68vh, 680px); min-height: 420px; }
+#v2Map { position:relative; }
+#v2Map.is-visible { display: block; }
+#dataList.v2-list-hidden { display: none; }
+.v2-map-area-marker { background-color:#293249; color:#fff; text-align:center; border-radius:5px; box-shadow:rgba(0,0,0,.25) 3px 3px 5px, rgba(0,0,0,.5) 2px 2px 4px; white-space:nowrap; }
+.v2-map-area-marker-lv0 { width:110px; padding-top:3px; padding-bottom:3px; }
+.v2-map-area-marker-lv0 .v2-map-area-name { font-size:1em; }
+.v2-map-area-marker-lv0 .v2-map-area-price { color:#c7ced9; font-size:.8rem; }
+.v2-map-area-marker-lv1 { width:85px; padding-top:3px; padding-bottom:3px; }
+.v2-map-area-marker-lv1 .v2-map-area-name { font-size:.8em; }
+.v2-map-area-marker-lv1 .v2-map-area-price { color:#c7ced9; font-size:.7rem; }
+.v2-map-area-marker-lv2 { width:75px; padding-top:2px; padding-bottom:2px; }
+.v2-map-area-marker-lv2 .v2-map-area-name { font-size:.7em; }
+.v2-map-area-marker-lv2 .v2-map-area-price { color:#c7ced9; font-size:.65rem; }
+#v2CurrentLocation { position:absolute; z-index:1000; top:75px; right:5px; display:grid; width:38px; height:38px; place-items:center; padding:0; border:1px solid rgba(0,0,0,.3); border-radius:50%; background:#fff; color:#333; box-shadow:0 1px 3px rgba(0,0,0,.2); font-size:18px; }
+#v2CurrentLocation:hover { background:#f2f4f7; }
+#v2CurrentLocation.is-loading { opacity:.6; }
+#v2CurrentLocation.is-hidden { display:none; }
+.v2-current-location-dot { position:relative; width:24px; height:24px; box-sizing:border-box; border:4px solid #fff; border-radius:50%; background:#293249; box-shadow:0 0 5px rgba(0,0,0,.4); animation:v2-current-location-pulse 1.5s infinite alternate ease-in-out; }
+.v2-current-location-dot span { position:absolute; top:-15px; left:50%; width:0; height:0; transform:translateX(-50%); border-right:5px solid transparent; border-bottom:9px solid #293249; border-left:5px solid transparent; }
+@keyframes v2-current-location-pulse { from { transform:scale(1); } to { transform:scale(1.2); } }
+/* 2026-10-25: Detail maps load only after the modal opens; keep the loader inside the measured map area. */
+#part_map_wrap { position:relative; width:100%; max-width:100%; overflow:hidden; box-sizing:border-box; }
+#part_map_wrap #detail_map { width:100% !important; max-width:100%; box-sizing:border-box; }
+.v2-detail-map-loading { position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center; gap:9px; background:#f7f7f7; color:#657084; font-size:.85rem; pointer-events:none; }
+.v2-detail-map-spinner { width:20px; height:20px; border:2px solid #d7dce5; border-top-color:#293249; border-radius:50%; animation:v2-detail-map-spin .75s linear infinite; }
+@keyframes v2-detail-map-spin { to { transform:rotate(360deg); } }
+#sort { display:none !important; }
+
+.v2-load-state {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin: 24px 12px;
+  padding: 24px 18px;
+  border: 1px solid #e7ebf1;
+  border-radius: 14px;
+  background: #fff;
+  color: #293249;
+  text-align: center;
+}
+.v2-load-state p { margin: 0; color: #667085; font-size: .88rem; line-height: 1.55; }
+.v2-retry-button {
+  min-height: 40px;
+  margin-top: 4px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #293249;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  #v2Map { height: 72vh; }
+}
+
+@media (max-width: 480px) {
+  #v2Map { min-height: 360px; }
+  .v2-chart-wrap { height:240px; margin:10px 8px; }
+}
+
+.v2-brand-tag { display:inline-block; margin-left:5px; padding:2px 6px; border:1px solid rgba(255,255,255,.45); border-radius:999px; color:#dce7ff; font-size:.52em; line-height:1.5; vertical-align:middle; }
+
+/* Version 2 first-screen shell: align the visual language with the main service. */
+:root { --v2-accent: #293249; --v2-ink: #293249; --v2-muted: #667085; --v2-line: #e4e8ef; --v2-top-stack: 122px; }
+html, body { background: #f4f6f9; color: var(--v2-ink); }
+#titleBar { z-index: 1040; background: var(--v2-accent); box-shadow: 0 2px 10px rgba(26, 36, 54, .12); }
+#help { grid-column:5; }
+#rearrangeCard, #rearrangeRegionCard { z-index:1050; }
+body:has(#rearrangeNew:checked) #dataList .aptYear,
+body:has(#rearrangeNew:checked) #dataList .apt_year { color:#0047ab !important; font-weight:600 !important; }
+#title { font-family: 'Noto Sans KR', sans-serif; letter-spacing: -.035em; }
+#selections { z-index: 1030; top: 51px; display:grid; grid-template-columns:.8fr 1.5fr 1fr; align-content:center; justify-content:center; padding:10px 0; background:var(--v2-accent); box-shadow:rgba(50,50,93,.25) 0 5px 5px -1px,rgba(0,0,0,.3) 0 1px 3px -1px; }
+#weight { z-index: 1020; top: 97px; min-height: 17px; padding: 2px 8px; background: var(--v2-accent); }
+#sido, #gungu, #month { width:95%; height:2em; margin-right:2px; padding:0; border:0; border-radius:0; background:#fff; color:#000; font-size:.8em; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
+#dataList { padding-top: 0 !important; }
+#dataList .listBox {
+  grid-template-columns: 70px minmax(0, 1fr);
+  width: 100%; min-height: 0; margin: 0; padding: .5em 0;
+  border: 0; border-bottom: 1px solid #999; border-radius: 0;
+  background: transparent; box-shadow: none; transition: background-color .15s ease;
+}
+#dataList .listBox:active { background-color: #e7ebf2; }
+#dataList .content { min-width: 0; padding-left: 0; }
+#dataList .apt_name, #dataList .apt_info, #dataList .apt_address { margin-top: 0; line-height: normal; }
+.v2-load-state { margin: 14px 12px; box-shadow: 0 2px 8px rgba(28, 43, 67, .035); }
+.v2-retry-button { background: var(--v2-accent); }
+.v2-complex-info-window { max-width:280px; padding:3px 8px; border:2px solid #293249; border-radius:5px; background:#fff; color:#202b3d; text-align:center; box-shadow:3px 3px 5px rgba(0,0,0,.25),2px 2px 4px rgba(0,0,0,.5); }
+.v2-complex-info-window #info_window_complex_name { font-weight:600; }
+.v2-complex-info-window #info_window_complex_address { font-size:.85em; }
+.v2-complex-info-window, .v2-complex-info-window * { pointer-events:none !important; user-select:none; }
+#gradeSelector { position:absolute; z-index:1015; display:grid; grid-template-columns:repeat(4,70px); justify-content:space-between; column-gap:20px; padding:10px 5px 10px 20px; border:2px solid #293249; border-radius:8px; background:#efefef; box-shadow:0 3px 6px rgba(0,0,0,.18); width:400px; height:auto; top:12px; right:55px; bottom:auto; }
+.gradeSelector_check { display:flex; align-items:center; gap:5px; min-height:22px; }
+.gradeSelector_check .form-check-input { flex:none; float:none; margin:0 !important; vertical-align:middle; }
+#check_grade_S_text, #check_grade_A_text, #check_grade_B_text, #check_grade_C_text { display:flex; align-items:center; justify-content:center; width:30px; height:21px; margin:0; padding:0; border-radius:8px; color:#fff; text-align:center; line-height:1; font-size:.9em; user-select:none; }
+#check_grade_S_text { background:#39465f; }
+#check_grade_A_text { background:#1f5d9f; }
+#check_grade_B_text { background:#2e78b7; }
+#check_grade_C_text { background:#527a9f; }
+#gradeSelector .form-check-input { width:1.2em; height:1.2em; border-color:#999 !important; }
+#gradeSelector .form-check-input:checked { background-color:#293249 !important; border-color:#293249 !important; }
+#gradeSelector.is-hidden { display:none !important; }
+
+@media (min-width: 900px) {
+  #v2GlobalSearchPanel { right:auto; width:590px; margin-right:0; margin-left:5px; }
+  #v2GlobalSearchResults { right:auto; left:0; width:600px; }
+  #dataList { width: 800px; margin: 0 auto; }
+}
+@media (max-width: 480px) {
+  :root { --v2-top-stack: 122px; }
+  #dataList .listBox { width: 100%; margin: 0; padding: .5em 0; }
+}
+
+/* Match the reference split-map desktop and map-first mobile behavior. */
+@media (min-width: 800px) {
+  #dataList .reg_subTable { grid-template-columns: 1.2fr 1.8fr 1.2fr 1.2fr 1fr; }
+  body { height: 100vh; overflow: hidden; }
+  #centerBox { display: block; width: 100%; max-width: none; }
+  #titleBar, #selections, #weight { left: 0; right: auto; width: 600px; margin: 0; }
+  #titleBar { top: 0; }
+  #selections { top: 51px; }
+  #weight { top: 97px; }
+  #v2Workspace { position: fixed; z-index: 2; inset: 0; width: 100vw; height: 100vh; }
+  #v2GlobalSearchPanel { position: fixed; z-index: 1060; top:-220px; left:5px; right:auto; width:590px; margin-right:0; margin-left:5px; max-height:none; overflow:visible; }
+  #v2GlobalSearchPanel.is-visible { top:0; }
+  #v2GlobalSearchResults { top:115px; right:auto; bottom:48px; left:0; width:600px; }
+  #v2ListPane { position: absolute; top: 120px; bottom: 0; left: 0; width: 600px; overflow-x: hidden; overflow-y: auto; padding-bottom: 30px; }
+  body.v2-national-region #v2ListPane { top: 97px; }
+  #dataList { width:100%; margin:0; }
+  #v2Map { position: absolute; display: block; top: 0; right: 0; bottom: 0; left: 600px; width: auto; height: auto; min-height: 0; }
+  #rearrangeCard, #rearrangeRegionCard { left:0; right:auto; width:590px; max-width:calc(100vw - 5px); margin:0 0 0 5px; transform:none; }
+  #v2MobileViewToggle { display: none; }
+  #exampleModal { top:0; right:auto; bottom:0; left:0; width:600px; height:100vh; z-index:1055; }
+  #exampleModal .modal-dialog { width:500px; max-width:500px; margin-right:auto !important; margin-left:auto !important; }
+}
+@media (max-width: 799px) {
+  body { height: 100vh; overflow: hidden; }
+  #centerBox { display: block; width: 100%; }
+  #titleBar, #selections, #weight { left: 0; right: 0; width: 100%; margin: 0; }
+  #titleBar { top: 0; }
+  #selections { top: 51px; }
+  #weight { top: 97px; }
+  #v2Workspace { position: fixed; z-index: 2; top: 122px; right: 0; bottom: 0; left: 0; height: calc(100vh - 122px); height: calc(100dvh - 122px); }
+  #v2GlobalSearchPanel { position: fixed; z-index: 1060; top:-220px; right:1%; left:1%; width:98%; max-height:none; overflow:visible; }
+  #v2GlobalSearchPanel.is-visible { top:0; }
+  #v2GlobalSearchResults { top:115px; right:0; bottom:calc(48px + env(safe-area-inset-bottom,0px)); left:0; width:100%; }
+  #v2ListPane { position: absolute; inset: 0; display: none; overflow-x: hidden; overflow-y: auto; padding: 0 0 50px; }
+  body.v2-national-region #v2ListPane { top: -25px; padding: 0 0 105px; }
+  body.v2-national-region #dataList { margin-top: 32px; }
+  #v2ListPane.v2-list-hidden { display: none; }
+  #v2Workspace[data-mobile-view="list"] #v2ListPane { display: block; }
+  #v2Map { position: absolute; inset: 0; display: block; width: 100%; height: 100%; min-height: 0; }
+  #rearrangeCard, #rearrangeRegionCard { left:1%; right:1%; width:98%; max-width:none; margin:0; transform:none; }
+  #gradeSelector { grid-template-columns:1fr; justify-content:center; row-gap:10px; column-gap:10px; width:64px; height:145px; padding:5px; top:auto; bottom:25px; right:10px; border-radius:5px; }
+  #check_grade_S_text, #check_grade_A_text, #check_grade_B_text, #check_grade_C_text { width:25px; height:21px; margin:0; border-radius:6px; font-size:.85em; }
+  #gradeSelector .form-check-input { width:1.15em; height:1.15em; }
+  #v2Workspace[data-mobile-view="list"] #v2Map { display: none; }
+  #v2MobileViewToggle { position: fixed; z-index: 1040; bottom: max(65px, calc(env(safe-area-inset-bottom) + 58px)); left: 10px; display: grid; width: 4em; height: 4em; align-content: center; justify-content: center; padding: 0; border: 2px solid #162235; border-radius: 50%; background: #293249; color: #fff; box-shadow: 0 3px 10px rgba(0,0,0,.24); }
+  .v2-mobile-toggle-icon { font-size: 1.15rem; line-height: 1.2; }
+  .v2-mobile-toggle-text { font-size: .68rem; line-height: 1.25; }
+  #dataList { padding-top: 0 !important; }
+}

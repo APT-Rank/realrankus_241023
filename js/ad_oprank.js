@@ -135,11 +135,13 @@ function show_partnership(){
       $('#partInfo').html(sub_comment)
     }
 
+    // 2026-10-25: Resolve partnership images correctly in the nested V2 preview and promoted /op route.
+    var partImagePath = window.location.pathname.indexOf('/op/v2/') >= 0 ? '../../ad/image/' : '../ad/image/';
     if(checkMobile() == 'other'){
-      $('#partImage').html("<img src='../ad/image/" + img_url + "' height='70px' style='border-radius: 10px;'>")
+      $('#partImage').html("<img src='" + partImagePath + img_url + "' height='70px' style='border-radius: 10px;'>")
     }
     else{
-      $('#partImage').html("<img src='../ad/image/" + img_url + "' height='58px' style='border-radius: 10px;'>")
+      $('#partImage').html("<img src='" + partImagePath + img_url + "' height='58px' style='border-radius: 10px;'>")
     }
   }
   else{
