@@ -500,28 +500,47 @@
 
     initSorting()
 
+    // 2026-10-26: Give each modal its own back-stack entry so X/backdrop dismissal also consumes it.
     $('div.modal').on('show.bs.modal', function() {
-      var modal = this;
-      var hash = modal.id;
-      window.location.hash = hash;
-      window.onhashchange = function() {
-        if (!location.hash){
-          $(modal).modal('hide');
-        }
+      var modalId = this.id;
+      if (modalId !== 'exampleModal') {
+        var otherModal = this;
+        window.location.hash = modalId;
+        window.onhashchange = function() {
+          if (!location.hash) $(otherModal).modal('hide');
+        };
+        return;
+      }
+      var state = window.history.state;
+      var alreadyTracked = state && (state.opModalId === modalId || state.modal === modalId);
+      if (!alreadyTracked && !$(this).data('opV2SwitchingDetail')) {
+        var nextState = state && typeof state === 'object' ? Object.assign({}, state) : {};
+        nextState.opModalId = modalId;
+        nextState.opModalHistory = true;
+        nextState.opModalToken = Date.now() + '-' + (++modalState);
+        window.history.pushState(nextState, '', window.location.pathname + window.location.search + '#' + modalId);
+      }
+    });
+
+    $('div.modal').on('hide.bs.modal', function() {
+      if (this.id !== 'exampleModal') return;
+      if ($(this).data('opV2SwitchingDetail')) return;
+      var state = window.history.state;
+      var modalId = this.id;
+      if (state && (state.opModalId === modalId || state.modal === modalId)) {
+        // A browser Back already changed history.state; only explicit dismissals still point at this modal.
+        window.history.back();
       }
     });
 
     $('div.modal').on('hidden.bs.modal', function() {
       //var hash = this.id;
-      //history.replaceState('', document.title, window.location.pathname);
+      if (this.id !== 'exampleModal') history.replaceState('', document.title, window.location.pathname);
       
       //처음 진입 시 공지 팝업이 표시되면, 닫은 후 가중치 팝업 표시
       if(noticePop == true){     
         noticePop = false
       }
-
-      var hash = this.id;
-      history.replaceState('', document.title, window.location.pathname);
 
       if(startNotice == true){
         if(alwaysSortingPop != "off"){
@@ -753,6 +772,8 @@
     //var selection = document.getElementById("gungu")
     selectedRegion = $("#sido option:selected").val()
     selectedSubRegion = $("#gungu option:selected").val()
+    // 2026-10-26: Show the map loading indicator as soon as a region selection starts.
+    if (typeof window.beginV2RegionLoading === "function") window.beginV2RegionLoading();
 
     if (selectedSubRegion != "1000000000_Korea"){
       updateTable(selectedMonth, selectedSubRegion)
@@ -774,6 +795,7 @@
   function updateTable(month, region){
     document.body.classList.remove('v2-national-region');
     if (window.refreshV2Layout) window.refreshV2Layout();
+    if (typeof window.beginV2RegionLoading === "function") window.beginV2RegionLoading();
     //$('div.modal').modal("hide");    
     $('#sort').css("visibility", "visible")
     $('html').scrollTop(0)
@@ -1652,10 +1674,11 @@
   function updateRegionTable(month){
     document.body.classList.add('v2-national-region');
     if (window.refreshV2Layout) window.refreshV2Layout();
+    if (typeof window.beginV2RegionLoading === "function") window.beginV2RegionLoading();
     $('html').scrollTop(0)
     $('#sort').css("visibility", "hidden")
     url = "https://www.realrankus.com/" + month + "/1000000000_Korea.json"
-    $('#dataList').html("");
+    $('#dataList').attr('aria-busy', 'true').html("");
 
     setTimeout(function(){}, 250)
 
@@ -1728,6 +1751,9 @@
           $('#dataList').append(addon_html);
         }
         $('#dataList').append("<div style='height: 2em'></div>");
+        $('#dataList').attr('aria-busy', 'false');
+    }).fail(function(){
+      $('#dataList').attr('aria-busy', 'false');
     })
 
     saveLocalStorage()
@@ -2067,7 +2093,7 @@
     //detailHtml += "<hr>";
 
     footerHtml += "<div class='modal-footer'>"    
-    footerHtml += " <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>일주일 동안 보지 않기</span></label></div>"
+    footerHtml += " <div id='footerCheck'><input class='form-check-input' type='checkbox' value='' id='flexCheckDefault'><label class='form-check-label' for='flexCheckDefault'><span class='notice'>다음 업데이트까지 보지 않기</span></label></div>"
     if(checkMobile() == 'ios'){
       footerHtml += " <div id='footerBtn1'><button type='button' class='goApt' style='font-size: 0.85em' onClick='openOuterLink(\"https://apps.apple.com/kr/app/%EC%95%84%ED%8C%8C%ED%8A%B8%EB%9E%AD%ED%81%AC/id6448044104\")'>iOS 앱 설치</button></div>"
     }
@@ -2104,7 +2130,7 @@
     $('#flexCheckDefault').change(function(){
       if($(this).is(':checked')){
         //console.log("CHECKED!!")
-        $.cookie('popCookie', '202609', { expires: 30, path: '/' }); //수정
+        $.cookie('popCookie', '202609', { expires: 50, path: '/' }); //수정
         //console.log($.cookie('popCookie'))
       }
       else{

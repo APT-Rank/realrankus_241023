@@ -4279,7 +4279,7 @@ function showNotice() {
 
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
-      $.cookie("popCookie", "202606", { expires: 30, path: "/" });
+      $.cookie("popCookie", "202606", { expires: 50, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });

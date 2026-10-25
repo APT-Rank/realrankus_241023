@@ -5054,7 +5054,7 @@ function showNotice() {
   $("#flexCheckDefault").change(function () {
     if ($(this).is(":checked")) {
       // 수정일: 2026-10-03 — 10월 공지 확인 상태와 노출 기간을 새 버전으로 갱신합니다.
-      $.cookie("popCookie", "202610", { expires: 45, path: "/" });
+      $.cookie("popCookie", "202610", { expires: 50, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });
