@@ -110,7 +110,7 @@
   <script src="../js/request_report.js" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet" />
-  <link href="../css/style_price.css?v=20261025_2" rel="stylesheet" />
+  <link href="../css/style_price.css?v=20261026_1" rel="stylesheet" />
   <link href="../css/slider.css" rel="stylesheet" />
 
   <script src="../js/doubleSlider.js" type="text/javascript"></script>
@@ -3198,6 +3198,7 @@
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
+        windowWidth: 400,         // 2026-10-26: 모바일 뷰포트 기준 렌더링 (PC/태블릿에서도 모바일 미디어 쿼리 활성화)
         ignoreElements: function (el) {
           // 2026-10-22: 캡처 대상 카드가 아닌 다른 모든 카드 및 구분선은 복제 단계에서 즉시 제외하여 렌더링 10배 가속 (ignoreElements)
           if (el.classList && el.classList.contains('listBox') && el !== cardDom) return true;
@@ -3226,21 +3227,100 @@
             clonedCard.style.border = '1px solid #E43B46';
             clonedCard.style.boxSizing = 'border-box';
 
-            // 2026-10-24: 캡처 시 카드 다운로드 버튼 무시로 인한 우측 여백 낭비 제거 및 3단 비교가격 전체 폭 활용
+            // 2026-10-26: PC/태블릿에서도 모바일과 동일한 컴팩트 카드 규격(폭 360px) 강제
+            clonedCard.style.width = '360px';
+            clonedCard.style.maxWidth = '360px';
+            clonedCard.style.minWidth = '360px';
+            clonedCard.style.margin = '0 auto';
+
+            // 2026-10-26: PC 환경에서는 sparkline_container가 price_table2 외부에 있으므로 모바일처럼 price_table2 내부로 재배치
+            var clonedPriceTable2 = clonedCard.querySelector('.price_table2');
+            var clonedSparkline = clonedCard.querySelector('.sparkline_container');
+            if (clonedPriceTable2 && clonedSparkline && clonedSparkline.parentElement !== clonedPriceTable2) {
+              clonedPriceTable2.appendChild(clonedSparkline);
+            }
+
+            // 모바일 1단 수직 레이아웃 강제
+            var clonedPriceContent = clonedCard.querySelector('.price_content');
+            if (clonedPriceContent) {
+              clonedPriceContent.style.display = 'grid';
+              clonedPriceContent.style.gridTemplateColumns = '1fr';
+              clonedPriceContent.style.gridTemplateAreas = 'none';
+              clonedPriceContent.style.alignItems = 'stretch';
+              clonedPriceContent.style.marginTop = '5px';
+            }
+
+            // 상단: 실거래가 정보(1fr) + 스파크라인 그래프(0.4fr)
+            if (clonedPriceTable2) {
+              clonedPriceTable2.style.gridArea = 'auto';
+              clonedPriceTable2.style.display = 'grid';
+              clonedPriceTable2.style.gridTemplateColumns = '1fr 0.4fr';
+              clonedPriceTable2.style.borderRight = '0px';
+              clonedPriceTable2.style.marginRight = '0px';
+              clonedPriceTable2.style.marginTop = '5px';
+              clonedPriceTable2.style.paddingBottom = '5px';
+              clonedPriceTable2.style.alignItems = 'center';
+            }
+
+            if (clonedSparkline) {
+              clonedSparkline.style.gridArea = 'auto';
+              clonedSparkline.style.borderLeft = '1px solid #eee';
+              clonedSparkline.style.borderRight = '0px';
+              clonedSparkline.style.padding = '0 3px';
+              clonedSparkline.style.gridRow = 'auto';
+              clonedSparkline.style.height = '100%';
+              clonedSparkline.style.display = 'flex';
+              clonedSparkline.style.justifyContent = 'center';
+              clonedSparkline.style.alignItems = 'center';
+            }
+
             var clonedCompareContainer = clonedCard.querySelector('.compare_price_container');
             if (clonedCompareContainer) {
+              clonedCompareContainer.style.gridArea = 'auto';
+              clonedCompareContainer.style.display = 'grid';
               clonedCompareContainer.style.gridTemplateColumns = '1fr';
+              clonedCompareContainer.style.columnGap = '8px';
+              clonedCompareContainer.style.alignItems = 'center';
+              clonedCompareContainer.style.paddingTop = '8px';
+              clonedCompareContainer.style.borderTop = '1px solid #eee';
+              clonedCompareContainer.style.marginTop = '4px';
               clonedCompareContainer.style.width = '100%';
             }
+
             var clonedComparePrice = clonedCard.querySelector('.compare_price');
             if (clonedComparePrice) {
+              clonedComparePrice.style.gridArea = 'auto';
+              clonedComparePrice.style.display = 'grid';
               clonedComparePrice.style.gridTemplateColumns = 'auto auto 1fr';
               clonedComparePrice.style.columnGap = '8px';
+              clonedComparePrice.style.fontSize = '0.72em';
+              clonedComparePrice.style.fontWeight = '600';
+              clonedComparePrice.style.borderTop = '0px';
+              clonedComparePrice.style.paddingTop = '0px';
               clonedComparePrice.style.width = '100%';
               var divs = clonedComparePrice.querySelectorAll('div');
               for (var d = 0; d < divs.length; d++) {
                 divs[d].style.whiteSpace = 'nowrap';
               }
+            }
+
+            // 텍스트 크기 및 세부 정돈 (모바일 화면 비율과 일치)
+            var clonedPriceNum = clonedCard.querySelector('.price_num');
+            if (clonedPriceNum) {
+              clonedPriceNum.style.lineHeight = '1.2em';
+              clonedPriceNum.style.fontSize = '1.15em';
+            }
+            var clonedAptName = clonedCard.querySelector('.apt_name');
+            if (clonedAptName) {
+              clonedAptName.style.fontSize = '0.9em';
+            }
+            var clonedHidedRatio = clonedCard.querySelector('.hided_ratio');
+            if (clonedHidedRatio) {
+              clonedHidedRatio.style.display = 'none';
+            }
+            var clonedDownloadWrap = clonedCard.querySelector('.card_download_wrapper');
+            if (clonedDownloadWrap) {
+              clonedDownloadWrap.style.display = 'none';
             }
 
             // 출처 표기 (워터마크: 왼쪽 캡처 일시, 오른쪽 리얼랭커스 | realrankus.com)
