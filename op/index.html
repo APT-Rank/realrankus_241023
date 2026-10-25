@@ -1560,12 +1560,12 @@
     var dh = 200;
     if(Number(selectedMonth) > 202212){
       var detailItem = aptData.data[index];
-      // 2026-10-25: Match main-map mobile sizing and enlarge this detail-only marker to 1.5x.
+      // 2026-10-26: Use the base marker size in the detail map.
       var detailMobileMarkerLayout = typeof window.isMobile === 'boolean'
         ? window.isMobile
         : window.matchMedia('(max-width: 799px)').matches;
       var detailMarkerIcon = typeof window.createOpLargeMarkerIcon === 'function'
-        ? window.createOpLargeMarkerIcon(detailItem, index, detailMobileMarkerLayout, 1.5)
+        ? window.createOpLargeMarkerIcon(detailItem, index, detailMobileMarkerLayout, 1)
         : undefined;
       if (detailMarkerIcon && detailMarkerIcon.anchor) {
         // Lower the marker graphic without panning the map when the modal opens.

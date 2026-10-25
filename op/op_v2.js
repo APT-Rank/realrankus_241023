@@ -525,7 +525,10 @@
     };
     if (modal.hasClass("show") || modal.is(":visible")) {
       switchingDetail = true;
-      modal.off("hidden.bs.modal.opV2Map").one("hidden.bs.modal.opV2Map", openDetail);
+      // 2026-10-26: Wait until Bootstrap finishes removing the old backdrop before showing the replacement detail.
+      modal.off("hidden.bs.modal.opV2Map").one("hidden.bs.modal.opV2Map", function () {
+        window.setTimeout(openDetail, 0);
+      });
       modal.modal("hide");
       return;
     }

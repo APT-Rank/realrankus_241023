@@ -1226,7 +1226,14 @@ function setTreeMap(){
 function showCostsum(){
   // 2026-10-23: [시가총액 트리맵 지연 로딩 방어] 백그라운드 수신 완료 전 클릭 시 안전하게 대기
   if ((!cost_treemap || typeof treemap_data === 'undefined') && typeof loadAuxiliaryDataInBackground === 'function' && !auxDataLoaded) {
-    loadAuxiliaryDataInBackground().then(function() { showCostsum(); });
+    // 2026-10-26: 데이터 준비 중에도 모달을 먼저 열어 로딩 상태를 보여준다.
+    showCostsumLoading();
+    loadAuxiliaryDataInBackground().then(function() {
+      showCostsum();
+    }).catch(function(error) {
+      console.error('[cost map] 시가총액 데이터를 불러오지 못했습니다.', error);
+      $("#costDetail .cost-map-loading").html("시가총액 데이터를 불러오지 못했습니다.");
+    });
     return;
   }
 
@@ -1326,10 +1333,25 @@ function showCostsum(){
     treemapCanvas += "<div class='graph'> <canvas id='treeMapChart' width='"+ scr_width +"' height='" + scr_height + "'></canvas></div>"
   }
   
-  $("#costDetail").html(treemapCanvas)
+  // 2026-10-26: 모달을 먼저 표시하고, 다음 프레임에서 트리맵을 그려 초기 지연을 안내한다.
+  $("#costDetail").html(treemapCanvas + "<div class='cost-map-loading' role='status' aria-live='polite'><span class='cost-map-spinner' aria-hidden='true'></span><span>시가총액 지도를 불러오는 중입니다.</span></div>");
+  $("#costModal").modal('show');
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      try {
+        drawTreeMap(cost_data);
+      } catch (error) {
+        console.error('[cost map] 트리맵을 표시하지 못했습니다.', error);
+        $("#costDetail .cost-map-loading").html("시가총액 지도를 불러오지 못했습니다.");
+      }
+    });
+  });
+}
 
-  drawTreeMap(cost_data)
-  $("#costModal").modal('show')  
+// 2026-10-26: 보조 데이터가 아직 준비되지 않은 경우의 모달 로딩 화면
+function showCostsumLoading(){
+  $("#costDetail").html("<div class='cost-map-loading cost-map-loading-only' role='status' aria-live='polite'><span class='cost-map-spinner' aria-hidden='true'></span><span>시가총액 데이터를 불러오는 중입니다.</span></div>");
+  $("#costModal").modal('show');
 }
 
 function drawTreeMap(data){
@@ -1453,6 +1475,10 @@ function drawTreeMap(data){
       },
       animation: {        
           duration: 850,
+          onComplete: function(){
+            // 2026-10-26: 차트 애니메이션까지 완료된 뒤 로딩 표시를 제거한다.
+            $("#costDetail .cost-map-loading").fadeOut(150, function(){ $(this).remove(); });
+          }
       },
       plugins:{
         title: {
