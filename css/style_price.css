@@ -21,6 +21,7 @@
     text-align: center;
     line-height: 50px;
     background-color: #E43B46;
+    z-index: 100;
   }
 
   .price_content {
@@ -50,10 +51,10 @@
     color: #cc233f
   }
 
-  /* 2026-10-24: 거래가격 우측 신고가 배지 스타일 */
+  /* 2026-10-24: 거래가격 우측 신고가 배지 스타일 (스크롤 시 스티키 헤더 위로 노출되는 z-depth 버그 방지를 위해 position: relative 제거) */
   .badge_highest {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: 1px;
     margin-left: 6px;
     padding: 1px 5px;
     font-size: 0.65em;
@@ -63,8 +64,6 @@
     background-color: #E43B46;
     color: #ffffff;
     letter-spacing: -0.3px;
-    position: relative;
-    top: -1px;
   }
 
   .hided_ratio {
@@ -260,6 +259,7 @@
   #regionSearchCard,
   #unifiedSearchCard {
     position: fixed;
+    z-index: 150;
     display: grid;
     grid-template-columns: 45px 1fr 40px;
     top: -220px;
@@ -352,6 +352,7 @@
 
   #rearrangeCard {
     position: fixed;
+    z-index: 150;
     display: grid;
     grid-template-columns: 45px 1fr 40px;
     top: -250px;
@@ -371,6 +372,7 @@
 
   #rearrangeRegionCard {
     position: fixed;
+    z-index: 150;
     display: grid;
     grid-template-columns: 45px 1fr 40px;
     top: -250px;
@@ -467,6 +469,7 @@
     text-align: center;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    z-index: 10;
   }
 
   .date_saperator_web {
@@ -478,6 +481,7 @@
     text-align: center;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    z-index: 10;
   }
 
   .data_selection {
@@ -834,6 +838,7 @@
     left: 0;
     right: 0;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 5px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    z-index: 90;
   }
 
   #themeSelections {
@@ -848,6 +853,7 @@
     top: 50px;
     left: 0;
     right: 0;
+    z-index: 90;
   }
 
   #weight {
@@ -866,6 +872,7 @@
     font-size: 0.7em;
     color: white;
     text-align: center;
+    z-index: 80;
   }
 
   #linkToAptrank {

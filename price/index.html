@@ -110,7 +110,7 @@
   <script src="../js/request_report.js" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet" />
-  <link href="../css/style_price.css" rel="stylesheet" />
+  <link href="../css/style_price.css?v=20261025_1" rel="stylesheet" />
   <link href="../css/slider.css" rel="stylesheet" />
 
   <script src="../js/doubleSlider.js" type="text/javascript"></script>
@@ -144,10 +144,10 @@
   .compare_price > div {
     white-space: nowrap;
   }
-  /* 2026-10-24: 거래가격 우측 신고가 배지 스타일 */
+  /* 2026-10-24: 거래가격 우측 신고가 배지 스타일 (스크롤 시 스티키 헤더 위로 노출되는 z-depth 버그 방지를 위해 position: relative 제거) */
   .badge_highest {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: 1px;
     margin-left: 6px;
     padding: 1px 5px;
     font-size: 0.65em;
@@ -157,8 +157,6 @@
     background-color: #E43B46;
     color: #ffffff;
     letter-spacing: -0.3px;
-    position: relative;
-    top: -1px;
   }
   /* 2026-10-24: 카드 이미지 캡처 카메라 플래시 이펙트 */
   @keyframes cameraFlashEffect {
