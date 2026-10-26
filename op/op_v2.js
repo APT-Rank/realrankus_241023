@@ -871,7 +871,8 @@
     var areaId = "op_area_" + markerId;
     var svg = "<svg version='1.1' class='large_marker " + gradeClass + "' id='large_marker_" + markerId + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 " + size + " " + size + "' style='enable-background:new 0 0 800 1200;' xml:space='preserve' width='" + (68 * scale) + "' height='" + (60 * scale) + "'>" +
       "<defs><style>." + gradeClass + "{fill:" + color + "}.large_marker_" + gradeClass + "{stroke:" + color + ";stroke-width:0.5}.cls-2{fill:#fff}.cls-3_text{fill:#fff;font-size:8px;font-weight:600}.cls-4_text{fill:#000;font-size:7px;font-weight:600}.cls-5_text{fill:#000;font-size:5px;font-weight:600}.cls-6_text{fill:#000;font-size:4px;font-weight:600}</style></defs>" +
-      "<g class='svg_loc_large'><path class='cls-1 large_marker_" + gradeClass + "' d='M.12,12.29V4.5a1,1,0,0,1,1-1H32.43a1,1,0,0,1,1,1v7.79Z'/>" +
+      // 2026-10-26: Increase the two flat-roof corner radii from 1px to 2px.
+      "<g class='svg_loc_large'><path class='cls-1 large_marker_" + gradeClass + "' d='M.12,12.29V5.5a2,2,0,0,1,2-2H31.43a2,2,0,0,1,2,2v6.79Z'/>" +
       "<path class='cls-2 large_marker_" + gradeClass + "' d='M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z'/>" +
       "<text class='cls-3_text' text-anchor='middle' x='16.5' y='11'>" + safe(gradeLabel) + "</text><text class='cls-4_text' id='" + priceId + "' text-anchor='middle' x='17' y='20'>" + safe(sale.price) + "</text><text class='cls-5_text' id='" + areaId + "' text-anchor='middle' x='17' y='26'>" + safe(sale.area) + "</text></g></svg>";
     var wrapperHeight = (mobileLarge ? 65 : 60) * scale;

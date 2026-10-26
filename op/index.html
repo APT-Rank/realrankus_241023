@@ -425,6 +425,18 @@
   var alwaysSortingPop = "on";
   var regionSelection = false;
 
+  // 2026-10-26: Keep OP notice dismissal separate from RealRankus on the shared host.
+  function hasDismissedOpNotice(){
+    var opNoticeVersion = $.cookie('popCookie_op');
+    if(opNoticeVersion == '202609') return true;
+    // Migrate the previous shared OP cookie once, without mistaking RealRankus' cookie for it.
+    if(opNoticeVersion == undefined && $.cookie('popCookie') == '202609'){
+      $.cookie('popCookie_op', '202609', { expires: 45, path: '/' });
+      return true;
+    }
+    return false;
+  }
+
   $(document).ready(function(){
     //document.cookie = "safeCookie1=foo; SameSite=Lax";
     //document.cookie = "safeCookie2=foo";
@@ -564,7 +576,7 @@
       }
     })
 
-    if($.cookie('popCookie') != "202609"){ //수정
+    if(!hasDismissedOpNotice()){
       startNotice = true
       showNotice()
       //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당      
@@ -2120,7 +2132,7 @@
     } 
     $('.modal-footer').css({"padding-top" : "3px"})
 
-    if($.cookie('popCookie') != '202609'){ //수정
+    if(!hasDismissedOpNotice()){
       $('#flexCheckDefault').prop("checked", false)
     }
     else{
@@ -2130,16 +2142,18 @@
     $('#flexCheckDefault').change(function(){
       if($(this).is(':checked')){
         //console.log("CHECKED!!")
-        $.cookie('popCookie', '202609', { expires: 50, path: '/' }); //수정
+        // 수정일: 2026-10-26 — OP 공지 확인 상태를 전용 쿠키에 45일간 저장합니다.
+        $.cookie('popCookie_op', '202609', { expires: 45, path: '/' });
         //console.log($.cookie('popCookie'))
       }
       else{
         //console.log("UN-CHECKED!!")
-        $.removeCookie('popCookie', null, { path: '/' });
+        $.removeCookie('popCookie_op', null, { path: '/' });
+        if($.cookie('popCookie') == '202609') $.removeCookie('popCookie', null, { path: '/' });
       }
     })
 
     $("#exampleModal").modal("show"); //offcanvas
   }
 </script>
-<script src="/op/op_v2.js?v=20261026_52"></script>
+<script src="/op/op_v2.js?v=20261026_53"></script>
