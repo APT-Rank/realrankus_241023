@@ -3556,20 +3556,32 @@
         }
       });
 
-      // 5. 하단 워터마크 추가 (단일 카드 캡처와 동일: 좌측 Captured at 일시, 우측 리얼랭커스 | realrankus.com)
+      // 5. 상단 타이틀 및 하단 워터마크 추가
       var scale = 2;
+      var headerHeight = 32 * scale;
       var footerHeight = 36 * scale;
       var finalCanvas = document.createElement('canvas');
       finalCanvas.width = canvas.width;
-      finalCanvas.height = canvas.height + footerHeight;
+      finalCanvas.height = canvas.height + headerHeight + footerHeight;
 
       var ctx = finalCanvas.getContext('2d');
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-      ctx.drawImage(canvas, 0, 0);
 
-      // 상단 점선 구분선 (dashed line #e2e8f0)
-      var lineY = canvas.height + 2 * scale;
+      var padX = 10 * scale;
+
+      // 상단 좌측 회색 타이틀 (YYYY년 MM월 DD일 실거래 집계 현황 | 리얼랭커스 PRICE)
+      var headerTitle = yyyy + "년 " + mm + "월 " + dd + "일 실거래 집계 현황 | 리얼랭커스 PRICE";
+      ctx.font = '600 ' + (11.5 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillStyle = '#64748b';
+      ctx.textBaseline = 'top';
+      ctx.fillText(headerTitle, padX, 12 * scale);
+
+      // 본문 카드 그리드 렌더링
+      ctx.drawImage(canvas, 0, headerHeight);
+
+      // 하단 점선 구분선 (dashed line #e2e8f0)
+      var lineY = headerHeight + canvas.height + 2 * scale;
       var padX = 10 * scale;
       ctx.beginPath();
       ctx.setLineDash([4 * scale, 3 * scale]);
@@ -3580,14 +3592,14 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // 좌측 캡처 일시 워터마크
+      // 하단 좌측 캡처 일시 워터마크
       ctx.font = (8 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = '#94a3b8';
       ctx.textBaseline = 'top';
       ctx.fillText('Captured at', padX, lineY + 7 * scale);
       ctx.fillText(captureDateTimeStr, padX, lineY + 17 * scale);
 
-      // 우측 리얼랭커스 브랜드 워터마크
+      // 하단 우측 리얼랭커스 브랜드 워터마크
       var fontBrand = 'bold ' + (11 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       var fontSep = (10 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       var fontDomain = (11 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
