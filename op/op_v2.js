@@ -846,10 +846,8 @@
     selectedMapCode = String(item["검색코드"] || "");
     if (!map) { pendingSearchMapCode = selectedMapCode; renderMap(); return; }
     pendingSearchMapCode = "";
-    var zoom = map.getZoom();
-    var targetZoom = Math.max(zoom, isReferenceMobile() ? 15 : 16);
     map.setCenter(new naver.maps.LatLng(pos[0], pos[1]));
-    if (zoom !== targetZoom) map.setZoom(targetZoom, true);
+    // 2026-10-26: Selecting a complex keeps the user's current map scale.
     window.setTimeout(function () { drawVisibleMapData(); animateSelectedMarker(selectedMapCode); }, 250);
   }
 
@@ -1052,10 +1050,9 @@
         if (level === "Level0") {
           mapFocusKey = [window.selectedMonth, window.selectedSubRegion].join(":");
           map.setCenter(position);
-          map.setZoom(10, true);
+          // 2026-10-26: Keep the current scale when a region summary marker is selected.
           return;
         }
-        var targetZoom = level === "Level2" ? 16 : 14;
         var upperRegion = String(item.name_en || "").split("_")[0];
         var subRegion = String(item.find_link || "") + "_" + String(item.name_en || "");
         if (upperRegion && subRegion !== String(window.selectedSubRegion)) {
@@ -1067,7 +1064,7 @@
         }
         mapFocusKey = [window.selectedMonth, window.selectedSubRegion].join(":");
         map.setCenter(position);
-        map.setZoom(targetZoom, true);
+        // 2026-10-26: Keep the current scale when moving between region summary markers.
       });
       markers.push(marker);
     });
