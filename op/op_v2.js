@@ -15,6 +15,7 @@
   var activeMapData = null;
   var selectedMapCode = "";
   var pendingSearchMapCode = "";
+  var pendingSearchKeepMapView = false;
   var selectedAnimationCode = "";
   var selectedAnimationMarker = null;
   var hoverMarker = null;
@@ -405,8 +406,10 @@
         var districtName = String(nearestDistrict.name_en || "");
         var sidoCode = districtName.split("_")[0];
         var gunguCode = districtCode + "_" + districtName;
-        if (sidoCode && gunguCode && typeof window.optionChange === "function") {
-          window.optionChange(gunguCode, sidoCode);
+        if (sidoCode && gunguCode) {
+          $("#sido").val(sidoCode);
+          if (typeof window.optionChange === "function") window.optionChange(gunguCode, sidoCode);
+
           updateLocalSearchLabel();
           // Keep the user's location centered when the newly selected region reloads.
           mapFocusKey = [window.selectedMonth, window.selectedSubRegion].join(":");
@@ -678,9 +681,11 @@
       && currentCodeIndex >= 0
       && window.showDetail) {
       pendingSearchMapCode = String(entry[5] || "");
+      pendingSearchKeepMapView = !!keepMapView;
       selectedMapCode = pendingSearchMapCode;
       if (!keepMapView) selectComplexOnMap(getData()[currentCodeIndex]);
       pendingSearchMapCode = "";
+      pendingSearchKeepMapView = false;
       if (!keepMapView && isMobileLayout()) setView("list");
       showDetailFromMap(currentCodeIndex);
       return;
@@ -693,6 +698,7 @@
     var tries = 0;
     var previousData = window.aptData;
     pendingSearchMapCode = String(entry[5] || "");
+    pendingSearchKeepMapView = !!keepMapView;
     selectedMapCode = pendingSearchMapCode;
     if (!keepMapView && isMobileLayout()) setView("list");
     if (map) mapFocusKey = "";
@@ -703,10 +709,11 @@
       if (loadedTarget && index >= 0 && window.showDetail) {
         window.clearInterval(timer);
         pendingSearchMapCode = String(entry[5] || "");
+        pendingSearchKeepMapView = !!keepMapView;
         selectedMapCode = pendingSearchMapCode;
         if (map) renderMap();
         showDetailFromMap(index);
-      } else if (tries >= 50) window.clearInterval(timer);
+      } else if (tries >= 50) { window.clearInterval(timer); pendingSearchKeepMapView = false; }
     }, 200);
   }
 
@@ -786,8 +793,10 @@
         marker.setZIndex(2147483647);
         hoverMarker = marker;
         var content = "<div class='v2-complex-info-window'><div id='info_window_complex_name'>" + safe(item["오피스텔명"] || "오피스텔") + "</div><div id='info_window_complex_address'>" + safe(item["법정동주소"] || item["도로명주소"] || "주소 정보 없음") + "</div></div>";
-        if (!hoverInfoWindow) hoverInfoWindow = new naver.maps.InfoWindow({ content: content, borderWidth: 0, backgroundColor: "transparent", anchorSize: new naver.maps.Size(0, 0), pixelOffset: new naver.maps.Point(17, 18), disableAutoPan: true });
-        else hoverInfoWindow.setContent(content);
+        var hoverOffset = new naver.maps.Point(17, 8);
+        if (!hoverInfoWindow) hoverInfoWindow = new naver.maps.InfoWindow({ content: content, borderWidth: 0, backgroundColor: "transparent", anchorSize: new naver.maps.Size(0, 0), pixelOffset: hoverOffset, disableAutoPan: true });
+        else { hoverInfoWindow.setContent(content); hoverInfoWindow.setOptions({ pixelOffset: hoverOffset }); }
+
         hoverInfoWindow.open(map, marker);
         makeHoverInfoWindowPointerTransparent();
         window.requestAnimationFrame(makeHoverInfoWindowPointerTransparent);
@@ -1097,7 +1106,8 @@
       var center = pendingItem ? coords(pendingItem) : firstRegionItem ? coords(firstRegionItem) : storedViewport ? storedViewport.center : selectedMapCenter(data.regions, data.search.data);
       var defaultZoom = nationwide ? 8 : 16;
       var targetZoom = pendingItem ? (isReferenceMobile() ? 15 : 16) : storedViewport && storedViewport.zoom ? storedViewport.zoom : defaultZoom;
-      if (pendingItem) { selectedMapCode = pendingSearchMapCode; pendingSearchMapCode = ""; }
+      var keepView = pendingSearchKeepMapView;
+      if (pendingItem) { selectedMapCode = pendingSearchMapCode; pendingSearchMapCode = ""; pendingSearchKeepMapView = false; }
       if (!map) {
         map = new naver.maps.Map("v2Map", {
           center: new naver.maps.LatLng(center[0], center[1]),
@@ -1130,11 +1140,11 @@
         initialRegionFocusPending = false;
         map.setCenter(new naver.maps.LatLng(center[0], center[1]));
         // 2026-10-26: Region changes keep the user's current zoom; only an explicit search target may zoom in.
-        if (pendingItem) map.setZoom(targetZoom, true);
+        if (pendingItem && !keepView && map.getZoom() < targetZoom) map.setZoom(targetZoom, true);
         if (pendingItem) window.setTimeout(function () { drawVisibleMapData(); animateSelectedMarker(selectedMapCode); }, 250);
         settleRegionLoadingOnIdle(focusKey);
         return;
-      } else if (pendingItem) { map.setCenter(new naver.maps.LatLng(center[0], center[1])); map.setZoom(targetZoom, true); }
+      } else if (pendingItem) { map.setCenter(new naver.maps.LatLng(center[0], center[1])); if (!keepView && map.getZoom() < targetZoom) map.setZoom(targetZoom, true); }
       else if (initialRegionFocusPending && !listBusy && !nationwide) {
         var firstLoadedItem = currentRegionItems.find(function (item) {
           var point = coords(item);
