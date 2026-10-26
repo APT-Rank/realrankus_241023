@@ -157,7 +157,7 @@
     $('#sortClose').css({"border-radius": '5px', "background-color": "#ff3849", "color":"white", "height":"2.5em"})
     $('#footerCheck').css({"grid-column" : "span 2", "height" : "2em"})    
 
-    initSlide();    
+    if (typeof initSlide === 'function') initSlide();    
 
     $('#startSortPop').change(function(){
       if($(this).is(':checked')){      
@@ -364,4 +364,67 @@
     sortData.data = sortJSON(data, key, type)
 
 //    return sortData
+  }
+
+  function formatPriceText_op(minVal, maxVal, fMin, fMax) {
+    if (minVal == fMin && maxVal == fMax) {
+      return '가격 전체';
+    }
+    if (minVal == fMin) {
+      return Number(maxVal).toFixed(1) + "억 이하";
+    }
+    if (maxVal == fMax) {
+      return Number(minVal).toFixed(1) + "억 이상";
+    }
+    return Number(minVal).toFixed(1) + "억 ~ " + Number(maxVal).toFixed(1) + "억";
+  }
+
+  function initSlide() {
+    var maxLimit = 60;
+    var minLimit = 0;
+    var minVal = (typeof minValue !== 'undefined') ? minValue : 0;
+    var maxVal = (typeof maxValue !== 'undefined') ? maxValue : 60;
+
+    var leftPercent = (minVal / maxLimit) * 100;
+    var rightPercent = 100 - (maxVal / maxLimit) * 100;
+
+    $(".rangeBar").css({ 'left': leftPercent + '%', 'right': rightPercent + '%' });
+    $("#leftThumb").css('left', leftPercent + '%');
+    $("#rightThumb").css('right', rightPercent + '%');
+
+    $("#minRange").prop('value', minVal);
+    $("#maxRange").prop('value', maxVal);
+
+    $("#min_val").html(Number(minVal).toFixed(1) + "억");
+    $("#max_val").html(Number(maxVal).toFixed(1) + "억");
+
+    $("#filterName").html(formatPriceText_op(minVal, maxVal, minLimit, maxLimit));
+  }
+
+  function slideMin(e) {
+    var maxRange = document.getElementById('maxRange');
+    var maxVal = maxRange ? Number(maxRange.value) : 60;
+    var val = Math.min(Number(e.value), maxVal - 1);
+    e.value = val;
+    minValue = val;
+
+    var leftPercent = (val / 60) * 100;
+    $(".rangeBar").css('left', leftPercent + '%');
+    $("#leftThumb").css('left', leftPercent + '%');
+    $("#min_val").html(Number(val).toFixed(1) + "억");
+    $("#filterName").html(formatPriceText_op(minValue, maxValue, 0, 60));
+  }
+
+  function slideMax(e) {
+    var minRange = document.getElementById('minRange');
+    var minVal = minRange ? Number(minRange.value) : 0;
+    var val = Math.max(Number(e.value), minVal + 1);
+    e.value = val;
+    maxValue = val;
+
+    var rightPercent = 100 - (val / 60) * 100;
+    $(".rangeBar").css('right', rightPercent + '%');
+    $("#rightThumb").css('right', rightPercent + '%');
+    $("#max_val").html(Number(val).toFixed(1) + "억");
+    $("#filterName").html(formatPriceText_op(minValue, maxValue, 0, 60));
   }
