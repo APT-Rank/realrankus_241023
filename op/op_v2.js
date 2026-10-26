@@ -281,6 +281,22 @@
         }, 100);
       }
     });
+    if (window.ResizeObserver) {
+      var headerResizeObserver = new ResizeObserver(function () {
+        syncWorkspaceGeometry();
+        if (!map || !window.naver || !naver.maps) return;
+        window.requestAnimationFrame(function () {
+          var pane = byId("v2Map");
+          if (pane && pane.clientWidth > 0 && pane.clientHeight > 0) {
+            map.setSize(new naver.maps.Size(pane.clientWidth, pane.clientHeight));
+          }
+        });
+      });
+      ["titleBar", "selections", "weight"].forEach(function (id) {
+        var header = byId(id);
+        if (header) headerResizeObserver.observe(header);
+      });
+    }
     scheduleRefresh();
   }
 
@@ -305,7 +321,16 @@
     workspace.style.width = "100vw";
     workspace.style.bottom = footerHeight + "px";
     if (mobile) {
-      var mobileTop = document.body.classList.contains("v2-national-region") ? 97 : 122;
+      // 2026-10-26: Start the map below the rendered header stack instead of a fixed 122px guess.
+      var headerBottom = 0;
+      ["titleBar", "selections", "weight"].forEach(function (id) {
+        var header = byId(id);
+        if (!header || window.getComputedStyle(header).display === "none") return;
+        var rect = header.getBoundingClientRect();
+        if (rect.height > 0) headerBottom = Math.max(headerBottom, rect.bottom);
+      });
+      var mobileTop = headerBottom > 0 ? Math.floor(headerBottom) : (document.body.classList.contains("v2-national-region") ? 97 : 122);
+      document.documentElement.style.setProperty("--v2-top-stack", mobileTop + "px");
       var mobileHeight = Math.max(0, availableHeight - mobileTop);
       workspace.style.top = mobileTop + "px";
       workspace.style.height = mobileHeight + "px";
