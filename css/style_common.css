@@ -254,7 +254,7 @@
   background-color: #eeeeee;
   box-shadow: rgba(50, 50, 93, 0.25) 0px -5px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   text-align: center;
-  z-index: 860;
+  z-index: 1600;
 }
 
 #tab1, #tab2, #tab3, #tab4, #tab5, #tab6, #tab7, #tab8, #tab9{
@@ -282,7 +282,10 @@
   display: grid;
   background:rgba(0, 0, 0, 0.6);
   width:100%;
-  height:100%;
+  left:0;
+  right:0;
+  bottom:3em;
+  height:auto;
   z-index: 1500;
 }
 .text-pageLoading{

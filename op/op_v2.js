@@ -172,7 +172,7 @@
     regionLoading.setAttribute("aria-live", "polite");
     // 2026-10-26: Match the reference's dimmed loading backdrop and white grow spinner.
     regionLoading.innerHTML = "<span class='spinner-grow text-pageLoading' role='status' aria-hidden='true'></span><span>지역 정보를 불러오는 중입니다.</span>";
-    workspace.appendChild(regionLoading);
+    document.body.appendChild(regionLoading);
     // 2026-10-26: Show the region loader immediately; the OP entry screen now starts on the map.
     beginRegionLoading(regionKey());
     document.body.appendChild(searchPanel);
@@ -323,6 +323,8 @@
     workspace.style.right = "0px";
     workspace.style.width = "100vw";
     workspace.style.bottom = footerHeight + "px";
+    var regionLoadingEl = byId("v2RegionLoading");
+    if (regionLoadingEl) regionLoadingEl.style.bottom = footerHeight + "px";
     if (mobile) {
       // 2026-10-26: Start the map below the rendered header stack instead of a fixed 122px guess.
       var headerBottom = 0;
@@ -793,7 +795,7 @@
         marker.setZIndex(2147483647);
         hoverMarker = marker;
         var content = "<div class='v2-complex-info-window'><div id='info_window_complex_name'>" + safe(item["오피스텔명"] || "오피스텔") + "</div><div id='info_window_complex_address'>" + safe(item["법정동주소"] || item["도로명주소"] || "주소 정보 없음") + "</div></div>";
-        var hoverOffset = new naver.maps.Point(17, 8);
+        var hoverOffset = new naver.maps.Point(26, 0);
         if (!hoverInfoWindow) hoverInfoWindow = new naver.maps.InfoWindow({ content: content, borderWidth: 0, backgroundColor: "transparent", anchorSize: new naver.maps.Size(0, 0), pixelOffset: hoverOffset, disableAutoPan: true });
         else { hoverInfoWindow.setContent(content); hoverInfoWindow.setOptions({ pixelOffset: hoverOffset }); }
 
@@ -856,6 +858,7 @@
     regionLoadingKey = String(key || regionKey());
     var workspace = byId("v2Workspace");
     if (workspace) workspace.classList.add("v2-region-loading");
+    document.body.classList.add("v2-region-loading");
     var loading = byId("v2RegionLoading");
     if (loading) {
       loading.classList.remove("is-error");
@@ -869,6 +872,7 @@
     if (key !== regionKey()) return;
     var workspace = byId("v2Workspace");
     if (workspace) workspace.classList.remove("v2-region-loading");
+    document.body.classList.remove("v2-region-loading");
     regionLoadingKey = "";
   }
 
@@ -889,7 +893,7 @@
   function markerGradeClass(grade) { return "grade" + grade; }
 
   function markerColor(grade) {
-    return grade === "S" ? "#39465f" : grade === "A" ? "#1f5d9f" : grade === "B" ? "#2e78b7" : "#527a9f";
+    return grade === "S" ? "#162235" : grade === "A" ? "#1f5d9f" : grade === "B" ? "#2e78b7" : "#527a9f";
   }
 
   function markerSaleLabels(item) {

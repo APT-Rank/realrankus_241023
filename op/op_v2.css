@@ -1,5 +1,5 @@
 /* 2026-10-25: Primary /op V2 interface styles, including responsive map/list panes, marker controls and detail-modal layout. */
-#v2GlobalSearchPanel { position:fixed; z-index:1060; top:-220px; left:0; right:0; display:grid; grid-template-columns:45px minmax(0,1fr) 40px; align-items:center; justify-content:center; width:98%; height:90px; margin:0 auto; padding:0; background:var(--v2-accent); border:0; border-radius:0 0 15px 15px; box-shadow:0 3px 6px rgba(0,0,0,.24); text-align:center; opacity:0; visibility:hidden; pointer-events:none; transition:top .4s ease,opacity .4s ease,visibility 0s linear .4s; }
+#v2GlobalSearchPanel { position:fixed; z-index:1060; top:-220px; left:0; right:0; display:grid; grid-template-columns:45px minmax(0,1fr) 40px; align-items:center; justify-content:center; width:98%; height:100px; margin:0 auto; padding:0; background:var(--v2-accent); border:0; border-radius:0 0 15px 15px; border: 1px solid #535353; text-align:center; opacity:0; visibility:hidden; pointer-events:none; transition:top .4s ease,opacity .4s ease,visibility 0s linear .4s; }
 #v2GlobalSearchPanel.is-visible { top:0; opacity:1; visibility:visible; pointer-events:auto; transition:top .4s ease,opacity .4s ease,visibility 0s; }
 .v2-search-icon { grid-column:1; grid-row:1; color:#fff; text-align:center; font-size:1.5rem; }
 .v2-search-guide { grid-column:2; grid-row:1; min-width:0; }
@@ -31,8 +31,8 @@
 #v2Map { position:relative; }
 #v2Map.is-visible { display: block; }
 /* 2026-10-26: Match the reference region loader's dim black veil and white status content. */
-#v2RegionLoading { position:absolute; z-index:800; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:rgba(0,0,0,.6); color:#fff; font-size:.9rem; font-weight:600; pointer-events:none; }
-#v2Workspace.v2-region-loading #v2RegionLoading { display:flex; }
+#v2RegionLoading { position:fixed; z-index:1500; top:0; left:0; right:0; bottom:3em; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:rgba(0,0,0,.6); color:#fff; font-size:.9rem; font-weight:600; }
+body.v2-region-loading #v2RegionLoading, #v2Workspace.v2-region-loading #v2RegionLoading { display:flex; }
 #v2RegionLoading .spinner-grow { width:2rem; height:2rem; background-color:#fff; }
 #v2RegionLoading.is-error .spinner-grow { display:none; }
 #dataList.v2-list-hidden { display: none; }
@@ -99,7 +99,7 @@
 .v2-brand-tag { display:inline-block; margin-left:5px; padding:2px 6px; border:1px solid rgba(255,255,255,.45); border-radius:999px; color:#dce7ff; font-size:.52em; line-height:1.5; vertical-align:middle; }
 
 /* Version 2 first-screen shell: align the visual language with the main service. */
-:root { --v2-accent: #293249; --v2-ink: #293249; --v2-muted: #667085; --v2-line: #e4e8ef; --v2-top-stack: 122px; }
+:root { --v2-accent: #162235; --v2-ink: #293249; --v2-muted: #667085; --v2-line: #e4e8ef; --v2-top-stack: 122px; --v2-search: #1f5d9f;}
 html, body { background: #f4f6f9; color: var(--v2-ink); }
 #titleBar { z-index: 1040; background: var(--v2-accent); box-shadow: 0 2px 10px rgba(26, 36, 54, .12); }
 #help { grid-column:5; }
@@ -130,7 +130,7 @@ body:has(#rearrangeNew:checked) #dataList .apt_year { color:#0047ab !important; 
 .gradeSelector_check { display:flex; align-items:center; gap:5px; min-height:22px; }
 .gradeSelector_check .form-check-input { flex:none; float:none; margin:0 !important; vertical-align:middle; }
 #check_grade_S_text, #check_grade_A_text, #check_grade_B_text, #check_grade_C_text { display:flex; align-items:center; justify-content:center; width:30px; height:21px; margin:0; padding:0; border-radius:8px; color:#fff; text-align:center; line-height:1; font-size:.9em; user-select:none; }
-#check_grade_S_text { background:#39465f; }
+#check_grade_S_text { background:#162235; }
 #check_grade_A_text { background:#1f5d9f; }
 #check_grade_B_text { background:#2e78b7; }
 #check_grade_C_text { background:#527a9f; }
@@ -139,7 +139,7 @@ body:has(#rearrangeNew:checked) #dataList .apt_year { color:#0047ab !important; 
 #gradeSelector.is-hidden { display:none !important; }
 
 @media (min-width: 900px) {
-  #v2GlobalSearchPanel { right:auto; width:590px; margin-right:0; margin-left:5px; }
+  #v2GlobalSearchPanel { right:auto; width:588px; margin-right:0; margin-left:5px; }
   #v2GlobalSearchResults { right:auto; left:0; width:600px; }
   #dataList { width: 800px; margin: 0 auto; }
 }
@@ -158,15 +158,15 @@ body:has(#rearrangeNew:checked) #dataList .apt_year { color:#0047ab !important; 
   #selections { top: 51px; }
   #weight { top: 97px; }
   #v2Workspace { position: fixed; z-index: 2; inset: 0; width: 100vw; height: 100vh; }
-  #v2GlobalSearchPanel { position: fixed; z-index: 1060; top:-220px; left:5px; right:auto; width:590px; margin-right:0; margin-left:5px; max-height:none; overflow:visible; }
+  #v2GlobalSearchPanel { position: fixed; z-index: 1060; top:-220px; left:0px; right:auto; width:588px; margin-right:0; margin-left:5px; max-height:none; overflow:visible; }
   #v2GlobalSearchPanel.is-visible { top:0; }
   #v2GlobalSearchResults { top:115px; right:auto; bottom:48px; left:0; width:600px; }
   #v2ListPane { position: absolute; top: 120px; bottom: 0; left: 0; width: 600px; overflow-x: hidden; overflow-y: auto; padding-bottom: 30px; }
   body.v2-national-region #v2ListPane { top: 97px; }
   #dataList { width:100%; margin:0; }
   #v2Map { position: absolute; display: block; top: 0; right: 0; bottom: 0; left: 600px; width: auto; height: auto; min-height: 0; }
-  #v2RegionLoading { top:0; right:0; bottom:0; left:600px; }
-  #rearrangeCard, #rearrangeRegionCard { left:0; right:auto; width:590px; max-width:calc(100vw - 5px); margin:0 0 0 5px; transform:none; }
+
+  #rearrangeCard, #rearrangeRegionCard { left:0; right:auto; width:588px; max-width:calc(100vw - 5px); margin:0 0 0 5px; transform:none; }
   #v2MobileViewToggle { display: none; }
   #exampleModal { top:0; right:auto; bottom:0; left:0; width:600px; height:100vh; z-index:1055; }
   #exampleModal .modal-dialog { width:500px; max-width:500px; margin-right:auto !important; margin-left:auto !important; }
@@ -194,7 +194,7 @@ body:has(#rearrangeNew:checked) #dataList .apt_year { color:#0047ab !important; 
   #check_grade_S_text, #check_grade_A_text, #check_grade_B_text, #check_grade_C_text { width:25px; height:21px; margin:0; border-radius:6px; font-size:.85em; }
   #gradeSelector .form-check-input { width:1.15em; height:1.15em; }
   #v2Workspace[data-mobile-view="list"] #v2Map { display: none; }
-  #v2Workspace[data-mobile-view="list"].v2-region-loading #v2RegionLoading { display:none; }
+
   #v2MobileViewToggle { position: fixed; z-index: 1040; bottom: max(65px, calc(env(safe-area-inset-bottom) + 58px)); left: 10px; display: grid; width: 4em; height: 4em; align-content: center; justify-content: center; padding: 0; border: 2px solid #162235; border-radius: 50%; background: #293249; color: #fff; box-shadow: 0 3px 10px rgba(0,0,0,.24); }
   .v2-mobile-toggle-icon { font-size: 1.15rem; line-height: 1.2; }
   .v2-mobile-toggle-text { font-size: .68rem; line-height: 1.25; }
