@@ -222,9 +222,10 @@
   }
 
   /* 2026-10-27: 거래량 리스트 2열 캡처 플로팅 버튼 */
+  /* 2026-10-27: 거래량 리스트 2열 캡처 플로팅 버튼 (리스트 영역 우측 하단 배치) */
   .btn_capture_volume_floating {
     position: fixed;
-    right: 20px;
+    right: max(20px, calc(50% - 400px + 20px));
     bottom: 25px;
     width: 52px;
     height: 52px;
@@ -242,6 +243,11 @@
     -webkit-tap-highlight-color: transparent;
     outline: none;
     border: none;
+  }
+  @media screen and (min-width: 800px) {
+    .btn_capture_volume_floating {
+      right: calc(50% - 400px + 20px);
+    }
   }
   .btn_capture_volume_floating:hover {
     transform: scale(1.08);
@@ -3445,7 +3451,7 @@
       toastr.info("거래량 2열 이미지를 생성 중입니다...");
     }
 
-    // 브라우저가 스피너를 먼저 렌더링하도록 60ms 대기
+    // 버튼 스피너가 렌더링되도록 60ms 대기
     await new Promise(function (resolve) { setTimeout(resolve, 60); });
 
     try {
@@ -3460,8 +3466,8 @@
       var captureDateTimeStr = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + min + ":" + ss;
 
       var gunguText = $("#gungu option:selected").text().trim();
-      if (gunguText === "전국/전체시도" || !gunguText) {
-        gunguText = "전국";
+      if (gunguText === "시/군/구선택" || !gunguText) {
+        gunguText = "전체";
       }
       var cleanRegionName = gunguText.replace(/[/\\?%*:|"<>]/g, "").trim();
       var filename = "리얼랭커스_거래량_" + cleanRegionName + "_" + timeStr + ".png";
@@ -3481,20 +3487,20 @@
           var clonedDataList = clonedDoc.getElementById('dataList');
           if (!clonedDataList) return;
 
-          // 1. 모든 순수 거래량 카드(.listBox)만 추출 (광고, 배너, 빈 공간 원천 제외)
+          // 1. 순수 거래량 카드(.listBox)만 추출 (광고, 배너, 빈 상자 제외)
           var clonedCards = Array.from(clonedDataList.querySelectorAll('.listBox'));
 
-          // 2. dataList 내부를 비워 광고 및 불필요 요소 완전 제거
+          // 2. dataList 내부를 비워 불필요한 배너 요소 완전 배제
           clonedDataList.innerHTML = '';
 
-          // 3. 2열 가로 우선 그리드 레이아웃 설정 (카카오톡 최적화 컴팩트 640px, 상단 헤더 제외)
+          // 3. 2열 가로우선 그리드 레이아웃 설정 (카카오톡 최적화 뷰포트 640px)
           clonedDataList.style.cssText = 'display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; width: 640px !important; min-width: 640px !important; max-width: 640px !important; margin: 0 auto !important; padding: 10px !important; box-sizing: border-box !important; background-color: #ffffff !important;';
 
-          // 4. 각 카드 규격 및 내부 스타일 통일 (카카오톡 모바일 가독성 최적화)
+          // 4. 각 카드의 여백과 스타일 정리 (카카오톡 공유 최적화)
           clonedCards.forEach(function (card) {
             card.style.cssText = 'display: block !important; width: 100% !important; box-sizing: border-box !important; background-color: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 6px !important; padding: 10px 10px !important; margin: 0 !important; animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; box-shadow: none !important;';
 
-            // 즐겨찾기 별표 숨김
+            // 즐겨찾기 별표 제거
             var favMark = card.querySelector('.fav_mark');
             if (favMark) favMark.style.display = 'none';
 
@@ -3504,19 +3510,19 @@
               regName.style.cssText = 'font-size: 13.5px !important; font-weight: 700 !important; color: #0f172a !important; line-height: 1.25 !important; margin-bottom: 2px !important;';
             }
 
-            // 볼륨 컨텐츠
+            // 거래량 내용
             var volContent = card.querySelector('.volume_content');
             if (volContent) {
               volContent.style.cssText = 'display: block !important; margin-top: 4px !important;';
             }
 
-            // 거래량 테이블: 좌측 72px로 우측 여백 축소
+            // 거래량 테이블: 좌측 72px 고정
             var priceTable = card.querySelector('.price_table');
             if (priceTable) {
               priceTable.style.cssText = 'display: grid !important; grid-template-columns: 72px 1fr !important; align-items: center !important; margin: 0 !important; border: none !important;';
             }
 
-            // 거래량 숫자: 우측 선 제거 및 우측 여백 제거
+            // 거래량 수치: 빨간색 건수 우측 세로선 제거 및 여백 축소
             var volNum = card.querySelector('.vol_num');
             if (volNum) {
               volNum.style.cssText = 'font-size: 15.5px !important; font-weight: 700 !important; color: #cc233f !important; border: none !important; border-right: none !important; padding-right: 0px !important; margin-right: 0px !important; white-space: nowrap !important; line-height: 1.2 !important;';
@@ -3527,7 +3533,7 @@
               volSum.style.cssText = 'border: none !important; border-right: none !important; padding-right: 0px !important; margin-right: 0px !important;';
             }
 
-            // 비교 거래량 서브: 거래량예측, 퍼센티지, 예상건수 사이 공간 확대
+            // 비교 거래량 서브: 거래량예측, 퍼센티지, 예상건수 간 여백 균등 분배
             var compareSub = card.querySelector('.compare_volume_sub');
             if (compareSub) {
               compareSub.style.cssText = 'display: grid !important; grid-template-columns: auto 1fr auto !important; column-gap: 6px !important; font-size: 10.5px !important; font-weight: 600 !important; padding-left: 6px !important; row-gap: 2px !important; color: #334155 !important; border: none !important; align-items: center !important;';
@@ -3550,13 +3556,75 @@
         }
       });
 
-      var base64Data = canvas.toDataURL('image/png');
+      // 5. 하단 워터마크 추가 (단일 카드 캡처와 동일: 좌측 Captured at 일시, 우측 리얼랭커스 | realrankus.com)
+      var scale = 2;
+      var footerHeight = 36 * scale;
+      var finalCanvas = document.createElement('canvas');
+      finalCanvas.width = canvas.width;
+      finalCanvas.height = canvas.height + footerHeight;
 
-      // 안드로이드 하이브리드 앱 웹뷰 환경 검사
+      var ctx = finalCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+      ctx.drawImage(canvas, 0, 0);
+
+      // 상단 점선 구분선 (dashed line #e2e8f0)
+      var lineY = canvas.height + 2 * scale;
+      var padX = 10 * scale;
+      ctx.beginPath();
+      ctx.setLineDash([4 * scale, 3 * scale]);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1 * scale;
+      ctx.moveTo(padX, lineY);
+      ctx.lineTo(finalCanvas.width - padX, lineY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 좌측 캡처 일시 워터마크
+      ctx.font = (8 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillStyle = '#94a3b8';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Captured at', padX, lineY + 7 * scale);
+      ctx.fillText(captureDateTimeStr, padX, lineY + 17 * scale);
+
+      // 우측 리얼랭커스 브랜드 워터마크
+      var fontBrand = 'bold ' + (11 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      var fontSep = (10 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      var fontDomain = (11 * scale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+      ctx.font = fontDomain;
+      var domainWidth = ctx.measureText('realrankus.com').width;
+      ctx.font = fontSep;
+      var sepWidth = ctx.measureText('|').width;
+      ctx.font = fontBrand;
+      var brandWidth = ctx.measureText('리얼랭커스').width;
+
+      var totalRightWidth = brandWidth + (4 * scale) + sepWidth + (4 * scale) + domainWidth;
+      var rightStartX = finalCanvas.width - padX - totalRightWidth;
+      var textY = lineY + 11 * scale;
+
+      // 리얼랭커스 (브랜드 레드 #E43B46)
+      ctx.font = fontBrand;
+      ctx.fillStyle = '#E43B46';
+      ctx.fillText('리얼랭커스', rightStartX, textY);
+
+      // 구분선 | (#cbd5e1)
+      ctx.font = fontSep;
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText('|', rightStartX + brandWidth + 4 * scale, textY);
+
+      // realrankus.com (#64748b)
+      ctx.font = fontDomain;
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('realrankus.com', rightStartX + brandWidth + 4 * scale + sepWidth + 4 * scale, textY);
+
+      var base64Data = finalCanvas.toDataURL('image/png');
+
+      // 안드로이드 하이브리드 앱 환경 검사
       if (window.Android && typeof window.Android.downloadImage === 'function') {
         window.Android.downloadImage(base64Data, filename);
       } else {
-        // 일반 브라우저 환경 (모바일 Safari, Chrome 등)
+        // 일반 브라우저 환경 (iOS Safari, Chrome 등)
         var link = document.createElement('a');
         link.download = filename;
         link.href = base64Data;
