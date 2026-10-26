@@ -172,6 +172,8 @@
     // 2026-10-26: Match the reference's dimmed loading backdrop and white grow spinner.
     regionLoading.innerHTML = "<span class='spinner-grow text-pageLoading' role='status' aria-hidden='true'></span><span>지역 정보를 불러오는 중입니다.</span>";
     workspace.appendChild(regionLoading);
+    // 2026-10-26: Show the region loader immediately; the OP entry screen now starts on the map.
+    beginRegionLoading(regionKey());
     document.body.appendChild(searchPanel);
     document.body.appendChild(searchResultsPanel);
 

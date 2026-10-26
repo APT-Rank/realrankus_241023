@@ -200,33 +200,8 @@
 
       <!--리스트 데이터 붙여넣는 영역-->
       <div id="dataList" aria-live="polite" aria-busy="true"></div>
-      <!-- 2026-10-23: [App Shell & Skeleton 즉시 초기화] 오피스텔 데이터 로딩 중 자연스러운 shimmer 카드 노출 -->
+      <!-- 2026-10-26: Keep the initial list empty; the map workspace shows the region-loading overlay. -->
       <script>
-        function getOpSkeletonHtml() {
-          var html = "<div class='sk_card' style='height:50px; margin-bottom:8px;'><div class='sk_shimmer' style='height:100%; width:100%;'></div></div>";
-          for (var i = 0; i < 6; i++) {
-            html += "<div class='sk_card' style='margin-bottom:8px;'>"
-                  + "<div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;'>"
-                  + "<div class='sk_shimmer' style='height:20px; width:55%;'></div>"
-                  + "<div class='sk_shimmer' style='height:20px; width:24px; border-radius:50%;'></div>"
-                  + "</div>"
-                  + "<div style='display:grid; grid-template-columns:105px 1fr; gap:12px; align-items:center;'>"
-                  + "<div style='border-right:1px solid #eef2f6; padding-right:8px; display:flex; flex-direction:column; gap:6px;'>"
-                  + "<div class='sk_shimmer' style='height:20px; width:80%;'></div>"
-                  + "<div class='sk_shimmer' style='height:11px; width:60%;'></div>"
-                  + "<div class='sk_shimmer' style='height:11px; width:50%;'></div>"
-                  + "</div>"
-                  + "<div style='display:flex; flex-direction:column; gap:6px;'>"
-                  + "<div class='sk_shimmer' style='height:12px; width:90%;'></div>"
-                  + "<div class='sk_shimmer' style='height:12px; width:85%;'></div>"
-                  + "<div class='sk_shimmer' style='height:12px; width:88%;'></div>"
-                  + "</div>"
-                  + "</div>"
-                  + "</div>";
-          }
-          return html;
-        }
-
         (function initOpAppShellImmediately() {
           try {
             var params = new URLSearchParams(window.location.search);
@@ -238,10 +213,6 @@
               }
               var sidoEl = document.getElementById('sido');
               if (sidoEl) { sidoEl.innerHTML = opt; sidoEl.value = reg; }
-            }
-            var listEl = document.getElementById('dataList');
-            if (listEl) {
-              listEl.innerHTML = getOpSkeletonHtml();
             }
           } catch(e) {}
         })();
@@ -826,13 +797,9 @@
     //console.log("AAAAAAAAAA", region)
     //url = "https://www.realrankus.com/op/" + month + "/" + region + "_OPST.json"
     url = "/op/" + month + "/" + region + "_OPST.json"
-    // 2026-10-23: 오피스텔 스켈레톤 UI 표시
+    // 2026-10-26: Keep the list blank during loading; the workspace region loader covers the initial map view.
     $('#dataList').attr('aria-busy', 'true');
-    if (typeof getOpSkeletonHtml === 'function') {
-      $('#dataList').html(getOpSkeletonHtml());
-    } else {
-      $('#dataList').html("<div style='display: grid; text-align: center; justify-items: center;'><br><br><br><br><div class='spinner-border text-danger' role='status'></div></div>");
-    }
+    $('#dataList').empty();
 
     //광고정보 로딩
     $.ajaxSetup({ async: false }); 
@@ -2156,4 +2123,4 @@
     $("#exampleModal").modal("show"); //offcanvas
   }
 </script>
-<script src="/op/op_v2.js?v=20261026_58"></script>
+<script src="/op/op_v2.js?v=20261026_59"></script>
