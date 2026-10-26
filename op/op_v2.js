@@ -23,7 +23,6 @@
   var lastMapDrawSignature = "";
   var hoverInfoWindow = null;
   var switchingDetail = false;
-  var detailMapZoomLock = null;
   var regionLoadingKey = "";
   var initialRegionFocusPending = false;
 
@@ -198,7 +197,8 @@
     });
     detailModal.on("hidden.bs.modal.opV2", function () {
       stopSelectedAnimation();
-      if (!switchingDetail) selectedMapCode = "";
+      var wasSwitchingDetail = switchingDetail;
+      if (!wasSwitchingDetail) selectedMapCode = "";
       switchingDetail = false;
       if (!isMobileLayout()) $(".modal-backdrop").css({ width: "100%", zIndex: 1050 });
     });
@@ -582,31 +582,7 @@
     if (!window.showDetail) return;
     var modal = $("#exampleModal");
     var selectedCode = selectedMapCode;
-    var mapZoomBeforeDetail = map && typeof map.getZoom === "function" ? map.getZoom() : null;
-    if (mapZoomBeforeDetail !== null) {
-      // 2026-10-26: Lock the main map to its current scale while a marker detail opens.
-      var restoreMainMapZoom = function () {
-        if (!map || typeof map.getZoom !== "function" || typeof map.setZoom !== "function") return;
-        if (map.getZoom() !== mapZoomBeforeDetail) map.setZoom(mapZoomBeforeDetail, true);
-      };
-      if (detailMapZoomLock) {
-        window.clearTimeout(detailMapZoomLock.timer);
-        if (detailMapZoomLock.listener) naver.maps.Event.removeListener(detailMapZoomLock.listener);
-      }
-      var zoomLock = { listener: null, timer: null };
-      zoomLock.listener = naver.maps.Event.addListener(map, "zoom_changed", restoreMainMapZoom);
-      zoomLock.timer = window.setTimeout(function () {
-        if (zoomLock.listener) naver.maps.Event.removeListener(zoomLock.listener);
-        if (detailMapZoomLock === zoomLock) detailMapZoomLock = null;
-      }, 1500);
-      detailMapZoomLock = zoomLock;
-      modal.off("shown.bs.modal.opV2KeepMapZoom").one("shown.bs.modal.opV2KeepMapZoom", function () {
-        window.requestAnimationFrame(restoreMainMapZoom);
-        window.setTimeout(restoreMainMapZoom, 150);
-        window.setTimeout(restoreMainMapZoom, 400);
-        window.setTimeout(restoreMainMapZoom, 900);
-      });
-    }
+    // 2026-10-26: Detail modal display is independent of the main map viewport; do not change its center or zoom here.
     var openDetail = function () {
       modal.removeData("opV2SwitchingDetail");
       window.showDetail(index);
