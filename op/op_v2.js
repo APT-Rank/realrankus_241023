@@ -25,6 +25,7 @@
   var switchingDetail = false;
   var detailMapZoomLock = null;
   var regionLoadingKey = "";
+  var initialRegionFocusPending = false;
 
   function byId(id) { return document.getElementById(id); }
   function safe(value) {
@@ -44,6 +45,29 @@
   // 2026-10-25: Map signatures rely on selected codes directly; the unused duplicate region-label lookup was removed.
   function regionKey() { return [window.selectedMonth, window.selectedSubRegion].join(":"); }
   function coords(item) { return [Number(item && item.Y), Number(item && item.X)]; }
+  function hasExplicitRegionTarget() {
+    var params = new URLSearchParams(window.location.search);
+    return params.has("reg") || params.has("sub");
+  }
+  function readStoredMapViewport() {
+    if (hasExplicitRegionTarget()) return null;
+    try {
+      var lat = Number(localStorage.getItem("lastMapLat_op_v2"));
+      var lng = Number(localStorage.getItem("lastMapLng_op_v2"));
+      var zoom = Number(localStorage.getItem("lastMapZoom_op_v2"));
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !lat || !lng) return null;
+      return { center: [lat, lng], zoom: Number.isFinite(zoom) && zoom >= 1 ? zoom : null };
+    } catch (_) { return null; }
+  }
+  function saveMapViewport() {
+    if (!map || !map.getCenter) return;
+    try {
+      var center = map.getCenter();
+      localStorage.setItem("lastMapLat_op_v2", center.lat());
+      localStorage.setItem("lastMapLng_op_v2", center.lng());
+      localStorage.setItem("lastMapZoom_op_v2", map.getZoom());
+    } catch (_) {}
+  }
   function syncNewSortHighlight(sortId) {
     document.querySelectorAll("#dataList .aptYear").forEach(function (node) {
       node.style.removeProperty("color");
@@ -146,7 +170,8 @@
     regionLoading.id = "v2RegionLoading";
     regionLoading.setAttribute("role", "status");
     regionLoading.setAttribute("aria-live", "polite");
-    regionLoading.innerHTML = "<span class='v2-region-spinner' aria-hidden='true'></span><span>지역 정보를 불러오는 중입니다.</span>";
+    // 2026-10-26: Match the reference's dimmed loading backdrop and white grow spinner.
+    regionLoading.innerHTML = "<span class='spinner-grow text-pageLoading' role='status' aria-hidden='true'></span><span>지역 정보를 불러오는 중입니다.</span>";
     workspace.appendChild(regionLoading);
     document.body.appendChild(searchPanel);
     document.body.appendChild(searchResultsPanel);
@@ -314,10 +339,15 @@
     var originalContent = button.innerHTML;
     button.disabled = true;
     button.classList.add("is-loading");
-    button.innerHTML = "<i class='fa-solid fa-spinner fa-spin' aria-hidden='true'></i>";
+    // 2026-10-26: Use the reference's dark button and compact white Bootstrap spinner while locating.
+    button.style.backgroundColor = "#333";
+    button.style.borderColor = "#333";
+    button.innerHTML = "<div class='spinner-border spinner-border-sm text-white' role='status'></div>";
     navigator.geolocation.getCurrentPosition(function (position) {
       button.disabled = false;
       button.classList.remove("is-loading");
+      button.style.backgroundColor = "";
+      button.style.borderColor = "";
       button.innerHTML = originalContent;
       if (!map) renderMap();
       if (!map) return;
@@ -359,6 +389,8 @@
     }, function () {
       button.disabled = false;
       button.classList.remove("is-loading");
+      button.style.backgroundColor = "";
+      button.style.borderColor = "";
       button.innerHTML = originalContent;
       button.title = "위치 권한을 허용한 뒤 다시 눌러 주세요.";
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
@@ -817,7 +849,7 @@
     var loading = byId("v2RegionLoading");
     if (loading) {
       loading.classList.remove("is-error");
-      loading.innerHTML = "<span class='v2-region-spinner' aria-hidden='true'></span><span>지역 정보를 불러오는 중입니다.</span>";
+      loading.innerHTML = "<span class='spinner-grow text-pageLoading' role='status' aria-hidden='true'></span><span>지역 정보를 불러오는 중입니다.</span>";
     }
   }
 
@@ -1057,12 +1089,14 @@
       }
       var currentRegionItems = getData();
       var nationwide = String(window.selectedSubRegion) === "1000000000_Korea";
+      var storedViewport = map ? null : readStoredMapViewport();
       var firstRegionItem = regionChanged && !nationwide ? currentRegionItems.find(function (item) {
         var point = coords(item);
         return Number.isFinite(point[0]) && Number.isFinite(point[1]) && point[0] !== 0 && point[1] !== 0;
       }) : null;
-      var center = pendingItem ? coords(pendingItem) : firstRegionItem ? coords(firstRegionItem) : selectedMapCenter(data.regions, data.search.data);
-      var targetZoom = pendingItem ? (isReferenceMobile() ? 15 : 16) : (String(window.selectedSubRegion) === "1000000000_Korea" ? 8 : 16);
+      var center = pendingItem ? coords(pendingItem) : firstRegionItem ? coords(firstRegionItem) : storedViewport ? storedViewport.center : selectedMapCenter(data.regions, data.search.data);
+      var defaultZoom = nationwide ? 8 : 16;
+      var targetZoom = pendingItem ? (isReferenceMobile() ? 15 : 16) : storedViewport && storedViewport.zoom ? storedViewport.zoom : defaultZoom;
       if (pendingItem) { selectedMapCode = pendingSearchMapCode; pendingSearchMapCode = ""; }
       if (!map) {
         map = new naver.maps.Map("v2Map", {
@@ -1074,10 +1108,26 @@
           zoomControlOptions: { style: naver.maps.ZoomControlStyle.SMALL, position: naver.maps.Position.TOP_RIGHT }
         });
         mapFocusKey = focusKey;
-        naver.maps.Event.addListener(map, "idle", drawVisibleMapData);
+        initialRegionFocusPending = !storedViewport && !pendingItem && !nationwide;
+        naver.maps.Event.addListener(map, "idle", function () {
+          saveMapViewport();
+          drawVisibleMapData();
+        });
+        if (initialRegionFocusPending && !listBusy) {
+          var initialFirst = currentRegionItems.find(function (item) {
+            var point = coords(item);
+            return Number.isFinite(point[0]) && Number.isFinite(point[1]) && point[0] !== 0 && point[1] !== 0;
+          });
+          if (initialFirst) {
+            var initialPoint = coords(initialFirst);
+            map.setCenter(new naver.maps.LatLng(initialPoint[0], initialPoint[1]));
+            initialRegionFocusPending = false;
+          }
+        }
         if (pendingItem) window.setTimeout(function () { drawVisibleMapData(); animateSelectedMarker(selectedMapCode); }, 250);
       } else if (mapFocusKey !== focusKey) {
         mapFocusKey = focusKey;
+        initialRegionFocusPending = false;
         map.setCenter(new naver.maps.LatLng(center[0], center[1]));
         // 2026-10-26: Region changes keep the user's current zoom; only an explicit search target may zoom in.
         if (pendingItem) map.setZoom(targetZoom, true);
@@ -1085,6 +1135,17 @@
         settleRegionLoadingOnIdle(focusKey);
         return;
       } else if (pendingItem) { map.setCenter(new naver.maps.LatLng(center[0], center[1])); map.setZoom(targetZoom, true); }
+      else if (initialRegionFocusPending && !listBusy && !nationwide) {
+        var firstLoadedItem = currentRegionItems.find(function (item) {
+          var point = coords(item);
+          return Number.isFinite(point[0]) && Number.isFinite(point[1]) && point[0] !== 0 && point[1] !== 0;
+        });
+        if (firstLoadedItem) {
+          var firstLoadedPoint = coords(firstLoadedItem);
+          map.setCenter(new naver.maps.LatLng(firstLoadedPoint[0], firstLoadedPoint[1]));
+          initialRegionFocusPending = false;
+        }
+      }
       drawVisibleMapData();
       if (!listBusy) settleRegionLoadingOnIdle(focusKey);
     }).catch(function (error) {

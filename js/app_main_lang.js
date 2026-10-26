@@ -449,6 +449,27 @@ $(document).ready(function () {
   }
   region_url = pathPrefix + selectedMonth + "/region_map.json?v=2.0" + update_ver;
 
+  // 수정일: 2026-10-26 — URL 목적지가 없으면 마지막 지도 상태를 저장 지역보다 우선 복원합니다.
+  function restoreSavedMapViewport() {
+    const hasUrlTarget = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
+    const savedLat = localStorage.getItem("lastMapLat");
+    const savedLng = localStorage.getItem("lastMapLng");
+    if (hasUrlTarget || !savedLat || !savedLng) return;
+    come_from_map = true;
+    if (lastRegion) return;
+
+    const closestRegion = findClosestRegion(parseFloat(savedLat), parseFloat(savedLng));
+    if (!closestRegion) return;
+    const targetCode = String(closestRegion["법정동코드"]);
+    for (let i = 0; i < codeMap.length; i++) {
+      if (!codeMap[i][2].startsWith(targetCode)) continue;
+      selectedRegion = codeMap[i][1];
+      selectedSubRegion = codeMap[i][2];
+      $("#sido").val(selectedRegion).prop("selected", true);
+      break;
+    }
+  }
+
   const request = indexedDB.open(DB_Date); // 1. DB 열기
   request.onerror = (e) => {
     console.log("ERROR : ", e.target.errorCode);
@@ -507,42 +528,7 @@ $(document).ready(function () {
           showHideMarker(current_zoom);
           $("#pageLoadingBack").remove();
           
-          // URL 파라미터(cpx, reg, sub 등)가 존재하는지 확인합니다. 파라미터가 있다면 특정 지역이나 단지를 강제로 조회하려는 의도이므로 로컬스토리지 좌표를 무시합니다.
-          const hasUrlParam = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
-          
-          // URL 파라미터가 없고, 이전에 사용자가 명시적으로 선택한 지역(lastRegion)도 없는 경우에만 마지막 지도 좌표 동기화를 수행합니다.
-          if (!hasUrlParam && !lastRegion && localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
-            come_from_map = true;
-            
-            // 로컬스토리지의 문자열 좌표값을 실수(float)로 변환합니다.
-            var c_lat = parseFloat(localStorage.getItem("lastMapLat"));
-            var c_lng = parseFloat(localStorage.getItem("lastMapLng"));
-            
-            // 지도 중심 좌표에서 가장 가까운 시군구(level1_loc) 객체를 찾습니다.
-            var closestRegion = findClosestRegion(c_lat, c_lng);
-            if (closestRegion) {
-              // 찾은 시군구 객체의 법정동코드를 문자열로 추출합니다. (예: "1168000000")
-              var targetCode = closestRegion["법정동코드"].toString();
-              
-              // share.js에 정의된 전체 지역 코드 맵(codeMap)을 순회하며 법정동코드와 일치하는 지역을 찾습니다.
-              for (var c_i = 0; c_i < codeMap.length; c_i++) {
-                // codeMap[c_i][2]는 "1168000000_Seoul_Gangnam" 형태이므로 대상 법정동코드로 시작하는지 확인합니다.
-                if (codeMap[c_i][2].startsWith(targetCode)) {
-                  // 일치하는 경우, 전역 상태인 선택 지역(selectedRegion)과 선택 시군구(selectedSubRegion)를 갱신합니다.
-                  selectedRegion = codeMap[c_i][1];
-                  selectedSubRegion = codeMap[c_i][2];
-                  
-                  // UI 상의 '시/도' 콤보박스(#sido) 값을 변경된 지역으로 강제 선택(selected) 처리합니다.
-                  // (구/군 콤보박스는 이어지는 optionChange 함수에서 처리됩니다)
-                  $("#sido").val(selectedRegion).prop("selected", true);
-                  break;
-                }
-              }
-            }
-            // 한 번 동기화된 지도 좌표는 소비하여 이후 페이지 이동이나 Back 이동 시 강남구 등으로 덮어쓰는 것을 방지합니다.
-            localStorage.removeItem("lastMapLat");
-            localStorage.removeItem("lastMapLng");
-          }
+          restoreSavedMapViewport();
 
           optionChange(selectedSubRegion, selectedRegion);
           updateRegion();
@@ -601,42 +587,7 @@ $(document).ready(function () {
           showHideMarker(current_zoom);
           $("#pageLoadingBack").remove();
 
-          // URL 파라미터(cpx, reg, sub 등)가 존재하는지 확인합니다. 파라미터가 있다면 특정 지역이나 단지를 강제로 조회하려는 의도이므로 로컬스토리지 좌표를 무시합니다.
-          const hasUrlParam = urlParams.has("cpx") || urlParams.has("reg") || urlParams.has("sub") || urlParams.has("apt") || urlParams.has("complex");
-          
-          // URL 파라미터가 없고, 이전에 사용자가 명시적으로 선택한 지역(lastRegion)도 없는 경우에만 마지막 지도 좌표 동기화를 수행합니다.
-          if (!hasUrlParam && !lastRegion && localStorage.getItem("lastMapLat") && localStorage.getItem("lastMapLng")) {
-            come_from_map = true;
-            
-            // 로컬스토리지의 문자열 좌표값을 실수(float)로 변환합니다.
-            var c_lat = parseFloat(localStorage.getItem("lastMapLat"));
-            var c_lng = parseFloat(localStorage.getItem("lastMapLng"));
-            
-            // 지도 중심 좌표에서 가장 가까운 시군구(level1_loc) 객체를 찾습니다.
-            var closestRegion = findClosestRegion(c_lat, c_lng);
-            if (closestRegion) {
-              // 찾은 시군구 객체의 법정동코드를 문자열로 추출합니다. (예: "1168000000")
-              var targetCode = closestRegion["법정동코드"].toString();
-              
-              // share.js에 정의된 전체 지역 코드 맵(codeMap)을 순회하며 법정동코드와 일치하는 지역을 찾습니다.
-              for (var c_i = 0; c_i < codeMap.length; c_i++) {
-                // codeMap[c_i][2]는 "1168000000_Seoul_Gangnam" 형태이므로 대상 법정동코드로 시작하는지 확인합니다.
-                if (codeMap[c_i][2].startsWith(targetCode)) {
-                  // 일치하는 경우, 전역 상태인 선택 지역(selectedRegion)과 선택 시군구(selectedSubRegion)를 갱신합니다.
-                  selectedRegion = codeMap[c_i][1];
-                  selectedSubRegion = codeMap[c_i][2];
-                  
-                  // UI 상의 '시/도' 콤보박스(#sido) 값을 변경된 지역으로 강제 선택(selected) 처리합니다.
-                  // (구/군 콤보박스는 이어지는 optionChange 함수에서 처리됩니다)
-                  $("#sido").val(selectedRegion).prop("selected", true);
-                  break;
-                }
-              }
-            }
-            // 한 번 동기화된 지도 좌표는 소비하여 이후 페이지 이동이나 Back 이동 시 강남구 등으로 덮어쓰는 것을 방지합니다.
-            localStorage.removeItem("lastMapLat");
-            localStorage.removeItem("lastMapLng");
-          }
+          restoreSavedMapViewport();
 
           optionChange(selectedSubRegion, selectedRegion);
           updateRegion();
@@ -1115,6 +1066,10 @@ function resetReload() {
 
   localStorage.setItem("lastRegion", selectedRegion);
   localStorage.setItem("lastSubRegion", selectedSubRegion);
+  // 수정일: 2026-10-26 — 초기화 시 저장된 지도 위치도 지워 강남구 기본 위치로 복귀합니다.
+  localStorage.removeItem("lastMapLat");
+  localStorage.removeItem("lastMapLng");
+  localStorage.removeItem("lastMapZoom");
 
   location.reload();
 }

@@ -30,11 +30,11 @@
 #v2Map { display: none; width: 100%; height: min(68vh, 680px); min-height: 420px; }
 #v2Map { position:relative; }
 #v2Map.is-visible { display: block; }
-#v2RegionLoading { position:absolute; z-index:800; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:rgba(244,246,249,.42); color:#293249; font-size:.9rem; font-weight:600; pointer-events:none; }
+/* 2026-10-26: Match the reference region loader's dim black veil and white status content. */
+#v2RegionLoading { position:absolute; z-index:800; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:rgba(0,0,0,.6); color:#fff; font-size:.9rem; font-weight:600; pointer-events:none; }
 #v2Workspace.v2-region-loading #v2RegionLoading { display:flex; }
-.v2-region-spinner { width:36px; height:36px; border:4px solid #d8deea; border-top-color:#293249; border-radius:50%; animation:v2-region-spin .75s linear infinite; }
-#v2RegionLoading.is-error .v2-region-spinner { display:none; }
-@keyframes v2-region-spin { to { transform:rotate(360deg); } }
+#v2RegionLoading .spinner-grow { width:2rem; height:2rem; background-color:#fff; }
+#v2RegionLoading.is-error .spinner-grow { display:none; }
 #dataList.v2-list-hidden { display: none; }
 .v2-map-area-marker { background-color:#293249; color:#fff; text-align:center; border-radius:5px; box-shadow:rgba(0,0,0,.25) 3px 3px 5px, rgba(0,0,0,.5) 2px 2px 4px; white-space:nowrap; }
 .v2-map-area-marker-lv0 { width:110px; padding-top:3px; padding-bottom:3px; }
@@ -48,7 +48,8 @@
 .v2-map-area-marker-lv2 .v2-map-area-price { color:#c7ced9; font-size:.65rem; }
 #v2CurrentLocation { position:absolute; z-index:1000; top:75px; right:5px; display:grid; width:38px; height:38px; place-items:center; padding:0; border:1px solid rgba(0,0,0,.3); border-radius:50%; background:#fff; color:#333; box-shadow:0 1px 3px rgba(0,0,0,.2); font-size:18px; }
 #v2CurrentLocation:hover { background:#f2f4f7; }
-#v2CurrentLocation.is-loading { opacity:.6; }
+/* 2026-10-26: Keep the location control at full opacity with the reference's dark loading state. */
+#v2CurrentLocation.is-loading { border-color:#333; background:#333; opacity:1; }
 #v2CurrentLocation.is-hidden { display:none; }
 .v2-current-location-dot { position:relative; width:24px; height:24px; box-sizing:border-box; border:4px solid #fff; border-radius:50%; background:#293249; box-shadow:0 0 5px rgba(0,0,0,.4); animation:v2-current-location-pulse 1.5s infinite alternate ease-in-out; }
 .v2-current-location-dot span { position:absolute; top:-15px; left:50%; width:0; height:0; transform:translateX(-50%); border-right:5px solid transparent; border-bottom:9px solid #293249; border-left:5px solid transparent; }
