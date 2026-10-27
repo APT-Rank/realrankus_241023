@@ -238,10 +238,33 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
     cursor: pointer;
     z-index: 1050;
-    transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+    transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease, width 0.18s ease, padding 0.18s ease, border-radius 0.18s ease;
     -webkit-tap-highlight-color: transparent;
     outline: none;
     border: none;
+    white-space: nowrap;
+  }
+  .btn_capture_volume_floating.is-capturing {
+    width: auto !important;
+    min-width: 52px !important;
+    padding: 0 16px !important;
+    border-radius: 26px !important;
+    pointer-events: none !important;
+    cursor: default !important;
+  }
+  .btn_capture_volume_floating .volume-capture-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .btn_capture_volume_floating .volume-capture-pct {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    display: inline-block;
+    min-width: 28px;
+    text-align: right;
   }
   .btn_capture_volume_floating:hover {
     transform: scale(1.05);
@@ -3426,27 +3449,41 @@
   var isCapturingVolumeList = false;
   async function captureVolumeList2Col(btnEl) {
     if (isCapturingVolumeList) return;
-    var isVolumeMode = ($("#sido option:selected").val() === "Korea");
+    var isVolumeMode = ($("#sido option:selected").val() === "Korea" || selectedRegion === "Korea");
     if (!isVolumeMode) return;
 
     var $dataList = $('#dataList');
     var $cards = $dataList.find('.listBox');
     if ($cards.length === 0) {
-      if (typeof toastr !== 'undefined') toastr.warning("캡처할 거래량 목록이 없습니다.");
       return;
     }
 
     isCapturingVolumeList = true;
     var $btn = $(btnEl || '#btn_capture_volume_floating');
+    var btnNode = $btn[0];
     var originalBtnHtml = $btn.html();
-    $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
 
-    if (typeof toastr !== 'undefined') {
-      toastr.info("거래량 2열 이미지를 생성 중입니다...");
-    }
+    // 2026-10-27: 토스트 팝업 제거 및 cityclass summaryCapture 방식(부트스트랩 스피너 + 실시간 퍼센티지) 적용
+    $btn.addClass('is-capturing');
+    btnNode.innerHTML = "<div class='spinner-border spinner-border-sm text-white' role='status' style='margin-right: 6px; vertical-align: middle;'></div><span class='volume-capture-status'>이미지 생성 중 (<span class='volume-capture-pct'>0%</span>)</span>";
 
-    // 버튼 스피너가 렌더링되도록 60ms 대기
-    await new Promise(function (resolve) { setTimeout(resolve, 60); });
+    var currentPct = 0;
+    var updateProgress = function(pct) {
+      currentPct = Math.max(currentPct, Math.min(100, Math.round(pct)));
+      var pctEl = btnNode.querySelector('.volume-capture-pct');
+      if (pctEl) {
+        pctEl.textContent = currentPct + "%";
+      }
+    };
+
+    var progressInterval = setInterval(function() {
+      if (currentPct < 85) {
+        updateProgress(currentPct + Math.floor(Math.random() * 5) + 3);
+      }
+    }, 70);
+
+    // 버튼 상태가 화면에 렌더링되도록 40ms 대기
+    await new Promise(function (resolve) { setTimeout(resolve, 40); });
 
     try {
       var now = new Date();
@@ -3478,6 +3515,7 @@
         scrollX: 0,
         scrollY: 0,
         onclone: function (clonedDoc) {
+          updateProgress(45);
           var clonedDataList = clonedDoc.getElementById('dataList');
           if (!clonedDataList) return;
 
@@ -3549,6 +3587,9 @@
           });
         }
       });
+
+      clearInterval(progressInterval);
+      updateProgress(90);
 
       // 5. 상단 타이틀 및 하단 워터마크 추가
       var scale = 2;
@@ -3626,6 +3667,9 @@
 
       var base64Data = finalCanvas.toDataURL('image/png');
 
+      updateProgress(100);
+      await new Promise(function (resolve) { setTimeout(resolve, 120); });
+
       // 안드로이드 하이브리드 앱 환경 검사
       if (window.Android && typeof window.Android.downloadImage === 'function') {
         window.Android.downloadImage(base64Data, filename);
@@ -3638,17 +3682,12 @@
         link.click();
         document.body.removeChild(link);
       }
-
-      if (typeof toastr !== 'undefined') {
-        toastr.success("거래량 이미지가 저장되었습니다.");
-      }
     } catch (err) {
       console.error("거래량 2열 이미지 캡처 실패:", err);
-      if (typeof toastr !== 'undefined') {
-        toastr.error("이미지 캡처 중 오류가 발생했습니다.");
-      }
     } finally {
-      $btn.prop('disabled', false).html(originalBtnHtml);
+      if (progressInterval) clearInterval(progressInterval);
+      $btn.removeClass('is-capturing');
+      btnNode.innerHTML = originalBtnHtml;
       isCapturingVolumeList = false;
     }
   }
