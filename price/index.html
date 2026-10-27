@@ -221,36 +221,65 @@
     transform: scale(0.92);
   }
 
-  /* 2026-10-27: 거래량 리스트 2열 캡처 플로팅 버튼 (플랫 버튼 GUI & 미세 그림자 & 하단바 18px 상단 배치) */
+  /* 2026-10-27: 거래량 캡처 플로팅 버튼 - 라운드 박스(Pill) 기반 자연스러운 좌우 확장/수축 애니메이션 */
   .btn_capture_volume_floating {
     position: fixed;
     right: max(20px, calc(50% - 400px + 20px));
     bottom: 66px;
     width: 52px;
     height: 52px;
-    border-radius: 50%;
+    border-radius: 26px; /* 52px 높이의 절반 고정: 52x52일 땐 원형, 가로 확장 시 양 끝이 반원인 매끄러운 캡슐 (타원 왜곡 방지) */
     background-color: #E43B46;
     color: #ffffff;
     display: none;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
     cursor: pointer;
     z-index: 1050;
-    transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease, width 0.18s ease, padding 0.18s ease, border-radius 0.18s ease;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0;
     border: none;
+    outline: none;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    transition: width 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+  }
+  .btn_capture_volume_floating[style*="display: block"] {
+    display: flex !important;
+  }
+  .btn_capture_volume_floating .btn_icon_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 20px;
+    color: #ffffff;
+    flex-shrink: 0;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s, transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s;
+  }
+  .btn_capture_volume_floating .btn_progress_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
     white-space: nowrap;
   }
-  .btn_capture_volume_floating.is-capturing {
-    width: auto !important;
-    min-width: 52px !important;
-    padding: 0 16px !important;
-    border-radius: 26px !important;
-    pointer-events: none !important;
-    cursor: default !important;
+  .btn_capture_volume_floating .btn_progress_wrap .spinner-border {
+    margin-right: 6px;
+    flex-shrink: 0;
   }
   .btn_capture_volume_floating .volume-capture-status {
     font-size: 13px;
@@ -263,8 +292,25 @@
     font-variant-numeric: tabular-nums;
     font-weight: 700;
     display: inline-block;
-    min-width: 28px;
+    min-width: 30px;
     text-align: right;
+  }
+  .btn_capture_volume_floating.is-capturing {
+    width: 178px !important;
+    pointer-events: none !important;
+    cursor: default !important;
+    transform: none !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.26) !important;
+  }
+  .btn_capture_volume_floating.is-capturing .btn_icon_wrap {
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+  }
+  .btn_capture_volume_floating.is-capturing .btn_progress_wrap {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s;
   }
   .btn_capture_volume_floating:hover {
     transform: scale(1.05);
@@ -614,9 +660,13 @@
         </div>
       </div>
 
-      <!-- 2026-10-27: 거래량 리스트 2열 캡처 플로팅 카메라 버튼 -->
+      <!-- 2026-10-27: 거래량 리스트 2열 캡처 플로팅 카메라 버튼 (라운드 박스 / 캡슐 애니메이션) -->
       <button type="button" id="btn_capture_volume_floating" class="btn_capture_volume_floating" title="거래량 2열 캡처" onClick="captureVolumeList2Col(this)">
-        <i class="fa-solid fa-camera"></i>
+        <span class="btn_icon_wrap"><i class="fa-solid fa-camera"></i></span>
+        <span class="btn_progress_wrap">
+          <div class="spinner-border spinner-border-sm text-white" role="status"></div>
+          <span class="volume-capture-status">이미지 생성 중 (<span class="volume-capture-pct">0%</span>)</span>
+        </span>
       </button>
     </div>
   </div>
@@ -3461,16 +3511,15 @@
     isCapturingVolumeList = true;
     var $btn = $(btnEl || '#btn_capture_volume_floating');
     var btnNode = $btn[0];
-    var originalBtnHtml = $btn.html();
 
-    // 2026-10-27: 토스트 팝업 제거 및 cityclass summaryCapture 방식(부트스트랩 스피너 + 실시간 퍼센티지) 적용
+    // 2026-10-27: 라운드 박스(Pill) 기반 자연스러운 좌우 확장/수축 애니메이션 및 실시간 진행률
+    var pctEl = btnNode.querySelector('.volume-capture-pct');
+    if (pctEl) pctEl.textContent = '0%';
     $btn.addClass('is-capturing');
-    btnNode.innerHTML = "<div class='spinner-border spinner-border-sm text-white' role='status' style='margin-right: 6px; vertical-align: middle;'></div><span class='volume-capture-status'>이미지 생성 중 (<span class='volume-capture-pct'>0%</span>)</span>";
 
     var currentPct = 0;
     var updateProgress = function(pct) {
       currentPct = Math.max(currentPct, Math.min(100, Math.round(pct)));
-      var pctEl = btnNode.querySelector('.volume-capture-pct');
       if (pctEl) {
         pctEl.textContent = currentPct + "%";
       }
@@ -3482,8 +3531,8 @@
       }
     }, 70);
 
-    // 버튼 상태가 화면에 렌더링되도록 40ms 대기
-    await new Promise(function (resolve) { setTimeout(resolve, 40); });
+    // 버튼 너비 확장 트랜지션(0.32s)이 시작 및 진행되도록 50ms 대기
+    await new Promise(function (resolve) { setTimeout(resolve, 50); });
 
     try {
       var now = new Date();
@@ -3668,7 +3717,8 @@
       var base64Data = finalCanvas.toDataURL('image/png');
 
       updateProgress(100);
-      await new Promise(function (resolve) { setTimeout(resolve, 120); });
+      // 100% 진행률을 사용자가 충분히 인지할 수 있도록 300ms 유지
+      await new Promise(function (resolve) { setTimeout(resolve, 300); });
 
       // 안드로이드 하이브리드 앱 환경 검사
       if (window.Android && typeof window.Android.downloadImage === 'function') {
@@ -3686,8 +3736,10 @@
       console.error("거래량 2열 이미지 캡처 실패:", err);
     } finally {
       if (progressInterval) clearInterval(progressInterval);
+      // 부드러운 원형 원복: .is-capturing 제거로 좌우 자연스럽게 수축 (트랜지션 320ms 완료 대기)
       $btn.removeClass('is-capturing');
-      btnNode.innerHTML = originalBtnHtml;
+      await new Promise(function (resolve) { setTimeout(resolve, 340); });
+      if (pctEl) pctEl.textContent = '0%';
       isCapturingVolumeList = false;
     }
   }
