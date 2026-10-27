@@ -3599,37 +3599,61 @@
               volContent.style.cssText = 'display: block !important; margin-top: 4px !important;';
             }
 
-            // 거래량 테이블: 좌측 72px 고정
+            // 거래량 테이블: 좌측 74px 고정, align-items: start로 거래건수와 9월 거래량 예측 상단 라인 일치
             var priceTable = card.querySelector('.price_table');
             if (priceTable) {
-              priceTable.style.cssText = 'display: grid !important; grid-template-columns: 72px 1fr !important; align-items: center !important; margin: 0 !important; border: none !important;';
+              priceTable.style.cssText = 'display: grid !important; grid-template-columns: 74px 1fr !important; align-items: start !important; margin: 0 !important; border: none !important;';
             }
 
-            // 거래량 수치: 빨간색 건수 우측 세로선 제거 및 여백 축소
-            var volNum = card.querySelector('.vol_num');
-            if (volNum) {
-              volNum.style.cssText = 'font-size: 15.5px !important; font-weight: 700 !important; color: #cc233f !important; border: none !important; border-right: none !important; padding-right: 0px !important; margin-right: 0px !important; white-space: nowrap !important; line-height: 1.2 !important;';
-            }
-
+            // 거래량 수치 및 월별 건수: 세로 정렬 및 상단 맞춤
             var volSum = card.querySelector('#vol_sum');
             if (volSum) {
-              volSum.style.cssText = 'border: none !important; border-right: none !important; padding-right: 0px !important; margin-right: 0px !important;';
+              volSum.style.cssText = 'border: none !important; border-right: none !important; padding: 0 !important; margin: 0 !important; display: flex !important; flex-direction: column !important; justify-content: flex-start !important;';
+              var subDates = volSum.querySelectorAll('div:not(.vol_num)');
+              subDates.forEach(function (d) {
+                d.style.cssText = 'font-size: 10px !important; line-height: 1.35 !important; color: #64748b !important; white-space: nowrap !important; margin: 0 !important; padding: 0 !important;';
+              });
             }
 
-            // 비교 거래량 서브: 거래량예측, 퍼센티지, 예상건수 간 여백 균등 분배
+            // 거래량 수치: 빨간색 건수 상단 마진을 정리하여 우측 9월 거래량 예측과 상단 라인을 정확히 맞춤
+            var volNum = card.querySelector('.vol_num');
+            if (volNum) {
+              volNum.style.cssText = 'font-size: 15.5px !important; font-weight: 700 !important; color: #cc233f !important; border: none !important; border-right: none !important; padding: 0 !important; margin: 0 0 2px 0 !important; white-space: nowrap !important; line-height: 1.15 !important;';
+            }
+
+            // 비교 거래량 서브: 거래량예측, 퍼센티지, 예상건수 간 여백 균등 분배 및 9월-10월 사이 단일 연속선 적용
             var compareSub = card.querySelector('.compare_volume_sub');
             if (compareSub) {
-              compareSub.style.cssText = 'display: grid !important; grid-template-columns: auto 1fr auto !important; column-gap: 6px !important; font-size: 10.5px !important; font-weight: 600 !important; padding-left: 6px !important; row-gap: 2px !important; color: #334155 !important; border: none !important; align-items: center !important;';
-              var subDivs = compareSub.querySelectorAll('div');
-              for (var s = 0; s < subDivs.length; s++) {
-                subDivs[s].style.whiteSpace = 'nowrap';
+              var subDivs = Array.from(compareSub.querySelectorAll('div'));
+              subDivs.forEach(function (d) {
+                d.style.border = 'none';
+                d.style.borderBottom = 'none';
+                d.style.padding = '1px 0';
+                d.style.margin = '0';
+              });
+
+              // 9월 거래량 예측과 10월 거래량 예측 사이를 가로지르는 단일 연속선(divider) 삽입
+              var prevSalesVolDivs = compareSub.querySelectorAll('.prev_sales_vol');
+              if (prevSalesVolDivs.length >= 3) {
+                var lastPrevDiv = prevSalesVolDivs[prevSalesVolDivs.length - 1];
+                var divider = card.ownerDocument.createElement('div');
+                divider.className = 'volume_pred_divider';
+                divider.style.cssText = 'grid-column: 1 / -1 !important; height: 1px !important; background-color: #e2e8f0 !important; margin: 3px 0 4px 0 !important; padding: 0 !important; line-height: 0 !important; font-size: 0 !important;';
+                lastPrevDiv.after(divider);
+              }
+
+              compareSub.style.cssText = 'display: grid !important; grid-template-columns: auto 1fr auto !important; column-gap: 6px !important; font-size: 10.5px !important; font-weight: 600 !important; padding-left: 6px !important; color: #334155 !important; border: none !important; align-items: center !important; margin: 0 !important;';
+
+              var updatedSubDivs = compareSub.querySelectorAll('div:not(.volume_pred_divider)');
+              for (var s = 0; s < updatedSubDivs.length; s++) {
+                updatedSubDivs[s].style.whiteSpace = 'nowrap';
                 var colIdx = s % 3;
                 if (colIdx === 1) {
-                  subDivs[s].style.textAlign = 'center';
+                  updatedSubDivs[s].style.textAlign = 'center';
                 } else if (colIdx === 2) {
-                  subDivs[s].style.textAlign = 'right';
+                  updatedSubDivs[s].style.textAlign = 'right';
                 } else {
-                  subDivs[s].style.textAlign = 'left';
+                  updatedSubDivs[s].style.textAlign = 'left';
                 }
               }
             }
