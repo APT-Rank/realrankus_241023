@@ -3512,10 +3512,15 @@
     var $btn = $(btnEl || '#btn_capture_volume_floating');
     var btnNode = $btn[0];
 
-    // 2026-10-27: 라운드 박스(Pill) 기반 자연스러운 좌우 확장/수축 애니메이션 및 실시간 진행률
+    // 2026-10-27: 라운드 박스(Pill) 기반 자연스러운 좌우 확장/수축 애니메이션
     var pctEl = btnNode.querySelector('.volume-capture-pct');
     if (pctEl) pctEl.textContent = '0%';
     $btn.addClass('is-capturing');
+
+    // [버퍼/렉 제거 핵심] 버튼 확장 애니메이션(0.32s)이 완전히 끝나고 "이미지 생성 중 (0%)"가 깔끔하게 안착할 때까지 대기
+    // (이 대기 시간 동안 메인 스레드가 100% 자유로워 확장 애니메이션이 60fps로 매끄럽게 완료된 후 이미지 생성을 시작함)
+    await new Promise(function (resolve) { setTimeout(resolve, 340); });
+    await new Promise(function (resolve) { requestAnimationFrame(resolve); });
 
     var currentPct = 0;
     var updateProgress = function(pct) {
@@ -3530,9 +3535,6 @@
         updateProgress(currentPct + Math.floor(Math.random() * 5) + 3);
       }
     }, 70);
-
-    // 버튼 너비 확장 트랜지션(0.32s)이 시작 및 진행되도록 50ms 대기
-    await new Promise(function (resolve) { setTimeout(resolve, 50); });
 
     try {
       var now = new Date();
