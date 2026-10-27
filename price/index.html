@@ -221,15 +221,15 @@
     transform: scale(0.92);
   }
 
-  /* 2026-10-27: 거래량 리스트 2열 캡처 플로팅 버튼 (샤프 & 고대비 플랫 글래스 커버 GUI & 하단바 18px 상단 배치) */
+  /* 2026-10-27: 거래량 리스트 2열 캡처 플로팅 버튼 (리얼 글래스 템플릿 커버 GUI & 하단바 18px 상단 배치) */
   .btn_capture_volume_floating {
     position: fixed;
     right: max(20px, calc(50% - 400px + 20px));
     bottom: 66px;
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
-    background: linear-gradient(155deg, #ff3647 0%, #E43B46 48%, #aa0e1c 100%);
+    background: radial-gradient(circle at 35% 30%, #ff4b5b 0%, #E43B46 55%, #a30b18 100%);
     color: #ffffff;
     display: none;
     align-items: center;
@@ -237,41 +237,71 @@
     font-size: 21px;
     cursor: pointer;
     z-index: 1050;
-    border: 1.5px solid rgba(255, 255, 255, 0.75);
-    border-top: 2px solid #ffffff;
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.48);
-    box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.92),
-                inset 0 -2px 3px rgba(0, 0, 0, 0.45),
-                0 6px 20px rgba(228, 59, 70, 0.48),
-                0 2px 5px rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25),
+                inset 0 0 12px rgba(255, 255, 255, 0.45),
+                inset 0 1.5px 2px #ffffff,
+                inset 0 -2px 3px rgba(0, 0, 0, 0.4),
+                0 6px 20px rgba(228, 59, 70, 0.45),
+                0 2px 4px rgba(0, 0, 0, 0.18);
     overflow: hidden;
     isolation: isolate;
     -webkit-tap-highlight-color: transparent;
     outline: none;
     transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.18s ease;
   }
-  /* 샤프한 플랫 글래스 사선 빗각 반사광 */
+  /* 템플릿 특유의 다중 평행 사선 광선 (Parallel Diagonal Glass Glare Streaks) */
   .btn_capture_volume_floating::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.3) 47%, rgba(255, 255, 255, 0) 51%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: linear-gradient(130deg, 
+      rgba(255, 255, 255, 0.75) 0%, 
+      rgba(255, 255, 255, 0.35) 24%, 
+      rgba(255, 255, 255, 0) 36%, 
+      rgba(255, 255, 255, 0) 47%, 
+      rgba(255, 255, 255, 0.55) 51%, 
+      rgba(255, 255, 255, 0.85) 54%, 
+      rgba(255, 255, 255, 0) 58%, 
+      rgba(255, 255, 255, 0) 68%, 
+      rgba(255, 255, 255, 0.35) 75%, 
+      rgba(255, 255, 255, 0.65) 85%, 
+      rgba(255, 255, 255, 0) 100%);
     pointer-events: none;
     z-index: 1;
+  }
+  /* 템플릿 상단 엣지 글래스 렌즈 플레어 글린트 (Edge Hotspot Flare) */
+  .btn_capture_volume_floating::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: 13px;
+    width: 14px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ffffff;
+    filter: blur(1.5px);
+    box-shadow: 0 0 7px 2px #ffffff;
+    pointer-events: none;
+    z-index: 3;
   }
   .btn_capture_volume_floating i {
     position: relative;
     z-index: 2;
-    filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.55));
+    filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.5));
   }
   .btn_capture_volume_floating:hover {
     transform: translateY(-2px) scale(1.06);
     filter: brightness(1.08);
-    box-shadow: inset 0 2px 2px #ffffff,
-                inset 0 -2px 3px rgba(0, 0, 0, 0.35),
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4),
+                inset 0 0 14px rgba(255, 255, 255, 0.6),
+                inset 0 2px 2px #ffffff,
                 0 10px 26px rgba(228, 59, 70, 0.58),
                 0 3px 8px rgba(0, 0, 0, 0.22);
   }
