@@ -462,7 +462,7 @@ function setupBottomMenu(currentMenu){
       $("#linkToAptrank_bottom").css({"display":"none"})
     }
     else{
-      $("#linkToAptrank_bottom").css({"width":"100%", "z-index":"150"})
+      $("#linkToAptrank_bottom").css({"width":"100%", "z-index":"860"})
     }
     let delay = 150;
     let timer = null;
@@ -470,7 +470,7 @@ function setupBottomMenu(currentMenu){
       clearTimeout(timer);
       timer = setTimeout(function(){
         if (window.innerHeight > heightMargin) {
-          $("#linkToAptrank_bottom").css({"display":"inline-block", "z-index":"150"})
+          $("#linkToAptrank_bottom").css({"display":"inline-block", "z-index":"860"})
         }
         if (window.innerHeight <= heightMargin) {
           $("#linkToAptrank_bottom").css({"display":"none"})
