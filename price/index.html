@@ -448,53 +448,24 @@
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <option value="latest_deal" id="recent_deal" selected>오늘 등록된</option>
-            <option value="202611">2026년 11월</option>
-            <option value="202610">2026년 10월</option>
-            <option value="202609">2026년 09월</option>
-            <option value="202608">2026년 08월</option>
-            <option value="202607">2026년 07월</option>
-            <!--
-            <option value="202606">2026년 06월</option>            
-            <option value="202605">2026년 05월</option>            
-            <option value="202604">2026년 04월</option>            
-            <option value="202603">2026년 03월</option>
-            <option value="202602">2026년 02월</option>            
-            <option value="202601">2026년 01월</option>            
-            <option value="202512">2025년 12월</option>            
-            <option value="202511">2025년 11월</option>            
-            <option value="202510">2025년 10월</option>            
-            <option value="202509">2025년 09월</option>            
-            <option value="202508">2025년 08월</option>            
-            <option value="202507">2025년 07월</option>
-            <option value="202506">2025년 06월</option>            
-            <option value="202505">2025년 05월</option>            
-            <option value="202504">2025년 04월</option>            
-            <option value="202503">2025년 03월</option>            
-            <option value="202502">2025년 02월</option>            
-            <option value="202501">2025년 01월</option>            
-            <option value="202412">2024년 12월</option>
-            <option value="202411">2024년 11월</option>
-            <option value="202410">2024년 10월</option>            
-            <option value="202409">2024년 09월</option>            
-            <option value="202408">2024년 08월</option>            
-            <option value="202407">2024년 07월</option>            
-            <option value="202406">2024년 06월</option>            
-            <option value="202405">2024년 05월</option>            
-            <option value="202404">2024년 04월</option>            
-            <option value="202403">2024년 03월</option>            
-            <option value="202402">2024년 02월</option>            
-            <option value="202401">2024년 01월</option>            
-            <option value="202312">2023년 12월</option>            
-            <option value="202311">2023년 11월</option>
-            <option value="202310">2023년 10월</option>            
-            <option value="202309">2023년 09월</option>            
-            <option value="202308">2023년 08월</option>            
-            <option value="202307">2023년 07월</option>
-            <option value="202306">2023년 06월</option>
-            <option value="202305">2023년 05월</option>
-            <option value="202304">2023년 04월</option>
-            -->
           </select>
+          <script>
+            (function initRecentMonths() {
+              var monthSelect = document.getElementById("month");
+              if (!monthSelect) return;
+              var now = new Date();
+              for (var i = 0; i < 5; i++) {
+                var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                var yyyy = d.getFullYear();
+                var m = d.getMonth() + 1;
+                var mm = m < 10 ? "0" + m : "" + m;
+                var opt = document.createElement("option");
+                opt.value = "" + yyyy + mm;
+                opt.textContent = yyyy + "년 " + mm + "월";
+                monthSelect.appendChild(opt);
+              }
+            })();
+          </script>
         </div>
       </div>
 
