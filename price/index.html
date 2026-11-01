@@ -454,6 +454,10 @@
               var monthSelect = document.getElementById("month");
               if (!monthSelect) return;
               var now = new Date();
+              // 매월 1일의 경우 어제 거래 기준이므로 전월을 최신 월로 반영
+              if (now.getDate() === 1) {
+                now.setDate(now.getDate() - 1);
+              }
               for (var i = 0; i < 5; i++) {
                 var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 var yyyy = d.getFullYear();
