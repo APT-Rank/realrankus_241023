@@ -6,11 +6,11 @@
     "dongs": {
         "순창읍": {
             "summary_metrics": {
-                "r_simple": 0.27120824633423357,
-                "r_multi": 0.9871968051457136,
-                "r_squared": "97.5%",
-                "price_per_gli_point": 1.3240897919953643,
-                "std_error": 56.154154713213835,
+                "r_simple": 0.25866954258683034,
+                "r_multi": 0.9864715426294128,
+                "r_squared": "97.3%",
+                "price_per_gli_point": 0.9011862982883687,
+                "std_error": 54.16836418263175,
                 "remarks": "통계 유의성 부족"
             },
             "chart_boundaries": {
@@ -19,41 +19,41 @@
                 "simple_trendline": [
                     {
                         "gli": 22.7914725174,
-                        "price": 528.5051434396298
+                        "price": 530.6176611900564
                     },
                     {
                         "gli": 36.5970646771,
-                        "price": 679.5211140063616
+                        "price": 670.659665182004
                     }
                 ],
                 "corrected_trendline": [
                     {
                         "gli": 22.7914725174,
-                        "price": 605.0428872420691
+                        "price": 603.9600276932388
                     },
                     {
                         "gli": 36.5970646771,
-                        "price": 623.3227308931791
+                        "price": 616.4014381873178
                     }
                 ],
                 "stable_zone_upper": [
                     {
                         "gli": 22.7914725174,
-                        "price": 633.119964598676
+                        "price": 631.0442097845546
                     },
                     {
                         "gli": 36.5970646771,
-                        "price": 651.399808249786
+                        "price": 643.4856202786336
                     }
                 ],
                 "stable_zone_lower": [
                     {
                         "gli": 22.7914725174,
-                        "price": 576.9658098854622
+                        "price": 576.875845601923
                     },
                     {
                         "gli": 36.5970646771,
-                        "price": 595.2456535365723
+                        "price": 589.317256096002
                     }
                 ]
             },
@@ -69,25 +69,25 @@
                 {
                     "complex_name": "대석",
                     "gli_score": 22.7914725174,
-                    "price_per_pyung": 421.5,
+                    "price_per_pyung": 423.0,
                     "age_category": "노후 (25년이상)",
-                    "construction_age": 27,
+                    "construction_age": 28,
                     "household_count": 136
                 },
                 {
                     "complex_name": "순창남양휴튼",
-                    "gli_score": 34.671398563,
-                    "price_per_pyung": 904.6666666666666,
+                    "gli_score": 34.595398563,
+                    "price_per_pyung": 891.3333333333334,
                     "age_category": "신축 (5년미만)",
-                    "construction_age": 3,
+                    "construction_age": 4,
                     "household_count": 378
                 },
                 {
                     "complex_name": "온리뷰",
-                    "gli_score": 31.2223280259,
-                    "price_per_pyung": 733.0,
-                    "age_category": "준신축 (5~10년)",
-                    "construction_age": 9,
+                    "gli_score": 31.1463280259,
+                    "price_per_pyung": 718.0,
+                    "age_category": "구축 (10~25년)",
+                    "construction_age": 10,
                     "household_count": 165
                 },
                 {
@@ -103,7 +103,7 @@
                     "gli_score": 36.5970646771,
                     "price_per_pyung": 397.0,
                     "age_category": "노후 (25년이상)",
-                    "construction_age": 31,
+                    "construction_age": 32,
                     "household_count": 142
                 }
             ]

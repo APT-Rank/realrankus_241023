@@ -1410,6 +1410,7 @@ async function cancelMarketOrder(orderId) {
 }
 
 async function loadComplexMasterSummary(complexId) {
+    if (!currentUser) return null;
     if (complexId === null || complexId === undefined || String(complexId).trim() === '') return null;
     const key = String(complexId);
     if (complexMasterSummaryCache.has(key)) return complexMasterSummaryCache.get(key);
@@ -1867,7 +1868,7 @@ function renderWorldMarkers() {
                     && currentBounds.hasLatLng(new naver.maps.LatLng(latitude, longitude));
             });
             const areaLabelEntries = [];
-            if (!isSmallMarker) {
+            if (!isSmallMarker && currentUser) {
                 for (let index = 0; index < visibleComplexMarkers.length; index += 10) {
                     const markerBatch = visibleComplexMarkers.slice(index, index + 10);
                     const batchEntries = await Promise.all(markerBatch.map(async comp => {
@@ -1894,9 +1895,9 @@ function renderWorldMarkers() {
             const markerPrefix = isSmallMarker ? 'small_marker' : 'large_marker';
             const markerId = `${markerPrefix}_${String(comp.complex_id || comp.id || complexName).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
             const masterSummary = masterSummaries.get(String(comp.complex_id || comp.id || ''));
-            const initialPrice = Number(masterSummary?.initial_price);
+            const initialPrice = Number(masterSummary?.initial_price ?? comp.initial_price);
             const markerPrice = Number.isFinite(initialPrice) && initialPrice > 0 ? formatPrice(initialPrice) : '--';
-            const markerArea = masterSummary?.representative_area_label || '--';
+            const markerArea = masterSummary?.representative_area_label || comp.representative_area_label || '--';
             const markerColor = '#198754';
             const markerKey = String(comp.complex_id || comp.id || complexName);
             const markerSignature = JSON.stringify([

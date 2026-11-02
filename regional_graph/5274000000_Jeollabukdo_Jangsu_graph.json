@@ -6,72 +6,72 @@
     "dongs": {
         "장수읍": {
             "summary_metrics": {
-                "r_simple": 1.0,
+                "r_simple": -1.0,
                 "r_multi": 1.0,
                 "r_squared": "100.0%",
-                "price_per_gli_point": 1.5657298944970228,
-                "std_error": 53.1044568123367,
+                "price_per_gli_point": 5.183105857645319,
+                "std_error": 53.00628893505625,
                 "remarks": ""
             },
             "chart_boundaries": {
-                "min_gli": 19.9348750898,
-                "max_gli": 26.6726396525,
+                "min_gli": 19.2688750898,
+                "max_gli": 26.0066396525,
                 "simple_trendline": [
                     {
-                        "gli": 19.9348750898,
+                        "gli": 19.2688750898,
                         "price": 860.0
                     },
                     {
-                        "gli": 26.6726396525,
-                        "price": 874.5
+                        "gli": 26.0066396525,
+                        "price": 812.0
                     }
                 ],
                 "corrected_trendline": [
                     {
-                        "gli": 19.9348750898,
-                        "price": 861.975240301049
+                        "gli": 19.2688750898,
+                        "price": 853.4612734861827
                     },
                     {
-                        "gli": 26.6726396525,
-                        "price": 872.524759698951
+                        "gli": 26.0066396525,
+                        "price": 818.5387265138172
                     }
                 ],
                 "stable_zone_upper": [
                     {
-                        "gli": 19.9348750898,
-                        "price": 888.5274687072173
+                        "gli": 19.2688750898,
+                        "price": 879.9644179537108
                     },
                     {
-                        "gli": 26.6726396525,
-                        "price": 899.0769881051193
+                        "gli": 26.0066396525,
+                        "price": 845.0418709813454
                     }
                 ],
                 "stable_zone_lower": [
                     {
-                        "gli": 19.9348750898,
-                        "price": 835.4230118948807
+                        "gli": 19.2688750898,
+                        "price": 826.9581290186545
                     },
                     {
-                        "gli": 26.6726396525,
-                        "price": 845.9725312927827
+                        "gli": 26.0066396525,
+                        "price": 792.035582046289
                     }
                 ]
             },
             "scatter_points": [
                 {
                     "complex_name": "장수부경스카이",
-                    "gli_score": 19.9348750898,
+                    "gli_score": 19.2688750898,
                     "price_per_pyung": 860.0,
                     "age_category": "준신축 (5~10년)",
-                    "construction_age": 8,
+                    "construction_age": 9,
                     "household_count": 90
                 },
                 {
                     "complex_name": "장수타워팰리스",
-                    "gli_score": 26.6726396525,
-                    "price_per_pyung": 874.5,
+                    "gli_score": 26.0066396525,
+                    "price_per_pyung": 812.0,
                     "age_category": "구축 (10~25년)",
-                    "construction_age": 12,
+                    "construction_age": 13,
                     "household_count": 89
                 }
             ]
