@@ -1,3 +1,13 @@
+var notice_202611 = 
+"<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 11월 업데이트 안내 (2026-11-03)</div>"
++"<ul>"
++"<li><div class='notice'>병원 정보 업데이트 했습니다. (건강보험심사평가원 제공)</div></li>"
++"<li><div class='notice'>2026년 10월 인구 변동 정보 업데이트 했습니다.</div></li>"
++"<li><div class='notice'>오피스텔분석 서비스를 지도형으로 제공했습니다.</div></li>"
++"<li><div class='notice'>CityClass 서비스 내 지역별 급지 정보 업데이트 했습니다.</div></li>"
++"</ul>"
++"<hr>"
+
 var notice_202610 = 
 "<div class='popupTitle' style='text-align: center; padding-bottom: 1em'> 2026년 10월 업데이트 안내 (2026-10-03)</div>"
 +"<ul>"

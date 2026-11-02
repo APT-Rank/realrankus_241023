@@ -85,11 +85,11 @@ var exchange_rate = 1500; // 1억 KRW 당 USD 환산값 (예시: 1500M KRW = 1M 
 
 // 수정일: 2026-10-03 — 10월 데이터 공개에 맞춰 분석 기준월과 초기 선택월을 갱신했습니다.
 /** @type {string} 데이터 분석 기준월 (수동 업데이트 대상) */
-var thisMonth = "202610"; //수정
+var thisMonth = "202611"; //수정
 /** @type {string} 사용자가 현재 화면에서 선택하여 보고 있는 분석 대상 월 */
-var selectedMonth = "202610"; //수정
+var selectedMonth = "202611"; //수정
 /** @type {string} 로컬 캐싱용 IndexedDB 데이터베이스 버전명 */
-var DB_Date = "202610_03"; //수정
+var DB_Date = "202611_01"; //수정
 /** @type {string} 선택된 상위 행정구역 시/도 (예: "Seoul") */
 var selectedRegion = "Seoul";
 /** @type {string} 선택된 하위 행정구역 시/군/구 코드 및 명칭 (예: "1168000000_Seoul_Gangnam") */
@@ -739,7 +739,7 @@ $(document).ready(function () {
     }
   });
 
-  if ($.cookie("popCookie") != "202610" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+  if ($.cookie("popCookie") != "202611" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
     startNotice = true;
     showNotice();
     //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
@@ -869,8 +869,7 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202605_04");
   window.indexedDB.deleteDatabase("202606_01");
   window.indexedDB.deleteDatabase("202606_02");
-  window.indexedDB.deleteDatabase("202606_02_EN");
-  */
+  window.indexedDB.deleteDatabase("202606_02_EN");  
   window.indexedDB.deleteDatabase("202606_03");
   window.indexedDB.deleteDatabase("202606_03_EN");
   window.indexedDB.deleteDatabase("202606_04");
@@ -889,13 +888,16 @@ function writeIdxedDB(searchingData) {
   window.indexedDB.deleteDatabase("202609_01_EN");
   window.indexedDB.deleteDatabase("202609_02");
   window.indexedDB.deleteDatabase("202609_02_EN");
+  */
   // 수정일: 2026-10-03 — 이전 9월 IndexedDB 데이터베이스 버전을 정리합니다.
   window.indexedDB.deleteDatabase("202609_03");
   window.indexedDB.deleteDatabase("202609_03_EN");
   window.indexedDB.deleteDatabase("202610_01");
   window.indexedDB.deleteDatabase("202610_01_EN");
   window.indexedDB.deleteDatabase("202610_02");
-  window.indexedDB.deleteDatabase("202610_02_EN");  
+  window.indexedDB.deleteDatabase("202610_02_EN");
+  window.indexedDB.deleteDatabase("202610_03");
+  window.indexedDB.deleteDatabase("202610_03_EN");
   window.indexedDB.deleteDatabase(DB_Date);
 
   const dbName = DB_Date;
@@ -4934,6 +4936,9 @@ function showNotice() {
   if (selectedMonth == "202610") {
     detailHtml += `${notice_202610}`;
   }
+  if (selectedMonth == "202611") {
+    detailHtml += `${notice_202611}`;
+  }  
 
   var coffeeChatTitle = t('ui.notice.coffeechat_title', '{years}년 차를 맞이한 지속 가능한 AI 서비스, 리얼랭커스')
     .replace('{years}', yearsDifference);
@@ -5000,7 +5005,7 @@ function showNotice() {
   }
   $(".modal-footer").css({ "padding-top": "3px" });
 
-  if ($.cookie("popCookie") != "202610") {
+  if ($.cookie("popCookie") != "202611") {
     $("#flexCheckDefault").prop("checked", false);
   } else {
     $("#flexCheckDefault").prop("checked", true);
@@ -5010,7 +5015,7 @@ function showNotice() {
     if ($(this).is(":checked")) {
       // 수정일: 2026-10-03 — 10월 공지 확인 상태와 노출 기간을 새 버전으로 갱신합니다.
       // 수정일: 2026-10-26 — 다음 업데이트까지 보지 않기 선택을 45일간 유지합니다.
-      $.cookie("popCookie", "202610", { expires: 45, path: "/" });
+      $.cookie("popCookie", "202611", { expires: 45, path: "/" });
       console.log($.cookie("popCookie"));
     } else {
       $.removeCookie("popCookie", null, { path: "/" });

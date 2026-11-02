@@ -75,10 +75,10 @@
 
   <script src="/js/menu_select_box.js?ver=1.3" type="text/javascript"></script>
   <script src="/js/draw_chart.js?v=20261026_4" type="text/javascript"></script>
-  <script src="/js/sort_op.js?v=20261026_1" type="text/javascript"></script>
-  <script src="/op/search_op_v2.js?v=20261026_4" type="text/javascript"></script>
+  <script src="/js/sort_op.js?v=20261103_1" type="text/javascript"></script>
+  <script src="/op/search_op_v2.js?v=20261103_1" type="text/javascript"></script>
   <script src="/js/rearrange_op.js" type="text/javascript"></script>
-  <script src="/js/share.js?v=20261027_1" type="text/javascript"></script>
+  <script src="/js/share.js?v=20261103_1" type="text/javascript"></script>
   <script src="/js/weight_cal.js" type="text/javascript"></script>
   <script src="/js/weight_array.js" type="text/javascript"></script>
   <script src="/js/simulation.js" type="text/javascript"></script>
@@ -87,7 +87,7 @@
   <link href="/css/style_common.css" rel="stylesheet"/>
   <link href="/css/style_op.css" rel="stylesheet"/>
   <link href="/css/slider_op.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="/op/op_v2.css?v=20261026_62">
+  <link rel="stylesheet" href="/op/op_v2.css?v=20261103_1">
 
   <script src="/js/doubleSlider.js" type="text/javascript"></script>
 </head>
@@ -123,7 +123,8 @@
         <div id="month_selection">
           <select id="month" onChange="updateMonth()">
             <!-- 2026-10-25: Keep only the active 2026-10 dataset selectable; retain older months in comments for later release. -->
-            <option value="202610" selected>2026년 10월</option>
+            <option value="202611" selected>2026년 11월</option>
+            <option value="202610">2026년 10월</option>
             <!--
             <option value="202608">2026년 08월</option>
             <option value="202607">2026년 07월</option>
@@ -336,7 +337,7 @@
 </body>
 
 <script>
-  var selectedMonth = "202610" //수정
+  var selectedMonth = "202611" //수정
   var selectedRegion = "Seoul"
   var selectedSubRegion = "1168000000_Seoul_Gangnam"
   var update_ver = "?v=1.0"
@@ -2110,17 +2111,17 @@
       if($(this).is(':checked')){
         //console.log("CHECKED!!")
         // 수정일: 2026-10-26 — OP 공지 확인 상태를 전용 쿠키에 45일간 저장합니다.
-        $.cookie('popCookie_op', '202609', { expires: 45, path: '/' });
+        $.cookie('popCookie_op', '202611', { expires: 45, path: '/' });
         //console.log($.cookie('popCookie'))
       }
       else{
         //console.log("UN-CHECKED!!")
         $.removeCookie('popCookie_op', null, { path: '/' });
-        if($.cookie('popCookie') == '202609') $.removeCookie('popCookie', null, { path: '/' });
+        if($.cookie('popCookie') == '202611') $.removeCookie('popCookie', null, { path: '/' });
       }
     })
 
     $("#exampleModal").modal("show"); //offcanvas
   }
 </script>
-<script src="/op/op_v2.js?v=20261026_62"></script>
+<script src="/op/op_v2.js?v=20261103_1"></script>

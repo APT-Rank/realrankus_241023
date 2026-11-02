@@ -479,7 +479,7 @@
   }
 
   function loadSearchIndex(month) {
-    month = String(month || window.selectedMonth || "202610");
+    month = String(month || window.selectedMonth);
     if (searchIndexes[month]) return Promise.resolve(searchIndexes[month]);
     if (!searchRequests[month]) {
       // 2026-10-25: Read the authoritative monthly list directly; the old generated search-index artifact is not used.
@@ -503,7 +503,7 @@
   }
 
   function loadRegionMap(month) {
-    month = String(month || window.selectedMonth || "202610");
+    month = String(month || window.selectedMonth);
     if (regionMaps[month]) return Promise.resolve(regionMaps[month]);
     if (!regionMapRequests[month]) {
       regionMapRequests[month] = fetch("/op/" + encodeURIComponent(month) + "/region_map_op.json", { cache: "force-cache" })
@@ -566,7 +566,7 @@
       var migrated = legacy.map(function (row) {
         var dateMatch = String(row[5] || "").match(/(\d{2})년\s*(\d+)월\s*(\d+)일,\s*(\d+)시\s*(\d+)분/);
         var savedAt = dateMatch ? new Date(2000 + Number(dateMatch[1]), Number(dateMatch[2]) - 1, Number(dateMatch[3]), Number(dateMatch[4]), Number(dateMatch[5])).getTime() : Date.now();
-        return { entry: [row[3], row[4], row[1], row[2], -1, row[0]], month: String(window.selectedMonth || "202610"), savedAt: savedAt };
+        return { entry: [row[3], row[4], row[1], row[2], -1, row[0]], month: String(window.selectedMonth), savedAt: savedAt };
       });
       localStorage.setItem("op_v2_recent_searches", JSON.stringify(migrated));
       return migrated;
@@ -1088,9 +1088,9 @@
   function renderMap() {
     var pane = byId("v2Map");
     if (!pane || !window.naver || !naver.maps) return;
-    var month = String(window.selectedMonth || "202610");
+    var month = String(window.selectedMonth);
     loadMapData(month).then(function (data) {
-      if (!pane.isConnected || month !== String(window.selectedMonth || "202610")) return;
+      if (!pane.isConnected || month !== String(window.selectedMonth)) return;
       activeMapData = { search: data.search, regions: data.regions };
       var focusKey = [month, window.selectedSubRegion].join(":");
       var pendingItem = pendingSearchMapCode && data.search.data.find(function (item) { return String(item["검색코드"] || "") === pendingSearchMapCode; });
