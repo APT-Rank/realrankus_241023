@@ -2187,47 +2187,73 @@ async function downloadClassSummaryImage(btnEl, event) {
     var cloneEl = targetEl.cloneNode(true);
     cloneEl.id = "summaryCaptureTarget_clone";
     cloneEl.style.cssText = "background:#ffffff; border-radius:8px; width:max-content; max-width:none; overflow:visible; box-sizing:border-box;";
-    cloneEl.style.setProperty("padding", "16px 20px", "important");
+    cloneEl.style.setProperty("padding", "16px 20px 24px 20px", "important");
+    cloneEl.style.setProperty("display", "block", "important");
+    cloneEl.style.setProperty("height", "auto", "important");
+    cloneEl.style.setProperty("min-height", "auto", "important");
+    cloneEl.style.setProperty("max-height", "none", "important");
+    cloneEl.style.setProperty("overflow", "visible", "important");
+
+    // 2026-11-03: 모바일 미디어쿼리(width:115px)와 캡처 가상뷰포트(width:210px) 간 높이 불일치 및 하단 잘림 완전 해결
+    var dongItems = cloneEl.querySelectorAll(".summary-single-dong-item");
+    dongItems.forEach(function(item) {
+      item.style.setProperty("width", "210px", "important");
+      item.style.setProperty("padding", "7px 10px", "important");
+      item.style.setProperty("font-size", "0.85rem", "important");
+      var subSep = item.querySelector(".summary-sub-sep");
+      if (subSep) subSep.style.setProperty("display", "inline", "important");
+      var subPct = item.querySelector(".summary-sub-pct");
+      if (subPct) subPct.style.setProperty("display", "inline", "important");
+    });
 
     var clonedScroll = cloneEl.querySelector(".summary-table-scroll");
     if (clonedScroll) {
-      clonedScroll.style.overflow = "visible";
-      clonedScroll.style.maxHeight = "none";
-      clonedScroll.style.height = "auto";
-      clonedScroll.style.flex = "none";
-      clonedScroll.style.width = "max-content";
-      clonedScroll.style.maxWidth = "none";
+      clonedScroll.style.setProperty("display", "block", "important");
+      clonedScroll.style.setProperty("overflow", "visible", "important");
+      clonedScroll.style.setProperty("overflow-y", "visible", "important");
+      clonedScroll.style.setProperty("overflow-x", "visible", "important");
+      clonedScroll.style.setProperty("height", "auto", "important");
+      clonedScroll.style.setProperty("min-height", "auto", "important");
+      clonedScroll.style.setProperty("max-height", "none", "important");
+      clonedScroll.style.setProperty("flex", "none", "important");
+      clonedScroll.style.setProperty("width", "max-content", "important");
+      clonedScroll.style.setProperty("max-width", "none", "important");
     }
 
     var clonedMatrixTable = cloneEl.querySelector(".summary-matrix-table");
     if (clonedMatrixTable) {
-      clonedMatrixTable.style.width = "max-content";
-      clonedMatrixTable.style.tableLayout = "auto";
+      clonedMatrixTable.style.setProperty("width", "max-content", "important");
+      clonedMatrixTable.style.setProperty("table-layout", "auto", "important");
     }
 
     var clonedSingleTable = cloneEl.querySelector(".summary-single-table");
     if (clonedSingleTable) {
-      clonedSingleTable.style.width = "960px";
-      clonedSingleTable.style.maxWidth = "none";
+      clonedSingleTable.style.setProperty("width", "960px", "important");
+      clonedSingleTable.style.setProperty("max-width", "none", "important");
+      clonedSingleTable.style.setProperty("height", "auto", "important");
     }
 
     // sticky 속성 해제 (html2canvas 캡쳐 시 상단 헤더·좌측 급지 열 겹침 방지)
     var stickyCells = cloneEl.querySelectorAll("thead, thead th, .summary-tier-col, .summary-tier-cell");
     stickyCells.forEach(function(cell) {
-      cell.style.position = "static";
+      cell.style.setProperty("position", "static", "important");
     });
 
-    // 하단 워터마크 바 추가
+    // 하단 워터마크 바 추가 (하단 여백 및 테두리 완벽 보존)
     var watermark = document.createElement("div");
-    watermark.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding:10px 16px; background:#f8fafc; border-top:1px solid #e2e8f0; border-radius:6px; font-size:12px; color:#64748b; font-weight:600;";
+    watermark.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-top:14px; margin-bottom:8px; padding:10px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:12px; color:#64748b; font-weight:600;";
     watermark.innerHTML = "<span>Captured at " + timeStampText + "</span><span>리얼랭커스 | realrankus.com</span>";
     cloneEl.appendChild(watermark);
+
+    var bottomSpacer = document.createElement("div");
+    bottomSpacer.style.cssText = "height:16px; width:100%; display:block;";
+    cloneEl.appendChild(bottomSpacer);
 
     offscreenWrapper.appendChild(cloneEl);
     document.body.appendChild(offscreenWrapper);
 
     var captureW = Math.ceil(cloneEl.scrollWidth || cloneEl.offsetWidth || 1000);
-    var captureH = Math.ceil(cloneEl.scrollHeight || cloneEl.offsetHeight || 800);
+    var captureH = Math.ceil(cloneEl.scrollHeight || cloneEl.offsetHeight || 800) + 10;
     // 분할 캡쳐 시 레이아웃 흔들림 방지를 위해 고정 픽셀 너비 지정
     cloneEl.style.width = captureW + "px";
     var virtualWinW = Math.max(captureW + 40, 1200);
