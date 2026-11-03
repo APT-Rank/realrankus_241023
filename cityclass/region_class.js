@@ -2227,7 +2227,7 @@ async function downloadClassSummaryImage(btnEl, event) {
     cloneEl.style.setProperty("max-height", "none", "important");
     cloneEl.style.setProperty("overflow", "visible", "important");
 
-    // 2026-11-03: 시군구 캡처 시 동 카드 2줄 배치(평단가/상위%) 및 가로 3개 동 밀착 배열(560px)
+    // 2026-11-03: 시군구 캡처 시 동 카드 2줄 배치(평단가/상위%) 및 가로 3개 동 밀착 배열(620px)
     var dongItems = cloneEl.querySelectorAll(".summary-single-dong-item");
     dongItems.forEach(function(item) {
       item.style.setProperty("width", "140px", "important");
@@ -2288,8 +2288,8 @@ async function downloadClassSummaryImage(btnEl, event) {
 
     var clonedSingleTable = cloneEl.querySelector(".summary-single-table");
     if (clonedSingleTable) {
-      // 2026-11-03: 시군구 캡처 시 2줄 카드 가로 3개 동 밀착 배치 (560px)
-      clonedSingleTable.style.setProperty("width", "560px", "important");
+      // 2026-11-03: 시군구 캡처 시 2줄 카드 가로 3개 동 밀착 배치 (620px)
+      clonedSingleTable.style.setProperty("width", "620px", "important");
       clonedSingleTable.style.setProperty("max-width", "none", "important");
       clonedSingleTable.style.setProperty("height", "auto", "important");
     }
