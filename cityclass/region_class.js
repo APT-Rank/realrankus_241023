@@ -2141,22 +2141,36 @@ async function downloadClassSummaryImage(btnEl, event) {
 
   var originalBtnHtml = btnEl.innerHTML;
   var isAllGungu = ($("#summaryGungu").val() || "ALL") === "ALL";
+  var statusText = isAllGungu ? "고해상도 저장 중" : "이미지 생성 중";
   // 2026-10-23: 스피너(<i>)와 텍스트/퍼센트(<span>) DOM을 분리하여 진행률 갱신 시 스피너 리셋(깜빡임) 및 버튼 가로폭 변동 방지
+  // 2026-11-03: 시군구 개별 캡처 시에도 이미지 생성 진행률(%) 실시간 표시
   btnEl.innerHTML = "<div class='spinner-border spinner-border-sm text-white' role='status' style='margin-right: 4px; vertical-align: middle;'></div><span class='summary-capture-status'>" +
-    (isAllGungu ? "고해상도 저장 중 (<span class='summary-capture-pct'>0%</span>)" : "저장 중...") +
+    statusText + " (<span class='summary-capture-pct'>0%</span>)" +
     "</span>";
   var statusSpanEl = btnEl.querySelector(".summary-capture-status");
   var pctSpanEl = btnEl.querySelector(".summary-capture-pct");
+  var currentPct = 0;
   var updateCaptureProgress = function(pctVal) {
+    currentPct = Math.max(currentPct, Math.min(100, Math.round(pctVal)));
     if (!pctSpanEl && statusSpanEl) {
-      statusSpanEl.innerHTML = "고해상도 저장 중 (<span class='summary-capture-pct'>0%</span>)";
+      statusSpanEl.innerHTML = statusText + " (<span class='summary-capture-pct'>0%</span>)";
       pctSpanEl = btnEl.querySelector(".summary-capture-pct");
     }
     if (pctSpanEl) {
-      pctSpanEl.textContent = pctVal + "%";
+      pctSpanEl.textContent = currentPct + "%";
     }
   };
   btnEl.style.pointerEvents = "none";
+
+  var progressInterval = null;
+  if (!isAllGungu) {
+    progressInterval = setInterval(function() {
+      if (currentPct < 85) {
+        currentPct += Math.floor(Math.random() * 5) + 3;
+        updateCaptureProgress(currentPct);
+      }
+    }, 70);
+  }
 
   var offscreenWrapper = null;
 
@@ -2228,7 +2242,8 @@ async function downloadClassSummaryImage(btnEl, event) {
 
     var clonedSingleTable = cloneEl.querySelector(".summary-single-table");
     if (clonedSingleTable) {
-      clonedSingleTable.style.setProperty("width", "960px", "important");
+      // 2026-11-03: 시군구 캡처 시 우측 빈 여백 제거 및 3열 카드 밀착 배치 (방안 1)
+      clonedSingleTable.style.setProperty("width", "795px", "important");
       clonedSingleTable.style.setProperty("max-width", "none", "important");
       clonedSingleTable.style.setProperty("height", "auto", "important");
     }
@@ -2500,6 +2515,10 @@ async function downloadClassSummaryImage(btnEl, event) {
 
     // 2026-10-23: PC 및 모바일 모두에서 '전체' 보기(또는 대형 표) 캡쳐 시 시간 소요를 감수하더라도 고해상도(2.5~3.0배율)로 캡쳐
     if (selectedGungu === "ALL" || captureW > 1200 || captureH > 1200) {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
       // 1) 모바일 환경이거나 초대형 표(경기도 전체 등)에서 단일 캔버스 제한에 걸릴 가능성이 있는 경우,
       //    단일 캔버스 크기 제한과 무관하게 2.5~3.0배율 원본 해상도를 100% 보장하는 밴드 스트리밍 PNG 인코더를 우선 실행
       if (typeof CompressionStream !== "undefined" && (isMobileEnv || (captureW * captureH > 8000000))) {
@@ -2605,16 +2624,25 @@ async function downloadClassSummaryImage(btnEl, event) {
         allowTaint: false,
         backgroundColor: "#ffffff",
         logging: false,
-        ignoreElements: ignoreFilter
+        ignoreElements: ignoreFilter,
+        onclone: function(clonedDoc) {
+          updateCaptureProgress(50);
+        }
       });
-    }
 
-    if (statusSpanEl) { statusSpanEl.textContent = "파일 생성 중..."; }
-    await new Promise(function(resolve) { setTimeout(resolve, 20); });
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      updateCaptureProgress(92);
+    }
 
     if (!finalBlob && finalCanvas) {
       finalBlob = await canvasToBlobAsync(finalCanvas);
     }
+
+    updateCaptureProgress(100);
+    await new Promise(function(resolve) { setTimeout(resolve, 150); });
 
     if (window.Android && typeof window.Android.downloadImage === "function") {
       var base64Data = null;
@@ -2652,6 +2680,10 @@ async function downloadClassSummaryImage(btnEl, event) {
     console.error("Summary capture failed:", err);
     alert("이미지 저장 중 오류가 발생했습니다.");
   } finally {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
     if (offscreenWrapper && offscreenWrapper.parentNode) {
       offscreenWrapper.parentNode.removeChild(offscreenWrapper);
     }
