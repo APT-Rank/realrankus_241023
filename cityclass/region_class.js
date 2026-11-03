@@ -827,7 +827,7 @@ async function downloadRegionModalImage(btnEl, index, event) {
         // 하단 워터마크 바 추가
         var watermark = clonedDoc.createElement('div');
         watermark.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px 18px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:11px; color:#64748b; font-weight:600;';
-        watermark.innerHTML = '<span>Captured at ' + timeStampText + '</span><span>리얼랭커스 | realrankus.com</span>';
+        watermark.innerHTML = '<span>Captured at ' + timeStampText + '</span><span>리얼랭커스 CityClass | realrankus.com/cityclass</span>';
         clonedEl.appendChild(watermark);
       }
     });
@@ -2274,7 +2274,7 @@ async function downloadClassSummaryImage(btnEl, event) {
     // 하단 워터마크 바 추가 (하단 여백 및 테두리 완벽 보존)
     var watermark = document.createElement("div");
     watermark.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-top:14px; margin-bottom:8px; padding:10px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:12px; color:#64748b; font-weight:600;";
-    watermark.innerHTML = "<span>Captured at " + timeStampText + "</span><span>리얼랭커스 | realrankus.com</span>";
+    watermark.innerHTML = "<span>Captured at " + timeStampText + "</span><span>리얼랭커스 CityClass | realrankus.com/cityclass</span>";
     cloneEl.appendChild(watermark);
 
     var bottomSpacer = document.createElement("div");
