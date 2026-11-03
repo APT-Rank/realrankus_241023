@@ -2150,6 +2150,7 @@ async function downloadClassSummaryImage(btnEl, event) {
   var statusSpanEl = btnEl.querySelector(".summary-capture-status");
   var pctSpanEl = btnEl.querySelector(".summary-capture-pct");
   var currentPct = 0;
+  var targetPct = 80;
   var updateCaptureProgress = function(pctVal) {
     currentPct = Math.max(currentPct, Math.min(100, Math.round(pctVal)));
     if (!pctSpanEl && statusSpanEl) {
@@ -2162,15 +2163,31 @@ async function downloadClassSummaryImage(btnEl, event) {
   };
   btnEl.style.pointerEvents = "none";
 
+  // 2026-11-03: 92% 정체 현상 방지 및 완전한 리니어(Linear) 연속 진행률 애니메이션
   var progressInterval = null;
   if (!isAllGungu) {
     progressInterval = setInterval(function() {
-      if (currentPct < 85) {
-        currentPct += Math.floor(Math.random() * 5) + 3;
+      if (currentPct < targetPct) {
+        var diff = targetPct - currentPct;
+        var step = Math.max(1, Math.min(6, Math.ceil(diff * 0.12)));
+        currentPct += step;
         updateCaptureProgress(currentPct);
       }
-    }, 70);
+    }, 45);
   }
+
+  var finishCaptureProgress = async function() {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
+    while (currentPct < 100) {
+      currentPct = Math.min(100, currentPct + 1);
+      updateCaptureProgress(currentPct);
+      await new Promise(function(r) { setTimeout(r, 30); });
+    }
+    await new Promise(function(resolve) { setTimeout(resolve, 320); });
+  };
 
   var offscreenWrapper = null;
 
@@ -2626,23 +2643,20 @@ async function downloadClassSummaryImage(btnEl, event) {
         logging: false,
         ignoreElements: ignoreFilter,
         onclone: function(clonedDoc) {
-          updateCaptureProgress(50);
+          targetPct = 88;
         }
       });
 
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
-      }
-      updateCaptureProgress(92);
+      // 렌더링 완료 후 이미지 인코딩(Blob 변환) 단계에서도 급점프 없이 98%까지 부드럽게 진행
+      targetPct = 98;
     }
 
     if (!finalBlob && finalCanvas) {
       finalBlob = await canvasToBlobAsync(finalCanvas);
     }
 
-    updateCaptureProgress(100);
-    await new Promise(function(resolve) { setTimeout(resolve, 150); });
+    // 100% 도달 및 완료 화면 320ms 유지 후 저장 진행
+    await finishCaptureProgress();
 
     if (window.Android && typeof window.Android.downloadImage === "function") {
       var base64Data = null;
