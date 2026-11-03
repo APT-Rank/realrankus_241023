@@ -2227,16 +2227,43 @@ async function downloadClassSummaryImage(btnEl, event) {
     cloneEl.style.setProperty("max-height", "none", "important");
     cloneEl.style.setProperty("overflow", "visible", "important");
 
-    // 2026-11-03: 모바일 미디어쿼리(width:115px)와 캡처 가상뷰포트(width:210px) 간 높이 불일치 및 하단 잘림 완전 해결
+    // 2026-11-03: 시군구 캡처 시 동 카드 2줄 배치(평단가/상위%) 및 가로 3개 동 밀착 배열(560px)
     var dongItems = cloneEl.querySelectorAll(".summary-single-dong-item");
     dongItems.forEach(function(item) {
-      item.style.setProperty("width", "210px", "important");
-      item.style.setProperty("padding", "7px 10px", "important");
-      item.style.setProperty("font-size", "0.85rem", "important");
+      item.style.setProperty("width", "140px", "important");
+      item.style.setProperty("padding", "6px 9px", "important");
+      item.style.setProperty("align-items", "flex-start", "important");
+      item.style.setProperty("text-align", "left", "important");
+
+      var dongName = item.querySelector(".summary-dong-name");
+      if (dongName) {
+        dongName.style.setProperty("font-size", "0.84rem", "important");
+        dongName.style.setProperty("font-weight", "700", "important");
+        dongName.style.setProperty("margin-bottom", "2px", "important");
+      }
+
+      var dongSub = item.querySelector(".summary-dong-sub");
+      if (dongSub) {
+        dongSub.style.setProperty("font-size", "0.72rem", "important");
+        dongSub.style.setProperty("line-height", "1.28", "important");
+        dongSub.style.setProperty("width", "100%", "important");
+      }
+
+      var subVal = item.querySelector(".summary-sub-val");
+      if (subVal) {
+        subVal.style.setProperty("display", "block", "important");
+        subVal.style.setProperty("white-space", "nowrap", "important");
+      }
+
       var subSep = item.querySelector(".summary-sub-sep");
-      if (subSep) subSep.style.setProperty("display", "inline", "important");
+      if (subSep) subSep.style.setProperty("display", "none", "important");
+
       var subPct = item.querySelector(".summary-sub-pct");
-      if (subPct) subPct.style.setProperty("display", "inline", "important");
+      if (subPct) {
+        subPct.style.setProperty("display", "block", "important");
+        subPct.style.setProperty("white-space", "nowrap", "important");
+        subPct.style.setProperty("opacity", "0.9", "important");
+      }
     });
 
     var clonedScroll = cloneEl.querySelector(".summary-table-scroll");
@@ -2261,8 +2288,8 @@ async function downloadClassSummaryImage(btnEl, event) {
 
     var clonedSingleTable = cloneEl.querySelector(".summary-single-table");
     if (clonedSingleTable) {
-      // 2026-11-03: 시군구 캡처 시 우측 빈 여백 제거 및 3열 카드 밀착 배치 (방안 1)
-      clonedSingleTable.style.setProperty("width", "795px", "important");
+      // 2026-11-03: 시군구 캡처 시 2줄 카드 가로 3개 동 밀착 배치 (560px)
+      clonedSingleTable.style.setProperty("width", "560px", "important");
       clonedSingleTable.style.setProperty("max-width", "none", "important");
       clonedSingleTable.style.setProperty("height", "auto", "important");
     }
