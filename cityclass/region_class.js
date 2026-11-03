@@ -2150,7 +2150,6 @@ async function downloadClassSummaryImage(btnEl, event) {
   var statusSpanEl = btnEl.querySelector(".summary-capture-status");
   var pctSpanEl = btnEl.querySelector(".summary-capture-pct");
   var currentPct = 0;
-  var targetPct = 80;
   var updateCaptureProgress = function(pctVal) {
     currentPct = Math.max(currentPct, Math.min(100, Math.round(pctVal)));
     if (!pctSpanEl && statusSpanEl) {
@@ -2163,17 +2162,18 @@ async function downloadClassSummaryImage(btnEl, event) {
   };
   btnEl.style.pointerEvents = "none";
 
-  // 2026-11-03: 92% 정체 현상 방지 및 완전한 리니어(Linear) 연속 진행률 애니메이션
+  // 2026-11-03: 98% 정체 및 훅 점프 완전 차단 - 멈춤 없는 리니어(Linear) 연속 1% 단위 진행률
   var progressInterval = null;
   if (!isAllGungu) {
     progressInterval = setInterval(function() {
-      if (currentPct < targetPct) {
-        var diff = targetPct - currentPct;
-        var step = Math.max(1, Math.min(6, Math.ceil(diff * 0.12)));
-        currentPct += step;
+      if (currentPct < 85) {
+        currentPct = Math.min(85, currentPct + 2);
+        updateCaptureProgress(currentPct);
+      } else if (currentPct < 99) {
+        currentPct = Math.min(99, currentPct + 1);
         updateCaptureProgress(currentPct);
       }
-    }, 45);
+    }, 40);
   }
 
   var finishCaptureProgress = async function() {
@@ -2181,10 +2181,12 @@ async function downloadClassSummaryImage(btnEl, event) {
       clearInterval(progressInterval);
       progressInterval = null;
     }
+    var remaining = 100 - currentPct;
+    var stepIntervalMs = remaining > 0 ? Math.max(15, Math.min(38, Math.floor(400 / remaining))) : 30;
     while (currentPct < 100) {
-      currentPct = Math.min(100, currentPct + 1);
+      currentPct++;
       updateCaptureProgress(currentPct);
-      await new Promise(function(r) { setTimeout(r, 30); });
+      await new Promise(function(r) { setTimeout(r, stepIntervalMs); });
     }
     await new Promise(function(resolve) { setTimeout(resolve, 320); });
   };
@@ -2641,14 +2643,8 @@ async function downloadClassSummaryImage(btnEl, event) {
         allowTaint: false,
         backgroundColor: "#ffffff",
         logging: false,
-        ignoreElements: ignoreFilter,
-        onclone: function(clonedDoc) {
-          targetPct = 88;
-        }
+        ignoreElements: ignoreFilter
       });
-
-      // 렌더링 완료 후 이미지 인코딩(Blob 변환) 단계에서도 급점프 없이 98%까지 부드럽게 진행
-      targetPct = 98;
     }
 
     if (!finalBlob && finalCanvas) {
