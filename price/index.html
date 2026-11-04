@@ -110,7 +110,7 @@
   <script src="../js/request_report.js" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet" />
-  <link href="../css/style_price.css?v=20261104_2" rel="stylesheet" />
+  <link href="../css/style_price.css?v=20261104_3" rel="stylesheet" />
   <link href="../css/slider.css" rel="stylesheet" />
 
   <script src="../js/doubleSlider.js" type="text/javascript"></script>
@@ -3514,7 +3514,7 @@
     }
   }
 
-  // 2026-11-04: 신고가/상승/하락/신저가 리스트 캡처 플로팅 버튼 노출 제어
+  // 2026-11-04: 실거래 리스트 캡처 플로팅 버튼 노출 제어 (#전체, #신고가, #상승, #하락, #신저가)
   function checkFilterFloatingBtnVisibility() {
     var $btn = $("#btn_capture_filter_floating");
     if (!$btn.length) return;
@@ -3524,7 +3524,7 @@
 
     var isFilterActive = (
       typeof selections !== 'undefined' && 
-      (selections === 'rearrangeHighest' || selections === 'rearrangeHigher' || selections === 'rearrangeLower' || selections === 'rearrangeLowest')
+      (selections === 'rearrangeHighest' || selections === 'rearrangeHigher' || selections === 'rearrangeLower' || selections === 'rearrangeLowest' || selections === 'rearrangeAll' || !selections)
     );
 
     if (!isVolumeMode && isLatestDeal && isFilterActive) {
@@ -3534,16 +3534,19 @@
       else if (selections === 'rearrangeHigher') { targetClass = "higher"; count = (typeof higherDeal !== 'undefined') ? higherDeal : 0; }
       else if (selections === 'rearrangeLower') { targetClass = "lower"; count = (typeof lowerDeal !== 'undefined') ? lowerDeal : 0; }
       else if (selections === 'rearrangeLowest') { targetClass = "lowest"; count = (typeof newLow !== 'undefined') ? newLow : 0; }
+      else { targetClass = ""; count = (typeof itemNum !== 'undefined') ? itemNum : $('#dataList .listBox').length; }
 
-      var hasCards = count > 0 || $('#dataList').find('.listBox.' + targetClass).length > 0;
+      var hasCards = count > 0 || (targetClass ? $('#dataList').find('.listBox.' + targetClass).length > 0 : $('#dataList').find('.listBox').length > 0);
       if (hasCards) {
         var filterLabelMap = {
+          'rearrangeAll': '전체',
           'rearrangeHighest': '신고가',
           'rearrangeHigher': '상승',
           'rearrangeLower': '하락',
           'rearrangeLowest': '신저가'
         };
-        $btn.attr('title', (filterLabelMap[selections] || '') + ' 리스트 캡처');
+        var currentSel = selections || 'rearrangeAll';
+        $btn.attr('title', (filterLabelMap[currentSel] || '전체') + ' 리스트 캡처');
         if (!$btn.is(':visible')) {
           $btn.css('display', 'flex');
         }
@@ -3831,7 +3834,52 @@
     }
   }
 
-  // 2026-11-04: 신고가, 상승, 하락, 신저가 단지 리스트 고해상도 이미지 캡처 (개별 카드 캡처와 100% 동일한 레이아웃 적용)
+  // 2026-11-04: 단지 개수에 따른 동적 컬럼(1~4열) 및 간소화 티어 계산 헬퍼
+  function getLayoutTier(count) {
+    if (count <= 8) {
+      return {
+        cols: 1,
+        mode: 'full',      // 풀 스펙
+        cardW: 412,
+        gap: 10,
+        innerW: 412,
+        containerW: 440,
+        scale: 3
+      };
+    } else if (count <= 30) {
+      return {
+        cols: 2,
+        mode: 'full',      // 풀 스펙 2열
+        cardW: 412,
+        gap: 10,
+        innerW: 834,       // 412 * 2 + 10 = 834
+        containerW: 862,
+        scale: 2
+      };
+    } else if (count <= 80) {
+      return {
+        cols: 3,
+        mode: 'medium',    // 중간 간소화 (직전대비 1줄만)
+        cardW: 412,
+        gap: 10,
+        innerW: 1256,      // 412 * 3 + 10 * 2 = 1256
+        containerW: 1284,
+        scale: 2
+      };
+    } else {
+      return {
+        cols: 4,
+        mode: 'compact',   // 초간소화 (300px 전광판형 미니 카드)
+        cardW: 300,
+        gap: 10,
+        innerW: 1230,      // 300 * 4 + 10 * 3 = 1230
+        containerW: 1258,
+        scale: 1.5         // 캔버스 한도 안전 및 초고속 렌더링
+      };
+    }
+  }
+
+  // 2026-11-04: 실거래 리스트 고해상도 이미지 캡처 (#전체, #신고가, #상승, #하락, #신저가)
   var isCapturingFilterList = false;
   async function captureFilterList(btnEl) {
     if (isCapturingFilterList) return;
@@ -3842,15 +3890,16 @@
     if (!$dataList.length) return;
 
     var filterInfoMap = {
+      'rearrangeAll': { name: '전체', cls: '', color: '#E43B46' },
       'rearrangeHighest': { name: '신고가', cls: 'highest', color: '#E43B46' },
       'rearrangeHigher': { name: '상승', cls: 'higher', color: '#cc233f' },
       'rearrangeLower': { name: '하락', cls: 'lower', color: '#2563eb' },
       'rearrangeLowest': { name: '신저가', cls: 'lowest', color: '#1d4ed8' }
     };
-    var filterInfo = filterInfoMap[selections];
-    if (!filterInfo) return;
+    var currentSel = selections || 'rearrangeAll';
+    var filterInfo = filterInfoMap[currentSel] || filterInfoMap['rearrangeAll'];
 
-    var $matchedCards = $dataList.find('.listBox.' + filterInfo.cls);
+    var $matchedCards = filterInfo.cls ? $dataList.find('.listBox.' + filterInfo.cls) : $dataList.find('.listBox');
     if ($matchedCards.length === 0) {
       if (typeof toastr !== 'undefined') toastr.info("저장할 " + filterInfo.name + " 단지가 없습니다.");
       return;
@@ -3910,11 +3959,11 @@
       var filename = "리얼랭커스_" + filterInfo.name + "_" + cleanRegionName + "_" + timeStr + ".png";
 
       var dataListDom = $dataList[0];
-      // 2026-11-04: 캡처 단지가 10개 초과 시 2컬럼 그리드, 10개 이하는 1열 정렬
-      var isTwoCol = $matchedCards.length >= 10;
-      var containerW = isTwoCol ? 862 : 440;
-      var innerW = isTwoCol ? 834 : 412;
-      var captureScale = isTwoCol ? 2 : ($matchedCards.length > 15 ? 2 : 3);
+      // 2026-11-04: 단지 개수별 동적 레이아웃 티어 (1열: ~8건, 2열: 9~30건, 3열: 31~80건, 4열: 81건~)
+      var tier = getLayoutTier($matchedCards.length);
+      var containerW = tier.containerW;
+      var innerW = tier.innerW;
+      var captureScale = tier.scale;
 
       var canvas = await html2canvas(dataListDom, {
         scale: captureScale,
@@ -3942,12 +3991,12 @@
           if (!clonedDataList) return;
 
           // 1. 해당 필터 대상 카드만 추출
-          var clonedCards = Array.from(clonedDataList.querySelectorAll('.listBox.' + filterInfo.cls));
-          var clonedIsTwoCol = clonedCards.length >= 10;
-          var clonedInnerW = clonedIsTwoCol ? 834 : 412;
-          var clonedContainerW = clonedIsTwoCol ? 862 : 440;
+          var clonedCards = filterInfo.cls ? Array.from(clonedDataList.querySelectorAll('.listBox.' + filterInfo.cls)) : Array.from(clonedDataList.querySelectorAll('.listBox'));
+          var clonedTier = getLayoutTier(clonedCards.length);
+          var clonedInnerW = clonedTier.innerW;
+          var clonedContainerW = clonedTier.containerW;
 
-          // 2. dataList 내부를 비우고 레이아웃 설정 (10개 초과 시 862px 2열, 10개 이하는 440px 1열)
+          // 2. dataList 내부를 비우고 레이아웃 설정
           clonedDataList.innerHTML = '';
           clonedDataList.style.cssText = 'display: flex !important; flex-direction: column !important; align-items: center !important; width: ' + clonedContainerW + 'px !important; min-width: ' + clonedContainerW + 'px !important; max-width: ' + clonedContainerW + 'px !important; margin: 0 auto !important; padding: 16px 14px 14px 14px !important; box-sizing: border-box !important; background-color: #ffffff !important;';
 
@@ -3962,8 +4011,8 @@
             '</div>';
           clonedDataList.appendChild(headerBox);
 
-          // 4. 개별 카드 스타일 포맷팅 헬퍼 함수
-          var formatCard = function (card, is2Col, isLast) {
+          // 4. 개별 카드 스타일 포맷팅 헬퍼 함수 (티어별 간소화 지원)
+          var formatCard = function (card, tInfo, isLast) {
             card.classList.remove('camera-flash-active');
             card.style.display = 'block';
             card.style.animation = 'none';
@@ -3972,91 +4021,34 @@
             card.style.filter = 'none';
             card.style.transform = 'none';
             card.style.backgroundColor = '#ffffff';
-            card.style.padding = '14px 16px';
             card.style.borderRadius = '0px';
             card.style.boxShadow = 'none';
             card.style.border = '1px solid #E43B46';
             card.style.boxSizing = 'border-box';
-            card.style.width = '412px';
-            card.style.maxWidth = '412px';
-            card.style.minWidth = '412px';
-            card.style.margin = is2Col ? '0 !important' : (isLast ? '0 auto 4px auto' : '0 auto 10px auto');
+            card.style.width = tInfo.cardW + 'px';
+            card.style.maxWidth = tInfo.cardW + 'px';
+            card.style.minWidth = tInfo.cardW + 'px';
+            card.style.margin = (tInfo.cols > 1) ? '0 !important' : (isLast ? '0 auto 4px auto' : '0 auto 10px auto');
 
-            // PC 환경에서 sparkline_container가 price_table2 외부에 있는 경우 내부로 재배치
+            var clonedHidedRatio = card.querySelector('.hided_ratio');
+            if (clonedHidedRatio) clonedHidedRatio.style.display = 'none';
+
+            var clonedDownloadWrap = card.querySelector('.card_download_wrapper');
+            if (clonedDownloadWrap) clonedDownloadWrap.style.display = 'none';
+
+            var favMark = card.querySelector('.fav_mark');
+            if (favMark) favMark.style.display = 'none';
+
             var clonedPriceTable2 = card.querySelector('.price_table2');
             var clonedSparkline = card.querySelector('.sparkline_container');
-            if (clonedPriceTable2 && clonedSparkline && clonedSparkline.parentElement !== clonedPriceTable2) {
-              clonedPriceTable2.appendChild(clonedSparkline);
-            }
-
-            // 모바일 1단 수직 레이아웃 강제
-            var clonedPriceContent = card.querySelector('.price_content');
-            if (clonedPriceContent) {
-              clonedPriceContent.style.display = 'grid';
-              clonedPriceContent.style.gridTemplateColumns = '1fr';
-              clonedPriceContent.style.gridTemplateAreas = 'none';
-              clonedPriceContent.style.alignItems = 'stretch';
-              clonedPriceContent.style.marginTop = '5px';
-            }
-
-            // 상단: 실거래가 정보(1fr) + 스파크라인 그래프(0.4fr)
-            if (clonedPriceTable2) {
-              clonedPriceTable2.style.gridArea = 'auto';
-              clonedPriceTable2.style.display = 'grid';
-              clonedPriceTable2.style.gridTemplateColumns = '1fr 0.4fr';
-              clonedPriceTable2.style.borderRight = '0px';
-              clonedPriceTable2.style.marginRight = '0px';
-              clonedPriceTable2.style.marginTop = '5px';
-              clonedPriceTable2.style.paddingBottom = '5px';
-              clonedPriceTable2.style.alignItems = 'center';
-            }
-
-            if (clonedSparkline) {
-              clonedSparkline.style.gridArea = 'auto';
-              clonedSparkline.style.borderLeft = '1px solid #eee';
-              clonedSparkline.style.borderRight = '0px';
-              clonedSparkline.style.padding = '0 3px';
-              clonedSparkline.style.gridRow = 'auto';
-              clonedSparkline.style.height = '100%';
-              clonedSparkline.style.display = 'flex';
-              clonedSparkline.style.justifyContent = 'center';
-              clonedSparkline.style.alignItems = 'center';
-            }
-
             var clonedCompareContainer = card.querySelector('.compare_price_container');
-            if (clonedCompareContainer) {
-              clonedCompareContainer.style.display = 'grid';
-              clonedCompareContainer.style.gridArea = 'auto';
-              clonedCompareContainer.style.gridTemplateColumns = '1fr';
-              clonedCompareContainer.style.columnGap = '8px';
-              clonedCompareContainer.style.alignItems = 'center';
-              clonedCompareContainer.style.paddingTop = '8px';
-              clonedCompareContainer.style.borderTop = '1px solid #eee';
-              clonedCompareContainer.style.marginTop = '4px';
-              clonedCompareContainer.style.width = '100%';
-            }
-
             var clonedComparePrice = card.querySelector('.compare_price');
-            if (clonedComparePrice) {
-              clonedComparePrice.style.display = 'grid';
-              clonedComparePrice.style.gridArea = 'auto';
-              clonedComparePrice.style.gridTemplateColumns = 'auto auto 1fr';
-              clonedComparePrice.style.columnGap = '8px';
-              clonedComparePrice.style.fontSize = '0.72em';
-              clonedComparePrice.style.fontWeight = '600';
-              clonedComparePrice.style.borderTop = '0px';
-              clonedComparePrice.style.paddingTop = '0px';
-              clonedComparePrice.style.width = '100%';
-              var divs = clonedComparePrice.querySelectorAll('div');
-              for (var d = 0; d < divs.length; d++) {
-                divs[d].style.whiteSpace = 'nowrap';
-              }
-            }
-
             var clonedPriceNum = card.querySelector('.price_num');
+            var clonedAptName = card.querySelector('.apt_name');
+            var clonedPriceContent = card.querySelector('.price_content');
+
+            // 신고가 뱃지 정밀 스타일링
             if (clonedPriceNum) {
-              clonedPriceNum.style.lineHeight = '1.2em';
-              clonedPriceNum.style.fontSize = '1.25em';
               var clonedBadge = clonedPriceNum.querySelector('.badge_highest');
               if (clonedBadge) {
                 clonedBadge.style.cssText = 'display: inline-flex !important; align-items: center !important; justify-content: center !important; vertical-align: middle !important; margin-left: 6px !important; padding: 0 6px !important; height: 1.55em !important; font-size: 0.62em !important; font-weight: 700 !important; line-height: 1 !important; border-radius: 4px !important; background-color: #E43B46 !important; color: #ffffff !important; letter-spacing: -0.3px !important; box-sizing: border-box !important;';
@@ -4071,19 +4063,149 @@
               }
             }
 
-            var clonedAptName = card.querySelector('.apt_name');
-            if (clonedAptName) {
-              clonedAptName.style.fontSize = '0.9em';
+            if (tInfo.mode === 'compact') {
+              // === Lv 4. 슈퍼 컴팩트 (4컬럼, 300px 전광판형 미니 카드) ===
+              card.style.padding = '8px 12px';
+
+              if (clonedSparkline) clonedSparkline.style.display = 'none';
+              if (clonedCompareContainer) clonedCompareContainer.style.display = 'none';
+
+              // 직전거래 변동률 태그 추출하여 price_num 옆에 인라인 추가
+              if (clonedComparePrice) {
+                var divs = clonedComparePrice.querySelectorAll('div');
+                if (divs.length > 1 && clonedPriceNum) {
+                  var ratioTag = divs[1].innerHTML;
+                  if (ratioTag && ratioTag.trim()) {
+                    var ratioSpan = clonedDoc.createElement('span');
+                    ratioSpan.className = 'compact_ratio_tag';
+                    ratioSpan.style.cssText = 'font-size: 0.62em !important; font-weight: 700 !important; margin-left: 6px !important; vertical-align: middle !important;';
+                    ratioSpan.innerHTML = ratioTag;
+                    clonedPriceNum.appendChild(ratioSpan);
+                  }
+                }
+              }
+
+              if (clonedAptName) {
+                clonedAptName.style.fontSize = '0.86em';
+                clonedAptName.style.lineHeight = '1.25';
+                clonedAptName.style.whiteSpace = 'nowrap';
+                clonedAptName.style.overflow = 'hidden';
+                clonedAptName.style.textOverflow = 'ellipsis';
+              }
+
+              if (clonedPriceContent) {
+                clonedPriceContent.style.display = 'block';
+                clonedPriceContent.style.marginTop = '4px';
+              }
+
+              if (clonedPriceTable2) {
+                clonedPriceTable2.style.display = 'flex';
+                clonedPriceTable2.style.justifyContent = 'space-between';
+                clonedPriceTable2.style.alignItems = 'baseline';
+                clonedPriceTable2.style.marginTop = '2px';
+                clonedPriceTable2.style.paddingBottom = '0px';
+                clonedPriceTable2.style.borderRight = '0px';
+              }
+
+              if (clonedPriceNum) {
+                clonedPriceNum.style.fontSize = '1.18em';
+                clonedPriceNum.style.lineHeight = '1.2';
+                clonedPriceNum.style.whiteSpace = 'nowrap';
+              }
+
+              var complexTable = card.querySelector('.complex_table');
+              if (complexTable) {
+                complexTable.style.fontSize = '0.74em';
+                complexTable.style.color = '#64748b';
+                complexTable.style.textAlign = 'right';
+                complexTable.style.whiteSpace = 'nowrap';
+                var addrDivs = complexTable.querySelectorAll('.apt_address');
+                if (addrDivs.length > 1) {
+                  addrDivs[1].style.display = 'none'; // 거래유형/일자 행 숨김으로 1줄 유지
+                }
+              }
+
+            } else {
+              // === Lv 1~3 (1~3컬럼 공통: 스파크라인 포함 레이아웃) ===
+              card.style.padding = (tInfo.mode === 'medium') ? '10px 14px' : '14px 16px';
+
+              // PC 환경에서 sparkline_container가 price_table2 외부에 있는 경우 내부로 재배치
+              if (clonedPriceTable2 && clonedSparkline && clonedSparkline.parentElement !== clonedPriceTable2) {
+                clonedPriceTable2.appendChild(clonedSparkline);
+              }
+
+              if (clonedPriceContent) {
+                clonedPriceContent.style.display = 'grid';
+                clonedPriceContent.style.gridTemplateColumns = '1fr';
+                clonedPriceContent.style.gridTemplateAreas = 'none';
+                clonedPriceContent.style.alignItems = 'stretch';
+                clonedPriceContent.style.marginTop = '5px';
+              }
+
+              if (clonedPriceTable2) {
+                clonedPriceTable2.style.gridArea = 'auto';
+                clonedPriceTable2.style.display = 'grid';
+                clonedPriceTable2.style.gridTemplateColumns = '1fr 0.4fr';
+                clonedPriceTable2.style.borderRight = '0px';
+                clonedPriceTable2.style.marginRight = '0px';
+                clonedPriceTable2.style.marginTop = '5px';
+                clonedPriceTable2.style.paddingBottom = '5px';
+                clonedPriceTable2.style.alignItems = 'center';
+              }
+
+              if (clonedSparkline) {
+                clonedSparkline.style.gridArea = 'auto';
+                clonedSparkline.style.borderLeft = '1px solid #eee';
+                clonedSparkline.style.borderRight = '0px';
+                clonedSparkline.style.padding = '0 3px';
+                clonedSparkline.style.gridRow = 'auto';
+                clonedSparkline.style.height = '100%';
+                clonedSparkline.style.display = 'flex';
+                clonedSparkline.style.justifyContent = 'center';
+                clonedSparkline.style.alignItems = 'center';
+              }
+
+              if (clonedCompareContainer) {
+                clonedCompareContainer.style.display = 'grid';
+                clonedCompareContainer.style.gridArea = 'auto';
+                clonedCompareContainer.style.gridTemplateColumns = '1fr';
+                clonedCompareContainer.style.columnGap = '8px';
+                clonedCompareContainer.style.alignItems = 'center';
+                clonedCompareContainer.style.paddingTop = (tInfo.mode === 'medium') ? '6px' : '8px';
+                clonedCompareContainer.style.borderTop = '1px solid #eee';
+                clonedCompareContainer.style.marginTop = '4px';
+                clonedCompareContainer.style.width = '100%';
+              }
+
+              if (clonedComparePrice) {
+                clonedComparePrice.style.display = 'grid';
+                clonedComparePrice.style.gridArea = 'auto';
+                clonedComparePrice.style.gridTemplateColumns = 'auto auto 1fr';
+                clonedComparePrice.style.columnGap = '8px';
+                clonedComparePrice.style.fontSize = '0.72em';
+                clonedComparePrice.style.fontWeight = '600';
+                clonedComparePrice.style.borderTop = '0px';
+                clonedComparePrice.style.paddingTop = '0px';
+                clonedComparePrice.style.width = '100%';
+                var divs = clonedComparePrice.querySelectorAll('div');
+                for (var d = 0; d < divs.length; d++) {
+                  divs[d].style.whiteSpace = 'nowrap';
+                  // Lv 3. 세미 컴팩트 (3컬럼): 직전거래 대비(0,1,2번)만 보이고 최고가/최저가(3~8번)는 숨김
+                  if (tInfo.mode === 'medium' && d >= 3) {
+                    divs[d].style.display = 'none';
+                  }
+                }
+              }
+
+              if (clonedPriceNum) {
+                clonedPriceNum.style.lineHeight = '1.2em';
+                clonedPriceNum.style.fontSize = '1.25em';
+              }
+
+              if (clonedAptName) {
+                clonedAptName.style.fontSize = '0.9em';
+              }
             }
-
-            var clonedHidedRatio = card.querySelector('.hided_ratio');
-            if (clonedHidedRatio) clonedHidedRatio.style.display = 'none';
-
-            var clonedDownloadWrap = card.querySelector('.card_download_wrapper');
-            if (clonedDownloadWrap) clonedDownloadWrap.style.display = 'none';
-
-            var favMark = card.querySelector('.fav_mark');
-            if (favMark) favMark.style.display = 'none';
           };
 
           // 5. gungu가 '전체'인 경우: 방안 B(군구 가나다순 정렬 및 군구별 소제목 헤더 구분) 적용
@@ -4103,7 +4225,12 @@
                 if (parts.length > 0) {
                   var rawAddr = parts[parts.length - 1].trim();
                   var tokens = rawAddr.split(/\s+/);
-                  if (tokens.length > 1) return tokens[1].trim();
+                  if (tokens.length > 1) {
+                    if (tokens.length > 2 && tokens[1].endsWith('시') && (tokens[2].endsWith('구') || tokens[2].endsWith('군'))) {
+                      return (tokens[1] + ' ' + tokens[2]).trim();
+                    }
+                    return tokens[1].trim();
+                  }
                 }
               }
               return '기타';
@@ -4139,18 +4266,18 @@
                 '<span style="font-size: 11.5px !important; font-weight: 600 !important; color: #64748b !important;">' + grp.cards.length + '건</span>';
               clonedDataList.appendChild(gHeader);
 
-              // 해당 군구 카드 목록 (10개 이상 시 2컬럼 그리드 유지, 10개 미만은 1열)
-              if (clonedIsTwoCol) {
+              // 해당 군구 카드 목록 (티어별 컬럼 배치)
+              if (clonedTier.cols > 1) {
                 var gGridWrap = clonedDoc.createElement('div');
-                gGridWrap.style.cssText = 'display: grid !important; grid-template-columns: repeat(2, 412px) !important; gap: 10px !important; width: ' + clonedInnerW + 'px !important; margin: 0 auto !important; box-sizing: border-box !important;';
+                gGridWrap.style.cssText = 'display: grid !important; grid-template-columns: repeat(' + clonedTier.cols + ', ' + clonedTier.cardW + 'px) !important; gap: ' + clonedTier.gap + 'px !important; width: ' + clonedInnerW + 'px !important; margin: 0 auto !important; box-sizing: border-box !important;';
                 grp.cards.forEach(function (card) {
-                  formatCard(card, true, false);
+                  formatCard(card, clonedTier, false);
                   gGridWrap.appendChild(card);
                 });
                 clonedDataList.appendChild(gGridWrap);
               } else {
                 grp.cards.forEach(function (card, cIdx) {
-                  formatCard(card, false, cIdx === grp.cards.length - 1);
+                  formatCard(card, clonedTier, cIdx === grp.cards.length - 1);
                   clonedDataList.appendChild(card);
                 });
               }
@@ -4158,20 +4285,20 @@
           } else {
             // 단일 군구 선택 시: 기존 단일 컨테이너 렌더링 유지
             var cardsContainer = clonedDataList;
-            if (clonedIsTwoCol) {
+            if (clonedTier.cols > 1) {
               var gridWrap = clonedDoc.createElement('div');
-              gridWrap.style.cssText = 'display: grid !important; grid-template-columns: repeat(2, 412px) !important; gap: 10px !important; width: ' + clonedInnerW + 'px !important; margin: 0 auto !important; box-sizing: border-box !important;';
+              gridWrap.style.cssText = 'display: grid !important; grid-template-columns: repeat(' + clonedTier.cols + ', ' + clonedTier.cardW + 'px) !important; gap: ' + clonedTier.gap + 'px !important; width: ' + clonedInnerW + 'px !important; margin: 0 auto !important; box-sizing: border-box !important;';
               clonedDataList.appendChild(gridWrap);
               cardsContainer = gridWrap;
             }
 
             clonedCards.forEach(function (card, cIdx) {
-              formatCard(card, clonedIsTwoCol, cIdx === clonedCards.length - 1);
+              formatCard(card, clonedTier, cIdx === clonedCards.length - 1);
               cardsContainer.appendChild(card);
             });
           }
 
-          // 6. 하단 출처 워터마크 추가 (10개 초과 시 834px, 10개 이하는 412px 폭)
+          // 6. 하단 출처 워터마크 추가
           var footer = clonedDoc.createElement('div');
           footer.className = 'card_capture_footer';
           footer.style.cssText = 'display: flex !important; justify-content: space-between !important; align-items: center !important; width: ' + clonedInnerW + 'px !important; min-width: ' + clonedInnerW + 'px !important; max-width: ' + clonedInnerW + 'px !important; margin: 8px auto 0 auto !important; padding-top: 10px !important; border-top: 1px dashed #e2e8f0 !important; font-family: "Noto Sans KR", -apple-system, sans-serif !important; font-size: 11px !important; box-sizing: border-box !important;';
