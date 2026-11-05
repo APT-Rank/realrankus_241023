@@ -2093,92 +2093,71 @@ function renderClassSummary() {
     }
     html += "</tbody></table></div>";
   }
-  // CASE 2: 전국 16개 시도 비교 매트릭스
+  // CASE 2: 전국 16개 시도 비교 급지표 (하위 동 없이 시도 자체의 급지만 표시)
   else if (selectedSido === "ALL" && selectedGungu === "SIDO") {
     var sidoMap = {};
     for (var k2 = 0; k2 < filteredDongs.length; k2++) {
       var item2 = filteredDongs[k2];
       var sName2 = item2["시도"];
       if (!sidoMap[sName2]) {
-        sidoMap[sName2] = { name: sName2, dongs: [], sumVal: 0, count: 0 };
+        sidoMap[sName2] = { name: sName2, dongs: [], sumVal: 0, count: 0, complexCount: 0, houseCount: 0 };
       }
       sidoMap[sName2].dongs.push(item2);
       sidoMap[sName2].sumVal += Number(item2[themeMeta.valKey] || 0);
+      sidoMap[sName2].complexCount += Number(item2["단지수"] || 0);
+      sidoMap[sName2].houseCount += Number(item2["세대수"] || 0);
       sidoMap[sName2].count += 1;
     }
 
-    var sidoArr = Object.values(sidoMap);
+    var sidoArr = Object.values(sidoMap).filter(function(s) { return s.count > 0; });
+    sidoArr.forEach(function(s) {
+      s.avgVal = s.sumVal / s.count;
+    });
     sidoArr.sort(function(a, b) {
-      var avgA = a.count > 0 ? (a.sumVal / a.count) : 0;
-      var avgB = b.count > 0 ? (b.sumVal / b.count) : 0;
-      return avgB - avgA;
+      return b.avgVal - a.avgVal;
+    });
+    sidoArr.forEach(function(s, idx) {
+      s.rank = idx + 1;
+      s.rankPct = (idx / sidoArr.length) * 100;
     });
 
     html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45; flex-shrink: 0;'>";
-    html += "<div data-html2canvas-ignore='true'>시도 또는 동 이름을 클릭하면 상세 정보로 이동합니다.</div>";
-    html += warnNoticeLineHtml;
+    html += "<div data-html2canvas-ignore='true'>시도 카드를 클릭하면 해당 시도의 구·군별 급지 요약표로 이동합니다.</div>";
     html += "</div>";
-    html += "<div class='summary-table-scroll'>";
-    html += "<table class='summary-matrix-table'>";
-    html += "<thead><tr>";
-    html += "<th class='summary-tier-col'>급지<br><span style='font-size:0.68rem; font-weight:600; color:#64748b;'>(상위 %)</span></th>";
 
-    for (var s = 0; s < sidoArr.length; s++) {
-      var sObj = sidoArr[s];
-      var sAvg = sObj.count > 0 ? (sObj.sumVal / sObj.count) : 0;
-      var sSubText = isPriceTheme
-        ? ("평당 " + Number(sAvg.toFixed(0)).toLocaleString() + "만")
-        : (sAvg.toFixed(1) + "점");
-      html += "<th style='cursor:pointer;' title='클릭하여 " + sObj.name + " 전체 요약 보기' onClick='selectSummarySido(\"" + sObj.name + "\")'>";
-      html += "<div>" + sObj.name + "</div>";
-      html += "<div class='summary-gungu-header-sub'>" + sSubText + "</div>";
-      html += "</th>";
-    }
-    html += "</tr></thead><tbody>";
-
+    html += "<div class='summary-table-scroll'><table class='summary-single-table'><tbody>";
     for (var t2 = 0; t2 < tiers.length; t2++) {
       var tier2 = tiers[t2];
-      var hasAnyDongInTier = false;
-      for (var c = 0; c < filteredDongs.length; c++) {
-        var p = Number(filteredDongs[c][themeMeta.pctKey]);
-        if (p >= tier2.min && p < tier2.max) {
-          hasAnyDongInTier = true;
-          break;
-        }
-      }
-      if (!hasAnyDongInTier) continue;
+      var tierSidos = sidoArr.filter(function(s) {
+        return s.rankPct >= tier2.min && s.rankPct < tier2.max;
+      });
+      if (tierSidos.length === 0) continue;
 
       html += "<tr>";
-      html += "<td class='summary-tier-cell'>";
+      html += "<td class='summary-single-tier-cell'>";
       html += "<div class='summary-tier-badge " + tier2.cl + "'>" + tier2.label + "</div>";
       html += "<div class='summary-tier-pct'>(상위 " + tier2.rangeText + ")</div>";
+      html += "<div style='font-size:0.7rem; color:#64748b; margin-top:2px;'>" + tierSidos.length + "개 시·도</div>";
       html += "</td>";
+      html += "<td><div class='summary-single-dong-wrap'>";
 
-      for (var s2 = 0; s2 < sidoArr.length; s2++) {
-        var sDongs = sidoArr[s2].dongs.filter(function(dItem) {
-          var pVal = Number(dItem[themeMeta.pctKey]);
-          return pVal >= tier2.min && pVal < tier2.max;
-        });
-        sDongs.sort(function(a, b) {
-          return Number(a[themeMeta.pctKey]) - Number(b[themeMeta.pctKey]);
-        });
+      for (var n2 = 0; n2 < tierSidos.length; n2++) {
+        var sObj = tierSidos[n2];
+        var sSub = isPriceTheme
+          ? ("평당 " + Number(sObj.avgVal.toFixed(0)).toLocaleString() + "만원")
+          : (themeMeta.name + " " + sObj.avgVal.toFixed(2) + "점");
 
-        html += "<td>";
-        for (var m = 0; m < sDongs.length; m++) {
-          var dObj = sDongs[m];
-          var dSub = isPriceTheme
-            ? (Number(Number(dObj["평단가"]).toFixed(0)).toLocaleString() + "만")
-            : (Number(dObj[themeMeta.valKey]).toFixed(1) + "점");
-          var isLowComplex = Number(dObj["단지수"] || 0) <= 2;
-          html += "<div class='summary-dong-badge " + tier2.cl + "' onClick='openRegionInfoFromSummary(" + dObj["index"] + ")'>";
-          html += "<div>" + dObj["읍면동"] + "</div>";
-          html += "<div class='summary-dong-sub'>" + dSub + "</div>";
-          if (isLowComplex) html += warnBadgeHtml;
-          html += "</div>";
-        }
-        html += "</td>";
+        html += "<div class='summary-single-dong-item " + tier2.cl + "' style='cursor:pointer;' title='클릭하여 " + sObj.name + " 구·군별 급지요약 보기' onClick='selectSummarySido(\"" + sObj.name + "\")'>";
+        html += "<div class='summary-dong-name'>" + sObj.name + "</div>";
+        html += "<div class='summary-dong-sub'>" +
+                  "<span class='summary-sub-val'>" + sSub + "</span>" +
+                  "<span class='summary-sub-sep'> · </span>" +
+                  "<span class='summary-sub-pct'>전국 " + sObj.rank + "위 (" + sObj.count + "개 동)</span>" +
+                "</div>";
+        html += "</div>";
       }
-      html += "</tr>";
+
+      html += "</div></td></tr>";
     }
     html += "</tbody></table></div>";
   }
