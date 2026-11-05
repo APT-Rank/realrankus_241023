@@ -1606,12 +1606,21 @@ window.addEventListener('popstate', function(event) {
     return;
   }
 
-  // 2) 급지요약 모달에서 특정 구·군 단독 보기로 진입한 상태에서 기기/브라우저 Back 버튼을 누른 경우: 전체(ALL) 보기로 복귀
-  if (topState === "summaryModal" && ($("#summaryGungu").val() || "ALL") !== "ALL") {
-    $("#summaryGungu").val("ALL");
-    renderClassSummary();
-    window.history.pushState({ modalState: "summaryModal", depth: modalHistoryStack.length }, "", "#summaryModal");
-    return;
+  // 2) 급지요약 모달에서 뒤로가기 버튼을 누른 경우 (군구 단독 -> 시도 전체, 또는 전국 군구 -> 전국 시도)
+  if (topState === "summaryModal") {
+    var curSido = $("#summarySido").val() || "서울시";
+    var curGungu = $("#summaryGungu").val() || "ALL";
+    if (curSido === "ALL" && curGungu === "GUNGU") {
+      $("#summaryGungu").val("SIDO");
+      renderClassSummary();
+      window.history.pushState({ modalState: "summaryModal", depth: modalHistoryStack.length }, "", "#summaryModal");
+      return;
+    } else if (curSido !== "ALL" && curGungu !== "ALL") {
+      $("#summaryGungu").val("ALL");
+      renderClassSummary();
+      window.history.pushState({ modalState: "summaryModal", depth: modalHistoryStack.length }, "", "#summaryModal");
+      return;
+    }
   }
 
   // 3) 최상위 모달만 닫기 (예: #infoModal 닫고 하위의 #summaryModal은 그대로 유지)
@@ -1826,6 +1835,32 @@ function getSummaryThemeMeta(theme) {
   return { pctKey: "평단가_백분률", valKey: "평단가", name: "평단가" };
 }
 
+function getShortSidoName(sido) {
+  if (!sido) return "";
+  return sido.replace("특별시", "").replace("광역시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "").replace("시", "");
+}
+
+function selectSummarySido(sidoName) {
+  $("#summarySido").val(sidoName);
+  populateSummaryGunguDropdown();
+  $("#summaryGungu").val("ALL");
+  renderClassSummary();
+}
+
+function selectSummaryGunguDirect(sidoName, gunguName) {
+  $("#summarySido").val(sidoName);
+  populateSummaryGunguDropdown();
+  $("#summaryGungu").val(gunguName);
+  renderClassSummary();
+}
+
+function goBackToNationwide(type) {
+  $("#summarySido").val("ALL");
+  populateSummaryGunguDropdown();
+  $("#summaryGungu").val(type || "SIDO");
+  renderClassSummary();
+}
+
 function showClassSummary() {
   if (!region_class || !sido_list || sido_list.length === 0) {
     alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
@@ -1835,6 +1870,7 @@ function showClassSummary() {
   if (!summaryInitialized) {
     var headerHtml = "";
     headerHtml += "<select id='summarySido' class='summary-select' onChange='onSummarySidoChange()'>";
+    headerHtml += "<option value='ALL'>전국</option>";
     for (var i = 0; i < sido_list.length; i++) {
       headerHtml += "<option value='" + sido_list[i] + "'>" + sido_list[i] + "</option>";
     }
@@ -1853,20 +1889,10 @@ function showClassSummary() {
 
     $("#summaryTitleWrapper").html(headerHtml);
 
-    // 현재 선택된 시도와 매칭되는 기본값 설정
-    var defaultSido = "서울시";
-    if (typeof selectedRegion !== "undefined" && selectedRegion) {
-      for (var r = 0; r < regions.length; r++) {
-        if (regions[r][1] === selectedRegion && sido_list.indexOf(regions[r][0]) !== -1) {
-          defaultSido = regions[r][0];
-          break;
-        }
-      }
-    }
-    if (sido_list.indexOf(defaultSido) !== -1) {
-      $("#summarySido").val(defaultSido);
-    }
+    // 2026-11-05: 사용자 요구사항 - 드롭다운 기본값은 '서울시 전체'
+    $("#summarySido").val("서울시");
     populateSummaryGunguDropdown();
+    $("#summaryGungu").val("ALL");
     summaryInitialized = true;
   }
 
@@ -1880,12 +1906,17 @@ function showClassSummary() {
 
 function populateSummaryGunguDropdown() {
   var selectedSido = $("#summarySido").val();
-  var sidoIdx = sido_list.indexOf(selectedSido);
-  var gungus = (sidoIdx !== -1 && gungu_list[sidoIdx]) ? gungu_list[sidoIdx] : [];
-
-  var gunguHtml = "<option value='ALL'>전체 (구·군 비교)</option>";
-  for (var i = 0; i < gungus.length; i++) {
-    gunguHtml += "<option value='" + gungus[i] + "'>" + gungus[i] + "</option>";
+  var gunguHtml = "";
+  if (selectedSido === "ALL") {
+    gunguHtml += "<option value='SIDO'>시도</option>";
+    gunguHtml += "<option value='GUNGU'>군구</option>";
+  } else {
+    var sidoIdx = sido_list.indexOf(selectedSido);
+    var gungus = (sidoIdx !== -1 && gungu_list[sidoIdx]) ? gungu_list[sidoIdx] : [];
+    gunguHtml += "<option value='ALL' selected>전체 (구·군 비교)</option>";
+    for (var i = 0; i < gungus.length; i++) {
+      gunguHtml += "<option value='" + gungus[i] + "'>" + gungus[i] + "</option>";
+    }
   }
   $("#summaryGungu").html(gunguHtml);
 }
@@ -1910,21 +1941,22 @@ function openRegionInfoFromSummary(dongIdx) {
   var summaryTheme = $("#summaryTheme").val() || menuSelection;
   openSummaryBottomSheet(dongIdx, summaryTheme);
 }
+
 function renderClassSummary() {
   var selectedSido = $("#summarySido").val() || "서울시";
-  var selectedGungu = $("#summaryGungu").val() || "ALL";
+  var selectedGungu = $("#summaryGungu").val() || (selectedSido === "ALL" ? "SIDO" : "ALL");
   var selectedTheme = $("#summaryTheme").val() || "menu_select_price";
 
   var themeMeta = getSummaryThemeMeta(selectedTheme);
   var tiers = getSummaryTiers(selectedTheme);
   var isPriceTheme = (selectedTheme === "menu_select_price");
 
-  // 해당 시도(및 시군구) 데이터 필터링
+  // 데이터 필터링
   var filteredDongs = [];
   for (var i = 0; i < region_class.length; i++) {
     var row = region_class[i];
-    if (row["시도"] !== selectedSido) continue;
-    if (selectedGungu !== "ALL" && row["군구"] !== selectedGungu) continue;
+    if (selectedSido !== "ALL" && row["시도"] !== selectedSido) continue;
+    if (selectedSido !== "ALL" && selectedGungu !== "ALL" && row["군구"] !== selectedGungu) continue;
 
     var pctVal = row[themeMeta.pctKey];
     var metricVal = row[themeMeta.valKey];
@@ -1939,7 +1971,7 @@ function renderClassSummary() {
   if (filteredDongs.length === 0) {
     $("#summaryDetail").html(
       "<div style='padding: 40px 20px; text-align: center; font-weight: 600; color: #64748b;'>" +
-      selectedSido + " 지역은 '" + themeMeta.name + "' 분석 대상 데이터가 없습니다. 다른 기준이나 지역을 선택해주세요." +
+      (selectedSido === "ALL" ? "전국" : selectedSido) + " 지역은 '" + themeMeta.name + "' 분석 대상 데이터가 없습니다. 다른 기준이나 지역을 선택해주세요." +
       "</div>"
     );
     return;
@@ -1959,47 +1991,131 @@ function renderClassSummary() {
     ? ("평균 평단가: 평당 " + Number(avgMetric.toFixed(0)).toLocaleString() + "만원")
     : ("평균 " + themeMeta.name + " 점수: " + avgMetric.toFixed(2) + "점");
 
-  var titleRegionText = selectedSido + (selectedGungu === "ALL" ? " 전체" : (" " + selectedGungu));
+  var titleRegionText = "";
+  var subStatsText = "";
+  if (selectedSido === "ALL") {
+    if (selectedGungu === "GUNGU") {
+      titleRegionText = "전국 (시·군·구 종합)";
+      subStatsText = avgMetricText + " &nbsp;|&nbsp; 전국 252개 시·군·구 (총 " + totalComplex.toLocaleString() + "개 단지)";
+    } else {
+      titleRegionText = "전국 (16개 시·도)";
+      subStatsText = avgMetricText + " &nbsp;|&nbsp; 총 " + totalComplex.toLocaleString() + "개 단지 (" + totalHouse.toLocaleString() + "세대)";
+    }
+  } else {
+    titleRegionText = selectedSido + (selectedGungu === "ALL" ? " 전체" : (" " + selectedGungu));
+    subStatsText = avgMetricText + " &nbsp;|&nbsp; 총 " + totalComplex.toLocaleString() + "개 단지 (" + totalHouse.toLocaleString() + "세대)";
+  }
+
   var html = "<div id='summaryCaptureTarget'>";
 
   // 상단 배너
   html += "<div class='summary-banner'>";
   html += "<div>";
   html += "<div class='summary-banner-title'>" + titleRegionText + ", " + themeMeta.name + " 급지 요약표</div>";
-  html += "<div class='summary-banner-meta'>" + avgMetricText + " &nbsp;|&nbsp; 총 " + totalComplex.toLocaleString() + "개 단지 (" + totalHouse.toLocaleString() + "세대)</div>";
+  html += "<div class='summary-banner-meta'>" + subStatsText + "</div>";
   html += "</div>";
   html += "<div class='summary-banner-meta'>업데이트 : " + updatedDate + "</div>";
   html += "</div>";
 
-  if (selectedGungu === "ALL") {
-    // 시도 전체: 시군구(구·군)별 평균 평단가/점수 내림차순 정렬
+  var warnSvgHtml = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
+  var warnBadgeHtml = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml + "</span>";
+  var warnNoticeLineHtml = "<div class='summary-warn-notice'>" + warnSvgHtml + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
+
+  // CASE 1: 전국 군구 종합 체급표
+  if (selectedSido === "ALL" && selectedGungu === "GUNGU") {
     var gunguMap = {};
     for (var k = 0; k < filteredDongs.length; k++) {
       var item = filteredDongs[k];
+      var sName = item["시도"];
       var gName = item["군구"];
-      if (!gunguMap[gName]) {
-        gunguMap[gName] = { name: gName, dongs: [], sumVal: 0, count: 0 };
+      var key = sName + "|" + gName;
+      if (!gunguMap[key]) {
+        gunguMap[key] = { sido: sName, gungu: gName, key: key, dongs: [], sumVal: 0, count: 0 };
       }
-      gunguMap[gName].dongs.push(item);
-      gunguMap[gName].sumVal += Number(item[themeMeta.valKey] || 0);
-      gunguMap[gName].count += 1;
+      gunguMap[key].dongs.push(item);
+      gunguMap[key].sumVal += Number(item[themeMeta.valKey] || 0);
+      gunguMap[key].count += 1;
     }
 
-    var gunguArr = Object.values(gunguMap);
+    var gunguArr = Object.values(gunguMap).filter(function(g) { return g.count > 0; });
+    gunguArr.forEach(function(g) {
+      g.avgVal = g.sumVal / g.count;
+    });
     gunguArr.sort(function(a, b) {
+      return b.avgVal - a.avgVal;
+    });
+    gunguArr.forEach(function(g, idx) {
+      g.rank = idx + 1;
+      g.rankPct = (idx / gunguArr.length) * 100;
+    });
+
+    html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45; flex-shrink: 0;'>";
+    html += "<div data-html2canvas-ignore='true'>시군구 카드를 클릭하면 해당 지역의 동별 급지 요약표로 이동합니다.</div>";
+    html += "</div>";
+
+    html += "<div class='summary-table-scroll'><table class='summary-single-table'><tbody>";
+    for (var t = 0; t < tiers.length; t++) {
+      var tier = tiers[t];
+      var tierGungus = gunguArr.filter(function(g) {
+        return g.rankPct >= tier.min && g.rankPct < tier.max;
+      });
+      if (tierGungus.length === 0) continue;
+
+      html += "<tr>";
+      html += "<td class='summary-single-tier-cell'>";
+      html += "<div class='summary-tier-badge " + tier.cl + "'>" + tier.label + "</div>";
+      html += "<div class='summary-tier-pct'>(상위 " + tier.rangeText + ")</div>";
+      html += "<div style='font-size:0.7rem; color:#64748b; margin-top:2px;'>" + tierGungus.length + "개 시군구</div>";
+      html += "</td>";
+      html += "<td><div class='summary-single-dong-wrap'>";
+
+      for (var n = 0; n < tierGungus.length; n++) {
+        var gObj = tierGungus[n];
+        var gSub = isPriceTheme
+          ? ("평당 " + Number(gObj.avgVal.toFixed(0)).toLocaleString() + "만원")
+          : (themeMeta.name + " " + gObj.avgVal.toFixed(2) + "점");
+        var shortSido = getShortSidoName(gObj.sido);
+
+        html += "<div class='summary-single-dong-item " + tier.cl + "' style='cursor:pointer;' title='클릭하여 " + gObj.sido + " " + gObj.gungu + " 동별 급지요약 보기' onClick='selectSummaryGunguDirect(\"" + gObj.sido + "\", \"" + gObj.gungu + "\")'>";
+        html += "<div class='summary-dong-name'>" +
+                  "<span style='font-size:0.75rem; opacity:0.85; margin-right:4px;'>[" + shortSido + "]</span>" +
+                  gObj.gungu +
+                "</div>";
+        html += "<div class='summary-dong-sub'>" +
+                  "<span class='summary-sub-val'>" + gSub + "</span>" +
+                  "<span class='summary-sub-sep'> · </span>" +
+                  "<span class='summary-sub-pct'>전국 " + gObj.rank + "위 (" + setPercentage(gObj.rankPct) + ")</span>" +
+                "</div>";
+        html += "</div>";
+      }
+
+      html += "</div></td></tr>";
+    }
+    html += "</tbody></table></div>";
+  }
+  // CASE 2: 전국 16개 시도 비교 매트릭스
+  else if (selectedSido === "ALL" && selectedGungu === "SIDO") {
+    var sidoMap = {};
+    for (var k2 = 0; k2 < filteredDongs.length; k2++) {
+      var item2 = filteredDongs[k2];
+      var sName2 = item2["시도"];
+      if (!sidoMap[sName2]) {
+        sidoMap[sName2] = { name: sName2, dongs: [], sumVal: 0, count: 0 };
+      }
+      sidoMap[sName2].dongs.push(item2);
+      sidoMap[sName2].sumVal += Number(item2[themeMeta.valKey] || 0);
+      sidoMap[sName2].count += 1;
+    }
+
+    var sidoArr = Object.values(sidoMap);
+    sidoArr.sort(function(a, b) {
       var avgA = a.count > 0 ? (a.sumVal / a.count) : 0;
       var avgB = b.count > 0 ? (b.sumVal / b.count) : 0;
       return avgB - avgA;
     });
 
-    // 2026-10-23: 단지수 2개 이하 동 우측 하단 주의(삼각형 느낌표) 뱃지 SVG 및 안내 문구 추가
-    var warnSvgHtml = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
-    var warnBadgeHtml = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml + "</span>";
-    var warnNoticeLineHtml = "<div class='summary-warn-notice'>" + warnSvgHtml + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
-
-    // 2026-10-23: 이미지 캡쳐 시 클릭 조작 안내만 제외하고 느낌표(주의) 안내는 캡쳐 이미지에 포함되도록 분리
     html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45; flex-shrink: 0;'>";
-    html += "<div data-html2canvas-ignore='true'>시군구 또는 동 이름을 클릭하면 상세 정보가 표시됩니다.</div>";
+    html += "<div data-html2canvas-ignore='true'>시도 또는 동 이름을 클릭하면 상세 정보로 이동합니다.</div>";
     html += warnNoticeLineHtml;
     html += "</div>";
     html += "<div class='summary-table-scroll'>";
@@ -2007,26 +2123,25 @@ function renderClassSummary() {
     html += "<thead><tr>";
     html += "<th class='summary-tier-col'>급지<br><span style='font-size:0.68rem; font-weight:600; color:#64748b;'>(상위 %)</span></th>";
 
-    for (var g = 0; g < gunguArr.length; g++) {
-      var gObj = gunguArr[g];
-      var gAvg = gObj.count > 0 ? (gObj.sumVal / gObj.count) : 0;
-      var gSubText = isPriceTheme
-        ? ("평당 " + Number(gAvg.toFixed(0)).toLocaleString() + "만")
-        : (gAvg.toFixed(1) + "점");
-      html += "<th style='cursor:pointer;' title='클릭하여 " + gObj.name + " 단독 요약 보기' onClick='selectSummaryGungu(\"" + gObj.name + "\")'>";
-      html += "<div>" + gObj.name + "</div>";
-      html += "<div class='summary-gungu-header-sub'>" + gSubText + "</div>";
+    for (var s = 0; s < sidoArr.length; s++) {
+      var sObj = sidoArr[s];
+      var sAvg = sObj.count > 0 ? (sObj.sumVal / sObj.count) : 0;
+      var sSubText = isPriceTheme
+        ? ("평당 " + Number(sAvg.toFixed(0)).toLocaleString() + "만")
+        : (sAvg.toFixed(1) + "점");
+      html += "<th style='cursor:pointer;' title='클릭하여 " + sObj.name + " 전체 요약 보기' onClick='selectSummarySido(\"" + sObj.name + "\")'>";
+      html += "<div>" + sObj.name + "</div>";
+      html += "<div class='summary-gungu-header-sub'>" + sSubText + "</div>";
       html += "</th>";
     }
     html += "</tr></thead><tbody>";
 
-    for (var t = 0; t < tiers.length; t++) {
-      var tier = tiers[t];
-      // 해당 급지에 속하는 동이 시도 내에 하나라도 있는지 확인
+    for (var t2 = 0; t2 < tiers.length; t2++) {
+      var tier2 = tiers[t2];
       var hasAnyDongInTier = false;
       for (var c = 0; c < filteredDongs.length; c++) {
         var p = Number(filteredDongs[c][themeMeta.pctKey]);
-        if (p >= tier.min && p < tier.max) {
+        if (p >= tier2.min && p < tier2.max) {
           hasAnyDongInTier = true;
           break;
         }
@@ -2035,28 +2150,27 @@ function renderClassSummary() {
 
       html += "<tr>";
       html += "<td class='summary-tier-cell'>";
-      html += "<div class='summary-tier-badge " + tier.cl + "'>" + tier.label + "</div>";
-      html += "<div class='summary-tier-pct'>(상위 " + tier.rangeText + ")</div>";
+      html += "<div class='summary-tier-badge " + tier2.cl + "'>" + tier2.label + "</div>";
+      html += "<div class='summary-tier-pct'>(상위 " + tier2.rangeText + ")</div>";
       html += "</td>";
 
-      for (var g2 = 0; g2 < gunguArr.length; g2++) {
-        var gDongs = gunguArr[g2].dongs.filter(function(dItem) {
-          var p = Number(dItem[themeMeta.pctKey]);
-          return p >= tier.min && p < tier.max;
+      for (var s2 = 0; s2 < sidoArr.length; s2++) {
+        var sDongs = sidoArr[s2].dongs.filter(function(dItem) {
+          var pVal = Number(dItem[themeMeta.pctKey]);
+          return pVal >= tier2.min && pVal < tier2.max;
         });
-        // 백분위 오름차순(우수한 순) 정렬
-        gDongs.sort(function(a, b) {
+        sDongs.sort(function(a, b) {
           return Number(a[themeMeta.pctKey]) - Number(b[themeMeta.pctKey]);
         });
 
         html += "<td>";
-        for (var m = 0; m < gDongs.length; m++) {
-          var dObj = gDongs[m];
+        for (var m = 0; m < sDongs.length; m++) {
+          var dObj = sDongs[m];
           var dSub = isPriceTheme
             ? (Number(Number(dObj["평단가"]).toFixed(0)).toLocaleString() + "만")
             : (Number(dObj[themeMeta.valKey]).toFixed(1) + "점");
           var isLowComplex = Number(dObj["단지수"] || 0) <= 2;
-          html += "<div class='summary-dong-badge " + tier.cl + "' onClick='openRegionInfoFromSummary(" + dObj["index"] + ")'>";
+          html += "<div class='summary-dong-badge " + tier2.cl + "' onClick='openRegionInfoFromSummary(" + dObj["index"] + ")'>";
           html += "<div>" + dObj["읍면동"] + "</div>";
           html += "<div class='summary-dong-sub'>" + dSub + "</div>";
           if (isLowComplex) html += warnBadgeHtml;
@@ -2066,53 +2180,148 @@ function renderClassSummary() {
       }
       html += "</tr>";
     }
+    html += "</tbody></table></div>";
+  }
+  // CASE 3: 특정 시도 전체 (구·군 비교 매트릭스)
+  else if (selectedGungu === "ALL") {
+    var gunguMap3 = {};
+    for (var k3 = 0; k3 < filteredDongs.length; k3++) {
+      var item3 = filteredDongs[k3];
+      var gName3 = item3["군구"];
+      if (!gunguMap3[gName3]) {
+        gunguMap3[gName3] = { name: gName3, dongs: [], sumVal: 0, count: 0 };
+      }
+      gunguMap3[gName3].dongs.push(item3);
+      gunguMap3[gName3].sumVal += Number(item3[themeMeta.valKey] || 0);
+      gunguMap3[gName3].count += 1;
+    }
+
+    var gunguArr3 = Object.values(gunguMap3);
+    gunguArr3.sort(function(a, b) {
+      var avgA = a.count > 0 ? (a.sumVal / a.count) : 0;
+      var avgB = b.count > 0 ? (b.sumVal / b.count) : 0;
+      return avgB - avgA;
+    });
+
+    html += "<div style='font-size: 0.76rem; color: #64748b; margin-bottom: 6px; line-height: 1.45; flex-shrink: 0;'>";
+    html += "<div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:6px; flex-wrap:wrap;'>";
+    html += "<div data-html2canvas-ignore='true'>시군구 또는 동 이름을 클릭하면 상세 정보가 표시됩니다.</div>";
+    html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.75rem; font-weight: 600; padding: 2px 8px;' onClick='goBackToNationwide(\"SIDO\")' data-html2canvas-ignore='true'>← 전국(시도) 비교로</button>";
+    html += "</div>";
+    html += warnNoticeLineHtml;
+    html += "</div>";
+    html += "<div class='summary-table-scroll'>";
+    html += "<table class='summary-matrix-table'>";
+    html += "<thead><tr>";
+    html += "<th class='summary-tier-col'>급지<br><span style='font-size:0.68rem; font-weight:600; color:#64748b;'>(상위 %)</span></th>";
+
+    for (var g = 0; g < gunguArr3.length; g++) {
+      var gObj3 = gunguArr3[g];
+      var gAvg3 = gObj3.count > 0 ? (gObj3.sumVal / gObj3.count) : 0;
+      var gSubText3 = isPriceTheme
+        ? ("평당 " + Number(gAvg3.toFixed(0)).toLocaleString() + "만")
+        : (gAvg3.toFixed(1) + "점");
+      html += "<th style='cursor:pointer;' title='클릭하여 " + gObj3.name + " 단독 요약 보기' onClick='selectSummaryGungu(\"" + gObj3.name + "\")'>";
+      html += "<div>" + gObj3.name + "</div>";
+      html += "<div class='summary-gungu-header-sub'>" + gSubText3 + "</div>";
+      html += "</th>";
+    }
+    html += "</tr></thead><tbody>";
+
+    for (var t3 = 0; t3 < tiers.length; t3++) {
+      var tier3 = tiers[t3];
+      var hasAnyDongInTier3 = false;
+      for (var c3 = 0; c3 < filteredDongs.length; c3++) {
+        var p3 = Number(filteredDongs[c3][themeMeta.pctKey]);
+        if (p3 >= tier3.min && p3 < tier3.max) {
+          hasAnyDongInTier3 = true;
+          break;
+        }
+      }
+      if (!hasAnyDongInTier3) continue;
+
+      html += "<tr>";
+      html += "<td class='summary-tier-cell'>";
+      html += "<div class='summary-tier-badge " + tier3.cl + "'>" + tier3.label + "</div>";
+      html += "<div class='summary-tier-pct'>(상위 " + tier3.rangeText + ")</div>";
+      html += "</td>";
+
+      for (var g2 = 0; g2 < gunguArr3.length; g2++) {
+        var gDongs3 = gunguArr3[g2].dongs.filter(function(dItem) {
+          var pItem = Number(dItem[themeMeta.pctKey]);
+          return pItem >= tier3.min && pItem < tier3.max;
+        });
+        gDongs3.sort(function(a, b) {
+          return Number(a[themeMeta.pctKey]) - Number(b[themeMeta.pctKey]);
+        });
+
+        html += "<td>";
+        for (var m3 = 0; m3 < gDongs3.length; m3++) {
+          var dObj3 = gDongs3[m3];
+          var dSub3 = isPriceTheme
+            ? (Number(Number(dObj3["평단가"]).toFixed(0)).toLocaleString() + "만")
+            : (Number(dObj3[themeMeta.valKey]).toFixed(1) + "점");
+          var isLowComplex3 = Number(dObj3["단지수"] || 0) <= 2;
+          html += "<div class='summary-dong-badge " + tier3.cl + "' onClick='openRegionInfoFromSummary(" + dObj3["index"] + ")'>";
+          html += "<div>" + dObj3["읍면동"] + "</div>";
+          html += "<div class='summary-dong-sub'>" + dSub3 + "</div>";
+          if (isLowComplex3) html += warnBadgeHtml;
+          html += "</div>";
+        }
+        html += "</td>";
+      }
+      html += "</tr>";
+    }
 
     html += "</tbody></table></div>";
-  } else {
-    // 특정 시군구 단독 선택 시: 한눈에 들어오는 카드형 요약표
-    var warnSvgHtml2 = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
-    var warnBadgeHtml2 = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml2 + "</span>";
-    // 2026-10-23: 단일 시군구 캡쳐 시에도 돌아가기 버튼만 제외하고 느낌표(주의) 안내는 캡쳐 이미지에 포함
+  }
+  // CASE 4: 특정 시군구 단독 선택 시 (한눈에 들어오는 카드형 요약표)
+  else {
+    var warnSvgHtml4 = "<svg viewBox='0 0 24 24' width='14' height='14' style='display:block;'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' fill='#facc15' stroke='#854d0e' stroke-width='1.8' stroke-linejoin='round'/><path d='M12 9v4.5' stroke='#1e293b' stroke-width='2.4' stroke-linecap='round'/><circle cx='12' cy='16.8' r='1.3' fill='#1e293b'/></svg>";
+    var warnBadgeHtml4 = "<span class='summary-dong-warn' title='단지 2개 이하 (소수 단지 표본 주의)'>" + warnSvgHtml4 + "</span>";
+
     html += "<div style='margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; flex-shrink: 0;'>";
-    html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.78rem; font-weight: 600;' onClick='selectSummaryGungu(\"ALL\")' data-html2canvas-ignore='true'>← " + selectedSido + " 전체로 돌아가기</button>";
-    html += "<div class='summary-warn-notice'>" + warnSvgHtml2 + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
+    html += "<div style='display:flex; gap:6px;'>";
+    html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.78rem; font-weight: 600;' onClick='selectSummaryGungu(\"ALL\")' data-html2canvas-ignore='true'>← " + selectedSido + " 전체로</button>";
+    html += "<button type='button' class='btn btn-sm btn-outline-secondary' style='font-size: 0.78rem; font-weight: 600;' onClick='goBackToNationwide(\"GUNGU\")' data-html2canvas-ignore='true'>← 전국(군구) 요약으로</button>";
+    html += "</div>";
+    html += "<div class='summary-warn-notice'>" + warnSvgHtml4 + "<span>표시는 단지수가 2개 이하인 동으로, 급지 판단에 주의하세요.</span></div>";
     html += "</div>";
 
     html += "<div class='summary-table-scroll'><table class='summary-single-table'><tbody>";
-    for (var t2 = 0; t2 < tiers.length; t2++) {
-      var tier2 = tiers[t2];
-      var tierDongs = filteredDongs.filter(function(dItem) {
-        var p = Number(dItem[themeMeta.pctKey]);
-        return p >= tier2.min && p < tier2.max;
+    for (var t4 = 0; t4 < tiers.length; t4++) {
+      var tier4 = tiers[t4];
+      var tierDongs4 = filteredDongs.filter(function(dItem) {
+        var p4 = Number(dItem[themeMeta.pctKey]);
+        return p4 >= tier4.min && p4 < tier4.max;
       });
-      if (tierDongs.length === 0) continue;
+      if (tierDongs4.length === 0) continue;
 
-      tierDongs.sort(function(a, b) {
+      tierDongs4.sort(function(a, b) {
         return Number(a[themeMeta.pctKey]) - Number(b[themeMeta.pctKey]);
       });
 
       html += "<tr>";
       html += "<td class='summary-single-tier-cell'>";
-      html += "<div class='summary-tier-badge " + tier2.cl + "'>" + tier2.label + "</div>";
-      html += "<div class='summary-tier-pct'>(상위 " + tier2.rangeText + ")</div>";
+      html += "<div class='summary-tier-badge " + tier4.cl + "'>" + tier4.label + "</div>";
+      html += "<div class='summary-tier-pct'>(상위 " + tier4.rangeText + ")</div>";
       html += "</td>";
       html += "<td><div class='summary-single-dong-wrap'>";
 
-      for (var n = 0; n < tierDongs.length; n++) {
-        var dObj2 = tierDongs[n];
-        var dSub2 = isPriceTheme
-          ? ("평당 " + Number(Number(dObj2["평단가"]).toFixed(0)).toLocaleString() + "만원")
-          : (themeMeta.name + " " + Number(dObj2[themeMeta.valKey]).toFixed(2) + "점");
-        var isLowComplex2 = Number(dObj2["단지수"] || 0) <= 2;
-        // 2026-10-23: [2번 요구사항] 단일 시군구 동 카드 균일 고정폭(웹 210px, 모바일 130px), 좌측 정렬 및 모바일 평단가-상위퍼센트 줄바꿈
-        html += "<div class='summary-single-dong-item " + tier2.cl + "' onClick='openRegionInfoFromSummary(" + dObj2["index"] + ")'>";
-        html += "<div class='summary-dong-name'>" + dObj2["읍면동"] + "</div>";
+      for (var n4 = 0; n4 < tierDongs4.length; n4++) {
+        var dObj4 = tierDongs4[n4];
+        var dSub4 = isPriceTheme
+          ? ("평당 " + Number(Number(dObj4["평단가"]).toFixed(0)).toLocaleString() + "만원")
+          : (themeMeta.name + " " + Number(dObj4[themeMeta.valKey]).toFixed(2) + "점");
+        var isLowComplex4 = Number(dObj4["단지수"] || 0) <= 2;
+        html += "<div class='summary-single-dong-item " + tier4.cl + "' onClick='openRegionInfoFromSummary(" + dObj4["index"] + ")'>";
+        html += "<div class='summary-dong-name'>" + dObj4["읍면동"] + "</div>";
         html += "<div class='summary-dong-sub'>" +
-                  "<span class='summary-sub-val'>" + dSub2 + "</span>" +
+                  "<span class='summary-sub-val'>" + dSub4 + "</span>" +
                   "<span class='summary-sub-sep'> · </span>" +
-                  "<span class='summary-sub-pct'>상위 " + setPercentage(Number(dObj2[themeMeta.pctKey])) + "</span>" +
+                  "<span class='summary-sub-pct'>상위 " + setPercentage(Number(dObj4[themeMeta.pctKey])) + "</span>" +
                 "</div>";
-        if (isLowComplex2) html += warnBadgeHtml2;
+        if (isLowComplex4) html += warnBadgeHtml4;
         html += "</div>";
       }
 
@@ -2140,7 +2349,7 @@ async function downloadClassSummaryImage(btnEl, event) {
   if (!targetEl) return;
 
   var originalBtnHtml = btnEl.innerHTML;
-  var isAllGungu = ($("#summaryGungu").val() || "ALL") === "ALL";
+  var isAllGungu = ($("#summaryGungu").val() || "ALL") === "ALL" || $("#summarySido").val() === "ALL";
   var statusText = isAllGungu ? "고해상도 저장 중" : "이미지 생성 중";
   // 2026-10-23: 스피너(<i>)와 텍스트/퍼센트(<span>) DOM을 분리하여 진행률 갱신 시 스피너 리셋(깜빡임) 및 버튼 가로폭 변동 방지
   // 2026-11-03: 시군구 개별 캡처 시에도 이미지 생성 진행률(%) 실시간 표시
@@ -2204,13 +2413,19 @@ async function downloadClassSummaryImage(btnEl, event) {
                         pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
 
     var selectedSido = $("#summarySido").val() || "서울시";
-    var selectedGungu = $("#summaryGungu").val() || "ALL";
+    var selectedGungu = $("#summaryGungu").val() || (selectedSido === "ALL" ? "SIDO" : "ALL");
     var selectedTheme = $("#summaryTheme").val() || "menu_select_price";
     var themeMeta = getSummaryThemeMeta(selectedTheme);
 
     var safeName = function(str) { return (str || "").replace(/[\\/:*?"<>|\s]+/g, "_"); };
-    var gunguLabel = (selectedGungu === "ALL") ? "전체" : safeName(selectedGungu);
-    var fileName = "리얼랭커스_급지요약_" + safeName(selectedSido) + "_" + gunguLabel + "_" + safeName(themeMeta.name) + "_" + fileTimeStamp + ".png";
+    var safeSido = (selectedSido === "ALL") ? "전국" : safeName(selectedSido);
+    var gunguLabel = "";
+    if (selectedSido === "ALL") {
+      gunguLabel = (selectedGungu === "GUNGU") ? "군구" : "시도";
+    } else {
+      gunguLabel = (selectedGungu === "ALL") ? "전체" : safeName(selectedGungu);
+    }
+    var fileName = "리얼랭커스_급지요약_" + safeSido + "_" + gunguLabel + "_" + safeName(themeMeta.name) + "_" + fileTimeStamp + ".png";
 
     // 2026-10-23: 오프스크린 복제 컨테이너에서 전체 표를 펼쳐 캡쳐 (모바일 padding:0!important 영향 방지를 위해 setProperty 사용)
     offscreenWrapper = document.createElement("div");
@@ -2288,8 +2503,12 @@ async function downloadClassSummaryImage(btnEl, event) {
 
     var clonedSingleTable = cloneEl.querySelector(".summary-single-table");
     if (clonedSingleTable) {
-      // 2026-11-03: 시군구 캡처 시 2줄 카드 가로 3개 동 밀착 배치 (620px)
-      clonedSingleTable.style.setProperty("width", "620px", "important");
+      if (selectedSido === "ALL") {
+        clonedSingleTable.style.setProperty("width", "960px", "important");
+      } else {
+        // 2026-11-03: 시군구 캡처 시 2줄 카드 가로 3개 동 밀착 배치 (620px)
+        clonedSingleTable.style.setProperty("width", "620px", "important");
+      }
       clonedSingleTable.style.setProperty("max-width", "none", "important");
       clonedSingleTable.style.setProperty("height", "auto", "important");
     }
