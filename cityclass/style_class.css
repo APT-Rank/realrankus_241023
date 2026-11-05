@@ -2522,6 +2522,33 @@
     .summary-single-dong-item .summary-dong-sub .summary-sub-pct {
       display: block !important;
     }
+    /* 2026-11-05: 모바일 전체-군구 선택 시 시군구명(예: 용인시 수지구) 텍스트 잘림 방지 - 1컬럼(width: 100%) 전폭 배치 */
+    .summary-nationwide-gungu-table .summary-single-dong-item {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 7px 10px !important;
+    }
+    .summary-nationwide-gungu-table .summary-single-dong-item .summary-dong-name {
+      font-size: 0.86rem !important;
+      white-space: normal !important;
+      word-break: keep-all !important;
+      text-overflow: clip !important;
+    }
+    .summary-nationwide-gungu-table .summary-single-dong-item .summary-dong-sub {
+      font-size: 0.68rem !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      align-items: center !important;
+      gap: 4px !important;
+      margin-top: 2px !important;
+    }
+    .summary-nationwide-gungu-table .summary-single-dong-item .summary-dong-sub .summary-sub-sep {
+      display: inline !important;
+    }
+    .summary-nationwide-gungu-table .summary-single-dong-item .summary-dong-sub .summary-sub-pct {
+      display: inline !important;
+    }
     #summaryModalHeader {      
       gap: 4px;
       padding: 6px 4px;

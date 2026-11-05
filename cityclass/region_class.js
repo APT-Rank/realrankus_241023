@@ -2053,7 +2053,7 @@ function renderClassSummary() {
     html += "<div data-html2canvas-ignore='true'>시군구 카드를 클릭하면 해당 지역의 동별 급지 요약표로 이동합니다.</div>";
     html += "</div>";
 
-    html += "<div class='summary-table-scroll'><table class='summary-single-table'><tbody>";
+    html += "<div class='summary-table-scroll'><table class='summary-single-table summary-nationwide-gungu-table'><tbody>";
     for (var t = 0; t < tiers.length; t++) {
       var tier = tiers[t];
       var tierGungus = gunguArr.filter(function(g) {
@@ -2423,8 +2423,13 @@ async function downloadClassSummaryImage(btnEl, event) {
 
     // 2026-11-03: 시군구 캡처 시 동 카드 2줄 배치(평단가/상위%) 및 가로 3개 동 밀착 배열(620px)
     var dongItems = cloneEl.querySelectorAll(".summary-single-dong-item");
+    var isNationwideGungu = (selectedSido === "ALL" && selectedGungu === "GUNGU");
     dongItems.forEach(function(item) {
-      item.style.setProperty("width", "140px", "important");
+      if (isNationwideGungu) {
+        item.style.setProperty("width", "210px", "important");
+      } else {
+        item.style.setProperty("width", "140px", "important");
+      }
       item.style.setProperty("padding", "6px 9px", "important");
       item.style.setProperty("align-items", "flex-start", "important");
       item.style.setProperty("text-align", "left", "important");
