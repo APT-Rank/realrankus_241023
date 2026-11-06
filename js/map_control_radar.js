@@ -135,7 +135,8 @@ function loadRadarMap(center_x, center_y, aptData){
     language: "en"
   };
 
-  defaultMap = new naver.maps.Map("dataMap", MapOptions);
+  var mapTargetId = document.getElementById("radarDataMap") ? "radarDataMap" : "dataMap";
+  defaultMap = new naver.maps.Map(mapTargetId, MapOptions);
 
   var bounds = defaultMap.getBounds(),
       southWest = bounds.getSW(),

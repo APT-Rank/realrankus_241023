@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>[테스트베드] APT-Rank 단지 주변 입지 레이더 맵 (풀스크린 모달)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+  <meta name="theme-color" content="#162235">
+
+  <!-- 스타일시트 로드 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/css/SpoqaHanSansNeo.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link href="./css/style_common.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+  <!-- 풀스크린 모달 전용 격리 스타일 -->
+  <link href="./css/radar_modal_view.css?v=20261106_1" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f1f5f9;
+      font-family: 'Spoqa Han Sans Neo', 'Noto Sans KR', sans-serif;
+      padding-bottom: 60px;
+    }
+    .test-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 18px 14px;
+    }
+    .test-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      margin-bottom: 16px;
+      border: 1px solid #e2e8f0;
+    }
+    .test-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .test-desc {
+      font-size: 0.88rem;
+      color: #64748b;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .btn-complex-test {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #1e293b;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-complex-test:hover {
+      background: #f8fafc;
+      border-color: #0d6efd;
+      color: #0d6efd;
+    }
+    .btn-complex-test:active {
+      transform: scale(0.98);
+    }
+    .check-item {
+      font-size: 0.86rem;
+      color: #334155;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .check-item i {
+      color: #10b981;
+    }
+  </style>
+
+  <!-- 스크립트 라이브러리 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 네이버 지도 v3 API -->
+  <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1&language=ko"></script>
+
+  <!-- Firebase v10 SDK compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+  <script src="./js/con_counter_js.js"></script>
+
+  <!-- 리얼랭커스 코어 및 레이더 스크립트 -->
+  <script src="./js/i18n.js"></script>
+  <script src="./js/share.js"></script>
+  <script src="./js/distance.js"></script>
+  <script src="./js/weight_cal.js"></script>
+  <script src="./js/map_control_radar.js"></script>
+  <!-- 신규 풀스크린 모달 모듈 -->
+  <script src="./js/radar_modal_view.js?v=20261106_1"></script>
+</head>
+
+<body>
+  <div class="test-container">
+    <!-- 상단 소개 카드 -->
+    <div class="test-card" style="background: linear-gradient(135deg, #162235 0%, #1e3a8a 100%); color: #ffffff; border:none;">
+      <div style="font-size: 0.8rem; font-weight: 600; color: #38bdf8; letter-spacing: 0.5px;">STAGING TESTBED</div>
+      <div style="font-size: 1.35rem; font-weight: 700; margin-top: 4px;">주변 입지 레이더 맵 풀스크린 모달</div>
+      <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 6px; line-height: 1.45;">
+        모바일 웹앱/PWA 환경에서 기존 <code>iframe</code> 사용 시 발생하던 <strong>지도 드래그 화면 깜빡임(Flicker)</strong>을 해결하기 위해,
+        단일 페이지 내 <strong>풀스크린 모달 직접 렌더링</strong>으로 구현한 독립 검증 페이지입니다.
+      </div>
+    </div>
+
+    <!-- 대표 단지 원클릭 테스트 카드 -->
+    <div class="test-card">
+      <div class="test-title"><i class="fa-solid fa-building text-primary"></i> 대표 단지 원클릭 테스트</div>
+      <div class="test-desc">아래 버튼을 누르면 Firebase에서 실시간 단지 데이터를 수신한 후 풀스크린 모달로 즉시 열립니다.</div>
+
+      <div class="d-grid gap-2 mt-3">
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('11650', '22818')">
+          <div>
+            <div style="font-weight: 700;">반포자이</div>
+            <small style="color: #64748b;">서초구 반포동 | 3,410세대 | 역세권/학군/인프라</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted"></i>
+        </button>
+
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('11650', '134707')">
+          <div>
+            <div style="font-weight: 700;">래미안원베일리</div>
+            <small style="color: #64748b;">서초구 반포동 | 2,990세대 | 한강변 신축</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted"></i>
+        </button>
+
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('11710', '107383')">
+          <div>
+            <div style="font-weight: 700;">헬리오시티</div>
+            <small style="color: #64748b;">송파구 가락동 | 9,510세대 | 초대단지 인프라</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted"></i>
+        </button>
+
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('11440', '113945')">
+          <div>
+            <div style="font-weight: 700;">마포프레스티지자이</div>
+            <small style="color: #64748b;">마포구 염리동 | 1,694세대 | 마포 대장</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted"></i>
+        </button>
+
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('11680', '8928')">
+          <div>
+            <div style="font-weight: 700;">은마아파트</div>
+            <small style="color: #64748b;">강남구 대치동 | 4,424세대 | 대치동 학원가</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 단지 직접 입력 테스트 카드 -->
+    <div class="test-card">
+      <div class="test-title"><i class="fa-solid fa-magnifying-glass text-secondary"></i> 단지 직접 입력 테스트</div>
+      <div class="test-desc">군구 코드와 단지 고유 코드를 입력하여 원하는 단지를 직접 열어볼 수 있습니다.</div>
+
+      <div class="row g-2 mt-2">
+        <div class="col-6">
+          <label class="form-label small text-muted mb-1">군구 코드</label>
+          <input type="text" id="customGungu" class="form-control" value="11650" placeholder="예: 11650 (서초구)">
+        </div>
+        <div class="col-6">
+          <label class="form-label small text-muted mb-1">단지 코드</label>
+          <input type="text" id="customCode" class="form-control" value="22818" placeholder="예: 22818">
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary w-100 mt-3 py-2 fw-bold" onclick="loadCustomTest()">
+        <i class="fa-solid fa-play me-1"></i> 입력한 단지로 레이더 모달 열기
+      </button>
+    </div>
+
+    <!-- 검증 체크리스트 -->
+    <div class="test-card">
+      <div class="test-title"><i class="fa-solid fa-list-check text-success"></i> 모바일 검증 체크포인트</div>
+      <div class="mt-2">
+        <div class="check-item"><i class="fa-solid fa-circle-check"></i> <strong>지도 드래그 깜빡임 해소</strong>: 손가락으로 지도를 회전/패닝할 때 흰색 번쩍임 없이 부드러운가?</div>
+        <div class="check-item"><i class="fa-solid fa-circle-check"></i> <strong>바텀시트 터치 조작</strong>: 하단 드래그 바로 입지 정보 시트를 올리고 내릴 때 매끄러운가?</div>
+        <div class="check-item"><i class="fa-solid fa-circle-check"></i> <strong>인프라 체크박스 연동</strong>: 교통/인프라/학군 체크박스 토글 시 마커/폴리곤이 정상 반영되는가?</div>
+        <div class="check-item"><i class="fa-solid fa-circle-check"></i> <strong>스마트폰 뒤로가기</strong>: 상단 ◀ 버튼 및 스마트폰 자체 뒤로가기 제스처 시 모달이 정상 종료되는가?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 풀스크린 레이더 모달 (iframe 없는 순수 DOM 인페이지 모달) -->
+  <div id="radarModal" class="radar-modal-fullscreen" style="display: none;">
+    <!-- 상단 고정 헤더 -->
+    <div id="radarModalHeader">
+      <div class="radar-modal-header-left">
+        <button type="button" class="radar-btn-icon" onclick="RadarModal.close()" title="뒤로가기">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="radar-modal-title-box">
+          <span id="radarModalComplexName">단지 입지 분석</span>
+          <span id="radarModalBadge" class="radar-modal-badge" style="display: none;">1위</span>
+        </div>
+      </div>
+      <div class="radar-modal-header-right">
+        <button type="button" class="radar-btn-icon" onclick="RadarModal.close()" title="닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 지도 및 바텀시트 본문 -->
+    <div id="radarModalBody">
+      <!-- 네이버 지도 렌더링 컨테이너 -->
+      <div id="radarDataMap"></div>
+
+      <!-- 입지 상세 정보 바텀시트 -->
+      <div id="radarDataList_wrapper">
+        <div id="radarDataList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Firebase에서 단지 데이터를 수신하여 풀스크린 모달 오픈
+    function loadAndOpenTest(gunguCode, searchCode) {
+      if (!firebase || !firebase.database) {
+        alert("Firebase가 초기화되지 않았습니다. 인터넷 연결을 확인해 주세요.");
+        return;
+      }
+
+      var $btn = $(event.currentTarget);
+      var originalHtml = $btn.html();
+      $btn.css('opacity', '0.6').prop('disabled', true);
+
+      firebase
+        .database()
+        .ref()
+        .child("complex_info")
+        .child(gunguCode)
+        .child(searchCode)
+        .get()
+        .then(function(snapshot) {
+          $btn.css('opacity', '1').prop('disabled', false);
+          if (snapshot.exists()) {
+            var complex_info = snapshot.val();
+            console.log("Loaded complex_info:", complex_info);
+            // 풀스크린 모달 기동
+            RadarModal.open(complex_info, gunguCode);
+          } else {
+            alert("단지 정보를 찾을 수 없습니다: " + searchCode);
+          }
+        })
+        .catch(function(err) {
+          $btn.css('opacity', '1').prop('disabled', false);
+          console.error("Firebase load error:", err);
+          alert("데이터 조회 실패: " + err.message);
+        });
+    }
+
+    function loadCustomTest() {
+      var g = $('#customGungu').val().trim();
+      var c = $('#customCode').val().trim();
+      if (!g || !c) {
+        alert("군구 코드와 단지 코드를 모두 입력해 주세요.");
+        return;
+      }
+      loadAndOpenTest(g, c);
+    }
+  </script>
+</body>
+</html>
