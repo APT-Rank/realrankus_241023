@@ -108,7 +108,7 @@
     <div id="help" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="offcanvas_right" aria-controls="offcanvasRight"><i class="fa-solid fa-ellipsis"></i></div>
   </div>
 
-  <div id="update_info"><span>업데이트 확인 중...</span></div>
+  <div id="update_info" onClick="refreshLiveMarket(this)" title="탭하여 실시간 새로고침"><span>업데이트 확인 중...</span></div>
   <div id="menu_selector">    
     <div><input type='radio' class='btnRadio_tab' name='menu_select' autocomplete='off' id='menu_select_list' onClick='change_menu(this)' checked><label class='btn btn-outline-danger' id='label_menu_select_list' for='menu_select_list'><i class="fa-solid fa-table-list"></i> 오늘의 지수</label></div>
     <div><input type='radio' class='btnRadio_tab' name='menu_select' autocomplete='off' id='menu_select_chart' onClick='change_menu(this)'><label class='btn btn-outline-danger' id='label_menu_select_chart' for='menu_select_chart'><i class="fa-solid fa-chart-line"></i> 차트</label></div>
@@ -373,7 +373,7 @@
         // 첫 화면(오늘의 지수) 즉시 렌더링 및 스켈레톤 해제
         $('#hourly_area').html("");
         show_hourly_info();
-        $('#update_info').html("<span>업데이트 : <span id='update_time_span'>" + hourly_updated + "</span></span><button type='button' class='btn_live_refresh' onClick='refreshLiveMarket(this)' title='새로고침'><i class='fa-solid fa-arrows-rotate'></i></button>");
+        $('#update_info').html("<span>업데이트 : <span id='update_time_span'>" + hourly_updated + "</span></span>");
         $('#graph_area').hide();
         $('#shortcut').hide();
         scrollUp();

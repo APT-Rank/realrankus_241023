@@ -928,6 +928,17 @@
     color: white;
     text-align: center;
     z-index: 500;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+  }
+  #update_info:hover{
+    background-color: #1f314d;
+  }
+  #update_info:active{
+    background-color: #274066;
+    opacity: 0.9;
   }
 
   #go_to_aptrank{

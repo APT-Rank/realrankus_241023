@@ -119,9 +119,12 @@ function set_color_tag3(val){
 
 function show_hourly_info(){
   popMsg = "'" + hourly_updated + "'" + " 시점의\n시장지표가 복사되었습니다."
-  hourly_info_txt = "<div onClick='CopyToClipboard(shareText, popMsg)'><button class='tShare'> <i class='fa-regular fa-copy'></i> </button></div>"
+  hourly_info_txt = "<div style='display:flex; gap:6px; align-items:center;'>"
+  hourly_info_txt += "<button type='button' class='tShare' onClick='CopyToClipboard(shareText, popMsg)' title='지표 복사'><i class='fa-regular fa-copy'></i></button>"
+  hourly_info_txt += "<button type='button' class='tShare tRefreshBtn' onClick='refreshLiveMarket(this)' title='실시간 새로고침'><i class='fa-solid fa-arrows-rotate'></i></button>"
+  hourly_info_txt += "</div>"
   hourly_info_txt += "<div></div>"
-  hourly_info_txt += "<div class='comment'>" + hourly_updated + "</div>"
+  hourly_info_txt += "<div class='comment' id='hourly_update_time'>" + hourly_updated + "</div>"
   $('#hourly_info').append(hourly_info_txt); 
 
   var addon_html = ""
@@ -4211,4 +4214,119 @@ function downloadMoneyFlowImage(btnEl, event) {
       alert('이미지 저장 중 문제가 발생했습니다: ' + (err.message || err));
     });
   }, 450);
+}
+
+// ==========================================
+// 실시간 시장지표 (Live Market) 갱신 및 폴링 로직 (Pro)
+// ==========================================
+var isRefreshingMarket = false;
+var lastMarketRefreshTime = 0;
+var marketRefreshTimer = null;
+
+function refreshLiveMarket(btnEl, isSilent) {
+  var now = Date.now();
+  // 3초 디바운스 (연타 방지)
+  if (isRefreshingMarket || (!isSilent && (now - lastMarketRefreshTime < 3000))) {
+    return;
+  }
+  isRefreshingMarket = true;
+  lastMarketRefreshTime = now;
+
+  var $icons = $('.tRefreshBtn i');
+  $icons.addClass('fa-spin');
+
+  // 실시간 Worker API 또는 캐시 방지 파라미터 적용 R2 URL
+  var liveApiUrl = (typeof LIVE_MARKET_API !== 'undefined' && LIVE_MARKET_API)
+    ? LIVE_MARKET_API
+    : ((typeof hourly_url !== 'undefined' && hourly_url) ? hourly_url : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json");
+  
+  var fetchUrl = liveApiUrl + (liveApiUrl.indexOf('?') >= 0 ? '&' : '?') + 't=' + now;
+
+  $.getJSON(fetchUrl)
+    .done(function(json) {
+      if (json && json["GENERATE"]) {
+        hourly_market = json;
+        hourly_updated = (hourly_market["GENERATE"]["value"] || "").substr(0, 19);
+        hourly_year = hourly_updated.substr(2, 2);
+        hourly_month = Number(hourly_updated.substr(5, 2));
+        hourly_day = Number(hourly_updated.substr(8, 2));
+        shareTitle = "MoneyFlow 시장지표 (" + hourly_updated + ")";
+        shareText = shareTitle + "\n\n";
+
+        // 1. 오늘의 지수 영역 갱신
+        $('#hourly_info').html("");
+        $('#hourly_area').html("");
+        show_hourly_info();
+
+        // 2. 상단 시간 표시 갱신
+        $('#hourly_update_time').text(hourly_updated);
+
+        // 3. 현재 열려있는 차트의 마지막 '현재' 포인트 값도 실시간으로 갱신
+        updateActiveChartsLivePoint();
+
+        if (!isSilent && typeof toastr !== 'undefined') {
+          toastr.success('시장지표가 최신으로 갱신되었습니다.');
+        }
+      }
+    })
+    .fail(function(err) {
+      if (!isSilent) {
+        console.warn('Live market refresh failed, keeping current data:', err);
+      }
+    })
+    .always(function() {
+      setTimeout(function() {
+        $icons.removeClass('fa-spin');
+        isRefreshingMarket = false;
+      }, 400);
+    });
+}
+
+function updateActiveChartsLivePoint() {
+  if (typeof hourly_market === 'undefined' || !hourly_market) return;
+
+  var chartMapping = [
+    { getChart: function() { return typeof myKOSPI_Chart !== 'undefined' ? myKOSPI_Chart : null; }, key: 'KOSPI' },
+    { getChart: function() { return typeof myKOSDAQ_Chart !== 'undefined' ? myKOSDAQ_Chart : null; }, key: 'KOSDAQ' },
+    { getChart: function() { return typeof myKOSPI200_Chart !== 'undefined' ? myKOSPI200_Chart : null; }, key: 'KOSPI200' },
+    { getChart: function() { return typeof myDOW_Chart !== 'undefined' ? myDOW_Chart : null; }, key: 'DOW' },
+    { getChart: function() { return typeof myNASDAQ_Chart !== 'undefined' ? myNASDAQ_Chart : null; }, key: 'NAS' },
+    { getChart: function() { return typeof mySNP_Chart !== 'undefined' ? mySNP_Chart : null; }, key: 'SNP' },
+    { getChart: function() { return typeof myUSDKRW_Chart !== 'undefined' ? myUSDKRW_Chart : null; }, key: 'USDKRW' },
+    { getChart: function() { return typeof myJPYKRW_Chart !== 'undefined' ? myJPYKRW_Chart : null; }, key: 'JPYKRW' },
+    { getChart: function() { return typeof myEURKRW_Chart !== 'undefined' ? myEURKRW_Chart : null; }, key: 'EURKRW' },
+    { getChart: function() { return typeof myDollarIndex_Chart !== 'undefined' ? myDollarIndex_Chart : null; }, key: 'Dollar_Index' },
+    { getChart: function() { return typeof myBTCUSD_Chart !== 'undefined' ? myBTCUSD_Chart : null; }, key: 'USDT-BTC' },
+    { getChart: function() { return typeof myETHUSD_Chart !== 'undefined' ? myETHUSD_Chart : null; }, key: 'USDT-ETH' },
+    { getChart: function() { return typeof myGold_Chart !== 'undefined' ? myGold_Chart : null; }, key: 'YF_Gold' },
+    { getChart: function() { return typeof mySilver_Chart !== 'undefined' ? mySilver_Chart : null; }, key: 'YF_Silver' },
+    { getChart: function() { return typeof myCopper_Chart !== 'undefined' ? myCopper_Chart : null; }, key: 'YF_Copper' },
+    { getChart: function() { return typeof myWTI_Chart !== 'undefined' ? myWTI_Chart : null; }, key: 'YF_WTI' },
+    { getChart: function() { return typeof myDubai_Chart !== 'undefined' ? myDubai_Chart : null; }, key: 'Dubai' },
+    { getChart: function() { return typeof myBrent_Chart !== 'undefined' ? myBrent_Chart : null; }, key: 'YF_Brent' }
+  ];
+
+  chartMapping.forEach(function(item) {
+    var c = item.getChart();
+    if (c && c.data && c.data.labels && c.data.datasets && c.data.datasets.length > 0) {
+      var lastIdx = c.data.labels.length - 1;
+      if (lastIdx >= 0 && c.data.labels[lastIdx] === '현재') {
+        var rawVal = hourly_market[item.key] ? hourly_market[item.key].value : null;
+        if (rawVal !== null && typeof rawVal !== 'undefined') {
+          if (typeof rawVal === 'string') rawVal = Number(rawVal.replaceAll(',', ''));
+          c.data.datasets[0].data[lastIdx] = rawVal;
+          c.update('none');
+        }
+      }
+    }
+  });
+}
+
+function initMarketAutoRefresh() {
+  if (marketRefreshTimer) clearInterval(marketRefreshTimer);
+  marketRefreshTimer = setInterval(function() {
+    if (!document.hidden) {
+      refreshLiveMarket(null, true);
+    }
+  }, 60000);
 }

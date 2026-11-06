@@ -3764,8 +3764,11 @@ function refreshLiveMarket(btnEl, isSilent) {
   isRefreshingMarket = true;
   lastMarketRefreshTime = now;
 
-  var $icons = $('.tRefreshBtn i, .btn_live_refresh i');
+  var $icons = $('.tRefreshBtn i');
   $icons.addClass('fa-spin');
+  if ($('#update_time_span').length) {
+    $('#update_time_span').html(hourly_updated + " <i class='fa-solid fa-arrows-rotate fa-spin' style='font-size:9px; margin-left:3px;'></i>");
+  }
 
   // 실시간 Worker API 또는 캐시 방지 파라미터 적용 R2 URL
   var liveApiUrl = (typeof LIVE_MARKET_API !== 'undefined' && LIVE_MARKET_API)
@@ -3810,6 +3813,9 @@ function refreshLiveMarket(btnEl, isSilent) {
     .always(function() {
       setTimeout(function() {
         $icons.removeClass('fa-spin');
+        if ($('#update_time_span').length) {
+          $('#update_time_span').text(hourly_updated);
+        }
         isRefreshingMarket = false;
       }, 400);
     });
