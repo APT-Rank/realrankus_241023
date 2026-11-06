@@ -119,12 +119,9 @@ function set_color_tag3(val){
 
 function show_hourly_info(){
   popMsg = "'" + hourly_updated + "'" + " 시점의\n시장지표가 복사되었습니다."
-  hourly_info_txt = "<div style='display:flex; gap:6px; align-items:center;'>"
-  hourly_info_txt += "<button type='button' class='tShare' onClick='CopyToClipboard(shareText, popMsg)' title='지표 복사'><i class='fa-regular fa-copy'></i></button>"
-  hourly_info_txt += "<button type='button' class='tShare tRefreshBtn' onClick='refreshLiveMarket(this)' title='실시간 새로고침'><i class='fa-solid fa-arrows-rotate'></i></button>"
-  hourly_info_txt += "</div>"
+  hourly_info_txt = "<div onClick='CopyToClipboard(shareText, popMsg)'><button type='button' class='tShare' title='지표 복사'><i class='fa-regular fa-copy'></i></button></div>"
   hourly_info_txt += "<div></div>"
-  hourly_info_txt += "<div class='comment' id='hourly_update_time'>" + hourly_updated + "</div>"
+  hourly_info_txt += "<div class='comment comment_refresh' id='hourly_update_time' onClick='refreshLiveMarket(this)' title='클릭하여 실시간 갱신'><span>" + hourly_updated + "</span> <i class='fa-solid fa-arrows-rotate'></i></div>"
   $('#hourly_info').append(hourly_info_txt); 
 
   var addon_html = ""
@@ -4232,7 +4229,7 @@ function refreshLiveMarket(btnEl, isSilent) {
   isRefreshingMarket = true;
   lastMarketRefreshTime = now;
 
-  var $icons = $('.tRefreshBtn i');
+  var $icons = $('#hourly_update_time i');
   $icons.addClass('fa-spin');
 
   // 실시간 Worker API 또는 캐시 방지 파라미터 적용 R2 URL
@@ -4246,7 +4243,11 @@ function refreshLiveMarket(btnEl, isSilent) {
     .done(function(json) {
       if (json && json["GENERATE"]) {
         hourly_market = json;
-        hourly_updated = (hourly_market["GENERATE"]["value"] || "").substr(0, 19);
+
+        // A안: 라이브 수신 시점의 타임스탬프를 초 단위까지 최신 반영
+        var clientNow = new Date();
+        var pad = function(n) { return String(n).padStart(2, '0'); };
+        hourly_updated = clientNow.getFullYear() + '-' + pad(clientNow.getMonth() + 1) + '-' + pad(clientNow.getDate()) + ' ' + pad(clientNow.getHours()) + ':' + pad(clientNow.getMinutes()) + ':' + pad(clientNow.getSeconds());
         hourly_year = hourly_updated.substr(2, 2);
         hourly_month = Number(hourly_updated.substr(5, 2));
         hourly_day = Number(hourly_updated.substr(8, 2));
@@ -4259,7 +4260,7 @@ function refreshLiveMarket(btnEl, isSilent) {
         show_hourly_info();
 
         // 2. 상단 시간 표시 갱신
-        $('#hourly_update_time').text(hourly_updated);
+        $('#hourly_update_time span').text(hourly_updated);
 
         // 3. 현재 열려있는 차트의 마지막 '현재' 포인트 값도 실시간으로 갱신
         updateActiveChartsLivePoint();
@@ -4277,6 +4278,9 @@ function refreshLiveMarket(btnEl, isSilent) {
     .always(function() {
       setTimeout(function() {
         $icons.removeClass('fa-spin');
+        if ($('#hourly_update_time span').length) {
+          $('#hourly_update_time span').text(hourly_updated);
+        }
         isRefreshingMarket = false;
       }, 400);
     });
