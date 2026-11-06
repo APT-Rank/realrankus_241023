@@ -913,9 +913,15 @@
     position: fixed;
     width: 100%;
     top: 40px;
-    display: grid;    
-    grid-template-columns: 1fr;     
-    padding-bottom: 2px;    
+    height: 18px;
+    line-height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    padding: 0;
+    margin: 0;
     background-color: #162235;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 5px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     font-size: 0.7em;
@@ -1245,13 +1251,20 @@
   .btn_live_refresh {
     background: transparent;
     border: none;
-    color: #64748b;
-    padding: 2px 6px;
-    margin-left: 6px;
-    font-size: 13px;
+    color: #94a3b8;
+    padding: 0 4px;
+    margin-left: 3px;
+    font-size: 11px;
     cursor: pointer;
     vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
     transition: color 0.15s ease, transform 0.15s ease;
+  }
+  .btn_live_refresh:hover {
+    color: #ffffff;
   }
   .btn_live_refresh:active {
     color: #d12145;
