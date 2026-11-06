@@ -4264,10 +4264,6 @@ function refreshLiveMarket(btnEl, isSilent) {
 
         // 3. 현재 열려있는 차트의 마지막 '현재' 포인트 값도 실시간으로 갱신
         updateActiveChartsLivePoint();
-
-        if (!isSilent && typeof toastr !== 'undefined') {
-          toastr.success('시장지표가 최신으로 갱신되었습니다.');
-        }
       }
     })
     .fail(function(err) {

@@ -3761,11 +3761,9 @@ function refreshLiveMarket(btnEl, isSilent) {
   isRefreshingMarket = true;
   lastMarketRefreshTime = now;
 
-  var $icons = $('#hourly_update_time i, #update_info i');
+  var $icons = $('#hourly_update_time i, #update_info i, #weight i');
   $icons.addClass('fa-spin');
-  if ($('#update_time_span').length) {
-    $('#update_time_span').html(hourly_updated + " <i class='fa-solid fa-arrows-rotate fa-spin' style='font-size:9px; margin-left:3px;'></i>");
-  }
+  $('#update_info, #weight').addClass('is-updating');
 
   // 실시간 Worker API 또는 캐시 방지 파라미터 적용 R2 URL
   var liveApiUrl = (typeof LIVE_MARKET_API !== 'undefined' && LIVE_MARKET_API)
@@ -3795,15 +3793,15 @@ function refreshLiveMarket(btnEl, isSilent) {
         show_hourly_info();
 
         // 2. 상단 시간 표시 갱신
-        $('#update_time_span').text(hourly_updated);
-        $('#hourly_update_time span').text(hourly_updated);
+        if ($('#update_time_span').length) {
+          $('#update_time_span').text(hourly_updated);
+        }
+        if ($('#hourly_update_time span').length) {
+          $('#hourly_update_time span').text(hourly_updated);
+        }
 
         // 3. 현재 열려있는 차트의 마지막 '현재' 포인트 값도 실시간으로 갱신
         updateActiveChartsLivePoint();
-
-        if (!isSilent && typeof toastr !== 'undefined') {
-          toastr.success('시장지표가 최신으로 갱신되었습니다.');
-        }
       }
     })
     .fail(function(err) {
@@ -3814,6 +3812,10 @@ function refreshLiveMarket(btnEl, isSilent) {
     .always(function() {
       setTimeout(function() {
         $icons.removeClass('fa-spin');
+        $('#update_info, #weight').removeClass('is-updating');
+        if (typeof document.activeElement !== 'undefined' && document.activeElement && document.activeElement.blur) {
+          document.activeElement.blur();
+        }
         if ($('#update_time_span').length) {
           $('#update_time_span').text(hourly_updated);
         }

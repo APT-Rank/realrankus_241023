@@ -909,7 +909,8 @@
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
   }
 
-  #update_info{
+  #update_info,
+  #weight{
     position: fixed;
     width: 100%;
     top: 40px;
@@ -931,14 +932,28 @@
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
-    transition: background-color 0.15s ease, opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
   }
-  #update_info:hover{
-    background-color: #1f314d;
+  @media (hover: hover) and (pointer: fine) {
+    #update_info:hover,
+    #weight:hover{
+      background-color: #1f314d;
+    }
   }
-  #update_info:active{
-    background-color: #274066;
+  #update_info:active,
+  #weight:active,
+  #update_info.is-updating,
+  #weight.is-updating{
+    background-color: #274066 !important;
     opacity: 0.9;
+  }
+  #update_info i,
+  #weight i{
+    font-size: 10px;
+    margin-left: 4px;
+    color: #cbd5e1;
+    transition: transform 0.2s ease, color 0.15s ease;
   }
 
   #go_to_aptrank{
