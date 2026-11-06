@@ -127,42 +127,50 @@
       <div class="test-desc">아래 버튼을 누르면 Firebase에서 실시간 단지 데이터를 수신한 후 풀스크린 모달로 즉시 열립니다.</div>
 
       <div class="d-grid gap-2 mt-3">
-        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1165000000_Seoul_Seocho', '22818', this)">
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1165000000_Seoul_Seocho', '22853', this)">
           <div>
             <div style="font-weight: 700;">반포자이</div>
-            <small style="color: #64748b;">서초구 반포동 | 3,410세대 | 역세권/학군/인프라</small>
+            <small style="color: #64748b;">서초구 반포동 | 코드 22853 | 3,410세대</small>
           </div>
           <i class="fa-solid fa-chevron-right text-muted"></i>
         </button>
 
-        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1165000000_Seoul_Seocho', '134707', this)">
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1165000000_Seoul_Seocho', '142155', this)">
           <div>
             <div style="font-weight: 700;">래미안원베일리</div>
-            <small style="color: #64748b;">서초구 반포동 | 2,990세대 | 한강변 신축</small>
+            <small style="color: #64748b;">서초구 반포동 | 코드 142155 | 2,990세대</small>
           </div>
           <i class="fa-solid fa-chevron-right text-muted"></i>
         </button>
 
-        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1171000000_Seoul_Songpa', '107383', this)">
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1165000000_Seoul_Seocho', '107613', this)">
+          <div>
+            <div style="font-weight: 700;">아크로리버파크</div>
+            <small style="color: #64748b;">서초구 반포동 | 코드 107613 | 1,612세대</small>
+          </div>
+          <i class="fa-solid fa-chevron-right text-muted"></i>
+        </button>
+
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1171000000_Seoul_Songpa', '111515', this)">
           <div>
             <div style="font-weight: 700;">헬리오시티</div>
-            <small style="color: #64748b;">송파구 가락동 | 9,510세대 | 초대단지 인프라</small>
+            <small style="color: #64748b;">송파구 가락동 | 코드 111515 | 9,510세대</small>
           </div>
           <i class="fa-solid fa-chevron-right text-muted"></i>
         </button>
 
-        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1144000000_Seoul_Mapo', '113945', this)">
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1144000000_Seoul_Mapo', '121608', this)">
           <div>
             <div style="font-weight: 700;">마포프레스티지자이</div>
-            <small style="color: #64748b;">마포구 염리동 | 1,694세대 | 마포 대장</small>
+            <small style="color: #64748b;">마포구 염리동 | 코드 121608 | 1,694세대</small>
           </div>
           <i class="fa-solid fa-chevron-right text-muted"></i>
         </button>
 
-        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1168000000_Seoul_Gangnam', '8928', this)">
+        <button type="button" class="btn-complex-test" onclick="loadAndOpenTest('1168000000_Seoul_Gangnam', '236', this)">
           <div>
             <div style="font-weight: 700;">은마아파트</div>
-            <small style="color: #64748b;">강남구 대치동 | 4,424세대 | 대치동 학원가</small>
+            <small style="color: #64748b;">강남구 대치동 | 코드 236 | 4,424세대</small>
           </div>
           <i class="fa-solid fa-chevron-right text-muted"></i>
         </button>
@@ -259,47 +267,99 @@
       return code;
     }
 
-    // Firebase에서 단지 데이터를 수신하여 풀스크린 모달 오픈
+    // Firebase 및 로컬/원격 JSON 통합 데이터 수신 및 모달 기동
     function loadAndOpenTest(gunguCode, searchCode, btnEl) {
-      if (!firebase || !firebase.database) {
-        alert("Firebase가 초기화되지 않았습니다. 인터넷 연결을 확인해 주세요.");
-        return;
-      }
-
       var resolvedGungu = resolveGunguKey(gunguCode);
       var $btn = btnEl ? $(btnEl) : null;
       if ($btn && $btn.length) {
         $btn.css('opacity', '0.6').prop('disabled', true);
       }
 
-      firebase
-        .database()
-        .ref()
-        .child("complex_info")
-        .child(resolvedGungu)
-        .child(searchCode)
-        .get()
-        .then(function(snapshot) {
-          if ($btn && $btn.length) {
-            $btn.css('opacity', '1').prop('disabled', false);
-          }
-          if (snapshot.exists()) {
-            var complex_info = snapshot.val();
-            console.log("Loaded complex_info successfully:", complex_info);
-            // 풀스크린 모달 기동
-            RadarModal.open(complex_info, resolvedGungu);
-          } else {
-            console.warn("Snapshot does not exist at:", "complex_info/" + resolvedGungu + "/" + searchCode);
-            alert("단지 정보를 찾을 수 없습니다.\n- 지역코드: " + resolvedGungu + "\n- 단지코드: " + searchCode);
-          }
-        })
-        .catch(function(err) {
-          if ($btn && $btn.length) {
-            $btn.css('opacity', '1').prop('disabled', false);
-          }
-          console.error("Firebase load error:", err);
-          alert("데이터 조회 실패: " + err.message);
-        });
+      function onSuccess(complex_info) {
+        if ($btn && $btn.length) {
+          $btn.css('opacity', '1').prop('disabled', false);
+        }
+        console.log("Loaded complex_info successfully:", complex_info);
+        // 풀스크린 모달 기동
+        RadarModal.open(complex_info, resolvedGungu);
+      }
+
+      function onFail(msg) {
+        if ($btn && $btn.length) {
+          $btn.css('opacity', '1').prop('disabled', false);
+        }
+        alert(msg || ("단지 정보를 찾을 수 없습니다.\n- 지역: " + resolvedGungu + "\n- 단지: " + searchCode));
+      }
+
+      // 2단계: 로컬/원격 월별 데이터 파일(202611/*.json)에서 보완 검색
+      function tryJsonFallback() {
+        console.log("Trying JSON fallback for:", resolvedGungu, searchCode);
+        var localUrl = "./202611/" + resolvedGungu + ".json";
+        $.getJSON(localUrl)
+          .done(function(res) {
+            if (res && Array.isArray(res.data)) {
+              var found = res.data.find(function(item) {
+                return String(item['검색코드']) === String(searchCode) || 
+                       (item['아파트명'] && item['아파트명'].indexOf(searchCode) > -1);
+              });
+              if (found) {
+                onSuccess(found);
+                return;
+              }
+            }
+            tryRemoteFallback();
+          })
+          .fail(function() {
+            tryRemoteFallback();
+          });
+      }
+
+      // 3단계: 공식 운영 서버 JSON에서 조회
+      function tryRemoteFallback() {
+        var remoteUrl = "https://www.realrankus.com/202611/" + resolvedGungu + ".json";
+        $.getJSON(remoteUrl)
+          .done(function(res) {
+            if (res && Array.isArray(res.data)) {
+              var found = res.data.find(function(item) {
+                return String(item['검색코드']) === String(searchCode) || 
+                       (item['아파트명'] && item['아파트명'].indexOf(searchCode) > -1);
+              });
+              if (found) {
+                onSuccess(found);
+                return;
+              }
+            }
+            onFail();
+          })
+          .fail(function() {
+            onFail();
+          });
+      }
+
+      // 1단계: Firebase Realtime Database 조회
+      if (typeof firebase !== 'undefined' && firebase.database) {
+        firebase
+          .database()
+          .ref()
+          .child("complex_info")
+          .child(resolvedGungu)
+          .child(searchCode)
+          .get()
+          .then(function(snapshot) {
+            if (snapshot.exists() && snapshot.val()) {
+              onSuccess(snapshot.val());
+            } else {
+              // Firebase에 없는 경우 JSON 보완 검색
+              tryJsonFallback();
+            }
+          })
+          .catch(function(err) {
+            console.warn("Firebase query failed, attempting JSON fallback:", err);
+            tryJsonFallback();
+          });
+      } else {
+        tryJsonFallback();
+      }
     }
 
     function loadCustomTest() {
