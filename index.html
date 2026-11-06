@@ -667,9 +667,31 @@
   <div id="map_banner_play" style="position:fixed; bottom: 80px; left: 20px; z-index:900; background-color:#0d6efd; color:white; padding:10px 15px; border-radius:8px; cursor:pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight:bold; text-align:center;" onClick="location.href='./play/index.html'"><i class="fa-solid fa-earth-asia me-1"></i> PLAY 시작</div>
   -->
 
-  <div id="radar-container"
-    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 1500; overscroll-behavior: none;">
-    <iframe id="radar-iframe" src="" style="width: 100%; height: 100%; border: none; visibility: hidden; -webkit-transform: translate3d(0, 0, 0); transform: translateZ(0);"></iframe>
+  <!-- 2026-11-06: 모바일 풀스크린 레이더 맵 모달 (기존 iframe 대체) -->
+  <!-- 2026-11-07: #iframe_back 이벤트 정규화 및 350ms Fade 애니메이션 연동 -->
+  <div id="radarModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #ffffff; z-index: 99999; overscroll-behavior: none;">
+    <!-- 네이버 지도 영역 -->
+    <div id="radarDataMap" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+
+    <!-- 상단 아파트 요약 정보 플로팅 카드 (radarMap.html apt_info_mobile 100% 동일) -->
+    <div id="radarAptInfoWrap" style="position: absolute; top: 0; left: 0; width: 100%; z-index: 200000; pointer-events: none;">
+      <div class="card" id="apt_info_mobile" style="position: absolute; top: 10px; left: 3px; font-size: 0.85em; width: calc(100vw - 50px); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px; background-color: rgba(255, 255, 255, 0.75); border: none; padding: 0; pointer-events: auto;">
+        <div class="card-body" id="apt_info_body" style="padding-top: 5px; padding-bottom: 5px;">
+          <div id="iframe_back" style="font-size: 2em; cursor: pointer; pointer-events: auto; padding: 2px 8px 2px 2px; touch-action: manipulation;">
+            <i class="fa-solid fa-chevron-left"></i>
+          </div>
+          <div>
+            <div class="popupTitle" style="font-size: 1.25em; font-weight: 600;">단지 입지 분석</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 입지 정보 바텀시트 (radarMap.html dataList_wrapper 100% 동일) -->
+    <div id="radarDataList_wrapper" style="display: none; position: fixed; z-index: 1000; width: 100%; background-color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; box-shadow: rgba(0, 0, 0, 0.06) 0px -6px 6px, rgba(0, 0, 0, 0.12) 0px -4px 4px; overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: 0.9em;">
+      <div id="radarDataList" style="padding: 0px 5px 30px 5px;"></div>
+    </div>
   </div>
 
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
@@ -696,6 +718,7 @@
 
   <script src="./js/i18n.js?v=20260604"></script>
   <script defer src="./js/gli_chart_renderer.js?v=20260614"></script>
+  <script defer src="./js/radar_modal_view.js?v=20261107_1"></script>
   <script defer src="./js/app_main_lang.js?v=20261103_1"></script>
 </body>
 

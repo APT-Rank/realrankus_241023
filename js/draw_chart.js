@@ -703,134 +703,200 @@ function drawPriceChart(duration, dataset_front, dataset, dataset_end, id_name, 
 });
 }
 
+// 2026-11-06: 레이더 맵 단일 바 그래프용 리얼랭커스 메인 서비스 스타일 플러그인 (트랙 배경 + 20/40/60/80 눈금선 + 타이틀/점수)
+var radarScoreBarStylePlugin = {
+  id: 'radarScoreBarStyle',
+  beforeDatasetsDraw: function(chart) {
+    var chartArea = chart.chartArea;
+    var xScale = chart.scales.x;
+    var firstDataset = chart.getDatasetMeta(0);
+    if (!chartArea || !xScale || !firstDataset || !firstDataset.data || !firstDataset.data[0]) return;
+
+    var ctx = chart.ctx;
+    var trackStart = xScale.getPixelForValue(0);
+    var trackEnd = xScale.getPixelForValue(100);
+    var bar = firstDataset.data[0];
+    var props = bar.getProps ? bar.getProps(['y', 'height'], true) : bar;
+    var height = props.height || 10;
+
+    ctx.save();
+    ctx.fillStyle = '#edf0f3';
+    drawRoundedScoreTrack(ctx, trackStart, props.y - height / 2, trackEnd - trackStart, height);
+    ctx.restore();
+  },
+  afterDatasetsDraw: function(chart) {
+    var chartArea = chart.chartArea;
+    var xScale = chart.scales.x;
+    var firstDataset = chart.getDatasetMeta(0);
+    if (!chartArea || !xScale || !firstDataset || !firstDataset.data || !firstDataset.data[0]) return;
+
+    var ctx = chart.ctx;
+    var bar = firstDataset.data[0];
+    var props = bar.getProps ? bar.getProps(['y', 'height'], true) : bar;
+    var height = props.height || 10;
+
+    // 흰색 1px 눈금선 (20, 40, 60, 80)
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    [20, 40, 60, 80].forEach(function(tickValue) {
+      var tickX = xScale.getPixelForValue(tickValue);
+      ctx.fillRect(Math.round(tickX), props.y - height / 2, 1, height);
+    });
+
+    // 데스크톱: 상단 좌측 타이틀명, 우측 점수 텍스트 렌더링 (리얼랭커스 메인 scoreBarStylePlugin과 동일)
+    if (chart.options.plugins && chart.options.plugins.radarHeader) {
+      var labelY = props.y - height / 2 - 5;
+      var value = Number(chart.data.datasets[0].data[0]);
+      var labelText = chart.data.labels && chart.data.labels[0] ? normalizeScoreLabel(chart.data.labels[0]) : '';
+
+      ctx.font = '600 12px Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+      ctx.fillStyle = '#354052';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(labelText, chartArea.left, labelY);
+
+      if (isFinite(value)) {
+        ctx.font = '700 12px Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+        ctx.fillStyle = '#273247';
+        ctx.textAlign = 'right';
+        ctx.fillText(value.toFixed(2), chartArea.right, labelY);
+      }
+    }
+    ctx.restore();
+  }
+};
+
+// 2026-11-06: 레이더 맵 데스크톱 총점 그래프 렌더링 함수 (트랙 눈금 배경 및 타이틀/점수 헤더 적용)
 function drawRadarChart(score, label1, color1, className){
     var element = document.getElementById(className);
     if (!element) return;
     var ctx = element.getContext('2d');
-    var color = 'white'
-    var align = 'start'
-
-    if(score < 85){
-      color = 'black'
-      align = 'end'
-    }
-    else{
-      color = 'white'
-      align = 'start'
-    }
+    var chartColor = color1 || (typeof SCORE_CHART_COLOR !== 'undefined' ? SCORE_CHART_COLOR : '#e43b46');
 
     var myChart = new Chart(ctx, {
       type: 'bar',
-      plugins:[ChartDataLabels],
+      plugins: [radarScoreBarStylePlugin],
       data: {          
         labels: [label1],
         datasets: [{                
           data: [score],
-          backgroundColor: [color1],
-          barThickness: 15,            
+          backgroundColor: chartColor,
+          borderRadius: 999,
+          borderSkipped: false,
+          barThickness: 10,            
         }]
       },
       options: {
         indexAxis: 'y',
-        maintainAspectRatio: false,        
-        plugins:{
-          legend:{
+        maintainAspectRatio: false,
+        layout: {
+          padding: { top: 16 }
+        },
+        plugins: {
+          legend: {
             display: false
           },            
           datalabels: {
-            display: true,
-            color: color,
-            align: align,
-            anchor: 'end',              
-            offset: 2,
-            textAlign: 'center',
-            font: {
-              weight: 'bold'
-            },              
-          },                      
+            display: false
+          },
+          radarHeader: true
         },
         animation: {            
-          x:{
+          x: {
             from: 100
           }
         },
         scales: {
-          x:{
+          x: {
             type: 'linear',
+            position: 'bottom',
             min: 0,
             max: 100,
+            ticks: {
+              stepSize: 20,
+              color: '#8993a2',
+              padding: 6,
+              font: { size: 10 }
+            },
+            grid: { display: false, drawBorder: false, drawTicks: false }
           },
-          myScale: {              
-            position: 'left', // `axis` is determined by the position as `'y'`
+          y: {              
+            display: false,
+            grid: { display: false },
+            ticks: { display: false }
           }
         }          
       }
   });  
 }
 
+// 2026-11-06: 레이더 맵 모바일 총점 그래프 렌더링 함수 (미니멀 바 스타일 및 우측 점수 레이블 표시)
 function drawRadarChart_mobile(score, label1, color1, className){
     var element = document.getElementById(className);
     if (!element) return;
     var ctx = element.getContext('2d');
-    var color = 'white'
-    var align = 'start'
-
-    if(score < 85){
-      color = 'black'
-      align = 'end'
-    }
-    else{
-      color = 'white'
-      align = 'start'
-    }
+    var chartColor = color1 || (typeof SCORE_CHART_COLOR !== 'undefined' ? SCORE_CHART_COLOR : '#e43b46');
 
     var myChart = new Chart(ctx, {
       type: 'bar',
-      plugins:[ChartDataLabels],
+      plugins: [radarScoreBarStylePlugin, ChartDataLabels],
       data: {          
         labels: [""],
         datasets: [{                
           data: [score],
-          backgroundColor: [color1],
-          barThickness: 10,            
+          backgroundColor: chartColor,
+          borderRadius: 999,
+          borderSkipped: false,
+          barThickness: 9,            
         }]
       },
       options: {
         indexAxis: 'y',
-        maintainAspectRatio: false,        
-        plugins:{
-          legend:{
+        maintainAspectRatio: false,
+        layout: {
+          padding: { right: 35 } // 우측 점수 레이블 공간 확보
+        },
+        plugins: {
+          legend: {
             display: false
           },            
           datalabels: {
             display: true,
-            color: color,
-            align: align,
+            color: '#1e293b',
+            align: 'end',
             anchor: 'end',              
-            offset: 2,
-            textAlign: 'center',
+            offset: 4,
+            textAlign: 'right',
+            formatter: function(val) {
+              return Number(val).toFixed(2);
+            },
             font: {
-              weight: 'bold'
+              family: 'Pretendard, "Spoqa Han Sans Neo", "Noto Sans KR", sans-serif',
+              weight: '700',
+              size: 11
             },              
-          },                      
+          },
+          radarHeader: false
         },
         animation: {            
-          x:{
+          x: {
             from: 100
           }
         },
         scales: {
-          x:{
+          x: {
             display: true,
             type: 'linear',
             min: 0,
             max: 100,
-            ticks:{
+            ticks: {
               display: false
-            }
+            },
+            grid: { display: false, drawBorder: false }
           },
-          y:{
-            display: false
+          y: {
+            display: false,
+            grid: { display: false }
           },
         }          
       }

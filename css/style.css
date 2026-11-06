@@ -1662,8 +1662,11 @@
     grid-template-columns: 1fr 1.2fr;
   }
 
+  /* 2026-11-07: 레이더 맵 모달 실거래가 변동 기간 선택 select 스타일 복구 (#radar_pStart, #radar_pEnd 추가) */
   #pStart,
-  #pEnd {
+  #pEnd,
+  #radar_pStart,
+  #radar_pEnd {
     width: 90px;
     font-size: 0.85em;
     height: 2em;

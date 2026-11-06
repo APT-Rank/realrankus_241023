@@ -662,7 +662,7 @@ $(document).ready(function () {
     const container = document.getElementById("radar-container");
 
     // radar iframe이 열려 있다면 닫기
-    if (container.style.display === "block") {
+    if (container && container.style.display === "block") {
       closeRadar();
     }
   });
@@ -4329,13 +4329,12 @@ function dong_filter(selection) {
  * @param {string} searchCode - 단지 고유 검색 코드
  */
 function openRadarMap(searchCode) {
-
-
   // 새 창 열기
   if (isMobile) {
+    // 2026-11-06, 2026-11-07: 모바일에서는 모달을 바로 띄우지 않고 로딩 오버레이를 먼저 띄웁니다 (잔상 방지).
+    $("#pageLoadingBack").remove();
     $("body").append(
-      "<div id='pageLoadingBack'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white'>\
-            <br>주변 환경 정보를 불러오고 있어요!</div></div>",
+      "<div id='pageLoadingBack' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); z-index: 200010; display: grid; justify-items: center; align-content: center;'><div class='spinner-grow text-pageLoading' role='status'></div><div style='font-size: 0.85em; color: white; text-align: center;'><br>주변 환경 정보를 불러오고 있어요!</div></div>"
     );
   }
 
@@ -4351,6 +4350,7 @@ function openRadarMap(searchCode) {
         complex_info = snapshot.val();
         console.log(complex_info);
         if (complex_info == null) {
+          if (isMobile) $("#pageLoadingBack").remove();
           alert("불러오기 실패했어요. 다시 시도해 주세요.");
         } else {
           //데이터 저장해서 새창으로 보내기
@@ -4363,25 +4363,26 @@ function openRadarMap(searchCode) {
           sessionStorage.setItem("radarMapData", JSON.stringify(dataToSend));
 
           if (isMobile) {
-            // iframe으로 열기
-            const container = document.getElementById("radar-container");
-            const iframe = document.getElementById("radar-iframe");
-            iframe.src = "./radarMap.html"; // 새로 로딩
-            iframe.style.visibility = "hidden";
-            container.style.display = "block";
-
-            // 뒤로가기를 감지할 히스토리 추가
-            history.pushState({ radarOpen: true }, "", "");
+            // 로딩 오버레이 뒤에서 모달을 띄우고 렌더링한 후, 렌더링이 완료되면 로딩이 페이드아웃되며 완성된 모달이 나타납니다.
+            openRadarModal();
+            if (typeof renderRadarModalView === "function") {
+              renderRadarModalView(complex_info);
+            }
           } else {
             const radarMapWindow = window.open("./radarMap.html", "_blank");
           }
-
-
         }
+      } else {
+        if (isMobile) $("#pageLoadingBack").remove();
+        alert("단지 정보를 찾을 수 없습니다.");
       }
     })
     .catch((error) => {
       console.log(error.message);
+      if (isMobile) {
+        $("#pageLoadingBack").remove();
+        closeRadarModal();
+      }
     });
 }
 /**
@@ -4390,22 +4391,97 @@ function openRadarMap(searchCode) {
  */
 function showRadarIframe() {
   const iframe = document.getElementById("radar-iframe");
-  iframe.style.visibility = "visible";
+  if (iframe) iframe.style.visibility = "visible";
 }
 
 /**
  * @function closeRadar
- * @description 화면을 덮고 있는 레이더 맵 iframe 컨테이너를 숨기고 소스 URL을 초기화하여 시스템 자원을 반환합니다.
+ * @description 화면을 덮고 있는 레이더 맵 모달 또는 iframe 컨테이너를 숨겨 시스템 자원을 반환합니다.
  */
 function closeRadar() {
+  closeRadarModal();
   const container = document.getElementById("radar-container");
-  const iframe = document.getElementById("radar-iframe");
-  iframe.src = "";
-  container.style.display = "none";
-
-  // 현재 상태가 radarOpen 상태면 히스토리 한 단계 뒤로가기
-  //}
+  if (container) {
+    const iframe = document.getElementById("radar-iframe");
+    if (iframe) iframe.src = "";
+    container.style.display = "none";
+  }
 }
+
+// 2026-11-06, 2026-11-07: 풀스크린 레이더 맵 모달 상태 관리 플래그
+var isRadarModalOpen = false;
+var isRadarModalClosing = false;
+
+/**
+ * @function openRadarModal
+ * @description 모바일 환경에서 iframe 대신 빈 풀스크린 모달을 표시합니다 (2026-11-06 신규, 2026-11-07: 350ms fadeIn 적용).
+ */
+function openRadarModal() {
+  if (isRadarModalOpen) return;
+  isRadarModalClosing = false;
+  isRadarModalOpen = true;
+  $("#radarModal").stop(true, false).fadeIn(350);
+  $("body").css("overflow", "hidden");
+  history.pushState({ radarModalOpen: true }, "", "");
+}
+
+/**
+ * @function closeRadarModal
+ * @description 풀스크린 모달을 페이드아웃하며 닫습니다. 하위의 다른 모달(baseModal 등)은 유지합니다 (2026-11-06 신규, 2026-11-07: 350ms fadeOut 및 중복 방지 가드 적용).
+ */
+function closeRadarModal(fromPopState) {
+  $("#pageLoadingBack").remove();
+
+  // 이미 페이드아웃 진행 중인 경우 중복 인터럽트 방지
+  if (isRadarModalClosing) {
+    return;
+  }
+
+  var $modal = $("#radarModal");
+  if (!isRadarModalOpen && !$modal.is(":visible") && $modal.css("display") !== "block") {
+    return;
+  }
+
+  var wasOpen = isRadarModalOpen;
+  isRadarModalOpen = false;
+  isRadarModalClosing = true; // 350ms fadeOut 애니메이션이 완료될 때까지 재진입 및 .stop() 인터럽트 완벽 차단
+
+  $modal.stop(true, false).fadeOut(350, function () {
+    $(this).hide().css({ opacity: 1 });
+    isRadarModalClosing = false;
+    $("#radarDataList_wrapper").hide();
+    if ($(".modal.show").length === 0) {
+      $("body").removeClass("modal-open");
+      $("body").css("overflow", "");
+    } else {
+      // baseModal 등 하위 모달이 남아있다면 body 스크롤 방지 및 modal-open 유지
+      $("body").addClass("modal-open");
+      $("body").css("overflow", "hidden");
+      if ($(".modal-backdrop").length === 0) {
+        $("body").append('<div class="modal-backdrop fade show"></div>');
+      }
+    }
+    if (typeof radarMapInstance !== 'undefined' && radarMapInstance && typeof radarMapInstance.destroy === 'function') {
+      radarMapInstance.destroy();
+      radarMapInstance = null;
+    }
+    $("#radarDataMap").empty();
+    $("#radarAptInfoWrap").empty();
+    $("#radarDataList").empty();
+  });
+
+  if (!fromPopState) {
+    if (wasOpen && history.state && history.state.radarModalOpen) {
+      history.back();
+    }
+  }
+}
+
+window.addEventListener("popstate", function (e) {
+  if (isRadarModalOpen || ($("#radarModal").length && $("#radarModal").is(":visible"))) {
+    closeRadarModal(true);
+  }
+});
 
 /**
  * @function showGraphCarousel

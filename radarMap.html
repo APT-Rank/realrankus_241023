@@ -726,8 +726,9 @@
       detailHtml += "</div>";
       detailHtml += "<div class='card-body'>";
       detailHtml += "<div id='popTransport'>";
+      // 2026-11-06: 데스크톱 입지 총점 차트 캔버스 높이 56px 통일
       if (!isMobile) {
-        detailHtml += "<div class='graph' style='height: 80px'> <canvas id='transportChart'></canvas></div>";
+        detailHtml += "<div class='graph' style='height: 56px'> <canvas id='transportChart'></canvas></div>";
       }
       detailHtml += "<div class='popTable'>";
       detailHtml += `
@@ -778,7 +779,7 @@
     detailHtml += "<div class='card-body'>";
     detailHtml += "<div id='popInfra'>";
     if (!isMobile) {
-      detailHtml += "<div class='graph' style='height: 80px'> <canvas id='infraChart'></canvas></div>";
+      detailHtml += "<div class='graph' style='height: 56px'> <canvas id='infraChart'></canvas></div>";
     }
     detailHtml += "<div class='popTable'>";
 
@@ -923,7 +924,7 @@
     detailHtml += "<div class='card-body'>";
     detailHtml += "<div id='popEducation'>";
     if (!isMobile) {
-      detailHtml += "<div class='graph' style='height: 80px'> <canvas id='eduChart'></canvas></div>";
+      detailHtml += "<div class='graph' style='height: 56px'> <canvas id='eduChart'></canvas></div>";
     }
     detailHtml += "<div class='popTable'>";
     if (pSchool_distance - 100 < 0) {
@@ -1009,7 +1010,7 @@
     detailHtml += "<div id='popLiving'>";
 
     if (!isMobile) {
-      detailHtml += "<div class='graph' style='height: 80px'> <canvas id='livingChart'></canvas></div>";
+      detailHtml += "<div class='graph' style='height: 56px'> <canvas id='livingChart'></canvas></div>";
     }
     if (apt_type == "분양(예정)") {
       detailHtml += "<div class='comment'>" + t("ui.report.pending_comment", "'미정' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.") + "</div><hr>";
@@ -1427,21 +1428,23 @@
     $(".popSubPriceTable").css({ "margin-top": "3px", "margin-bottom": "0px" });
     setTimeout(function () {
       setComplexLike(searchCode.toString(), aptName)
+      // 2026-11-06: 리얼랭커스 통일 차트 테마 색상(SCORE_CHART_COLOR) 적용
+      var scoreColor = typeof SCORE_CHART_COLOR !== 'undefined' ? SCORE_CHART_COLOR : "#e43b46";
       if (isMobile) {
-        drawRadarChart_mobile(livingScore, t("ui.living_score_label", "주거총점"), "#fe4040", "livingChart");
+        drawRadarChart_mobile(livingScore, t("ui.living_score_label", "주거총점"), scoreColor, "livingChart");
         if (stationArea != undefined) {
-          drawRadarChart_mobile(transportScore, t("ui.transport_score_label", "교통총점"), "#fe4040", "transportChart");
+          drawRadarChart_mobile(transportScore, t("ui.transport_score_label", "교통총점"), scoreColor, "transportChart");
         }
-        drawRadarChart_mobile(infraScore, t("ui.infra_score_label", "인프라총점"), "#fe4040", "infraChart");
-        drawRadarChart_mobile(eduScore, t("ui.edu_score_label", "교육총점"), "#fe4040", "eduChart");
+        drawRadarChart_mobile(infraScore, t("ui.infra_score_label", "인프라총점"), scoreColor, "infraChart");
+        drawRadarChart_mobile(eduScore, t("ui.edu_score_label", "교육총점"), scoreColor, "eduChart");
       }
       else {
-        drawRadarChart(livingScore, t("ui.living_score_label", "주거총점"), "#fe4040", "livingChart");
+        drawRadarChart(livingScore, t("ui.living_score_label", "주거총점"), scoreColor, "livingChart");
         if (stationArea != undefined) {
-          drawRadarChart(transportScore, t("ui.transport_score_label", "교통총점"), "#fe4040", "transportChart");
+          drawRadarChart(transportScore, t("ui.transport_score_label", "교통총점"), scoreColor, "transportChart");
         }
-        drawRadarChart(infraScore, t("ui.infra_score_label", "인프라총점"), "#fe4040", "infraChart");
-        drawRadarChart(eduScore, t("ui.edu_score_label", "교육총점"), "#fe4040", "eduChart");
+        drawRadarChart(infraScore, t("ui.infra_score_label", "인프라총점"), scoreColor, "infraChart");
+        drawRadarChart(eduScore, t("ui.edu_score_label", "교육총점"), scoreColor, "eduChart");
       }
 
       if (apt_type != "분양(예정)") {

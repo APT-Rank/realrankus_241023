@@ -702,8 +702,27 @@ $(document).on('hide.bs.modal', '#appDownloadModal', function () {
 });
 
 window.addEventListener('popstate', (event) => {
-  if (history.state && history.state.radarOpen) {
-    history.back();
+  // 2026-11-06, 2026-11-07: 레이더 모달(#radarModal)이 열려있거나 페이드아웃 중인 경우, 레이더 모달만 닫고 하위 모달(baseModal 등)은 그대로 유지
+  if ((typeof isRadarModalOpen !== 'undefined' && isRadarModalOpen) || (typeof isRadarModalClosing !== 'undefined' && isRadarModalClosing) || ($('#radarModal').length && ($('#radarModal').is(':visible') || $('#radarModal').css('display') === 'block'))) {
+    if (typeof isRadarModalOpen !== 'undefined') isRadarModalOpen = false;
+    if (typeof closeRadarModal === 'function') {
+      closeRadarModal(true);
+    } else {
+      $('#radarModal').fadeOut(350);
+    }
+    return;
+  }
+
+  // 2. 레거시 레이더 iframe 컨테이너가 열려 있다면 닫기
+  const container = document.getElementById("radar-container");
+  if (container && container.style.display === "block") {
+    if (typeof closeRadar === 'function') closeRadar();
+    return;
+  }
+
+  // 2026-11-07: popstate 목적지 state가 현재 열려있는 하위 모달(예: baseModal)인 경우 닫지 않고 화면에 온전히 보존
+  if (event.state && event.state.modal && modalStack.length > 0 && modalStack[modalStack.length - 1] === event.state.modal) {
+    $(`#${event.state.modal}`).modal('show');
     return;
   }
 
