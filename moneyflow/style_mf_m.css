@@ -1238,6 +1238,25 @@
     color:white;
     text-align: center;
   } 
+  .tRefreshBtn {
+    background: #1e293b;
+    border: 1px solid #334155;
+  }
+  .btn_live_refresh {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    padding: 2px 6px;
+    margin-left: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+  .btn_live_refresh:active {
+    color: #d12145;
+    transform: scale(0.9);
+  }
   .kakaoShare{
     width: 2em;    
     height: 2em;

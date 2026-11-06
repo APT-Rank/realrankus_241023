@@ -1291,7 +1291,23 @@
     border-radius: 5px;
     width: 60px;
     background: #d12145;
+    cursor: pointer;
+    line-height: 2em;
+    transition: opacity 0.2s ease, transform 0.1s ease;
   } 
+  .tShare:hover {
+    opacity: 0.9;
+  }
+  .tShare:active {
+    transform: scale(0.96);
+  }
+  .tRefreshBtn {
+    background: #1e293b;
+    border: 1px solid #334155;
+  }
+  .tRefreshBtn:hover {
+    background: #0f172a;
+  }
   .kakaoShare{
     width: 2em;    
     height: 2em;

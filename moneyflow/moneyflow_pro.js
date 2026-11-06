@@ -4064,19 +4064,24 @@ function downloadMoneyFlowImage(btnEl, event) {
   var filename = "MoneyFlow_" + timestamp + ".png";
 
   var originalBtnHtml = $btn.html();
-  // 2026-10-23: 지도 현위치 버튼과 일원화된 Bootstrap 스피너 적용 및 다크 배경 전환
+  // 포커스 및 터치 하이라이트 잔상 해제
+  if (document.activeElement && typeof document.activeElement.blur === 'function') {
+    document.activeElement.blur();
+  }
+
+  // 지도 현위치 버튼과 일원화된 Bootstrap 스피너 적용 및 다크 배경 전환
   $btn.css({
     "background-color": "#333",
     "border-color": "#333"
   });
-  $btn.prop('disabled', true).html('<div class="spinner-border spinner-border-sm text-white" role="status"></div>');
+  $btn.prop('disabled', true).html('<div class="spinner-border spinner-border-sm text-white" role="status" style="width:14px; height:14px; border-width:2px; vertical-align:middle;"></div>');
 
   // 2. GLIChartRenderer 패턴: 화면 너비 기반 동적 고해상도 배율 계산 (가로 2400px 이상 목표)
   var targetWidth = 2400;
   var currentWidth = targetDom.offsetWidth || 1200;
   var dynamicScale = Math.min(5, Math.max(3, targetWidth / currentWidth));
 
-  // 3. 캡처 전 외부 마진/그림자 임시 제거 및 Chart.js 해상도(devicePixelRatio)를 높이고 resize/update 실행
+  // 3. 캡처 전 외부 마진/그림자 임시 제거 및 Chart.js 해상도(devicePixelRatio)를 높이고 애니메이션 정지 후 완전 렌더링
   var originalMargin = targetDom.style.margin;
   var originalBoxShadow = targetDom.style.boxShadow;
   targetDom.style.margin = '0px';
@@ -4088,11 +4093,15 @@ function downloadMoneyFlowImage(btnEl, event) {
     : (typeof myMoneyFlow_Chart !== 'undefined' ? myMoneyFlow_Chart : null);
 
   var originalDPR = chart ? (chart.options.devicePixelRatio || window.devicePixelRatio || 1) : 1;
+  var origAnimation = null;
 
   if (chart) {
+    origAnimation = chart.options.animation;
+    chart.stop(); // 진행 중인 모든 애니메이션 즉시 중단
+    chart.options.animation = false;
     chart.options.devicePixelRatio = Math.max(window.devicePixelRatio || 1, dynamicScale);
     chart.resize();
-    chart.update('none');
+    chart.render(); // 100% 버퍼 확정 렌더링
   }
 
   function restoreOriginals() {
@@ -4100,6 +4109,7 @@ function downloadMoneyFlowImage(btnEl, event) {
     targetDom.style.boxShadow = originalBoxShadow;
     if (chart) {
       try {
+        chart.options.animation = origAnimation;
         chart.options.devicePixelRatio = originalDPR;
         chart.resize();
         chart.update('none');
@@ -4107,7 +4117,7 @@ function downloadMoneyFlowImage(btnEl, event) {
         console.error('Error restoring chart DPR:', e);
       }
     }
-    // 2026-10-23: 버튼 배경 및 상태 복원
+    // 버튼 배경 및 상태 복원
     $btn.css({
       "background-color": "",
       "border-color": ""
@@ -4115,7 +4125,7 @@ function downloadMoneyFlowImage(btnEl, event) {
     $btn.prop('disabled', false).html(originalBtnHtml);
   }
 
-  // 4. GLIChartRenderer 패턴: 브라우저 렌더링/리플로우 시간을 주기 위해 150ms 딜레이 후 캡처
+  // 4. 브라우저 레이아웃/GPU 버퍼 정착 시간을 확보하기 위해 450ms 안정화 딜레이 후 캡처 (반투명 및 설익은 캡처 방지)
   setTimeout(function () {
     html2canvas(targetDom, {
       scale: dynamicScale,
@@ -4123,6 +4133,12 @@ function downloadMoneyFlowImage(btnEl, event) {
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
+      ignoreElements: function (el) {
+        if (el && el.classList && (el.classList.contains('card_download_wrapper') || el.classList.contains('btn_card_download'))) {
+          return true;
+        }
+        return false;
+      },
       onclone: function (clonedDoc) {
         clonedDoc.body.style.margin = '0px';
         clonedDoc.body.style.padding = '0px';
@@ -4153,6 +4169,9 @@ function downloadMoneyFlowImage(btnEl, event) {
             clonedCanvas.height = origCanvas.height;
             var ctx = clonedCanvas.getContext('2d');
             if (ctx) {
+              // 중요: 캔버스 바탕에 완전 불투명한 순백색 채우기 (투명도/반투명 현상 원천 방지)
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, clonedCanvas.width, clonedCanvas.height);
               ctx.drawImage(origCanvas, 0, 0);
             }
           }
@@ -4191,5 +4210,5 @@ function downloadMoneyFlowImage(btnEl, event) {
       console.error('MoneyFlow capture error:', err);
       alert('이미지 저장 중 문제가 발생했습니다: ' + (err.message || err));
     });
-  }, 150);
+  }, 450);
 }
