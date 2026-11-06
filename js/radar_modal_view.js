@@ -518,3 +518,4 @@ function showRadarDetail(aptData) {
   var $target = $('#radarDataList').length ? $('#radarDataList') : $('#dataList');
   $target.html(detailHtml);
 }
+
