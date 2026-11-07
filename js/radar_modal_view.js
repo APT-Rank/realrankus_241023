@@ -1,10 +1,14 @@
 /**
  * ==========================================================================
- * APT-Rank 풀스크린 레이더 맵 모달 (RadarModalView)
+ * APT-Rank 풀스크린 레이더 맵 공통 뷰 & 고해상도 캡처 모듈 (RadarModalView)
  * 작성일: 2026-11-06 (초기 생성 및 radarMap.html 모바일 뷰 이식)
- * 수정일: 2026-11-07 (상권 마커 패스, 실거래가 차트/날짜 셀렉트 스타일 복구, 350ms Fade-in/out, 히스토리 안전 가드, 드래그 깜빡임 방지용 흰색 백킹 및 GPU 가속 격리)
- * radarMap.html의 모바일 화면(isMobile=true) 및 map_control_radar.js와
- * 100% 동일한 DOM 구조, CSS 스타일링, 지도 마커, 차트 및 인터랙션을 제공합니다.
+ * 수정일: 2026-11-07
+ *   - radarMap.html(웹/모바일 단독 페이지) 및 index.html(모바일 풀스크린 모달) 통합 공통 엔진화
+ *   - 상권/학원가 폴리곤 렌더링, 실거래가 차트/날짜 셀렉트 복구, 350ms Fade-in/out, 히스토리 배열 정규화 가드
+ *   - 캡처 시 아파트 중심 마커 정중앙 이동 후 타일 로드 대기 및 완료 후 원위치 복원
+ *   - OverlayView(overlayLayer.firstChild) 최하단 z-depth 벡터 언더레이로 반경원/거리점선/폴리곤 정밀 합성
+ *   - 모바일/웹 모두 캡처 시 상단 요약 카드의 뒤로가기('<') 버튼 제거 및 리얼랭커스 상·하단 워터마크 합성
+ *   - price/index.html 동일 규격 포인트컬러(#E43B46) Pill 확장/수축 플로팅 캡처 버튼 UI 및 바텀시트 연동
  * 메인 지도(defaultMap) 및 전역 변수와 완전히 격리되어 동작합니다.
  * ==========================================================================
  */
@@ -169,7 +173,66 @@ function RadarCustomOverlay(options) {
   return overlay;
 }
 
-// 2026-11-07: 바텀시트 접기/펼치기 애니메이션 - #radarDataList_wrapper 및 #dataList_wrapper 양방향 지원
+// 2026-11-07: price/index.html 우측 하단 캡처 버튼과 100% 동일한 내부 마크업 헬퍼
+var RADAR_CAPTURE_BTN_INNER_HTML =
+  '<span class="btn_icon_wrap"><i class="fa-solid fa-camera"></i></span>' +
+  '<span class="btn_progress_wrap">' +
+    '<div class="spinner-border spinner-border-sm text-white" role="status"></div>' +
+    '<span class="volume-capture-status">이미지 저장 중 (<span class="volume-capture-pct">0%</span>)</span>' +
+  '</span>';
+
+function ensureRadarCaptureButtonMarkup($btn) {
+  if (!$btn || !$btn.length) return;
+  if (!$btn.find('.btn_progress_wrap').length) {
+    $btn.html(RADAR_CAPTURE_BTN_INNER_HTML);
+  }
+}
+
+// 2026-11-07: 플로팅 캡처 버튼 위치 동기화 헬퍼
+// - 모바일/모달: #radarDataList_wrapper(또는 #dataList_wrapper) 바깥의 우측 상단(시트 상단 테두리 위 10px)에 배치
+// - 데스크톱: 지도 우측 하단(bottom: 24px, right: 24px)에 배치
+function syncRadarCaptureButtonPosition(isMobileView, sheetTop) {
+  var $capBtn = $("#radarMapCaptureBtn");
+  var targetParent = ($("#radarModal").length && $("#radarModal").is(":visible"))
+    ? document.getElementById("radarModal")
+    : (document.getElementById("radarCenterBox") || document.getElementById("radarMapCaptureArea") || document.body);
+
+  if (!$capBtn.length) {
+    $capBtn = $('<button type="button" id="radarMapCaptureBtn" class="radar-map-floating-capture-btn" onclick="captureRadarMapView(event)" data-html2canvas-ignore="true" title="입지 분석 지도 이미지 저장">' + RADAR_CAPTURE_BTN_INNER_HTML + '</button>');
+    $(targetParent).append($capBtn);
+  } else {
+    ensureRadarCaptureButtonMarkup($capBtn);
+    if (targetParent && $capBtn[0].parentNode !== targetParent) {
+      $(targetParent).append($capBtn);
+    }
+  }
+
+  // 기존 #info_check_card 내부 버튼이 남아있다면 제거
+  $("#radarModalCaptureBtn").remove();
+
+  if (isMobileView) {
+    var baseTop = (typeof sheetTop === 'number' && isFinite(sheetTop)) ? sheetTop : (radar_info_pos || (window.innerHeight * 2 / 3 + 10));
+    $capBtn.addClass("mobile-sheet-top-right").css({
+      'display': 'flex',
+      'position': 'fixed',
+      'right': '14px',
+      'bottom': 'auto',
+      'top': Math.max(80, baseTop - 62) + 'px',
+      'z-index': 200002
+    });
+  } else {
+    $capBtn.removeClass("mobile-sheet-top-right").css({
+      'display': 'flex',
+      'position': 'fixed',
+      'right': '24px',
+      'bottom': '24px',
+      'top': 'auto',
+      'z-index': 100002
+    });
+  }
+}
+
+// 2026-11-07: 바텀시트 접기/펼치기 애니메이션 - #radarDataList_wrapper 및 #dataList_wrapper 양방향 지원 + 모바일 캡처 버튼 연동
 function moveRadarInfoWindow() {
   var moving_dest;
   if (isRadarDown) {
@@ -182,6 +245,11 @@ function moveRadarInfoWindow() {
   isRadarDown = !isRadarDown;
   $('#info_OnOff').toggleClass('rotated');
   $('#radarDataList_wrapper, #dataList_wrapper').stop(true, true).animate({ top: moving_dest }, 350);
+
+  var $mobileCapBtn = $('#radarMapCaptureBtn.mobile-sheet-top-right');
+  if ($mobileCapBtn.length) {
+    $mobileCapBtn.stop(true, true).animate({ top: Math.max(80, moving_dest - 62) }, 350);
+  }
 }
 
 // 2026-11-07: 실거래가 그래프 표시/숨김 토글 - #radarDataList 및 #dataList 지원
@@ -910,7 +978,7 @@ function renderRadarModalView(aptData) {
       window.closeRadarModal();
     } else {
       $("#radarModal").fadeOut(350, function () {
-        $("#radarDataList_wrapper, #dataList_wrapper").hide();
+        $("#radarDataList_wrapper, #dataList_wrapper, #radarMapCaptureBtn").hide();
       });
     }
   });
@@ -975,7 +1043,7 @@ function renderRadarModalView(aptData) {
 
     detailHtml += "</div></div></div>";
   } else {
-    // 2026-11-07: 모바일/모달 전용 상단 체크박스 및 캡처 버튼 (#info_check_card)
+    // 2026-11-07: 모바일/모달 전용 상단 체크박스 및 접기 버튼 (#info_check_card - 캡처 버튼은 바텀시트 바깥 우측 상단으로 분리)
     detailHtml += "<div class='card-body' id='info_check_card'>";
     detailHtml += "<div id='info_check_div'>";
     if (stationArea != undefined && stationArea !== "") {
@@ -987,10 +1055,7 @@ function renderRadarModalView(aptData) {
       detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>";
       detailHtml += "<div></div>";
     }
-    detailHtml += "<div class='radar-header-actions'>";
-    detailHtml += "<button type='button' id='radarModalCaptureBtn' class='radar-floating-capture-btn' onclick='captureRadarMapView(event)' data-html2canvas-ignore='true' title='" + t("ui.capture_map", "지도 캡처") + "'><i class='fa-solid fa-camera'></i></button>";
     detailHtml += "<div id='info_OnOff' onClick='moveRadarInfoWindow()'><i class='fa-solid fa-chevron-down'></i></div>";
-    detailHtml += "</div>";
     detailHtml += "</div>";
     detailHtml += "</div>";
   }
@@ -1591,7 +1656,7 @@ function renderRadarModalView(aptData) {
     } else {
       $(".complex_like").css({ 'grid-template-columns': '1fr 1fr 1fr' });
     }
-    $("#radarMapCaptureBtn").show();
+    syncRadarCaptureButtonPosition(false);
   } else {
     // 2026-11-07: 모바일 및 모달 바텀시트 화면 스타일링 (radarMap.html isMobile=true 100% 동일)
     radar_info_pos = window.innerHeight * 2 / 3 + 10;
@@ -1618,6 +1683,7 @@ function renderRadarModalView(aptData) {
     });
     $("#titleBar_radar").hide();
     $(".priceGraph").hide();
+    syncRadarCaptureButtonPosition(true, radar_info_pos);
   }
 
   $(".mobile_card").css({ 'margin-left': '5px', 'margin-right': '5px' });
@@ -1740,12 +1806,9 @@ function initRadarModalMap(aptData) {
     'will-change': 'transform'
   });
 
-  // 2026-11-07: 지도 우측 하단 플로팅 캡처 버튼 주입
-  if (!document.getElementById("radarMapCaptureBtn")) {
-    var $capBtn = $('<button type="button" id="radarMapCaptureBtn" class="radar-map-floating-capture-btn" onclick="captureRadarMapView(event)" data-html2canvas-ignore="true" title="입지 분석 지도 이미지 저장"><i class="fa-solid fa-camera"></i></button>');
-    var capParent = document.getElementById("radarMapCaptureArea") || mapTarget;
-    $(capParent).append($capBtn);
-  }
+  // 2026-11-07: 플로팅 캡처 버튼 위치 동기화 (모바일 바텀시트 바깥 우측 상단 / 데스크톱 우측 하단)
+  var isModalOrMobile = ($("#radarModal").length > 0 && $("#radarModal").is(":visible")) || !isDesktopLayout;
+  syncRadarCaptureButtonPosition(isModalOrMobile, radar_info_pos);
 
   radarMapInstance = new naver.maps.Map(mapTarget, MapOptions);
   var map = radarMapInstance;
@@ -2343,12 +2406,15 @@ function initRadarModalMap(aptData) {
  * @function captureRadarMapView
  * @description 화면에 표시된 네이버 지도 영역과 단지 요약 카드를 고해상도(scale: 2) PNG 이미지로 캡처 및 다운로드합니다.
  * 모바일 환경과 웹(데스크톱) 환경의 레이아웃 차이를 완벽히 인식하여 최적화된 방식으로 캡처합니다:
- * - 모바일: 세로형 스마트폰 비율 화면 + 상단 뒤로가기 화살표 카드
- * - 웹(데스크톱): 와이드 지도 영역(우측 패널) 전체 100% 캡처 (오른쪽 빈 여백 원천 차단) + 좌측 상단 모던 글래스모피즘 단지 카드 (뒤로가기 화살표 제거)
- * - 단지 중심 동심원(250m/500m/1km/3km/5km) 및 학교/지하철 점선이 map.getBounds() 선형 보간 알고리즘으로 단지 마커에 100% 오차 없이 정밀 합성됩니다.
- * - 캡처 중에는 버튼이 숨겨지지 않고 "이미지 저장 중...(###%)" 캡슐 형태로 확장되어 실시간 진행률을 표시합니다.
- * 파일명: [단지명]_입지분석.png
- * 작성일: 2026-11-07
+ * - 모바일 & 웹 공통: 캡처 시 상단 단지 요약 카드의 뒤로가기('<', #iframe_back) 아이콘을 숨기고 좌측 여백 없이 정렬
+ * - 웹(데스크톱): 와이드 지도 영역(우측 패널) 전체 100% 캡처 (오른쪽 빈 여백 원천 차단) + 좌측 상단 글래스모피즘 단지 카드
+ * - 최하단 z-depth 벡터 언더레이(OverlayView overlayLayer.firstChild + MapCanvasProjection.fromCoordToOffset)를 통해
+ *   반경원(250m/500m/1km/3km/5km), 지하철/초·중학교 거리 점선, 상권/학원가 폴리곤을 모든 마커 아래에 오차 없이 합성
+ * - 캡처 버튼(price/index.html 동일 Pill UI) 클릭 시 좌측 확장 완료 후 진행률(0%~100%) 표시와 함께 캡처 시작 및 원형 수축 복원
+ * - 캡처 직전 아파트 마커(단지 중심점)를 지도 정중앙으로 이동시키고 타일 로드를 대기한 후 캡처하며, 완료 후 원래 중심 복원
+ * - 리얼랭커스 상단 타이틀 및 하단 브랜드/캡처일시 워터마크 합성 (저장 완료 토스트 미표시)
+ * 파일명: 리얼랭커스_{아파트명}_주변입지환경_{YYYYMMDD}_{HHMMSS}.png
+ * 수정일: 2026-11-07
  */
 function captureRadarMapView(event) {
   if (event) {
@@ -2356,7 +2422,20 @@ function captureRadarMapView(event) {
     event.stopPropagation();
   }
 
-  // 1. 단지명 및 기본 정보 확인
+  if (typeof html2canvas === 'undefined') {
+    alert("캡처 라이브러리(html2canvas)를 로드 중입니다. 잠시 후 다시 시도해 주세요.");
+    return;
+  }
+
+  var $btn = $(event ? event.currentTarget : "#radarMapCaptureBtn, #radarModalCaptureBtn");
+  if (!$btn.length) {
+    $btn = $(".radar-map-floating-capture-btn, .radar-floating-capture-btn");
+  }
+  if ($btn.length && $btn.data("capturing")) {
+    return;
+  }
+
+  // 1. 단지명 및 타임스탬프 파일명/워터마크 문자열 생성: 리얼랭커스_{아파트명}_주변입지환경_{YYYYMMDD}_{HHMMSS}.png
   var aptName = "단지";
   if (window.currentRadarAptData && window.currentRadarAptData["아파트명"]) {
     aptName = window.currentRadarAptData["아파트명"];
@@ -2366,18 +2445,23 @@ function captureRadarMapView(event) {
     aptName = $("#apt_info .popupTitle").text().split("(")[0].trim();
   }
   var cleanAptName = aptName.replace(/[\\/:*?"<>|]/g, '').trim() || "단지";
-  var filename = cleanAptName + "_입지분석.png";
+  var now = new Date();
+  var pad2 = function (n) { return String(n).padStart(2, '0'); };
+  var yyyy = String(now.getFullYear());
+  var mm = pad2(now.getMonth() + 1);
+  var dd = pad2(now.getDate());
+  var hh = pad2(now.getHours());
+  var min = pad2(now.getMinutes());
+  var ss = pad2(now.getSeconds());
+  var dateStr = yyyy + mm + dd;
+  var timeStr = hh + min + ss;
+  var captureDateTimeStr = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + min + ":" + ss;
+  var filename = "리얼랭커스_" + cleanAptName + "_주변입지환경_" + dateStr + "_" + timeStr + ".png";
 
-  if (typeof html2canvas === 'undefined') {
-    alert("캡처 라이브러리(html2canvas)를 로드 중입니다. 잠시 후 다시 시도해 주세요.");
-    return;
-  }
-
-  // 2. 환경 판정: 모바일 vs 웹(데스크톱)
+  // 2. 환경 및 캡처 대상 확인
   var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
   var isDesktop = !isMobileDevice;
 
-  // 3. 캡처 대상 엘리먼트 및 치수 결정 (데스크톱 와이드 지도 완벽 대응)
   var mapElement = document.getElementById("radarDataMap") || document.getElementById("dataMap");
   var captureTarget = document.getElementById("radarMapCaptureArea") || mapElement;
   if (!captureTarget) {
@@ -2385,309 +2469,406 @@ function captureRadarMapView(event) {
     return;
   }
 
-  var mapW = (mapElement && mapElement.clientWidth > 50) ? mapElement.clientWidth : (captureTarget.clientWidth > 50 ? captureTarget.clientWidth : (isDesktop ? (window.innerWidth - 500) : window.innerWidth));
-  var mapH = (mapElement && mapElement.clientHeight > 50) ? mapElement.clientHeight : (captureTarget.clientHeight > 50 ? captureTarget.clientHeight : window.innerHeight);
-
-  // 0KB 및 치수 오류 방지 강제 보정
-  if (!mapH || mapH <= 50) mapH = window.innerHeight || 800;
-  if (!mapW || mapW <= 50) mapW = isDesktop ? (window.innerWidth - 500) : (window.innerWidth || 390);
-
-  // 데스크톱 환경에서는 캡처 타깃의 너비/높이를 실제 지도 치수로 정확히 일치시켜 우측 여백 발생 차단
-  var origTargetStyle = $(captureTarget).attr("style") || "";
-  if (isDesktop) {
-    $(captureTarget).css({
-      'width': mapW + 'px',
-      'height': mapH + 'px',
-      'min-height': mapH + 'px',
-      'overflow': 'hidden',
-      'position': 'relative'
-    });
+  // 3. price/index.html 우측 하단 캡처 버튼과 100% 동일한 라운드 박스(Pill) 좌측 확장/수축 애니메이션
+  ensureRadarCaptureButtonMarkup($btn);
+  var pctEl = $btn.length ? $btn[0].querySelector('.volume-capture-pct') : null;
+  if (pctEl) pctEl.textContent = '0%';
+  if ($btn.length) {
+    $btn.data("capturing", true).addClass("is-capturing");
   }
 
-  // 4. 2026-11-07: 버튼 캡슐형 확장 및 진행률 UI 표시 ("이미지 저장 중...(###%)")
-  var $btn = $(event ? event.currentTarget : "#radarModalCaptureBtn, #radarMapCaptureBtn");
-  if (!$btn.length) {
-    $btn = $(".radar-map-floating-capture-btn, .radar-floating-capture-btn");
-  }
-
-  function updateProgress(percent) {
-    if ($btn.length) {
-      $btn.find("#capProgressText").text(percent + "%");
+  var currentPct = 0;
+  function updateProgress(pct) {
+    currentPct = Math.max(currentPct, Math.min(100, Math.round(pct)));
+    if (pctEl) {
+      pctEl.textContent = currentPct + "%";
     }
   }
 
-  $btn.addClass("capturing-capsule")
-      .prop("disabled", true)
-      .html('<i class="fa-solid fa-spinner fa-spin"></i> <span>이미지 저장 중...(<span id="capProgressText">12%</span>)</span>');
+  function finishButtonState() {
+    if (!$btn.length) return;
+    // 부드러운 원형 원복: .is-capturing 제거로 좌우 자연스럽게 수축 (트랜지션 320ms 완료 대기)
+    $btn.removeClass("is-capturing");
+    setTimeout(function () {
+      if (pctEl) pctEl.textContent = '0%';
+      $btn.data("capturing", false);
+    }, 340);
+  }
 
-  var progressVal = 12;
-  var progressTimer = setInterval(function () {
-    if (progressVal < 82) {
-      progressVal += Math.floor(Math.random() * 8) + 4;
-      if (progressVal > 82) progressVal = 82;
-      updateProgress(progressVal);
+  // [버퍼/렉 제거 핵심] 버튼 확장 애니메이션(0.32s)이 완전히 끝나고 "이미지 저장 중 (0%)"가 깔끔하게 안착할 때까지 대기
+  setTimeout(function () {
+    var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 16); };
+    raf(function () {
+      startActualCapture();
+    });
+  }, 340);
+
+  function startActualCapture() {
+    var mapW = (mapElement && mapElement.clientWidth > 50) ? mapElement.clientWidth : (captureTarget.clientWidth > 50 ? captureTarget.clientWidth : (isDesktop ? (window.innerWidth - 500) : window.innerWidth));
+    var mapH = (mapElement && mapElement.clientHeight > 50) ? mapElement.clientHeight : (captureTarget.clientHeight > 50 ? captureTarget.clientHeight : window.innerHeight);
+
+    if (!mapH || mapH <= 50) mapH = window.innerHeight || 800;
+    if (!mapW || mapW <= 50) mapW = isDesktop ? (window.innerWidth - 500) : (window.innerWidth || 390);
+
+    var origTargetStyle = $(captureTarget).attr("style") || "";
+    if (isDesktop) {
+      $(captureTarget).css({
+        'width': mapW + 'px',
+        'height': mapH + 'px',
+        'min-height': mapH + 'px',
+        'overflow': 'hidden',
+        'position': 'relative'
+      });
     }
-  }, 120);
 
-  // 5. 제외 대상 숨김 처리 (줌 컨트롤 +/- 및 독립 페이지 상단 타이틀 바)
-  var hadZoomControl = true;
-  if (window.radarMapInstance && typeof window.radarMapInstance.getOptions === 'function') {
-    try {
-      hadZoomControl = !!window.radarMapInstance.getOptions('zoomControl');
-    } catch (e) {
-      hadZoomControl = true;
+    var progressTimer = setInterval(function () {
+      if (currentPct < 85) {
+        updateProgress(currentPct + Math.floor(Math.random() * 5) + 3);
+      }
+    }, 70);
+
+    // 단지 중심점 안전 추출 및 원래 지도 중심 기록
+    var aptCenter = window.currentRadarCenter;
+    if (!aptCenter && window.currentRadarAptData) {
+      var lat = Number(window.currentRadarAptData["Y"] || window.currentRadarAptData["lat"]);
+      var lng = Number(window.currentRadarAptData["X"] || window.currentRadarAptData["lng"]);
+      if (lat && lng) aptCenter = new naver.maps.LatLng(lat, lng);
     }
-  }
-  if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function') {
-    try {
-      window.radarMapInstance.setOptions({ zoomControl: false });
-    } catch (e) {}
-  }
-
-  var $zoomControls = $(captureTarget).find('*').filter(function () {
-    var txt = $(this).text().trim();
-    var title = $(this).attr('title') || '';
-    return (txt === '+' || txt === '-' || txt === '−' || txt === '+\n-' || title.indexOf('확대') !== -1 || title.indexOf('축소') !== -1);
-  }).closest('div');
-  var $titleBar = $("#titleBar_radar");
-  var titleBarDisplay = $titleBar.css("display");
-
-  $zoomControls.hide();
-  $titleBar.hide();
-
-  // 6. 단지 요약 카드 스타일 최적화 (모바일 vs 웹 완벽 분리)
-  var $aptWrap = $("#radarAptInfoWrap");
-  var origWrapStyle = $aptWrap.attr("style") || "";
-  var origWrapDisplay = $aptWrap.css("display");
-
-  var $aptMobile = $("#apt_info_mobile");
-  var origMobileStyle = $aptMobile.attr("style") || "";
-
-  var $aptBody = $("#apt_info_body");
-  var origBodyStyle = $aptBody.attr("style") || "";
-
-  var $backBtn = $("#iframe_back");
-  var origBackStyle = $backBtn.attr("style") || "";
-
-  if (isMobileDevice) {
-    // [모바일 환경]: 스마트폰 화면용 세로형 카드 + 뒤로가기 화살표(<)
-    $aptWrap.css({
-      'display': 'block',
-      'position': 'absolute',
-      'top': '10px',
-      'left': '3px',
-      'width': 'auto',
-      'z-index': 200000,
-      'pointer-events': 'none'
-    });
-    $aptMobile.css({
-      'position': 'relative',
-      'top': '0px',
-      'left': '0px',
-      'width': (mapW - 50) + 'px',
-      'border-radius': '3px',
-      'box-shadow': 'rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px',
-      'background-color': 'rgba(255, 255, 255, 0.85)',
-      'pointer-events': 'auto'
-    });
-    $aptBody.css({
-      'display': 'grid',
-      'grid-template-columns': '30px 1fr',
-      'align-items': 'center',
-      'padding-top': '5px',
-      'padding-bottom': '5px'
-    });
-    $backBtn.show().css({
-      'display': 'block',
-      'color': '#E43B46',
-      'font-size': '2em',
-      'padding': '2px 8px 2px 2px'
-    });
-  } else {
-    // [웹 / 데스크톱 환경]: 와이드 지도 전용 세련된 글래스모피즘 정보 카드 (뒤로가기 화살표 제거)
-    $aptWrap.css({
-      'display': 'block',
-      'position': 'absolute',
-      'top': '20px',
-      'left': '20px',
-      'width': 'auto',
-      'z-index': 200000,
-      'pointer-events': 'none'
-    });
-    $aptMobile.css({
-      'position': 'relative',
-      'top': '0px',
-      'left': '0px',
-      'width': '380px',
-      'padding': '12px 18px',
-      'border-radius': '10px',
-      'box-shadow': '0 8px 24px rgba(0, 0, 0, 0.16)',
-      'background-color': 'rgba(255, 255, 255, 0.94)',
-      'backdrop-filter': 'blur(8px)',
-      'border': '1px solid rgba(0, 0, 0, 0.08)',
-      'pointer-events': 'auto'
-    });
-    $aptBody.css({
-      'display': 'block',
-      'padding': '0px'
-    });
-    // 데스크톱에서는 흉측한 뒤로가기 화살표 깔끔하게 숨김!
-    $backBtn.hide();
-  }
-
-  // 7. 네이버 지도 자체 SVG 오버레이 활성 상태 기록 및 캡처 중 일시 숨김 (잔상 및 왜곡 방지)
-  var hadMetroLine = !!(radar_metro_line && radar_metro_line.getMap());
-  var hadPSchoolLine = !!(radar_pSchool_line && radar_pSchool_line.getMap());
-  var hadMSchoolLines = (radar_mSchool_lines || []).map(function (l) { return !!(l && l.getMap()); });
-
-  radar_circles.forEach(function (c) { if (c) c.setMap(null); });
-  if (radar_metro_line) radar_metro_line.setMap(null);
-  if (radar_pSchool_line) radar_pSchool_line.setMap(null);
-  (radar_mSchool_lines || []).forEach(function (l) { if (l) l.setMap(null); });
-
-  var scale = 2; // html2canvas scale 동기화
-
-  // 2026-11-07: map.getBounds() 선형 보간 기반 100% 무결점 화면 픽셀 좌표 변환
-  function getMapPixelOffset(coord) {
-    if (!coord || !radarMapInstance) return null;
-    try {
-      var bounds = radarMapInstance.getBounds();
-      if (!bounds) return null;
-      var sw = bounds.getSW();
-      var ne = bounds.getNE();
-      var lngSpan = ne.lng() - sw.lng();
-      var latSpan = ne.lat() - sw.lat();
-      if (lngSpan <= 0 || latSpan <= 0) return null;
-
-      var targetLng = typeof coord.lng === 'function' ? coord.lng() : Number(coord.x || coord.lng);
-      var targetLat = typeof coord.lat === 'function' ? coord.lat() : Number(coord.y || coord.lat);
-
-      var px = ((targetLng - sw.lng()) / lngSpan) * mapW;
-      var py = ((ne.lat() - targetLat) / latSpan) * mapH;
-      return { x: px, y: py };
-    } catch (e) {
-      console.warn("좌표 투영 오류:", e);
-      return null;
+    if (!aptCenter && radar_circles.length && radar_circles[0]) {
+      aptCenter = radar_circles[0].getCenter();
     }
-  }
 
-  // 단지 중심점 안전 추출
-  var aptCenter = window.currentRadarCenter;
-  if (!aptCenter && window.currentRadarAptData) {
-    var lat = Number(window.currentRadarAptData["Y"] || window.currentRadarAptData["lat"]);
-    var lng = Number(window.currentRadarAptData["X"] || window.currentRadarAptData["lng"]);
-    if (lat && lng) aptCenter = new naver.maps.LatLng(lat, lng);
-  }
-  if (!aptCenter && radar_circles.length && radar_circles[0]) {
-    aptCenter = radar_circles[0].getCenter();
-  }
+    var origMapCenter = (radarMapInstance && typeof radarMapInstance.getCenter === 'function')
+      ? radarMapInstance.getCenter()
+      : null;
 
-  // 2026-11-07: 반경원 및 거리표시선 공통 렌더러 (단지 중심점 1개에만 정밀 결합)
-  function drawRadarVectorOverlays(targetCtx, s) {
-    if (!targetCtx || !aptCenter) return;
+    // 5. 아파트 마커를 지도 정중앙으로 이동 후 idle 및 타일 이미지 로딩 완료 대기
+    function centerMapAndWaitTiles(done) {
+      if (!radarMapInstance || !aptCenter || typeof radarMapInstance.setCenter !== 'function') {
+        done();
+        return;
+      }
 
-    var centerPt = getMapPixelOffset(aptCenter);
-    if (!centerPt) return;
+      var finished = false;
+      var idleListener = null;
+      var idleTimer = null;
 
-    // A. 반경원표시 (250m, 500m, 1km, 3km, 5km)
-    var activeRadii = [250, 500, 1000, 3000, 5000];
+      function waitTilesThenFinish() {
+        if (finished) return;
+        finished = true;
+        if (idleListener && typeof naver !== 'undefined' && naver.maps && naver.maps.Event) {
+          try { naver.maps.Event.removeListener(idleListener); } catch (e) {}
+        }
+        clearTimeout(idleTimer);
 
-    activeRadii.forEach(function (radius) {
-      var northCoord = radarMoveLatLng(aptCenter, radius, 'N');
-      var northPt = getMapPixelOffset(northCoord);
-      if (northPt) {
-        var radiusPx = Math.abs(centerPt.y - northPt.y);
-        targetCtx.save();
-        targetCtx.beginPath();
-        targetCtx.arc(centerPt.x * s, centerPt.y * s, radiusPx * s, 0, 2 * Math.PI);
-        targetCtx.strokeStyle = '#E43B46';
-        targetCtx.globalAlpha = 0.45;
-        targetCtx.lineWidth = 1.3 * s;
-        targetCtx.stroke();
-        targetCtx.restore();
-
-        // 반경 레이블 뱃지 (250m, 500m, 1km, 3km, 5km)
-        targetCtx.save();
-        var labelText = radius >= 1000 ? (radius / 1000) + "km" : radius + "m";
-        targetCtx.font = "bold " + Math.round(10 * s) + "px sans-serif";
-        var textW = targetCtx.measureText(labelText).width;
-        var badgeW = textW + (10 * s);
-        var badgeH = 15 * s;
-        var badgeX = (centerPt.x * s) - (badgeW / 2);
-        var badgeY = (centerPt.y * s) - (radiusPx * s) - (badgeH / 2);
-
-        // 화면 영역 안에 위치할 때만 뱃지 표시
-        if (badgeY >= 0 && badgeY <= mapH * s && badgeX >= 0 && badgeX <= mapW * s) {
-          targetCtx.fillStyle = "rgba(45, 55, 72, 0.75)";
-          targetCtx.beginPath();
-          if (targetCtx.roundRect) {
-            targetCtx.roundRect(badgeX, badgeY, badgeW, badgeH, 3 * s);
-          } else {
-            targetCtx.rect(badgeX, badgeY, badgeW, badgeH);
+        var startWait = Date.now();
+        function checkTiles() {
+          var allLoaded = true;
+          if (mapElement) {
+            var imgs = mapElement.getElementsByTagName('img');
+            for (var i = 0; i < imgs.length; i++) {
+              if (imgs[i].src && !imgs[i].complete) {
+                allLoaded = false;
+                break;
+              }
+            }
           }
-          targetCtx.fill();
-          targetCtx.fillStyle = "#ffffff";
-          targetCtx.textAlign = "center";
-          targetCtx.textBaseline = "middle";
-          targetCtx.fillText(labelText, centerPt.x * s, badgeY + (badgeH / 2));
+          if (allLoaded || (Date.now() - startWait) > 800) {
+            setTimeout(done, 120);
+          } else {
+            setTimeout(checkTiles, 70);
+          }
         }
-        targetCtx.restore();
+        checkTiles();
       }
-    });
 
-    // B. 지하철역 직선거리 점선 (radar_metro_line)
-    if (radar_metro_line && hadMetroLine) {
-      var metroPath = radar_metro_line.getPath();
-      if (metroPath && metroPath.getLength && metroPath.getLength() >= 2) {
-        var p1 = getMapPixelOffset(metroPath.getAt(0));
-        var p2 = getMapPixelOffset(metroPath.getAt(1));
-        if (p1 && p2) {
-          targetCtx.save();
-          targetCtx.beginPath();
-          targetCtx.setLineDash([4 * s, 3 * s]);
-          targetCtx.strokeStyle = radarColorCode['지하철역'] || '#3F5682';
-          targetCtx.lineWidth = 2 * s;
-          targetCtx.moveTo(p1.x * s, p1.y * s);
-          targetCtx.lineTo(p2.x * s, p2.y * s);
-          targetCtx.stroke();
-          targetCtx.restore();
+      try {
+        if (typeof naver !== 'undefined' && naver.maps && naver.maps.Event) {
+          idleListener = naver.maps.Event.once(radarMapInstance, 'idle', waitTilesThenFinish);
         }
+        radarMapInstance.setCenter(aptCenter);
+      } catch (e) {
+        waitTilesThenFinish();
+        return;
       }
+
+      // 이미 중앙에 있어 idle 이벤트가 발생하지 않는 경우를 대비한 안전 타이머
+      idleTimer = setTimeout(waitTilesThenFinish, 260);
     }
 
-    // C. 초등학교 직선거리 점선 (radar_pSchool_line)
-    if (radar_pSchool_line && hadPSchoolLine) {
-      var pPath = radar_pSchool_line.getPath();
-      if (pPath && pPath.getLength && pPath.getLength() >= 2) {
-        var p1 = getMapPixelOffset(pPath.getAt(0));
-        var p2 = getMapPixelOffset(pPath.getAt(1));
-        if (p1 && p2) {
-          targetCtx.save();
-          targetCtx.beginPath();
-          targetCtx.setLineDash([4 * s, 3 * s]);
-          targetCtx.strokeStyle = radarColorCode['초등학교'] || '#C49B00';
-          targetCtx.lineWidth = 2 * s;
-          targetCtx.moveTo(p1.x * s, p1.y * s);
-          targetCtx.lineTo(p2.x * s, p2.y * s);
-          targetCtx.stroke();
-          targetCtx.restore();
+    centerMapAndWaitTiles(function () {
+      // 6. 제외 대상 숨김 처리 (줌 컨트롤 +/- 및 독립 페이지 상단 타이틀 바)
+      var hadZoomControl = true;
+      if (window.radarMapInstance && typeof window.radarMapInstance.getOptions === 'function') {
+        try {
+          hadZoomControl = !!window.radarMapInstance.getOptions('zoomControl');
+        } catch (e) {
+          hadZoomControl = true;
         }
       }
-    }
+      if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function') {
+        try {
+          window.radarMapInstance.setOptions({ zoomControl: false });
+        } catch (e) {}
+      }
 
-    // D. 중학교 직선거리 점선들 (radar_mSchool_lines)
-    if (radar_mSchool_lines && radar_mSchool_lines.length) {
-      radar_mSchool_lines.forEach(function (mLine, mIdx) {
-        if (mLine && hadMSchoolLines[mIdx]) {
-          var mPath = mLine.getPath();
-          if (mPath && mPath.getLength && mPath.getLength() >= 2) {
-            var p1 = getMapPixelOffset(mPath.getAt(0));
-            var p2 = getMapPixelOffset(mPath.getAt(1));
+      var $zoomControls = $(captureTarget).find('*').filter(function () {
+        var txt = $(this).text().trim();
+        var title = $(this).attr('title') || '';
+        return (txt === '+' || txt === '-' || txt === '−' || txt === '+\n-' || title.indexOf('확대') !== -1 || title.indexOf('축소') !== -1);
+      }).closest('div');
+      var $titleBar = $("#titleBar_radar");
+      var titleBarDisplay = $titleBar.css("display");
+
+      $zoomControls.hide();
+      $titleBar.hide();
+
+      // 7. 단지 요약 카드 스타일 최적화 (모바일 vs 웹 완벽 분리)
+      var $aptWrap = $("#radarAptInfoWrap");
+      var origWrapStyle = $aptWrap.attr("style") || "";
+      var origWrapDisplay = $aptWrap.css("display");
+
+      var $aptMobile = $("#apt_info_mobile");
+      var origMobileStyle = $aptMobile.attr("style") || "";
+
+      var $aptBody = $("#apt_info_body");
+      var origBodyStyle = $aptBody.attr("style") || "";
+
+      var $backBtn = $("#iframe_back");
+      var origBackStyle = $backBtn.attr("style") || "";
+
+      if (isMobileDevice) {
+        $aptWrap.css({
+          'display': 'block',
+          'position': 'absolute',
+          'top': '12px',
+          'left': '12px',
+          'width': 'auto',
+          'z-index': 200000,
+          'pointer-events': 'none'
+        });
+        $aptMobile.css({
+          'position': 'relative',
+          'top': '0px',
+          'left': '0px',
+          'width': 'auto',
+          'max-width': (mapW - 24) + 'px',
+          'padding': '0px',
+          'border-radius': '8px',
+          'box-shadow': '0 4px 16px rgba(0, 0, 0, 0.14)',
+          'background-color': 'rgba(255, 255, 255, 0.92)',
+          'border': '1px solid rgba(0, 0, 0, 0.06)',
+          'pointer-events': 'auto'
+        });
+        // 2026-11-07: 모바일 캡처 시 타이틀 좌측 "<"(#iframe_back) 숨김 및 30px 그리드 여백 제거
+        $aptBody.css({
+          'display': 'block',
+          'grid-template-columns': 'none',
+          'padding': '8px 12px'
+        });
+        $backBtn.hide();
+      } else {
+        $aptWrap.css({
+          'display': 'block',
+          'position': 'absolute',
+          'top': '20px',
+          'left': '20px',
+          'width': 'auto',
+          'z-index': 200000,
+          'pointer-events': 'none'
+        });
+        $aptMobile.css({
+          'position': 'relative',
+          'top': '0px',
+          'left': '0px',
+          'width': '380px',
+          'padding': '12px 18px',
+          'border-radius': '10px',
+          'box-shadow': '0 8px 24px rgba(0, 0, 0, 0.16)',
+          'background-color': 'rgba(255, 255, 255, 0.94)',
+          'backdrop-filter': 'blur(8px)',
+          'border': '1px solid rgba(0, 0, 0, 0.08)',
+          'pointer-events': 'auto'
+        });
+        $aptBody.css({
+          'display': 'block',
+          'padding': '0px'
+        });
+        $backBtn.hide();
+      }
+
+      // 8. 네이버 지도 자체 SVG 오버레이 활성 상태 기록 및 캡처 중 일시 숨김 (잔상 및 왜곡 방지)
+      var hadMetroLine = !!(radar_metro_line && radar_metro_line.getMap());
+      var hadPSchoolLine = !!(radar_pSchool_line && radar_pSchool_line.getMap());
+      var hadMSchoolLines = (radar_mSchool_lines || []).map(function (l) { return !!(l && l.getMap()); });
+
+      var visibleMarketPolygons = (radar_market_polygons || []).filter(function (p) { return p && p.getMap(); });
+      var visibleAcademyPolygons = (radar_academy_polygons || []).filter(function (p) { return p && p.getMap(); });
+
+      radar_circles.forEach(function (c) { if (c) c.setMap(null); });
+      if (radar_metro_line) radar_metro_line.setMap(null);
+      if (radar_pSchool_line) radar_pSchool_line.setMap(null);
+      (radar_mSchool_lines || []).forEach(function (l) { if (l) l.setMap(null); });
+      visibleMarketPolygons.forEach(function (p) { p.setMap(null); });
+      visibleAcademyPolygons.forEach(function (p) { p.setMap(null); });
+
+      var scale = 2; // html2canvas scale 옵션 값
+
+      // 2026-11-07: 최하단 z-depth 벡터 언더레이 캔버스 준비
+      // 네이버 지도 타일 바로 위이자 모든 마커/거리뱃지/라벨/단지카드 아래인 overlayLayer의 첫 번째 자식(firstChild)에 배치한다.
+      var underlayCanvas = document.createElement('canvas');
+      underlayCanvas.id = 'radarTempVectorCanvas';
+      underlayCanvas.width = Math.round(mapW * scale);
+      underlayCanvas.height = Math.round(mapH * scale);
+      underlayCanvas.style.cssText = 'position:absolute;left:0px;top:0px;width:' + mapW + 'px;height:' + mapH + 'px;pointer-events:none;';
+
+      var vectorUnderlay = null;
+      var underlayPane = null;
+      var paneOffsetX = 0;
+      var paneOffsetY = 0;
+      var underlayRendered = false;
+
+      if (radarMapInstance && typeof naver !== 'undefined' && naver.maps && typeof naver.maps.OverlayView === 'function') {
+        try {
+          vectorUnderlay = new naver.maps.OverlayView();
+          vectorUnderlay.onAdd = function () {
+            var panes = this.getPanes && this.getPanes();
+            underlayPane = panes ? panes.overlayLayer : null;
+            if (underlayPane) {
+              if (underlayPane.firstChild) {
+                underlayPane.insertBefore(underlayCanvas, underlayPane.firstChild);
+              } else {
+                underlayPane.appendChild(underlayCanvas);
+              }
+            }
+          };
+          vectorUnderlay.draw = function () {};
+          vectorUnderlay.onRemove = function () {
+            if (underlayCanvas && underlayCanvas.parentNode) {
+              underlayCanvas.parentNode.removeChild(underlayCanvas);
+            }
+          };
+          vectorUnderlay.setMap(radarMapInstance);
+        } catch (e) {
+          console.warn("벡터 언더레이 레이어 생성 경고:", e);
+        }
+      }
+
+      // 2026-11-07: 위경도 -> 지도 컨테이너 기준 픽셀(CSS px) 변환
+      // 1순위: OverlayView 공식 MapCanvasProjection.fromCoordToOffset (마커/커스텀오버레이와 서브픽셀 단위로 100% 일치)
+      // 2순위: map.getBounds() 선형 보간 (백업)
+      function getMapPixelOffset(coord) {
+        if (!coord || !radarMapInstance) return null;
+        try {
+          if (vectorUnderlay && underlayPane && typeof vectorUnderlay.getProjection === 'function') {
+            var canvasProj = vectorUnderlay.getProjection();
+            if (canvasProj && typeof canvasProj.fromCoordToOffset === 'function') {
+              var cOff = canvasProj.fromCoordToOffset(coord);
+              if (cOff && isFinite(cOff.x) && isFinite(cOff.y)) {
+                return { x: cOff.x - paneOffsetX, y: cOff.y - paneOffsetY };
+              }
+            }
+          }
+        } catch (e) {}
+        try {
+          var proj = radarMapInstance.getProjection && radarMapInstance.getProjection();
+          if (proj && typeof proj.fromCoordToOffset === 'function') {
+            var off = proj.fromCoordToOffset(coord);
+            if (off && isFinite(off.x) && isFinite(off.y)) return { x: off.x, y: off.y };
+          }
+        } catch (e) {}
+        try {
+          var bounds = radarMapInstance.getBounds();
+          if (!bounds) return null;
+          var sw = bounds.getSW();
+          var ne = bounds.getNE();
+          var lngSpan = ne.lng() - sw.lng();
+          var latSpan = ne.lat() - sw.lat();
+          if (lngSpan <= 0 || latSpan <= 0) return null;
+
+          var targetLng = typeof coord.lng === 'function' ? coord.lng() : Number(coord.x || coord.lng);
+          var targetLat = typeof coord.lat === 'function' ? coord.lat() : Number(coord.y || coord.lat);
+
+          var px = ((targetLng - sw.lng()) / lngSpan) * mapW;
+          var py = ((ne.lat() - targetLat) / latSpan) * mapH;
+          return { x: px, y: py };
+        } catch (e) {
+          console.warn("좌표 투영 오류:", e);
+          return null;
+        }
+      }
+
+      // 2026-11-07: naver KVOArray / 일반 배열 모두 지원하는 배열 변환 헬퍼
+      function toPlainArray(arr) {
+        if (!arr) return [];
+        if (typeof arr.getArray === 'function') return arr.getArray();
+        return Array.isArray(arr) ? arr : [];
+      }
+
+      // 2026-11-07: 상권/학원가 폴리곤 캔버스 직접 렌더링 (테두리 + 반투명 채우기)
+      function drawPolygonsOnCanvas(targetCtx, s, polygons, color) {
+        polygons.forEach(function (polygon) {
+          var paths = toPlainArray(polygon.getPaths ? polygon.getPaths() : [polygon.getPath()]);
+          if (paths.length && paths[0] && typeof paths[0].lat === 'function') paths = [paths];
+          targetCtx.save();
+          targetCtx.beginPath();
+          paths.forEach(function (path) {
+            toPlainArray(path).forEach(function (coord, idx) {
+              var pt = getMapPixelOffset(coord);
+              if (!pt) return;
+              if (idx === 0) targetCtx.moveTo(pt.x * s, pt.y * s);
+              else targetCtx.lineTo(pt.x * s, pt.y * s);
+            });
+            targetCtx.closePath();
+          });
+          targetCtx.globalAlpha = 0.2;
+          targetCtx.fillStyle = color;
+          targetCtx.fill('evenodd');
+          targetCtx.globalAlpha = 0.8;
+          targetCtx.strokeStyle = color;
+          targetCtx.lineWidth = 2 * s;
+          targetCtx.stroke();
+          targetCtx.restore();
+        });
+      }
+
+      // 2026-11-07: 반경라인 + 거리선 + 폴리곤 최하단 z-depth 렌더러 (단지 중심점 1개에만 정밀 결합)
+      function drawRadarVectorOverlays(targetCtx, s) {
+        if (!targetCtx || !aptCenter) return;
+
+        var centerPt = getMapPixelOffset(aptCenter);
+        if (!centerPt) return;
+
+        // A. 반경라인 표시 (250m, 500m, 1km, 3km, 5km) - 가장 아래 z-depth
+        var activeRadii = [250, 500, 1000, 3000, 5000];
+
+        activeRadii.forEach(function (radius) {
+          var northCoord = radarMoveLatLng(aptCenter, radius, 'N');
+          var northPt = getMapPixelOffset(northCoord);
+          if (northPt) {
+            var radiusPx = Math.abs(centerPt.y - northPt.y);
+            targetCtx.save();
+            targetCtx.beginPath();
+            targetCtx.arc(centerPt.x * s, centerPt.y * s, radiusPx * s, 0, 2 * Math.PI);
+            targetCtx.strokeStyle = '#E43B46';
+            targetCtx.globalAlpha = 0.45;
+            targetCtx.lineWidth = 1.3 * s;
+            targetCtx.stroke();
+            targetCtx.restore();
+          }
+        });
+
+        // B. 지하철역 직선거리 점선 (radar_metro_line)
+        if (radar_metro_line && hadMetroLine) {
+          var metroPath = radar_metro_line.getPath();
+          if (metroPath && metroPath.getLength && metroPath.getLength() >= 2) {
+            var p1 = getMapPixelOffset(metroPath.getAt(0));
+            var p2 = getMapPixelOffset(metroPath.getAt(1));
             if (p1 && p2) {
               targetCtx.save();
               targetCtx.beginPath();
               targetCtx.setLineDash([4 * s, 3 * s]);
-              targetCtx.strokeStyle = radarColorCode['중학교'] || '#6D872C';
+              targetCtx.strokeStyle = radarColorCode['지하철역'] || '#3F5682';
               targetCtx.lineWidth = 2 * s;
               targetCtx.moveTo(p1.x * s, p1.y * s);
               targetCtx.lineTo(p2.x * s, p2.y * s);
@@ -2696,177 +2877,347 @@ function captureRadarMapView(event) {
             }
           }
         }
+
+        // C. 초등학교 직선거리 점선 (radar_pSchool_line)
+        if (radar_pSchool_line && hadPSchoolLine) {
+          var pPath = radar_pSchool_line.getPath();
+          if (pPath && pPath.getLength && pPath.getLength() >= 2) {
+            var p1 = getMapPixelOffset(pPath.getAt(0));
+            var p2 = getMapPixelOffset(pPath.getAt(1));
+            if (p1 && p2) {
+              targetCtx.save();
+              targetCtx.beginPath();
+              targetCtx.setLineDash([4 * s, 3 * s]);
+              targetCtx.strokeStyle = radarColorCode['초등학교'] || '#C49B00';
+              targetCtx.lineWidth = 2 * s;
+              targetCtx.moveTo(p1.x * s, p1.y * s);
+              targetCtx.lineTo(p2.x * s, p2.y * s);
+              targetCtx.stroke();
+              targetCtx.restore();
+            }
+          }
+        }
+
+        // D. 중학교 직선거리 점선들 (radar_mSchool_lines)
+        if (radar_mSchool_lines && radar_mSchool_lines.length) {
+          radar_mSchool_lines.forEach(function (mLine, mIdx) {
+            if (mLine && hadMSchoolLines[mIdx]) {
+              var mPath = mLine.getPath();
+              if (mPath && mPath.getLength && mPath.getLength() >= 2) {
+                var p1 = getMapPixelOffset(mPath.getAt(0));
+                var p2 = getMapPixelOffset(mPath.getAt(1));
+                if (p1 && p2) {
+                  targetCtx.save();
+                  targetCtx.beginPath();
+                  targetCtx.setLineDash([4 * s, 3 * s]);
+                  targetCtx.strokeStyle = radarColorCode['중학교'] || '#6D872C';
+                  targetCtx.lineWidth = 2 * s;
+                  targetCtx.moveTo(p1.x * s, p1.y * s);
+                  targetCtx.lineTo(p2.x * s, p2.y * s);
+                  targetCtx.stroke();
+                  targetCtx.restore();
+                }
+              }
+            }
+          });
+        }
+
+        // E. 상권/학원가 반투명 폴리곤
+        drawPolygonsOnCanvas(targetCtx, s, visibleMarketPolygons, radarColorCode['상권'] || '#8B2E2E');
+        drawPolygonsOnCanvas(targetCtx, s, visibleAcademyPolygons, radarColorCode['학원가'] || '#6A4C9C');
+      }
+
+      // SVG 네임스페이스 보정
+      var modifiedSvgs = [];
+      $(captureTarget).find('svg').each(function () {
+        var svg = this;
+        var origAttrs = {
+          xmlns: svg.getAttribute('xmlns'),
+          xmlnsXlink: svg.getAttribute('xmlns:xlink')
+        };
+
+        if (!svg.getAttribute('xmlns')) {
+          svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        }
+        if (!svg.getAttribute('xmlns:xlink')) {
+          svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+        }
+
+        modifiedSvgs.push({
+          svg: svg,
+          orig: origAttrs
+        });
       });
-    }
+
+      // 지도 및 DOM 상태 복구 헬퍼 함수 (멱등성 보장)
+      var domRestored = false;
+      function restoreMapAndDomState() {
+        if (domRestored) return;
+        domRestored = true;
+        clearInterval(progressTimer);
+        $titleBar.css("display", titleBarDisplay);
+        $zoomControls.show();
+
+        if (isDesktop && origTargetStyle) {
+          $(captureTarget).attr("style", origTargetStyle);
+        }
+
+        if (vectorUnderlay) {
+          try { vectorUnderlay.setMap(null); } catch (e) {}
+          vectorUnderlay = null;
+        }
+        if (underlayCanvas && underlayCanvas.parentNode) {
+          underlayCanvas.parentNode.removeChild(underlayCanvas);
+        }
+
+        // 캡처 전 원래 지도 중심 위치 복원 (모바일 바텀시트 패닝 위치 등 유지)
+        if (radarMapInstance && origMapCenter && typeof radarMapInstance.setCenter === 'function') {
+          try { radarMapInstance.setCenter(origMapCenter); } catch (e) {}
+        }
+
+        // 네이버 지도 자체 오버레이 복원
+        radar_circles.forEach(function (c) { if (c) c.setMap(radarMapInstance); });
+        if (radar_metro_line && hadMetroLine) radar_metro_line.setMap(radarMapInstance);
+        if (radar_pSchool_line && hadPSchoolLine) radar_pSchool_line.setMap(radarMapInstance);
+        (radar_mSchool_lines || []).forEach(function (l, idx) {
+          if (l && hadMSchoolLines[idx]) l.setMap(radarMapInstance);
+        });
+        visibleMarketPolygons.forEach(function (p) { p.setMap(radarMapInstance); });
+        visibleAcademyPolygons.forEach(function (p) { p.setMap(radarMapInstance); });
+
+        if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function' && hadZoomControl) {
+          try {
+            window.radarMapInstance.setOptions({ zoomControl: true });
+          } catch (e) {}
+        }
+
+        if ($aptWrap.length) {
+          $aptWrap.attr("style", origWrapStyle);
+          $aptWrap.css("display", origWrapDisplay);
+        }
+        if ($aptMobile.length) {
+          $aptMobile.attr("style", origMobileStyle);
+        }
+        if ($aptBody.length) {
+          $aptBody.attr("style", origBodyStyle);
+        }
+        if ($backBtn.length) {
+          $backBtn.attr("style", origBackStyle);
+        }
+
+        modifiedSvgs.forEach(function (item) {
+          if (item.orig.xmlns) item.svg.setAttribute('xmlns', item.orig.xmlns);
+          else item.svg.removeAttribute('xmlns');
+          if (item.orig.xmlnsXlink) item.svg.setAttribute('xmlns:xlink', item.orig.xmlnsXlink);
+          else item.svg.removeAttribute('xmlns:xlink');
+        });
+      }
+
+      function restoreAllOnError() {
+        restoreMapAndDomState();
+        finishButtonState();
+      }
+
+      // 9. 80ms 레이아웃 안정화 후 최하단 언더레이 드로잉 및 html2canvas 실행
+      setTimeout(function () {
+        updateProgress(40);
+
+        try {
+          if (underlayPane && underlayCanvas && underlayCanvas.parentNode === underlayPane && mapElement) {
+            if (underlayPane.firstChild !== underlayCanvas) {
+              underlayPane.insertBefore(underlayCanvas, underlayPane.firstChild);
+            }
+            var mapRect = mapElement.getBoundingClientRect();
+            var paneRect = underlayPane.getBoundingClientRect();
+            paneOffsetX = mapRect.left - paneRect.left;
+            paneOffsetY = mapRect.top - paneRect.top;
+            underlayCanvas.style.left = paneOffsetX + 'px';
+            underlayCanvas.style.top = paneOffsetY + 'px';
+
+            var uCtx = underlayCanvas.getContext('2d');
+            uCtx.setTransform(1, 0, 0, 1, 0, 0);
+            uCtx.clearRect(0, 0, underlayCanvas.width, underlayCanvas.height);
+            drawRadarVectorOverlays(uCtx, scale);
+            underlayRendered = true;
+          }
+        } catch (uErr) {
+          console.warn("최하단 벡터 언더레이 선행 렌더링 경고:", uErr);
+        }
+
+        html2canvas(captureTarget, {
+          useCORS: true,
+          allowTaint: false,
+          scale: 2,
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: mapW,
+          height: mapH,
+          windowWidth: mapW,
+          windowHeight: mapH,
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
+          ignoreElements: function (el) {
+            if (!el) return false;
+            if (el.getAttribute && el.getAttribute('data-html2canvas-ignore') === 'true') return true;
+            if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
+            if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
+            if (el.id === 'titleBar_radar' || el.id === 'iframe_back') return true;
+            if (el.innerText && (el.innerText.trim() === '+' || el.innerText.trim() === '-' || el.innerText.trim() === '−' || el.innerText.trim() === '+\n-')) return true;
+            if (el.getAttribute && (el.getAttribute('title') === '확대' || el.getAttribute('title') === '축소')) return true;
+            if (el.className && typeof el.className === 'string' &&
+                (el.className.indexOf('naver-maps-control') !== -1 ||
+                 el.className.indexOf('nmap_zoom') !== -1 ||
+                 el.className.indexOf('nmap_btn_zoom') !== -1 ||
+                 el.className.indexOf('control') !== -1)) return true;
+            return false;
+          }
+        }).then(function (canvas) {
+          clearInterval(progressTimer);
+          updateProgress(90);
+
+          if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
+            restoreAllOnError();
+            alert("지도 캡처 영역 크기 오류로 이미지 생성에 실패했습니다. 화면을 확인 후 다시 시도해 주세요.");
+            return;
+          }
+
+          var realScale = (canvas.width / mapW) || 2;
+
+          if (!underlayRendered) {
+            try {
+              var fallbackCtx = canvas.getContext('2d');
+              fallbackCtx.setTransform(1, 0, 0, 1, 0, 0);
+              drawRadarVectorOverlays(fallbackCtx, realScale);
+            } catch (err) {
+              console.warn("캔버스 오버레이 폴백 렌더링 경고:", err);
+            }
+          }
+
+          try {
+            // 2026-11-07: price/index.html 캡처 결과와 동일한 리얼랭커스 상단 타이틀 및 하단 워터마크 합성
+            var headerHeight = Math.round(32 * realScale);
+            var footerHeight = Math.round(36 * realScale);
+            var finalCanvas = document.createElement('canvas');
+            finalCanvas.width = canvas.width;
+            finalCanvas.height = canvas.height + headerHeight + footerHeight;
+
+            var ctx = finalCanvas.getContext('2d');
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+            var padX = 10 * realScale;
+
+            // 상단 좌측 회색 타이틀 (YYYY년 MM월 DD일 주변 입지 환경 분석 | 리얼랭커스)
+            var headerTitle = yyyy + "년 " + mm + "월 " + dd + "일 주변 입지 환경 분석 | 리얼랭커스";
+            ctx.font = '600 ' + (11.5 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillStyle = '#64748b';
+            ctx.textBaseline = 'top';
+            ctx.fillText(headerTitle, padX, 10 * realScale);
+
+            // 상단 워터마크와 지도 영역 경계선 (#e2e8f0)
+            ctx.beginPath();
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1 * realScale;
+            ctx.moveTo(0, headerHeight - 0.5 * realScale);
+            ctx.lineTo(finalCanvas.width, headerHeight - 0.5 * realScale);
+            ctx.stroke();
+
+            // 본문 지도 이미지 렌더링
+            ctx.drawImage(canvas, 0, headerHeight);
+
+            // 하단 점선 구분선 (dashed line #e2e8f0 - price/index.html 100% 동일)
+            var lineY = headerHeight + canvas.height + 2 * realScale;
+            ctx.beginPath();
+            ctx.setLineDash([4 * realScale, 3 * realScale]);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1 * realScale;
+            ctx.moveTo(padX, lineY);
+            ctx.lineTo(finalCanvas.width - padX, lineY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 하단 좌측 캡처 일시 워터마크
+            ctx.font = (8 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillStyle = '#94a3b8';
+            ctx.textBaseline = 'top';
+            ctx.fillText('Captured at', padX, lineY + 7 * realScale);
+            ctx.fillText(captureDateTimeStr, padX, lineY + 17 * realScale);
+
+            // 하단 우측 리얼랭커스 브랜드 워터마크
+            var fontBrand = 'bold ' + (11 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            var fontSep = (10 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            var fontDomain = (11 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+            ctx.font = fontDomain;
+            var domainWidth = ctx.measureText('realrankus.com').width;
+            ctx.font = fontSep;
+            var sepWidth = ctx.measureText('|').width;
+            ctx.font = fontBrand;
+            var brandWidth = ctx.measureText('리얼랭커스').width;
+
+            var totalRightWidth = brandWidth + (4 * realScale) + sepWidth + (4 * realScale) + domainWidth;
+            var rightStartX = finalCanvas.width - padX - totalRightWidth;
+            var textY = lineY + 11 * realScale;
+
+            // 리얼랭커스 (브랜드 레드 #E43B46)
+            ctx.font = fontBrand;
+            ctx.fillStyle = '#E43B46';
+            ctx.fillText('리얼랭커스', rightStartX, textY);
+
+            // 구분선 | (#cbd5e1)
+            ctx.font = fontSep;
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillText('|', rightStartX + brandWidth + 4 * realScale, textY);
+
+            // realrankus.com (#64748b)
+            ctx.font = fontDomain;
+            ctx.fillStyle = '#64748b';
+            ctx.fillText('realrankus.com', rightStartX + brandWidth + 4 * realScale + sepWidth + 4 * realScale, textY);
+
+            updateProgress(97);
+
+            var base64Data = finalCanvas.toDataURL('image/png');
+            if (!base64Data || base64Data.length < 200 || base64Data === 'data:,') {
+              restoreAllOnError();
+              alert("생성된 이미지 데이터가 비어 있습니다 (0KB). 잠시 후 다시 시도해 주세요.");
+              return;
+            }
+
+            // 캔버스 직렬화 완료 즉시 지도 및 DOM 상태 원복
+            restoreMapAndDomState();
+
+            updateProgress(100);
+            // 100% 진행률을 사용자가 충분히 인지할 수 있도록 300ms 유지 (price/index.html 동일)
+            setTimeout(function () {
+              if (window.Android && typeof window.Android.downloadImage === 'function') {
+                window.Android.downloadImage(base64Data, filename);
+              } else {
+                var link = document.createElement('a');
+                link.download = filename;
+                link.href = base64Data;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+              finishButtonState();
+            }, 300);
+
+          } catch (err) {
+            restoreAllOnError();
+            console.error("이미지 변환 오류:", err);
+            alert("이미지 변환에 실패했습니다: " + err.message);
+          }
+        }).catch(function (err) {
+          restoreAllOnError();
+          console.error("html2canvas capture error:", err);
+          alert("캡처에 실패했습니다: " + err.message);
+        });
+      }, 80);
+    });
   }
-
-  // SVG 네임스페이스 보정
-  var modifiedSvgs = [];
-  $(captureTarget).find('svg').each(function () {
-    var svg = this;
-    var origAttrs = {
-      xmlns: svg.getAttribute('xmlns'),
-      xmlnsXlink: svg.getAttribute('xmlns:xlink')
-    };
-
-    if (!svg.getAttribute('xmlns')) {
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    }
-    if (!svg.getAttribute('xmlns:xlink')) {
-      svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-    }
-
-    modifiedSvgs.push({
-      svg: svg,
-      orig: origAttrs
-    });
-  });
-
-  // 복구 헬퍼 함수
-  function restoreDomState() {
-    clearInterval(progressTimer);
-    $titleBar.css("display", titleBarDisplay);
-    $zoomControls.show();
-
-    if (isDesktop && origTargetStyle) {
-      $(captureTarget).attr("style", origTargetStyle);
-    }
-
-    // 네이버 지도 자체 오버레이 복원
-    radar_circles.forEach(function (c) { if (c) c.setMap(radarMapInstance); });
-    if (radar_metro_line && hadMetroLine) radar_metro_line.setMap(radarMapInstance);
-    if (radar_pSchool_line && hadPSchoolLine) radar_pSchool_line.setMap(radarMapInstance);
-    (radar_mSchool_lines || []).forEach(function (l, idx) {
-      if (l && hadMSchoolLines[idx]) l.setMap(radarMapInstance);
-    });
-
-    if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function' && hadZoomControl) {
-      try {
-        window.radarMapInstance.setOptions({ zoomControl: true });
-      } catch (e) {}
-    }
-
-    if ($aptWrap.length) {
-      $aptWrap.attr("style", origWrapStyle);
-      $aptWrap.css("display", origWrapDisplay);
-    }
-    if ($aptMobile.length) {
-      $aptMobile.attr("style", origMobileStyle);
-    }
-    if ($aptBody.length) {
-      $aptBody.attr("style", origBodyStyle);
-    }
-    if ($backBtn.length) {
-      $backBtn.attr("style", origBackStyle);
-    }
-
-    modifiedSvgs.forEach(function (item) {
-      if (item.orig.xmlns) item.svg.setAttribute('xmlns', item.orig.xmlns);
-      else item.svg.removeAttribute('xmlns');
-      if (item.orig.xmlnsXlink) item.svg.setAttribute('xmlns:xlink', item.orig.xmlnsXlink);
-      else item.svg.removeAttribute('xmlns:xlink');
-    });
-
-    // 2026-11-07: 캡처 버튼을 원래 카메라 단독 아이콘으로 복원
-    $btn.removeClass("capturing-capsule")
-        .prop("disabled", false)
-        .html('<i class="fa-solid fa-camera"></i>');
-  }
-
-  // 8. 150ms 후 html2canvas 실행
-  setTimeout(function () {
-    updateProgress(35);
-    html2canvas(captureTarget, {
-      useCORS: true,
-      allowTaint: false,
-      scale: 2,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: mapW,
-      height: mapH,
-      windowWidth: mapW,
-      windowHeight: mapH,
-      x: 0,
-      y: 0,
-      scrollX: 0,
-      scrollY: 0,
-      ignoreElements: function (el) {
-        if (!el) return false;
-        if (el.getAttribute && el.getAttribute('data-html2canvas-ignore') === 'true') return true;
-        if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
-        if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
-        if (el.id === 'titleBar_radar') return true;
-        // 2026-11-07: 네이버 지도 줌 컨트롤(+/-) 요소는 캡처 이미지에서 완전 제외
-        if (el.innerText && (el.innerText.trim() === '+' || el.innerText.trim() === '-' || el.innerText.trim() === '−' || el.innerText.trim() === '+\n-')) return true;
-        if (el.getAttribute && (el.getAttribute('title') === '확대' || el.getAttribute('title') === '축소')) return true;
-        if (el.className && typeof el.className === 'string' &&
-            (el.className.indexOf('naver-maps-control') !== -1 ||
-             el.className.indexOf('nmap_zoom') !== -1 ||
-             el.className.indexOf('nmap_btn_zoom') !== -1 ||
-             el.className.indexOf('control') !== -1)) return true;
-        return false;
-      }
-    }).then(function (canvas) {
-      clearInterval(progressTimer);
-      updateProgress(90);
-
-      // 0KB 캔버스 방지 검증
-      if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
-        restoreDomState();
-        alert("지도 캡처 영역 크기 오류로 이미지 생성에 실패했습니다. 화면을 확인 후 다시 시도해 주세요.");
-        return;
-      }
-
-      // 2026-11-07: 캡처된 캔버스에 반경원 및 거리표시선 직접 2차 보장 렌더링
-      try {
-        var finalCtx = canvas.getContext('2d');
-        drawRadarVectorOverlays(finalCtx, scale);
-      } catch (err) {
-        console.warn("캔버스 오버레이 직접 렌더링 경고:", err);
-      }
-
-      updateProgress(96);
-
-      // 9. 이미지 다운로드 트리거 및 0KB 검증
-      try {
-        var base64Data = canvas.toDataURL('image/png');
-        if (!base64Data || base64Data.length < 200 || base64Data === 'data:,') {
-          restoreDomState();
-          alert("생성된 이미지 데이터가 비어 있습니다 (0KB). 잠시 후 다시 시도해 주세요.");
-          return;
-        }
-
-        updateProgress(100);
-
-        if (window.Android && typeof window.Android.downloadImage === 'function') {
-          window.Android.downloadImage(base64Data, filename);
-        } else {
-          var link = document.createElement('a');
-          link.download = filename;
-          link.href = base64Data;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-        if (typeof toastr !== 'undefined' && toastr.success) {
-          toastr.success(filename + " 저장 완료");
-        }
-
-        setTimeout(function () {
-          restoreDomState();
-        }, 500);
-
-      } catch (err) {
-        restoreDomState();
-        console.error("이미지 변환 오류:", err);
-        alert("이미지 변환에 실패했습니다: " + err.message);
-      }
-    }).catch(function (err) {
-      restoreDomState();
-      console.error("html2canvas capture error:", err);
-      alert("캡처에 실패했습니다: " + err.message);
-    });
-  }, 150);
 }
 
 // 2026-11-07: 네이버 부동산 및 호갱노노 링크 핸들러

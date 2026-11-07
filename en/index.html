@@ -150,7 +150,7 @@
   <script defer src="../js/distance.js?v=20260902" type="text/javascript"></script>
 
   <link href="../css/style_common.css" rel="stylesheet" />
-  <link href="../css/style.css?v=20260902" rel="stylesheet" />
+  <link href="../css/style.css?v=20261107_19" rel="stylesheet" />
   <link href="../css/slider.css" rel="stylesheet" />
   <link href="../css/style_board.css" rel="stylesheet" />
   <link href="../css/jquery-ui.css" rel="stylesheet" />
@@ -698,6 +698,15 @@
       </div>
     </div>
 
+    <!-- 2026-11-07: #radarDataList_wrapper 바깥 우측 상단 플로팅 캡처 버튼 (price/index.html 동일 UI) -->
+    <button type="button" id="radarMapCaptureBtn" class="radar-map-floating-capture-btn mobile-sheet-top-right" style="display: none;" onclick="captureRadarMapView(event)" data-html2canvas-ignore="true" title="Save Location Analysis Map">
+      <span class="btn_icon_wrap"><i class="fa-solid fa-camera"></i></span>
+      <span class="btn_progress_wrap">
+        <div class="spinner-border spinner-border-sm text-white" role="status"></div>
+        <span class="volume-capture-status">이미지 저장 중 (<span class="volume-capture-pct">0%</span>)</span>
+      </span>
+    </button>
+
     <!-- 하단 입지 정보 바텀시트 (radarMap.html dataList_wrapper 100% 동일) -->
     <div id="radarDataList_wrapper" style="display: none; position: fixed; z-index: 1000; width: 100%; background-color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; box-shadow: rgba(0, 0, 0, 0.06) 0px -6px 6px, rgba(0, 0, 0, 0.12) 0px -4px 4px; overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: 0.9em;">
       <div id="radarDataList" style="padding: 0px 5px 30px 5px;"></div>
@@ -729,7 +738,7 @@
 
   <script src="../js/i18n.js?v=20260604"></script>
   <script defer src="../js/gli_chart_renderer.js?v=20260614"></script>
-  <script defer src="../js/radar_modal_view.js?v=20261107_15"></script>
+  <script defer src="../js/radar_modal_view.js?v=20261107_20"></script>
   <script defer src="../js/app_main_lang.js?v=20261103_1"></script>
 </body>
 

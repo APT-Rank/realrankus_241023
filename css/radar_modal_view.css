@@ -1,5 +1,6 @@
 /* ==========================================================================
-   APT-Rank 풀스크린 레이더 맵 모달 전용 스타일 (radar_modal_view.css)
+   APT-Rank 레이더 맵 모달 & 단독 페이지 공통 스타일 (radar_modal_view.css)
+   수정일: 2026-11-07 (price/index.html 동일 Pill 확장/수축 플로팅 캡처 버튼 UI 및 모바일 시트 상단 우측 배치 적용)
    메인 사이트(index.html)와 완벽히 격리된 독립 네임스페이스 스타일
    ========================================================================== */
 
@@ -173,98 +174,140 @@
   padding-right: 2px;
 }
 
-.radar-floating-capture-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #1e293b;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  padding: 0;
-  font-size: 0.95rem;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-  transition: transform 0.15s ease, background-color 0.15s ease;
-  white-space: nowrap;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.radar-floating-capture-btn:hover {
-  background: #0f172a;
-}
-
-.radar-floating-capture-btn:active {
-  transform: scale(0.92);
-}
-
-/* 2026-11-07: radarMap 지도 우측 하단 플로팅 캡쳐 버튼 (카메라 아이콘 전용) */
+/* 2026-11-07: price/index.html과 100% 동일한 라운드 박스(Pill) 캡처 플로팅 버튼 UI 및 좌측 확장/수축 애니메이션 */
+.radar-floating-capture-btn,
 .radar-map-floating-capture-btn {
-  position: absolute;
+  position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 1000;
-  display: inline-flex;
+  left: auto;
+  width: 52px;
+  height: 52px;
+  min-width: 0;
+  border-radius: 26px; /* 52px 높이의 절반 고정: 52x52일 땐 원형, 가로 확장 시 매끄러운 캡슐 */
+  background-color: #E43B46;
+  color: #ffffff;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1e293b;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  padding: 0;
-  font-size: 1.15rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
   cursor: pointer;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
+  z-index: 100002;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  transition: width 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.radar-map-floating-capture-btn:hover {
-  background-color: #0f172a;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+.radar-map-floating-capture-btn[style*="display: block"],
+.radar-floating-capture-btn[style*="display: block"] {
+  display: flex !important;
 }
 
-.radar-map-floating-capture-btn:active {
-  transform: scale(0.94);
+/* 모바일 #radarDataList_wrapper 바깥 우측 상단 플로팅 배치 */
+.radar-map-floating-capture-btn.mobile-sheet-top-right {
+  position: fixed;
+  right: 14px;
+  bottom: auto;
+  z-index: 200002;
 }
 
-/* 2026-11-07: 캡처 진행 중 캡슐형 확장 버튼 스타일 (진행률 ###% 실시간 표시) */
-.radar-map-floating-capture-btn.capturing-capsule,
-.radar-floating-capture-btn.capturing-capsule {
-  width: auto !important;
-  min-width: 176px !important;
-  height: 42px !important;
-  border-radius: 24px !important;
-  padding: 0 18px !important;
-  background-color: #E43B46 !important;
-  color: #ffffff !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.3px !important;
-  box-shadow: 0 4px 16px rgba(228, 59, 70, 0.45) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  white-space: nowrap !important;
-  cursor: wait !important;
-  z-index: 200001 !important;
-  transform: none !important;
+.radar-map-floating-capture-btn .btn_icon_wrap,
+.radar-floating-capture-btn .btn_icon_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
+  color: #ffffff;
+  flex-shrink: 0;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s, transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s;
+}
+
+.radar-map-floating-capture-btn .btn_progress_wrap,
+.radar-floating-capture-btn .btn_progress_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  white-space: nowrap;
+}
+
+.radar-map-floating-capture-btn .btn_progress_wrap .spinner-border,
+.radar-floating-capture-btn .btn_progress_wrap .spinner-border {
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.radar-map-floating-capture-btn .volume-capture-status,
+.radar-floating-capture-btn .volume-capture-status {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.radar-map-floating-capture-btn .volume-capture-pct,
+.radar-floating-capture-btn .volume-capture-pct {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  display: inline-block;
+  min-width: 30px;
+  text-align: right;
+}
+
+.radar-map-floating-capture-btn.is-capturing,
+.radar-floating-capture-btn.is-capturing {
+  width: 178px !important;
   pointer-events: none !important;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: default !important;
+  transform: none !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.26) !important;
+  z-index: 200003 !important;
 }
 
-.radar-map-floating-capture-btn.capturing-capsule i,
-.radar-floating-capture-btn.capturing-capsule i {
-  font-size: 14px;
+.radar-map-floating-capture-btn.is-capturing .btn_icon_wrap,
+.radar-floating-capture-btn.is-capturing .btn_icon_wrap {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.radar-map-floating-capture-btn.is-capturing .btn_progress_wrap,
+.radar-floating-capture-btn.is-capturing .btn_progress_wrap {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s;
+}
+
+.radar-map-floating-capture-btn:hover,
+.radar-floating-capture-btn:hover {
+  transform: scale(1.05);
+  background-color: #d32f3a;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.28);
+}
+
+.radar-map-floating-capture-btn:active,
+.radar-floating-capture-btn:active {
+  transform: scale(0.95);
+  background-color: #b91c1c;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* 바텀시트 상단 드래그 핸들 (모바일 전용) */
