@@ -2035,33 +2035,41 @@ function initRadarModalMap(aptData) {
     grade = "gradeC";
   }
 
-  var large_marker_size = 40;
+  // 2026-11-07: 모바일 브라우저 및 SVG 직렬화 최소 폰트 크기(8px) 강제 확대 현상 방지를 위해 viewBox를 400x400(10배 해상도)으로 확장
+  var large_marker_size = 400;
   var large_marker_id = 'large_marker_' + (aptData['검색코드'] || '');
   var sPrice_marker_id = 'sPrice_' + (aptData['검색코드'] || '');
   var area_marker_id = 'area_' + (aptData['검색코드'] || '');
+  var priceFontPx = (last_sales_price_kor && last_sales_price_kor.length >= 6) ? 56 : 66;
+  var areaFontPx = (last_sales_area_kor && last_sales_area_kor.length >= 12) ? 38 : ((last_sales_area_kor && last_sales_area_kor.length >= 10) ? 42 : 46);
+  var safeAttr = function (v) { return String(v || '').replace(/"/g, '&quot;'); };
 
   var svg_loc_large = `
-    <svg version="1.1" class='large_marker ${grade}' id="${large_marker_id}" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+    <svg version="1.1" class='large_marker ${grade}' id="${large_marker_id}"
+        data-marker-color="${svg_color}" data-grade="${safeAttr(complex_grade)}" data-price="${safeAttr(last_sales_price_kor)}" data-area="${safeAttr(last_sales_area_kor)}"
+        xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
         viewBox="0 0 ${large_marker_size} ${large_marker_size}" xml:space="preserve" width="${APT_marker_size_width}" height="${APT_marker_size_height}">
     <defs>
     <style>
     .${grade}{fill:${svg_color}}
     .large_marker_${grade} {stroke:${svg_color}; stroke-width:0.5;}
     .cls-2{fill:#fff;}
-    .cls-3_text{fill:#fff; font-size:8px; font-weight:600}
-    .cls-4_text{fill:#000; font-size:7px; font-weight:600}
-    .cls-5_text{fill:#000; font-size:5px; font-weight:600}
+    .cls-3_text{fill:#fff; font-size:78px; font-weight:700; font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; -webkit-text-size-adjust:none; text-size-adjust:none;}
+    .cls-4_text{fill:#000; font-size:${priceFontPx}px; font-weight:700; font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; -webkit-text-size-adjust:none; text-size-adjust:none;}
+    .cls-5_text{fill:#000; font-size:${areaFontPx}px; font-weight:600; font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; -webkit-text-size-adjust:none; text-size-adjust:none;}
     </style>
     <filter id="shadow" x="0%" y="0%" width="200%" height="200%">
       <feDropShadow dx="4" dy="8" stdDeviation="2" flood-color="rgba(0,0,0,0.4)" />
     </filter>
     </defs>
     <g class="svg_loc_large">
+    <g transform="scale(10)">
     <path class="cls-1 large_marker_${grade}" filter="url(#shadow)" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>
     <path class="cls-2 large_marker_${grade}" filter="url(#shadow)" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>
-    <text class="cls-3_text" text-anchor="middle" x="16.5" y="10">${complex_grade}</text>
-    <text class="cls-4_text" id="${sPrice_marker_id}" text-anchor="middle" x="17" y="20">${last_sales_price_kor}</text>
-    <text class="cls-5_text" id="${area_marker_id}" text-anchor="middle" x="17" y="26">${last_sales_area_kor}</text>
+    </g>
+    <text class="cls-3_text" text-anchor="middle" x="168" y="100">${complex_grade}</text>
+    <text class="cls-4_text" id="${sPrice_marker_id}" text-anchor="middle" x="168" y="198">${last_sales_price_kor}</text>
+    <text class="cls-5_text" id="${area_marker_id}" text-anchor="middle" x="168" y="258">${last_sales_area_kor}</text>
     </g>
     </svg>
   `;
@@ -3065,6 +3073,96 @@ function captureRadarMapView(event) {
         });
       });
 
+      // 2026-11-07: 모바일 html2canvas 캡처 시 SVG <text> 폰트 비대화 현상 원천 차단을 위해 단지 마커를 고해상도 Canvas로 임시 치환
+      var replacedMarkerSvgs = [];
+      if (typeof Path2D !== 'undefined') {
+        $(captureTarget).find('svg.large_marker').each(function () {
+          var svg = this;
+          try {
+            var wCss = Number(svg.getAttribute('width')) || Math.round(svg.getBoundingClientRect().width) || 70;
+            var hCss = Number(svg.getAttribute('height')) || Math.round(svg.getBoundingClientRect().height) || 70;
+            var dpr = 4;
+            var mCanvas = document.createElement('canvas');
+            mCanvas.width = wCss * dpr;
+            mCanvas.height = hCss * dpr;
+            mCanvas.style.cssText = 'display:block; width:' + wCss + 'px; height:' + hCss + 'px; pointer-events:none;';
+
+            var textNodes = svg.querySelectorAll('text');
+            var markerColor = svg.getAttribute('data-marker-color') || '#a70000';
+            var gradeTxt = svg.getAttribute('data-grade') || (textNodes[0] ? textNodes[0].textContent : '');
+            var priceTxt = svg.getAttribute('data-price') || (textNodes[1] ? textNodes[1].textContent : '');
+            var areaTxt = svg.getAttribute('data-area') || (textNodes[2] ? textNodes[2].textContent : '');
+
+            var mCtx = mCanvas.getContext('2d');
+            var uScale = (wCss * dpr) / 40;
+            var roofPath = new Path2D('M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z');
+            var bodyPath = new Path2D('M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z');
+
+            // 1) 그림자 패스
+            mCtx.save();
+            mCtx.scale(uScale, uScale);
+            mCtx.shadowColor = 'rgba(0, 0, 0, 0.36)';
+            mCtx.shadowBlur = 1.8 * uScale;
+            mCtx.shadowOffsetX = 2.0 * uScale;
+            mCtx.shadowOffsetY = 3.2 * uScale;
+            mCtx.fillStyle = markerColor;
+            mCtx.fill(roofPath);
+            mCtx.fillStyle = '#ffffff';
+            mCtx.fill(bodyPath);
+            mCtx.restore();
+
+            // 2) 지붕 및 본체 벡터 패스
+            mCtx.save();
+            mCtx.scale(uScale, uScale);
+            mCtx.lineWidth = 0.5;
+            mCtx.strokeStyle = markerColor;
+            mCtx.fillStyle = markerColor;
+            mCtx.fill(roofPath);
+            mCtx.stroke(roofPath);
+            mCtx.fillStyle = '#ffffff';
+            mCtx.fill(bodyPath);
+            mCtx.stroke(bodyPath);
+            mCtx.restore();
+
+            // 3) 텍스트 자동 폭 맞춤 렌더링 (마커 박스 내부 폭 30.2 유닛 이내 보장)
+            var centerX = 16.8 * uScale;
+            var maxTextW = 30.2 * uScale;
+            var fontStack = '"Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+            var drawFittedMarkerText = function (txt, yUnits, baseUnits, color, weight) {
+              if (!txt) return;
+              var px = baseUnits * uScale;
+              mCtx.font = weight + ' ' + px + 'px ' + fontStack;
+              var measured = mCtx.measureText(txt).width;
+              if (measured > maxTextW && measured > 0) {
+                px = px * (maxTextW / measured);
+                mCtx.font = weight + ' ' + px + 'px ' + fontStack;
+              }
+              mCtx.fillStyle = color;
+              mCtx.textAlign = 'center';
+              mCtx.textBaseline = 'alphabetic';
+              mCtx.fillText(txt, centerX, yUnits * uScale);
+            };
+
+            drawFittedMarkerText(gradeTxt, 10.0, 7.8, '#ffffff', '700');
+            drawFittedMarkerText(priceTxt, 19.8, 6.6, '#000000', '700');
+            drawFittedMarkerText(areaTxt, 25.8, 4.5, '#000000', '600');
+
+            var origSvgDisplay = svg.style.display;
+            svg.style.display = 'none';
+            if (svg.parentNode) {
+              svg.parentNode.insertBefore(mCanvas, svg);
+            }
+            replacedMarkerSvgs.push({
+              svg: svg,
+              origDisplay: origSvgDisplay,
+              canvas: mCanvas
+            });
+          } catch (mErr) {
+            console.warn('단지 마커 캔버스 치환 경고:', mErr);
+          }
+        });
+      }
+
       // 지도 및 DOM 상태 복구 헬퍼 함수 (멱등성 보장)
       var domRestored = false;
       function restoreMapAndDomState() {
@@ -3126,6 +3224,15 @@ function captureRadarMapView(event) {
           else item.svg.removeAttribute('xmlns');
           if (item.orig.xmlnsXlink) item.svg.setAttribute('xmlns:xlink', item.orig.xmlnsXlink);
           else item.svg.removeAttribute('xmlns:xlink');
+        });
+
+        replacedMarkerSvgs.forEach(function (item) {
+          if (item.canvas && item.canvas.parentNode) {
+            item.canvas.parentNode.removeChild(item.canvas);
+          }
+          if (item.svg) {
+            item.svg.style.display = item.origDisplay || '';
+          }
         });
       }
 
