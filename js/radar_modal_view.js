@@ -2305,8 +2305,10 @@ function initRadarModalMap(aptData) {
   $(".drink").hide();
   $(".motel").hide();
 
-  // 모바일 화면: 바텀시트에 가려지지 않도록 지도 중심을 아래로 110px 패닝 (단지 핀이 상단 1/2 영역에 위치)
-  map.panBy(new naver.maps.Point(0, 110));
+  // 2026-11-07: 모바일 화면에서만 바텀시트에 가려지지 않도록 지도 중심을 아래로 110px 패닝 (데스크톱은 정중앙 유지)
+  if (isMobileView) {
+    map.panBy(new naver.maps.Point(0, 110));
+  }
 
   // 줌 변경 시 동심원 및 거리 인덱스 표시 제어 (2026-11-07: 1km, 3km, 5km 원은 상시 유지)
   naver.maps.Event.addListener(map, 'zoom_changed', function () {
@@ -2800,8 +2802,23 @@ function captureRadarMapView(event) {
         if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
         if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
         if (el.id === 'titleBar_radar') return true;
-        // 2026-11-07: 네이버 지도 자체의 왜곡된 SVG circle/polyline 및 거리 마커 텍스트는 캡처에서 완전 제외 (상권/학원가 polygon은 보존)
+        // 2026-11-07: 네이버 지도 자체의 왜곡된 SVG 오버레이(동심원, 거리 점선 등) 및 텍스트 마커 완전 제외!
+        // (마커 SVG는 보존하고, 네이버 지도의 배경 벡터 오버레이 레이어는 100% 무시하여 상단 어긋남 버그 원천 차단)
         var tag = el.tagName ? el.tagName.toLowerCase() : '';
+        if (tag === 'svg') {
+          var cls = (el.getAttribute('class') || '') + ' ' + (typeof el.className === 'string' ? el.className : '');
+          var isMarkerSvg = cls.indexOf('large_marker') !== -1 ||
+                            cls.indexOf('edu_marker') !== -1 ||
+                            cls.indexOf('trans_marker') !== -1 ||
+                            cls.indexOf('infra_marker') !== -1 ||
+                            cls.indexOf('market') !== -1 ||
+                            cls.indexOf('department_store') !== -1 ||
+                            cls.indexOf('mall') !== -1 ||
+                            cls.indexOf('mart') !== -1 ||
+                            cls.indexOf('park') !== -1 ||
+                            cls.indexOf('harmful') !== -1;
+          if (!isMarkerSvg) return true;
+        }
         if (tag === 'circle' || tag === 'polyline') return true;
         if (el.className && typeof el.className === 'string' &&
             (el.className.indexOf('distance_index') !== -1 ||
