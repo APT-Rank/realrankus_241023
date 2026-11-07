@@ -2389,6 +2389,7 @@ function captureRadarMapView(event) {
     aptCenter = radar_circles[0].getCenter();
   }
 
+  // 2026-11-07: 캡처 시 아파트 단지 마커가 지도의 정중앙에 완벽히 오도록 지도 중심 강제 이동
   if (radarMapInstance && aptCenter) {
     radarMapInstance.setCenter(aptCenter);
   }
@@ -2776,7 +2777,7 @@ function captureRadarMapView(event) {
         .html('<i class="fa-solid fa-camera"></i>');
   }
 
-  // 8. 150ms 후 html2canvas 실행
+  // 8. 300ms 후 html2canvas 실행 (지도가 단지 중심으로 완전히 안착하도록 충분한 리플로우 대기)
   setTimeout(function () {
     updateProgress(35);
     html2canvas(captureTarget, {
@@ -2799,6 +2800,12 @@ function captureRadarMapView(event) {
         if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
         if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
         if (el.id === 'titleBar_radar') return true;
+        // 2026-11-07: 네이버 지도 자체의 왜곡된 SVG circle/polyline 및 거리 마커 텍스트는 캡처에서 완전 제외 (상권/학원가 polygon은 보존)
+        var tag = el.tagName ? el.tagName.toLowerCase() : '';
+        if (tag === 'circle' || tag === 'polyline') return true;
+        if (el.className && typeof el.className === 'string' &&
+            (el.className.indexOf('distance_index') !== -1 ||
+             el.className.indexOf('radius_') !== -1)) return true;
         // 2026-11-07: 네이버 지도 줌 컨트롤(+/-) 요소는 캡처 이미지에서 완전 제외
         if (el.innerText && (el.innerText.trim() === '+' || el.innerText.trim() === '-' || el.innerText.trim() === '−' || el.innerText.trim() === '+\n-')) return true;
         if (el.getAttribute && (el.getAttribute('title') === '확대' || el.getAttribute('title') === '축소')) return true;
