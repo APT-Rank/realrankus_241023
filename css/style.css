@@ -1680,6 +1680,40 @@
     color: black;
   }
 
+  /* 2026-11-07: 모바일 레이더 맵 모달 드래그 시 깜빡임(Flickering) 방지 및 GPU 하드웨어 가속 */
+  #radarModal {
+    background-color: #ffffff !important;
+    isolation: isolate;
+    contain: paint;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  #radarModalBg {
+    background-color: #ffffff !important;
+    pointer-events: none;
+  }
+
+  #radarDataMap {
+    background-color: #ffffff !important;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  #radarDataMap canvas,
+  #radarDataMap .nmap_pane,
+  #radarDataMap > div {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
   .table-striped {
     max-height: 200px;
   }

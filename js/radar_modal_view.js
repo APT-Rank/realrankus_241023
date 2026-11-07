@@ -2,7 +2,7 @@
  * ==========================================================================
  * APT-Rank 풀스크린 레이더 맵 모달 (RadarModalView)
  * 작성일: 2026-11-06 (초기 생성 및 radarMap.html 모바일 뷰 이식)
- * 수정일: 2026-11-07 (상권 마커 패스, 실거래가 차트/날짜 셀렉트 스타일 복구, 350ms Fade-in/out, 히스토리 안전 가드)
+ * 수정일: 2026-11-07 (상권 마커 패스, 실거래가 차트/날짜 셀렉트 스타일 복구, 350ms Fade-in/out, 히스토리 안전 가드, 드래그 깜빡임 방지용 흰색 백킹 및 GPU 가속 격리)
  * radarMap.html의 모바일 화면(isMobile=true) 및 map_control_radar.js와
  * 100% 동일한 DOM 구조, CSS 스타일링, 지도 마커, 차트 및 인터랙션을 제공합니다.
  * 메인 지도(defaultMap) 및 전역 변수와 완전히 격리되어 동작합니다.
@@ -133,6 +133,7 @@ function radarDrawPolygon(coords, options) {
   });
 }
 
+// 2026-11-07: 드래그 시 offsetWidth 강제 리플로우(Layout Thrashing) 방지 및 transform 중심 정렬 적용
 function RadarCustomOverlay(options) {
   var overlay = new naver.maps.OverlayView();
   var position = options.position;
@@ -150,7 +151,9 @@ function RadarCustomOverlay(options) {
     if (!projection) return;
     var pixel = projection.fromCoordToOffset(position);
     el.style.position = "absolute";
-    el.style.left = pixel.x - el.offsetWidth / 2 + 5 + "px";
+    el.style.left = pixel.x + 5 + "px";
+    el.style.transform = "translateX(-50%)";
+    el.style.webkitTransform = "translateX(-50%)";
     el.style.top = pixel.y - 45 + "px";
   };
 
@@ -1491,7 +1494,8 @@ function initRadarModalMap(aptData) {
     keyboardShortcuts: true,
     disableDoubleTapZoom: true,
     disableDoubleClickZoom: true,
-    disableTwoFingerTapZoom: true
+    disableTwoFingerTapZoom: true,
+    background: '#ffffff'
   };
 
   var mapTarget = document.getElementById("radarDataMap");
@@ -1501,7 +1505,15 @@ function initRadarModalMap(aptData) {
     radarMapInstance.destroy();
     radarMapInstance = null;
   }
-  $("#radarDataMap").empty();
+  // 2026-11-07: 드래그 시 하위 지도와의 그래픽 간섭 및 깜빡임 방지 (흰색 불투명 배경 + GPU 가속 레이어 지정)
+  $("#radarDataMap").empty().css({
+    'background-color': '#ffffff',
+    '-webkit-transform': 'translate3d(0, 0, 0)',
+    'transform': 'translate3d(0, 0, 0)',
+    '-webkit-backface-visibility': 'hidden',
+    'backface-visibility': 'hidden',
+    'will-change': 'transform'
+  });
 
   radarMapInstance = new naver.maps.Map(mapTarget, MapOptions);
   var map = radarMapInstance;
