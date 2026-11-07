@@ -4,6 +4,7 @@
  * 작성일: 2026-11-06 (초기 생성 및 radarMap.html 모바일 뷰 이식)
  * 수정일: 2026-11-07
  *   - radarMap.html(웹/모바일 단독 페이지) 및 index.html(모바일 풀스크린 모달) 통합 공통 엔진화
+ *   - 웹(radarMap.html) 및 모바일(#radarModal) 캡처 시 좌측 입지 요약(주거/교육/교통/인프라) + 우측 입지 지도 2단 가로 리포트 합성
  *   - 상권/학원가 폴리곤 렌더링, 실거래가 차트/날짜 셀렉트 복구, 350ms Fade-in/out, 히스토리 배열 정규화 가드
  *   - 캡처 시 아파트 중심 마커 정중앙 이동 후 타일 로드 대기 및 완료 후 원위치 복원
  *   - OverlayView(overlayLayer.firstChild) 최하단 z-depth 벡터 언더레이로 반경원/거리점선/폴리곤 정밀 합성
@@ -2527,11 +2528,301 @@ function initRadarModalMap(aptData) {
 
 // 2026-11-07: 입지 분석 지도 및 상단 반투명 요약 카드 이미지 캡처/다운로드 함수
 /**
+ * @function buildRadarDesktopSummaryDom
+ * @description 2026-11-07: 웹(radarMap.html) 및 모바일(#radarModal) 스크린샷 캡처 전용 좌측 입지 요약 패널 DOM 생성
+ * - 상단: 아파트명 + 등급(Rank), 준공년월(년차), 도로명/법정동 주소 그대로 유지
+ * - 하단: 주거 → 교육 → 교통(교통정보 없는 곳 생략) → 인프라 순서의 최소 핵심 요약 카드 구성
+ * @param {Object} aptData - 현재 단지 입지 분석 데이터 (window.currentRadarAptData)
+ * @param {number} panelWidth - 좌측 요약 패널 고정 폭 (CSS px)
+ * @returns {{ el: HTMLElement, hasTransport: boolean }}
+ */
+function buildRadarDesktopSummaryDom(aptData, panelWidth) {
+  var t = (typeof window.tSafe === 'function') ? window.tSafe : function (k, d) { return d; };
+  var isEn = (typeof LANG !== 'undefined' && LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
+  var scoreColor = (typeof SCORE_CHART_COLOR !== 'undefined') ? SCORE_CHART_COLOR : '#e43b46';
+
+  var escHtml = function (val) {
+    if (val === null || val === undefined) return '';
+    return String(val)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  };
+
+  var aptName = (isEn && aptData["APT_Name_EN"]) ? aptData["APT_Name_EN"] : (aptData["아파트명"] || "");
+  var apt_type = aptData["매매타입"] || "아파트";
+  var law_Address = (isEn && aptData["Law_Addr_EN"]) ? aptData["Law_Addr_EN"] : (aptData["법정동주소"] || "");
+  var road_Address = (isEn && aptData["Road_Addr_EN"]) ? aptData["Road_Addr_EN"] : (aptData["도로명주소"] || "");
+  var aptValue = Math.round((Number(aptData["가치 총점"]) || 0) * 100) / 100;
+  var aptDuration = aptData["준공년차"] || "";
+  var complex_grade = (typeof setGrade === 'function')
+    ? setGrade(aptValue)
+    : (aptValue >= 70 ? "S" : (aptValue >= 55 ? "A" : (aptValue >= 40 ? "B" : "C")));
+
+  var tReconstruction = t("ui.report.reconstruction", "재건축");
+  var tExpected = t("ui.report.presale_expected", "예정");
+  var tPresaleScheduled = t("ui.report.presale_scheduled", "분양예정");
+  var tYearsSuffix = t("ui.report.years_suffix", "년차");
+
+  var aptYear_val = aptData["준공년월"] || "";
+  if (isEn && aptYear_val) {
+    aptYear_val = new Date(aptYear_val).toLocaleString("en-US", { month: "short", year: "numeric" });
+  }
+  var aptYear = "";
+  if (apt_type == "아파트") { aptYear = aptYear_val + " (" + aptDuration + tYearsSuffix + ")"; }
+  else if (apt_type == "재건축") { aptYear = aptYear_val + " (" + aptDuration + tYearsSuffix + ", " + tReconstruction + ")"; }
+  else if (apt_type == "분양권") { aptYear = "(" + (isEn ? "Pre-sale" : "분양권") + ", " + aptYear_val + " " + tExpected + ")"; }
+  else if (apt_type == "분양(예정)") { aptYear = "(" + tPresaleScheduled + ")"; }
+
+  var stationArea = aptData["역세권여부"];
+  var hasTransport = (stationArea !== undefined && stationArea !== null &&
+    String(stationArea).trim() !== "" && String(stationArea).trim().toUpperCase() !== "NA");
+
+  var livingScoreNum = Math.max(0, Math.min(100, Number(aptData["주거총점"]) || 0));
+  var eduScoreNum = Math.max(0, Math.min(100, Number(aptData["학군총점"]) || 0));
+  var transScoreNum = Math.max(0, Math.min(100, Number(aptData["교통총점"]) || 0));
+  var infraScoreNum = Math.max(0, Math.min(100, Number(aptData["인프라총점"]) || 0));
+
+  var tCountSuffix = isEn ? "" : "개";
+
+  // 1) 주거 데이터
+  var house_num = aptData["세대수"];
+  var houseText = (house_num !== null && house_num !== undefined && house_num !== "")
+    ? (Number(house_num).toLocaleString() + t("ui.report.house_num_unit", "세대"))
+    : t("ui.report.undetermined", "미정");
+  var parking = aptData["주차"] || "-";
+  var heating = aptData["난방"] || "-";
+  var entrance = aptData["현관구조"] || "-";
+  if (isEn) {
+    if (parking === "미정" || parking === "-") parking = "TBD";
+    else parking = String(parking).replace("세대당 ", "").replace("대", " / hh");
+    var heatingDict = { "개별난방": "Individual", "지역난방": "District", "중앙난방": "Central", "도시가스": "City Gas", "미정": "TBD" };
+    heating = heatingDict[heating] || heating;
+    var entranceDict = { "계단식": "Staircase", "복도식": "Corridor", "복합식": "Mixed", "미정": "TBD" };
+    entrance = entranceDict[entrance] || entrance;
+  }
+  var floor_rate = aptData["용적률"];
+  floor_rate = (floor_rate == "0" || floor_rate == 0 || floor_rate == undefined || isNaN(floor_rate)) ? "--%" : (Number(floor_rate).toFixed(0) + "%");
+  var cover_rate = aptData["건폐율"];
+  cover_rate = (cover_rate == "0" || cover_rate == 0 || cover_rate == undefined || isNaN(cover_rate)) ? "--%" : (Number(cover_rate).toFixed(0) + "%");
+
+  // 2) 교육 데이터
+  var pSchool_edu = Number(aptData["초등학교학업성취도"]) || 0;
+  var pSchool_distance = Number(aptData["초등학교거리"]) || 0;
+  var minDistance = (pSchool_distance - 100 < 0) ? parseInt(pSchool_distance * 0.8, 10) : parseInt(pSchool_distance - 100, 10);
+  var maxDistance = parseInt(pSchool_distance, 10);
+  var pSchoolDistText = minDistance.toLocaleString() + "~" + maxDistance.toLocaleString() + "m";
+
+  var pSchool_edu_result = "";
+  if (pSchool_edu > 95 && pSchool_edu <= 100) pSchool_edu_result = t("ui.report.transfer_in_heavy", "많은 전입");
+  else if (pSchool_edu >= 92 && pSchool_edu <= 95) pSchool_edu_result = t("ui.report.transfer_in_light", "적은 전입");
+  else if (pSchool_edu >= 88 && pSchool_edu < 92) pSchool_edu_result = t("ui.report.transfer_neutral", "전입/전출 적음");
+  else if (pSchool_edu >= 85 && pSchool_edu < 88) pSchool_edu_result = t("ui.report.transfer_out_light", "적은 전출");
+  else pSchool_edu_result = t("ui.report.transfer_out_heavy", "많은 전출");
+
+  var mSchool_edu = Number(aptData["중학교학업성취도"] || 0).toFixed(1) + "%";
+  var academy_edu = isEn
+    ? ((aptData["500m이내학원가"] || 0) + " area(s) (" + (aptData["500m이내학원수"] || 0) + ")")
+    : ((aptData["500m이내학원가"] || 0) + "개 (총 " + (aptData["500m이내학원수"] || 0) + "개 학원)");
+  var academy_edu_long = isEn
+    ? ((aptData["1km이내학원가"] || 0) + " area(s) (" + (aptData["1km이내학원수"] || 0) + ")")
+    : ((aptData["1km이내학원가"] || 0) + "개 (총 " + (aptData["1km이내학원수"] || 0) + "개 학원)");
+  var drinkTotal = (Number(aptData["300m이내유흥주점"]) || 0) + (Number(aptData["300m이내단란주점"]) || 0) + (Number(aptData["300m이내모텔"]) || 0);
+
+  // 3) 교통 데이터
+  var nearestStation = isEn
+    ? ((aptData["closest_station"] || "") + " (" + (Math.round((aptData["가까운역거리"] || 0) * 100) / 100).toFixed() + "m)")
+    : ((aptData["가까운역이름"] || "") + "역(" + (Math.round((aptData["가까운역거리"] || 0) * 100) / 100).toFixed() + "m)");
+  var subway_line = (isEn && aptData["Line_EN"]) ? aptData["Line_EN"] : (aptData["역노선"] || "");
+  if (Array.isArray(subway_line)) subway_line = subway_line.join(", ");
+  else subway_line = String(subway_line).replace(/\[|\]|'/g, "").trim();
+  var stationPoint_30m = (aptData["30분이내주요거점역"] || 0) + tCountSuffix;
+  var stationPoint_1h = (aptData["1시간이내주요거점역"] || 0) + tCountSuffix;
+
+  // 4) 인프라 데이터
+  var market_infra = isEn
+    ? ((aptData["300m이내상권"] || 0) + " area(s) (" + (aptData["300m이내점포수"] || 0) + ")")
+    : ((aptData["300m이내상권"] || 0) + "개 (총 " + (aptData["300m이내점포수"] || 0) + "개 지점)");
+  var deptStore = (aptData["3km이내백화점수"] || 0) + tCountSuffix;
+  var outletMall = (aptData["5km이내아울렛몰수"] || 0) + tCountSuffix;
+  var bigMart = (aptData["1km이내대형마트수"] || aptData["1km이내대형먀트수"] || 0) + tCountSuffix;
+  var bigHospital = (aptData["5km이내대형병원수"] || 0) + tCountSuffix;
+  var park500 = (aptData["500m이내공원수"] || 0) + tCountSuffix;
+  var bigPark1k = (aptData["800m이내대형공원수"] || 0) + tCountSuffix;
+  var hospital500 = (aptData["500m이내병원수"] || 0) + tCountSuffix;
+  var harmful3k = (aptData["3km이내혐오시설수"] || 0) + tCountSuffix;
+
+  var buildScoreHeader = function (iconClass, titleText, scoreVal) {
+    var pct = Math.max(0, Math.min(100, scoreVal));
+    return (
+      '<div style="margin-bottom:7px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:#1e293b;line-height:1.2;">' +
+            '<i class="' + iconClass + '" style="color:#475569;font-size:12.5px;width:15px;text-align:center;"></i>' +
+            '<span>' + escHtml(titleText) + '</span>' +
+          '</div>' +
+          '<div style="font-size:13px;font-weight:700;color:#273247;line-height:1.2;">' + scoreVal.toFixed(2) + '</div>' +
+        '</div>' +
+        '<div style="position:relative;width:100%;height:8px;background-color:#edf0f3;border-radius:999px;overflow:hidden;">' +
+          '<div style="width:' + pct + '%;height:100%;background-color:' + scoreColor + ';border-radius:999px;"></div>' +
+          '<div style="position:absolute;top:0;bottom:0;left:20%;width:1px;background-color:#ffffff;"></div>' +
+          '<div style="position:absolute;top:0;bottom:0;left:40%;width:1px;background-color:#ffffff;"></div>' +
+          '<div style="position:absolute;top:0;bottom:0;left:60%;width:1px;background-color:#ffffff;"></div>' +
+          '<div style="position:absolute;top:0;bottom:0;left:80%;width:1px;background-color:#ffffff;"></div>' +
+        '</div>' +
+      '</div>'
+    );
+  };
+
+  var buildRow = function (label, val, subNote) {
+    var subHtml = subNote
+      ? '<div style="font-size:10.5px;color:#64748b;text-align:right;line-height:1.3;margin-top:1px;word-break:keep-all;">' + escHtml(subNote) + '</div>'
+      : '';
+    return (
+      '<div style="padding:2.5px 0;">' +
+        '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:12px;line-height:1.38;">' +
+          '<span style="color:#475569;font-weight:500;flex-shrink:0;">' + escHtml(label) + '</span>' +
+          '<span style="color:#0f172a;font-weight:600;text-align:right;">' + escHtml(val) + '</span>' +
+        '</div>' +
+        subHtml +
+      '</div>'
+    );
+  };
+
+  var buildGridCell = function (label, val) {
+    return (
+      '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;font-size:11.5px;line-height:1.38;padding:2px 0;">' +
+        '<span style="color:#475569;font-weight:500;">' + escHtml(label) + '</span>' +
+        '<span style="color:#0f172a;font-weight:600;text-align:right;flex-shrink:0;">' + escHtml(val) + '</span>' +
+      '</div>'
+    );
+  };
+
+  var cardStyle = 'background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;box-shadow:0 1px 2px rgba(15,23,42,0.04);display:flex;flex-direction:column;justify-content:center;flex:1;';
+
+  // 상단 단지 기본 정보 헤더 (아파트명, 년차, 주소 그대로 유지)
+  var addrHtml = '';
+  if (apt_type == "분양권" || apt_type == "분양(예정)") {
+    addrHtml = '<div style="font-size:11.5px;color:#64748b;margin-top:3px;line-height:1.35;">' + escHtml(road_Address || law_Address) + '</div>';
+  } else {
+    if (road_Address) {
+      addrHtml += '<div style="font-size:11.5px;color:#64748b;margin-top:3px;line-height:1.35;">' + escHtml((isEn ? "(Road) " : "(신) ") + road_Address) + '</div>';
+    }
+    if (law_Address) {
+      addrHtml += '<div style="font-size:11.5px;color:#64748b;margin-top:1px;line-height:1.35;">' + escHtml((isEn ? "(Jibun) " : "(구) ") + law_Address) + '</div>';
+    }
+  }
+
+  var topHeaderHtml =
+    '<div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:11px 14px;box-shadow:0 1px 2px rgba(15,23,42,0.04);flex-shrink:0;">' +
+      '<div style="font-size:17px;font-weight:700;color:#0f172a;line-height:1.3;letter-spacing:-0.3px;word-break:keep-all;">' +
+        escHtml(aptName) +
+        '<span style="font-size:13.5px;font-weight:600;color:#1e293b;"> (Rank ' + escHtml(complex_grade) + ')</span>' +
+      '</div>' +
+      '<div style="font-size:12.5px;font-weight:500;color:#334155;margin-top:3px;line-height:1.35;">' + escHtml(aptYear) + '</div>' +
+      addrHtml +
+    '</div>';
+
+  // 1) 주거 카드
+  var livingRows = '';
+  if (aptData["한강"] > 0) {
+    livingRows += buildRow(isEn ? "Han River Premium" : "한강 프리미엄", t("ui.report.premium_applied", "적용"));
+  }
+  if (aptData["해운대"] > 0) {
+    livingRows += buildRow(isEn ? "Haeundae Premium" : "해운대 프리미엄", t("ui.report.premium_applied", "적용"));
+  }
+  livingRows += buildRow(t("ui.report.house_num_label", "세대수"), houseText);
+  if (apt_type == "재건축") {
+    livingRows += buildRow(isEn ? "FAR / BCR" : "용적률 / 건폐율", floor_rate + " / " + cover_rate);
+  }
+  livingRows += buildRow(t("ui.report.parking_label", "주차"), parking);
+  livingRows += buildRow(t("ui.report.heating_label", "난방방식"), heating);
+  livingRows += buildRow(t("ui.report.entrance_label", "현관구조"), entrance);
+
+  var livingCardHtml =
+    '<div style="' + cardStyle + '">' +
+      buildScoreHeader('fa-solid fa-house-user', t("ui.report.living", "주거"), livingScoreNum) +
+      '<div>' + livingRows + '</div>' +
+    '</div>';
+
+  // 2) 교육 카드
+  var eduRows = '';
+  eduRows += buildRow(t("ui.report.pSchool_distance_label", "초등학교 거리"), pSchoolDistText);
+  eduRows += buildRow(t("ui.report.pSchool_change_label", "초등학교 학생증감"), pSchool_edu_result);
+  eduRows += buildRow(t("ui.report.mSchool_achievement_label", "중학교 보통 학력 이상"), mSchool_edu);
+  eduRows += buildRow(t("ui.academies_300m", "300m 이내 학원가"), academy_edu);
+  eduRows += buildRow(t("ui.academies_1km", "1km 이내 학원가"), academy_edu_long);
+  eduRows += buildRow(t("ui.harmful_facility_300m", "300m 이내 유흥시설/모텔"), drinkTotal + tCountSuffix);
+
+  var eduCardHtml =
+    '<div style="' + cardStyle + '">' +
+      buildScoreHeader('fas fa-graduation-cap', t("ui.report.education", "교육"), eduScoreNum) +
+      '<div>' + eduRows + '</div>' +
+    '</div>';
+
+  // 3) 교통 카드 (교통정보 없는 곳은 생략)
+  var transCardHtml = '';
+  if (hasTransport) {
+    var transRows = '';
+    transRows += buildRow(t("ui.report.nearest_station_label", "가장 가까운 역"), nearestStation, subway_line);
+    transRows += buildRow(t("ui.report.station_30m_label", "30분 이내 도착 가능 주요역"), stationPoint_30m);
+    transRows += buildRow(t("ui.report.station_1h_label", "1시간 이내 도착 가능 주요역"), stationPoint_1h);
+    transCardHtml =
+      '<div style="' + cardStyle + '">' +
+        buildScoreHeader('fas fa-bus', t("ui.report.transport", "교통"), transScoreNum) +
+        '<div>' + transRows + '</div>' +
+      '</div>';
+  }
+
+  // 4) 인프라 카드
+  var infraBodyHtml =
+    buildRow(t("ui.report.market_300m_label", "300m 이내 상권"), market_infra) +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;column-gap:16px;margin-top:2px;padding-top:3px;border-top:1px dashed #eef2f6;">' +
+      buildGridCell(isEn ? "Dept. (3km)" : "3km 백화점", deptStore) +
+      buildGridCell(isEn ? "Outlet/Mall (5km)" : "5km 아울렛/몰", outletMall) +
+      buildGridCell(isEn ? "Mart (1km)" : "1km 대형마트", bigMart) +
+      buildGridCell(isEn ? "Gen. Hosp. (5km)" : "5km 대형병원", bigHospital) +
+      buildGridCell(isEn ? "Park (500m)" : "500m 공원", park500) +
+      buildGridCell(isEn ? "Big Park (1km)" : "1km 대형공원", bigPark1k) +
+      buildGridCell(isEn ? "Clinic (500m)" : "500m 병원", hospital500) +
+      buildGridCell(isEn ? "Unpleasant (3km)" : "3km 혐오시설", harmful3k) +
+    '</div>';
+
+  var infraCardHtml =
+    '<div style="' + cardStyle + '">' +
+      buildScoreHeader('fas fa-hospital-user', t("ui.report.infra", "인프라"), infraScoreNum) +
+      '<div>' + infraBodyHtml + '</div>' +
+    '</div>';
+
+  var wrapEl = document.createElement('div');
+  wrapEl.id = 'radarDesktopSummaryCapturePanel';
+  wrapEl.style.cssText =
+    'position:fixed;left:-10000px;top:0px;right:auto;width:' + panelWidth + 'px;min-width:' + panelWidth + 'px;max-width:' + panelWidth + 'px;box-sizing:border-box;' +
+    'background-color:#f8fafc;padding:12px 14px;display:flex;flex-direction:column;gap:8px;' +
+    '-webkit-text-size-adjust:100%;text-size-adjust:100%;' +
+    'font-family:"Spoqa Han Sans Neo","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;' +
+    'z-index:-1;pointer-events:none;';
+
+  // 순서: 상단 단지정보 → 주거 → 교육 → 교통(있을 때만) → 인프라
+  wrapEl.innerHTML =
+    topHeaderHtml +
+    '<div style="display:flex;flex-direction:column;gap:8px;flex:1;">' +
+      livingCardHtml +
+      eduCardHtml +
+      transCardHtml +
+      infraCardHtml +
+    '</div>';
+
+  return { el: wrapEl, hasTransport: hasTransport };
+}
+
+/**
  * @function captureRadarMapView
  * @description 화면에 표시된 네이버 지도 영역과 단지 요약 카드를 고해상도(scale: 2) PNG 이미지로 캡처 및 다운로드합니다.
  * 모바일 환경과 웹(데스크톱) 환경의 레이아웃 차이를 완벽히 인식하여 최적화된 방식으로 캡처합니다:
- * - 모바일 & 웹 공통: 캡처 시 상단 단지 요약 카드의 뒤로가기('<', #iframe_back) 아이콘을 숨기고 좌측 여백 없이 정렬
- * - 웹(데스크톱): 와이드 지도 영역(우측 패널) 전체 100% 캡처 (오른쪽 빈 여백 원천 차단) + 좌측 상단 글래스모피즘 단지 카드
+ * - 모바일: 상단 단지 요약 카드의 뒤로가기('<', #iframe_back) 아이콘을 숨기고 단일 지도 뷰 캡처
+ * - 웹(데스크톱 radarMap.html): 2026-11-07 좌측 입지 요약 패널(단지헤더 + 주거/교육/교통/인프라) + 우측 입지 지도 2단 리포트 합성
  * - 최하단 z-depth 벡터 언더레이(OverlayView overlayLayer.firstChild + MapCanvasProjection.fromCoordToOffset)를 통해
  *   반경원(250m/500m/1km/3km/5km), 지하철/초·중학교 거리 점선, 상권/학원가 폴리곤을 모든 마커 아래에 오차 없이 합성
  * - 캡처 버튼(price/index.html 동일 Pill UI) 클릭 시 좌측 확장 완료 후 진행률(0%~100%) 표시와 함께 캡처 시작 및 원형 수축 복원
@@ -2582,9 +2873,11 @@ function captureRadarMapView(event) {
   var captureDateTimeStr = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + min + ":" + ss;
   var filename = "리얼랭커스_" + cleanAptName + "_주변입지환경_" + dateStr + "_" + timeStr + ".png";
 
-  // 2. 환경 및 캡처 대상 확인
-  var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+  // 2. 환경 및 캡처 대상 확인 (2026-11-07: 웹 및 모바일 모두 [좌측] 입지 요약 + [우측] 입지 지도 2단 가로 이미지로 통합 생성)
+  var isInModal = $("#radarModal").length > 0 && $("#radarModal").is(":visible");
+  var isMobileDevice = isInModal || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
   var isDesktop = !isMobileDevice;
+  var useSideBySideWebLayout = !!window.currentRadarAptData;
 
   var mapElement = document.getElementById("radarDataMap") || document.getElementById("dataMap");
   var captureTarget = document.getElementById("radarMapCaptureArea") || mapElement;
@@ -2628,14 +2921,73 @@ function captureRadarMapView(event) {
   }, 340);
 
   function startActualCapture() {
-    var mapW = (mapElement && mapElement.clientWidth > 50) ? mapElement.clientWidth : (captureTarget.clientWidth > 50 ? captureTarget.clientWidth : (isDesktop ? (window.innerWidth - 500) : window.innerWidth));
-    var mapH = (mapElement && mapElement.clientHeight > 50) ? mapElement.clientHeight : (captureTarget.clientHeight > 50 ? captureTarget.clientHeight : window.innerHeight);
+    var origLiveMapW = (mapElement && mapElement.clientWidth > 50) ? mapElement.clientWidth : (captureTarget.clientWidth > 50 ? captureTarget.clientWidth : (isDesktop ? (window.innerWidth - 500) : window.innerWidth));
+    var origLiveMapH = (mapElement && mapElement.clientHeight > 50) ? mapElement.clientHeight : (captureTarget.clientHeight > 50 ? captureTarget.clientHeight : window.innerHeight);
 
-    if (!mapH || mapH <= 50) mapH = window.innerHeight || 800;
-    if (!mapW || mapW <= 50) mapW = isDesktop ? (window.innerWidth - 500) : (window.innerWidth || 390);
+    if (!origLiveMapH || origLiveMapH <= 50) origLiveMapH = window.innerHeight || 800;
+    if (!origLiveMapW || origLiveMapW <= 50) origLiveMapW = isDesktop ? (window.innerWidth - 500) : (window.innerWidth || 390);
+
+    var mapW = origLiveMapW;
+    var mapH = origLiveMapH;
 
     var origTargetStyle = $(captureTarget).attr("style") || "";
-    if (isDesktop) {
+    var origMapElemStyle = mapElement ? ($(mapElement).attr("style") || "") : "";
+    var $radarModal = $("#radarModal");
+    var origRadarModalStyle = $radarModal.length ? ($radarModal.attr("style") || "") : "";
+    var $container = $("#container");
+    var origContainerStyle = $container.length ? ($container.attr("style") || "") : "";
+    var $centerBox = $("#radarCenterBox");
+    var origCenterBoxStyle = $centerBox.length ? ($centerBox.attr("style") || "") : "";
+
+    // 2026-11-07: 웹 & 모바일 통합 2단 가로 리포트 레이아웃 치수 산정 및 우측 지도 사이즈 조정
+    var leftPanelEl = null;
+    var leftPanelWidth = 420;
+    if (useSideBySideWebLayout) {
+      var summaryBuilt = buildRadarDesktopSummaryDom(window.currentRadarAptData, leftPanelWidth);
+      leftPanelEl = summaryBuilt.el;
+      document.body.appendChild(leftPanelEl);
+      var naturalLeftH = Math.ceil(leftPanelEl.getBoundingClientRect().height) || 720;
+      var minBodyH = summaryBuilt.hasTransport ? 740 : 660;
+      mapH = Math.max(naturalLeftH, minBodyH);
+      mapW = Math.round(mapH * 1.08);
+      leftPanelEl.style.height = mapH + "px";
+
+      // 모바일 #radarModal의 contain:paint 해제(확장된 우측 타일 디코딩 보장) 및 실화면 가로 스크롤 방지(overflow:hidden 유지)
+      if ($radarModal.length && isInModal) {
+        $radarModal.css({ 'contain': 'none', 'overflow': 'hidden' });
+      }
+      if ($container.length && !isInModal) {
+        $container.css({ 'overflow': isMobileDevice ? 'hidden' : 'visible' });
+      }
+      if ($centerBox.length && !isInModal) {
+        $centerBox.css({ 'overflow': isMobileDevice ? 'hidden' : 'visible' });
+      }
+      $(captureTarget).css({
+        'width': mapW + 'px',
+        'height': mapH + 'px',
+        'min-height': mapH + 'px',
+        'max-height': mapH + 'px',
+        'overflow': 'hidden',
+        'position': isInModal ? 'absolute' : 'relative',
+        'left': '0px',
+        'top': '0px'
+      });
+      if (mapElement && mapElement !== captureTarget) {
+        $(mapElement).css({
+          'left': '0px',
+          'top': '0px',
+          'width': mapW + 'px',
+          'height': mapH + 'px'
+        });
+      }
+      if (radarMapInstance && typeof radarMapInstance.setSize === 'function' && typeof naver !== 'undefined' && naver.maps && naver.maps.Size) {
+        try {
+          radarMapInstance.setSize(new naver.maps.Size(mapW, mapH));
+        } catch (e) {}
+      }
+      // 동기 레이아웃 강제 반영으로 중심 이동 시 새 뷰포트 기준 정중앙 보장
+      void captureTarget.offsetHeight;
+    } else if (isDesktop) {
       $(captureTarget).css({
         'width': mapW + 'px',
         'height': mapH + 'px',
@@ -2697,7 +3049,7 @@ function captureRadarMapView(event) {
               }
             }
           }
-          if (allLoaded || (Date.now() - startWait) > 800) {
+          if (allLoaded || (Date.now() - startWait) > 1500) {
             setTimeout(done, 120);
           } else {
             setTimeout(checkTiles, 70);
@@ -2761,7 +3113,11 @@ function captureRadarMapView(event) {
       var $backBtn = $("#iframe_back");
       var origBackStyle = $backBtn.attr("style") || "";
 
-      if (isMobileDevice) {
+      if (useSideBySideWebLayout) {
+        // 2026-11-07: 웹 & 모바일 2단 가로 리포트 캡처 시 단지 기본 정보는 좌측 요약 패널 상단에 배치되므로 우측 지도 위 타이틀 카드 숨김
+        $aptWrap.hide();
+        $backBtn.hide();
+      } else if (isMobileDevice) {
         $aptWrap.css({
           'display': 'block',
           'position': 'absolute',
@@ -3172,8 +3528,38 @@ function captureRadarMapView(event) {
         $titleBar.css("display", titleBarDisplay);
         $zoomControls.show();
 
-        if (isDesktop && origTargetStyle) {
-          $(captureTarget).attr("style", origTargetStyle);
+        if (leftPanelEl && leftPanelEl.parentNode) {
+          leftPanelEl.parentNode.removeChild(leftPanelEl);
+        }
+
+        if (useSideBySideWebLayout) {
+          if ($radarModal.length && isInModal) {
+            if (origRadarModalStyle) $radarModal.attr("style", origRadarModalStyle);
+            else $radarModal.removeAttr("style");
+          }
+          if ($container.length && !isInModal) {
+            if (origContainerStyle) $container.attr("style", origContainerStyle);
+            else $container.removeAttr("style");
+          }
+          if ($centerBox.length && !isInModal) {
+            if (origCenterBoxStyle) $centerBox.attr("style", origCenterBoxStyle);
+            else $centerBox.removeAttr("style");
+          }
+          if (mapElement && mapElement !== captureTarget) {
+            if (origMapElemStyle) $(mapElement).attr("style", origMapElemStyle);
+            else $(mapElement).removeAttr("style");
+          }
+        }
+
+        if (useSideBySideWebLayout || isDesktop) {
+          if (origTargetStyle) $(captureTarget).attr("style", origTargetStyle);
+          else $(captureTarget).removeAttr("style");
+        }
+
+        if (useSideBySideWebLayout && radarMapInstance && typeof radarMapInstance.setSize === 'function' && typeof naver !== 'undefined' && naver.maps && naver.maps.Size) {
+          try {
+            radarMapInstance.setSize(new naver.maps.Size(origLiveMapW, origLiveMapH));
+          } catch (e) {}
         }
 
         if (vectorUnderlay) {
@@ -3267,7 +3653,7 @@ function captureRadarMapView(event) {
           console.warn("최하단 벡터 언더레이 선행 렌더링 경고:", uErr);
         }
 
-        html2canvas(captureTarget, {
+        var mapCapturePromise = html2canvas(captureTarget, {
           useCORS: true,
           allowTaint: false,
           scale: 2,
@@ -3275,15 +3661,58 @@ function captureRadarMapView(event) {
           logging: false,
           width: mapW,
           height: mapH,
-          windowWidth: mapW,
-          windowHeight: mapH,
+          windowWidth: useSideBySideWebLayout ? Math.max(window.innerWidth || 1280, mapW + 100) : mapW,
+          windowHeight: useSideBySideWebLayout ? Math.max(window.innerHeight || 900, mapH + 100) : mapH,
           x: 0,
           y: 0,
           scrollX: 0,
           scrollY: 0,
+          onclone: function (clonedDoc) {
+            if (!useSideBySideWebLayout) return;
+            var clonedRadarModal = clonedDoc.getElementById('radarModal');
+            if (clonedRadarModal && isInModal) {
+              clonedRadarModal.style.cssText = 'display:block;position:relative;left:0px;top:0px;width:' + mapW + 'px;height:' + mapH + 'px;overflow:visible;contain:none;isolation:auto;transform:none;-webkit-transform:none;margin:0;padding:0;background:#ffffff;';
+            }
+            var clonedContainer = clonedDoc.getElementById('container');
+            if (clonedContainer && !isInModal) {
+              clonedContainer.style.cssText = 'width:' + mapW + 'px;height:' + mapH + 'px;overflow:visible;margin:0;padding:0;position:relative;';
+            }
+            var clonedCenter = clonedDoc.getElementById('radarCenterBox');
+            if (clonedCenter && !isInModal) {
+              clonedCenter.style.cssText = 'display:block;width:' + mapW + 'px;height:' + mapH + 'px;overflow:visible;margin:0;padding:0;position:relative;';
+            }
+            if (captureTarget && captureTarget.id) {
+              var clonedTarget = clonedDoc.getElementById(captureTarget.id);
+              if (clonedTarget) {
+                clonedTarget.style.position = 'relative';
+                clonedTarget.style.left = '0px';
+                clonedTarget.style.top = '0px';
+                clonedTarget.style.width = mapW + 'px';
+                clonedTarget.style.height = mapH + 'px';
+                clonedTarget.style.minHeight = mapH + 'px';
+                clonedTarget.style.maxHeight = mapH + 'px';
+                clonedTarget.style.overflow = 'hidden';
+              }
+            }
+            if (mapElement && mapElement.id) {
+              var clonedMapEl = clonedDoc.getElementById(mapElement.id);
+              if (clonedMapEl) {
+                clonedMapEl.style.left = '0px';
+                clonedMapEl.style.top = '0px';
+                clonedMapEl.style.width = mapW + 'px';
+                clonedMapEl.style.height = mapH + 'px';
+              }
+            }
+          },
           ignoreElements: function (el) {
             if (!el) return false;
             if (el.getAttribute && el.getAttribute('data-html2canvas-ignore') === 'true') return true;
+            if (el.id === 'radarDesktopSummaryCapturePanel') return true;
+            // 모바일 index.html 등에서 배경 메인 지도/리스트 등 무거운 body 직계 형제 요소 제외
+            if (el.parentElement === document.body && el !== captureTarget && !el.contains(captureTarget)) {
+              var tName = el.tagName;
+              if (tName !== 'STYLE' && tName !== 'LINK') return true;
+            }
             if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
             if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
             if (el.id === 'titleBar_radar' || el.id === 'iframe_back') return true;
@@ -3296,7 +3725,46 @@ function captureRadarMapView(event) {
                  el.className.indexOf('control') !== -1)) return true;
             return false;
           }
-        }).then(function (canvas) {
+        });
+
+        var leftCapturePromise = (useSideBySideWebLayout && leftPanelEl)
+          ? html2canvas(leftPanelEl, {
+              useCORS: true,
+              allowTaint: false,
+              scale: 2,
+              backgroundColor: '#f8fafc',
+              logging: false,
+              width: leftPanelWidth,
+              height: mapH,
+              windowWidth: Math.max(window.innerWidth || 1280, leftPanelWidth + 100),
+              windowHeight: Math.max(window.innerHeight || 900, mapH + 100),
+              x: 0,
+              y: 0,
+              scrollX: 0,
+              scrollY: 0,
+              onclone: function (clonedDoc) {
+                var clonedPanel = clonedDoc.getElementById('radarDesktopSummaryCapturePanel');
+                if (clonedPanel) {
+                  clonedPanel.style.position = 'fixed';
+                  clonedPanel.style.left = '0px';
+                  clonedPanel.style.top = '0px';
+                  clonedPanel.style.zIndex = '999999';
+                }
+              },
+              ignoreElements: function (el) {
+                if (!el) return false;
+                if (el === leftPanelEl || leftPanelEl.contains(el) || el.contains(leftPanelEl)) return false;
+                var tag = el.tagName;
+                if (tag === 'STYLE' || tag === 'LINK' || tag === 'HEAD') return false;
+                if (el.parentElement === document.body) return true;
+                return false;
+              }
+            })
+          : Promise.resolve(null);
+
+        Promise.all([mapCapturePromise, leftCapturePromise]).then(function (results) {
+          var canvas = results[0];
+          var leftCanvas = results[1];
           clearInterval(progressTimer);
           updateProgress(90);
 
@@ -3319,11 +3787,13 @@ function captureRadarMapView(event) {
           }
 
           try {
-            // 2026-11-07: price/index.html 캡처 결과와 동일한 리얼랭커스 상단 타이틀 및 하단 워터마크 합성
+            // 2026-11-07: 리얼랭커스 상단 타이틀 및 하단 워터마크 합성 (데스크톱 웹은 좌측 입지정보 + 우측 입지지도 2단 합성)
+            var hasLeftComposite = !!(useSideBySideWebLayout && leftCanvas && leftCanvas.width > 0 && leftCanvas.height > 0);
+            var leftDrawW = hasLeftComposite ? Math.round(leftPanelWidth * realScale) : 0;
             var headerHeight = Math.round(32 * realScale);
             var footerHeight = Math.round(36 * realScale);
             var finalCanvas = document.createElement('canvas');
-            finalCanvas.width = canvas.width;
+            finalCanvas.width = leftDrawW + canvas.width;
             finalCanvas.height = canvas.height + headerHeight + footerHeight;
 
             var ctx = finalCanvas.getContext('2d');
@@ -3340,7 +3810,7 @@ function captureRadarMapView(event) {
             ctx.textBaseline = 'top';
             ctx.fillText(headerTitle, padX, 10 * realScale);
 
-            // 상단 워터마크와 지도 영역 경계선 (#e2e8f0)
+            // 상단 워터마크와 본문 영역 경계선 (#e2e8f0)
             ctx.beginPath();
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 1 * realScale;
@@ -3348,8 +3818,20 @@ function captureRadarMapView(event) {
             ctx.lineTo(finalCanvas.width, headerHeight - 0.5 * realScale);
             ctx.stroke();
 
-            // 본문 지도 이미지 렌더링
-            ctx.drawImage(canvas, 0, headerHeight);
+            if (hasLeftComposite) {
+              // 좌측 입지 요약 패널 + 우측 입지 지도 나란히 합성 및 중앙 세로 구분선 렌더링
+              ctx.drawImage(leftCanvas, 0, headerHeight, leftDrawW, canvas.height);
+              ctx.drawImage(canvas, leftDrawW, headerHeight);
+              ctx.beginPath();
+              ctx.strokeStyle = '#e2e8f0';
+              ctx.lineWidth = 1 * realScale;
+              ctx.moveTo(leftDrawW - 0.5 * realScale, headerHeight);
+              ctx.lineTo(leftDrawW - 0.5 * realScale, headerHeight + canvas.height);
+              ctx.stroke();
+            } else {
+              // 모바일 단일 본문 지도 이미지 렌더링
+              ctx.drawImage(canvas, 0, headerHeight);
+            }
 
             // 하단 점선 구분선 (dashed line #e2e8f0 - price/index.html 100% 동일)
             var lineY = headerHeight + canvas.height + 2 * realScale;
