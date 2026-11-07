@@ -1686,6 +1686,8 @@ function initRadarModalMap(aptData) {
   var loc_x = Number(aptData["X"]);
   var loc_y = Number(aptData["Y"]);
   var center = new naver.maps.LatLng(loc_y, loc_x);
+  // 2026-11-07: 현재 단지 중심 좌표 전역 캐싱 (캡처 벡터 오버레이 렌더링 지원)
+  window.currentRadarCenter = center;
 
   var icon_size_width = 50;
   var icon_size_height = 50;
@@ -1805,6 +1807,12 @@ function initRadarModalMap(aptData) {
       radar_distance_markers.push(distMarker);
     });
   });
+
+  // 2026-11-07: 초기 줌(16)에 맞춰 250m, 500m 외의 원 및 마커는 초기 비활성화
+  if (radar_circles[2]) radar_circles[2].setMap(null);
+  if (radar_circles[3]) radar_circles[3].setMap(null);
+  if (radar_circles[4]) radar_circles[4].setMap(null);
+  $(".radius_1km, .radius_3km, .radius_5km").hide();
 
   // 단지 메인 마커 (map_control_radar.js createAPTMarker 100% 동일)
   var aptValue = Math.round((Number(aptData["가치 총점"]) || 0) * 100) / 100;
@@ -2465,7 +2473,167 @@ function captureRadarMapView(event) {
     'padding': '2px 8px 2px 2px'
   });
 
-  // 6. 2026-11-07: SVG 네임스페이스 보정 (html2canvas SVG 렌더링 호환성 유지)
+  // 6. 2026-11-07: 지도 거리표시선 및 반경원표시 정밀 픽셀 변환 헬퍼 및 벡터 렌더러
+  var mapContainer = document.getElementById("radarDataMap") || document.getElementById("dataMap") || captureTarget;
+  var mapW = mapContainer.clientWidth || captureTarget.clientWidth || window.innerWidth;
+  var mapH = mapContainer.clientHeight || captureTarget.clientHeight || window.innerHeight;
+  var scale = 2; // html2canvas scale 동기화
+
+  function getMapPixelOffset(coord) {
+    if (!coord) return null;
+    // 1. OverlayView 프로젝션 헬퍼 시도
+    try {
+      if (window.radarProjectionHelper && window.radarProjectionHelper.getProjection()) {
+        var pt = window.radarProjectionHelper.getProjection().fromCoordToOffset(coord);
+        if (pt && typeof pt.x === 'number' && typeof pt.y === 'number') {
+          return pt;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Naver Maps World Point 머카토르 델타 투영 (100% 무결점 화면 상대 픽셀 변환)
+    try {
+      if (radarMapInstance && radarMapInstance.getProjection()) {
+        var proj = radarMapInstance.getProjection();
+        var centerWorld = proj.fromCoordToPoint(radarMapInstance.getCenter());
+        var targetWorld = proj.fromCoordToPoint(coord);
+        return {
+          x: (targetWorld.x - centerWorld.x) + (mapW / 2),
+          y: (targetWorld.y - centerWorld.y) + (mapH / 2)
+        };
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  // 2026-11-07: 단지 중심점 안전 추출
+  var aptCenter = window.currentRadarCenter;
+  if (!aptCenter && window.currentRadarAptData) {
+    var lat = Number(window.currentRadarAptData["Y"] || window.currentRadarAptData["lat"]);
+    var lng = Number(window.currentRadarAptData["X"] || window.currentRadarAptData["lng"]);
+    if (lat && lng) aptCenter = new naver.maps.LatLng(lat, lng);
+  }
+  if (!aptCenter && radar_circles.length && radar_circles[0]) {
+    aptCenter = radar_circles[0].getCenter();
+  }
+
+  // 2026-11-07: 반경원 및 거리표시선 공통 렌더러
+  function drawRadarVectorOverlays(targetCtx, s) {
+    if (!targetCtx || !aptCenter) return;
+
+    var centerPt = getMapPixelOffset(aptCenter);
+    if (!centerPt) return;
+
+    var curZoom = radarMapInstance ? radarMapInstance.getZoom() : 16;
+
+    // A. 반경원표시 (동심원 250m, 500m 등 현재 줌 기준)
+    var activeRadii = [];
+    if (curZoom >= 16) {
+      activeRadii = [250, 500];
+    } else if (curZoom == 15) {
+      activeRadii = [500];
+    } else if (curZoom == 14) {
+      activeRadii = [1000];
+    } else {
+      activeRadii = [];
+    }
+
+    activeRadii.forEach(function (radius) {
+      var northCoord = radarMoveLatLng(aptCenter, radius, 'N');
+      var northPt = getMapPixelOffset(northCoord);
+      if (northPt) {
+        var radiusPx = Math.abs(centerPt.y - northPt.y);
+        targetCtx.save();
+        targetCtx.beginPath();
+        targetCtx.arc(centerPt.x * s, centerPt.y * s, radiusPx * s, 0, 2 * Math.PI);
+        targetCtx.strokeStyle = '#E43B46';
+        targetCtx.globalAlpha = 0.45;
+        targetCtx.lineWidth = 1.2 * s;
+        targetCtx.stroke();
+        targetCtx.restore();
+      }
+    });
+
+    // B. 지하철역 직선거리 점선 (radar_metro_line)
+    if (radar_metro_line && radar_metro_line.getMap()) {
+      var metroPath = radar_metro_line.getPath();
+      if (metroPath && metroPath.getLength && metroPath.getLength() >= 2) {
+        var p1 = getMapPixelOffset(metroPath.getAt(0));
+        var p2 = getMapPixelOffset(metroPath.getAt(1));
+        if (p1 && p2) {
+          targetCtx.save();
+          targetCtx.beginPath();
+          targetCtx.setLineDash([4 * s, 3 * s]);
+          targetCtx.strokeStyle = radarColorCode['지하철역'] || '#3F5682';
+          targetCtx.lineWidth = 2 * s;
+          targetCtx.moveTo(p1.x * s, p1.y * s);
+          targetCtx.lineTo(p2.x * s, p2.y * s);
+          targetCtx.stroke();
+          targetCtx.restore();
+        }
+      }
+    }
+
+    // C. 초등학교 직선거리 점선 (radar_pSchool_line)
+    if (radar_pSchool_line && radar_pSchool_line.getMap()) {
+      var pPath = radar_pSchool_line.getPath();
+      if (pPath && pPath.getLength && pPath.getLength() >= 2) {
+        var p1 = getMapPixelOffset(pPath.getAt(0));
+        var p2 = getMapPixelOffset(pPath.getAt(1));
+        if (p1 && p2) {
+          targetCtx.save();
+          targetCtx.beginPath();
+          targetCtx.setLineDash([4 * s, 3 * s]);
+          targetCtx.strokeStyle = radarColorCode['초등학교'] || '#C49B00';
+          targetCtx.lineWidth = 2 * s;
+          targetCtx.moveTo(p1.x * s, p1.y * s);
+          targetCtx.lineTo(p2.x * s, p2.y * s);
+          targetCtx.stroke();
+          targetCtx.restore();
+        }
+      }
+    }
+
+    // D. 중학교 직선거리 점선들 (radar_mSchool_lines)
+    if (radar_mSchool_lines && radar_mSchool_lines.length) {
+      radar_mSchool_lines.forEach(function (mLine) {
+        if (mLine && mLine.getMap()) {
+          var mPath = mLine.getPath();
+          if (mPath && mPath.getLength && mPath.getLength() >= 2) {
+            var p1 = getMapPixelOffset(mPath.getAt(0));
+            var p2 = getMapPixelOffset(mPath.getAt(1));
+            if (p1 && p2) {
+              targetCtx.save();
+              targetCtx.beginPath();
+              targetCtx.setLineDash([4 * s, 3 * s]);
+              targetCtx.strokeStyle = radarColorCode['중학교'] || '#6D872C';
+              targetCtx.lineWidth = 2 * s;
+              targetCtx.moveTo(p1.x * s, p1.y * s);
+              targetCtx.lineTo(p2.x * s, p2.y * s);
+              targetCtx.stroke();
+              targetCtx.restore();
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // 2026-11-07: HTML 마커 하위 레이어에 임시 캔버스 주입하여 html2canvas가 마커 아래 벡터를 캡처하도록 지원
+  var tempCanvas = document.createElement("canvas");
+  tempCanvas.id = "radarVectorCaptureCanvas";
+  tempCanvas.width = mapW * scale;
+  tempCanvas.height = mapH * scale;
+  tempCanvas.style.cssText = "position:absolute; top:0; left:0; width:" + mapW + "px; height:" + mapH + "px; z-index:2; pointer-events:none;";
+  var tempCtx = tempCanvas.getContext("2d");
+  drawRadarVectorOverlays(tempCtx, scale);
+  if (mapContainer.firstChild) {
+    mapContainer.insertBefore(tempCanvas, mapContainer.firstChild);
+  } else {
+    mapContainer.appendChild(tempCanvas);
+  }
+
+  // SVG 네임스페이스 보정
   var modifiedSvgs = [];
   $(captureTarget).find('svg').each(function () {
     var svg = this;
@@ -2492,6 +2660,10 @@ function captureRadarMapView(event) {
     $titleBar.css("display", titleBarDisplay);
     $captureBtns.show();
     $zoomControls.show();
+
+    if (tempCanvas && tempCanvas.parentNode) {
+      tempCanvas.parentNode.removeChild(tempCanvas);
+    }
 
     if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function' && hadZoomControl) {
       try {
@@ -2549,6 +2721,14 @@ function captureRadarMapView(event) {
         return false;
       }
     }).then(function (canvas) {
+      // 2026-11-07: 캡처된 캔버스에 반경원 및 거리표시선 직접 2차 보장 렌더링
+      try {
+        var finalCtx = canvas.getContext('2d');
+        drawRadarVectorOverlays(finalCtx, scale);
+      } catch (err) {
+        console.warn("캔버스 오버레이 직접 렌더링 경고:", err);
+      }
+
       // 상태 복구
       restoreDomState();
 
