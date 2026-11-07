@@ -236,6 +236,37 @@
   transform: scale(0.94);
 }
 
+/* 2026-11-07: 캡처 진행 중 캡슐형 확장 버튼 스타일 (진행률 ###% 실시간 표시) */
+.radar-map-floating-capture-btn.capturing-capsule,
+.radar-floating-capture-btn.capturing-capsule {
+  width: auto !important;
+  min-width: 176px !important;
+  height: 42px !important;
+  border-radius: 24px !important;
+  padding: 0 18px !important;
+  background-color: #E43B46 !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.3px !important;
+  box-shadow: 0 4px 16px rgba(228, 59, 70, 0.45) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  cursor: wait !important;
+  z-index: 200001 !important;
+  transform: none !important;
+  pointer-events: none !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.radar-map-floating-capture-btn.capturing-capsule i,
+.radar-floating-capture-btn.capturing-capsule i {
+  font-size: 14px;
+}
+
 /* 바텀시트 상단 드래그 핸들 (모바일 전용) */
 .radar-sheet-handle-wrap {
   width: 100%;

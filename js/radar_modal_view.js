@@ -2343,8 +2343,10 @@ function initRadarModalMap(aptData) {
  * @function captureRadarMapView
  * @description 현재 화면에 표시된 네이버 지도 영역(#radarMapCaptureArea 또는 #dataMap)과 좌측 상단의
  * 반투명 아파트 요약 카드를 html2canvas를 사용하여 고해상도(scale: 2) PNG 이미지로 캡처 및 다운로드합니다.
- * 지도 위의 원(동심원), 라인(지하철/초등학교/중학교 직선거리), 폴리곤(상권/학원가 영역)과 좌측 상단 단지 요약 카드가 왜곡 없이 정확하게 캡처됩니다.
- * 하단 바텀시트 정보는 캡처 전후로 사라지지 않고 온전히 유지되며, 지도 줌 컨트롤(+/-)과 플로팅 캡처 버튼은 캡처 이미지에서 깔끔하게 제외됩니다.
+ * 지도 위의 원(동심원 250m/500m/1km/3km/5km), 라인(지하철/초등학교/중학교 직선거리), 폴리곤(상권/학원가 영역)과 좌측 상단 단지 요약 카드가 왜곡 없이 정확하게 캡처됩니다.
+ * 하단 바텀시트 정보는 캡처 전후로 사라지지 않고 온전히 유지되며, 지도 줌 컨트롤(+/-)은 캡처 이미지에서 깔끔하게 제외됩니다.
+ * 캡처 진행 중에는 버튼이 숨겨지지 않고 "이미지 저장 중...(###%)" 캡슐형태로 확장되어 실시간 진행률을 보여줍니다.
+ * 0KB 빈 파일 다운로드를 원천 방지하기 위해 컨테이너 치수 강제 보정 및 base64 데이터 유효성 검증을 수행합니다.
  * 파일명: [단지명]_입지분석.png
  * 작성일: 2026-11-07
  */
@@ -2381,13 +2383,47 @@ function captureRadarMapView(event) {
     return;
   }
 
+  // 2-1. 2026-11-07: 0KB 다운로드 방지 - 캡처 영역 높이/너비 정규화 및 강제 보정
+  var targetW = captureTarget.clientWidth || $(captureTarget).width() || window.innerWidth;
+  var targetH = captureTarget.clientHeight || $(captureTarget).height() || window.innerHeight;
+  if (!targetH || targetH <= 50) {
+    targetH = window.innerHeight || 800;
+    $(captureTarget).css({ 'height': targetH + 'px', 'min-height': targetH + 'px' });
+  }
+  if (!targetW || targetW <= 50) {
+    targetW = window.innerWidth || 1200;
+    $(captureTarget).css({ 'width': targetW + 'px' });
+  }
+
   var isDesktopLayout = !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) && window.innerWidth >= 768;
 
-  // 3. 버튼 로딩 상태 표시 (카메라 아이콘 -> 스피너 아이콘)
+  // 3. 2026-11-07: 버튼 캡슐형 확장 및 진행률 UI 표시 ("이미지 저장 중...(###%)")
   var $btn = $(event ? event.currentTarget : "#radarModalCaptureBtn, #radarMapCaptureBtn");
-  $btn.prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
+  if (!$btn.length) {
+    $btn = $(".radar-map-floating-capture-btn, .radar-floating-capture-btn");
+  }
 
-  // 4. 제외 대상 임시 숨김 (플로팅 캡처 버튼, 네이버 지도 줌 컨트롤(+/-), 독립 페이지 상단 바만 숨김)
+  function updateProgress(percent) {
+    if ($btn.length) {
+      $btn.find("#capProgressText").text(percent + "%");
+    }
+  }
+
+  $btn.addClass("capturing-capsule")
+      .prop("disabled", true)
+      .html('<i class="fa-solid fa-spinner fa-spin"></i> <span>이미지 저장 중...(<span id="capProgressText">12%</span>)</span>');
+
+  var progressVal = 12;
+  var progressTimer = setInterval(function () {
+    if (progressVal < 82) {
+      progressVal += Math.floor(Math.random() * 8) + 4;
+      if (progressVal > 82) progressVal = 82;
+      updateProgress(progressVal);
+    }
+  }, 120);
+
+  // 4. 제외 대상 임시 숨김 (네이버 지도 줌 컨트롤(+/-), 독립 페이지 상단 바만 숨김)
+  // 2026-11-07: 플로팅 캡처 버튼은 data-html2canvas-ignore="true"로 보호되어 캡처 이미지에 포함되지 않으므로 화면에 유지!
   // 2026-11-07: 하단 바텀시트(#radarDataList_wrapper)는 captureTarget 외부에 있으므로 절대 hide()하지 않아 캡처 후에도 정보가 사라지지 않음!
   // 2026-11-07: 네이버 지도 줌 컨트롤(+/-)은 API 레벨 및 DOM 양방향에서 완벽 제거하여 캡처 이미지에 포함되지 않도록 처리!
   var hadZoomControl = true;
@@ -2404,7 +2440,6 @@ function captureRadarMapView(event) {
     } catch (e) {}
   }
 
-  var $captureBtns = $(".radar-floating-capture-btn, .radar-map-floating-capture-btn, #radarModalCaptureBtn, #radarMapCaptureBtn");
   var $zoomControls = $(captureTarget).find('*').filter(function () {
     var txt = $(this).text().trim();
     var title = $(this).attr('title') || '';
@@ -2413,7 +2448,6 @@ function captureRadarMapView(event) {
   var $titleBar = $("#titleBar_radar");
   var titleBarDisplay = $titleBar.css("display");
 
-  $captureBtns.hide();
   $zoomControls.hide();
   $titleBar.hide();
 
@@ -2433,7 +2467,6 @@ function captureRadarMapView(event) {
 
   var $aptMobile = $("#apt_info_mobile");
   var origMobileStyle = $aptMobile.attr("style") || "";
-  var targetW = captureTarget.clientWidth || window.innerWidth;
   // 모바일: 50px 여백 유지, 웹/데스크톱: 최대 440px
   var safeCardW = isDesktopLayout ? Math.min(440, targetW - 60) : (targetW - 50);
   $aptMobile.css({
@@ -2478,8 +2511,8 @@ function captureRadarMapView(event) {
   (radar_mSchool_lines || []).forEach(function (l) { if (l) l.setMap(null); });
 
   var mapContainer = document.getElementById("radarDataMap") || document.getElementById("dataMap") || captureTarget;
-  var mapW = mapContainer.clientWidth || captureTarget.clientWidth || window.innerWidth;
-  var mapH = mapContainer.clientHeight || captureTarget.clientHeight || window.innerHeight;
+  var mapW = mapContainer.clientWidth || targetW;
+  var mapH = mapContainer.clientHeight || targetH;
   var scale = 2; // html2canvas scale 동기화
 
   function getMapPixelOffset(coord) {
@@ -2494,7 +2527,7 @@ function captureRadarMapView(event) {
       }
     } catch (e) {}
 
-    // 2. Naver Maps World Point 머카토르 델타 투영 (100% 무결점 화면 상대 픽셀 변환)
+    // 2. Naver Maps World Point 머카토르 투영 (백업)
     try {
       if (radarMapInstance && radarMapInstance.getProjection()) {
         var proj = radarMapInstance.getProjection();
@@ -2527,17 +2560,8 @@ function captureRadarMapView(event) {
     var centerPt = getMapPixelOffset(aptCenter);
     if (!centerPt) return;
 
-    var curZoom = radarMapInstance ? radarMapInstance.getZoom() : 16;
-
-    // A. 반경원표시 (2026-11-07: 동심원 250m, 500m 뿐만 아니라 1km, 3km, 5km 원도 모두 렌더링)
-    var activeRadii = [];
-    if (curZoom >= 16) {
-      activeRadii = [250, 500, 1000, 3000, 5000];
-    } else if (curZoom == 15) {
-      activeRadii = [500, 1000, 3000, 5000];
-    } else {
-      activeRadii = [1000, 3000, 5000];
-    }
+    // A. 반경원표시 (2026-11-07: 250m, 500m, 1km, 3km, 5km 원 렌더링)
+    var activeRadii = [250, 500, 1000, 3000, 5000];
 
     activeRadii.forEach(function (radius) {
       var northCoord = radarMoveLatLng(aptCenter, radius, 'N');
@@ -2549,8 +2573,35 @@ function captureRadarMapView(event) {
         targetCtx.arc(centerPt.x * s, centerPt.y * s, radiusPx * s, 0, 2 * Math.PI);
         targetCtx.strokeStyle = '#E43B46';
         targetCtx.globalAlpha = 0.45;
-        targetCtx.lineWidth = 1.2 * s;
+        targetCtx.lineWidth = 1.3 * s;
         targetCtx.stroke();
+        targetCtx.restore();
+
+        // 반경 레이블 뱃지 (250m, 500m, 1km, 3km, 5km)
+        targetCtx.save();
+        var labelText = radius >= 1000 ? (radius / 1000) + "km" : radius + "m";
+        targetCtx.font = "bold " + Math.round(10 * s) + "px sans-serif";
+        var textW = targetCtx.measureText(labelText).width;
+        var badgeW = textW + (10 * s);
+        var badgeH = 15 * s;
+        var badgeX = (centerPt.x * s) - (badgeW / 2);
+        var badgeY = (centerPt.y * s) - (radiusPx * s) - (badgeH / 2);
+
+        // 화면 영역 안에 위치할 때만 뱃지 표시
+        if (badgeY >= 0 && badgeY <= mapH * s && badgeX >= 0 && badgeX <= mapW * s) {
+          targetCtx.fillStyle = "rgba(45, 55, 72, 0.75)";
+          targetCtx.beginPath();
+          if (targetCtx.roundRect) {
+            targetCtx.roundRect(badgeX, badgeY, badgeW, badgeH, 3 * s);
+          } else {
+            targetCtx.rect(badgeX, badgeY, badgeW, badgeH);
+          }
+          targetCtx.fill();
+          targetCtx.fillStyle = "#ffffff";
+          targetCtx.textAlign = "center";
+          targetCtx.textBaseline = "middle";
+          targetCtx.fillText(labelText, centerPt.x * s, badgeY + (badgeH / 2));
+        }
         targetCtx.restore();
       }
     });
@@ -2644,8 +2695,8 @@ function captureRadarMapView(event) {
 
   // 복구 헬퍼 함수
   function restoreDomState() {
+    clearInterval(progressTimer);
     $titleBar.css("display", titleBarDisplay);
-    $captureBtns.show();
     $zoomControls.show();
 
     // 네이버 지도 자체 오버레이 복원
@@ -2683,18 +2734,23 @@ function captureRadarMapView(event) {
       else item.svg.removeAttribute('xmlns:xlink');
     });
 
-    // 2026-11-07: 캡처 버튼을 카메라 단독 아이콘으로 복원
-    $btn.prop("disabled", false).html('<i class="fa-solid fa-camera"></i>');
+    // 2026-11-07: 캡처 버튼을 원래 카메라 단독 아이콘으로 복원
+    $btn.removeClass("capturing-capsule")
+        .prop("disabled", false)
+        .html('<i class="fa-solid fa-camera"></i>');
   }
 
-  // 7. 120ms 후 html2canvas 실행 (DOM 리플로우 보장)
+  // 7. 150ms 후 html2canvas 실행 (DOM 리플로우 및 상태 갱신 보장)
   setTimeout(function () {
+    updateProgress(35);
     html2canvas(captureTarget, {
       useCORS: true,
       allowTaint: false,
       scale: 2,
       backgroundColor: '#ffffff',
       logging: false,
+      width: targetW,
+      height: targetH,
       ignoreElements: function (el) {
         if (!el) return false;
         if (el.getAttribute && el.getAttribute('data-html2canvas-ignore') === 'true') return true;
@@ -2712,6 +2768,16 @@ function captureRadarMapView(event) {
         return false;
       }
     }).then(function (canvas) {
+      clearInterval(progressTimer);
+      updateProgress(90);
+
+      // 2026-11-07: 0KB 캔버스 방지 검증
+      if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
+        restoreDomState();
+        alert("지도 캡처 영역 크기 오류로 이미지 생성에 실패했습니다. 화면을 확인 후 다시 시도해 주세요.");
+        return;
+      }
+
       // 2026-11-07: 캡처된 캔버스에 반경원 및 거리표시선 직접 2차 보장 렌더링
       try {
         var finalCtx = canvas.getContext('2d');
@@ -2720,12 +2786,19 @@ function captureRadarMapView(event) {
         console.warn("캔버스 오버레이 직접 렌더링 경고:", err);
       }
 
-      // 상태 복구
-      restoreDomState();
+      updateProgress(96);
 
-      // 8. 2026-11-07: 이미지 다운로드 트리거
+      // 8. 2026-11-07: 이미지 다운로드 트리거 및 0KB 검증
       try {
         var base64Data = canvas.toDataURL('image/png');
+        if (!base64Data || base64Data.length < 200 || base64Data === 'data:,') {
+          restoreDomState();
+          alert("생성된 이미지 데이터가 비어 있습니다 (0KB). 잠시 후 다시 시도해 주세요.");
+          return;
+        }
+
+        updateProgress(100);
+
         if (window.Android && typeof window.Android.downloadImage === 'function') {
           window.Android.downloadImage(base64Data, filename);
         } else {
@@ -2739,7 +2812,14 @@ function captureRadarMapView(event) {
         if (typeof toastr !== 'undefined' && toastr.success) {
           toastr.success(filename + " 저장 완료");
         }
+
+        // 2026-11-07: 다운로드 완료 후 500ms 지연 후 버튼 복원
+        setTimeout(function () {
+          restoreDomState();
+        }, 500);
+
       } catch (err) {
+        restoreDomState();
         console.error("이미지 변환 오류:", err);
         alert("이미지 변환에 실패했습니다: " + err.message);
       }
@@ -2749,7 +2829,7 @@ function captureRadarMapView(event) {
       console.error("html2canvas capture error:", err);
       alert("캡처에 실패했습니다: " + err.message);
     });
-  }, 120);
+  }, 150);
 }
 
 // 2026-11-07: 네이버 부동산 및 호갱노노 링크 핸들러
