@@ -2305,10 +2305,8 @@ function initRadarModalMap(aptData) {
   $(".drink").hide();
   $(".motel").hide();
 
-  // 2026-11-07: 모바일 화면에서만 바텀시트에 가려지지 않도록 지도 중심을 아래로 110px 패닝 (데스크톱은 정중앙 유지)
-  if (isMobileView) {
-    map.panBy(new naver.maps.Point(0, 110));
-  }
+  // 모바일 화면: 바텀시트에 가려지지 않도록 지도 중심을 아래로 110px 패닝 (단지 핀이 상단 1/2 영역에 위치)
+  map.panBy(new naver.maps.Point(0, 110));
 
   // 줌 변경 시 동심원 및 거리 인덱스 표시 제어 (2026-11-07: 1km, 3km, 5km 원은 상시 유지)
   naver.maps.Event.addListener(map, 'zoom_changed', function () {
@@ -2379,24 +2377,7 @@ function captureRadarMapView(event) {
   var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
   var isDesktop = !isMobileDevice;
 
-  // 3. 단지 중심점 안전 추출 및 지도 정중앙 강제 재설정
-  // 2026-11-07: 캡처 시 아파트 단지 마커가 지도의 정중앙에 오도록 중심 좌표 강제 재설정
-  var aptCenter = window.currentRadarCenter;
-  if (!aptCenter && window.currentRadarAptData) {
-    var lat = Number(window.currentRadarAptData["Y"] || window.currentRadarAptData["lat"]);
-    var lng = Number(window.currentRadarAptData["X"] || window.currentRadarAptData["lng"]);
-    if (lat && lng) aptCenter = new naver.maps.LatLng(lat, lng);
-  }
-  if (!aptCenter && radar_circles.length && radar_circles[0]) {
-    aptCenter = radar_circles[0].getCenter();
-  }
-
-  // 2026-11-07: 캡처 시 아파트 단지 마커가 지도의 정중앙에 완벽히 오도록 지도 중심 강제 이동
-  if (radarMapInstance && aptCenter) {
-    radarMapInstance.setCenter(aptCenter);
-  }
-
-  // 4. 캡처 대상 엘리먼트 및 실제 렌더링 치수 결정 (getBoundingClientRect 기반)
+  // 3. 캡처 대상 엘리먼트 및 치수 결정 (데스크톱 와이드 지도 완벽 대응)
   var mapElement = document.getElementById("radarDataMap") || document.getElementById("dataMap");
   var captureTarget = document.getElementById("radarMapCaptureArea") || mapElement;
   if (!captureTarget) {
@@ -2404,9 +2385,8 @@ function captureRadarMapView(event) {
     return;
   }
 
-  var rect = (mapElement || captureTarget).getBoundingClientRect();
-  var mapW = Math.round(rect.width) || (isDesktop ? (window.innerWidth - 500) : window.innerWidth);
-  var mapH = Math.round(rect.height) || window.innerHeight;
+  var mapW = (mapElement && mapElement.clientWidth > 50) ? mapElement.clientWidth : (captureTarget.clientWidth > 50 ? captureTarget.clientWidth : (isDesktop ? (window.innerWidth - 500) : window.innerWidth));
+  var mapH = (mapElement && mapElement.clientHeight > 50) ? mapElement.clientHeight : (captureTarget.clientHeight > 50 ? captureTarget.clientHeight : window.innerHeight);
 
   // 0KB 및 치수 오류 방지 강제 보정
   if (!mapH || mapH <= 50) mapH = window.innerHeight || 800;
@@ -2414,15 +2394,17 @@ function captureRadarMapView(event) {
 
   // 데스크톱 환경에서는 캡처 타깃의 너비/높이를 실제 지도 치수로 정확히 일치시켜 우측 여백 발생 차단
   var origTargetStyle = $(captureTarget).attr("style") || "";
-  $(captureTarget).css({
-    'width': mapW + 'px',
-    'height': mapH + 'px',
-    'min-height': mapH + 'px',
-    'overflow': 'hidden',
-    'position': 'relative'
-  });
+  if (isDesktop) {
+    $(captureTarget).css({
+      'width': mapW + 'px',
+      'height': mapH + 'px',
+      'min-height': mapH + 'px',
+      'overflow': 'hidden',
+      'position': 'relative'
+    });
+  }
 
-  // 5. 2026-11-07: 버튼 캡슐형 확장 및 진행률 UI 표시 ("이미지 저장 중...(###%)")
+  // 4. 2026-11-07: 버튼 캡슐형 확장 및 진행률 UI 표시 ("이미지 저장 중...(###%)")
   var $btn = $(event ? event.currentTarget : "#radarModalCaptureBtn, #radarMapCaptureBtn");
   if (!$btn.length) {
     $btn = $(".radar-map-floating-capture-btn, .radar-floating-capture-btn");
@@ -2447,7 +2429,7 @@ function captureRadarMapView(event) {
     }
   }, 120);
 
-  // 6. 제외 대상 숨김 처리 (줌 컨트롤 +/- 및 독립 페이지 상단 타이틀 바)
+  // 5. 제외 대상 숨김 처리 (줌 컨트롤 +/- 및 독립 페이지 상단 타이틀 바)
   var hadZoomControl = true;
   if (window.radarMapInstance && typeof window.radarMapInstance.getOptions === 'function') {
     try {
@@ -2473,7 +2455,7 @@ function captureRadarMapView(event) {
   $zoomControls.hide();
   $titleBar.hide();
 
-  // 7. 단지 요약 카드 스타일 최적화 (모바일 vs 웹 완벽 분리)
+  // 6. 단지 요약 카드 스타일 최적화 (모바일 vs 웹 완벽 분리)
   var $aptWrap = $("#radarAptInfoWrap");
   var origWrapStyle = $aptWrap.attr("style") || "";
   var origWrapDisplay = $aptWrap.css("display");
@@ -2553,7 +2535,7 @@ function captureRadarMapView(event) {
     $backBtn.hide();
   }
 
-  // 8. 네이버 지도 자체 SVG 오버레이 활성 상태 기록 및 캡처 중 일시 숨김 (잔상 및 왜곡 방지)
+  // 7. 네이버 지도 자체 SVG 오버레이 활성 상태 기록 및 캡처 중 일시 숨김 (잔상 및 왜곡 방지)
   var hadMetroLine = !!(radar_metro_line && radar_metro_line.getMap());
   var hadPSchoolLine = !!(radar_pSchool_line && radar_pSchool_line.getMap());
   var hadMSchoolLines = (radar_mSchool_lines || []).map(function (l) { return !!(l && l.getMap()); });
@@ -2565,87 +2547,99 @@ function captureRadarMapView(event) {
 
   var scale = 2; // html2canvas scale 동기화
 
-  // 2026-11-07: 단지 마커가 지도의 정중앙에 위치하므로 중심점은 무조건 (mapW / 2, mapH / 2)!
-  var centerPt = {
-    x: mapW / 2,
-    y: mapH / 2
-  };
-
-  var aptLat = typeof aptCenter.lat === 'function' ? aptCenter.lat() : Number(aptCenter.y || aptCenter.lat);
-  var aptLng = typeof aptCenter.lng === 'function' ? aptCenter.lng() : Number(aptCenter.x || aptCenter.lng);
-  var curZoom = radarMapInstance ? radarMapInstance.getZoom() : 16;
-
-  // Web Mercator 고정밀 Resolution (1픽셀당 미터 수)
-  var radLat = aptLat * Math.PI / 180;
-  var metersPerPx = (156543.03392 * Math.cos(radLat)) / Math.pow(2, curZoom);
-  var metersPerDegreeLat = 111132.92 - 559.82 * Math.cos(2 * radLat) + 1.175 * Math.cos(4 * radLat);
-  var metersPerDegreeLng = (Math.PI / 180) * 6378137 * Math.cos(radLat);
-
-  // 2026-11-07: 지도의 정중앙(단지 마커)을 기준으로 목표 위경도를 화면 픽셀 좌표로 변환하는 무결점 함수
+  // 2026-11-07: map.getBounds() 선형 보간 기반 100% 무결점 화면 픽셀 좌표 변환
   function getMapPixelOffset(coord) {
-    if (!coord) return null;
-    var cLat = typeof coord.lat === 'function' ? coord.lat() : Number(coord.y || coord.lat);
-    var cLng = typeof coord.lng === 'function' ? coord.lng() : Number(coord.x || coord.lng);
+    if (!coord || !radarMapInstance) return null;
+    try {
+      var bounds = radarMapInstance.getBounds();
+      if (!bounds) return null;
+      var sw = bounds.getSW();
+      var ne = bounds.getNE();
+      var lngSpan = ne.lng() - sw.lng();
+      var latSpan = ne.lat() - sw.lat();
+      if (lngSpan <= 0 || latSpan <= 0) return null;
 
-    var deltaEastMeters = (cLng - aptLng) * metersPerDegreeLng;
-    var deltaNorthMeters = (cLat - aptLat) * metersPerDegreeLat;
+      var targetLng = typeof coord.lng === 'function' ? coord.lng() : Number(coord.x || coord.lng);
+      var targetLat = typeof coord.lat === 'function' ? coord.lat() : Number(coord.y || coord.lat);
 
-    var px = centerPt.x + (deltaEastMeters / metersPerPx);
-    var py = centerPt.y - (deltaNorthMeters / metersPerPx);
-    return { x: px, y: py };
+      var px = ((targetLng - sw.lng()) / lngSpan) * mapW;
+      var py = ((ne.lat() - targetLat) / latSpan) * mapH;
+      return { x: px, y: py };
+    } catch (e) {
+      console.warn("좌표 투영 오류:", e);
+      return null;
+    }
+  }
+
+  // 단지 중심점 안전 추출
+  var aptCenter = window.currentRadarCenter;
+  if (!aptCenter && window.currentRadarAptData) {
+    var lat = Number(window.currentRadarAptData["Y"] || window.currentRadarAptData["lat"]);
+    var lng = Number(window.currentRadarAptData["X"] || window.currentRadarAptData["lng"]);
+    if (lat && lng) aptCenter = new naver.maps.LatLng(lat, lng);
+  }
+  if (!aptCenter && radar_circles.length && radar_circles[0]) {
+    aptCenter = radar_circles[0].getCenter();
   }
 
   // 2026-11-07: 반경원 및 거리표시선 공통 렌더러 (단지 중심점 1개에만 정밀 결합)
   function drawRadarVectorOverlays(targetCtx, s) {
     if (!targetCtx || !aptCenter) return;
 
-    // A. 반경원표시 (250m, 500m, 1km, 3km, 5km) - 지도의 정중앙(centerPt) 기준 완벽 일치!
+    var centerPt = getMapPixelOffset(aptCenter);
+    if (!centerPt) return;
+
+    // A. 반경원표시 (250m, 500m, 1km, 3km, 5km)
     var activeRadii = [250, 500, 1000, 3000, 5000];
 
     activeRadii.forEach(function (radius) {
-      var radiusPx = radius / metersPerPx;
-      targetCtx.save();
-      targetCtx.beginPath();
-      targetCtx.arc(centerPt.x * s, centerPt.y * s, radiusPx * s, 0, 2 * Math.PI);
-      targetCtx.strokeStyle = '#E43B46';
-      targetCtx.globalAlpha = 0.45;
-      targetCtx.lineWidth = 1.3 * s;
-      targetCtx.stroke();
-      targetCtx.restore();
-
-      // 반경 레이블 뱃지 (250m, 500m, 1km, 3km, 5km)
-      targetCtx.save();
-      var labelText = radius >= 1000 ? (radius / 1000) + "km" : radius + "m";
-      targetCtx.font = "bold " + Math.round(10 * s) + "px sans-serif";
-      var textW = targetCtx.measureText(labelText).width;
-      var badgeW = textW + (10 * s);
-      var badgeH = 15 * s;
-      var badgeX = (centerPt.x * s) - (badgeW / 2);
-      var badgeY = (centerPt.y * s) - (radiusPx * s) - (badgeH / 2);
-
-      // 화면 영역 안에 위치할 때만 뱃지 표시
-      if (badgeY >= 0 && badgeY <= mapH * s && badgeX >= 0 && badgeX <= mapW * s) {
-        targetCtx.fillStyle = "rgba(45, 55, 72, 0.75)";
+      var northCoord = radarMoveLatLng(aptCenter, radius, 'N');
+      var northPt = getMapPixelOffset(northCoord);
+      if (northPt) {
+        var radiusPx = Math.abs(centerPt.y - northPt.y);
+        targetCtx.save();
         targetCtx.beginPath();
-        if (targetCtx.roundRect) {
-          targetCtx.roundRect(badgeX, badgeY, badgeW, badgeH, 3 * s);
-        } else {
-          targetCtx.rect(badgeX, badgeY, badgeW, badgeH);
+        targetCtx.arc(centerPt.x * s, centerPt.y * s, radiusPx * s, 0, 2 * Math.PI);
+        targetCtx.strokeStyle = '#E43B46';
+        targetCtx.globalAlpha = 0.45;
+        targetCtx.lineWidth = 1.3 * s;
+        targetCtx.stroke();
+        targetCtx.restore();
+
+        // 반경 레이블 뱃지 (250m, 500m, 1km, 3km, 5km)
+        targetCtx.save();
+        var labelText = radius >= 1000 ? (radius / 1000) + "km" : radius + "m";
+        targetCtx.font = "bold " + Math.round(10 * s) + "px sans-serif";
+        var textW = targetCtx.measureText(labelText).width;
+        var badgeW = textW + (10 * s);
+        var badgeH = 15 * s;
+        var badgeX = (centerPt.x * s) - (badgeW / 2);
+        var badgeY = (centerPt.y * s) - (radiusPx * s) - (badgeH / 2);
+
+        // 화면 영역 안에 위치할 때만 뱃지 표시
+        if (badgeY >= 0 && badgeY <= mapH * s && badgeX >= 0 && badgeX <= mapW * s) {
+          targetCtx.fillStyle = "rgba(45, 55, 72, 0.75)";
+          targetCtx.beginPath();
+          if (targetCtx.roundRect) {
+            targetCtx.roundRect(badgeX, badgeY, badgeW, badgeH, 3 * s);
+          } else {
+            targetCtx.rect(badgeX, badgeY, badgeW, badgeH);
+          }
+          targetCtx.fill();
+          targetCtx.fillStyle = "#ffffff";
+          targetCtx.textAlign = "center";
+          targetCtx.textBaseline = "middle";
+          targetCtx.fillText(labelText, centerPt.x * s, badgeY + (badgeH / 2));
         }
-        targetCtx.fill();
-        targetCtx.fillStyle = "#ffffff";
-        targetCtx.textAlign = "center";
-        targetCtx.textBaseline = "middle";
-        targetCtx.fillText(labelText, centerPt.x * s, badgeY + (badgeH / 2));
+        targetCtx.restore();
       }
-      targetCtx.restore();
     });
 
     // B. 지하철역 직선거리 점선 (radar_metro_line)
     if (radar_metro_line && hadMetroLine) {
       var metroPath = radar_metro_line.getPath();
       if (metroPath && metroPath.getLength && metroPath.getLength() >= 2) {
-        var p1 = centerPt; // 단지 중심
+        var p1 = getMapPixelOffset(metroPath.getAt(0));
         var p2 = getMapPixelOffset(metroPath.getAt(1));
         if (p1 && p2) {
           targetCtx.save();
@@ -2665,7 +2659,7 @@ function captureRadarMapView(event) {
     if (radar_pSchool_line && hadPSchoolLine) {
       var pPath = radar_pSchool_line.getPath();
       if (pPath && pPath.getLength && pPath.getLength() >= 2) {
-        var p1 = centerPt; // 단지 중심
+        var p1 = getMapPixelOffset(pPath.getAt(0));
         var p2 = getMapPixelOffset(pPath.getAt(1));
         if (p1 && p2) {
           targetCtx.save();
@@ -2687,7 +2681,7 @@ function captureRadarMapView(event) {
         if (mLine && hadMSchoolLines[mIdx]) {
           var mPath = mLine.getPath();
           if (mPath && mPath.getLength && mPath.getLength() >= 2) {
-            var p1 = centerPt; // 단지 중심
+            var p1 = getMapPixelOffset(mPath.getAt(0));
             var p2 = getMapPixelOffset(mPath.getAt(1));
             if (p1 && p2) {
               targetCtx.save();
@@ -2779,7 +2773,7 @@ function captureRadarMapView(event) {
         .html('<i class="fa-solid fa-camera"></i>');
   }
 
-  // 8. 300ms 후 html2canvas 실행 (지도가 단지 중심으로 완전히 안착하도록 충분한 리플로우 대기)
+  // 8. 150ms 후 html2canvas 실행
   setTimeout(function () {
     updateProgress(35);
     html2canvas(captureTarget, {
@@ -2802,27 +2796,6 @@ function captureRadarMapView(event) {
         if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
         if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
         if (el.id === 'titleBar_radar') return true;
-        // 2026-11-07: 네이버 지도 자체의 왜곡된 SVG 오버레이(동심원, 거리 점선 등) 및 텍스트 마커 완전 제외!
-        // (마커 SVG는 보존하고, 네이버 지도의 배경 벡터 오버레이 레이어는 100% 무시하여 상단 어긋남 버그 원천 차단)
-        var tag = el.tagName ? el.tagName.toLowerCase() : '';
-        if (tag === 'svg') {
-          var cls = (el.getAttribute('class') || '') + ' ' + (typeof el.className === 'string' ? el.className : '');
-          var isMarkerSvg = cls.indexOf('large_marker') !== -1 ||
-                            cls.indexOf('edu_marker') !== -1 ||
-                            cls.indexOf('trans_marker') !== -1 ||
-                            cls.indexOf('infra_marker') !== -1 ||
-                            cls.indexOf('market') !== -1 ||
-                            cls.indexOf('department_store') !== -1 ||
-                            cls.indexOf('mall') !== -1 ||
-                            cls.indexOf('mart') !== -1 ||
-                            cls.indexOf('park') !== -1 ||
-                            cls.indexOf('harmful') !== -1;
-          if (!isMarkerSvg) return true;
-        }
-        if (tag === 'circle' || tag === 'polyline') return true;
-        if (el.className && typeof el.className === 'string' &&
-            (el.className.indexOf('distance_index') !== -1 ||
-             el.className.indexOf('radius_') !== -1)) return true;
         // 2026-11-07: 네이버 지도 줌 컨트롤(+/-) 요소는 캡처 이미지에서 완전 제외
         if (el.innerText && (el.innerText.trim() === '+' || el.innerText.trim() === '-' || el.innerText.trim() === '−' || el.innerText.trim() === '+\n-')) return true;
         if (el.getAttribute && (el.getAttribute('title') === '확대' || el.getAttribute('title') === '축소')) return true;
