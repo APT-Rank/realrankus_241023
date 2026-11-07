@@ -2833,6 +2833,31 @@ function buildRadarDesktopSummaryDom(aptData, panelWidth) {
   return { el: wrapEl, hasTransport: hasTransport };
 }
 
+// 2026-11-08: Canvas 요소의 픽셀 버퍼까지 온전히 복제하는 딥 클론 헬퍼 (캡처 중 화면 틀어짐/흔들림 방지용 동결 레이어 구성)
+function createDeepCloneWithCanvas(sourceEl) {
+  if (!sourceEl) return null;
+  var clone = sourceEl.cloneNode(true);
+  var origCanvases = sourceEl.querySelectorAll('canvas');
+  var cloneCanvases = clone.querySelectorAll('canvas');
+  for (var i = 0; i < origCanvases.length; i++) {
+    try {
+      var src = origCanvases[i];
+      var dest = cloneCanvases[i];
+      if (src && dest && src.width > 0 && src.height > 0) {
+        dest.width = src.width;
+        dest.height = src.height;
+        var dCtx = dest.getContext('2d');
+        if (dCtx) {
+          dCtx.drawImage(src, 0, 0);
+        }
+      }
+    } catch (e) {
+      console.warn("캔버스 복제 경고:", e);
+    }
+  }
+  return clone;
+}
+
 /**
  * @function captureRadarMapView
  * @description 화면에 표시된 네이버 지도 영역과 단지 요약 카드를 고해상도(scale: 2) PNG 이미지로 캡처 및 다운로드합니다.
@@ -2946,6 +2971,57 @@ function captureRadarMapView(event) {
     var mapW = origLiveMapW;
     var mapH = origLiveMapH;
 
+    // 2026-11-08: 캡처 중 화면 틀어짐/깜빡임/레이아웃 흔들림 원천 방지를 위한 전면 시각 동결 클론 오버레이 생성
+    // 캡처 중 지도 사이즈나 중심 변경, 오버레이 제거 등 모든 사전 작업이 진행되는 동안 사용자 화면을 100% 온전하게 동결 보존
+    var freezeSource = isInModal ? document.getElementById("radarModal") : (document.getElementById("container") || captureTarget);
+    var $freezeOverlay = null;
+
+    if (freezeSource) {
+      try {
+        var sourceRect = freezeSource.getBoundingClientRect();
+        var cloneNode = createDeepCloneWithCanvas(freezeSource);
+        if (cloneNode) {
+          $(cloneNode).find('[data-html2canvas-ignore="true"], .radar-map-floating-capture-btn, #radarMapCaptureBtn, #radarModalCaptureBtn').remove();
+
+          $freezeOverlay = $('<div id="radarCaptureFreezeOverlay"></div>').css({
+            'position': 'fixed',
+            'top': Math.max(0, sourceRect.top) + 'px',
+            'left': Math.max(0, sourceRect.left) + 'px',
+            'width': Math.round(sourceRect.width) + 'px',
+            'height': Math.round(sourceRect.height) + 'px',
+            'z-index': 99990,
+            'pointer-events': 'none',
+            'overflow': 'hidden',
+            'background': '#ffffff'
+          });
+
+          $(cloneNode).css({
+            'position': 'absolute',
+            'top': '0px',
+            'left': '0px',
+            'width': Math.round(sourceRect.width) + 'px',
+            'height': Math.round(sourceRect.height) + 'px',
+            'margin': '0px',
+            'transform': 'none'
+          });
+
+          $freezeOverlay.append(cloneNode);
+          document.body.appendChild($freezeOverlay[0]);
+        }
+      } catch (fzErr) {
+        console.warn("동결 클론 오버레이 생성 경고:", fzErr);
+      }
+    }
+
+    // 2026-11-08: 캡처용 요약 카드를 사용자 화면에 노출시키지 않고 백그라운드에서 렌더링하기 위한 오프스크린 호스트
+    var bgHost = document.getElementById("radarBackgroundCaptureHost");
+    if (!bgHost) {
+      bgHost = document.createElement("div");
+      bgHost.id = "radarBackgroundCaptureHost";
+      bgHost.style.cssText = "position: fixed; left: -99999px; top: 0; width: 3000px; height: 3000px; overflow: hidden; pointer-events: none; z-index: -99999; opacity: 0;";
+      document.body.appendChild(bgHost);
+    }
+
     var origTargetStyle = $(captureTarget).attr("style") || "";
     var origMapElemStyle = mapElement ? ($(mapElement).attr("style") || "") : "";
     var $radarModal = $("#radarModal");
@@ -2961,7 +3037,7 @@ function captureRadarMapView(event) {
     if (useSideBySideWebLayout) {
       var summaryBuilt = buildRadarDesktopSummaryDom(window.currentRadarAptData, leftPanelWidth);
       leftPanelEl = summaryBuilt.el;
-      document.body.appendChild(leftPanelEl);
+      bgHost.appendChild(leftPanelEl);
       var naturalLeftH = Math.ceil(leftPanelEl.getBoundingClientRect().height) || 720;
       var minBodyH = summaryBuilt.hasTransport ? 740 : 660;
       mapH = Math.max(naturalLeftH, minBodyH);
@@ -3544,6 +3620,17 @@ function captureRadarMapView(event) {
         $titleBar.css("display", titleBarDisplay);
         $zoomControls.show();
 
+        // 2026-11-08: 시각 동결 클론 오버레이 및 백그라운드 오프스크린 호스트 안전 제거
+        if ($freezeOverlay && $freezeOverlay.length) {
+          $freezeOverlay.remove();
+        }
+        $("#radarCaptureFreezeOverlay").remove();
+
+        var $bgHost = $("#radarBackgroundCaptureHost");
+        if ($bgHost.length) {
+          $bgHost.remove();
+        }
+
         if (leftPanelEl && leftPanelEl.parentNode) {
           leftPanelEl.parentNode.removeChild(leftPanelEl);
         }
@@ -3684,6 +3771,10 @@ function captureRadarMapView(event) {
           scrollX: 0,
           scrollY: 0,
           onclone: function (clonedDoc) {
+            var clonedFreeze = clonedDoc.getElementById('radarCaptureFreezeOverlay');
+            if (clonedFreeze && clonedFreeze.parentNode) {
+              clonedFreeze.parentNode.removeChild(clonedFreeze);
+            }
             if (!useSideBySideWebLayout) return;
             var clonedRadarModal = clonedDoc.getElementById('radarModal');
             if (clonedRadarModal && isInModal) {
@@ -3723,6 +3814,8 @@ function captureRadarMapView(event) {
           ignoreElements: function (el) {
             if (!el) return false;
             if (el.getAttribute && el.getAttribute('data-html2canvas-ignore') === 'true') return true;
+            if (el.id === 'radarCaptureFreezeOverlay' || (el.id && el.id.indexOf('Freeze') !== -1)) return true;
+            if (el.id === 'radarBackgroundCaptureHost') return true;
             if (el.id === 'radarDesktopSummaryCapturePanel') return true;
             // 모바일 index.html 등에서 배경 메인 지도/리스트 등 무거운 body 직계 형제 요소 제외
             if (el.parentElement === document.body && el !== captureTarget && !el.contains(captureTarget)) {
@@ -3772,7 +3865,8 @@ function captureRadarMapView(event) {
                 if (el === leftPanelEl || leftPanelEl.contains(el) || el.contains(leftPanelEl)) return false;
                 var tag = el.tagName;
                 if (tag === 'STYLE' || tag === 'LINK' || tag === 'HEAD') return false;
-                if (el.parentElement === document.body) return true;
+                if (el.id === 'radarCaptureFreezeOverlay') return true;
+                if (el.parentElement === document.body && el !== bgHost) return true;
                 return false;
               }
             })
