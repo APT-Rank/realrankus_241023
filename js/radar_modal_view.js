@@ -1808,11 +1808,8 @@ function initRadarModalMap(aptData) {
     });
   });
 
-  // 2026-11-07: 초기 줌(16)에 맞춰 250m, 500m 외의 원 및 마커는 초기 비활성화
-  if (radar_circles[2]) radar_circles[2].setMap(null);
-  if (radar_circles[3]) radar_circles[3].setMap(null);
-  if (radar_circles[4]) radar_circles[4].setMap(null);
-  $(".radius_1km, .radius_3km, .radius_5km").hide();
+  // 2026-11-07: 모든 반경원(250m, 500m, 1km, 3km, 5km) 및 마커 활성화
+  $(".radius_250m, .radius_500m, .radius_1km, .radius_3km, .radius_5km").show();
 
   // 단지 메인 마커 (map_control_radar.js createAPTMarker 100% 동일)
   var aptValue = Math.round((Number(aptData["가치 총점"]) || 0) * 100) / 100;
@@ -2311,7 +2308,7 @@ function initRadarModalMap(aptData) {
   // 모바일 화면: 바텀시트에 가려지지 않도록 지도 중심을 아래로 110px 패닝 (단지 핀이 상단 1/2 영역에 위치)
   map.panBy(new naver.maps.Point(0, 110));
 
-  // 줌 변경 시 동심원 및 거리 인덱스 표시 제어
+  // 줌 변경 시 동심원 및 거리 인덱스 표시 제어 (2026-11-07: 1km, 3km, 5km 원은 상시 유지)
   naver.maps.Event.addListener(map, 'zoom_changed', function () {
     var curZoom = map.getZoom();
     if (curZoom >= 16) {
@@ -2326,22 +2323,18 @@ function initRadarModalMap(aptData) {
       $(".radius_500m").show();
       if (radar_circles[1]) radar_circles[1].setMap(map);
     }
-    if (curZoom == 14) {
+    if (curZoom <= 14) {
       $(".radius_250m").hide();
       if (radar_circles[0]) radar_circles[0].setMap(null);
       $(".radius_500m").hide();
       if (radar_circles[1]) radar_circles[1].setMap(null);
-      $(".radius_1km").show();
-      if (radar_circles[2]) radar_circles[2].setMap(map);
     }
-    if (curZoom <= 13) {
-      $(".radius_250m").hide();
-      if (radar_circles[0]) radar_circles[0].setMap(null);
-      $(".radius_500m").hide();
-      if (radar_circles[1]) radar_circles[1].setMap(null);
-      $(".radius_1km").hide();
-      if (radar_circles[2]) radar_circles[2].setMap(null);
-    }
+
+    // 1km, 3km, 5km 원 및 텍스트 마커 상시 활성화 유지
+    $(".radius_1km, .radius_3km, .radius_5km").show();
+    if (radar_circles[2]) radar_circles[2].setMap(map);
+    if (radar_circles[3]) radar_circles[3].setMap(map);
+    if (radar_circles[4]) radar_circles[4].setMap(map);
   });
 }
 
@@ -2526,16 +2519,14 @@ function captureRadarMapView(event) {
 
     var curZoom = radarMapInstance ? radarMapInstance.getZoom() : 16;
 
-    // A. 반경원표시 (동심원 250m, 500m 등 현재 줌 기준)
+    // A. 반경원표시 (2026-11-07: 동심원 250m, 500m 뿐만 아니라 1km, 3km, 5km 원도 모두 렌더링)
     var activeRadii = [];
     if (curZoom >= 16) {
-      activeRadii = [250, 500];
+      activeRadii = [250, 500, 1000, 3000, 5000];
     } else if (curZoom == 15) {
-      activeRadii = [500];
-    } else if (curZoom == 14) {
-      activeRadii = [1000];
+      activeRadii = [500, 1000, 3000, 5000];
     } else {
-      activeRadii = [];
+      activeRadii = [1000, 3000, 5000];
     }
 
     activeRadii.forEach(function (radius) {
