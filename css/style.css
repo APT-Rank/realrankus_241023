@@ -2303,6 +2303,52 @@
     color: black
   }
 
+  /* 2026-11-07: #baseModal 하단(#footer > div) 우측 끝 빨간색 원형 단지 분석 캡처 버튼 및 제자리 스피너 */
+  .base-modal-capture-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    border-radius: 50%;
+    background-color: #E43B46;
+    color: #ffffff;
+    font-size: 0.95em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .base-modal-capture-btn:hover {
+    background-color: #d32f3a;
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+  }
+
+  .base-modal-capture-btn:active {
+    background-color: #b91c1c;
+    color: #ffffff;
+    transform: scale(0.92);
+  }
+
+  .base-modal-capture-btn.is-capturing {
+    pointer-events: none;
+    cursor: default;
+    transform: none;
+  }
+
+  .base-modal-capture-btn .base-modal-capture-spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+    color: #ffffff;
+  }
+
   .kakaoShare {
     border: None;
     background-color: none;

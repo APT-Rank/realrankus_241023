@@ -105,6 +105,120 @@ function radarFormatOptionDate(dateStr) {
   }
 }
 
+/**
+ * @function updateRadarComplexVisitInfo
+ * @description 2026-11-07: radarMap_backup.html의 방문자 수 집계 및 #complex_visit_info 갱신 로직 복원
+ * - 전역 days_ago_num(최근 30일 기준값) 및 today_str 보장 (전역 today 객체 변형 방지)
+ * - #sido/#gungu 셀렉트박스가 없는 단독 페이지(radarMap.html)에서도 법정동주소로부터 시도/시군구/읍면동을 안전 추출하여 realrankus_visit 호출
+ * - 비로그인 환경의 서브 DB 쓰기 지연/거부 시에도 스피너가 무한 대기하지 않도록 읽기 전용 폴백 제공
+ */
+function updateRadarComplexVisitInfo(searchCode, rawLawAddr, isEn) {
+  if (!searchCode) return;
+  var codeStr = String(searchCode);
+  var pad2 = function (n) { return n < 10 ? "0" + n : String(n); };
+
+  if (typeof window.today_str === 'undefined' || !window.today_str) {
+    var nowDate = new Date();
+    window.today_str = nowDate.getFullYear() + "-" + pad2(nowDate.getMonth() + 1) + "-" + pad2(nowDate.getDate());
+  }
+
+  if (typeof window.days_ago_num === 'undefined' || isNaN(window.days_ago_num)) {
+    var dAgo = new Date();
+    dAgo.setDate(dAgo.getDate() - 30);
+    window.days_ago_num = Number("" + dAgo.getFullYear() + pad2(dAgo.getMonth() + 1) + pad2(dAgo.getDate()));
+  }
+
+  var sanitizeKey = function (s) {
+    return String(s || "").replace(/[.#$\[\]\/]/g, "").trim();
+  };
+
+  var sidoText = $("#sido option:selected").length ? $("#sido option:selected").text().trim() : "";
+  var gunguOptText = $("#gungu option:selected").length ? $("#gungu option:selected").text().trim() : "";
+  var visitSido = "";
+  var visitGungu = "";
+  var visitDong = "";
+
+  var parts = String(rawLawAddr || "").trim().split(/\s+/).filter(Boolean);
+  if (sidoText && gunguOptText) {
+    visitSido = sidoText;
+    visitGungu = sidoText + " " + gunguOptText;
+    var dongToken = parts.length >= 3 ? (parts[2].slice(-1) === "구" ? (parts[3] || parts[2]) : parts[2]) : (parts[1] || "");
+    visitDong = dongToken ? (visitGungu + " " + dongToken) : visitGungu;
+  } else if (parts.length >= 2) {
+    visitSido = parts[0];
+    if (parts[0].indexOf("세종") === 0) {
+      visitGungu = parts[0] + " 세종시";
+      visitDong = visitGungu + (parts[1] ? " " + parts[1] : "");
+    } else if (parts.length >= 4 && parts[2].slice(-1) === "구") {
+      visitGungu = parts[0] + " " + parts[1] + " " + parts[2];
+      visitDong = visitGungu + " " + parts[3];
+    } else {
+      visitGungu = parts[0] + " " + parts[1];
+      visitDong = parts[2] ? (visitGungu + " " + parts[2]) : visitGungu;
+    }
+  } else {
+    visitSido = "기타";
+    visitGungu = "기타";
+    visitDong = "기타";
+  }
+
+  visitSido = sanitizeKey(visitSido) || "기타";
+  visitGungu = sanitizeKey(visitGungu) || visitSido;
+  visitDong = sanitizeKey(visitDong) || visitGungu;
+
+  var renderVisitLabel = function (countVal) {
+    var $info = $("#complex_visit_info");
+    if (!$info.length) return;
+    if (!countVal || countVal <= 1) {
+      $info.html(isEn ? "This is the first visit!" : "첫 번째 방문이네요!");
+    } else {
+      var ordinalStr = isEn ? (function (n) {
+        var s = ["th", "st", "nd", "rd"], v = n % 100;
+        return n.toLocaleString() + (s[(v - 20) % 10] || s[v] || s[0]);
+      })(countVal) + " visit!" : countVal.toLocaleString() + "번째 방문이예요!";
+      $info.html(ordinalStr);
+    }
+  };
+
+  if (typeof realrankus_visit === 'function') {
+    try {
+      realrankus_visit(codeStr, visitSido, visitGungu, visitDong);
+    } catch (e) {
+      console.warn("realrankus_visit 실행 경고:", e);
+    }
+  }
+
+  // 비로그인 권한 제한 또는 서브 DB 응답 지연으로 스피너가 남아있는 경우 기본 DB 읽기 전용 폴백 수행
+  setTimeout(function () {
+    var $info = $("#complex_visit_info");
+    if (!$info.length || !$info.find(".spinner-border").length) return;
+    if (typeof firebase === 'undefined' || !firebase.database) {
+      renderVisitLabel(1);
+      return;
+    }
+    firebase.database().ref().child("realrankus_visit").child("complex_" + codeStr).get()
+      .then(function (snapshot) {
+        if (!$("#complex_visit_info .spinner-border").length) return;
+        var visit_count = 0;
+        if (snapshot && snapshot.exists()) {
+          var visit_obj = snapshot.val() || {};
+          for (var dateKey in visit_obj) {
+            var compare_days = Number(String(dateKey).replace(/-/g, ""));
+            if (window.days_ago_num <= compare_days) {
+              visit_count += (Number(visit_obj[dateKey]) || 0);
+            }
+          }
+        }
+        renderVisitLabel(visit_count > 0 ? visit_count : 1);
+      })
+      .catch(function () {
+        if ($("#complex_visit_info .spinner-border").length) {
+          renderVisitLabel(1);
+        }
+      });
+  }, 900);
+}
+
 function radarMoveLatLng(center, distance, direction) {
   var R = 6378137;
   var dLat = (distance / R) * (180 / Math.PI);
@@ -1656,6 +1770,8 @@ function renderRadarModalView(aptData) {
     } else {
       $(".complex_like").css({ 'grid-template-columns': '1fr 1fr 1fr' });
     }
+    // 2026-11-07: 데스크톱 #visit_like_card 상단 #complex_visit_info 방문자 카운트 집계 및 텍스트 갱신 복원
+    updateRadarComplexVisitInfo(searchCode, aptData["법정동주소"], isEn);
     syncRadarCaptureButtonPosition(false);
   } else {
     // 2026-11-07: 모바일 및 모달 바텀시트 화면 스타일링 (radarMap.html isMobile=true 100% 동일)

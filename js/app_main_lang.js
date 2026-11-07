@@ -2677,9 +2677,9 @@ function showDetail(index, forceMapCenter) {
         </div>
       `;
 
-  //총점,순위
+  //총점,순위 (2026-11-07: #baseModal 이미지 캡처 타깃 식별자 data-capture-card 추가)
   detailHtml += `
-        <div class='card'>
+        <div class='card' data-capture-card='rank'>
         <div class='card-header'>
       `;
 
@@ -2811,9 +2811,9 @@ function showDetail(index, forceMapCenter) {
         </div></div></div>
       `;
 
-  //주거
+  //주거 (2026-11-07: #baseModal 이미지 캡처 평가 카드 식별자 추가)
   detailHtml += `
-        <div class='card'>
+        <div class='card' data-capture-card='eval'>
         <div class='card-header'>
         <div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp${tSafe('ui.report.living', '주거')}</div>
         </div>
@@ -2950,9 +2950,9 @@ function showDetail(index, forceMapCenter) {
   }
 
   if (stationArea != "NA") {
-    //교통
+    //교통 (2026-11-07: #baseModal 이미지 캡처 평가 카드 식별자 추가)
     detailHtml += `
-          <div class='card'>
+          <div class='card' data-capture-card='eval'>
           <div class='card-header'>
           <div class='popTitle'><i class='fas fa-bus'></i>&nbsp&nbsp${tSafe("ui.report.transport", "교통")}</div>
           </div>
@@ -3004,9 +3004,9 @@ function showDetail(index, forceMapCenter) {
     avgTransportScore = (Math.round((transportSum / itemNum) * 100) / 100).toFixed(2);
   }
 
-  //인프라
+  //인프라 (2026-11-07: #baseModal 이미지 캡처 평가 카드 식별자 추가)
   detailHtml += `
-        <div class='card'>
+        <div class='card' data-capture-card='eval'>
         <div class='card-header'>
         <div class='popTitle'><i class='fas fa-hospital-user'></i>&nbsp&nbsp${tSafe("ui.report.infra", "인프라")}</div>
         </div>
@@ -3047,9 +3047,9 @@ function showDetail(index, forceMapCenter) {
   detailHtml += `</div></div></div></div>`;
   avgInfraScore = (Math.round((infraSum / itemNum) * 100) / 100).toFixed(2);
 
-  //교육
+  //교육 (2026-11-07: #baseModal 이미지 캡처 평가 카드 식별자 추가)
   detailHtml += `
-        <div class='card'>
+        <div class='card' data-capture-card='eval'>
         <div class='card-header'>
         <div class='popTitle'><i class='fas fa-graduation-cap'></i>&nbsp&nbsp${tSafe("ui.report.education", "교육")}</div>
         </div>
@@ -3486,6 +3486,8 @@ function showDetail(index, forceMapCenter) {
 
     footerHtml += `<div class='tShare' onClick='share(shareTitle, shareText, shareURL)'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>`;
   }
+  // 2026-11-07: #baseModal 하단(#footer > div) 가장 오른쪽에 단지 입지분석 이미지 캡처 카메라 버튼 추가
+  footerHtml += `<div class='tShare base-modal-capture-btn' id='btnCaptureBaseModal' title='${isEn ? "Save Complex Analysis Image" : "단지 분석 이미지 저장"}' onClick='captureBaseModalDetail(this, event)'><i class='fa-solid fa-camera'></i></div>`;
   footerHtml += `</div>`;
 
   $("#baseModalLabel").html(titleHtml);
@@ -3677,10 +3679,12 @@ function showDetail(index, forceMapCenter) {
   }
   //}
   //else{
-  $(".modal-footer").css({
-    "grid-template-columns": "1fr 0.15fr 0.15fr",
+  // 2026-11-07: #footer > div 우측 끝 카메라 버튼 추가로 4열 그리드 배치 적용
+  $("#footer > .modal-footer").css({
+    "grid-template-columns": "1fr 0.15fr 0.15fr 0.15fr",
     "text-align": "center",
     "text-align": "-webkit-center",
+    "align-items": "center",
   });
   //}
 
@@ -4711,7 +4715,8 @@ function showRegionDetail(index) {
 
   //}
   //else{
-  $(".modal-footer").css({
+  // 2026-11-07: 지역 상세 모달에서는 기존 3열 하단 레이아웃을 #footer 내부로 범위 한정
+  $("#footer > .modal-footer").css({
     "grid-template-columns": "1fr 0.15fr 0.15fr",
     "text-align": "center",
   });
@@ -5656,3 +5661,372 @@ showSearchBar = function () {
     }
   }
 };
+
+/**
+ * 2026-11-07: #baseModal 단지 상세 모달 핵심 섹션 이미지 캡처 및 저장
+ * - 캡처 대상:
+ *   1) #baseModal > div > div > div.modal-header (닫기 X 버튼 제외)
+ *   2) #aptDetail > div:nth-child(3) > div.card-header (지역명 + Rank)
+ *   3) #aptDetail > div:nth-child(3) > div:nth-child(2) (종합 점수 차트 또는 로그인 안내 영역)
+ *   4) #aptDetail > div:nth-child(5) ~ div:nth-child(8) (주거, 교통, 인프라, 교육 평가 카드)
+ * - 버튼 로딩: 확장 애니메이션 없이 카메라 버튼 제자리 스피너 회전
+ */
+async function captureBaseModalDetail(btnEl, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  if (!btnEl || btnEl.getAttribute("data-capturing") === "true") {
+    return;
+  }
+  if (typeof html2canvas === "undefined") {
+    alert("이미지 저장 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
+    return;
+  }
+
+  var liveModalContent = document.querySelector("#baseModal > div > div.modal-content") ||
+                         document.querySelector("#baseModal .modal-content");
+  var liveHeader = document.querySelector("#baseModal > div > div > div.modal-header") ||
+                   document.querySelector("#baseModal .modal-header");
+  var aptDetailEl = document.getElementById("aptDetail");
+
+  if (!liveModalContent || !liveHeader || !aptDetailEl) {
+    return;
+  }
+
+  var originalBtnHtml = btnEl.innerHTML;
+  btnEl.setAttribute("data-capturing", "true");
+  btnEl.classList.add("is-capturing");
+  btnEl.innerHTML = '<div class="spinner-border spinner-border-sm base-modal-capture-spinner" role="status" aria-label="저장 중"></div>';
+
+  var stageWrap = null;
+
+  try {
+    // 스피너가 화면에 즉시 렌더링되어 회전하도록 프레임 양보
+    await new Promise(function (resolve) {
+      window.requestAnimationFrame(function () {
+        setTimeout(resolve, 45);
+      });
+    });
+
+    if (typeof refreshDetailChartsWhenModalShown === "function") {
+      refreshDetailChartsWhenModalShown();
+    }
+
+    var contentRect = liveModalContent.getBoundingClientRect();
+    var contentWidth = Math.round(contentRect.width);
+    if (!contentWidth || contentWidth < 260) {
+      contentWidth = isMobile ? Math.min(window.innerWidth - 16, 480) : 498;
+    }
+
+    stageWrap = document.createElement("div");
+    stageWrap.id = "baseModalCaptureStage";
+    stageWrap.style.cssText =
+      "position:fixed; left:-10000px; top:0; width:" + contentWidth + "px; " +
+      "background-color:#ffffff; z-index:-1; pointer-events:none; overflow:visible; box-sizing:border-box;";
+
+    var stageContent = document.createElement("div");
+    stageContent.className = "modal-content";
+    stageContent.style.cssText =
+      "width:100%; border:none; border-radius:0; box-shadow:none; background-color:#ffffff; overflow:visible;";
+
+    // 1. 모달 헤더 복제 (#baseModal > div > div > div.modal-header) 및 우측 닫기(X) 버튼 제거
+    var clonedHeader = liveHeader.cloneNode(true);
+    clonedHeader.querySelectorAll(".btn-close").forEach(function (closeBtn) {
+      closeBtn.remove();
+    });
+    stageContent.appendChild(clonedHeader);
+
+    // 2. 본문 영역 생성
+    var stageBody = document.createElement("div");
+    stageBody.className = "modal-body";
+    stageBody.style.cssText =
+      "padding:10px 10px 4px 10px; overflow:visible; max-height:none; height:auto; background-color:#ffffff;";
+
+    var pendingImages = [];
+
+    // 원본 Chart.js <canvas> 픽셀을 고해상도 <img>로 변환하여 복제본 빈 캔버스 현상 원천 차단
+    function replaceCanvasesWithImages(origRoot, cloneRoot) {
+      if (!origRoot || !cloneRoot) return;
+      cloneRoot.querySelectorAll(".detail-chart-loading").forEach(function (wrap) {
+        wrap.classList.remove("is-chart-loading");
+      });
+      cloneRoot.querySelectorAll(".detail-chart-spinner").forEach(function (sp) {
+        sp.remove();
+      });
+
+      var origCanvases = origRoot.querySelectorAll("canvas");
+      var cloneCanvases = cloneRoot.querySelectorAll("canvas");
+      for (var i = 0; i < origCanvases.length && i < cloneCanvases.length; i++) {
+        var origC = origCanvases[i];
+        var cloneC = cloneCanvases[i];
+        cloneC.removeAttribute("id");
+        if (origC.width > 0 && origC.height > 0) {
+          try {
+            var dataUrl = origC.toDataURL("image/png");
+            if (dataUrl && dataUrl !== "data:,") {
+              var cRect = origC.getBoundingClientRect();
+              var cssW = cRect.width > 0 ? cRect.width : (origC.clientWidth || origC.width);
+              var cssH = cRect.height > 0 ? cRect.height : (origC.clientHeight || origC.height);
+              var img = document.createElement("img");
+              img.src = dataUrl;
+              img.style.cssText =
+                "display:block; width:" + cssW + "px; height:" + cssH + "px; max-width:100%; margin:0 auto;";
+              cloneC.parentNode.replaceChild(img, cloneC);
+              pendingImages.push(
+                new Promise(function (res) {
+                  if (img.complete) {
+                    res();
+                  } else {
+                    img.onload = res;
+                    img.onerror = res;
+                  }
+                })
+              );
+            }
+          } catch (cErr) {
+            console.warn("차트 캔버스 복제 경고:", cErr);
+          }
+        }
+      }
+    }
+
+    // 3. #aptDetail > div:nth-child(3) > div.card-header 및 div:nth-child(2) 복제
+    var rankCard = aptDetailEl.querySelector(':scope > [data-capture-card="rank"]') ||
+                   aptDetailEl.querySelector(":scope > div:nth-child(3)");
+    if (rankCard) {
+      var rankHeader = rankCard.querySelector(":scope > div.card-header");
+      var rankSecond = rankCard.querySelector(":scope > div:nth-child(2)");
+      if (rankHeader || rankSecond) {
+        var clonedRankCard = rankCard.cloneNode(false);
+        clonedRankCard.removeAttribute("id");
+        if (rankHeader) {
+          clonedRankCard.appendChild(rankHeader.cloneNode(true));
+        }
+        if (rankSecond) {
+          var clonedRankSecond = rankSecond.cloneNode(true);
+          replaceCanvasesWithImages(rankSecond, clonedRankSecond);
+          clonedRankCard.appendChild(clonedRankSecond);
+        }
+        stageBody.appendChild(clonedRankCard);
+      }
+    }
+
+    // 4. 입지 평가 카드 복제 (#aptDetail > div:nth-child(5) ~ div:nth-child(8): 주거, 교통, 인프라, 교육)
+    var evalCards = Array.prototype.slice.call(
+      aptDetailEl.querySelectorAll(':scope > [data-capture-card="eval"]')
+    );
+    if (evalCards.length === 0) {
+      [5, 6, 7, 8].forEach(function (nth) {
+        var fallbackCard = aptDetailEl.querySelector(":scope > div:nth-child(" + nth + ")");
+        if (fallbackCard) evalCards.push(fallbackCard);
+      });
+    }
+
+    evalCards.forEach(function (origCard, idx) {
+      var clonedCard = origCard.cloneNode(true);
+      replaceCanvasesWithImages(origCard, clonedCard);
+
+      // 주거 카드 내 평형/관리비 테이블 스크롤 제한 해제하여 전체 행 깔끔하게 노출
+      clonedCard.querySelectorAll(".table-responsive").forEach(function (tblWrap) {
+        tblWrap.style.maxHeight = "none";
+        tblWrap.style.overflow = "visible";
+        tblWrap.style.overflowY = "visible";
+      });
+      clonedCard.querySelectorAll(".table-striped").forEach(function (tbl) {
+        tbl.style.maxHeight = "none";
+      });
+      clonedCard.querySelectorAll("thead").forEach(function (th) {
+        th.style.position = "static";
+      });
+
+      if (idx === evalCards.length - 1) {
+        clonedCard.style.marginBottom = "4px";
+      }
+      stageBody.appendChild(clonedCard);
+    });
+
+    stageContent.appendChild(stageBody);
+    stageWrap.appendChild(stageContent);
+    document.body.appendChild(stageWrap);
+
+    if (pendingImages.length > 0) {
+      await Promise.all(pendingImages);
+    }
+
+    var captureW = Math.max(Math.ceil(stageWrap.offsetWidth), 1);
+    var captureH = Math.max(Math.ceil(stageWrap.offsetHeight), 1);
+
+    // 모바일/고해상도 환경 메모리 한계(16MP) 안전 범위 내 스케일 산정
+    var maxCanvasDim = 10000;
+    var maxCanvasArea = 16000000;
+    var baseScale = 2;
+    var scaleByDim = Math.min(maxCanvasDim / captureW, maxCanvasDim / captureH);
+    var scaleByArea = Math.sqrt(maxCanvasArea / (captureW * captureH));
+    var captureScale = Math.max(1, Math.min(baseScale, scaleByDim, scaleByArea));
+
+    var capturedCanvas = await html2canvas(stageWrap, {
+      scale: captureScale,
+      width: captureW,
+      height: captureH,
+      windowWidth: Math.max(window.innerWidth || captureW, captureW),
+      windowHeight: captureH,
+      x: 0,
+      y: 0,
+      scrollX: 0,
+      scrollY: 0,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: "#ffffff",
+      logging: false,
+      ignoreElements: function (el) {
+        if (!el) return false;
+        if (el === stageWrap || stageWrap.contains(el) || el.contains(stageWrap)) {
+          return false;
+        }
+        var tag = el.tagName;
+        if (tag === "STYLE" || tag === "LINK" || tag === "HEAD") {
+          return false;
+        }
+        // 배경 네이버 지도(#dataMap) 및 단지 리스트(#dataList) 등 무거운 형제 DOM 전체 스킵
+        if (el.parentElement === document.body) {
+          return true;
+        }
+        return false;
+      }
+    });
+
+    if (!capturedCanvas || capturedCanvas.width <= 0 || capturedCanvas.height <= 0) {
+      throw new Error("캡처 캔버스 생성 실패");
+    }
+
+    // 5. 리얼랭커스 상/하단 워터마크 합성 (price/index.html 및 radarMap.html 동일 규격)
+    var now = new Date();
+    var pad2 = function (n) { return String(n).padStart(2, "0"); };
+    var yyyy = String(now.getFullYear());
+    var mm = pad2(now.getMonth() + 1);
+    var dd = pad2(now.getDate());
+    var hh = pad2(now.getHours());
+    var mi = pad2(now.getMinutes());
+    var ss = pad2(now.getSeconds());
+    var captureDateTimeStr = yyyy + ". " + mm + ". " + dd + ". " + hh + ":" + mi + ":" + ss;
+
+    var realScale = (capturedCanvas.width / captureW) || captureScale;
+    var headerHeight = Math.round(32 * realScale);
+    var footerHeight = Math.round(36 * realScale);
+
+    var finalCanvas = document.createElement("canvas");
+    finalCanvas.width = capturedCanvas.width;
+    finalCanvas.height = capturedCanvas.height + headerHeight + footerHeight;
+
+    var ctx = finalCanvas.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+    var padX = 10 * realScale;
+    var isEnPage = (typeof currentLang !== "undefined" && currentLang === "en") ||
+                   window.location.pathname.indexOf("/en/") !== -1;
+
+    // 상단 타이틀 바
+    var headerTitle = isEnPage
+      ? (yyyy + "-" + mm + "-" + dd + " Complex Location Analysis | RealRankus")
+      : (yyyy + "년 " + mm + "월 " + dd + "일 단지 입지 분석 | 리얼랭커스");
+    ctx.font = "600 " + (11.5 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = "#64748b";
+    ctx.textBaseline = "top";
+    ctx.fillText(headerTitle, padX, 10 * realScale);
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = 1 * realScale;
+    ctx.moveTo(0, headerHeight - 0.5 * realScale);
+    ctx.lineTo(finalCanvas.width, headerHeight - 0.5 * realScale);
+    ctx.stroke();
+
+    // 본문 캡처 이미지 배치
+    ctx.drawImage(capturedCanvas, 0, headerHeight);
+
+    // 하단 점선 구분선
+    var lineY = headerHeight + capturedCanvas.height + 2 * realScale;
+    ctx.beginPath();
+    ctx.setLineDash([4 * realScale, 3 * realScale]);
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = 1 * realScale;
+    ctx.moveTo(padX, lineY);
+    ctx.lineTo(finalCanvas.width - padX, lineY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 하단 좌측 캡처 시각
+    ctx.font = (8 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = "#94a3b8";
+    ctx.textBaseline = "top";
+    ctx.fillText("Captured at", padX, lineY + 7 * realScale);
+    ctx.fillText(captureDateTimeStr, padX, lineY + 17 * realScale);
+
+    // 하단 우측 브랜드 워터마크
+    var brandLabel = isEnPage ? "RealRankus" : "리얼랭커스";
+    var fontBrand = "bold " + (11 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    var fontSep = (10 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    var fontDomain = (11 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+    ctx.font = fontDomain;
+    var domainWidth = ctx.measureText("realrankus.com").width;
+    ctx.font = fontSep;
+    var sepWidth = ctx.measureText("|").width;
+    ctx.font = fontBrand;
+    var brandWidth = ctx.measureText(brandLabel).width;
+
+    var totalRightWidth = brandWidth + (4 * realScale) + sepWidth + (4 * realScale) + domainWidth;
+    var rightStartX = finalCanvas.width - padX - totalRightWidth;
+    var textY = lineY + 11 * realScale;
+
+    ctx.font = fontBrand;
+    ctx.fillStyle = "#E43B46";
+    ctx.fillText(brandLabel, rightStartX, textY);
+
+    ctx.font = fontSep;
+    ctx.fillStyle = "#cbd5e1";
+    ctx.fillText("|", rightStartX + brandWidth + 4 * realScale, textY);
+
+    ctx.font = fontDomain;
+    ctx.fillStyle = "#64748b";
+    ctx.fillText("realrankus.com", rightStartX + brandWidth + 4 * realScale + sepWidth + 4 * realScale, textY);
+
+    var rawAptName = (typeof current_apt_name === "string" && current_apt_name) ||
+                     (typeof detail_complex === "string" && detail_complex) ||
+                     ((liveHeader.querySelector(".popupTitle h1") || liveHeader.querySelector(".popupTitle") || {}).textContent) ||
+                     "단지";
+    var safeAptName = String(rawAptName).trim().replace(/[\\/:*?"<>|]+/g, "_").replace(/\s+/g, "_");
+    var filename = "리얼랭커스_" + safeAptName + "_입지분석_" + yyyy + mm + dd + "_" + hh + mi + ss + ".png";
+
+    var base64Data = finalCanvas.toDataURL("image/png");
+    if (!base64Data || base64Data.length < 200 || base64Data === "data:,") {
+      throw new Error("빈 이미지 데이터 생성");
+    }
+
+    if (window.Android && typeof window.Android.downloadImage === "function") {
+      window.Android.downloadImage(base64Data, filename);
+    } else {
+      var link = document.createElement("a");
+      link.download = filename;
+      link.href = base64Data;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  } catch (err) {
+    console.error("#baseModal 입지분석 이미지 캡처 실패:", err);
+    alert("이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+  } finally {
+    if (stageWrap && stageWrap.parentNode) {
+      stageWrap.parentNode.removeChild(stageWrap);
+    }
+    btnEl.innerHTML = originalBtnHtml;
+    btnEl.classList.remove("is-capturing");
+    btnEl.removeAttribute("data-capturing");
+  }
+}
+
+window.captureBaseModalDetail = captureBaseModalDetail;
