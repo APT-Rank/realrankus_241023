@@ -2466,7 +2466,17 @@ function captureRadarMapView(event) {
     'padding': '2px 8px 2px 2px'
   });
 
-  // 6. 2026-11-07: 지도 거리표시선 및 반경원표시 정밀 픽셀 변환 헬퍼 및 벡터 렌더러
+  // 6. 2026-11-07: 네이버 지도 자체 SVG 오버레이 활성 상태 기록 및 캡처 중 일시 숨김
+  // (html2canvas가 3D Transform을 잘못 해석하여 화면 중앙/학원가에 엉뚱한 고스트 원/점선을 중복 생성하는 현상 완벽 차단)
+  var hadMetroLine = !!(radar_metro_line && radar_metro_line.getMap());
+  var hadPSchoolLine = !!(radar_pSchool_line && radar_pSchool_line.getMap());
+  var hadMSchoolLines = (radar_mSchool_lines || []).map(function (l) { return !!(l && l.getMap()); });
+
+  radar_circles.forEach(function (c) { if (c) c.setMap(null); });
+  if (radar_metro_line) radar_metro_line.setMap(null);
+  if (radar_pSchool_line) radar_pSchool_line.setMap(null);
+  (radar_mSchool_lines || []).forEach(function (l) { if (l) l.setMap(null); });
+
   var mapContainer = document.getElementById("radarDataMap") || document.getElementById("dataMap") || captureTarget;
   var mapW = mapContainer.clientWidth || captureTarget.clientWidth || window.innerWidth;
   var mapH = mapContainer.clientHeight || captureTarget.clientHeight || window.innerHeight;
@@ -2510,7 +2520,7 @@ function captureRadarMapView(event) {
     aptCenter = radar_circles[0].getCenter();
   }
 
-  // 2026-11-07: 반경원 및 거리표시선 공통 렌더러
+  // 2026-11-07: 반경원 및 거리표시선 공통 렌더러 (단지 중심점 1개에만 정밀 결합)
   function drawRadarVectorOverlays(targetCtx, s) {
     if (!targetCtx || !aptCenter) return;
 
@@ -2546,7 +2556,7 @@ function captureRadarMapView(event) {
     });
 
     // B. 지하철역 직선거리 점선 (radar_metro_line)
-    if (radar_metro_line && radar_metro_line.getMap()) {
+    if (radar_metro_line && hadMetroLine) {
       var metroPath = radar_metro_line.getPath();
       if (metroPath && metroPath.getLength && metroPath.getLength() >= 2) {
         var p1 = getMapPixelOffset(metroPath.getAt(0));
@@ -2566,7 +2576,7 @@ function captureRadarMapView(event) {
     }
 
     // C. 초등학교 직선거리 점선 (radar_pSchool_line)
-    if (radar_pSchool_line && radar_pSchool_line.getMap()) {
+    if (radar_pSchool_line && hadPSchoolLine) {
       var pPath = radar_pSchool_line.getPath();
       if (pPath && pPath.getLength && pPath.getLength() >= 2) {
         var p1 = getMapPixelOffset(pPath.getAt(0));
@@ -2587,8 +2597,8 @@ function captureRadarMapView(event) {
 
     // D. 중학교 직선거리 점선들 (radar_mSchool_lines)
     if (radar_mSchool_lines && radar_mSchool_lines.length) {
-      radar_mSchool_lines.forEach(function (mLine) {
-        if (mLine && mLine.getMap()) {
+      radar_mSchool_lines.forEach(function (mLine, mIdx) {
+        if (mLine && hadMSchoolLines[mIdx]) {
           var mPath = mLine.getPath();
           if (mPath && mPath.getLength && mPath.getLength() >= 2) {
             var p1 = getMapPixelOffset(mPath.getAt(0));
@@ -2608,20 +2618,6 @@ function captureRadarMapView(event) {
         }
       });
     }
-  }
-
-  // 2026-11-07: HTML 마커 하위 레이어에 임시 캔버스 주입하여 html2canvas가 마커 아래 벡터를 캡처하도록 지원
-  var tempCanvas = document.createElement("canvas");
-  tempCanvas.id = "radarVectorCaptureCanvas";
-  tempCanvas.width = mapW * scale;
-  tempCanvas.height = mapH * scale;
-  tempCanvas.style.cssText = "position:absolute; top:0; left:0; width:" + mapW + "px; height:" + mapH + "px; z-index:2; pointer-events:none;";
-  var tempCtx = tempCanvas.getContext("2d");
-  drawRadarVectorOverlays(tempCtx, scale);
-  if (mapContainer.firstChild) {
-    mapContainer.insertBefore(tempCanvas, mapContainer.firstChild);
-  } else {
-    mapContainer.appendChild(tempCanvas);
   }
 
   // SVG 네임스페이스 보정
@@ -2652,9 +2648,13 @@ function captureRadarMapView(event) {
     $captureBtns.show();
     $zoomControls.show();
 
-    if (tempCanvas && tempCanvas.parentNode) {
-      tempCanvas.parentNode.removeChild(tempCanvas);
-    }
+    // 네이버 지도 자체 오버레이 복원
+    radar_circles.forEach(function (c) { if (c) c.setMap(radarMapInstance); });
+    if (radar_metro_line && hadMetroLine) radar_metro_line.setMap(radarMapInstance);
+    if (radar_pSchool_line && hadPSchoolLine) radar_pSchool_line.setMap(radarMapInstance);
+    (radar_mSchool_lines || []).forEach(function (l, idx) {
+      if (l && hadMSchoolLines[idx]) l.setMap(radarMapInstance);
+    });
 
     if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function' && hadZoomControl) {
       try {
