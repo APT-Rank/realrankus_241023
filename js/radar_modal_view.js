@@ -169,6 +169,7 @@ function RadarCustomOverlay(options) {
   return overlay;
 }
 
+// 2026-11-07: 바텀시트 접기/펼치기 애니메이션 - #radarDataList_wrapper 및 #dataList_wrapper 양방향 지원
 function moveRadarInfoWindow() {
   var moving_dest;
   if (isRadarDown) {
@@ -180,13 +181,16 @@ function moveRadarInfoWindow() {
 
   isRadarDown = !isRadarDown;
   $('#info_OnOff').toggleClass('rotated');
-  $('#radarDataList_wrapper').stop(true, true).animate({ top: moving_dest }, 350);
+  $('#radarDataList_wrapper, #dataList_wrapper').stop(true, true).animate({ top: moving_dest }, 350);
 }
 
+// 2026-11-07: 실거래가 그래프 표시/숨김 토글 - #radarDataList 및 #dataList 지원
 function radarGraphShowHide(obj) {
+  var $graph = $("#radarDataList .priceGraph, #dataList .priceGraph");
+  var $table = $("#radarDataList .popSubPriceTable, #dataList .popSubPriceTable");
   if (obj.checked) {
-    $("#radarDataList .priceGraph").show();
-    $("#radarDataList .popSubPriceTable").css({
+    $graph.show();
+    $table.css({
       "margin-top": "10px",
       "margin-bottom": "10px",
     });
@@ -201,8 +205,8 @@ function radarGraphShowHide(obj) {
       }
     }, 50);
   } else {
-    $("#radarDataList .priceGraph").hide();
-    $("#radarDataList .popSubPriceTable").css({
+    $graph.hide();
+    $table.css({
       "margin-top": "3px",
       "margin-bottom": "0px",
     });
@@ -710,6 +714,8 @@ $(document).on('change', '#radarDataList .check-facility', function () {
  */
 function renderRadarModalView(aptData) {
   if (!aptData) return;
+  // 2026-11-07: 현재 렌더링된 단지 데이터 전역 캐싱 (캡처 및 외부 연동 지원)
+  window.currentRadarAptData = aptData;
 
   var t = (typeof window.tSafe === 'function') ? window.tSafe : function (k, d) { return d; };
   var isEn = (typeof LANG !== 'undefined' && LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
@@ -830,7 +836,21 @@ function renderRadarModalView(aptData) {
     }
   }
 
-  // 1. 상단 플로팅 아파트 카드 (#apt_info_mobile - radarMap.html 100% 동일)
+  // 2026-11-07: 데스크톱/모바일 환경 판정 (모달 내부이거나 모바일 브라우저인 경우 모바일 뷰, 데스크톱 독립 페이지는 데스크톱 뷰)
+  var isInModal = $("#radarModal").length > 0 && $("#radarModal").is(":visible");
+  var isMobileDevice = (typeof window.isMobile !== 'undefined') ? window.isMobile : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  var isMobileView = isInModal || isMobileDevice;
+
+  var $listWrapper = $("#radarDataList_wrapper").length ? $("#radarDataList_wrapper") : $("#dataList_wrapper");
+  var $list = $("#radarDataList").length ? $("#radarDataList") : $("#dataList");
+  var mapTarget = document.getElementById("radarDataMap") || document.getElementById("dataMap");
+  var $aptInfoWrap = $("#radarAptInfoWrap").length ? $("#radarAptInfoWrap") : $("#apt_info_mobile_wrap");
+  if (!$aptInfoWrap.length) {
+    var captureContainer = document.getElementById("radarMapCaptureArea") || (mapTarget ? mapTarget.parentNode : null) || document.body;
+    $aptInfoWrap = $("<div id='radarAptInfoWrap'></div>").appendTo(captureContainer);
+  }
+
+  // 1. 상단 플로팅 아파트 카드 (#apt_info_mobile - 모바일 화면 및 캡처 전용)
   var aptInfoHtml = "";
   aptInfoHtml += "<div class='card' id='apt_info_mobile' style='box-shadow:none; border:none; padding-top:0px; padding-bottom:0px; pointer-events:auto;'>";
   aptInfoHtml += "<div class='card-body' id='apt_info_body' style='padding-top:5px; padding-bottom:5px; pointer-events:auto;'>";
@@ -848,46 +868,132 @@ function renderRadarModalView(aptData) {
   aptInfoHtml += "</div>";
   aptInfoHtml += "</div>";
 
-  $("#radarAptInfoWrap").css({ 'z-index': 200000, 'pointer-events': 'none' }).html(aptInfoHtml);
-  $("#apt_info_mobile").css({
-    'position': 'absolute', 'top': '10px', 'left': '3px', 'font-size': '0.85em', 'width': window.innerWidth - 50,
-    'border-radius': '3px', 'box-shadow': 'rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px',
-    'background-color': 'rgba(255, 255, 255, 0.75)', 'z-index': 200001, 'pointer-events': 'auto'
-  });
+  $aptInfoWrap.html(aptInfoHtml);
+
+  if (isMobileView) {
+    $aptInfoWrap.css({
+      'position': 'absolute', 'top': '0px', 'left': '0px', 'width': '100%',
+      'z-index': 200000, 'pointer-events': 'none', 'display': 'block'
+    });
+    $("#apt_info_mobile").css({
+      'position': 'absolute', 'top': '10px', 'left': '3px', 'font-size': '0.85em', 'width': window.innerWidth - 50,
+      'border-radius': '3px', 'box-shadow': 'rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px',
+      'background-color': 'rgba(255, 255, 255, 0.75)', 'z-index': 200001, 'pointer-events': 'auto'
+    });
+    $("#iframe_back").show();
+  } else {
+    // 2026-11-07: 데스크톱 화면에서는 평상시 숨기고, 캡처 시에만 지도 좌측 상단에 렌더링되도록 준비
+    $aptInfoWrap.css({
+      'position': 'absolute', 'top': '16px', 'left': '16px', 'z-index': 1000,
+      'pointer-events': 'none', 'display': 'none'
+    });
+    $("#apt_info_mobile").css({
+      'position': 'relative', 'top': '0px', 'left': '0px', 'font-size': '0.85em', 'width': 'auto',
+      'min-width': '280px', 'border-radius': '4px',
+      'box-shadow': 'rgba(0, 0, 0, 0.15) 0px 2px 6px',
+      'background-color': 'rgba(255, 255, 255, 0.85)',
+      'backdrop-filter': 'blur(4px)',
+      'pointer-events': 'auto'
+    });
+    $("#iframe_back").hide();
+  }
 
   // 2026-11-07: 뒤로가기 버튼 단일 이벤트 리스너 처리 및 350ms fadeOut 연동
   $("#iframe_back").off("click").on("click", function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (typeof closeRadarModal === "function") {
+    if (typeof closeSelfIframe === "function") {
+      closeSelfIframe();
+    } else if (typeof closeRadarModal === "function") {
       closeRadarModal();
     } else if (typeof window.closeRadarModal === "function") {
       window.closeRadarModal();
     } else {
       $("#radarModal").fadeOut(350, function () {
-        $("#radarDataList_wrapper").hide();
+        $("#radarDataList_wrapper, #dataList_wrapper").hide();
       });
     }
   });
 
-  // 2. 바텀시트 콘텐츠 생성 (radarMap.html 100% 동일)
+  // 2. 바텀시트 / 사이드바 콘텐츠 생성 (radarMap.html 100% 동일)
   var detailHtml = "";
 
-  // 2-1. 상단 체크박스 및 토글 버튼 (#info_check_card)
-  detailHtml += "<div class='card-body' id='info_check_card'>";
-  detailHtml += "<div id='info_check_div'>";
-  if (stationArea != undefined && stationArea !== "") {
-    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>" + t("ui.transport_score_label", "교통") + "</div>";
-    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.infra_score_label", "인프라") + "</div>";
-    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>";
+  if (!isMobileView) {
+    // 2026-11-07: 데스크톱 전용 1) 아파트 상세 정보 카드 (#apt_info)
+    detailHtml += "<div class='card' id='apt_info' style='box-shadow:none; border:none; padding-top:0px; padding-bottom:0px'>";
+    detailHtml += "<div class='card-body' style='padding-top:5px; padding-bottom:5px'>";
+    detailHtml += "<div class='popupTitle' style='font-size: 1.25em; font-weight: 600'>" + aptName;
+    detailHtml += "<span style='font-size:0.8em'> (Rank " + complex_grade + ")</span></div>";
+    detailHtml += "<div class='popContent'>" + aptYear + "</div>";
+    if (apt_type == "분양권" || apt_type == "분양(예정)") {
+      detailHtml += "<div class='popContent' style='font-size: 0.8em'>" + law_Address + "</div>";
+    } else {
+      detailHtml += "<div class='popupSubtitle' style='font-size: 0.8em'>" + (isEn ? "(Road)" : "(신)") + " " + road_Address + "</div>";
+      detailHtml += "<div class='popupSubtitle' style='font-size: 0.8em'>" + (isEn ? "(Jibun)" : "(구)") + " " + law_Address + "</div>";
+    }
+    detailHtml += "</div></div>";
+
+    // 2026-11-07: 데스크톱 전용 2) 방문 및 좋아요 카드 (#visit_like_card)
+    detailHtml += "<div class='card' id='visit_like_card'>";
+    detailHtml += "<div id='complex_visit_info'><div class='spinner-border spinner-border-sm' role='status'></div></div>";
+    detailHtml += "<div class='card-body' style='padding-top: 5px; padding-bottom: 5px;'>";
+    detailHtml += "<div class='complex_like'>";
+
+    detailHtml += "<div class='complex_like_category'>";
+    detailHtml += "<div class='complex_like_living' onclick='complex_like_updown(\"living\", \"" + searchCode + "\", \"" + aptName + "\")'>";
+    detailHtml += "<div class='complex_like_name'>" + t("ui.report.living", "주거") + "</div>";
+    detailHtml += "<div class='complex_like_num' id='complex_like_living_" + searchCode + "'>";
+    detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+    detailHtml += "<div id='complex_like_num_living_" + searchCode + "'>##</div>";
+    detailHtml += "</div></div></div>";
+
+    if (stationArea != undefined && stationArea !== "") {
+      detailHtml += "<div class='complex_like_category'>";
+      detailHtml += "<div class='complex_like_trans' onclick='complex_like_updown(\"trans\", \"" + searchCode + "\", \"" + aptName + "\")'>";
+      detailHtml += "<div class='complex_like_name'>" + t("ui.report.transport", "교통") + "</div>";
+      detailHtml += "<div class='complex_like_num' id='complex_like_trans_" + searchCode + "'>";
+      detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+      detailHtml += "<div id='complex_like_num_trans_" + searchCode + "'>##</div>";
+      detailHtml += "</div></div></div>";
+    }
+
+    detailHtml += "<div class='complex_like_category'>";
+    detailHtml += "<div class='complex_like_infra' onclick='complex_like_updown(\"infra\", \"" + searchCode + "\", \"" + aptName + "\")'>";
+    detailHtml += "<div class='complex_like_name'>" + t("ui.report.infra", "인프라") + "</div>";
+    detailHtml += "<div class='complex_like_num' id='complex_like_infra_" + searchCode + "'>";
+    detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+    detailHtml += "<div id='complex_like_num_infra_" + searchCode + "'>##</div>";
+    detailHtml += "</div></div></div>";
+
+    detailHtml += "<div class='complex_like_category'>";
+    detailHtml += "<div class='complex_like_edu' onclick='complex_like_updown(\"edu\", \"" + searchCode + "\", \"" + aptName + "\")'>";
+    detailHtml += "<div class='complex_like_name'>" + t("ui.report.education", "교육") + "</div>";
+    detailHtml += "<div class='complex_like_num' id='complex_like_edu_" + searchCode + "'>";
+    detailHtml += "<div class='complex_like_thumb'><i class='fa-regular fa-thumbs-up'></i></div>";
+    detailHtml += "<div id='complex_like_num_edu_" + searchCode + "'>##</div>";
+    detailHtml += "</div></div></div>";
+
+    detailHtml += "</div></div></div>";
   } else {
-    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.infra_score_label", "인프라") + "</div>";
-    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>";
-    detailHtml += "<div></div>";
+    // 2026-11-07: 모바일/모달 전용 상단 체크박스 및 캡처 버튼 (#info_check_card)
+    detailHtml += "<div class='card-body' id='info_check_card'>";
+    detailHtml += "<div id='info_check_div'>";
+    if (stationArea != undefined && stationArea !== "") {
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>" + t("ui.transport_score_label", "교통") + "</div>";
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.infra_score_label", "인프라") + "</div>";
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>";
+    } else {
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.infra_score_label", "인프라") + "</div>";
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.edu_score_label", "교육") + "</div>";
+      detailHtml += "<div></div>";
+    }
+    detailHtml += "<div class='radar-header-actions'>";
+    detailHtml += "<button type='button' id='radarModalCaptureBtn' class='radar-floating-capture-btn' onclick='captureRadarMapView(event)' data-html2canvas-ignore='true' title='" + t("ui.capture_map", "지도 캡처") + "'><i class='fa-solid fa-camera'></i></button>";
+    detailHtml += "<div id='info_OnOff' onClick='moveRadarInfoWindow()'><i class='fa-solid fa-chevron-down'></i></div>";
+    detailHtml += "</div>";
+    detailHtml += "</div>";
+    detailHtml += "</div>";
   }
-  detailHtml += "<div id='info_OnOff' onClick='moveRadarInfoWindow()'><i class='fa-solid fa-chevron-down'></i></div>";
-  detailHtml += "</div>";
-  detailHtml += "</div>";
 
   var chartWidth = window.innerWidth - 130;
 
@@ -895,14 +1001,21 @@ function renderRadarModalView(aptData) {
   if (stationArea != undefined && stationArea !== "") {
     detailHtml += "<div class='card mobile_card'>";
     detailHtml += "<div class='card-header'>";
-    detailHtml += "<div class='popTitle_mobile'>";
-    detailHtml += "<div><i class='fas fa-bus'></i></div>";
-    detailHtml += "<div>" + t("ui.report.transport", "교통") + "</div>";
-    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_transportChart'></canvas></div>";
-    detailHtml += "</div>";
+    if (isMobileView) {
+      detailHtml += "<div class='popTitle_mobile'>";
+      detailHtml += "<div><i class='fas fa-bus'></i></div>";
+      detailHtml += "<div>" + t("ui.report.transport", "교통") + "</div>";
+      detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_transportChart'></canvas></div>";
+      detailHtml += "</div>";
+    } else {
+      detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_trans' checked></div>" + t("ui.report.transport", "교통") + "</div>";
+    }
     detailHtml += "</div>";
     detailHtml += "<div class='card-body'>";
     detailHtml += "<div id='popTransport'>";
+    if (!isMobileView) {
+      detailHtml += "<div class='graph' style='height: 56px'> <canvas id='radar_transportChart'></canvas></div>";
+    }
     detailHtml += "<div class='popTable'>";
     detailHtml += `
       <div class='popSubTableRadar' style='grid-template-columns: 26px 1fr 2fr;'>
@@ -913,21 +1026,34 @@ function renderRadarModalView(aptData) {
         <div class='popResult'>${nearestStation}</div>
       </div>
     `;
+    // 2026-11-07: 배열(Array) 또는 문자열(String) 형태의 역노선/거점역 데이터 안전 정규화
     var subway_line = (isEn && aptData["Line_EN"]) ? aptData["Line_EN"] : (aptData["역노선"] || "");
-    subway_line = subway_line.replace("[", "").replace("]", "").replace(/\'/g, "");
+    if (Array.isArray(subway_line)) {
+      subway_line = subway_line.join(", ");
+    } else {
+      subway_line = String(subway_line).replace("[", "").replace("]", "").replace(/\'/g, "");
+    }
     detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + subway_line + "</div></div>";
 
     detailHtml += "<div class='popSubTable'><div class='popContent'>" + t("ui.report.station_30m_label", "30분 이내 도착 가능 주요역") + "</div>" + "<div class='popResult'>" + stationPoint_30m + tCountSuffix + "</div></div>";
     if (stationPoint_30m != 0) {
       var stations_30m = (isEn && aptData["Key_stations_30m"]) ? aptData["Key_stations_30m"] : (aptData["30분거점역이름"] || "");
-      stations_30m = stations_30m.replace("[", "").replace("]", "").replace(/\'/g, "");
+      if (Array.isArray(stations_30m)) {
+        stations_30m = stations_30m.join(", ");
+      } else {
+        stations_30m = String(stations_30m).replace("[", "").replace("]", "").replace(/\'/g, "");
+      }
       detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_30m + "</div></div>";
     }
 
     detailHtml += "<div class='popSubTable' id='stationTable'><div class='popContent'>" + t("ui.report.station_1h_label", "1시간 이내 도착 가능 주요역") + "</div>" + "<div class='popResult'>" + stationPoint_1h + tCountSuffix + "</div></div>";
     if (stationPoint_1h != 0) {
       var stations_1h = (isEn && aptData["Key_stations_1h"]) ? aptData["Key_stations_1h"] : (aptData["1시간거점역이름"] || "");
-      stations_1h = stations_1h.replace("[", "").replace("]", "").replace(/\'/g, "");
+      if (Array.isArray(stations_1h)) {
+        stations_1h = stations_1h.join(", ");
+      } else {
+        stations_1h = String(stations_1h).replace("[", "").replace("]", "").replace(/\'/g, "");
+      }
       detailHtml += "<div class='stationList'><div></div><div class='stationText'>" + stations_1h + "</div></div><hr style='margin-top: 2px'>";
     }
     detailHtml += "<div class='comment2'>" + t("ui.report.transport_guide_tmap", "가장 가까운 역은 직선거리로 계산됩니다.<br>주요역은 평일 출근시간대 하차인원이 가장 많은 역을 의미합니다.<br>30분, 1시간 이동 거리는 T-MAP 대중교통 이동 시간 정보를 사용합니다.") + "</div>";
@@ -937,14 +1063,21 @@ function renderRadarModalView(aptData) {
   // 2-3. 인프라 카드
   detailHtml += "<div class='card mobile_card'>";
   detailHtml += "<div class='card-header'>";
-  detailHtml += "<div class='popTitle_mobile'>";
-  detailHtml += "<div><i class='fas fa-hospital-user'></i></div>";
-  detailHtml += "<div>" + t("ui.report.infra", "인프라") + "</div>";
-  detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_infraChart'></canvas></div>";
-  detailHtml += "</div>";
+  if (isMobileView) {
+    detailHtml += "<div class='popTitle_mobile'>";
+    detailHtml += "<div><i class='fas fa-hospital-user'></i></div>";
+    detailHtml += "<div>" + t("ui.report.infra", "인프라") + "</div>";
+    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_infraChart'></canvas></div>";
+    detailHtml += "</div>";
+  } else {
+    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_infra' checked></div>" + t("ui.report.infra", "인프라") + "</div>";
+  }
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popInfra'>";
+  if (!isMobileView) {
+    detailHtml += "<div class='graph' style='height: 56px'> <canvas id='radar_infraChart'></canvas></div>";
+  }
   detailHtml += "<div class='popTable'>";
 
   // 백화점
@@ -1033,14 +1166,21 @@ function renderRadarModalView(aptData) {
   // 2-4. 교육 카드
   detailHtml += "<div class='card mobile_card'>";
   detailHtml += "<div class='card-header'>";
-  detailHtml += "<div class='popTitle_mobile'>";
-  detailHtml += "<div><i class='fas fa-graduation-cap'></i></div>";
-  detailHtml += "<div>" + t("ui.report.education", "교육") + "</div>";
-  detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_eduChart'></canvas></div>";
-  detailHtml += "</div>";
+  if (isMobileView) {
+    detailHtml += "<div class='popTitle_mobile'>";
+    detailHtml += "<div><i class='fas fa-graduation-cap'></i></div>";
+    detailHtml += "<div>" + t("ui.report.education", "교육") + "</div>";
+    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_eduChart'></canvas></div>";
+    detailHtml += "</div>";
+  } else {
+    detailHtml += "<div class='popTitleRadar'><div><input class='form-check-input check-facility' type='checkbox' id='check_edu' checked></div>" + t("ui.report.education", "교육") + "</div>";
+  }
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popEducation'>";
+  if (!isMobileView) {
+    detailHtml += "<div class='graph' style='height: 56px'> <canvas id='radar_eduChart'></canvas></div>";
+  }
   detailHtml += "<div class='popTable'>";
 
   var minDistance = (pSchool_distance - 100 < 0) ? parseInt(pSchool_distance * 0.8) : parseInt(pSchool_distance - 100);
@@ -1099,14 +1239,21 @@ function renderRadarModalView(aptData) {
   // 2-5. 주거 카드
   detailHtml += "<div class='card mobile_card'>";
   detailHtml += "<div class='card-header'>";
-  detailHtml += "<div class='popTitle_mobile'>";
-  detailHtml += "<div><i class='fas fa-home'></i></div>";
-  detailHtml += "<div>" + t("ui.report.living", "주거") + "</div>";
-  detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_livingChart'></canvas></div>";
-  detailHtml += "</div>";
+  if (isMobileView) {
+    detailHtml += "<div class='popTitle_mobile'>";
+    detailHtml += "<div><i class='fa-solid fa-house-user'></i></div>";
+    detailHtml += "<div>" + t("ui.report.living", "주거") + "</div>";
+    detailHtml += "<div class='graph' style='height: 30px; width:" + chartWidth + "px'> <canvas id='radar_livingChart'></canvas></div>";
+    detailHtml += "</div>";
+  } else {
+    detailHtml += "<div class='popTitle'>" + t("ui.report.living", "주거") + "</div>";
+  }
   detailHtml += "</div>";
   detailHtml += "<div class='card-body'>";
   detailHtml += "<div id='popLiving'>";
+  if (!isMobileView) {
+    detailHtml += "<div class='graph' style='height: 56px'> <canvas id='radar_livingChart'></canvas></div>";
+  }
 
   if (apt_type == "분양(예정)") {
     detailHtml += "<div class='comment'>" + t("ui.report.pending_comment", "'미정' 항목이 있는 경우 평균치로 대체되어 계산되며,<br>향후 정보 업데이트에 따라 점수가 변경될 수 있습니다.") + "</div><hr>";
@@ -1388,30 +1535,90 @@ function renderRadarModalView(aptData) {
     detailHtml += "</div></div></div></div>";
   }
 
-  // 바텀시트 컨테이너 위치 및 크기 초기화 (radarMap.html isMobile=true 100% 동일)
-  radar_info_pos = window.innerHeight * 2 / 3 + 10;
-  radar_info_size = window.innerHeight * 1 / 3;
-  isRadarDown = false;
+  // 2-8. 푸터 영역 (네이버/호갱노노 링크 및 공유 버튼)
+  var footerHtml = "";
+  footerHtml += "<div class='modal-footer' id='radar_footer' style='display: grid; padding-top: 5px; padding-bottom: 5px; padding-left: 0px; padding-right: 0px; grid-template-columns: 1fr 0.15fr 0.15fr; text-align: center;'>";
+  if (apt_type == "분양(예정)") {
+    footerHtml += "<div><button type='button' class='goLink_HGNN' onclick='openHGNN(\"" + searchCode + "\")'>" + t("ui.view_hogangnono", "호갱노노 보기") + "</button></div>";
+  } else {
+    footerHtml += "<div><button type='button' class='goLink' onclick='openNaver(\"" + searchCode + "\")'>" + t("ui.view_naver", "네이버 부동산 보기") + "</button></div>";
+  }
+  var shareTitle = aptName + " 입지 분석";
+  var shareText = aptName + "의 입지 분석 결과 (가치총점: " + aptValue + "점)";
+  var shareURL = "https://www.realrankus.com/radarMap.html?code=" + searchCode;
+  var kakaoShareURL = shareURL;
+  var popMsg = "클립보드에 복사되었습니다.";
 
-  $("#radarDataList_wrapper").css({
-    'position': 'fixed',
-    'top': radar_info_pos + 'px',
-    'height': radar_info_size + 'px',
-    'width': '100%',
-    'background-color': 'rgba(255, 255, 255, 0)',
-    'box-shadow': 'rgba(0, 0, 0, 0.06) 0px -6px 6px, rgba(0, 0, 0, 0.12) 0px -4px 4px',
-    'border-top-left-radius': '10px',
-    'border-top-right-radius': '10px',
-    'font-size': '0.9em',
-    'overflow-y': 'auto',
-    'z-index': 100000,
-    'display': 'block'
-  });
+  if (typeof checkMobile === 'function' && checkMobile() == "ios") {
+    footerHtml += "<div class='tShare' onClick='CopyToClipboard(\"" + shareText + "\", \"" + popMsg + "\")'><i class='fa-regular fa-copy'></i></div>";
+  } else {
+    footerHtml += "<div class='kakaoShare' onClick='if(typeof kakaoShare===\"function\") kakaoShare(\"" + shareTitle + "\", \"" + shareText + "\", \"" + kakaoShareURL + "\")'><img src='./kakao_icon.png' height='32px'></div>";
+  }
+  footerHtml += "<div class='tShare' onClick='if(typeof share===\"function\") share(\"" + shareTitle + "\", \"" + shareText + "\", \"" + shareURL + "\")'><i class='fa-solid fa-arrow-up-right-from-square'></i></div>";
+  footerHtml += "</div>";
 
-  $("#radarDataList").html(detailHtml).css({
-    'background-color': 'rgba(255, 255, 255, 1)',
-    'padding': '0px'
-  });
+  detailHtml += footerHtml;
+
+  // 2026-11-07: 데스크톱/모바일 DOM 렌더링 및 레이아웃 제어
+  $list.html(detailHtml);
+
+  if (!isMobileView) {
+    // 2026-11-07: 데스크톱 화면 스타일링 (radarMap.html 100% 동일)
+    $list.css({
+      'padding-top': '55px',
+      'padding-left': '10px',
+      'padding-right': '10px',
+      'padding-bottom': '5px',
+      'background-color': '#ffffff'
+    });
+    $listWrapper.css({
+      'height': window.innerHeight + 'px',
+      'position': 'relative',
+      'top': '0px',
+      'background-color': '#ffffff',
+      'box-shadow': 'none',
+      'border-radius': '0px',
+      'overflow-y': 'auto',
+      'z-index': 'auto',
+      'display': 'block'
+    });
+    $("#titleBar_radar").show().css({ 'z-index': 1000 });
+    $("#apt_info").show();
+    $("#visit_like_card").show();
+    $(".priceGraph").show();
+    if (stationArea != undefined && stationArea !== "") {
+      $(".complex_like").css({ 'grid-template-columns': '1fr 1fr 1fr 1fr' });
+    } else {
+      $(".complex_like").css({ 'grid-template-columns': '1fr 1fr 1fr' });
+    }
+    $("#radarMapCaptureBtn").show();
+  } else {
+    // 2026-11-07: 모바일 및 모달 바텀시트 화면 스타일링 (radarMap.html isMobile=true 100% 동일)
+    radar_info_pos = window.innerHeight * 2 / 3 + 10;
+    radar_info_size = window.innerHeight * 1 / 3;
+    isRadarDown = false;
+
+    $list.css({
+      'background-color': '#ffffff',
+      'padding': '0px'
+    });
+    $listWrapper.css({
+      'position': 'fixed',
+      'top': radar_info_pos + 'px',
+      'height': radar_info_size + 'px',
+      'width': '100%',
+      'background-color': 'rgba(255, 255, 255, 0)',
+      'box-shadow': 'rgba(0, 0, 0, 0.06) 0px -6px 6px, rgba(0, 0, 0, 0.12) 0px -4px 4px',
+      'border-top-left-radius': '10px',
+      'border-top-right-radius': '10px',
+      'font-size': '0.9em',
+      'overflow-y': 'auto',
+      'z-index': 100000,
+      'display': 'block'
+    });
+    $("#titleBar_radar").hide();
+    $(".priceGraph").hide();
+  }
 
   $(".mobile_card").css({ 'margin-left': '5px', 'margin-right': '5px' });
   $(".popSubPriceTable").css({ "margin-top": "3px", "margin-bottom": "0px" });
@@ -1434,10 +1641,20 @@ function renderRadarModalView(aptData) {
   // 3. 네이버 지도 초기화 및 마커 렌더링
   initRadarModalMap(aptData);
 
-  // 4. 점수 바 차트 렌더링 (지연 호출로 레이아웃 보장)
+  // 4. 점수 바/트랙 차트 렌더링 (지연 호출로 레이아웃 보장)
   setTimeout(function () {
+    if (!isMobileView && typeof setComplexLike === 'function') {
+      setComplexLike(searchCode.toString(), aptName);
+    }
     var scoreColor = (typeof SCORE_CHART_COLOR !== 'undefined') ? SCORE_CHART_COLOR : "#e43b46";
-    if (typeof drawRadarChart_mobile === 'function') {
+    if (!isMobileView && typeof drawRadarChart === 'function') {
+      drawRadarChart(livingScore, t("ui.living_score_label", "주거총점"), scoreColor, "radar_livingChart");
+      if (stationArea != undefined && stationArea !== "") {
+        drawRadarChart(transportScore, t("ui.transport_score_label", "교통총점"), scoreColor, "radar_transportChart");
+      }
+      drawRadarChart(infraScore, t("ui.infra_score_label", "인프라총점"), scoreColor, "radar_infraChart");
+      drawRadarChart(eduScore, t("ui.edu_score_label", "교육총점"), scoreColor, "radar_eduChart");
+    } else if (typeof drawRadarChart_mobile === 'function') {
       drawRadarChart_mobile(livingScore, t("ui.living_score_label", "주거총점"), scoreColor, "radar_livingChart");
       if (stationArea != undefined && stationArea !== "") {
         drawRadarChart_mobile(transportScore, t("ui.transport_score_label", "교통총점"), scoreColor, "radar_transportChart");
@@ -1478,9 +1695,15 @@ function initRadarModalMap(aptData) {
   var APT_marker_size_height = 70;
   var stroke_width = "6px";
 
+  // 2026-11-07: 데스크톱 독립 뷰 여부에 따른 지도 크기 동적 계산 (radarMap.html 500px 그리드 대응)
+  var isStandalonePage = ($("#radarContainer").length > 0) || ($("#radarCenterBox").length > 0) || (!$("#radarModal").length || !$("#radarModal").is(":visible"));
+  var isDesktopLayout = (typeof isMobile !== 'undefined' ? !isMobile : true) && window.innerWidth >= 768;
+  var mapW = (isStandalonePage && isDesktopLayout) ? (window.innerWidth - 500) : window.innerWidth;
+  var mapH = window.innerHeight;
+
   var MapOptions = {
     center: center,
-    size: new naver.maps.Size(window.innerWidth, window.innerHeight),
+    size: new naver.maps.Size(mapW, mapH),
     zoom: 16,
     minZoom: 12,
     zoomControl: true,
@@ -1498,7 +1721,7 @@ function initRadarModalMap(aptData) {
     background: '#ffffff'
   };
 
-  var mapTarget = document.getElementById("radarDataMap");
+  var mapTarget = document.getElementById("radarDataMap") || document.getElementById("dataMap");
   if (!mapTarget) return;
 
   if (radarMapInstance && typeof radarMapInstance.destroy === 'function') {
@@ -1506,7 +1729,7 @@ function initRadarModalMap(aptData) {
     radarMapInstance = null;
   }
   // 2026-11-07: 드래그 시 하위 지도와의 그래픽 간섭 및 깜빡임 방지 (흰색 불투명 배경 + GPU 가속 레이어 지정)
-  $("#radarDataMap").empty().css({
+  $(mapTarget).empty().css({
     'background-color': '#ffffff',
     '-webkit-transform': 'translate3d(0, 0, 0)',
     'transform': 'translate3d(0, 0, 0)',
@@ -1515,8 +1738,37 @@ function initRadarModalMap(aptData) {
     'will-change': 'transform'
   });
 
+  // 2026-11-07: 지도 우측 하단 플로팅 캡처 버튼 주입
+  if (!document.getElementById("radarMapCaptureBtn")) {
+    var $capBtn = $('<button type="button" id="radarMapCaptureBtn" class="radar-map-floating-capture-btn" onclick="captureRadarMapView(event)" data-html2canvas-ignore="true" title="입지 분석 지도 이미지 저장"><i class="fa-solid fa-camera"></i></button>');
+    var capParent = document.getElementById("radarMapCaptureArea") || mapTarget;
+    $(capParent).append($capBtn);
+  }
+
   radarMapInstance = new naver.maps.Map(mapTarget, MapOptions);
   var map = radarMapInstance;
+
+  // 2026-11-07: 지도 오버레이 픽셀 좌표 정밀 변환을 위한 프로젝션 헬퍼
+  window.radarProjectionHelper = new naver.maps.OverlayView();
+  window.radarProjectionHelper.onAdd = function () {};
+  window.radarProjectionHelper.draw = function () {};
+  window.radarProjectionHelper.setMap(radarMapInstance);
+
+  // 2026-11-07: 데스크톱 창 크기 변경 시 지도 크기 자동 리사이징
+  if (isStandalonePage && isDesktopLayout) {
+    $(window).off("resize.radarStandalone").on("resize.radarStandalone", function () {
+      clearTimeout(window.radarResizeTimer);
+      window.radarResizeTimer = setTimeout(function () {
+        var nw = window.innerWidth - 500;
+        var nh = window.innerHeight;
+        if (radarMapInstance && typeof radarMapInstance.setSize === 'function') {
+          radarMapInstance.setSize(new naver.maps.Size(nw, nh));
+        }
+        var $lw = $("#radarDataList_wrapper").length ? $("#radarDataList_wrapper") : $("#dataList_wrapper");
+        $lw.css({ 'height': nh + 'px' });
+      }, 50);
+    });
+  }
 
   // 동심원 (250, 500, 1000, 3000, 5000m)
   var radii = [250, 500, 1000, 3000, 5000];
@@ -2085,11 +2337,279 @@ function initRadarModalMap(aptData) {
   });
 }
 
+// 2026-11-07: 입지 분석 지도 및 상단 반투명 요약 카드 이미지 캡처/다운로드 함수
+/**
+ * @function captureRadarMapView
+ * @description 현재 화면에 표시된 네이버 지도 영역(#radarMapCaptureArea 또는 #dataMap)과 좌측 상단의
+ * 반투명 아파트 요약 카드를 html2canvas를 사용하여 고해상도(scale: 2) PNG 이미지로 캡처 및 다운로드합니다.
+ * 지도 위의 원(동심원), 라인(지하철/초등학교/중학교 직선거리), 폴리곤(상권/학원가 영역)과 좌측 상단 단지 요약 카드가 왜곡 없이 정확하게 캡처됩니다.
+ * 하단 바텀시트 정보는 캡처 전후로 사라지지 않고 온전히 유지되며, 지도 줌 컨트롤(+/-)과 플로팅 캡처 버튼은 캡처 이미지에서 깔끔하게 제외됩니다.
+ * 파일명: [단지명]_입지분석.png
+ * 작성일: 2026-11-07
+ */
+function captureRadarMapView(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  // 1. 단지명 확인
+  var aptName = "단지";
+  if (window.currentRadarAptData && window.currentRadarAptData["아파트명"]) {
+    aptName = window.currentRadarAptData["아파트명"];
+  } else if ($("#apt_info_mobile .popupTitle").length) {
+    aptName = $("#apt_info_mobile .popupTitle").text().split("(")[0].trim();
+  } else if ($("#apt_info .popupTitle").length) {
+    aptName = $("#apt_info .popupTitle").text().split("(")[0].trim();
+  }
+  var cleanAptName = aptName.replace(/[\\/:*?"<>|]/g, '').trim() || "단지";
+  var filename = cleanAptName + "_입지분석.png";
+
+  if (typeof html2canvas === 'undefined') {
+    alert("캡처 라이브러리(html2canvas)를 로드 중입니다. 잠시 후 다시 시도해 주세요.");
+    return;
+  }
+
+  // 2. 캡처 대상 결정: #radarMapCaptureArea 또는 #radarDataMap / #dataMap
+  var captureTarget = document.getElementById("radarMapCaptureArea");
+  if (!captureTarget) {
+    captureTarget = document.getElementById("radarDataMap") || document.getElementById("dataMap");
+  }
+  if (!captureTarget) {
+    alert("캡처할 지도 영역을 찾을 수 없습니다.");
+    return;
+  }
+
+  var isDesktopLayout = !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) && window.innerWidth >= 768;
+
+  // 3. 버튼 로딩 상태 표시 (카메라 아이콘 -> 스피너 아이콘)
+  var $btn = $(event ? event.currentTarget : "#radarModalCaptureBtn, #radarMapCaptureBtn");
+  $btn.prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin"></i>');
+
+  // 4. 제외 대상 임시 숨김 (플로팅 캡처 버튼, 네이버 지도 줌 컨트롤(+/-), 독립 페이지 상단 바만 숨김)
+  // 2026-11-07: 하단 바텀시트(#radarDataList_wrapper)는 captureTarget 외부에 있으므로 절대 hide()하지 않아 캡처 후에도 정보가 사라지지 않음!
+  // 2026-11-07: 네이버 지도 줌 컨트롤(+/-)은 API 레벨 및 DOM 양방향에서 완벽 제거하여 캡처 이미지에 포함되지 않도록 처리!
+  var hadZoomControl = true;
+  if (window.radarMapInstance && typeof window.radarMapInstance.getOptions === 'function') {
+    try {
+      hadZoomControl = !!window.radarMapInstance.getOptions('zoomControl');
+    } catch (e) {
+      hadZoomControl = true;
+    }
+  }
+  if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function') {
+    try {
+      window.radarMapInstance.setOptions({ zoomControl: false });
+    } catch (e) {}
+  }
+
+  var $captureBtns = $(".radar-floating-capture-btn, .radar-map-floating-capture-btn, #radarModalCaptureBtn, #radarMapCaptureBtn");
+  var $zoomControls = $(captureTarget).find('*').filter(function () {
+    var txt = $(this).text().trim();
+    var title = $(this).attr('title') || '';
+    return (txt === '+' || txt === '-' || txt === '−' || txt === '+\n-' || title.indexOf('확대') !== -1 || title.indexOf('축소') !== -1);
+  }).closest('div');
+  var $titleBar = $("#titleBar_radar");
+  var titleBarDisplay = $titleBar.css("display");
+
+  $captureBtns.hide();
+  $zoomControls.hide();
+  $titleBar.hide();
+
+  // 5. 2026-11-07: 좌측 상단 단지 요약 카드 스타일 최적화 (유저 캡처 기준 이미지와 100% 동일한 형태 구성)
+  var $aptWrap = $("#radarAptInfoWrap");
+  var origWrapStyle = $aptWrap.attr("style") || "";
+  var origWrapDisplay = $aptWrap.css("display");
+  $aptWrap.css({
+    'display': 'block',
+    'position': 'absolute',
+    'top': '10px',
+    'left': '3px',
+    'width': 'auto',
+    'z-index': 200000,
+    'pointer-events': 'none'
+  });
+
+  var $aptMobile = $("#apt_info_mobile");
+  var origMobileStyle = $aptMobile.attr("style") || "";
+  var targetW = captureTarget.clientWidth || window.innerWidth;
+  // 모바일: 50px 여백 유지, 웹/데스크톱: 최대 440px
+  var safeCardW = isDesktopLayout ? Math.min(440, targetW - 60) : (targetW - 50);
+  $aptMobile.css({
+    'position': 'relative',
+    'top': '0px',
+    'left': '0px',
+    'width': safeCardW + 'px',
+    'border-radius': '3px',
+    'box-shadow': 'rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px',
+    'background-color': 'rgba(255, 255, 255, 0.85)',
+    'pointer-events': 'auto'
+  });
+
+  var $aptBody = $("#apt_info_body");
+  var origBodyStyle = $aptBody.attr("style") || "";
+  $aptBody.css({
+    'display': 'grid',
+    'grid-template-columns': '30px 1fr',
+    'align-items': 'center',
+    'padding-top': '5px',
+    'padding-bottom': '5px'
+  });
+
+  var $backBtn = $("#iframe_back");
+  var origBackStyle = $backBtn.attr("style") || "";
+  $backBtn.show().css({
+    'display': 'block',
+    'color': '#E43B46',
+    'font-size': '2em',
+    'padding': '2px 8px 2px 2px'
+  });
+
+  // 6. 2026-11-07: SVG 네임스페이스 보정 (html2canvas SVG 렌더링 호환성 유지)
+  var modifiedSvgs = [];
+  $(captureTarget).find('svg').each(function () {
+    var svg = this;
+    var origAttrs = {
+      xmlns: svg.getAttribute('xmlns'),
+      xmlnsXlink: svg.getAttribute('xmlns:xlink')
+    };
+
+    if (!svg.getAttribute('xmlns')) {
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    }
+    if (!svg.getAttribute('xmlns:xlink')) {
+      svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    }
+
+    modifiedSvgs.push({
+      svg: svg,
+      orig: origAttrs
+    });
+  });
+
+  // 복구 헬퍼 함수
+  function restoreDomState() {
+    $titleBar.css("display", titleBarDisplay);
+    $captureBtns.show();
+    $zoomControls.show();
+
+    if (window.radarMapInstance && typeof window.radarMapInstance.setOptions === 'function' && hadZoomControl) {
+      try {
+        window.radarMapInstance.setOptions({ zoomControl: true });
+      } catch (e) {}
+    }
+
+    if ($aptWrap.length) {
+      $aptWrap.attr("style", origWrapStyle);
+      $aptWrap.css("display", origWrapDisplay);
+    }
+    if ($aptMobile.length) {
+      $aptMobile.attr("style", origMobileStyle);
+    }
+    if ($aptBody.length) {
+      $aptBody.attr("style", origBodyStyle);
+    }
+    if ($backBtn.length) {
+      $backBtn.attr("style", origBackStyle);
+    }
+
+    modifiedSvgs.forEach(function (item) {
+      if (item.orig.xmlns) item.svg.setAttribute('xmlns', item.orig.xmlns);
+      else item.svg.removeAttribute('xmlns');
+      if (item.orig.xmlnsXlink) item.svg.setAttribute('xmlns:xlink', item.orig.xmlnsXlink);
+      else item.svg.removeAttribute('xmlns:xlink');
+    });
+
+    // 2026-11-07: 캡처 버튼을 카메라 단독 아이콘으로 복원
+    $btn.prop("disabled", false).html('<i class="fa-solid fa-camera"></i>');
+  }
+
+  // 7. 120ms 후 html2canvas 실행 (DOM 리플로우 보장)
+  setTimeout(function () {
+    html2canvas(captureTarget, {
+      useCORS: true,
+      allowTaint: false,
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      ignoreElements: function (el) {
+        if (!el) return false;
+        if (el.getAttribute && el.getAttribute('data-html2canvas-ignore') === 'true') return true;
+        if (el.id === 'radarDataList_wrapper' || el.id === 'dataList_wrapper') return true;
+        if (el.id === 'radarModalCaptureBtn' || el.id === 'radarMapCaptureBtn') return true;
+        if (el.id === 'titleBar_radar') return true;
+        // 2026-11-07: 네이버 지도 줌 컨트롤(+/-) 요소는 캡처 이미지에서 완전 제외
+        if (el.innerText && (el.innerText.trim() === '+' || el.innerText.trim() === '-' || el.innerText.trim() === '−' || el.innerText.trim() === '+\n-')) return true;
+        if (el.getAttribute && (el.getAttribute('title') === '확대' || el.getAttribute('title') === '축소')) return true;
+        if (el.className && typeof el.className === 'string' &&
+            (el.className.indexOf('naver-maps-control') !== -1 ||
+             el.className.indexOf('nmap_zoom') !== -1 ||
+             el.className.indexOf('nmap_btn_zoom') !== -1 ||
+             el.className.indexOf('control') !== -1)) return true;
+        return false;
+      }
+    }).then(function (canvas) {
+      // 상태 복구
+      restoreDomState();
+
+      // 8. 2026-11-07: 이미지 다운로드 트리거
+      try {
+        var base64Data = canvas.toDataURL('image/png');
+        if (window.Android && typeof window.Android.downloadImage === 'function') {
+          window.Android.downloadImage(base64Data, filename);
+        } else {
+          var link = document.createElement('a');
+          link.download = filename;
+          link.href = base64Data;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        if (typeof toastr !== 'undefined' && toastr.success) {
+          toastr.success(filename + " 저장 완료");
+        }
+      } catch (err) {
+        console.error("이미지 변환 오류:", err);
+        alert("이미지 변환에 실패했습니다: " + err.message);
+      }
+    }).catch(function (err) {
+      // 에러 시 복구
+      restoreDomState();
+      console.error("html2canvas capture error:", err);
+      alert("캡처에 실패했습니다: " + err.message);
+    });
+  }, 120);
+}
+
+// 2026-11-07: 네이버 부동산 및 호갱노노 링크 핸들러
+function openNaver(code) {
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  var nURL = isMobile ? "https://m.land.naver.com/complex/info/" + code : "https://new.land.naver.com/complexes/" + code;
+  if (typeof checkMobile === 'function' && checkMobile() == "ios") {
+    window.location.href = nURL;
+  } else {
+    window.open(nURL);
+  }
+}
+
+function openHGNN(code) {
+  var hURL = "https://hogangnono.com/apt/" + code;
+  if (typeof checkMobile === 'function' && checkMobile() == "ios") {
+    window.location.href = hURL;
+  } else {
+    window.open(hURL);
+  }
+}
+
 // 전역 인터페이스 노출 (인라인 이벤트 핸들러 및 외부 호출 지원)
 window.renderRadarModalView = renderRadarModalView;
+window.captureRadarMapView = captureRadarMapView;
 window.radarGraphShowHide = radarGraphShowHide;
 window.radar_price_sDateChange = radar_price_sDateChange;
 window.radar_price_eDateChange = radar_price_eDateChange;
 window.graphShowHide = radarGraphShowHide;
 window.price_sDateChange = radar_price_sDateChange;
 window.price_eDateChange = radar_price_eDateChange;
+window.openNaver = openNaver;
+window.openHGNN = openHGNN;
+window.moveInfoWindow = moveRadarInfoWindow;

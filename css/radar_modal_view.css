@@ -133,27 +133,107 @@
   }
 }
 
-/* 데스크톱(PC) 분할 뷰 스타일 */
+/* 데스크톱(PC) 분할 뷰 스타일 - radarModal 내부 전용 (radarMap.html 및 radarMap_test.html의 그리드 레이아웃에 간섭 방지) */
 @media (min-width: 769px) {
-  #radarDataMap {
-    left: 500px;
-    width: calc(100% - 500px);
+  #radarModal #radarDataMap {
+    left: 480px;
+    width: calc(100% - 480px);
   }
-  #radarDataList_wrapper {
+  #radarModal #radarDataList_wrapper {
     top: 0 !important;
     left: 0;
-    width: 500px;
+    width: 480px;
     height: 100% !important;
     background-color: #ffffff;
     border-right: 1px solid #e2e8f0;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
   }
-  #radarDataList {
+  #radarModal #radarDataList {
     height: 100%;
     overflow-y: auto;
-    padding: 20px 16px 50px 16px;
+    padding: 0px 5px 50px 5px;
     box-sizing: border-box;
   }
+}
+
+/* 2026-11-07: #radarDataList 우측 상단 플로팅 캡쳐 버튼 및 접기 액션 배치 */
+#info_check_div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  align-items: center;
+  justify-items: center;
+  gap: 4px;
+}
+
+.radar-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+  padding-right: 2px;
+}
+
+.radar-floating-capture-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.radar-floating-capture-btn:hover {
+  background: #0f172a;
+}
+
+.radar-floating-capture-btn:active {
+  transform: scale(0.92);
+}
+
+/* 2026-11-07: radarMap 지도 우측 하단 플로팅 캡쳐 버튼 (카메라 아이콘 전용) */
+.radar-map-floating-capture-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e293b;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+  font-size: 1.15rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.radar-map-floating-capture-btn:hover {
+  background-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.radar-map-floating-capture-btn:active {
+  transform: scale(0.94);
 }
 
 /* 바텀시트 상단 드래그 핸들 (모바일 전용) */
