@@ -242,7 +242,10 @@ function drawMoneyFlowChart(chartDate, mf_dataset, id_name){
           }
         }        
       },
-      animation: {            
+      // 2026-11-08: 초기 로드/기간 변경 시 colors 페이드인(from: transparent) 비활성화하여
+      // 캡처 타이밍에 관계없이 선/포인트/텍스트가 100% 온전한 불투명도로 유지되도록 수정
+      animations: {
+        colors: false,
         x: {
           type: 'number',
           easing: 'linear',

@@ -4094,14 +4094,41 @@ function downloadMoneyFlowImage(btnEl, event) {
 
   var originalDPR = chart ? (chart.options.devicePixelRatio || window.devicePixelRatio || 1) : 1;
   var origAnimation = null;
+  var origAnimations = null;
+  var origTransitions = null;
 
   if (chart) {
+    // 2026-11-08: 타이밍 이슈로 인한 차트 흐림/반투명(뿌옇게 찍힘) 원천 해결
+    // 1) 마우스 커서/터치로 인한 호버 툴팁 및 활성 하이라이트/딤 효과 즉시 비활성화
+    try {
+      if (typeof chart.setActiveElements === 'function') {
+        chart.setActiveElements([]);
+      }
+      if (chart.tooltip && typeof chart.tooltip.setActiveElements === 'function') {
+        chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+      }
+    } catch (e) {
+      console.warn('Chart active elements clear warning:', e);
+    }
+
+    // 2) 진행 중인 모든 애니메이션 강제 중단
+    if (typeof chart.stop === 'function') {
+      chart.stop();
+    }
+
+    // 3) 애니메이션 및 트랜지션 완전 끄기
     origAnimation = chart.options.animation;
-    chart.stop(); // 진행 중인 모든 애니메이션 즉시 중단
+    origAnimations = chart.options.animations;
+    origTransitions = chart.options.transitions;
     chart.options.animation = false;
+    chart.options.animations = false;
+    chart.options.transitions = false;
+
+    // 4) 고해상도 DPR 적용 후 update('none')을 실행하여 모든 좌표, 폰트, 불투명 선/색상을 100% 최종 상태로 강제 확정
     chart.options.devicePixelRatio = Math.max(window.devicePixelRatio || 1, dynamicScale);
     chart.resize();
-    chart.render(); // 100% 버퍼 확정 렌더링
+    chart.update('none');
+    chart.render();
   }
 
   function restoreOriginals() {
@@ -4110,6 +4137,12 @@ function downloadMoneyFlowImage(btnEl, event) {
     if (chart) {
       try {
         chart.options.animation = origAnimation;
+        if (typeof origAnimations !== 'undefined') {
+          chart.options.animations = origAnimations;
+        }
+        if (typeof origTransitions !== 'undefined') {
+          chart.options.transitions = origTransitions;
+        }
         chart.options.devicePixelRatio = originalDPR;
         chart.resize();
         chart.update('none');
@@ -4125,92 +4158,99 @@ function downloadMoneyFlowImage(btnEl, event) {
     $btn.prop('disabled', false).html(originalBtnHtml);
   }
 
-  // 4. 브라우저 레이아웃/GPU 버퍼 정착 시간을 확보하기 위해 450ms 안정화 딜레이 후 캡처 (반투명 및 설익은 캡처 방지)
-  setTimeout(function () {
-    html2canvas(targetDom, {
-      scale: dynamicScale,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      ignoreElements: function (el) {
-        if (el && el.classList && (el.classList.contains('card_download_wrapper') || el.classList.contains('btn_card_download'))) {
-          return true;
-        }
-        return false;
-      },
-      onclone: function (clonedDoc) {
-        clonedDoc.body.style.margin = '0px';
-        clonedDoc.body.style.padding = '0px';
-
-        var clonedTarget = clonedDoc.getElementById('Money_Flow');
-        if (clonedTarget) {
-          clonedTarget.style.backgroundColor = '#ffffff';
-          clonedTarget.style.boxShadow = 'none';
-          clonedTarget.style.margin = '0px';
-          clonedTarget.style.padding = '0px 0px 12px 0px'; // 불필요한 상하좌우 마진/여백 제거, 하단만 워터마크용 여백 확보
-          clonedTarget.style.border = '1px solid #cbd5e1';
-          clonedTarget.style.borderRadius = '4px';
-          clonedTarget.style.boxSizing = 'border-box';
-
-          // SVG 로고가 <img> 태그일 경우 깨짐 방지를 위해 인라인 SVG로 보존
-          var svgImgs = clonedTarget.querySelectorAll('img[src*="MoneyFlow.svg"]');
-          svgImgs.forEach(function (img) {
-            var svgWrapper = clonedDoc.createElement('span');
-            svgWrapper.innerHTML = "<svg viewBox='0 0 388 102' width='50' height='15' style='vertical-align: middle; margin-right: 0;'><path fill='none' stroke='#1355ac' stroke-width='4' stroke-miterlimit='10' d='M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43'></path><path fill='none' stroke='#1355ac' stroke-width='8' stroke-miterlimit='10' d='M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43'></path></svg>";
-            img.parentNode.replaceChild(svgWrapper.firstChild, img);
-          });
-
-          // 고해상도로 리사이즈된 원본 캔버스의 비트맵 픽셀을 복제본 캔버스에 1:1 복사
-          var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
-          var clonedCanvas = clonedDoc.getElementById('MoneyFlow_Chart');
-          if (origCanvas && clonedCanvas) {
-            clonedCanvas.width = origCanvas.width;
-            clonedCanvas.height = origCanvas.height;
-            var ctx = clonedCanvas.getContext('2d');
-            if (ctx) {
-              // 중요: 캔버스 바탕에 완전 불투명한 순백색 채우기 (투명도/반투명 현상 원천 방지)
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, clonedCanvas.width, clonedCanvas.height);
-              ctx.drawImage(origCanvas, 0, 0);
-            }
+  // 4. requestAnimationFrame과 안정화 딜레이를 통해 GPU 버퍼와 고해상도 캔버스가 온전히 커밋된 후 캡처
+  var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 16); };
+  raf(function () {
+    setTimeout(function () {
+      html2canvas(targetDom, {
+        scale: dynamicScale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        ignoreElements: function (el) {
+          if (el && el.classList && (el.classList.contains('card_download_wrapper') || el.classList.contains('btn_card_download'))) {
+            return true;
           }
+          return false;
+        },
+        onclone: function (clonedDoc) {
+          clonedDoc.body.style.margin = '0px';
+          clonedDoc.body.style.padding = '0px';
 
-          // 워터마크 추가 (왼쪽: Captured at 2줄, 오른쪽: 리얼랭커스 | realrankus.com)
-          var footer = clonedDoc.createElement('div');
-          footer.className = 'mf_capture_footer';
-          footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin:10px 14px 0 14px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
-          footer.innerHTML = '<div style="display:flex; flex-direction:column; line-height:1.25; font-size:8px; color:#cbd5e1; font-weight:400; letter-spacing:-0.2px;"><span>Captured at</span><span>' + captureDateTimeStr + '</span></div>' +
-            '<div style="display:flex; align-items:center; gap:4px;"><span style="font-weight:700; color:#1355ac; font-size:11px;">리얼랭커스</span><span style="color:#cbd5e1; font-size:10px;">|</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div>';
-          clonedTarget.appendChild(footer);
+          var clonedTarget = clonedDoc.getElementById('Money_Flow');
+          if (clonedTarget) {
+            clonedTarget.style.backgroundColor = '#ffffff';
+            clonedTarget.style.boxShadow = 'none';
+            clonedTarget.style.margin = '0px';
+            clonedTarget.style.padding = '0px 0px 12px 0px'; // 불필요한 상하좌우 마진/여백 제거, 하단만 워터마크용 여백 확보
+            clonedTarget.style.border = '1px solid #cbd5e1';
+            clonedTarget.style.borderRadius = '4px';
+            clonedTarget.style.boxSizing = 'border-box';
+
+            // SVG 로고가 <img> 태그일 경우 깨짐 방지를 위해 인라인 SVG로 보존
+            var svgImgs = clonedTarget.querySelectorAll('img[src*="MoneyFlow.svg"]');
+            svgImgs.forEach(function (img) {
+              var svgWrapper = clonedDoc.createElement('span');
+              svgWrapper.innerHTML = "<svg viewBox='0 0 388 102' width='50' height='15' style='vertical-align: middle; margin-right: 0;'><path fill='none' stroke='#1355ac' stroke-width='4' stroke-miterlimit='10' d='M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43'></path><path fill='none' stroke='#1355ac' stroke-width='8' stroke-miterlimit='10' d='M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43'></path></svg>";
+              img.parentNode.replaceChild(svgWrapper.firstChild, img);
+            });
+
+            // 2026-11-08: 고해상도로 리사이즈 및 100% 확정된 원본 캔버스의 비트맵 픽셀을 복제본 캔버스에 1:1 완벽 복제
+            var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
+            var clonedCanvas = clonedDoc.getElementById('MoneyFlow_Chart');
+            if (origCanvas && clonedCanvas) {
+              clonedCanvas.width = origCanvas.width;
+              clonedCanvas.height = origCanvas.height;
+              clonedCanvas.style.width = (origCanvas.clientWidth ? (origCanvas.clientWidth + 'px') : origCanvas.style.width);
+              clonedCanvas.style.height = (origCanvas.clientHeight ? (origCanvas.clientHeight + 'px') : origCanvas.style.height);
+              clonedCanvas.style.display = 'block';
+
+              var ctx = clonedCanvas.getContext('2d');
+              if (ctx) {
+                // 중요: 캔버스 바탕에 완전 불투명한 순백색 채우기 (투명도/반투명 현상 원천 방지)
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, clonedCanvas.width, clonedCanvas.height);
+                ctx.drawImage(origCanvas, 0, 0);
+              }
+            }
+
+            // 워터마크 추가 (왼쪽: Captured at 2줄, 오른쪽: 리얼랭커스 | realrankus.com)
+            var footer = clonedDoc.createElement('div');
+            footer.className = 'mf_capture_footer';
+            footer.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin:10px 14px 0 14px; padding-top:8px; border-top:1px dashed #e2e8f0; font-family:"Noto Sans KR", -apple-system, sans-serif; font-size:11px;';
+            footer.innerHTML = '<div style="display:flex; flex-direction:column; line-height:1.25; font-size:8px; color:#cbd5e1; font-weight:400; letter-spacing:-0.2px;"><span>Captured at</span><span>' + captureDateTimeStr + '</span></div>' +
+              '<div style="display:flex; align-items:center; gap:4px;"><span style="font-weight:700; color:#1355ac; font-size:11px;">리얼랭커스</span><span style="color:#cbd5e1; font-size:10px;">|</span><span style="color:#64748b; font-size:11px;">realrankus.com</span></div>';
+            clonedTarget.appendChild(footer);
+          }
         }
-      }
-    }).then(function (canvas) {
-      restoreOriginals();
+      }).then(function (canvas) {
+        restoreOriginals();
 
-      var base64Data = canvas.toDataURL('image/png');
+        var base64Data = canvas.toDataURL('image/png');
 
-      // 하이브리드 앱 웹뷰 환경 검사
-      if (window.Android && typeof window.Android.downloadImage === 'function') {
-        window.Android.downloadImage(base64Data, filename);
-      } else {
-        var link = document.createElement('a');
-        link.href = base64Data;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+        // 하이브리드 앱 웹뷰 환경 검사
+        if (window.Android && typeof window.Android.downloadImage === 'function') {
+          window.Android.downloadImage(base64Data, filename);
+        } else {
+          var link = document.createElement('a');
+          link.href = base64Data;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
 
-      if (typeof toastr !== 'undefined') {
-        toastr.success('MoneyFlow 이미지가 저장되었습니다.');
-      }
-    }).catch(function (err) {
-      restoreOriginals();
-      console.error('MoneyFlow capture error:', err);
-      alert('이미지 저장 중 문제가 발생했습니다: ' + (err.message || err));
-    });
-  }, 450);
+        if (typeof toastr !== 'undefined') {
+          toastr.success('MoneyFlow 이미지가 저장되었습니다.');
+        }
+      }).catch(function (err) {
+        restoreOriginals();
+        console.error('MoneyFlow capture error:', err);
+        alert('이미지 저장 중 문제가 발생했습니다: ' + (err.message || err));
+      });
+    }, 120);
+  });
 }
 
 // ==========================================
