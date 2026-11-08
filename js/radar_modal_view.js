@@ -2833,7 +2833,7 @@ function buildRadarDesktopSummaryDom(aptData, panelWidth) {
   return { el: wrapEl, hasTransport: hasTransport };
 }
 
-// 2026-11-08: Canvas 요소의 픽셀 버퍼까지 온전히 복제하는 딥 클론 헬퍼 (캡처 중 화면 틀어짐/흔들림 방지용 동결 레이어 구성)
+// 2026-11-08: Canvas 요소의 픽셀 버퍼 및 스크롤 위치까지 온전히 복제하는 딥 클론 헬퍼 (캡처 중 화면 틀어짐/흔들림 방지용 동결 레이어 구성)
 function createDeepCloneWithCanvas(sourceEl) {
   if (!sourceEl) return null;
   var clone = sourceEl.cloneNode(true);
@@ -2855,6 +2855,23 @@ function createDeepCloneWithCanvas(sourceEl) {
       console.warn("캔버스 복제 경고:", e);
     }
   }
+
+  // 스크롤 위치(바텀시트/리스트 등) 보존
+  try {
+    var origScrollables = sourceEl.querySelectorAll('*');
+    var cloneScrollables = clone.querySelectorAll('*');
+    for (var j = 0; j < origScrollables.length; j++) {
+      if (origScrollables[j].scrollTop > 0) {
+        cloneScrollables[j].scrollTop = origScrollables[j].scrollTop;
+      }
+      if (origScrollables[j].scrollLeft > 0) {
+        cloneScrollables[j].scrollLeft = origScrollables[j].scrollLeft;
+      }
+    }
+    if (sourceEl.scrollTop > 0) clone.scrollTop = sourceEl.scrollTop;
+    if (sourceEl.scrollLeft > 0) clone.scrollLeft = sourceEl.scrollLeft;
+  } catch (scErr) {}
+
   return clone;
 }
 
@@ -2983,30 +3000,61 @@ function captureRadarMapView(event) {
         if (cloneNode) {
           $(cloneNode).find('[data-html2canvas-ignore="true"], .radar-map-floating-capture-btn, #radarMapCaptureBtn, #radarModalCaptureBtn').remove();
 
-          $freezeOverlay = $('<div id="radarCaptureFreezeOverlay"></div>').css({
-            'position': 'fixed',
-            'top': Math.max(0, sourceRect.top) + 'px',
-            'left': Math.max(0, sourceRect.left) + 'px',
-            'width': Math.round(sourceRect.width) + 'px',
-            'height': Math.round(sourceRect.height) + 'px',
-            'z-index': 99990,
-            'pointer-events': 'none',
-            'overflow': 'hidden',
-            'background': '#ffffff'
-          });
+          if (isInModal) {
+            // 모바일: #radarModal은 자체 stacking context(z-index: 99999)를 가지므로
+            // #radarModal 내부에 z-index: 200001로 배치하여 지도 및 바텀시트 전면을 완벽히 동결하고
+            // 플로팅 캡처 버튼(z-index: 200003)만 동결 레이어 위에 노출되도록 구성
+            $freezeOverlay = $('<div id="radarCaptureFreezeOverlay"></div>').css({
+              'position': 'absolute',
+              'top': '0px',
+              'left': '0px',
+              'width': '100%',
+              'height': '100%',
+              'z-index': 200001,
+              'pointer-events': 'none',
+              'overflow': 'hidden',
+              'background': '#ffffff'
+            });
 
-          $(cloneNode).css({
-            'position': 'absolute',
-            'top': '0px',
-            'left': '0px',
-            'width': Math.round(sourceRect.width) + 'px',
-            'height': Math.round(sourceRect.height) + 'px',
-            'margin': '0px',
-            'transform': 'none'
-          });
+            $(cloneNode).css({
+              'position': 'absolute',
+              'top': '0px',
+              'left': '0px',
+              'width': '100%',
+              'height': '100%',
+              'margin': '0px',
+              'transform': 'none'
+            });
 
-          $freezeOverlay.append(cloneNode);
-          document.body.appendChild($freezeOverlay[0]);
+            $freezeOverlay.append(cloneNode);
+            freezeSource.appendChild($freezeOverlay[0]);
+          } else {
+            // 데스크톱 (radarMap.html)
+            $freezeOverlay = $('<div id="radarCaptureFreezeOverlay"></div>').css({
+              'position': 'fixed',
+              'top': Math.max(0, sourceRect.top) + 'px',
+              'left': Math.max(0, sourceRect.left) + 'px',
+              'width': Math.round(sourceRect.width) + 'px',
+              'height': Math.round(sourceRect.height) + 'px',
+              'z-index': 99990,
+              'pointer-events': 'none',
+              'overflow': 'hidden',
+              'background': '#ffffff'
+            });
+
+            $(cloneNode).css({
+              'position': 'absolute',
+              'top': '0px',
+              'left': '0px',
+              'width': Math.round(sourceRect.width) + 'px',
+              'height': Math.round(sourceRect.height) + 'px',
+              'margin': '0px',
+              'transform': 'none'
+            });
+
+            $freezeOverlay.append(cloneNode);
+            document.body.appendChild($freezeOverlay[0]);
+          }
         }
       } catch (fzErr) {
         console.warn("동결 클론 오버레이 생성 경고:", fzErr);
