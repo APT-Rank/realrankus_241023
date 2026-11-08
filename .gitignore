@@ -4,15 +4,20 @@ node_modules/
 functions/node_modules/
 functions/lib/
 play/_functions/lib/
-play/_functions/firestore-debug.log
 .firebase/
+
+# Logs & Debug
 firebase-debug.log
+firestore-debug.log
+*.log
 functions/sa-key.json
 *.env*
 play/_functions/.env*
 
+# Python & Temporary
 __pycache__/
 *.pyc
 price/recent/
 .tmp/
-
+scratch/
+artifacts/
