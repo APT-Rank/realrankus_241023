@@ -64,19 +64,27 @@ def fetch_existing_r2_objects(s3, bucket_name, prefix='data/3d/'):
     print(f"[*] Found {count} existing objects in R2 under '{prefix}'.")
     return existing
 
-def collect_local_files():
-    base_dir = os.path.join(REPO_ROOT, 'data', '3d')
-    local_files = []
-    if not os.path.exists(base_dir):
-        print(f"[!] Warning: Directory not found: {base_dir}")
-        return local_files
+def collect_local_files(custom_dir=None):
+    dirs_to_check = []
+    if custom_dir:
+        dirs_to_check.append(custom_dir)
+    dirs_to_check.extend([
+        os.path.join(REPO_ROOT, 'complex3d', 'data', '3d'),
+        os.path.join(REPO_ROOT, 'data', '3d')
+    ])
 
-    for f in os.listdir(base_dir):
-        if f.endswith('.json'):
-            full_path = os.path.join(base_dir, f)
-            r2_key = f"data/3d/{f}"
-            size = os.path.getsize(full_path)
-            local_files.append((full_path, r2_key, size))
+    seen = set()
+    local_files = []
+    for base_dir in dirs_to_check:
+        if not os.path.exists(base_dir):
+            continue
+        for f in os.listdir(base_dir):
+            if f.endswith('.json') and f not in seen:
+                seen.add(f)
+                full_path = os.path.join(base_dir, f)
+                r2_key = f"data/3d/{f}"
+                size = os.path.getsize(full_path)
+                local_files.append((full_path, r2_key, size))
     return local_files
 
 def upload_single_file(s3, bucket_name, full_path, r2_key, size):
@@ -87,7 +95,7 @@ def upload_single_file(s3, bucket_name, full_path, r2_key, size):
     s3.upload_file(full_path, bucket_name, r2_key, ExtraArgs=extra_args)
     return r2_key, size
 
-def sync_3d_to_r2(force=False, max_workers=24, dry_run=False):
+def sync_3d_to_r2(force=False, max_workers=24, dry_run=False, target_dir=None):
     bucket_name = get_env_var('R2_BUCKET_NAME', 'realrankus-data')
     s3 = get_r2_client()
 
@@ -96,7 +104,7 @@ def sync_3d_to_r2(force=False, max_workers=24, dry_run=False):
     if not force:
         existing_r2 = fetch_existing_r2_objects(s3, bucket_name, prefix)
 
-    local_files = collect_local_files()
+    local_files = collect_local_files(target_dir)
     total_files = len(local_files)
     total_bytes = sum(f[2] for f in local_files)
     print(f"[*] Local 3D files found: {total_files} files ({total_bytes / (1024*1024):.2f} MB)")
@@ -152,6 +160,7 @@ if __name__ == '__main__':
     parser.add_argument('--force', action='store_true', help='Force re-upload of all files')
     parser.add_argument('--dry-run', action='store_true', help='Simulate upload without actual changes')
     parser.add_argument('--workers', type=int, default=24, help='Number of upload threads (default: 24)')
+    parser.add_argument('--dir', default=None, help='Target directory containing 3D JSON files')
     args = parser.parse_args()
 
-    sync_3d_to_r2(force=args.force, max_workers=args.workers, dry_run=args.dry_run)
+    sync_3d_to_r2(force=args.force, max_workers=args.workers, dry_run=args.dry_run, target_dir=args.dir)
