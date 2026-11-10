@@ -281,6 +281,12 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data):
         geom = row.geometry
         if geom is None or geom.is_empty:
             continue
+
+        # [방안 A] 바닥면적 25㎡ 미만 또는 최소 변 3.0m 미만 초소형 노이즈/환기탑/기호 원천 제거
+        poly_area = geom.area
+        minx, miny, maxx, maxy = geom.bounds
+        if poly_area < 25.0 or min(maxx - minx, maxy - miny) < 3.0:
+            continue
             
         rings = []
         if geom.geom_type == 'Polygon':

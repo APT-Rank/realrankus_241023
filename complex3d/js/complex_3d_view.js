@@ -1239,9 +1239,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var minSpan = Math.min(spanX, spanZ);
     var approxFootprintArea = spanX * spanZ;
 
-    // ★ [데이터 무결성 방어] 초소형 부속 구조물(경비실, 환기탑, 전기실 등) 바늘탑(Needle Tower) 자동 보정 ★
+    // ★ [방안 A] 초소형 노이즈/환기탑/경비초소/GIS 기호 등 바닥면적 25㎡ 미만 또는 가로·세로 최소 폭 3.0m 미만 구조물 완전 제거 ★
+    // 주거동이나 상가로서의 기능이 없는 초소형 파편 및 바늘탑 원인 구조물을 3D 씬에서 원천 배제합니다.
+    if (approxFootprintArea < 25.0 || minSpan < 3.0) {
+      sampleGeom.dispose();
+      return;
+    }
+
+    // ★ [데이터 무결성 방어] 25㎡ 이상 ~ 65㎡ 미만 소형 부속 구조물(경비실, 관리동 등) 바늘탑 방지 보정 ★
     // 정상 주거용 아파트 동은 가로/세로 최소 폭이 6.5m 이상이고 바닥 면적이 65㎡ 이상이어야 합니다.
-    // 폭이 6.5m 미만이거나 바닥면적이 65㎡ 미만인 초소형 구조물에 대장 매칭 오류로 고층이 지정된 경우,
+    // 65㎡ 미만인 소형 구조물에 대장 매칭 오류로 고층이 지정된 경우,
     // 최대 2층으로 강제 보정하고 다중 라인 분할을 해제하여 현실적인 단지 시설물 형태로 렌더링합니다.
     var isAuxiliaryStructure = (approxFootprintArea < 65 || minSpan < 6.5);
     if (isAuxiliaryStructure && totalFloors > 2) {
