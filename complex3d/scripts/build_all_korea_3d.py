@@ -26,9 +26,10 @@ from concurrent.futures import ThreadPoolExecutor
 try:
     import pyproj
     import geopandas as gpd
+    import pandas as pd
     from shapely.geometry import mapping
 except ImportError:
-    print("Required packages: pyproj, geopandas, shapely")
+    print("Required packages: pyproj, geopandas, pandas, shapely")
     sys.exit(1)
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
@@ -42,7 +43,7 @@ transformer_to_5186 = pyproj.Transformer.from_crs('EPSG:4326', 'EPSG:5186', alwa
 transformer_to_4326 = pyproj.Transformer.from_crs('EPSG:5186', 'EPSG:4326', always_xy=True)
 
 SIDO_MAP = {
-    '11': '서울', '26': '부산', '27': '대구', '28': '인천', '29': '광주',
+    '11': '서울', '12': '광주/전남', '26': '부산', '27': '대구', '28': '인천', '29': '광주',
     '30': '대전', '31': '울산', '36': '세종', '41': '경기', '42': '강원',
     '43': '충북', '44': '충남', '45': '전북', '46': '전남', '47': '경북',
     '48': '경남', '50': '제주', '51': '강원', '52': '전북'
@@ -302,9 +303,18 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data):
         p_dong = cpx_pyoje.get(dong_name) or next((v for k, v in cpx_pyoje.items() if dong_name in k or k in dong_name), None)
         j_dong = cpx_jeonyu.get(dong_name) or next((v for k, v in cpx_jeonyu.items() if dong_name in k or k in dong_name), None)
         
-        # Determine height and floors
-        flr = int(row['A26'] or 0)
-        height = float(row['A16'] or 0.0)
+        # Determine height and floors safely handling NaN / None
+        try:
+            flr_val = row['A26']
+            flr = int(float(flr_val)) if flr_val is not None and not pd.isna(flr_val) else 0
+        except Exception:
+            flr = 0
+            
+        try:
+            h_val = row['A16']
+            height = float(h_val) if h_val is not None and not pd.isna(h_val) else 0.0
+        except Exception:
+            height = 0.0
         if p_dong:
             if p_dong['height'] > 0:
                 height = p_dong['height']
@@ -469,7 +479,10 @@ def process_sido(sido_code, limit=None, overwrite=False):
             skip_cnt += 1
             continue
             
-        data = build_complex_json(cpx, combined_gdf, pyoje_data, jeonyu_data)
+        try:
+            data = build_complex_json(cpx, combined_gdf, pyoje_data, jeonyu_data)
+        except Exception as e:
+            data = None
         if data and len(data['buildings']) > 0:
             with open(out_file, 'w', encoding='utf-8') as fp:
                 json.dump(data, fp, ensure_ascii=False, indent=2)
@@ -500,7 +513,7 @@ def main():
     print(f"Output Directory: {OUTPUT_DIR}")
     
     if args.sido == 'all':
-        sido_list = ['11', '41', '28', '26', '27', '30', '31', '36', '43', '44', '47', '48', '50', '51', '52']
+        sido_list = ['11', '41', '28', '26', '27', '12', '30', '31', '36', '43', '44', '47', '48', '50', '51', '52']
     else:
         sido_list = [args.sido]
         
