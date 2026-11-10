@@ -1591,8 +1591,8 @@
 
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
-  <script src="./js/regions_map.js"></script>
-  <script src="./js/complex_3d_view.js"></script>
+  <script src="./js/regions_map.js?v=20261111_0820"></script>
+  <script src="./js/complex_3d_view.js?v=20261111_0820"></script>
 </head>
 <body>
 
@@ -2172,6 +2172,15 @@
           });
         })
         .then(function (data3d) {
+          // Center coordinate normalization (배열 [lng, lat] 및 객체 {lat, lng} 완벽 호환)
+          if (data3d && data3d.center) {
+            var cRaw = data3d.center;
+            if (Array.isArray(cRaw) && cRaw.length >= 2) {
+              var a = Number(cRaw[0]), b = Number(cRaw[1]);
+              data3d.center = (a > 100) ? { lat: b, lng: a } : { lat: a, lng: b };
+            }
+          }
+
           LoadingManager.update(45, "동·호수별 입체 세대 모델 구축 중...");
 
           // Resolve region code if not yet known
@@ -2224,9 +2233,11 @@
 
           // Populate Dong Buttons (이름순 정렬)
           var dongGroup = document.getElementById('dong_btn_group');
-          var dongList = viewInstance.getDongList().slice().sort(function (a, b) {
-            return a.localeCompare(b, 'ko', { numeric: true });
-          });
+          var dongList = (viewInstance && typeof viewInstance.getDongList === 'function')
+            ? viewInstance.getDongList().slice().sort(function (a, b) {
+                return a.localeCompare(b, 'ko', { numeric: true });
+              })
+            : [];
           dongList.forEach(function (dKey) {
             var btn = document.createElement('button');
             btn.className = 'dong-btn';

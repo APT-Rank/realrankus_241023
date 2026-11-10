@@ -403,7 +403,7 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data):
         'searchCode': str(cpx['code']),
         'name': cpx['name'],
         'lawAddr': cpx['addr'],
-        'center': [cpx['x'], cpx['y']],
+        'center': {'lat': float(cpx['y']), 'lng': float(cpx['x'])},
         'specs': specs,
         'buildings': buildings,
         'neighbors': [],

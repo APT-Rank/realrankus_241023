@@ -25,9 +25,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   var centerRaw = data3d.center || [127.0, 37.5];
   var center = { lat: 37.5, lng: 127.0 };
-  if (Array.isArray(centerRaw)) {
-    center.lng = Number(centerRaw[0]);
-    center.lat = Number(centerRaw[1]);
+  if (Array.isArray(centerRaw) && centerRaw.length >= 2) {
+    var a = Number(centerRaw[0]), b = Number(centerRaw[1]);
+    // 한국 좌표 특성: 경도(lng)는 항상 100 초과 (~124-132), 위도(lat)는 100 미만 (~33-39)
+    if (a > 100) {
+      center.lng = a;
+      center.lat = b;
+    } else {
+      center.lat = a;
+      center.lng = b;
+    }
   } else if (centerRaw && typeof centerRaw === 'object') {
     center.lat = Number(centerRaw.lat !== undefined ? centerRaw.lat : (centerRaw.y || 37.5));
     center.lng = Number(centerRaw.lng !== undefined ? centerRaw.lng : (centerRaw.x || 127.0));
