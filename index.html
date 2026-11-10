@@ -712,6 +712,18 @@
     </div>
   </div>
 
+  <!-- 2026-11-10: 3D 단지 및 실시간 일조 시뮬레이션 풀스크린 모달 (#complex3dModal) -->
+  <div id="complex3dModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #0b111e; z-index: 100000; overscroll-behavior: none; -webkit-overflow-scrolling: touch;">
+    <!-- Iframe 로드 전 초기 브릿지 로딩 인디케이터 -->
+    <div id="complex3d_modal_loader" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #172554 0%, #0b111e 85%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; color: #fff; pointer-events: none;">
+      <div style="font-size: 34px; color: #38bdf8; margin-bottom: 14px;"><i class="fa-solid fa-cube fa-beat-fade"></i></div>
+      <div style="font-size: 15px; font-weight: 700; color: #f8fafc; margin-bottom: 4px;" id="complex3d_modal_loader_title">3D 단지 모형 준비 중</div>
+      <div style="font-size: 12px; color: #94a3b8;">입체 건물 및 실시간 일조 엔진 시작 중...</div>
+    </div>
+    <iframe id="complex3d_iframe" src="" style="position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; display: block;" allow="fullscreen"></iframe>
+  </div>
+
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>

@@ -2340,6 +2340,11 @@ function showDetail(index) {
         <div id='detail_map'></div>
         </div>
         <div id='aptrankLoginGuide' style='text-align:center; margin-top:5px'>지도를 선택하면 주변 입지를 확인할 수 있어요!</div>
+        <div style='padding: 6px 10px 10px 10px;'>
+          <button type='button' class='btn btn-outline-primary w-100' onclick='openComplex3dMap("${searchCode}")' style='font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;'>
+            <i class='fa-solid fa-cube'></i> 3D 단지 모형 및 일조 분석
+          </button>
+        </div>
         </div></div></div>
       `;
 
@@ -4481,7 +4486,112 @@ window.addEventListener("popstate", function (e) {
   if (isRadarModalOpen || ($("#radarModal").length && $("#radarModal").is(":visible"))) {
     closeRadarModal(true);
   }
+  if (isComplex3dModalOpen || ($("#complex3dModal").length && $("#complex3dModal").is(":visible"))) {
+    closeComplex3dModal(true);
+  }
 });
+
+/**
+ * ==========================================================================
+ * RealRankers 3D 단지 탐색 및 실시간 일조 분석 연동 모듈
+ * ==========================================================================
+ */
+var isComplex3dModalOpen = false;
+var complex3dModalViewInstance = null;
+
+function openComplex3dMap(searchCode) {
+  var gunguCode = $("#gungu option:selected").val();
+
+  // 현재 로드된 aptData 목록에서 단지 정보 탐색
+  var aptItem = null;
+  if (typeof aptData !== 'undefined' && aptData && aptData.data) {
+    aptItem = aptData.data.find(function (d) {
+      return String(d['검색코드'] || d.searchCode) === String(searchCode);
+    });
+  }
+
+  function proceedWith3d(aptDataFull) {
+    var dataToSend = {
+      searchCode: searchCode,
+      aptData: aptDataFull,
+      regionCode: gunguCode
+    };
+    sessionStorage.setItem("complex3dData", JSON.stringify(dataToSend));
+
+    if (isMobile) {
+      openComplex3dModal(searchCode, aptDataFull);
+    } else {
+      window.open("./complex3d/index.html?code=" + searchCode + "&region=" + (gunguCode || ""), "_blank");
+    }
+  }
+
+  // 주변 입지(학교, 마트, 백화점, 역 등) 3D 마커 렌더링을 위해 파이어베이스 complex_info에서 상세 정보 조회
+  firebase
+    .database()
+    .ref()
+    .child("complex_info")
+    .child(gunguCode)
+    .child(searchCode)
+    .get()
+    .then(function (snapshot) {
+      var complexInfo = snapshot.exists() ? snapshot.val() : {};
+      var merged = Object.assign({}, aptItem || {}, complexInfo || {});
+      proceedWith3d(merged);
+    })
+    .catch(function () {
+      proceedWith3d(aptItem || { "아파트명": "", "검색코드": searchCode });
+    });
+}
+
+// 2026-11-10: 3D 모달 iframe 내부로부터 닫기 메시지 수신 처리
+window.addEventListener("message", function (event) {
+  if (event && event.data && event.data.type === "closeComplex3dModal") {
+    closeComplex3dModal();
+  }
+});
+
+function openComplex3dModal(searchCode, aptDataFull) {
+  if (isComplex3dModalOpen) return;
+  isComplex3dModalOpen = true;
+
+  var aptName = aptDataFull ? (aptDataFull["아파트명"] || "") : "";
+  if (aptName) {
+    $("#complex3d_modal_loader_title").text(aptName + " 3D 준비 중");
+  } else {
+    $("#complex3d_modal_loader_title").text("3D 단지 모형 준비 중");
+  }
+
+  var gunguCode = aptDataFull ? (aptDataFull["시군구코드"] || "") : "";
+  var iframeUrl = "./complex3d/index.html?code=" + encodeURIComponent(searchCode) + 
+                  (gunguCode ? "&region=" + encodeURIComponent(gunguCode) : "") + 
+                  "&embedded=1";
+
+  var $modal = $("#complex3dModal");
+  var $iframe = $("#complex3d_iframe");
+
+  $iframe.attr("src", iframeUrl);
+  $modal.stop(true, false).fadeIn(250);
+
+  history.pushState({ complex3dModalOpen: true }, "", "");
+}
+
+function closeComplex3dModal(fromPopState) {
+  if (!isComplex3dModalOpen) return;
+  var wasOpen = isComplex3dModalOpen;
+  isComplex3dModalOpen = false;
+
+  var $modal = $("#complex3dModal");
+  var $iframe = $("#complex3d_iframe");
+
+  $modal.stop(true, false).fadeOut(200, function () {
+    // WebGL Context & GPU VRAM 100% 즉시 메모리 해제를 위해 about:blank 할당
+    $iframe.attr("src", "about:blank");
+  });
+
+  if (!fromPopState && wasOpen && history.state && history.state.complex3dModalOpen) {
+    history.back();
+  }
+}
 
 /**
  * @function showGraphCarousel
