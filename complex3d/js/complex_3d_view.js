@@ -23,7 +23,18 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   container.innerHTML = "";
 
-  var center = data3d.center || { lat: 37.5, lng: 127.0 };
+  var centerRaw = data3d.center || [127.0, 37.5];
+  var center = { lat: 37.5, lng: 127.0 };
+  if (Array.isArray(centerRaw)) {
+    center.lng = Number(centerRaw[0]);
+    center.lat = Number(centerRaw[1]);
+  } else if (centerRaw && typeof centerRaw === 'object') {
+    center.lat = Number(centerRaw.lat !== undefined ? centerRaw.lat : (centerRaw.y || 37.5));
+    center.lng = Number(centerRaw.lng !== undefined ? centerRaw.lng : (centerRaw.x || 127.0));
+  }
+  if (!isFinite(center.lat)) center.lat = 37.5;
+  if (!isFinite(center.lng)) center.lng = 127.0;
+
   var latMeters = 111000;
   var lngMeters = 111320 * Math.cos(center.lat * Math.PI / 180);
 
@@ -57,6 +68,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   renderer.toneMappingExposure = 1.08; // 신카이 특유의 눈부신 애니메이션 발광감
   renderer.outputEncoding = THREE.sRGBEncoding;
   container.appendChild(renderer.domElement);
+  container.style.touchAction = 'none';
+  renderer.domElement.style.touchAction = 'none';
 
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
   window.debugControls = controls;
@@ -1214,12 +1227,32 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var center3DX = (bBox.min.x + bBox.max.x) / 2;
     var center3DZ = (bBox.min.z + bBox.max.z) / 2;
 
+    var spanX = bBox.max.x - bBox.min.x;
+    var spanZ = bBox.max.z - bBox.min.z;
+    var minSpan = Math.min(spanX, spanZ);
+    var approxFootprintArea = spanX * spanZ;
+
+    // ★ [데이터 무결성 방어] 초소형 부속 구조물(경비실, 환기탑, 전기실 등) 바늘탑(Needle Tower) 자동 보정 ★
+    // 정상 주거용 아파트 동은 가로/세로 최소 폭이 6.5m 이상이고 바닥 면적이 65㎡ 이상이어야 합니다.
+    // 폭이 6.5m 미만이거나 바닥면적이 65㎡ 미만인 초소형 구조물에 대장 매칭 오류로 고층이 지정된 경우,
+    // 최대 2층으로 강제 보정하고 다중 라인 분할을 해제하여 현실적인 단지 시설물 형태로 렌더링합니다.
+    var isAuxiliaryStructure = (approxFootprintArea < 65 || minSpan < 6.5);
+    if (isAuxiliaryStructure && totalFloors > 2) {
+      totalFloors = Math.min(totalFloors, 2);
+      b.lines = [];
+      b.residential = false;
+      b.selectable = false;
+    }
+
+    bldgHeight = totalFloors * floorHeight;
+    if (bldgHeight > complexMaxHeight) complexMaxHeight = bldgHeight;
+
     dongCenters[dongKey] = new THREE.Vector3(center3DX, bldgHeight / 2, center3DZ);
     dongBBoxes[dongKey] = {
       minX: bBox.min.x, maxX: bBox.max.x,
       minZ: bBox.min.z, maxZ: bBox.max.z,
-      spanX: bBox.max.x - bBox.min.x,
-      spanZ: bBox.max.z - bBox.min.z
+      spanX: spanX,
+      spanZ: spanZ
     };
 
     if (bBox.min.x < complexMinX) complexMinX = bBox.min.x;
@@ -1423,7 +1456,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     dongMeshes[dongKey] = dongList;
 
     // ★ 동 호수 배지: 투명한 프로스트 글래스모피즘 HUD 배지 (주거동 위주로 정갈하게 배치) ★
-    var isResidential = b.residential !== false && !dongKey.includes('근린생활') && !dongKey.includes('상가');
+    var isResidential = b.residential !== false && !dongKey.includes('근린생활') && !dongKey.includes('상가') && !isAuxiliaryStructure;
     if (isResidential) {
       var canvas = document.createElement('canvas');
       canvas.width = 180;
@@ -3182,6 +3215,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       isDraggingPOVLook = true;
       povDragStart.x = e.clientX;
       povDragStart.y = e.clientY;
+      if (e.target && e.target.setPointerCapture) {
+        try { e.target.setPointerCapture(e.pointerId); } catch (err) {}
+      }
       if (container) container.style.cursor = 'grabbing';
       return;
     }
@@ -3194,12 +3230,17 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     povDragStart.x = e.clientX;
     povDragStart.y = e.clientY;
 
-    // 좌우 회전 (Yaw): ±85도 제한 (발코니 창문 밖으로 전방 170도 조망 아크로 방 뒤쪽 벽 관통 방지)
-    povYaw -= dx * 0.0035;
-    povYaw = Math.max(-1.48, Math.min(1.48, povYaw));
+    // 모바일 터치 및 마우스 드래그 감도 최적화 (터치 환경에서는 반응성을 높여 시야 이동을 매끄럽게 지원)
+    var isTouch = (e.pointerType === 'touch') || ('ontouchstart' in window && window.innerWidth <= 768);
+    var lookSpeed = isTouch ? 0.0065 : 0.0035;
 
-    // 상하 회전 (Pitch): -45도 ~ +45도 제한
-    povPitch = Math.max(-0.78, Math.min(0.78, povPitch - dy * 0.0035));
+    // 좌우 회전 (Yaw): 자유롭고 넓은 시야 이동 지원 (360° 전방위 파노라마 조망 가능)
+    povYaw -= dx * lookSpeed;
+    if (povYaw > Math.PI) povYaw -= Math.PI * 2;
+    else if (povYaw < -Math.PI) povYaw += Math.PI * 2;
+
+    // 상하 회전 (Pitch): -78도 ~ +78도 (하늘과 바닥까지 넓게 탐색 가능)
+    povPitch = Math.max(-1.36, Math.min(1.36, povPitch - dy * lookSpeed));
 
     // 카메라는 발코니에 100% 고정된 채 시선 방향만 회전
     camera.position.copy(balconyEyePos);
@@ -3219,6 +3260,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   }
 
   function onPointerUp(e) {
+    if (e.target && e.target.releasePointerCapture) {
+      try { e.target.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
     isDraggingPOVLook = false;
     // ★ 창밖 조망 시 다른 동/층 클릭 일체 차단 (단, 태양 궤적 노드 클릭은 지원) ★
     if (isPOVMode && currentPOVSubMode === 'outward') {
@@ -3287,6 +3331,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   container.addEventListener('pointerdown', onPointerDown);
   container.addEventListener('pointermove', onPointerMovePOV);
   container.addEventListener('pointerup', onPointerUp);
+  container.addEventListener('pointercancel', onPointerUp);
   container.addEventListener('wheel', onWheelPOV, { passive: false });
 
   function onKeyDown(e) {

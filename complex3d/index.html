@@ -49,6 +49,9 @@
       align-items: center;
       gap: 10px;
     }
+    .top-bar.pov-hidden {
+      display: none !important;
+    }
     .top-bar-titles {
       display: flex;
       flex-direction: column;
@@ -916,9 +919,9 @@
       }
 
       /* 5) 하단 메뉴 총 3단계 높이 제어 */
-      /* 1단계: 모두 아래로 내려가서 상단 핸들러만 보이는 상태 */
+      /* 1단계: 모두 아래로 내려가서 상단 핸들러만 보이는 상태 (2px 위로 상향 조정: 44px -> 46px) */
       .control-panel.stage-1 {
-        transform: translateY(calc(100% - 44px));
+        transform: translateY(calc(100% - 46px));
       }
       .control-panel.stage-1 .control-panel-expandable {
         max-height: 0 !important;
@@ -976,42 +979,46 @@
         gap: 5px;
       }
 
-      /* 8) 3단계 아이콘형 버튼 그룹 */
+      /* 1, 2) 3단계 개별 분리형 아이콘 버튼 (1줄, 2줄, 3줄) */
       .sheet-stage-group {
         display: inline-flex;
         align-items: center;
-        background: #f1f5f9;
-        padding: 2px;
-        border-radius: 7px;
-        gap: 2px;
-        border: 1px solid #e2e8f0;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        gap: 6px; /* 버튼 간 개별 분리 간격 */
+        border: none;
       }
       .sheet-stage-btn {
         display: inline-flex;
         align-items: center;
-        gap: 3px;
-        padding: 3px 6px;
-        border-radius: 5px;
-        border: none;
-        background: transparent;
-        color: #64748b;
-        font-size: 10px;
-        font-weight: 700;
+        justify-content: center;
+        width: 28px;
+        height: 25px;
+        padding: 0;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        color: #475569;
         cursor: pointer;
-        transition: all 0.18s ease;
-        line-height: 1;
-        white-space: nowrap;
+        transition: all 0.16s ease;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
       }
-      .sheet-stage-btn i {
-        font-size: 8.5px;
+      .sheet-stage-btn svg {
+        display: block;
+        width: 14px;
+        height: 14px;
       }
       .sheet-stage-btn:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
         color: #0f172a;
       }
       .sheet-stage-btn.active {
         background: #E43B46;
+        border-color: #E43B46;
         color: #ffffff;
-        box-shadow: 0 1px 4px rgba(228, 59, 70, 0.30);
+        box-shadow: 0 2px 6px rgba(228, 59, 70, 0.35);
       }
       .panel-card {
         padding: 8px 10px;
@@ -1071,19 +1078,22 @@
       }
 
       .floor-pov-banner {
-        top: 8px;
-        width: 96%;
+        top: 8px !important;
+        width: 96% !important;
         max-width: 460px;
-        height: auto;
+        height: auto !important;
         padding: 5px 10px;
         gap: 6px;
         border-radius: 16px;
         flex-wrap: wrap;
         justify-content: center;
       }
+      .floor-pov-banner .pov-badge {
+        display: none !important; /* 모바일에서 배지 숨김으로 세로 폭 축소 및 줄바꿈 최소화 */
+      }
       .pov-fov-floating-bar {
-        top: 74px;
-        padding: 3px 8px;
+        top: 96px !important; /* 상단바/배너와 겹치지 않도록 충분히 아래로 배치 */
+        padding: 4px 10px;
         gap: 6px;
       }
       .pov-title {
@@ -1124,6 +1134,10 @@
       }
       .bottom-hint {
         display: none;
+      }
+      /* 모바일에서는 상하좌우 방향 인디케이터 숨김 (나침반으로 충분함) */
+      .cardinal-indicator {
+        display: none !important;
       }
     }
 
@@ -1397,11 +1411,6 @@
       cursor: pointer;
       transition: all 0.2s;
       padding: 0;
-    }
-    .zoom-btn-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
     }
     .zoom-btn-span {
       grid-column: 1 / -1;
@@ -2535,6 +2544,8 @@
             var banner = document.getElementById('floor-pov-banner');
             var titleEl = document.getElementById('pov-title-text');
             var layerNb = document.getElementById('layer-neighbors');
+            var topBar = document.querySelector('.top-bar');
+            if (topBar) topBar.classList.add('pov-hidden');
             if (banner && titleEl) {
               var lineSuffix = info.lineDesc ? ' · ' + info.lineDesc : '';
               titleEl.innerText = info.dongName + ' ' + info.floor + '층 (' + info.bandLabel + lineSuffix + ')';
@@ -2693,6 +2704,9 @@
 
             var cp = document.getElementById('control-panel');
             if (cp) cp.classList.remove('pov-hidden');
+
+            var topBar = document.querySelector('.top-bar');
+            if (topBar) topBar.classList.remove('pov-hidden');
 
             var layerNb = document.getElementById('layer-neighbors');
             if (layerNb && viewInstance && typeof viewInstance.getNeighborsVisible === 'function') {
