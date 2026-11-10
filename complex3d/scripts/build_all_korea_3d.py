@@ -475,9 +475,18 @@ def process_sido(sido_code, limit=None, overwrite=False):
     t0 = time.time()
     for idx, cpx in enumerate(cpx_list):
         out_file = os.path.join(OUTPUT_DIR, f"{cpx['code']}.json")
-        if not overwrite and os.path.exists(out_file) and os.path.getsize(out_file) > 1000:
-            skip_cnt += 1
-            continue
+        if os.path.exists(out_file) and os.path.getsize(out_file) > 1000:
+            if not overwrite:
+                skip_cnt += 1
+                continue
+            # overwrite mode: only regenerate legacy (non-fused) files
+            try:
+                with open(out_file, 'r', encoding='utf-8') as fp:
+                    if '"korea_gis_ledger_fused"' in fp.read():
+                        skip_cnt += 1
+                        continue
+            except Exception:
+                pass
             
         try:
             data = build_complex_json(cpx, combined_gdf, pyoje_data, jeonyu_data)

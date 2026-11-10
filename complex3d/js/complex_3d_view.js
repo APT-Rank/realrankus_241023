@@ -987,11 +987,17 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var pts = [];
     var sumY = 0;
     for (var i = 0; i < ring.length; i++) {
-      var p = toLocalXY(ring[i][0], ring[i][1]);
+      if (!ring[i] || ring[i].length < 2) continue;
+      var lng = Number(ring[i][0]);
+      var lat = Number(ring[i][1]);
+      if (!isFinite(lng) || !isFinite(lat)) continue;
+      var p = toLocalXY(lng, lat);
+      if (!isFinite(p.x) || !isFinite(p.y)) continue;
       pts.push(p);
       sumY += p.y;
     }
-    var bCenterY = sumY / ring.length;
+    if (pts.length < 3) return null;
+    var bCenterY = sumY / pts.length;
 
     // 건물 위치(Position): -bCenterY (북쪽=-Z, 남쪽=+Z로 단지 내 동배치 100% 정위치)
     // 건물 향(Facing Orientation): 원본 전면 발코니/후면 복도 방향(+dy) 그대로 정상 보존
