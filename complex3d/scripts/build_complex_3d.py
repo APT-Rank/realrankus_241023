@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import re
+import math
 import time
 import argparse
 import urllib.request
@@ -77,21 +78,75 @@ def build_complex_3d(search_code, apt_name, law_addr, output_dir="data/3d", over
         complex_3d_url = f"https://jiblab.kr/api/complex-3d/{cx_id}"
         raw_3d_data = fetch_json(complex_3d_url)
         
-        # 5. Format & Save
+        # 5. Format, Filter & Save
+        raw_center = raw_3d_data.get("center")
+        center_obj = {"lat": 37.5, "lng": 127.0}
+        if isinstance(raw_center, (list, tuple)) and len(raw_center) >= 2:
+            a, b = float(raw_center[0]), float(raw_center[1])
+            center_obj = {"lat": b, "lng": a} if a > 100 else {"lat": a, "lng": b}
+        elif isinstance(raw_center, dict):
+            center_obj = {
+                "lat": float(raw_center.get("lat", raw_center.get("y", 37.5))),
+                "lng": float(raw_center.get("lng", raw_center.get("x", 127.0)))
+            }
+
+        def evaluate_ring(ring, lat_ref):
+            if not ring or len(ring) < 3:
+                return 0.0, 0.0, 0.0
+            kx = 111319.49 * math.cos(math.radians(lat_ref))
+            ky = 111319.49
+            xs = [p[0] * kx for p in ring]
+            ys = [p[1] * ky for p in ring]
+            span_x = max(xs) - min(xs)
+            span_y = max(ys) - min(ys)
+            min_span = min(span_x, span_y)
+            box_area = span_x * span_y
+            n = len(ring)
+            area = 0.5 * abs(sum(xs[i] * ys[(i + 1) % n] - xs[(i + 1) % n] * ys[i] for i in range(n)))
+            return area, box_area, min_span
+
+        valid_buildings = []
+        for b in raw_3d_data.get("buildings", []):
+            rings = b.get("rings")
+            if not rings or not rings[0] or len(rings[0]) < 3:
+                continue
+            area, box_area, min_span = evaluate_ring(rings[0], center_obj["lat"])
+            if area < 25.0 or box_area < 25.0 or min_span < 3.0:
+                continue
+            if area < 65.0 or min_span < 6.5:
+                if b.get("floors", 1) > 2:
+                    b["floors"] = 2
+                    if "height" in b: b["height"] = min(b["height"], 6.0)
+                    if "heightM" in b: b["heightM"] = min(b["heightM"], 6.0)
+                    b["lines"] = []
+                    b["residential"] = False
+                    b["selectable"] = False
+            valid_buildings.append(b)
+
+        valid_neighbors = []
+        for nb in raw_3d_data.get("neighbors", []):
+            rings = nb.get("rings")
+            if not rings or not rings[0] or len(rings[0]) < 3:
+                continue
+            area, box_area, min_span = evaluate_ring(rings[0], center_obj["lat"])
+            if area < 25.0 or box_area < 25.0 or min_span < 3.0:
+                continue
+            valid_neighbors.append(nb)
+
         output_data = {
             "searchCode": str(search_code),
             "name": apt_name,
             "lawAddr": law_addr,
-            "center": raw_3d_data.get("center"),
-            "buildings": raw_3d_data.get("buildings", []),
-            "neighbors": raw_3d_data.get("neighbors", []),
+            "center": center_obj,
+            "buildings": valid_buildings,
+            "neighbors": valid_neighbors,
             "floorBands": raw_3d_data.get("floorBands", []),
             "coverage": raw_3d_data.get("coverage", {}),
             "sourceComplexId": cx_id
         }
         
         with open(out_file, "w", encoding="utf-8") as f:
-            json.dump(output_data, f, ensure_ascii=False)
+            json.dump(output_data, f, ensure_ascii=False, separators=(',', ':'))
             
         return True, f"Saved ({len(output_data['buildings'])} blds, {len(output_data['neighbors'])} nbrs)"
     except Exception as e:

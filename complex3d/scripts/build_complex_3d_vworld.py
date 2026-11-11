@@ -10,6 +10,7 @@ import os
 import sys
 import json
 import re
+import math
 import time
 import argparse
 import urllib.request
@@ -83,7 +84,23 @@ def build_complex_3d_vworld(search_code, apt_name, law_addr, lat, lng, output_di
             elif g_type == "MultiPolygon":
                 rings = [poly[0] for poly in coords if poly]
 
-            if not rings or not rings[0]:
+            if not rings or not rings[0] or len(rings[0]) < 3:
+                continue
+
+            # Evaluate footprint dimensions & area (Plan A)
+            r0 = rings[0]
+            kx = 111319.49 * math.cos(math.radians(lat))
+            ky = 111319.49
+            xs = [p[0] * kx for p in r0]
+            ys = [p[1] * ky for p in r0]
+            span_x = max(xs) - min(xs)
+            span_y = max(ys) - min(ys)
+            min_span = min(span_x, span_y)
+            box_area = span_x * span_y
+            n_pts = len(r0)
+            poly_area = 0.5 * abs(sum(xs[i] * ys[(i + 1) % n_pts] - xs[(i + 1) % n_pts] * ys[i] for i in range(n_pts)))
+
+            if poly_area < 25.0 or box_area < 25.0 or min_span < 3.0:
                 continue
 
             bld_name = props.get("buld_nm", "") or ""
@@ -91,6 +108,8 @@ def build_complex_3d_vworld(search_code, apt_name, law_addr, lat, lng, output_di
             # Floors from VWorld properties
             grnd_floors = props.get("gro_flo_co")
             floors = int(grnd_floors) if grnd_floors and str(grnd_floors).isdigit() and int(grnd_floors) > 0 else 15
+            if (poly_area < 65.0 or min_span < 6.5) and floors > 2:
+                floors = 2
             height_m = floors * 2.8
 
             clean_bld_name = bld_name.replace(" ", "")
@@ -142,7 +161,7 @@ def build_complex_3d_vworld(search_code, apt_name, law_addr, lat, lng, output_di
         }
 
         with open(out_file, "w", encoding="utf-8") as f:
-            json.dump(output_data, f, ensure_ascii=False)
+            json.dump(output_data, f, ensure_ascii=False, separators=(',', ':'))
 
         return True, f"Saved VWorld 3D ({len(target_buildings)} blds, {len(neighbors)} nbrs)"
     except Exception as e:
