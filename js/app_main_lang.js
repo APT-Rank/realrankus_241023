@@ -5233,7 +5233,11 @@ window.addEventListener("popstate", function (e) {
   if (isRadarModalOpen || ($("#radarModal").length && $("#radarModal").is(":visible"))) {
     closeRadarModal(true);
   }
-  if (isComplex3dModalOpen || ($("#complex3dModal").length && $("#complex3dModal").is(":visible"))) {
+  if (
+    isComplex3dModalOpen &&
+    complex3dModalHistoryToken &&
+    (!e.state || e.state.complex3dModalToken !== complex3dModalHistoryToken)
+  ) {
     closeComplex3dModal(true);
   }
 });
@@ -5245,6 +5249,8 @@ window.addEventListener("popstate", function (e) {
  */
 var isComplex3dModalOpen = false;
 var complex3dModalViewInstance = null;
+var complex3dModalHistoryToken = null;
+var complex3dModalHistorySequence = 0;
 
 function openComplex3dMap(searchCode) {
   var gunguCode = $("#gungu option:selected").val();
@@ -5292,7 +5298,13 @@ function openComplex3dMap(searchCode) {
 
 // 2026-11-10: 3D 모달 iframe 내부로부터 닫기 메시지 수신 처리
 window.addEventListener("message", function (event) {
-  if (event && event.data && event.data.type === "closeComplex3dModal") {
+  var iframe = document.getElementById("complex3d_iframe");
+  if (
+    iframe &&
+    event.source === iframe.contentWindow &&
+    event.data &&
+    event.data.type === "closeComplex3dModal"
+  ) {
     closeComplex3dModal();
   }
 });
@@ -5314,28 +5326,49 @@ function openComplex3dModal(searchCode, aptDataFull) {
                   "&embedded=1";
 
   var $modal = $("#complex3dModal");
-  var $iframe = $("#complex3d_iframe");
+  var oldIframe = document.getElementById("complex3d_iframe");
+  if (oldIframe) oldIframe.remove();
 
-  $iframe.attr("src", iframeUrl);
+  var iframe = document.createElement("iframe");
+  iframe.id = "complex3d_iframe";
+  iframe.src = iframeUrl;
+  iframe.allow = "fullscreen";
+  iframe.style.cssText = "position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; display: block;";
+  document.getElementById("complex3d_modal_loader").style.display = "flex";
+  $modal.append(iframe);
   $modal.stop(true, false).fadeIn(250);
 
-  history.pushState({ complex3dModalOpen: true }, "", "");
+  complex3dModalHistorySequence += 1;
+  complex3dModalHistoryToken = Date.now().toString(36) + "-" + complex3dModalHistorySequence;
+  var currentHistoryState = history.state && typeof history.state === "object" ? history.state : {};
+  history.pushState(
+    Object.assign({}, currentHistoryState, {
+      complex3dModalOpen: true,
+      complex3dModalToken: complex3dModalHistoryToken
+    }),
+    "",
+    ""
+  );
 }
 
 function closeComplex3dModal(fromPopState) {
   if (!isComplex3dModalOpen) return;
-  var wasOpen = isComplex3dModalOpen;
+  var closingHistoryToken = complex3dModalHistoryToken;
   isComplex3dModalOpen = false;
+  complex3dModalHistoryToken = null;
 
   var $modal = $("#complex3dModal");
-  var $iframe = $("#complex3d_iframe");
+  var iframe = document.getElementById("complex3d_iframe");
+  if (iframe) iframe.remove();
 
-  $modal.stop(true, false).fadeOut(200, function () {
-    // WebGL Context & GPU VRAM 100% 즉시 메모리 해제를 위해 about:blank 할당
-    $iframe.attr("src", "about:blank");
-  });
+  $modal.stop(true, false).fadeOut(200);
 
-  if (!fromPopState && wasOpen && history.state && history.state.complex3dModalOpen) {
+  if (
+    !fromPopState &&
+    closingHistoryToken &&
+    history.state &&
+    history.state.complex3dModalToken === closingHistoryToken
+  ) {
     history.back();
   }
 }

@@ -1,8 +1,7 @@
 """
 =============================================================================
-RealRankers 3D Complex Builder (Pure VWorld Government API Version)
-국토교통부 브이월드(VWorld) 2D 건물 공간정보 API(LT_C_SPBD) 직접 연동 버전
-작성일: 2026-11-09
+RealRankers 3D Complex Builder (VWorld Government API + Ledger v2 Engine)
+국토교통부 브이월드(VWorld) 2D 건물 공간정보 API(LT_C_SPBD) + 표제부/전유부 융합 보완기
 =============================================================================
 """
 
@@ -10,254 +9,302 @@ import os
 import sys
 import json
 import re
-import math
 import time
 import argparse
 import urllib.request
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-VWORLD_API_KEY = os.getenv("VWORLD_API_KEY", "7A77E414-F858-3525-A20A-8E04AA2D8BD4")
+import geopandas as gpd
+from shapely.geometry import Polygon, MultiPolygon
 
-def fetch_json(url):
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        return json.loads(resp.read().decode('utf-8'))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
 
-def query_vworld_buildings(lat, lng, buffer_m=350, key=VWORLD_API_KEY):
-    """
-    VWorld Data API 2.0: LT_C_SPBD (도로명주소 건물공간정보)
-    중심점 (lng, lat) 기준 반경 buffer_m 내의 모든 건물 GeoJSON 폴리곤 수집
-    """
+import build_all_korea_3d as b3d
+
+VWORLD_API_KEY = os.getenv("VWORLD_API_KEY", "E87F22F1-8A2E-4F62-A53B-DDF1DF6E1F60")
+VWORLD_DOMAIN = os.getenv("VWORLD_DOMAIN", "realrankus.com")
+
+
+def fetch_json(url, retries=3):
+    last_err = None
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            last_err = e
+            if attempt < retries - 1:
+                time.sleep(0.6 * (attempt + 1))
+    raise last_err
+
+
+def _query_vworld_once(lat, lng, buffer_m, key, domain):
     point_wkt = f"POINT({lng} {lat})"
     params = {
         "service": "data",
         "request": "GetFeature",
         "data": "LT_C_SPBD",
         "key": key,
+        "domain": domain,
         "geomFilter": point_wkt,
         "buffer": str(buffer_m),
         "geometry": "true",
         "format": "json",
-        "size": "1000"
+        "size": "1000",
     }
     url = f"https://api.vworld.kr/req/data?{urllib.parse.urlencode(params)}"
     data = fetch_json(url)
-
     response = data.get("response", {})
-    if response.get("status") != "OK":
-        error_msg = response.get("error", {}).get("text", "VWorld API Error")
-        raise RuntimeError(f"VWorld Error: {error_msg}")
+    status = response.get("status")
+    if status == "NOT_FOUND":
+        return []
+    if status != "OK":
+        err = response.get("error", {})
+        raise RuntimeError(f"VWorld Error ({err.get('code', '')}): {err.get('text', 'Unknown')}")
+    return response.get("result", {}).get("featureCollection", {}).get("features", [])
 
-    result = response.get("result", {})
-    feature_collection = result.get("featureCollection", {})
-    features = feature_collection.get("features", [])
-    return features
 
-def build_complex_3d_vworld(search_code, apt_name, law_addr, lat, lng, output_dir="data/3d", overwrite=False, key=VWORLD_API_KEY):
-    os.makedirs(output_dir, exist_ok=True)
-    out_file = os.path.join(output_dir, f"{search_code}.json")
+def query_vworld_buildings(lat, lng, buffer_m=350, key=VWORLD_API_KEY, domain=VWORLD_DOMAIN):
+    """Query VWorld LT_C_SPBD features; merge tighter core buffer if 1000-row cap hit."""
+    feats = _query_vworld_once(lat, lng, buffer_m, key, domain)
+    if len(feats) >= 1000 and buffer_m > 180:
+        core_feats = _query_vworld_once(lat, lng, 180, key, domain)
+        seen = set()
+        merged = []
+        for f in core_feats + feats:
+            pr = f.get("properties") or {}
+            sig = f"{pr.get('bd_mgt_sn', '')}_{pr.get('buld_nm', '')}_{pr.get('buld_nm_dc', '')}"
+            if sig not in seen:
+                seen.add(sig)
+                merged.append(f)
+        return merged
+    return feats
 
-    if not overwrite and os.path.exists(out_file) and os.path.getsize(out_file) > 1000:
-        return True, "Already exists (SKIP)"
 
+def _transform_ring(ring):
+    return [b3d.transformer_to_5186.transform(pt[0], pt[1]) for pt in ring if len(pt) >= 2]
+
+
+def _geojson_geom_to_5186(geom):
+    if not geom:
+        return None
+    g_type = geom.get("type")
+    coords = geom.get("coordinates") or []
     try:
-        features = query_vworld_buildings(lat, lng, buffer_m=350, key=key)
-        if not features:
-            return False, "No buildings found in VWorld radius"
+        if g_type == "Polygon":
+            if not coords or len(coords[0]) < 3:
+                return None
+            ext = _transform_ring(coords[0])
+            holes = [_transform_ring(h) for h in coords[1:] if len(h) >= 3]
+            poly = Polygon(ext, holes)
+            return poly if poly.is_valid else poly.buffer(0)
+        elif g_type == "MultiPolygon":
+            polys = []
+            for p_coords in coords:
+                if not p_coords or len(p_coords[0]) < 3:
+                    continue
+                ext = _transform_ring(p_coords[0])
+                holes = [_transform_ring(h) for h in p_coords[1:] if len(h) >= 3]
+                p = Polygon(ext, holes)
+                if not p.is_valid:
+                    p = p.buffer(0)
+                if not p.is_empty:
+                    polys.append(p)
+            if not polys:
+                return None
+            return MultiPolygon(polys) if len(polys) > 1 else polys[0]
+    except Exception:
+        return None
+    return None
 
-        clean_name = re.sub(r'\(.*?\)', '', apt_name).replace(" ", "")
 
-        target_buildings = []
-        neighbors = []
+def vworld_features_to_gdf(features):
+    """Convert VWorld LT_C_SPBD GeoJSON features to EPSG:5186 GeoDataFrame compatible with build_complex_json."""
+    rows = []
+    for f in features:
+        geom = _geojson_geom_to_5186(f.get("geometry"))
+        if geom is None or geom.is_empty:
+            continue
+        pr = f.get("properties") or {}
+        bd_mgt_sn = str(pr.get("bd_mgt_sn") or "").strip()
+        pnu = bd_mgt_sn[:19] if len(bd_mgt_sn) >= 19 else ""
 
-        for f in features:
-            geom = f.get("geometry", {})
-            props = f.get("properties", {})
-            g_type = geom.get("type")
-            coords = geom.get("coordinates", [])
+        a5 = ""
+        if len(pnu) == 19:
+            try:
+                bun_i = int(pnu[11:15])
+                ji_i = int(pnu[15:19])
+                a5 = f"{bun_i}-{ji_i}" if ji_i > 0 else str(bun_i)
+            except Exception:
+                a5 = str(pr.get("buld_no") or "").strip()
 
-            # Normalize polygon coordinates to rings [[lng, lat], ...]
-            rings = []
-            if g_type == "Polygon":
-                rings = coords
-            elif g_type == "MultiPolygon":
-                rings = [poly[0] for poly in coords if poly]
-
-            if not rings or not rings[0] or len(rings[0]) < 3:
-                continue
-
-            # Evaluate footprint dimensions & area (Plan A)
-            r0 = rings[0]
-            kx = 111319.49 * math.cos(math.radians(lat))
-            ky = 111319.49
-            xs = [p[0] * kx for p in r0]
-            ys = [p[1] * ky for p in r0]
-            span_x = max(xs) - min(xs)
-            span_y = max(ys) - min(ys)
-            min_span = min(span_x, span_y)
-            box_area = span_x * span_y
-            n_pts = len(r0)
-            poly_area = 0.5 * abs(sum(xs[i] * ys[(i + 1) % n_pts] - xs[(i + 1) % n_pts] * ys[i] for i in range(n_pts)))
-
-            if poly_area < 25.0 or box_area < 25.0 or min_span < 3.0:
-                continue
-
-            bld_name = props.get("buld_nm", "") or ""
-            dong_name = props.get("buld_dong_nm", "") or ""
-            # Floors from VWorld properties
-            grnd_floors = props.get("gro_flo_co")
-            floors = int(grnd_floors) if grnd_floors and str(grnd_floors).isdigit() and int(grnd_floors) > 0 else 15
-            if (poly_area < 65.0 or min_span < 6.5) and floors > 2:
-                floors = 2
-            height_m = floors * 2.8
-
-            clean_bld_name = bld_name.replace(" ", "")
-
-            # Target complex matching (same apartment name or dong format within close radius)
-            is_target = False
-            if clean_bld_name and (clean_bld_name in clean_name or clean_name in clean_bld_name):
-                is_target = True
-            elif dong_name and re.match(r'^\d+동?$', dong_name.strip()):
-                # Check distance from complex center
-                p0 = rings[0][0]
-                dist_approx = ((p0[0] - lng)**2 + (p0[1] - lat)**2)**0.5 * 111000
-                if dist_approx < 180: # within 180m radius of apartment coordinate
-                    is_target = True
-
-            bld_obj = {
-                "id": str(props.get("bd_mgt_sn") or props.get("bul_man_no") or f"v_{len(target_buildings)+len(neighbors)}"),
-                "dong": dong_name if dong_name else (bld_name if bld_name else f"동_{len(target_buildings)+1}"),
-                "name": bld_name or apt_name,
-                "floors": floors,
-                "heightM": height_m,
-                "rings": rings
-            }
-
-            if is_target:
-                target_buildings.append(bld_obj)
-            else:
-                neighbors.append(bld_obj)
-
-        if not target_buildings and neighbors:
-            # Fallback: Closest buildings to lat,lng become target
-            neighbors.sort(key=lambda b: ((b['rings'][0][0][0] - lng)**2 + (b['rings'][0][0][1] - lat)**2))
-            target_buildings = neighbors[:min(10, len(neighbors))]
-            neighbors = neighbors[min(10, len(neighbors)):]
-
-        output_data = {
-            "searchCode": str(search_code),
-            "name": apt_name,
-            "lawAddr": law_addr,
-            "center": {"lat": lat, "lng": lng},
-            "buildings": target_buildings,
-            "neighbors": neighbors,
-            "floorBands": [
-                {"label": "저층", "fromFloor": 1, "toFloor": 5, "count": 10, "perPyeong": 0},
-                {"label": "중층", "fromFloor": 6, "toFloor": 10, "count": 10, "perPyeong": 0},
-                {"label": "고층", "fromFloor": 11, "toFloor": 20, "count": 10, "perPyeong": 0}
-            ],
-            "source": "vworld_gov_direct"
-        }
-
-        with open(out_file, "w", encoding="utf-8") as f:
-            json.dump(output_data, f, ensure_ascii=False, separators=(',', ':'))
-
-        return True, f"Saved VWorld 3D ({len(target_buildings)} blds, {len(neighbors)} nbrs)"
-    except Exception as e:
-        return False, str(e)
-
-def run_vworld_batch(month_dir="202611", top_n=20, output_dir="data/3d", key=VWORLD_API_KEY, workers=3, limit=None):
-    if not os.path.exists(month_dir):
-        print(f"Directory {month_dir} not found!")
-        return
-
-    files = [f for f in os.listdir(month_dir) if f.endswith('.json') and not f.startswith('1000000000') and not f.startswith('summary')]
-    print(f"[VWorld Direct] Scanning {len(files)} gungu files in {month_dir} (Top {top_n} per gungu)...")
-
-    seen_codes = set()
-    targets = []
-    for fname in sorted(files):
-        fpath = os.path.join(month_dir, fname)
+        bld_nm = str(pr.get("buld_nm") or "").strip()
+        bld_dc = str(pr.get("buld_nm_dc") or "").strip()
         try:
-            with open(fpath, 'r', encoding='utf-8') as f:
-                d = json.load(f)
-                items = d.get('data', [])
-                for item in items[:top_n]:
-                    code = item.get('검색코드') or item.get('searchCode')
-                    name = item.get('아파트명')
-                    addr = item.get('법정동주소')
-                    x = item.get('X')
-                    y = item.get('Y')
-                    rank = item.get('rank', 0)
-                    if code and name and x and y and str(code) not in seen_codes:
-                        seen_codes.add(str(code))
-                        targets.append({
-                            'code': str(code),
-                            'name': name,
-                            'addr': addr or '',
-                            'lat': float(y),
-                            'lng': float(x),
-                            'rank': rank,
-                            'file': fname
-                        })
-        except Exception as e:
-            print(f"Error reading {fname}: {e}")
+            flr = int(pr.get("gro_flo_co") or 0)
+        except Exception:
+            flr = 0
+
+        a9 = "공동주택" if bld_nm else ""
+        if "단독" in bld_nm or "단독" in bld_dc:
+            a9 = "단독주택"
+
+        rows.append({
+            "A2": pnu,
+            "A4": str(pr.get("gu") or "").strip(),
+            "A5": a5,
+            "A9": a9,
+            "A16": 0.0,
+            "A24": bld_nm,
+            "A25": bld_dc,
+            "A26": flr,
+            "geometry": geom,
+        })
+
+    if not rows:
+        return None
+    gdf = gpd.GeoDataFrame(rows, geometry="geometry", crs="EPSG:5186")
+    _ = gdf.sindex
+    return gdf
+
+
+def _safe_int(val):
+    try:
+        return int(str(val).replace(",", "").strip())
+    except Exception:
+        return 0
+
+
+def build_single_vworld_v2(cpx, pyoje_data, jeonyu_data, key=VWORLD_API_KEY, domain=VWORLD_DOMAIN):
+    hh_total = _safe_int(cpx.get("households") or 0)
+    buf = 550 if hh_total >= 1500 else (420 if hh_total >= 500 else 340)
+    feats = query_vworld_buildings(cpx["y"], cpx["x"], buffer_m=buf, key=key, domain=domain)
+    if not feats:
+        return None, "No features in VWorld radius"
+    gdf = vworld_features_to_gdf(feats)
+    if gdf is None or len(gdf) == 0:
+        return None, "No valid VWorld polygons"
+    data = b3d.build_complex_json(cpx, gdf, pyoje_data, jeonyu_data, source_label="vworld_ledger_fused_v2")
+    if data and len(data.get("buildings", [])) > 0:
+        return data, f"OK ({len(data['buildings'])} blds, {len(data.get('neighbors', []))} nbrs)"
+    return None, "Matched 0 target buildings in VWorld"
+
+
+def run_vworld_targets_batch(targets, output_dir=b3d.OUTPUT_DIR, root_dir=None, key=VWORLD_API_KEY, domain=VWORLD_DOMAIN, workers=6, overwrite=True, limit=None):
+    if root_dir is None:
+        root_dir = os.path.join(b3d.REPO_ROOT, "data", "3d")
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(root_dir, exist_ok=True)
 
     if limit:
         targets = targets[:limit]
 
-    print(f"Total target complexes to build via VWorld: {len(targets)}")
-    success_cnt, skip_cnt, fail_cnt = 0, 0, 0
-    start_time = time.time()
+    print(f"[VWorld v2] Scanning ledgers for {len(targets):,} fallback complexes...")
+    pyoje_data, jeonyu_data = b3d.scan_ledgers_for_complexes(targets)
 
-    def process(t, idx):
-        ok, msg = build_complex_3d_vworld(t['code'], t['name'], t['addr'], t['lat'], t['lng'], output_dir=output_dir, key=key)
-        time.sleep(0.15)
-        return idx, t, ok, msg
+    # Filter out ONLY complexes already completed with official v2 data (never preserve legacy v1 or unofficial cx_ data)
+    OFFICIAL_V2_MARKERS = ('"korea_gis_ledger_fused_v2"', '"vworld_ledger_fused_v2"', '"vworld_ledger_pure_v2"')
+    todo = []
+    skipped = 0
+    for cpx in targets:
+        out_file = os.path.join(output_dir, f"{cpx['code']}.json")
+        if os.path.exists(out_file) and os.path.getsize(out_file) > 1000:
+            try:
+                with open(out_file, "r", encoding="utf-8") as fp:
+                    txt = fp.read()
+                if any(m in txt for m in OFFICIAL_V2_MARKERS):
+                    root_out = os.path.join(root_dir, f"{cpx['code']}.json")
+                    if not os.path.exists(root_out) or os.path.getsize(root_out) != os.path.getsize(out_file):
+                        with open(root_out, "w", encoding="utf-8") as wp:
+                            wp.write(txt)
+                    skipped += 1
+                    continue
+            except Exception:
+                pass
+        todo.append(cpx)
 
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {executor.submit(process, t, i + 1): t for i, t in enumerate(targets)}
-        for future in as_completed(futures):
-            idx, t, ok, msg = future.result()
-            if "SKIP" in msg:
-                skip_cnt += 1
-                status = "SKIP"
-            elif ok:
-                success_cnt += 1
-                status = "OK"
+    print(f"[VWorld v2] Processing {len(todo):,} targets (pre-skipped valid: {skipped}) with {workers} workers...")
+    succ, fail = 0, 0
+    unmatched = []
+    t0 = time.time()
+
+    def worker(cpx):
+        time.sleep(0.06)
+        try:
+            data, msg = build_single_vworld_v2(cpx, pyoje_data, jeonyu_data, key=key, domain=domain)
+            return cpx, data, msg
+        except Exception as e:
+            return cpx, None, str(e)
+
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futures = [ex.submit(worker, c) for c in todo]
+        for i, fut in enumerate(as_completed(futures), 1):
+            cpx, data, msg = fut.result()
+            if data:
+                compact = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+                out_file = os.path.join(output_dir, f"{cpx['code']}.json")
+                root_out = os.path.join(root_dir, f"{cpx['code']}.json")
+                with open(out_file, "w", encoding="utf-8") as fp:
+                    fp.write(compact)
+                with open(root_out, "w", encoding="utf-8") as fp:
+                    fp.write(compact)
+                succ += 1
             else:
-                fail_cnt += 1
-                status = "FAIL"
+                fail += 1
+                unmatched.append({"code": cpx["code"], "name": cpx["name"], "addr": cpx["addr"], "reason": msg})
 
-            done_total = success_cnt + skip_cnt + fail_cnt
-            if done_total % 10 == 0 or status == "OK" or done_total == len(targets):
-                elapsed = time.time() - start_time
-                print(f"[{done_total}/{len(targets)}] ({status}) {t['name']} ({t['code']}) -> {msg} ({elapsed:.1f}s)", flush=True)
+            if i % 25 == 0 or i == len(todo):
+                print(f"[VWorld {i}/{len(todo)}] Success={succ} Fail={fail} ({time.time() - t0:.1f}s) last={cpx['name']} -> {msg}", flush=True)
 
-    print("\n==========================================", flush=True)
-    print(f"VWorld Batch completed: Total {len(targets)} | Success {success_cnt} | Skipped {skip_cnt} | Failed {fail_cnt}", flush=True)
-    print("==========================================", flush=True)
+    report_path = os.path.join(SCRIPT_DIR, "vworld_unmatched_report.json")
+    with open(report_path, "w", encoding="utf-8") as fp:
+        json.dump(unmatched, fp, ensure_ascii=False, indent=2)
+    print(f"\n[VWorld v2 Complete] Success={succ}, Skipped={skipped}, Failed={fail}. Unmatched list saved to {report_path}")
+    return succ, fail
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="RealRankers VWorld Pure Public 3D Builder")
+    parser = argparse.ArgumentParser(description="RealRankers VWorld + Ledger v2 3D Supplementer")
     parser.add_argument("--key", default=VWORLD_API_KEY, help="VWorld API Key")
-    parser.add_argument("--batch", action="store_true", help="Run batch build for gungu")
-    parser.add_argument("--month", default="202611", help="Monthly directory")
-    parser.add_argument("--top", type=int, default=20, help="Top N per gungu")
+    parser.add_argument("--domain", default=VWORLD_DOMAIN, help="Registered VWorld API domain")
+    parser.add_argument("--targets-file", default=None, help="JSON list of fallback complexes from build_all_korea_3d.py")
+    parser.add_argument("--batch", action="store_true", help="Run batch across month dir if no targets-file given")
+    parser.add_argument("--month", default=os.path.join(b3d.REPO_ROOT, "202611"), help="Monthly directory")
+    parser.add_argument("--top", type=int, default=9999, help="Top N per gungu when using --batch")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of complexes")
-    parser.add_argument("--output", default="data/3d", help="Output directory")
-
+    parser.add_argument("--workers", type=int, default=6, help="Concurrent HTTP workers")
+    parser.add_argument("--output", default=b3d.OUTPUT_DIR, help="Output directory")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite non-v2 files")
     args = parser.parse_args()
 
-    if args.batch:
-        run_vworld_batch(month_dir=args.month, top_n=args.top, output_dir=args.output, key=args.key, limit=args.limit)
+    if args.targets_file:
+        with open(args.targets_file, "r", encoding="utf-8") as fp:
+            target_list = json.load(fp)
+        run_vworld_targets_batch(
+            target_list,
+            output_dir=args.output,
+            key=args.key,
+            domain=args.domain,
+            workers=args.workers,
+            overwrite=True,
+            limit=args.limit,
+        )
+    elif args.batch:
+        all_cpx = list(b3d.load_all_target_complexes(month_dir=args.month).values())
+        run_vworld_targets_batch(
+            all_cpx,
+            output_dir=args.output,
+            key=args.key,
+            domain=args.domain,
+            workers=args.workers,
+            overwrite=args.overwrite,
+            limit=args.limit,
+        )
     else:
-        print(f"Testing VWorld API key: {args.key} ...")
-        try:
-            feats = query_vworld_buildings(37.6628, 127.0563, buffer_m=100, key=args.key)
-            print(f"VWorld Key is ACTIVE! Found {len(feats)} buildings.")
-        except Exception as e:
-            print(f"VWorld Key is currently PENDING/INACTIVE: {e}")
-            print("Once VWorld approves your key, run:")
-            print("  python scripts/build_complex_3d_vworld.py --batch --top 20")
+        print(f"Testing VWorld API key: {args.key} (domain={args.domain}) ...")
+        feats = query_vworld_buildings(37.6628, 127.0563, buffer_m=150, key=args.key, domain=args.domain)
+        print(f"VWorld Key is ACTIVE! Found {len(feats)} buildings.")
