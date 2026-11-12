@@ -1701,35 +1701,49 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     // ★ 동 호수 배지: 투명한 프로스트 글래스모피즘 HUD 배지 (주거동 위주로 정갈하게 배치) ★
     var isResidential = b.residential !== false && !dongKey.includes('근린생활') && !dongKey.includes('상가') && !isAuxiliaryStructure;
     if (isResidential) {
+      var isMobileDongLabel = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      var dongLabelScale = isMobileDongLabel ? 0.8 : 1;
       var canvas = document.createElement('canvas');
-      canvas.width = 180;
-      canvas.height = 72;
+      canvas.width = Math.round(180 * dongLabelScale);
+      canvas.height = Math.round(72 * dongLabelScale);
       var ctx = canvas.getContext('2d');
+      var labelInset = 4 * dongLabelScale;
+      var labelRadius = 18 * dongLabelScale;
 
       // 라운드 글래스 필
       ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
       if (typeof ctx.roundRect === 'function') {
-        ctx.roundRect(4, 4, 172, 64, 18);
+        ctx.roundRect(labelInset, labelInset, canvas.width - labelInset * 2, canvas.height - labelInset * 2, labelRadius);
         ctx.fill();
       } else {
-        ctx.fillRect(4, 4, 172, 64);
+        ctx.fillRect(labelInset, labelInset, canvas.width - labelInset * 2, canvas.height - labelInset * 2);
       }
       // 스카이블루 아웃라인
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 4 * dongLabelScale;
       ctx.strokeStyle = '#38bdf8';
       if (typeof ctx.roundRect === 'function') {
-        ctx.roundRect(4, 4, 172, 64, 18);
+        ctx.roundRect(labelInset, labelInset, canvas.width - labelInset * 2, canvas.height - labelInset * 2, labelRadius);
         ctx.stroke();
       } else {
-        ctx.strokeRect(4, 4, 172, 64);
+        ctx.strokeRect(labelInset, labelInset, canvas.width - labelInset * 2, canvas.height - labelInset * 2);
       }
 
       // 딥 네이비 타이포그래피
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 28px "Spoqa Han Sans Neo", sans-serif';
+      var dongLabelFontSize = Math.round(28 * dongLabelScale);
+      ctx.font = 'bold ' + dongLabelFontSize + 'px "Spoqa Han Sans Neo", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(dongKey, 90, 36);
+      if (isMobileDongLabel) {
+        var maxDongLabelWidth = canvas.width - labelInset * 6;
+        while (dongLabelFontSize > 15 && ctx.measureText(dongKey).width > maxDongLabelWidth) {
+          dongLabelFontSize--;
+          ctx.font = 'bold ' + dongLabelFontSize + 'px "Spoqa Han Sans Neo", sans-serif';
+        }
+        ctx.fillText(dongKey, canvas.width / 2, canvas.height / 2, maxDongLabelWidth);
+      } else {
+        ctx.fillText(dongKey, 90, 36);
+      }
 
       var spriteMap = new THREE.CanvasTexture(canvas);
       spriteMap.encoding = THREE.sRGBEncoding;
@@ -1744,7 +1758,12 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       sprite.scale.set(16, 6.4, 1);
       sprite.userData = { isDongLabel: true, dongKey: dongKey };
       scene.add(sprite);
-      registerConstantScreenBillboard(sprite, 34, canvas.width / canvas.height);
+      registerConstantScreenBillboard(
+        sprite,
+        isMobileDongLabel ? 24 : 34,
+        canvas.width / canvas.height,
+        isMobileDongLabel
+      );
     }
   });
 
@@ -2090,42 +2109,25 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     var maxTextWidth = canvas.width - Math.round(56 * labelScale);
     var fontFamily = '"Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    var labelLines = [];
-    var fontSize = Math.round(32 * labelScale);
-    function wrapTitle(size) {
-      ctx.font = 'bold ' + size + 'px ' + fontFamily;
-      var lines = [''];
-      Array.from(String(title || '')).forEach(function (character) {
-        var lineIndex = lines.length - 1;
-        var candidate = lines[lineIndex] + character;
-        if (lines[lineIndex] && ctx.measureText(candidate).width > maxTextWidth) {
-          if (character.trim()) lines.push(character);
-        } else {
-          lines[lineIndex] = candidate;
-        }
-      });
-      return lines.map(function (line) { return line.trim(); });
+    var labelText = String(title || '').trim();
+    var fontSize = Math.round(32 * labelScale) + 2;
+    var minFontSize = Math.round(24 * labelScale);
+    ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
+    while (fontSize > minFontSize && ctx.measureText(labelText).width > maxTextWidth) {
+      fontSize--;
+      ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
     }
-
-    labelLines = wrapTitle(fontSize);
-    if (labelLines.length > 1) {
-      for (fontSize = Math.round(30 * labelScale); fontSize >= Math.round(27 * labelScale); fontSize--) {
-        labelLines = wrapTitle(fontSize);
-        if (labelLines.length <= 2) break;
+    if (ctx.measureText(labelText).width > maxTextWidth) {
+      var labelCharacters = Array.from(labelText);
+      while (labelCharacters.length > 1 && ctx.measureText(labelCharacters.join('') + '…').width > maxTextWidth) {
+        labelCharacters.pop();
       }
-    }
-    if (labelLines.length > 2) {
-      labelLines = labelLines.slice(0, 2);
-      var lastLine = labelLines[1];
-      while (lastLine.length > 1 && ctx.measureText(lastLine + '…').width > maxTextWidth) {
-        lastLine = lastLine.slice(0, -1);
-      }
-      labelLines[1] = lastLine + '…';
+      labelText = labelCharacters.join('') + '…';
     }
 
     ctx.fillStyle = '#F3F4F6';
-    ctx.strokeStyle = '#4B5563';
-    ctx.lineWidth = Math.max(1, Math.round(3 * labelScale));
+    ctx.strokeStyle = '#111827';
+    ctx.lineWidth = Math.max(1.5, Math.round(3.5 * labelScale));
     ctx.beginPath();
     var inset = Math.round(8 * labelScale);
     if (typeof ctx.roundRect === 'function') {
@@ -2137,14 +2139,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     ctx.stroke();
 
     ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
-    ctx.fillStyle = '#1F2937';
+    ctx.fillStyle = '#000000';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    var lineHeight = fontSize * 1.15;
-    var firstLineY = canvas.height / 2 - ((labelLines.length - 1) * lineHeight) / 2;
-    labelLines.forEach(function (line, index) {
-      ctx.fillText(line, canvas.width / 2, firstLineY + index * lineHeight, maxTextWidth);
-    });
+    ctx.fillText(labelText, canvas.width / 2, canvas.height / 2, maxTextWidth);
 
     var texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -2158,7 +2156,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     sprite.renderOrder = 999;
     var aspect = canvas.width / canvas.height;
     sprite.scale.set(10 * aspect, 10, 1);
-    registerConstantScreenBillboard(sprite, Math.round((labelLines.length > 1 ? 54 : 45) * labelScale), aspect, true);
+    registerConstantScreenBillboard(sprite, Math.round(45 * labelScale), aspect, true);
     return sprite;
   }
 
