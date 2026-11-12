@@ -1317,6 +1317,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   var neighborObjectKeys = Object.create(null);
   var genericNeighborSignatures = Object.create(null);
+  var apartmentNeighborLabels = Object.create(null);
   function getNeighborFootprintSignature(ring) {
     var points = [];
     (ring || []).forEach(function (coordinate) {
@@ -1343,10 +1344,17 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     delete neighborObjectKeys[objectKey];
   }
 
+  function getNeighborBuildingHeight(building) {
+    var height = Number(building.heightM);
+    if (isFinite(height) && height > 0) return height;
+    var floors = Number(building.floors);
+    return isFinite(floors) && floors > 0 ? floors * 2.8 : 15;
+  }
+
   function addNeighborBuilding(n, apartmentCode) {
     if (!n.rings || !n.rings[0]) return;
     var objectKey = String(apartmentCode || '') + ':' + String(n.id || n.dong || neighborGroup.children.length);
-    if (neighborObjectKeys[objectKey]) return;
+    if (neighborObjectKeys[objectKey]) return neighborObjectKeys[objectKey].mesh;
     var footprintSignature = getNeighborFootprintSignature(n.rings[0]);
     if (apartmentCode && footprintSignature) {
       (genericNeighborSignatures[footprintSignature] || []).forEach(removeNeighborBuilding);
@@ -1354,9 +1362,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var shape = createShapeFromRing(n.rings[0]);
     if (!shape) return;
 
-    var height = n.heightM && n.heightM > 0 ? n.heightM : (n.floors ? n.floors * 2.8 : 15);
+    var height = getNeighborBuildingHeight(n);
     var geom = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
     geom.rotateX(-Math.PI / 2);
+    geom.computeBoundingBox();
 
     var mesh = new THREE.Mesh(geom, neighborMat);
     mesh.castShadow = true;
@@ -1383,6 +1392,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       if (!genericNeighborSignatures[footprintSignature]) genericNeighborSignatures[footprintSignature] = [];
       genericNeighborSignatures[footprintSignature].push(objectKey);
     }
+    return mesh;
   }
 
   (data3d.neighbors || []).forEach(function (neighbor) {
@@ -1390,6 +1400,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   });
 
   // --- 7. 대상 단지 아파트 (Target Complex): 극장판 애니메이션 셀 작화풍 ---
+  var constantScreenBillboards = [];
   var interactiveFloors = [];
   var dongMeshes = {};
   var dongCenters = {};
@@ -1732,6 +1743,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       sprite.scale.set(16, 6.4, 1);
       sprite.userData = { isDongLabel: true, dongKey: dongKey };
       scene.add(sprite);
+      registerConstantScreenBillboard(sprite, 34, canvas.width / canvas.height);
     }
   });
 
@@ -1764,13 +1776,13 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   // --- 8-1. Constant Screen-Size Camera-Facing 2D Billboards (Method 1) ---
   // 카메라 거리(Zoom) 및 각도와 무관하게 항상 카메라 정면을 바라보며 화면 픽셀 크기를 일정하게 유지하는 고해상도 2D 빌보드 라벨 시스템
-  var constantScreenBillboards = [];
-  function registerConstantScreenBillboard(sprite, baseHeightPx, aspect) {
+  function registerConstantScreenBillboard(sprite, baseHeightPx, aspect, useBaseHeight) {
     if (!sprite) return;
     constantScreenBillboards.push({
       sprite: sprite,
       baseHeightPx: baseHeightPx || 34,
-      aspect: aspect || 4.0
+      aspect: aspect || 4.0,
+      useBaseHeight: !!useBaseHeight
     });
   }
 
@@ -2034,6 +2046,87 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     // 카메라 거리와 무관하게 화면상 일정 크기 유지 등록
     registerConstantScreenBillboard(sprite, 34, aspect);
+    return sprite;
+  }
+
+  function createApartmentNeighborLabel(title) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var labelScale = 2 / 3;
+    canvas.width = Math.round(420 * labelScale);
+    canvas.height = Math.round(118 * labelScale);
+
+    var maxTextWidth = canvas.width - Math.round(56 * labelScale);
+    var fontFamily = '"Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    var labelLines = [];
+    var fontSize = Math.round(32 * labelScale);
+    function wrapTitle(size) {
+      ctx.font = 'bold ' + size + 'px ' + fontFamily;
+      var lines = [''];
+      Array.from(String(title || '')).forEach(function (character) {
+        var lineIndex = lines.length - 1;
+        var candidate = lines[lineIndex] + character;
+        if (lines[lineIndex] && ctx.measureText(candidate).width > maxTextWidth) {
+          if (character.trim()) lines.push(character);
+        } else {
+          lines[lineIndex] = candidate;
+        }
+      });
+      return lines.map(function (line) { return line.trim(); });
+    }
+
+    labelLines = wrapTitle(fontSize);
+    if (labelLines.length > 1) {
+      for (fontSize = Math.round(30 * labelScale); fontSize >= Math.round(27 * labelScale); fontSize--) {
+        labelLines = wrapTitle(fontSize);
+        if (labelLines.length <= 2) break;
+      }
+    }
+    if (labelLines.length > 2) {
+      labelLines = labelLines.slice(0, 2);
+      var lastLine = labelLines[1];
+      while (lastLine.length > 1 && ctx.measureText(lastLine + '…').width > maxTextWidth) {
+        lastLine = lastLine.slice(0, -1);
+      }
+      labelLines[1] = lastLine + '…';
+    }
+
+    ctx.fillStyle = '#F3F4F6';
+    ctx.strokeStyle = '#4B5563';
+    ctx.lineWidth = Math.max(1, Math.round(3 * labelScale));
+    ctx.beginPath();
+    var inset = Math.round(8 * labelScale);
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(inset, inset, canvas.width - inset * 2, canvas.height - inset * 2, Math.round(20 * labelScale));
+    } else {
+      ctx.rect(inset, inset, canvas.width - inset * 2, canvas.height - inset * 2);
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
+    ctx.fillStyle = '#1F2937';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var lineHeight = fontSize * 1.15;
+    var firstLineY = canvas.height / 2 - ((labelLines.length - 1) * lineHeight) / 2;
+    labelLines.forEach(function (line, index) {
+      ctx.fillText(line, canvas.width / 2, firstLineY + index * lineHeight, maxTextWidth);
+    });
+
+    var texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    var sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false
+    }));
+    sprite.renderOrder = 999;
+    var aspect = canvas.width / canvas.height;
+    sprite.scale.set(10 * aspect, 10, 1);
+    registerConstantScreenBillboard(sprite, Math.round((labelLines.length > 1 ? 54 : 45) * labelScale), aspect, true);
     return sprite;
   }
 
@@ -3767,7 +3860,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var dist = camPos.distanceTo(worldPos);
         dist = Math.max(10, Math.min(dist, 2500));
 
-        var worldH = dist * fovFactor * (targetH / vHeight);
+        var screenHeight = item.useBaseHeight ? item.baseHeightPx : targetH;
+        var worldH = dist * fovFactor * (screenHeight / vHeight);
         var worldW = worldH * item.aspect;
 
         sp.scale.set(worldW, worldH, 1);
@@ -4173,13 +4267,33 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       (models || []).forEach(function (model) {
         var complexCode = String(model.searchCode || '');
         var complexName = model.name || '';
+        var tallestBuilding = null;
+        var tallestBuildingHeight = -1;
         (model.buildings || []).forEach(function (building) {
           if (!building.residential) return;
-          addNeighborBuilding(Object.assign({}, building, {
+          var buildingHeight = getNeighborBuildingHeight(building);
+          var buildingMesh = addNeighborBuilding(Object.assign({}, building, {
             id: 'apt_' + complexCode + '_' + (building.id || building.dong || ''),
             name: complexName + (building.dong ? ' ' + building.dong : '')
           }), complexCode);
+          if (buildingMesh && buildingHeight > tallestBuildingHeight) {
+            tallestBuilding = buildingMesh;
+            tallestBuildingHeight = buildingHeight;
+          }
         });
+        if (complexCode && complexName && tallestBuilding && !apartmentNeighborLabels[complexCode]) {
+          var bounds = tallestBuilding.geometry.boundingBox;
+          var label = createApartmentNeighborLabel(complexName);
+          label.position.set(
+            (bounds.min.x + bounds.max.x) / 2,
+            bounds.max.y + 5,
+            (bounds.min.z + bounds.max.z) / 2
+          );
+          label.userData.isApartmentNeighborLabel = true;
+          label.userData.complexCode = complexCode;
+          neighborGroup.add(label);
+          apartmentNeighborLabels[complexCode] = label;
+        }
       });
     },
     toggleInfraLayer: function (layerKey, visible) {
