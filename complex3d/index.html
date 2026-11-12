@@ -676,6 +676,14 @@
       justify-content: center;
       user-select: none;
       animation: dirHudSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.24s ease, visibility 0s linear;
+      visibility: visible;
+    }
+    .pov-direction-hud.sheet-stage-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.24s ease, visibility 0s linear 0.24s;
     }
     @keyframes dirHudSlideIn {
       from { opacity: 0; transform: translateY(14px) scale(0.95); }
@@ -1020,6 +1028,9 @@
         border-radius: 0;
         gap: 6px; /* 버튼 간 개별 분리 간격 */
         border: none;
+      }
+      .control-panel.stage-1 .sheet-stage-group {
+        transform: translateY(-2px);
       }
       .sheet-stage-btn {
         display: inline-flex;
@@ -2645,18 +2656,41 @@
           var povDongSelect = document.getElementById('pov-dong-select');
           var povHoSelect = document.getElementById('pov-ho-select');
           var currentPOVInfo = null;
+          var previousPOVNeighborsVisible = null;
+          var mobileSheetFollowFrame = null;
 
           function isMobilePOVViewport() {
             return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
           }
 
           function positionMobilePOVFovBar() {
-            if (!povFovBar) return;
             var banner = document.getElementById('floor-pov-banner');
-            if (currentPOVInfo && currentPOVInfo.subMode === 'outward' && isMobilePOVViewport() && banner && banner.style.display !== 'none') {
-              povFovBar.style.setProperty('--mobile-pov-fov-top', Math.ceil(banner.getBoundingClientRect().bottom + 8) + 'px');
+            var isMobile = isMobilePOVViewport();
+            var isOutwardPOVVisible = currentPOVInfo && currentPOVInfo.subMode === 'outward' && banner && banner.style.display !== 'none';
+            var radarHud = document.getElementById('pov-direction-hud');
+            var bottomSheet = document.getElementById('control-panel');
+
+            if (isOutwardPOVVisible && isMobile) {
+              if (povFovBar) {
+                povFovBar.style.setProperty('--mobile-pov-fov-top', Math.ceil(banner.getBoundingClientRect().bottom + 8) + 'px');
+              }
+              if (radarHud) {
+                if (bottomSheet && bottomSheet.classList.contains('stage-3')) {
+                  radarHud.classList.add('sheet-stage-hidden');
+                } else {
+                  radarHud.classList.remove('sheet-stage-hidden');
+                  if (bottomSheet) {
+                    var sheetTop = bottomSheet.getBoundingClientRect().top;
+                    radarHud.style.bottom = Math.ceil(window.innerHeight - sheetTop + 12) + 'px';
+                  }
+                }
+              }
             } else {
-              povFovBar.style.removeProperty('--mobile-pov-fov-top');
+              if (povFovBar) povFovBar.style.removeProperty('--mobile-pov-fov-top');
+              if (radarHud) {
+                radarHud.style.removeProperty('bottom');
+                if (!isMobile && isOutwardPOVVisible) radarHud.classList.remove('sheet-stage-hidden');
+              }
             }
           }
 
@@ -2880,6 +2914,17 @@
           }
 
           window.onFloorPOVStart = function (info) {
+            if (!currentPOVInfo) {
+              previousPOVNeighborsVisible = viewInstance && typeof viewInstance.getNeighborsVisible === 'function'
+                ? viewInstance.getNeighborsVisible()
+                : false;
+              if (viewInstance && typeof viewInstance.setNeighborsVisible === 'function') {
+                viewInstance.setNeighborsVisible(true);
+              }
+              var neighborLayerCheckbox = document.getElementById('layer-neighbors');
+              if (neighborLayerCheckbox) neighborLayerCheckbox.checked = true;
+              loadApartmentNeighborModels().catch(function () {});
+            }
             currentPOVInfo = info;
             var banner = document.getElementById('floor-pov-banner');
             var titleEl = document.getElementById('pov-title-text');
@@ -2917,7 +2962,7 @@
                 }
 
                 var infraCard = document.getElementById('infra-panel-card');
-                if (infraCard) infraCard.style.display = 'none';
+                if (infraCard) infraCard.style.display = '';
 
                 var navDock = document.querySelector('.nav-toolbar');
                 if (navDock) navDock.style.display = 'none';
@@ -3006,6 +3051,12 @@
           };
 
           window.onFloorPOVExit = function () {
+            if (previousPOVNeighborsVisible !== null) {
+              if (viewInstance && typeof viewInstance.setNeighborsVisible === 'function') {
+                viewInstance.setNeighborsVisible(previousPOVNeighborsVisible);
+              }
+              previousPOVNeighborsVisible = null;
+            }
             currentPOVInfo = null;
             setPOVBottomMenuVisibility(true);
             positionMobilePOVFovBar();
@@ -3101,6 +3152,13 @@
           var sheetToggle = document.getElementById('mobile-sheet-toggle');
           var controlPanel = document.getElementById('control-panel');
           var stageBtns = document.querySelectorAll('.sheet-stage-btn');
+          if (controlPanel) {
+            controlPanel.addEventListener('transitionend', function (event) {
+              if (event.target === controlPanel && (event.propertyName === 'transform' || event.propertyName === 'max-height')) {
+                positionMobilePOVFovBar();
+              }
+            });
+          }
 
           function setMobileSheetStage(stage) {
             if (!controlPanel) return;
@@ -3116,6 +3174,23 @@
                 btn.classList.remove('active');
               }
             });
+            if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
+            if (mobileSheetFollowFrame) {
+              window.cancelAnimationFrame(mobileSheetFollowFrame);
+              mobileSheetFollowFrame = null;
+            }
+            if (currentPOVInfo && currentPOVInfo.subMode === 'outward' && isMobilePOVViewport()) {
+              var followStart = performance.now();
+              function followMobileSheet() {
+                positionMobilePOVFovBar();
+                if (performance.now() - followStart < 360) {
+                  mobileSheetFollowFrame = window.requestAnimationFrame(followMobileSheet);
+                } else {
+                  mobileSheetFollowFrame = null;
+                }
+              }
+              mobileSheetFollowFrame = window.requestAnimationFrame(followMobileSheet);
+            }
           }
 
           stageBtns.forEach(function (btn) {

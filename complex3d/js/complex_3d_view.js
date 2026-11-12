@@ -1523,6 +1523,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         totalFloors = Math.max(totalFloors, fMax);
       }
       bldgHeight = totalFloors * floorHeight;
+      if (bldgHeight > complexMaxHeight) complexMaxHeight = bldgHeight;
 
       // 라인별 면적 가중치 계산 (supply > exclusive > 1.0)
       var totalW = 0;
@@ -1763,10 +1764,41 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     // 타겟: 단지 중간 높이 (하늘과 단지의 완벽한 수평선 균형)
     defaultTarget.set(complexCenterX, complexMaxHeight * 0.45, complexCenterZ);
 
-    // 카메라: 완만한 12~16도 로우-미드 조감도 -> 단지 전체와 주변 조경이 여유롭게 들어오도록 원거리 조망 (새로고침 디폴트 뷰 확장)
-    var camDist = complexMaxSpan * 1.35; // 기존 0.85 -> 1.35로 시원하게 확장
-    var camHeight = complexMaxHeight * 1.45 + 30; // 스케일에 맞는 안정적인 고도
-    defaultCamPos.set(complexCenterX + camDist * 0.65, camHeight, complexCenterZ + camDist * 0.80);
+    var camDist = complexMaxSpan * 1.35;
+    var camHeight = complexMaxHeight * 1.45 + 30;
+    var initialOffset = new THREE.Vector3(
+      camDist * 0.65,
+      camHeight - defaultTarget.y,
+      camDist * 0.80
+    );
+    var viewDirection = initialOffset.clone().normalize();
+    var viewForward = viewDirection.clone().negate();
+    var worldUp = new THREE.Vector3(0, 1, 0);
+    var viewRight = new THREE.Vector3().crossVectors(viewForward, worldUp).normalize();
+    var viewUp = new THREE.Vector3().crossVectors(viewRight, viewForward).normalize();
+    var tanHalfVerticalFov = Math.tan(camera.fov * Math.PI / 360);
+    var tanHalfHorizontalFov = tanHalfVerticalFov * Math.max(0.1, camera.aspect);
+    var fitDistance = 0;
+
+    [complexMinX, complexMaxX].forEach(function (x) {
+      [0, complexMaxHeight].forEach(function (y) {
+        [complexMinZ, complexMaxZ].forEach(function (z) {
+          var relativeCorner = new THREE.Vector3(x - defaultTarget.x, y - defaultTarget.y, z - defaultTarget.z);
+          var towardCamera = relativeCorner.dot(viewDirection);
+          var horizontalExtent = Math.abs(relativeCorner.dot(viewRight));
+          var verticalExtent = Math.abs(relativeCorner.dot(viewUp));
+          fitDistance = Math.max(
+            fitDistance,
+            towardCamera + horizontalExtent / tanHalfHorizontalFov,
+            towardCamera + verticalExtent / tanHalfVerticalFov
+          );
+        });
+      });
+    });
+
+    var cameraDistance = Math.max(100, fitDistance * 1.15);
+    defaultCamPos.copy(defaultTarget).addScaledVector(viewDirection, cameraDistance);
+    controls.maxDistance = Math.max(controls.maxDistance, cameraDistance * 1.1);
 
     controls.target.copy(defaultTarget);
     camera.position.copy(defaultCamPos);
