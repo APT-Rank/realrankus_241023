@@ -3228,6 +3228,34 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return units;
   }
 
+  function getBalconyEyePosition(unitMesh) {
+    unitMesh.updateMatrixWorld(true);
+    var unitBox = new THREE.Box3().setFromObject(unitMesh);
+    var frontZ = unitBox.max.z;
+    var geometryPosition = unitMesh.geometry && unitMesh.geometry.attributes && unitMesh.geometry.attributes.position;
+    var frontTolerance = Math.max(0.05, (unitBox.max.z - unitBox.min.z) * 0.01);
+    var frontXTotal = 0;
+    var frontVertexCount = 0;
+
+    if (geometryPosition) {
+      var vertex = new THREE.Vector3();
+      for (var vertexIndex = 0; vertexIndex < geometryPosition.count; vertexIndex++) {
+        vertex.set(
+          geometryPosition.getX(vertexIndex),
+          geometryPosition.getY(vertexIndex),
+          geometryPosition.getZ(vertexIndex)
+        ).applyMatrix4(unitMesh.matrixWorld);
+        if (vertex.z >= frontZ - frontTolerance) {
+          frontXTotal += vertex.x;
+          frontVertexCount++;
+        }
+      }
+    }
+
+    var eyeX = frontVertexCount ? frontXTotal / frontVertexCount : (unitBox.min.x + unitBox.max.x) / 2;
+    return new THREE.Vector3(eyeX, unitMesh.position.y + 1.6, frontZ - 0.45);
+  }
+
   function getUnitInfo(unitMesh) {
     if (!unitMesh || !unitMesh.userData) {
       return { key: 'unit', label: '세대', shortLabel: '세대', hoName: '세대', lineNum: 1, mesh: null };
@@ -3263,15 +3291,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     activePOVFloor = targetMesh;
 
     // 타겟 호수의 3D 바운딩박스 중심 및 전면 발코니 좌표 산출
-    var uBox = new THREE.Box3().setFromObject(targetMesh);
-    var targetCenterX = (uBox.min.x + uBox.max.x) / 2;
-    var targetFrontZ = uBox.max.z;
-    var eyeY = targetMesh.position.y + 1.6;
-
-    var startX = balconyEyePos.x;
-    var startZ = balconyEyePos.z;
-    var targetX = targetCenterX;
-    var targetZ = targetFrontZ - 0.45;
+    var targetEyePos = getBalconyEyePosition(targetMesh);
+    var startEyePos = balconyEyePos.clone();
 
     if (balconyShiftAnimId) cancelAnimationFrame(balconyShiftAnimId);
     var startTime = performance.now();
@@ -3281,10 +3302,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var elapsed = now - startTime;
       var progress = Math.min(1.0, elapsed / duration);
       var ease = 1 - Math.pow(1 - progress, 3);
-      balconyEyePos.x = startX + (targetX - startX) * ease;
-      balconyEyePos.z = startZ + (targetZ - startZ) * ease;
-      camera.position.x = balconyEyePos.x;
-      camera.position.z = balconyEyePos.z;
+      balconyEyePos.lerpVectors(startEyePos, targetEyePos, ease);
+      camera.position.copy(balconyEyePos);
 
       // 시선 방향 유지
       var lookX = Math.sin(povYaw) * Math.cos(povPitch);
@@ -3481,10 +3500,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       neighborLineMat.opacity = 0.65;
 
       // ★ 4. 아파트 실내 안쪽에서 외부를 바라보도록 타겟 호수의 3D 좌표 기준 카메라 배치 (외벽 bBox.maxZ/unitZ 기준 실내 안쪽 -0.45m) ★
-      var uBox = new THREE.Box3().setFromObject(activeUnit);
-      var unitPosX = (uBox.min.x + uBox.max.x) / 2;
-      var unitPosZ = uBox.max.z - 0.45;
-      var targetEyePos = new THREE.Vector3(unitPosX, eyeY, unitPosZ);
+      var targetEyePos = getBalconyEyePosition(activeUnit);
 
       // 직방/호갱노노 3D 실측 앵글: 하향 약 -8도(pitch -0.14 rad), 정면 시야
       if (!isOutwardUnitSwitch) {
