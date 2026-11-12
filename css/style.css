@@ -899,6 +899,26 @@
     height: 200px;
   }
 
+  #btn_complex_3d_map{
+    font-size: 1.1em;
+    font-weight: 600;
+    padding: 7px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #E43B46;
+    background-color: #fff;
+    border: 2px solid #E43B46;
+    width: 100%;
+    outline: none;
+    box-shadow:none;
+  }
+  #btn_complex_3d_map:active {
+    background-color: #E43B46;
+    color: #fff;
+  }
+
   .searchedListBox {
     align-items: center;
     border-bottom: 1px solid #ccc;

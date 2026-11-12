@@ -2809,9 +2809,9 @@ function showDetail(index, forceMapCenter) {
         </div>
         <div id='aptrankLoginGuide' style='text-align:center; margin-top:5px'>${tSafe('ui.report.map_click_guide', '지도를 선택하면 주변 입지를 확인할 수 있어요!')}</div>
         <div style='padding: 6px 10px 10px 10px;'>
-          <button type='button' class='btn btn-outline-primary w-100' onclick='openComplex3dMap("${searchCode}")' style='font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;'>
-            <i class='fa-solid fa-cube'></i> ${tSafe('ui.report.complex_3d_btn', '3D 단지 모형 및 일조 분석')}
-          </button>
+          <div type='button' id='btn_complex_3d_map' onclick='openComplex3dMap("${searchCode}")' style='font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;'>
+            <i class='fa-solid fa-cube'></i> ${tSafe('ui.report.complex_3d_btn', '리얼 FLY 맵 [3D BETA]')}
+          </div>
         </div>
         </div></div></div>
       `;

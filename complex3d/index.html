@@ -105,7 +105,7 @@
       position: absolute;
       top: 16px;
       right: 20px;
-      width: 320px;
+      width: 360px;
       max-height: calc(100vh - 32px);
       overflow-y: auto;
       padding-right: 2px;
@@ -150,6 +150,8 @@
     .time-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 6px;
       font-size: 12px;
       color: #64748b;
       margin-bottom: 6px;
@@ -159,6 +161,103 @@
       font-weight: 700;
       color: #d97706;
     }
+    .direct-sunlight-widget {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+      margin-left: auto;
+      color: #334155;
+    }
+    @media (min-width: 769px) {
+      .time-header {
+        display: grid;
+        grid-template-columns: max-content max-content minmax(0, 1fr);
+        justify-content: initial;
+        gap: 8px;
+      }
+      .time-header > span,
+      .direct-sunlight-copy {
+        white-space: nowrap;
+      }
+      .direct-sunlight-widget {
+        justify-self: end;
+        margin-left: 0;
+      }
+    }
+    .direct-sunlight-widget[hidden],
+    .direct-sunlight-explanation[hidden] {
+      display: none !important;
+    }
+    .direct-sunlight-gauge {
+      --score-pct: 0%;
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      border-radius: 50%;
+      background: conic-gradient(#e43b46 var(--score-pct), #e2e8f0 var(--score-pct));
+    }
+    .direct-sunlight-gauge::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .direct-sunlight-value {
+      position: relative;
+      z-index: 1;
+      color: #0f172a;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .direct-sunlight-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      white-space: nowrap;
+      line-height: 1.1;
+    }
+    .direct-sunlight-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .direct-sunlight-score {
+      font-size: 9px;
+      font-weight: 600;
+      color: #64748b;
+      font-variant-numeric: tabular-nums;
+    }
+    .direct-sunlight-info {
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 50%;
+      background: #fff;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .direct-sunlight-explanation {
+      margin: 0 0 7px auto;
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 7px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 10px;
+      line-height: 1.45;
+    }
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
@@ -166,6 +265,9 @@
       border-radius: 3px;
       background: #e2e8f0;
       outline: none;
+    }
+    #time-slider {
+      transition: background 0.18s ease;
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -270,7 +372,7 @@
       cursor: pointer;
       font-size: 13px;
       color: #334155;
-      font-weight: 600;
+      font-weight: 400;
       user-select: none;
       padding: 3px 4px;
       border-radius: 6px;
@@ -296,6 +398,7 @@
     }
     .infra-tag b {
       color: #0f172a;
+      font-weight: 400;
     }
     .infra-tag small {
       display: none;
@@ -888,6 +991,67 @@
         align-items: center !important;
         justify-content: center !important;
       }
+      .nav-toolbar .mobile-neighbor-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        width: 72px;
+        min-height: 27px;
+        box-sizing: border-box;
+        padding: 3px 4px;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.70);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.10);
+        color: #334155;
+        font-size: 9px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .pov-mobile-neighbor-toggle {
+        position: fixed;
+        left: 12px;
+        bottom: 100px;
+        z-index: 81;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        width: 72px;
+        min-height: 27px;
+        box-sizing: border-box;
+        padding: 3px 4px;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.70);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.10);
+        color: #334155;
+        font-size: 9px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: opacity 0.24s ease, visibility 0s linear;
+      }
+      .pov-mobile-neighbor-toggle.sheet-stage-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.24s ease, visibility 0s linear 0.24s;
+      }
+      .mobile-neighbor-toggle input,
+      .pov-mobile-neighbor-toggle input {
+        width: 13px;
+        height: 13px;
+        margin: 0;
+        accent-color: #e43b46;
+        flex: 0 0 auto;
+      }
       .zoom-btn-span {
         grid-column: 1 / -1 !important;
       }
@@ -950,8 +1114,7 @@
         transition: transform 0.32s cubic-bezier(0.25, 1, 0.5, 1), max-height 0.32s cubic-bezier(0.25, 1, 0.5, 1);
         box-sizing: border-box;
         overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-y: hidden;
       }
       .control-panel.pov-hidden {
         transform: translateY(120%) !important;
@@ -978,13 +1141,45 @@
         opacity: 0 !important;
         overflow: hidden !important;
       }
+      .control-panel.stage-2 > #dong-selection-panel {
+        display: none !important;
+      }
 
       /* 3단계: 모든 메뉴가 상단으로 다 올라온 상태 */
       .control-panel.stage-3 {
         transform: translateY(0);
         max-height: 85vh !important;
       }
+      .control-panel.is-stage-preparing,
+      .control-panel.is-stage-preparing * {
+        transition: none !important;
+        animation: none !important;
+      }
+      .control-panel.is-stage-positioned {
+        bottom: auto !important;
+        max-height: none !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .control-panel.pov-hidden.is-stage-positioned {
+        transform: translateY(120%) !important;
+      }
       .control-panel.stage-3 .control-panel-expandable {
+        max-height: 1200px !important;
+        opacity: 1 !important;
+        overflow: hidden !important;
+        padding-top: 4px;
+        padding-bottom: 8px;
+      }
+      .control-panel.is-free-dragging {
+        max-height: var(--sheet-free-height, 85vh) !important;
+        transform: translateY(0) !important;
+      }
+      .control-panel.is-free-dragging > #dong-selection-panel {
+        display: block !important;
+      }
+      .control-panel.is-free-dragging .control-panel-expandable {
+        display: block !important;
         max-height: 1200px !important;
         opacity: 1 !important;
         overflow: visible !important;
@@ -997,6 +1192,7 @@
         padding: 2px 2px 4px 2px;
         cursor: pointer;
         user-select: none;
+        touch-action: none;
       }
       .mobile-sheet-handle {
         width: 36px;
@@ -1004,6 +1200,13 @@
         background: #cbd5e1;
         border-radius: 2px;
         margin: 2px auto 6px auto;
+        touch-action: none;
+        cursor: grab;
+      }
+      .control-panel.is-dragging {
+        transition: none !important;
+        user-select: none;
+        -webkit-user-select: none;
       }
       .mobile-sheet-bar {
         display: flex;
@@ -1530,6 +1733,9 @@
       padding: 6px;
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
     }
+    .mobile-neighbor-toggle {
+      display: none;
+    }
     .zoom-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1813,6 +2019,10 @@
         <button class="zoom-btn zoom-btn-span" id="btn-view-bird" title="위에서 아래로 내려다보는 뷰 (고각 조감뷰)"><i class="fa-solid fa-cube"></i></button>
       </div>
     </div>
+    <label class="mobile-neighbor-toggle" for="mobile-layer-neighbors">
+      <input type="checkbox" id="mobile-layer-neighbors">
+      <span>주변건물</span>
+    </label>
   </div>
 
   <!-- Controls -->
@@ -1820,10 +2030,10 @@
   <div class="control-panel stage-2" id="control-panel">
     <!-- Mobile Sheet Handle & Header (모바일 하단 슬라이딩 서랍 헤더) -->
     <div class="mobile-sheet-header" id="mobile-sheet-toggle">
-      <div class="mobile-sheet-handle"></div>
+      <div class="mobile-sheet-handle" id="mobile-sheet-handle"></div>
       <div class="mobile-sheet-bar">
         <div class="mobile-sheet-title">
-          <span>☀️ 일조 & 동별 탐색</span>
+          <span>☀️ 시간별 일조 & 그림자</span>
         </div>
         <!-- 2) 바텀시트 1단계(1줄), 2단계(2줄), 3단계(3줄) 아이콘만 표시 -->
         <div class="sheet-stage-group" id="sheet-stage-group" role="group" aria-label="메뉴 높이 단계">
@@ -1857,8 +2067,22 @@
       <div class="time-header">
         <span>시간 설정</span>
         <span class="time-val" id="time-display">14:00 (오후 2시)</span>
+        <div class="direct-sunlight-widget" id="direct-sunlight-widget" hidden>
+          <div class="direct-sunlight-gauge" id="direct-sunlight-gauge" role="progressbar" aria-label="직달일조지수" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span class="direct-sunlight-value" id="direct-sunlight-value">0</span>
+          </div>
+          <div class="direct-sunlight-copy">
+            <span class="direct-sunlight-label">직달일조</span>
+            <span class="direct-sunlight-score" id="direct-sunlight-score">0/100</span>
+          </div>
+          <button type="button" class="direct-sunlight-info" id="direct-sunlight-info" aria-label="직달일조지수 설명" aria-expanded="false">i</button>
+        </div>
       </div>
-      <input type="range" id="time-slider" min="0" max="24" step="any" value="14.0">
+      <div class="direct-sunlight-explanation" id="direct-sunlight-explanation" hidden>
+        선택 세대의 남향 외벽 표본 49곳 중 현재 태양 방향으로 주변 건물에 가리지 않는 지점의 비율입니다. 실제 창문, 실내 밝기, 날씨는 반영하지 않은 3D 모델 추정치입니다.
+        시간 바의 회색은 직달일조가 없는 구간, 노랑에서 빨강으로 갈수록 표본 기준 일조 비율이 높습니다.
+      </div>
+      <input type="range" id="time-slider" min="0" max="24" step="any" value="14.0" aria-label="선택 세대의 시간대별 직달일조">
       
       <div class="sun-metric-box" id="sun-metric-box">
         <div class="sun-metric-item">
@@ -1900,7 +2124,7 @@
 
       <div class="panel-card" id="camera-preset-panel">
         <div class="panel-title">
-          <span>🎥 카메라 시점 (뷰 프리셋)</span>
+          <span>🎥 카메라 뷰</span>
         </div>
         <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
           <button class="btn-custom" id="cp-btn-reset"><i class="fa-solid fa-arrows-rotate me-1"></i>기본 뷰</button>
@@ -1916,7 +2140,7 @@
 
       <div class="panel-card">
         <div class="panel-title">
-          <span>🗺️ 바닥 지반 설정</span>
+          <span>🗺️ 바닥 스킨</span>
         </div>
         <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
           <button class="btn-custom active" data-map="normal">일반 지도</button>
@@ -1928,7 +2152,7 @@
       <!-- Surrounding Infrastructure 3D Layer Toggle Card -->
       <div class="panel-card" id="infra-panel-card">
         <div class="panel-title">
-          <span>📍 주변 입지 3D 뷰</span>        
+          <span>📍 주변 인프라 & 주요 건물</span>        
         </div>
         <div class="infra-layer-list">
           <label class="infra-toggle-item">
@@ -1953,7 +2177,7 @@
           </label>
           <label class="infra-toggle-item">
             <input type="checkbox" id="layer-hospital" checked>
-            <span class="infra-tag">🏥 <b>병원</b></span>
+            <span class="infra-tag">🏥 <b>대형병원</b></span>
           </label>
           <label class="infra-toggle-item">
             <input type="checkbox" id="layer-commercial" checked>
@@ -1973,7 +2197,7 @@
           </label>
           <label class="infra-toggle-item" style="grid-column: span 2; border-top: 1px dashed rgba(0,0,0,0.08); margin-top: 2px; padding-top: 4px;">
             <input type="checkbox" id="layer-neighbors">
-            <span class="infra-tag">🏢 <b>주변건물</b> <small style="display:inline; margin-left:auto; color:#94a3b8; font-size:10px;">배경 3D</small></span>
+            <span class="infra-tag">🏢 <b>주변단지/건물</b></span>
           </label>
           <label class="infra-toggle-item" style="grid-column: span 2; border-top: 1px dashed rgba(0,0,0,0.08); margin-top: 2px; padding-top: 4px;">
             <input type="checkbox" id="layer-radius-rings" checked>
@@ -2145,6 +2369,11 @@
       <i class="fa-solid fa-border-all"></i> 발코니 창틀 <span id="frame-status-text" class="frame-status-badge">ON</span>
     </button>
   </div>
+
+  <label id="pov-mobile-neighbor-toggle" class="pov-mobile-neighbor-toggle sheet-stage-hidden" for="pov-mobile-layer-neighbors" aria-label="주변건물 표시">
+    <input type="checkbox" id="pov-mobile-layer-neighbors">
+    <span>주변건물</span>
+  </label>
 
   <!-- Viewing Direction Radar HUD (창밖조망 실시간 뷰 방향 컴퍼스 레이더) -->
   <div id="pov-direction-hud" class="pov-direction-hud" style="display: none;">
@@ -2527,10 +2756,18 @@
             { id: 'layer-bank', key: 'bank' },
             { id: 'layer-neighbors', key: 'neighbors' }
           ];
+          var mobileNeighborCheckbox = document.getElementById('mobile-layer-neighbors');
+          var povMobileNeighborCheckbox = document.getElementById('pov-mobile-layer-neighbors');
           infraLayerMap.forEach(function (item) {
             var el = document.getElementById(item.id);
             if (el) {
               el.addEventListener('change', function () {
+                if (item.key === 'neighbors' && mobileNeighborCheckbox) {
+                  mobileNeighborCheckbox.checked = el.checked;
+                }
+                if (item.key === 'neighbors' && povMobileNeighborCheckbox) {
+                  povMobileNeighborCheckbox.checked = el.checked;
+                }
                 if (viewInstance && typeof viewInstance.toggleInfraLayer === 'function') {
                   viewInstance.toggleInfraLayer(item.key, el.checked);
                   if (item.key === 'neighbors' && el.checked) {
@@ -2540,6 +2777,21 @@
               });
             }
           });
+          if (mobileNeighborCheckbox) {
+            mobileNeighborCheckbox.addEventListener('change', function () {
+              var neighborCheckbox = document.getElementById('layer-neighbors');
+              if (!neighborCheckbox || neighborCheckbox.checked === mobileNeighborCheckbox.checked) return;
+              neighborCheckbox.checked = mobileNeighborCheckbox.checked;
+              neighborCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+          }
+          if (povMobileNeighborCheckbox) {
+            povMobileNeighborCheckbox.addEventListener('change', function () {
+              if (!mobileNeighborCheckbox || mobileNeighborCheckbox.checked === povMobileNeighborCheckbox.checked) return;
+              mobileNeighborCheckbox.checked = povMobileNeighborCheckbox.checked;
+              mobileNeighborCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+          }
 
           // 생활권 반경원 (250m, 500m, 1km 동심원) 토글
           var layerRadiusRings = document.getElementById('layer-radius-rings');
@@ -2658,6 +2910,67 @@
           var currentPOVInfo = null;
           var previousPOVNeighborsVisible = null;
           var mobileSheetFollowFrame = null;
+          var directSunlightWidget = document.getElementById('direct-sunlight-widget');
+          var directSunlightGauge = document.getElementById('direct-sunlight-gauge');
+          var directSunlightValue = document.getElementById('direct-sunlight-value');
+          var directSunlightScore = document.getElementById('direct-sunlight-score');
+          var directSunlightInfoButton = document.getElementById('direct-sunlight-info');
+          var directSunlightExplanation = document.getElementById('direct-sunlight-explanation');
+          var renderedDirectSunlightTimelineKey = null;
+
+          if (directSunlightInfoButton && directSunlightExplanation) {
+            directSunlightInfoButton.addEventListener('click', function () {
+              var isExpanded = directSunlightInfoButton.getAttribute('aria-expanded') === 'true';
+              directSunlightInfoButton.setAttribute('aria-expanded', String(!isExpanded));
+              directSunlightExplanation.hidden = isExpanded;
+            });
+          }
+
+          window.onComplex3dSunlightIndexUpdate = function (info) {
+            if (!info) return;
+            var value = Math.max(0, Math.min(100, Math.round(Number(info.value) || 0)));
+            if (directSunlightValue) directSunlightValue.textContent = String(value);
+            if (directSunlightScore) directSunlightScore.textContent = value + '/100';
+            if (directSunlightGauge) {
+              directSunlightGauge.style.setProperty('--score-pct', value + '%');
+              directSunlightGauge.setAttribute('aria-valuenow', String(value));
+            }
+          };
+
+          window.onComplex3dSunlightTimelineUpdate = function (info) {
+            var slider = document.getElementById('time-slider');
+            if (!slider || !info) return;
+            if (info.status === 'clear') {
+              renderedDirectSunlightTimelineKey = null;
+              slider.style.background = '';
+              slider.title = '';
+              return;
+            }
+            if (info.status === 'start') {
+              slider.style.background = '#e2e8f0';
+              slider.title = '선택 세대의 시간별 직달일조를 계산 중입니다.';
+              return;
+            }
+            if (info.status !== 'complete' || !info.values || !info.values.length) return;
+            if (info.key && renderedDirectSunlightTimelineKey === info.key) return;
+
+            var stops = info.values.map(function (score, index) {
+              var color = '#e2e8f0';
+              if (score > 0) {
+                var warmth = 0.25 + Math.min(100, score) / 100 * 0.75;
+                var start = [251, 191, 36];
+                var end = [228, 59, 70];
+                var red = Math.round(start[0] + (end[0] - start[0]) * warmth);
+                var green = Math.round(start[1] + (end[1] - start[1]) * warmth);
+                var blue = Math.round(start[2] + (end[2] - start[2]) * warmth);
+                color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+              }
+              return color + ' ' + (index / (info.values.length - 1) * 100) + '%';
+            });
+            slider.style.background = 'linear-gradient(to right, ' + stops.join(', ') + ')';
+            slider.title = '회색은 직달일조 없음, 노랑~빨강은 표본 기준 일조 정도입니다.';
+            renderedDirectSunlightTimelineKey = info.key || null;
+          };
 
           function isMobilePOVViewport() {
             return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
@@ -2669,6 +2982,25 @@
             var isOutwardPOVVisible = currentPOVInfo && currentPOVInfo.subMode === 'outward' && banner && banner.style.display !== 'none';
             var radarHud = document.getElementById('pov-direction-hud');
             var bottomSheet = document.getElementById('control-panel');
+            var povNeighborToggle = document.getElementById('pov-mobile-neighbor-toggle');
+            var isMobilePOVVisible = currentPOVInfo && banner && banner.style.display !== 'none';
+
+            if (povNeighborToggle) {
+              if (isMobilePOVVisible && isMobile) {
+                if (bottomSheet && bottomSheet.classList.contains('stage-3')) {
+                  povNeighborToggle.classList.add('sheet-stage-hidden');
+                } else {
+                  povNeighborToggle.classList.remove('sheet-stage-hidden');
+                  if (bottomSheet) {
+                    var neighborSheetTop = bottomSheet.getBoundingClientRect().top;
+                    povNeighborToggle.style.bottom = Math.ceil(window.innerHeight - neighborSheetTop + 12) + 'px';
+                  }
+                }
+              } else {
+                povNeighborToggle.classList.add('sheet-stage-hidden');
+                povNeighborToggle.style.removeProperty('bottom');
+              }
+            }
 
             if (isOutwardPOVVisible && isMobile) {
               if (povFovBar) {
@@ -2922,10 +3254,15 @@
                 viewInstance.setNeighborsVisible(true);
               }
               var neighborLayerCheckbox = document.getElementById('layer-neighbors');
-              if (neighborLayerCheckbox) neighborLayerCheckbox.checked = true;
+              if (neighborLayerCheckbox) {
+                neighborLayerCheckbox.checked = true;
+                if (mobileNeighborCheckbox) mobileNeighborCheckbox.checked = true;
+                if (povMobileNeighborCheckbox) povMobileNeighborCheckbox.checked = true;
+              }
               loadApartmentNeighborModels().catch(function () {});
             }
             currentPOVInfo = info;
+            if (directSunlightWidget) directSunlightWidget.hidden = false;
             var banner = document.getElementById('floor-pov-banner');
             var titleEl = document.getElementById('pov-title-text');
             var layerNb = document.getElementById('layer-neighbors');
@@ -3037,6 +3374,8 @@
 
                 if (layerNb && viewInstance && typeof viewInstance.getNeighborsVisible === 'function') {
                   layerNb.checked = viewInstance.getNeighborsVisible();
+                  if (mobileNeighborCheckbox) mobileNeighborCheckbox.checked = layerNb.checked;
+                  if (povMobileNeighborCheckbox) povMobileNeighborCheckbox.checked = layerNb.checked;
                 }
               }
               setPOVBottomMenuVisibility(false);
@@ -3058,6 +3397,10 @@
               previousPOVNeighborsVisible = null;
             }
             currentPOVInfo = null;
+            if (directSunlightWidget) directSunlightWidget.hidden = true;
+            if (directSunlightExplanation) directSunlightExplanation.hidden = true;
+            if (directSunlightInfoButton) directSunlightInfoButton.setAttribute('aria-expanded', 'false');
+            window.onComplex3dSunlightTimelineUpdate({ status: 'clear' });
             setPOVBottomMenuVisibility(true);
             positionMobilePOVFovBar();
             var banner = document.getElementById('floor-pov-banner');
@@ -3110,6 +3453,8 @@
             var layerNb = document.getElementById('layer-neighbors');
             if (layerNb && viewInstance && typeof viewInstance.getNeighborsVisible === 'function') {
               layerNb.checked = viewInstance.getNeighborsVisible();
+              if (mobileNeighborCheckbox) mobileNeighborCheckbox.checked = layerNb.checked;
+              if (povMobileNeighborCheckbox) povMobileNeighborCheckbox.checked = layerNb.checked;
             }
           };
 
@@ -3151,7 +3496,43 @@
           var currentMobileStage = 2; // Default: 2단계
           var sheetToggle = document.getElementById('mobile-sheet-toggle');
           var controlPanel = document.getElementById('control-panel');
+          var controlPanelExpandable = document.getElementById('control-panel-expandable');
+          var seasonPanel = controlPanelExpandable && controlPanelExpandable.firstElementChild;
+          var seasonButtons = seasonPanel && seasonPanel.querySelector('.btn-group-custom');
+          var timePanel = controlPanel && controlPanel.children[1];
           var stageBtns = document.querySelectorAll('.sheet-stage-btn');
+          var sheetDrag = null;
+          var suppressSheetToggleClickUntil = 0;
+          var mobileSheetStageAnimation = null;
+          var mobileSheetReleasedRect = null;
+          var mobileSheetStageRects = null;
+
+          function updateSeasonPanelLayout() {
+            if (!seasonButtons || !timePanel || !seasonPanel || !controlPanelExpandable) return;
+            if (window.matchMedia('(max-width: 768px)').matches) {
+              if (seasonButtons.parentElement !== timePanel) timePanel.appendChild(seasonButtons);
+              if (seasonPanel.parentElement) seasonPanel.remove();
+            } else {
+              if (seasonButtons.parentElement !== seasonPanel) seasonPanel.appendChild(seasonButtons);
+              if (!seasonPanel.parentElement) {
+                controlPanelExpandable.insertBefore(seasonPanel, controlPanelExpandable.firstChild);
+              }
+            }
+          }
+          var mobileSheetMedia = window.matchMedia('(max-width: 768px)');
+          updateSeasonPanelLayout();
+          if (mobileSheetMedia.addEventListener) {
+            mobileSheetMedia.addEventListener('change', function () {
+              updateSeasonPanelLayout();
+              setMobileSheetStage(currentMobileStage);
+            });
+          } else if (mobileSheetMedia.addListener) {
+            mobileSheetMedia.addListener(function () {
+              updateSeasonPanelLayout();
+              setMobileSheetStage(currentMobileStage);
+            });
+          }
+
           if (controlPanel) {
             controlPanel.addEventListener('transitionend', function (event) {
               if (event.target === controlPanel && (event.propertyName === 'transform' || event.propertyName === 'max-height')) {
@@ -3160,11 +3541,124 @@
             });
           }
 
+          function measureMobileSheetStages() {
+            if (!controlPanel) return null;
+            var originalClassName = controlPanel.className;
+            var styleProperties = ['position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'max-height', 'transform', '--sheet-free-height', '--sheet-stage-offset'];
+            var originalStyles = {};
+            styleProperties.forEach(function (property) {
+              originalStyles[property] = {
+                value: controlPanel.style.getPropertyValue(property),
+                priority: controlPanel.style.getPropertyPriority(property)
+              };
+            });
+
+            controlPanel.classList.add('is-stage-preparing');
+            controlPanel.classList.remove('is-stage-positioned', 'is-stage-transitioning', 'is-free-dragging', 'pov-hidden', 'stage-1', 'stage-2', 'stage-3');
+            styleProperties.forEach(function (property) {
+              controlPanel.style.removeProperty(property);
+            });
+            controlPanel.style.setProperty('position', 'fixed');
+            controlPanel.style.setProperty('top', '0px');
+            controlPanel.style.setProperty('right', '0px');
+            controlPanel.style.setProperty('bottom', 'auto');
+            controlPanel.style.setProperty('left', '0px');
+            controlPanel.style.setProperty('width', '100%');
+            controlPanel.style.setProperty('height', 'auto');
+            controlPanel.style.setProperty('max-height', '85vh');
+            controlPanel.style.setProperty('transform', 'none');
+
+            var stageRects = {};
+            [1, 2, 3].forEach(function (stage) {
+              controlPanel.classList.add('stage-' + stage);
+              var rect = controlPanel.getBoundingClientRect();
+              var top = stage === 1 ? window.innerHeight - 46 : window.innerHeight - rect.height;
+              stageRects[stage] = { top: top, height: rect.height };
+              controlPanel.classList.remove('stage-' + stage);
+            });
+
+            controlPanel.className = originalClassName;
+            styleProperties.forEach(function (property) {
+              var savedStyle = originalStyles[property];
+              if (savedStyle.value) {
+                controlPanel.style.setProperty(property, savedStyle.value, savedStyle.priority);
+              } else {
+                controlPanel.style.removeProperty(property);
+              }
+            });
+            mobileSheetStageRects = stageRects;
+            return stageRects;
+          }
+
           function setMobileSheetStage(stage) {
             if (!controlPanel) return;
+            if (!mobileSheetMedia.matches) {
+              controlPanel.classList.remove('is-stage-positioned', 'is-stage-transitioning', 'is-free-dragging');
+              controlPanel.style.removeProperty('top');
+              controlPanel.style.removeProperty('height');
+              controlPanel.style.removeProperty('bottom');
+              controlPanel.style.removeProperty('--sheet-free-height');
+              controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
+              controlPanel.classList.add('stage-' + stage);
+              currentMobileStage = stage;
+              mobileSheetStageRects = null;
+              stageBtns.forEach(function (btn) {
+                btn.classList.toggle('active', parseInt(btn.getAttribute('data-stage'), 10) === stage);
+              });
+              return;
+            }
+            var startRect = controlPanel.getBoundingClientRect();
+            if (controlPanel.classList.contains('is-free-dragging') && mobileSheetReleasedRect &&
+                Math.abs(startRect.top - mobileSheetReleasedRect.top) < 2 &&
+                Math.abs(startRect.height - mobileSheetReleasedRect.height) < 2) {
+              startRect = mobileSheetReleasedRect;
+            }
+            if (mobileSheetStageAnimation) {
+              controlPanel.style.top = startRect.top + 'px';
+              controlPanel.style.height = startRect.height + 'px';
+              mobileSheetStageAnimation.onfinish = null;
+              mobileSheetStageAnimation.oncancel = null;
+              mobileSheetStageAnimation.cancel();
+              mobileSheetStageAnimation = null;
+            }
+            mobileSheetStageRects = measureMobileSheetStages();
+            controlPanel.classList.add('is-stage-preparing');
+            controlPanel.style.top = startRect.top + 'px';
+            controlPanel.style.height = startRect.height + 'px';
+            controlPanel.style.removeProperty('--sheet-stage-offset');
+            controlPanel.classList.add('is-stage-positioned');
+            controlPanel.classList.remove('is-free-dragging');
+            controlPanel.style.removeProperty('--sheet-free-height');
+            mobileSheetReleasedRect = null;
             currentMobileStage = stage;
             controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
             controlPanel.classList.add('stage-' + stage);
+            var targetRect = mobileSheetStageRects && mobileSheetStageRects[stage]
+              ? mobileSheetStageRects[stage]
+              : controlPanel.getBoundingClientRect();
+            controlPanel.classList.remove('is-stage-preparing');
+            controlPanel.getBoundingClientRect();
+            if ((Math.abs(startRect.top - targetRect.top) > 0.5 || Math.abs(startRect.height - targetRect.height) > 0.5) && typeof controlPanel.animate === 'function') {
+              var stageAnimation = controlPanel.animate([
+                { top: startRect.top + 'px', height: startRect.height + 'px' },
+                { top: targetRect.top + 'px', height: targetRect.height + 'px' }
+              ], {
+                duration: 360,
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+                fill: 'forwards'
+              });
+              mobileSheetStageAnimation = stageAnimation;
+              stageAnimation.onfinish = function () {
+                if (mobileSheetStageAnimation !== stageAnimation) return;
+                controlPanel.style.top = targetRect.top + 'px';
+                controlPanel.style.height = targetRect.height + 'px';
+                mobileSheetStageAnimation = null;
+                stageAnimation.cancel();
+              };
+            } else {
+              controlPanel.style.top = targetRect.top + 'px';
+              controlPanel.style.height = targetRect.height + 'px';
+            }
             
             stageBtns.forEach(function (btn) {
               var s = parseInt(btn.getAttribute('data-stage'), 10);
@@ -3179,7 +3673,7 @@
               window.cancelAnimationFrame(mobileSheetFollowFrame);
               mobileSheetFollowFrame = null;
             }
-            if (currentPOVInfo && currentPOVInfo.subMode === 'outward' && isMobilePOVViewport()) {
+            if (currentPOVInfo && isMobilePOVViewport()) {
               var followStart = performance.now();
               function followMobileSheet() {
                 positionMobilePOVFovBar();
@@ -3193,6 +3687,87 @@
             }
           }
 
+          function finishMobileSheetDrag(event) {
+            if (!sheetDrag || (event && event.pointerId !== sheetDrag.pointerId)) return;
+            var drag = sheetDrag;
+            sheetDrag = null;
+            if (event && sheetToggle.hasPointerCapture(event.pointerId)) {
+              sheetToggle.releasePointerCapture(event.pointerId);
+            }
+
+            if (drag.moved) {
+              suppressSheetToggleClickUntil = Date.now() + 450;
+              stageBtns.forEach(function (btn) { btn.classList.remove('active'); });
+              var releasedRect = controlPanel.getBoundingClientRect();
+              mobileSheetReleasedRect = {
+                top: releasedRect.top,
+                height: releasedRect.height
+              };
+            }
+
+            controlPanel.classList.remove('is-dragging');
+          }
+
+          if (sheetToggle && controlPanel) {
+            sheetToggle.addEventListener('pointerdown', function (event) {
+              if (!window.matchMedia('(max-width: 768px)').matches) return;
+              if (event.target.closest('.sheet-stage-btn')) return;
+              if (event.button !== undefined && event.button !== 0) return;
+              mobileSheetReleasedRect = null;
+              var startRect = controlPanel.getBoundingClientRect();
+              if (mobileSheetStageAnimation) {
+                controlPanel.style.top = startRect.top + 'px';
+                controlPanel.style.height = startRect.height + 'px';
+                mobileSheetStageAnimation.onfinish = null;
+                mobileSheetStageAnimation.oncancel = null;
+                mobileSheetStageAnimation.cancel();
+                mobileSheetStageAnimation = null;
+              }
+              var visibleTop = Math.max(0, startRect.top);
+              var visibleBottom = Math.min(window.innerHeight, startRect.bottom);
+              var visibleHeight = Math.max(0, visibleBottom - visibleTop);
+              var startHeight = Math.max(46, Math.min(startRect.height, visibleHeight));
+              sheetDrag = {
+                pointerId: event.pointerId,
+                startY: event.clientY,
+                startHeight: startHeight,
+                moved: false
+              };
+              sheetToggle.setPointerCapture(event.pointerId);
+            });
+
+            sheetToggle.addEventListener('pointermove', function (event) {
+              if (!sheetDrag || event.pointerId !== sheetDrag.pointerId) return;
+              event.preventDefault();
+              var deltaY = event.clientY - sheetDrag.startY;
+              if (!sheetDrag.moved && Math.abs(deltaY) > 4) {
+                sheetDrag.moved = true;
+                controlPanel.classList.add('is-stage-preparing');
+                controlPanel.style.setProperty('--sheet-free-height', sheetDrag.startHeight + 'px');
+                controlPanel.classList.add('is-free-dragging', 'is-dragging');
+                controlPanel.classList.remove('is-stage-positioned');
+                controlPanel.style.removeProperty('top');
+                controlPanel.style.removeProperty('height');
+                controlPanel.style.removeProperty('bottom');
+                controlPanel.getBoundingClientRect();
+                controlPanel.classList.remove('is-stage-preparing');
+              }
+              if (!sheetDrag.moved) return;
+              var minHeight = 46;
+              var maxHeight = window.innerHeight * 0.85;
+              var height = Math.max(minHeight, Math.min(maxHeight, sheetDrag.startHeight - deltaY));
+              controlPanel.style.setProperty('--sheet-free-height', height + 'px');
+              if (currentPOVInfo) positionMobilePOVFovBar();
+            });
+
+            sheetToggle.addEventListener('pointerup', function (event) {
+              finishMobileSheetDrag(event);
+            });
+            sheetToggle.addEventListener('pointercancel', function (event) {
+              finishMobileSheetDrag(event);
+            });
+          }
+
           stageBtns.forEach(function (btn) {
             btn.addEventListener('click', function (e) {
               e.stopPropagation();
@@ -3204,6 +3779,11 @@
 
           if (sheetToggle) {
             sheetToggle.addEventListener('click', function (e) {
+              if (Date.now() < suppressSheetToggleClickUntil) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+              }
               if (e.target.closest('.sheet-stage-btn')) return;
               if (currentMobileStage === 1) {
                 setMobileSheetStage(2);

@@ -110,7 +110,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   function updateDynamicCameraClamp() {
     if (!controls || !controls.enabled || isPOVMode) return;
     var dist = camera.position.distanceTo(controls.target);
-    controls.maxPolarAngle = getDynamicMaxPolarAngle(dist);
+    var maxPolarAngle = getDynamicMaxPolarAngle(dist);
+    var cosPolarAngle = (camera.position.y - controls.target.y) / Math.max(0.001, dist);
+    var currentPolarAngle = Math.acos(Math.max(-1, Math.min(1, cosPolarAngle)));
+    controls.maxPolarAngle = Math.max(maxPolarAngle, currentPolarAngle);
   }
 
   controls.addEventListener('change', updateDynamicCameraClamp);
@@ -537,11 +540,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   moonSprite.renderOrder = 9995;
   scene.add(moonSprite);
 
-  function updateSun() {
+  function getSunDirectionForTime(hour, season) {
     var declMap = { winter: -23.44, equinox: 0.0, summer: 23.44 };
-    var decl = (declMap[currentSeason] || 0.0) * Math.PI / 180;
+    var decl = (declMap[season] || 0.0) * Math.PI / 180;
     var lat = center.lat * Math.PI / 180;
-    var hourAngle = (currentHour - 12.0) * 15 * Math.PI / 180;
+    var hourAngle = (hour - 12.0) * 15 * Math.PI / 180;
 
     var sinAlt = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(hourAngle);
     var alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
@@ -550,12 +553,20 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
     if (hourAngle > 0) az = 2 * Math.PI - az;
 
-    // 태양 단위 방향 벡터
-    sunUnitDir.set(
-      Math.cos(alt) * Math.sin(az),
-      Math.sin(alt),
-      -Math.cos(alt) * Math.cos(az)
-    ).normalize();
+    return {
+      altitude: alt,
+      direction: new THREE.Vector3(
+        Math.cos(alt) * Math.sin(az),
+        Math.sin(alt),
+        -Math.cos(alt) * Math.cos(az)
+      ).normalize()
+    };
+  }
+
+  function updateSun() {
+    var solarPosition = getSunDirectionForTime(currentHour, currentSeason);
+    var alt = solarPosition.altitude;
+    sunUnitDir.copy(solarPosition.direction);
     isNightMode = alt <= 0.0;
     celestialBody = isNightMode ? 'moon' : 'sun';
     moonUnitDir.copy(sunUnitDir).negate();
@@ -640,6 +651,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     if (sunTrajectoryGroup && sunTrajectoryGroup.visible) {
       updateSunTrajectory();
     }
+    updateDirectSunlightIndex();
   }
 
   // --- 3-2. [아실/직방 3D 벤치마크] 창밖조망 시간별 태양 궤적 (Sun Trajectory Arc HUD) ---
@@ -1449,6 +1461,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   neighborGroup.name = "neighborBuildingsGroup";
   neighborGroup.visible = false;
   scene.add(neighborGroup);
+  var directSunlightOccluderMeshes = null;
 
   var neighborObjectKeys = Object.create(null);
   var genericNeighborSignatures = Object.create(null);
@@ -1477,6 +1490,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     entry.mesh.geometry.dispose();
     entry.line.geometry.dispose();
     delete neighborObjectKeys[objectKey];
+    directSunlightOccluderMeshes = null;
   }
 
   function getNeighborBuildingHeight(building) {
@@ -1505,6 +1519,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var mesh = new THREE.Mesh(geom, neighborMat);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
+    directSunlightOccluderMeshes = null;
     mesh.userData = {
       isNeighbor: true,
       isApartmentNeighbor: !!apartmentCode,
@@ -1876,6 +1891,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       spriteMap.encoding = THREE.sRGBEncoding;
       var spriteMat = new THREE.SpriteMaterial({
         map: spriteMap,
+        transparent: true,
         depthTest: true, // 깊이 테스트 활성화: 원거리 건물의 배지가 전방 건물을 뚫고 잘못 투과되어 보이는 현상 방지
         depthWrite: false
       });
@@ -1883,6 +1899,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       // 건물의 실제 옥상 상단(bldgHeight) 바로 위에 일치하도록 배치
       sprite.position.set(dongCenters[dongKey].x, bldgHeight + 5.5, dongCenters[dongKey].z);
       sprite.scale.set(16, 6.4, 1);
+      sprite.renderOrder = 1001;
       sprite.userData = { isDongLabel: true, dongKey: dongKey };
       scene.add(sprite);
       registerConstantScreenBillboard(
@@ -2228,63 +2245,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   }
 
   function createApartmentNeighborLabel(title) {
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    var labelScale = 2 / 3;
-    canvas.width = Math.round(420 * labelScale);
-    canvas.height = Math.round(118 * labelScale);
-
-    var maxTextWidth = canvas.width - Math.round(56 * labelScale);
-    var fontFamily = '"Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    var labelText = String(title || '').trim();
-    var fontSize = Math.round(32 * labelScale) + 2;
-    var minFontSize = Math.round(24 * labelScale);
-    ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
-    while (fontSize > minFontSize && ctx.measureText(labelText).width > maxTextWidth) {
-      fontSize--;
-      ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
-    }
-    if (ctx.measureText(labelText).width > maxTextWidth) {
-      var labelCharacters = Array.from(labelText);
-      while (labelCharacters.length > 1 && ctx.measureText(labelCharacters.join('') + '…').width > maxTextWidth) {
-        labelCharacters.pop();
-      }
-      labelText = labelCharacters.join('') + '…';
-    }
-
-    ctx.fillStyle = '#F3F4F6';
-    ctx.strokeStyle = '#111827';
-    ctx.lineWidth = Math.max(1.5, Math.round(3.5 * labelScale));
-    ctx.beginPath();
-    var inset = Math.round(8 * labelScale);
-    if (typeof ctx.roundRect === 'function') {
-      ctx.roundRect(inset, inset, canvas.width - inset * 2, canvas.height - inset * 2, Math.round(20 * labelScale));
-    } else {
-      ctx.rect(inset, inset, canvas.width - inset * 2, canvas.height - inset * 2);
-    }
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.font = 'bold ' + fontSize + 'px ' + fontFamily;
-    ctx.fillStyle = '#000000';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(labelText, canvas.width / 2, canvas.height / 2, maxTextWidth);
-
-    var texture = new THREE.CanvasTexture(canvas);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    var sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: texture,
-      transparent: true,
-      depthTest: false,
-      depthWrite: false
-    }));
-    sprite.renderOrder = 999;
-    var aspect = canvas.width / canvas.height;
-    sprite.scale.set(10 * aspect, 10, 1);
-    registerConstantScreenBillboard(sprite, Math.round(45 * labelScale), aspect, true);
-    return sprite;
+    return createFloatingLabel(null, title, null, '#fbbf24', 'rgba(30, 41, 59, 0.96)');
   }
 
   // 1. 학교 절차적 3D 모델링 (본관 4개층 교실창문 멀리언 + 강당 아치형 볼트지붕 + 연결통로 + 시계탑 & 국기게양대)
@@ -3333,6 +3294,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   var povCameraTransitionId = null;
   var cameraAnimationFrames = {};
   var cameraAnimationSerial = 0;
+  var isCameraAnimating = false;
 
   // 발코니 세대 좌/우 호수 이동 관리 시스템
   var currentFloorUnits = [];
@@ -3379,6 +3341,156 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     var eyeX = frontVertexCount ? frontXTotal / frontVertexCount : (unitBox.min.x + unitBox.max.x) / 2;
     return new THREE.Vector3(eyeX, unitMesh.position.y + 1.6, frontZ - 0.45);
+  }
+
+  var directSunlightRaycaster = new THREE.Raycaster();
+
+  function getDirectSunlightOccluders() {
+    if (directSunlightOccluderMeshes) return directSunlightOccluderMeshes;
+    directSunlightOccluderMeshes = [];
+    scene.traverse(function (object) {
+      if (object.isMesh && object.castShadow) directSunlightOccluderMeshes.push(object);
+    });
+    return directSunlightOccluderMeshes;
+  }
+
+  function calculateDirectSunlightIndex(unitMesh, direction, nightMode) {
+    var sampleCount = 49;
+    var rayDirection = direction || sunUnitDir;
+    var isNight = typeof nightMode === 'boolean' ? nightMode : isNightMode;
+    if (!unitMesh || !unitMesh.geometry || isNight || rayDirection.y <= 0.01 || rayDirection.z <= 0.02) {
+      return { value: 0, exposedCount: 0, sampleCount: sampleCount, isNightMode: isNight };
+    }
+
+    var sampleOrigins = unitMesh.userData.directSunlightSampleOrigins;
+    if (!sampleOrigins) {
+      unitMesh.updateMatrixWorld(true);
+      var unitBox = new THREE.Box3().setFromObject(unitMesh);
+      var frontZ = unitBox.max.z;
+      var frontTolerance = Math.max(0.05, (unitBox.max.z - unitBox.min.z) * 0.01);
+      var positions = unitMesh.geometry.attributes.position;
+      var minX = Infinity;
+      var maxX = -Infinity;
+      var vertex = new THREE.Vector3();
+
+      if (positions) {
+        for (var vertexIndex = 0; vertexIndex < positions.count; vertexIndex++) {
+          vertex.set(positions.getX(vertexIndex), positions.getY(vertexIndex), positions.getZ(vertexIndex))
+            .applyMatrix4(unitMesh.matrixWorld);
+          if (vertex.z >= frontZ - frontTolerance) {
+            minX = Math.min(minX, vertex.x);
+            maxX = Math.max(maxX, vertex.x);
+          }
+        }
+      }
+
+      if (!isFinite(minX) || maxX - minX < 0.1) {
+        minX = unitBox.min.x;
+        maxX = unitBox.max.x;
+      }
+
+      var width = maxX - minX;
+      var height = unitBox.max.y - unitBox.min.y;
+      if (width <= 0 || height <= 0) {
+        return { value: 0, exposedCount: 0, sampleCount: sampleCount, isNightMode: isNight };
+      }
+
+      sampleOrigins = [];
+      var xFractions = [0.15, 0.2667, 0.3833, 0.5, 0.6167, 0.7333, 0.85];
+      var yFractions = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+      for (var yi = 0; yi < yFractions.length; yi++) {
+        for (var xi = 0; xi < xFractions.length; xi++) {
+          sampleOrigins.push(new THREE.Vector3(
+            minX + width * xFractions[xi],
+            unitBox.min.y + height * yFractions[yi],
+            unitBox.max.z + 0.15
+          ));
+        }
+      }
+      unitMesh.userData.directSunlightSampleOrigins = sampleOrigins;
+    }
+
+    var occluders = getDirectSunlightOccluders();
+    var exposedCount = 0;
+    directSunlightRaycaster.near = 0.01;
+    directSunlightRaycaster.far = 3000;
+
+    for (var sampleIndex = 0; sampleIndex < sampleOrigins.length; sampleIndex++) {
+      directSunlightRaycaster.set(sampleOrigins[sampleIndex], rayDirection);
+      var intersections = directSunlightRaycaster.intersectObjects(occluders, false);
+      var isBlocked = intersections.some(function (hit) {
+        return hit.object !== unitMesh && hit.distance > 0.02;
+      });
+      if (!isBlocked) exposedCount++;
+    }
+
+    return {
+      value: Math.round(exposedCount / sampleCount * 100),
+      exposedCount: exposedCount,
+      sampleCount: sampleCount,
+      isNightMode: isNight
+    };
+  }
+
+  var directSunTimelineRequestId = 0;
+  var directSunTimelinePendingKey = null;
+  var directSunTimelineCacheKey = null;
+  var directSunTimelineCacheValues = null;
+
+  function updateDirectSunlightTimeline(unitMesh) {
+    if (!isPOVMode || !unitMesh || !unitMesh.geometry) return;
+    var cacheKey = unitMesh.uuid + ':' + currentSeason;
+    if (directSunTimelineCacheKey === cacheKey && directSunTimelineCacheValues) {
+      if (directSunTimelinePendingKey && directSunTimelinePendingKey !== cacheKey) {
+        directSunTimelineRequestId++;
+        directSunTimelinePendingKey = null;
+      }
+      if (typeof window.onComplex3dSunlightTimelineUpdate === 'function') {
+        window.onComplex3dSunlightTimelineUpdate({ status: 'complete', key: cacheKey, values: directSunTimelineCacheValues });
+      }
+      return;
+    }
+    if (directSunTimelinePendingKey === cacheKey) return;
+
+    directSunTimelinePendingKey = cacheKey;
+    var requestId = ++directSunTimelineRequestId;
+    var season = currentSeason;
+    var values = [];
+    var intervalCount = 48;
+    if (typeof window.onComplex3dSunlightTimelineUpdate === 'function') {
+      window.onComplex3dSunlightTimelineUpdate({ status: 'start' });
+    }
+
+    function calculateNextInterval(index) {
+      if (requestId !== directSunTimelineRequestId || !isPOVMode || activePOVFloor !== unitMesh || currentSeason !== season) return;
+      var hour = index * 0.5;
+      var solarPosition = getSunDirectionForTime(hour, season);
+      values.push(calculateDirectSunlightIndex(unitMesh, solarPosition.direction, solarPosition.altitude <= 0).value);
+
+      if (index + 1 < intervalCount) {
+        setTimeout(function () { calculateNextInterval(index + 1); }, 0);
+        return;
+      }
+
+      values.push(values[0]);
+      directSunTimelineCacheKey = cacheKey;
+      directSunTimelineCacheValues = values;
+      directSunTimelinePendingKey = null;
+      if (typeof window.onComplex3dSunlightTimelineUpdate === 'function') {
+        window.onComplex3dSunlightTimelineUpdate({ status: 'complete', key: cacheKey, values: values });
+      }
+    }
+
+    calculateNextInterval(0);
+  }
+
+  function updateDirectSunlightIndex() {
+    if (!isPOVMode || !activePOVFloor) return;
+    var result = calculateDirectSunlightIndex(activePOVFloor);
+    if (typeof window.onComplex3dSunlightIndexUpdate === 'function') {
+      window.onComplex3dSunlightIndexUpdate(result);
+    }
+    updateDirectSunlightTimeline(activePOVFloor);
   }
 
   function getUnitInfo(unitMesh) {
@@ -3481,6 +3593,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       cancelAnimationFrame(cameraAnimationFrames[animationId]);
       delete cameraAnimationFrames[animationId];
     });
+    isCameraAnimating = false;
   }
 
   function animatePOVCameraTo(endPos, endTarget, duration, targetFOV) {
@@ -3701,6 +3814,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var unitInfo = getUnitInfo(activeUnit);
 
     // UI 콜백 (상단 플로팅 HUD 배너 표출)
+    updateDirectSunlightIndex();
     if (typeof window.onFloorPOVStart === 'function') {
       window.onFloorPOVStart({
         dong: dong,
@@ -3732,6 +3846,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   function exitFloorPOV() {
     if (!isPOVMode) return;
     isPOVMode = false;
+    directSunTimelineRequestId++;
+    directSunTimelinePendingKey = null;
+    if (typeof window.onComplex3dSunlightTimelineUpdate === 'function') {
+      window.onComplex3dSunlightTimelineUpdate({ status: 'clear' });
+    }
     cancelPOVCameraTransition();
     if (balconyShiftAnimId) {
       cancelAnimationFrame(balconyShiftAnimId);
@@ -4004,7 +4123,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       camera.position.copy(balconyEyePos);
     } else {
       updateDynamicCameraClamp();
-      controls.update();
+      if (!isCameraAnimating) controls.update();
     }
 
     // ★ 카메라 거리(Zoom) 및 각도와 무관하게 화면상 항상 일정한 크기를 유지하는 2D 빌보드 라벨 스케일 동기화 (Method 1) ★
@@ -4183,28 +4302,79 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       if (horiz.lengthSq() < 0.001) horiz.set(0, 1);
       horiz.normalize();
 
-      var topHeight = complexMaxSpan * 1.55;
-      var target = new THREE.Vector3(complexCenterX, 0, complexCenterZ);
-      // 약 87.5도 고각(수평 오프셋 5%): 수직 평면도처럼 보이면서도 OrbitControls 짐벌락(마지막 튀는 현상)을 완벽 차단
-      var newPos = new THREE.Vector3(
-        complexCenterX + horiz.x * (topHeight * 0.05),
-        topHeight,
-        complexCenterZ + horiz.y * (topHeight * 0.05)
-      );
+      var polarAngle = Math.max(controls.minPolarAngle + 0.01, 0.06);
+      var viewDirection = new THREE.Vector3(
+        horiz.x * Math.sin(polarAngle),
+        Math.cos(polarAngle),
+        horiz.y * Math.sin(polarAngle)
+      ).normalize();
+      var viewForward = viewDirection.clone().negate();
+      var worldUp = new THREE.Vector3(0, 1, 0);
+      var viewRight = new THREE.Vector3().crossVectors(viewForward, worldUp).normalize();
+      var viewUp = new THREE.Vector3().crossVectors(viewRight, viewForward).normalize();
+      var target = new THREE.Vector3(complexCenterX, complexMaxHeight * 0.25, complexCenterZ);
+      var tanHalfVerticalFov = Math.tan(camera.fov * Math.PI / 360);
+      var tanHalfHorizontalFov = tanHalfVerticalFov * Math.max(0.1, camera.aspect);
+      var fitDistance = 0;
+
+      [complexMinX, complexMaxX].forEach(function (x) {
+        [0, complexMaxHeight].forEach(function (y) {
+          [complexMinZ, complexMaxZ].forEach(function (z) {
+            var relativeCorner = new THREE.Vector3(x - target.x, y - target.y, z - target.z);
+            var towardCamera = relativeCorner.dot(viewDirection);
+            var horizontalExtent = Math.abs(relativeCorner.dot(viewRight));
+            var verticalExtent = Math.abs(relativeCorner.dot(viewUp));
+            fitDistance = Math.max(
+              fitDistance,
+              towardCamera + horizontalExtent / tanHalfHorizontalFov,
+              towardCamera + verticalExtent / tanHalfVerticalFov
+            );
+          });
+        });
+      });
+
+      var cameraDistance = Math.max(100, fitDistance * 1.15);
+      controls.maxDistance = Math.max(controls.maxDistance, cameraDistance * 1.1);
+      // OrbitControls의 최소 극각보다 여유를 둔 거의 수직 각도로 이동해 시야각 제한에 의한 카메라 튐을 방지
+      var newPos = target.clone().addScaledVector(viewDirection, cameraDistance);
       this.animateCameraTo(newPos, target, 750);
     },
     viewBirdEye: function () {
       // 4) 위에서 아래로 내려다보는 뷰: 약 58~60도 고각 조감도 뷰
       var target = new THREE.Vector3(complexCenterX, complexMaxHeight * 0.25, complexCenterZ);
-      var dist = complexMaxSpan * 1.15;
       var pitch = 58 * Math.PI / 180;
-      var h = dist * Math.sin(pitch);
-      var d = dist * Math.cos(pitch);
-      var newPos = new THREE.Vector3(
-        complexCenterX + d * 0.40,
-        h,
-        complexCenterZ + d * 0.90
-      );
+      var viewDirection = new THREE.Vector3(
+        Math.cos(pitch) * 0.40,
+        Math.sin(pitch),
+        Math.cos(pitch) * 0.90
+      ).normalize();
+      var viewForward = viewDirection.clone().negate();
+      var worldUp = new THREE.Vector3(0, 1, 0);
+      var viewRight = new THREE.Vector3().crossVectors(viewForward, worldUp).normalize();
+      var viewUp = new THREE.Vector3().crossVectors(viewRight, viewForward).normalize();
+      var tanHalfVerticalFov = Math.tan(camera.fov * Math.PI / 360);
+      var tanHalfHorizontalFov = tanHalfVerticalFov * Math.max(0.1, camera.aspect);
+      var fitDistance = 0;
+
+      [complexMinX, complexMaxX].forEach(function (x) {
+        [0, complexMaxHeight].forEach(function (y) {
+          [complexMinZ, complexMaxZ].forEach(function (z) {
+            var relativeCorner = new THREE.Vector3(x - target.x, y - target.y, z - target.z);
+            var towardCamera = relativeCorner.dot(viewDirection);
+            var horizontalExtent = Math.abs(relativeCorner.dot(viewRight));
+            var verticalExtent = Math.abs(relativeCorner.dot(viewUp));
+            fitDistance = Math.max(
+              fitDistance,
+              towardCamera + horizontalExtent / tanHalfHorizontalFov,
+              towardCamera + verticalExtent / tanHalfVerticalFov
+            );
+          });
+        });
+      });
+
+      var cameraDistance = Math.max(100, fitDistance * 1.15);
+      controls.maxDistance = Math.max(controls.maxDistance, cameraDistance * 1.1);
+      var newPos = target.clone().addScaledVector(viewDirection, cameraDistance);
       this.animateCameraTo(newPos, target, 750);
     },
     zoomCamera: function (factor) {
@@ -4216,6 +4386,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       this.animateCameraTo(newPos, controls.target, 320);
     },
     animateCameraTo: function (newPos, newTarget, duration, targetFOV) {
+      cancelCameraAnimation();
       duration = duration || 650;
       var animationId = ++cameraAnimationSerial;
       var startPos = camera.position.clone();
@@ -4228,6 +4399,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
       // 애니메이션 중 OrbitControls와의 프레임별 내부 경합 방지 (부드러운 카메라 전환)
       controls.enabled = false;
+      isCameraAnimating = true;
 
       function step(now) {
         var progress = Math.min(1.0, (now - startTime) / duration);
@@ -4251,12 +4423,23 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             camera.updateProjectionMatrix();
           }
           camera.lookAt(controls.target);
+          isCameraAnimating = false;
           if (!isPOVMode || currentPOVSubMode !== 'outward') {
             controls.enabled = true;
             if (container) container.style.cursor = 'default';
             updateDynamicCameraClamp();
+            var finalPosition = camera.position.clone();
+            var finalTarget = controls.target.clone();
+            var dampingEnabled = controls.enableDamping;
+            controls.enabled = false;
+            controls.enableDamping = false;
+            controls.update();
+            controls.enableDamping = dampingEnabled;
+            controls.target.copy(finalTarget);
+            camera.position.copy(finalPosition);
+            camera.lookAt(controls.target);
+            controls.enabled = true;
           }
-          controls.update();
         }
       }
       cameraAnimationFrames[animationId] = requestAnimationFrame(step);
