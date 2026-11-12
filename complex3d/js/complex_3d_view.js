@@ -1246,13 +1246,148 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     }
 
     var sMin = 999999, sMax = -999999;
+    var vx = -uy, vy = ux;
+    var tMin = 999999, tMax = -999999;
     for (var i = 0; i < n; i++) {
       var s = pts[i].x * ux + pts[i].y * uy;
+      var t = pts[i].x * vx + pts[i].y * vy;
       if (s < sMin) sMin = s;
       if (s > sMax) sMax = s;
+      if (t < tMin) tMin = t;
+      if (t > tMax) tMax = t;
     }
     var L = Math.max(1, sMax - sMin);
-    return { ux: ux, uy: uy, sMin: sMin, sMax: sMax, L: L };
+    return {
+      ux: ux,
+      uy: uy,
+      sMin: sMin,
+      sMax: sMax,
+      L: L,
+      tMin: tMin,
+      tMax: tMax,
+      T: Math.max(1, tMax - tMin)
+    };
+  }
+
+  function chooseLineGridLayout(lineWeights, majorLength, minorLength) {
+    var lineCount = lineWeights.length;
+    var totalWeight = lineWeights.reduce(function (sum, weight) { return sum + weight; }, 0);
+    var bestLayout = null;
+    var targetAspect = 1.45;
+
+    for (var rowCount = 1; rowCount <= lineCount; rowCount++) {
+      var baseCount = Math.floor(lineCount / rowCount);
+      var extraCount = lineCount % rowCount;
+      var rowCounts = [];
+      var lineIndex = 0;
+      var score = (rowCount - 1) * 0.01;
+
+      for (var row = 0; row < rowCount; row++) {
+        var cellsInRow = baseCount + (row < extraCount ? 1 : 0);
+        var rowWeight = 0;
+        for (var cell = 0; cell < cellsInRow; cell++) {
+          rowWeight += lineWeights[lineIndex + cell];
+        }
+
+        var rowDepth = minorLength * rowWeight / totalWeight;
+        for (var cell = 0; cell < cellsInRow; cell++) {
+          var weight = lineWeights[lineIndex + cell];
+          var cellWidth = majorLength * weight / rowWeight;
+          var aspect = Math.max(cellWidth, rowDepth) / Math.max(0.1, Math.min(cellWidth, rowDepth));
+          var aspectError = Math.abs(Math.log(aspect / targetAspect));
+          if (aspect > 2.2) aspectError += (aspect - 2.2) * 0.8;
+          score += weight / totalWeight * aspectError;
+        }
+
+        rowCounts.push(cellsInRow);
+        lineIndex += cellsInRow;
+      }
+
+      if (!bestLayout || score < bestLayout.score) {
+        bestLayout = { rowCounts: rowCounts, score: score };
+      }
+    }
+
+    return bestLayout || { rowCounts: [lineCount], score: 0 };
+  }
+
+  function getPolygonArea2D(pts) {
+    if (!pts || pts.length < 3) return 0;
+    var area = 0;
+    for (var i = 0; i < pts.length; i++) {
+      var next = pts[(i + 1) % pts.length];
+      area += pts[i].x * next.y - next.x * pts[i].y;
+    }
+    return Math.abs(area) * 0.5;
+  }
+
+  function clipPolygonIntoLineCells(polygon, pca, lineWeights, rowCounts) {
+    var totalWeight = lineWeights.reduce(function (sum, weight) { return sum + weight; }, 0);
+    var perpendicularX = -pca.uy;
+    var perpendicularY = pca.ux;
+    var sourceArea = getPolygonArea2D(polygon);
+    var clippedArea = 0;
+    var result = [];
+    var lineIndex = 0;
+    var tStart = pca.tMin;
+
+    function clipBounds(sMin, sMax, tMin, tMax) {
+      var clipped = clipPolygonWithSlab(polygon, pca.ux, pca.uy, sMin, sMax);
+      return clipPolygonWithSlab(clipped, perpendicularX, perpendicularY, tMin, tMax);
+    }
+
+    function findAreaBoundary(axis, min, max, targetArea, sMin, sMax, tMin, tMax) {
+      var low = min;
+      var high = max;
+      for (var iteration = 0; iteration < 28; iteration++) {
+        var middle = (low + high) / 2;
+        var clipped = axis === 's'
+          ? clipBounds(sMin, middle, tMin, tMax)
+          : clipBounds(sMin, sMax, tMin, middle);
+        if (getPolygonArea2D(clipped) < targetArea) low = middle;
+        else high = middle;
+      }
+      return (low + high) / 2;
+    }
+
+    for (var row = 0; row < rowCounts.length; row++) {
+      var cellsInRow = rowCounts[row];
+      var rowWeight = 0;
+      for (var cell = 0; cell < cellsInRow; cell++) {
+        rowWeight += lineWeights[lineIndex + cell];
+      }
+
+      var tEnd = rowCounts.length === 1
+        ? pca.tMax
+        : findAreaBoundary('t', tStart, pca.tMax, sourceArea * rowWeight / totalWeight,
+          pca.sMin, pca.sMax, tStart, pca.tMax);
+      var rowArea = getPolygonArea2D(clipBounds(pca.sMin, pca.sMax, tStart, tEnd));
+      var sStart = pca.sMin;
+      for (var cell = 0; cell < cellsInRow; cell++) {
+        var cellWeight = lineWeights[lineIndex];
+        var sEnd = rowCounts.length === 1
+          ? sStart + pca.L * cellWeight / totalWeight
+          : findAreaBoundary('s', sStart, pca.sMax, rowArea * cellWeight / rowWeight,
+            sStart, pca.sMax, tStart, tEnd);
+        var clipped = clipBounds(sStart, sEnd, tStart, tEnd);
+        var cellArea = getPolygonArea2D(clipped);
+        if (!clipped || clipped.length < 3 || cellArea <= 0.01) return null;
+
+        clippedArea += cellArea;
+        result.push(clipped);
+        if (rowCounts.length > 1) {
+          var expectedArea = sourceArea * cellWeight / totalWeight;
+          if (Math.abs(cellArea - expectedArea) / expectedArea > 0.2) return null;
+        }
+        sStart = sEnd;
+        lineIndex++;
+      }
+      tStart = tEnd;
+    }
+
+    if (result.length !== lineWeights.length || sourceArea <= 0) return null;
+    if (rowCounts.length > 1 && Math.abs(clippedArea - sourceArea) / sourceArea > 0.03) return null;
+    return result;
   }
 
   // Sutherland-Hodgman 알고리즘 기반 2D 슬래브 클리핑 (주축 s방향 [sMin, sMax] 범위 내 폴리곤 슬라이스)
@@ -1509,7 +1644,6 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     // ★ [핵심 혁신] 라인별 층수 단차 및 호수별(Unit) 3D 분할 압출 시스템 ★
     var lines = Array.isArray(b.lines) ? b.lines.filter(function (l) { return l && l.line; }) : [];
-    var cumWeights = [0.0];
     var pca = null;
     var basePts = baseShape.transformedPts || [];
 
@@ -1526,21 +1660,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       if (bldgHeight > complexMaxHeight) complexMaxHeight = bldgHeight;
 
       // 라인별 면적 가중치 계산 (supply > exclusive > 1.0)
-      var totalW = 0;
       var lineWeights = [];
       lines.forEach(function (l) {
         var w = l.supply || l.exclusive || 1.0;
         lineWeights.push(w);
-        totalW += w;
       });
-      if (totalW > 0) {
-        var curCum = 0;
-        for (var li = 0; li < lines.length; li++) {
-          curCum += lineWeights[li] / totalW;
-          cumWeights.push(curCum);
-        }
-        cumWeights[cumWeights.length - 1] = 1.0;
-      }
       pca = computePolygonPCA(basePts);
     }
 
@@ -1552,14 +1676,15 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var lineEdgesCache = [];
 
     if (lines.length > 1 && basePts.length >= 3 && pca) {
-      for (var li = 0; li < lines.length; li++) {
-        var tMin = cumWeights[li];
-        var tMax = cumWeights[li + 1];
-        var sA = pca.sMin + tMin * pca.L;
-        var sB = pca.sMin + tMax * pca.L;
-        var clipped = clipPolygonWithSlab(basePts, pca.ux, pca.uy, sA, sB);
-        if (clipped && clipped.length >= 3) {
-          var sShape = createShapeFromPts(clipped);
+      var lineLayout = chooseLineGridLayout(lineWeights, pca.L, pca.T);
+      var linePolygonCache = clipPolygonIntoLineCells(basePts, pca, lineWeights, lineLayout.rowCounts);
+      if (!linePolygonCache && lineLayout.rowCounts.length > 1) {
+        linePolygonCache = clipPolygonIntoLineCells(basePts, pca, lineWeights, [lines.length]);
+      }
+
+      if (linePolygonCache) {
+        for (var li = 0; li < linePolygonCache.length; li++) {
+          var sShape = createShapeFromPts(linePolygonCache[li]);
           var sGeom = new THREE.ExtrudeGeometry(sShape, {
             depth: sliceHeight,
             bevelEnabled: true,
@@ -1571,7 +1696,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           sGeom.rotateX(-Math.PI / 2);
           lineGeomCache.push(sGeom);
           lineEdgesCache.push(new THREE.EdgesGeometry(sGeom, 26));
-        } else {
+        }
+      } else {
+        for (var li = 0; li < lines.length; li++) {
           lineGeomCache.push(null);
           lineEdgesCache.push(null);
         }
