@@ -124,15 +124,77 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   var skyTexture = new THREE.CanvasTexture(skyCanvas);
   skyTexture.encoding = THREE.sRGBEncoding;
 
-  // [대책 4] 지평선 안개(Fog) 동기화 시스템:
-  // - 0m ~ 880m(단지 및 500m 생활권): 100% 맑고 선명한 시야 유지 (안개 0%)
-  // - 880m ~ 1,480m: 바닥 원판 외곽(1,212m)이 배경 지평선 하늘색(#d6e8f6) 속으로 부드럽게 디졸브되어 칼로 자른 듯한 경계선 및 구멍 완벽 제거
+  // 1km 생활권의 건물과 이름표는 안개 없이 보이고, 지반 경계 이후부터 안개가 완만하게 적용되도록 설정
   var horizonFogColor = new THREE.Color(0xd6e8f6);
-  scene.fog = new THREE.Fog(0xd6e8f6, 880, 1480);
+  scene.fog = new THREE.Fog(0xd6e8f6, 1000, 2600);
+  var daySkyTexture = null;
+  var twilightOverlay;
+  var nightStarField = [];
+  for (var nightStarIndex = 0; nightStarIndex < 360; nightStarIndex++) {
+    var starColorVariation = Math.random();
+    nightStarField.push({
+      x: Math.random(),
+      y: Math.random() * 0.72,
+      radius: 0.5 + Math.random() * 0.5,
+      alpha: 0.72 + Math.random() * 0.28,
+      color: starColorVariation > 0.88 ? '255, 240, 218' : (starColorVariation < 0.2 ? '210, 232, 255' : '248, 251, 255'),
+      sparkle: Math.random() < 0.03,
+      sparkleLength: 2.4 + Math.random() * 1.2
+    });
+  }
 
   function renderShinkaiSky(hour) {
     var w = skyCanvas.width, h = skyCanvas.height;
     var isTwilight = (hour >= 16.75 && hour <= 18.5) || (hour >= 6.5 && hour <= 7.5);
+    var isNightSky = typeof isNightMode === 'boolean' ? isNightMode : (hour < 6.5 || hour >= 18.5);
+
+    if (isNightSky) {
+      if (twilightOverlay) twilightOverlay.visible = false;
+      var nightGrad = skyCtx.createLinearGradient(0, 0, 0, h);
+      nightGrad.addColorStop(0.0, '#030817');
+      nightGrad.addColorStop(0.38, '#0b1730');
+      nightGrad.addColorStop(0.72, '#172747');
+      nightGrad.addColorStop(1.0, '#263653');
+      skyCtx.fillStyle = nightGrad;
+      skyCtx.fillRect(0, 0, w, h);
+
+      for (var starIndex = 0; starIndex < nightStarField.length; starIndex++) {
+        var star = nightStarField[starIndex];
+        var starX = Math.round(star.x * w);
+        var starY = Math.round(star.y * h);
+        skyCtx.fillStyle = 'rgba(' + star.color + ', ' + star.alpha.toFixed(2) + ')';
+
+        if (star.sparkle) {
+          var sparkleLength = star.sparkleLength;
+          var sparkleWidth = 0.45;
+          skyCtx.beginPath();
+          skyCtx.moveTo(starX, starY - sparkleLength);
+          skyCtx.lineTo(starX + sparkleWidth, starY - sparkleWidth);
+          skyCtx.lineTo(starX + sparkleLength, starY);
+          skyCtx.lineTo(starX + sparkleWidth, starY + sparkleWidth);
+          skyCtx.lineTo(starX, starY + sparkleLength);
+          skyCtx.lineTo(starX - sparkleWidth, starY + sparkleWidth);
+          skyCtx.lineTo(starX - sparkleLength, starY);
+          skyCtx.lineTo(starX - sparkleWidth, starY - sparkleWidth);
+          skyCtx.closePath();
+          skyCtx.fill();
+        } else {
+          skyCtx.beginPath();
+          skyCtx.arc(starX, starY, star.radius, 0, Math.PI * 2);
+          skyCtx.fill();
+        }
+      }
+
+      skyTexture.needsUpdate = true;
+      scene.fog.color.setHex(0x172747);
+      scene.background = new THREE.Color(0x030817);
+      if (skyDome && skyMat) {
+        skyMat.map = skyTexture;
+        skyMat.needsUpdate = true;
+        skyDome.visible = true;
+      }
+      return;
+    }
 
     // 1. 대기 그라데이션 (신카이 마코토 특유의 깊고 채도 높은 서머 블루)
     var skyGrad = skyCtx.createLinearGradient(0, 0, 0, h);
@@ -281,6 +343,17 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     skyCtx.fill();
 
     skyTexture.needsUpdate = true;
+    scene.fog.color.setHex(isTwilight ? 0xf88c52 : 0xd6e8f6);
+    if (daySkyTexture) {
+      scene.background = daySkyTexture;
+      if (skyDome) skyDome.visible = false;
+    } else if (skyDome) {
+      skyDome.visible = true;
+    }
+    if (twilightOverlay) {
+      twilightOverlay.visible = !!daySkyTexture && isTwilight;
+      twilightOverlay.material.opacity = twilightOverlay.visible ? 0.31 : 0;
+    }
   }
 
   renderShinkaiSky(14.0);
@@ -295,6 +368,19 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   });
   var skyDome = new THREE.Mesh(skyGeo, skyMat);
   scene.add(skyDome);
+  twilightOverlay = new THREE.Mesh(
+    new THREE.SphereGeometry(5480, 48, 32),
+    new THREE.MeshBasicMaterial({
+      color: 0xf97316,
+      transparent: true,
+      opacity: 0,
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false
+    })
+  );
+  twilightOverlay.visible = false;
+  scene.add(twilightOverlay);
 
   // 사용자가 지정한 '햇살 비추는 도시의 하늘' 4096x2048 고해상도 파노라마 텍스처 로드 (sunlit_city_sky_4096.jpg)
   // 카메라 줌에 상관없이 배경 이미지가 항상 동일한 원근/스케일로 유지되도록 scene.background(Equirectangular) 적용
@@ -305,12 +391,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     loadedTex.minFilter = THREE.LinearFilter;
     loadedTex.magFilter = THREE.LinearFilter;
     loadedTex.generateMipmaps = true;
-    scene.background = loadedTex;
-    if (skyDome) {
-      skyMat.map = loadedTex;
-      skyMat.needsUpdate = true;
-      skyDome.visible = false;
-    }
+    daySkyTexture = loadedTex;
+    renderShinkaiSky(currentHour);
   }, undefined, function (err) {
     console.warn("[3D View] Sunlit city sky texture fallback:", err);
   });
@@ -339,8 +421,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   scene.add(sunLight);
   scene.add(sunLight.target);
 
-  var currentHour = 14.0;
+  var now = new Date();
+  var currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
   var currentSeason = 'equinox';
+  var isNightMode = false;
+  var celestialBody = 'sun';
 
   // --- 3-1. 3D 태양 아이콘 오브젝트 (눈부심 없는 정갈한 ☀️ 그래픽 태양 아이콘 - 2배 크기 & 고해상도) ---
   function createSunIconTexture() {
@@ -408,6 +493,49 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   scene.add(sunSprite);
 
   var sunUnitDir = new THREE.Vector3(0, 1, 0);
+  var moonUnitDir = new THREE.Vector3(0, 1, 0);
+
+  function createMoonIconTexture() {
+    var canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    var ctx = canvas.getContext('2d');
+    var cx = 256, cy = 256;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 132, 0, Math.PI * 2);
+    ctx.clip();
+    var moonGrad = ctx.createRadialGradient(cx - 36, cy - 40, 8, cx, cy, 142);
+    moonGrad.addColorStop(0, '#ffffff');
+    moonGrad.addColorStop(0.7, '#e0e7ff');
+    moonGrad.addColorStop(1, '#a5b4fc');
+    ctx.fillStyle = moonGrad;
+    ctx.fillRect(cx - 140, cy - 140, 280, 280);
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.fillStyle = 'rgba(30, 41, 59, 0.78)';
+    ctx.beginPath();
+    ctx.arc(cx + 68, cy - 12, 112, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 132, 0, Math.PI * 2);
+    ctx.stroke();
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  var moonSpriteMat = new THREE.SpriteMaterial({
+    map: createMoonIconTexture(),
+    color: 0xffffff,
+    transparent: true,
+    depthWrite: false
+  });
+  var moonSprite = new THREE.Sprite(moonSpriteMat);
+  moonSprite.visible = false;
+  moonSprite.scale.set(330, 330, 1);
+  moonSprite.renderOrder = 9995;
+  scene.add(moonSprite);
 
   function updateSun() {
     var declMap = { winter: -23.44, equinox: 0.0, summer: 23.44 };
@@ -422,26 +550,38 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
     if (hourAngle > 0) az = 2 * Math.PI - az;
 
-    // 직사광 위치 (반경 950m): 남(+Z), 북(-Z), 동(+X), 서(-X)
-    var sunDist = 950;
-    var lx = sunDist * Math.cos(alt) * Math.sin(az);
-    var ly = Math.max(30, sunDist * Math.sin(alt));
-    var lz = -sunDist * Math.cos(alt) * Math.cos(az);
-
-    sunLight.position.set(lx, ly, lz);
-    sunLight.target.position.set(0, 0, 0);
-
     // 태양 단위 방향 벡터
     sunUnitDir.set(
       Math.cos(alt) * Math.sin(az),
       Math.sin(alt),
       -Math.cos(alt) * Math.cos(az)
     ).normalize();
+    isNightMode = alt <= 0.0;
+    celestialBody = isNightMode ? 'moon' : 'sun';
+    moonUnitDir.copy(sunUnitDir).negate();
 
-    if (alt <= 0.0) {
+    var activeCelestialDir = isNightMode ? moonUnitDir : sunUnitDir;
+    var sunDist = 950;
+    sunLight.position.set(
+      activeCelestialDir.x * sunDist,
+      Math.max(30, activeCelestialDir.y * sunDist),
+      activeCelestialDir.z * sunDist
+    );
+    sunLight.target.position.set(0, 0, 0);
+
+    if (isNightMode) {
       sunSprite.visible = false;
+      moonSprite.visible = true;
+      sunLight.castShadow = false;
+      sunLight.intensity = 0.08;
+      sunLight.color.setHex(0x9caee8);
+      hemiLight.intensity = 0.28;
+      hemiLight.color.setHex(0x52648f);
+      hemiLight.groundColor.setHex(0x28334d);
     } else {
+      moonSprite.visible = false;
       sunSprite.visible = true;
+      sunLight.castShadow = true;
       if (alt <= 0.14) {
         sunSpriteMat.color.setHex(0xf97316); // 노을 오렌지
         sunSprite.scale.set(290, 290, 1); // 2배 크기 (기존 145 -> 290)
@@ -472,8 +612,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     renderShinkaiSky(currentHour);
 
     if (typeof window.onComplex3dSunUpdate === 'function') {
-      var azDeg = Math.round((az * 180 / Math.PI) % 360);
-      var altDeg = Math.round(alt * 180 / Math.PI);
+      var bodyDirection = isNightMode ? moonUnitDir : sunUnitDir;
+      var azDeg = Math.round((Math.atan2(bodyDirection.x, -bodyDirection.z) * 180 / Math.PI + 360) % 360);
+      var altDeg = Math.round(Math.asin(Math.max(-1, Math.min(1, bodyDirection.y))) * 180 / Math.PI);
       var dirText = "정남";
       if (azDeg >= 337.5 || azDeg < 22.5) dirText = "정북";
       else if (azDeg >= 22.5 && azDeg < 67.5) dirText = "북동";
@@ -488,9 +629,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         hour: currentHour,
         season: currentSeason,
         azimuthDeg: azDeg,
-        altitudeDeg: Math.max(0, altDeg),
+        altitudeDeg: altDeg,
         dirText: dirText,
-        isDaylight: alt > 0
+        isDaylight: !isNightMode,
+        isNightMode: isNightMode,
+        celestialBody: celestialBody
       });
     }
 
@@ -518,7 +661,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     // 3D 프레임 모델링 완전 제거됨 (2D 프레임 오버레이만 사용)
   }
 
-  function createSunHourBadgeTexture(dh, isActive) {
+  function createSunHourBadgeTexture(dh, isActive, isMoon) {
     var canvas = document.createElement('canvas');
     // Retina 2x 고해상도 (512x192)로 선명하게 렌더링
     canvas.width = 512;
@@ -526,53 +669,67 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var ctx = canvas.getContext('2d');
     ctx.scale(2, 2); // 내부 256x96 좌표계를 2배 스케일로 정밀 렌더링
 
-    // 1. [직방/호갱노노 3D 벤치마크] 황금빛 ☀️ 그래픽 태양 아이콘 (중심 x: 42, y: 48)
+    // 1. 천체 아이콘 (중심 x: 42, y: 48)
     var cx = 42, cy = 48;
     if (isActive) {
-      // 선택된 현재 시각: 강렬하고 화사한 황금빛 태양 아우라
       var aura = ctx.createRadialGradient(cx, cy, 8, cx, cy, 38);
-      aura.addColorStop(0.0, 'rgba(254, 240, 138, 0.95)');
-      aura.addColorStop(0.45, 'rgba(245, 158, 11, 0.75)');
-      aura.addColorStop(1.0, 'rgba(245, 158, 11, 0.0)');
+      aura.addColorStop(0.0, isMoon ? 'rgba(224, 231, 255, 0.95)' : 'rgba(254, 240, 138, 0.95)');
+      aura.addColorStop(0.45, isMoon ? 'rgba(129, 140, 248, 0.68)' : 'rgba(245, 158, 11, 0.75)');
+      aura.addColorStop(1.0, isMoon ? 'rgba(129, 140, 248, 0.0)' : 'rgba(245, 158, 11, 0.0)');
       ctx.fillStyle = aura;
       ctx.beginPath();
       ctx.arc(cx, cy, 38, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // 8개 방사형 뾰족한 태양 햇살 (Spiky Sun Corona Rays)
-    var rayLen = isActive ? 24 : 20;
-    var rayBase = isActive ? 14 : 12;
-    ctx.fillStyle = isActive ? '#fef08a' : '#f59e0b';
-    for (var i = 0; i < 8; i++) {
-      var angle = i * Math.PI / 4;
-      var tipX = cx + Math.cos(angle) * rayLen;
-      var tipY = cy + Math.sin(angle) * rayLen;
-      var p1Angle = angle + 0.22;
-      var p2Angle = angle - 0.22;
-      var p1X = cx + Math.cos(p1Angle) * rayBase;
-      var p1Y = cy + Math.sin(p1Angle) * rayBase;
-      var p2X = cx + Math.cos(p2Angle) * rayBase;
-      var p2Y = cy + Math.sin(p2Angle) * rayBase;
-
+    if (isMoon) {
+      ctx.save();
       ctx.beginPath();
-      ctx.moveTo(tipX, tipY);
-      ctx.lineTo(p1X, p1Y);
-      ctx.lineTo(p2X, p2Y);
-      ctx.closePath();
+      ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.fillStyle = isActive ? '#ffffff' : '#c7d2fe';
+      ctx.fillRect(cx - 16, cy - 16, 32, 32);
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.76)';
+      ctx.beginPath();
+      ctx.arc(cx + 8, cy - 2, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle = '#e0e7ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      var rayLen = isActive ? 24 : 20;
+      var rayBase = isActive ? 14 : 12;
+      ctx.fillStyle = isActive ? '#fef08a' : '#f59e0b';
+      for (var i = 0; i < 8; i++) {
+        var angle = i * Math.PI / 4;
+        var tipX = cx + Math.cos(angle) * rayLen;
+        var tipY = cy + Math.sin(angle) * rayLen;
+        var p1Angle = angle + 0.22;
+        var p2Angle = angle - 0.22;
+        var p1X = cx + Math.cos(p1Angle) * rayBase;
+        var p1Y = cy + Math.sin(p1Angle) * rayBase;
+        var p2X = cx + Math.cos(p2Angle) * rayBase;
+        var p2Y = cy + Math.sin(p2Angle) * rayBase;
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(p1X, p1Y);
+        ctx.lineTo(p2X, p2Y);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.fillStyle = isActive ? '#ffffff' : '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(cx, cy, isActive ? 12 : 11, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // 태양 중심 원형 디스크
-    ctx.fillStyle = isActive ? '#ffffff' : '#fbbf24';
-    ctx.beginPath();
-    ctx.arc(cx, cy, isActive ? 12 : 11, 0, Math.PI * 2);
-    ctx.fill();
-
     // 2. 시간 텍스트 라벨 (예: 'AM 11:00', 'PM 12:00')
     var label = dh.label;
-    var prefix = dh.h < 12.0 ? 'AM ' : 'PM ';
-    var fullText = prefix + label;
+    var fullText = label;
 
     ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif';
     ctx.textAlign = 'left';
@@ -616,21 +773,25 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var anchor = (isPOVMode && balconyEyePos) ? balconyEyePos : (camera ? camera.position : new THREE.Vector3());
     var sunDist = 580; // 3D 하늘 궤적 시야 반경
 
-    // 1. 일출(alt > 0)부터 일몰(alt > 0)까지 실제 천문학적 고도(alt) 및 방위각(az)으로 3D 궤적 곡선 생성
+    var trajectoryIsMoon = isNightMode;
+    var trajectoryStart = trajectoryIsMoon ? 17 : 5;
+    var trajectoryEnd = trajectoryIsMoon ? 31 : 19;
     var curvePoints = [];
-    for (var h = 5.5; h <= 18.5; h += 0.20) {
-      var hourAngle = (h - 12.0) * 15 * Math.PI / 180;
+    for (var h = trajectoryStart; h <= trajectoryEnd; h += 0.20) {
+      var normalizedHour = h % 24;
+      var hourAngle = (normalizedHour - 12.0) * 15 * Math.PI / 180;
       var sinAlt = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(hourAngle);
       var alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
-      if (alt > 0.01) {
+      if (trajectoryIsMoon ? alt < -0.01 : alt > 0.01) {
         var cosAz = (Math.sin(decl) - Math.sin(lat) * sinAlt) / (Math.cos(lat) * Math.cos(alt));
         var az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
         if (hourAngle > 0) az = 2 * Math.PI - az;
 
-        // 실제 자연 태양 궤적 (아침 동쪽 저고도 -> 정남 정점 최고 고도 -> 저녁 서쪽 저고도로 자연스럽게 상승/하강하는 실제 천구 궤적)
-        var ptX = anchor.x + sunDist * Math.cos(alt) * Math.sin(az);
-        var ptY = anchor.y + sunDist * Math.sin(alt);
-        var ptZ = anchor.z - sunDist * Math.cos(alt) * Math.cos(az);
+        var bodyAlt = trajectoryIsMoon ? -alt : alt;
+        var bodyAz = trajectoryIsMoon ? (az + Math.PI) % (Math.PI * 2) : az;
+        var ptX = anchor.x + sunDist * Math.cos(bodyAlt) * Math.sin(bodyAz);
+        var ptY = anchor.y + sunDist * Math.sin(bodyAlt);
+        var ptZ = anchor.z - sunDist * Math.cos(bodyAlt) * Math.cos(bodyAz);
         curvePoints.push(new THREE.Vector3(ptX, ptY, ptZ));
       }
     }
@@ -639,7 +800,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var curve = new THREE.CatmullRomCurve3(curvePoints);
       var tubeGeo = new THREE.TubeGeometry(curve, 72, 2.6, 8, false);
       var tubeMat = new THREE.MeshBasicMaterial({
-        color: 0xf59e0b,
+        color: trajectoryIsMoon ? 0xa5b4fc : 0xf59e0b,
         transparent: true,
         opacity: 0.85,
         depthTest: true,
@@ -650,24 +811,30 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       sunTrajectoryGroup.add(tubeMesh);
     }
 
-    // 2. 주요 시간대별(09시 ~ 17시) 3D 시간 배지 노드 배치
-    var DISPLAY_HOURS = [
+    var DISPLAY_HOURS = trajectoryIsMoon ? [
+      { h: 18.0, label: '18:00' },
+      { h: 20.0, label: '20:00' },
+      { h: 22.0, label: '22:00' },
+      { h: 0.0, label: '00:00' },
+      { h: 2.0, label: '02:00' },
+      { h: 4.0, label: '04:00' },
+      { h: 6.0, label: '06:00' }
+    ] : [
+      { h: 6.0, label: '06:00' },
+      { h: 8.0, label: '08:00' },
       { h: 9.0, label: '09:00' },
-      { h: 10.0, label: '10:00' },
-      { h: 11.0, label: '11:00' },
       { h: 12.0, label: '12:00' },
-      { h: 13.0, label: '13:00' },
       { h: 14.0, label: '14:00' },
-      { h: 15.0, label: '15:00' },
       { h: 16.0, label: '16:00' },
-      { h: 17.0, label: '17:00' }
+      { h: 18.0, label: '18:00' }
     ];
 
     // 현재 시각과 가장 가까운 시간대 배지 감지
     var minDiff = 999;
     var closestHour = null;
     DISPLAY_HOURS.forEach(function (dh) {
-      var diff = Math.abs(currentHour - dh.h);
+      var rawDiff = Math.abs(currentHour - dh.h);
+      var diff = Math.min(rawDiff, 24 - rawDiff);
       if (diff < minDiff) {
         minDiff = diff;
         closestHour = dh.h;
@@ -681,19 +848,21 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var hourAngle = (dh.h - 12.0) * 15 * Math.PI / 180;
       var sinAlt = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(hourAngle);
       var alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
-      if (alt <= 0.01) return;
+      if (trajectoryIsMoon ? alt >= -0.01 : alt <= 0.01) return;
 
       var cosAz = (Math.sin(decl) - Math.sin(lat) * sinAlt) / (Math.cos(lat) * Math.cos(alt));
       var az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
       if (hourAngle > 0) az = 2 * Math.PI - az;
 
-      var nx = anchor.x + nodeDist * Math.cos(alt) * Math.sin(az);
-      var ny = anchor.y + nodeDist * Math.sin(alt);
-      var nz = anchor.z - nodeDist * Math.cos(alt) * Math.cos(az);
+      var bodyAlt = trajectoryIsMoon ? -alt : alt;
+      var bodyAz = trajectoryIsMoon ? (az + Math.PI) % (Math.PI * 2) : az;
+      var nx = anchor.x + nodeDist * Math.cos(bodyAlt) * Math.sin(bodyAz);
+      var ny = anchor.y + nodeDist * Math.sin(bodyAlt);
+      var nz = anchor.z - nodeDist * Math.cos(bodyAlt) * Math.cos(bodyAz);
 
       var isActive = (dh.h === closestHour && minDiff <= 0.75);
       var spMat = new THREE.SpriteMaterial({
-        map: createSunHourBadgeTexture(dh, isActive),
+        map: createSunHourBadgeTexture(dh, isActive, trajectoryIsMoon),
         depthTest: false,
         depthWrite: false
       });
@@ -1383,8 +1552,6 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
           var lineNum = parseInt(lineObj.line, 10);
           var hoName = f + ('0' + lineNum).slice(-2) + '호';
-          var pyeong = Math.round((lineObj.supply || lineObj.exclusive || 100) / 3.30578);
-
           var mat = new THREE.MeshStandardMaterial({
             color: baseColor.clone(),
             roughness: 0.42,
@@ -1406,14 +1573,13 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             hoName: hoName,
             supply: lineObj.supply,
             exclusive: lineObj.exclusive,
-            pyeong: pyeong,
             totalFloors: totalFloors,
             band: band,
             bandLabel: bandLabel,
             baseColor: baseColor,
             isFloor: true,
             isUnit: true,
-            lineDesc: hoName + (pyeong ? ' (' + pyeong + '평)' : '')
+            lineDesc: hoName
           };
 
           scene.add(unitMesh);
@@ -2826,7 +2992,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         if (tooltip && ttDong && ttFloor) {
           var u = hit.userData;
           ttDong.innerText = u.dongName + ' (' + u.totalFloors + '층 중)';
-          var lineSuffix = u.hoName ? ' · ' + u.hoName + (u.pyeong ? ' (' + u.pyeong + '평형)' : '') : (u.lineDesc ? ' · ' + u.lineDesc : '');
+          var lineSuffix = u.hoName ? ' · ' + u.hoName : (u.lineDesc ? ' · ' + u.lineDesc : '');
           ttFloor.innerText = u.floor + '층 (' + u.bandLabel + ')' + lineSuffix;
           tooltip.style.display = 'block';
         }
@@ -2885,17 +3051,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   function getUnitInfo(unitMesh) {
     if (!unitMesh || !unitMesh.userData) {
-      return { key: 'unit', label: '세대', shortLabel: '세대', hoName: '세대', lineNum: 1, pyeong: null, mesh: null };
+      return { key: 'unit', label: '세대', shortLabel: '세대', hoName: '세대', lineNum: 1, mesh: null };
     }
     var u = unitMesh.userData;
-    var label = u.hoName ? (u.hoName + (u.pyeong ? ' (' + u.pyeong + '평)' : '')) : (u.floor + '층');
+    var label = u.hoName || (u.floor + '층');
     return {
       key: u.hoName || (u.floor + '01호'),
       label: label,
       shortLabel: u.hoName || (u.floor + '01호'),
       hoName: u.hoName,
       lineNum: u.lineNum,
-      pyeong: u.pyeong,
       mesh: unitMesh
     };
   }
@@ -3323,7 +3488,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var intersects = clickRaycaster.intersectObjects(candidateFloors);
     if (intersects.length > 0) {
       var hit = intersects[0].object;
-      viewFloorPOV(hit, 'focus');
+      viewFloorPOV(hit, 'outward');
     }
   }
   // 창밖 조망 시 마우스 휠로 사용자 맞춤형 화각(FOV 55도~105도) 미세조정 지원
@@ -3462,6 +3627,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     if (sunSprite && sunSprite.visible) {
       sunSprite.position.copy(camera.position).addScaledVector(sunUnitDir, 3200);
     }
+    if (moonSprite && moonSprite.visible) {
+      moonSprite.position.copy(camera.position).addScaledVector(moonUnitDir, 3200);
+    }
 
     // 나침반 및 화면 4면 실시간 16방위 방향지시표 연동 콜백
     if (typeof window.onComplex3dCameraRotate === 'function') {
@@ -3475,18 +3643,19 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     // 화면 기준 태양 위치 & 오프스크린 지시표(화살표+태양 아이콘) 연동 콜백
     if (typeof window.onComplex3dSunScreenUpdate === 'function') {
-      var sunWorld = camera.position.clone().addScaledVector(sunUnitDir, 1000);
+      var bodyUnitDir = isNightMode ? moonUnitDir : sunUnitDir;
+      var sunWorld = camera.position.clone().addScaledVector(bodyUnitDir, 1000);
       var proj = sunWorld.clone().project(camera);
       var camFwd = new THREE.Vector3();
       camera.getWorldDirection(camFwd);
-      var isBehind = sunUnitDir.dot(camFwd) < 0;
+      var isBehind = bodyUnitDir.dot(camFwd) < 0;
 
       window.onComplex3dSunScreenUpdate({
         ndcX: isBehind ? -proj.x : proj.x,
         ndcY: isBehind ? -proj.y : proj.y,
         isBehind: isBehind,
         onScreen: !isBehind && proj.x >= -0.88 && proj.x <= 0.88 && proj.y >= -0.82 && proj.y <= 0.82,
-        sunVisible: sunSprite ? sunSprite.visible : false
+        celestialBodyVisible: isNightMode ? moonSprite.visible : sunSprite.visible
       });
     }
 
@@ -3512,7 +3681,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     controls: controls,
     renderer: renderer,
     setTime: function (hour) {
-      currentHour = parseFloat(hour);
+      currentHour = ((parseFloat(hour) % 24) + 24) % 24;
       updateSun();
     },
     setSeason: function (season) {
@@ -3552,8 +3721,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var dist = Math.max(350, Math.min(1300, currentDist));
 
       // 태양의 수평 단위 벡터 (XZ 평면)
-      var horiz = new THREE.Vector2(sunUnitDir.x, sunUnitDir.z).normalize();
-      var altRad = Math.asin(Math.max(0.1, sunUnitDir.y));
+      var bodyUnitDir = isNightMode ? moonUnitDir : sunUnitDir;
+      var horiz = new THREE.Vector2(bodyUnitDir.x, bodyUnitDir.z).normalize();
+      var altRad = Math.asin(Math.max(0.1, bodyUnitDir.y));
 
       // 카메라는 태양의 반대편에 서서 낮은 시점에서 하늘을 올려다봄
       var camH = dist * 0.18;
@@ -3681,11 +3851,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var cosAz = (Math.sin(decl) - Math.sin(lat) * sinAlt) / (Math.cos(lat) * Math.cos(alt));
       var az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
       if (hourAngle > 0) az = 2 * Math.PI - az;
+      var nightMode = alt <= 0;
+      var bodyAz = nightMode ? (az + Math.PI) % (Math.PI * 2) : az;
+      var bodyAlt = nightMode ? -alt : alt;
       return {
-        azimuthDeg: Math.round((az * 180 / Math.PI) % 360),
-        altitudeDeg: Math.max(0, Math.round(alt * 180 / Math.PI)),
+        azimuthDeg: Math.round((bodyAz * 180 / Math.PI) % 360),
+        altitudeDeg: Math.round(bodyAlt * 180 / Math.PI),
         hour: currentHour,
-        season: currentSeason
+        season: currentSeason,
+        isNightMode: nightMode,
+        celestialBody: nightMode ? 'moon' : 'sun'
       };
     },
     // ★ [기능 3] 층별 입체 단면 분해 뷰 (Exploded View) 토글 및 상태 확인 메서드 ★
