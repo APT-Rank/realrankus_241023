@@ -857,6 +857,9 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data, source_label='kor
         geom = row.geometry
         if geom is None or geom.is_empty or geom.area < 80.0:
             continue
+        nearby_building_text = ' '.join(str(row.get(field) or '') for field in ('A9', 'A24', 'A25'))
+        if '아파트' in nearby_building_text or '공동주택' in nearby_building_text:
+            continue
         gc = geom.centroid
         dist = math.hypot(gc.x - cx, gc.y - cy)
         if dist <= 220.0:
@@ -1041,6 +1044,8 @@ def main():
     parser.add_argument('--limit', type=int, default=None, help="Limit number of complexes per Sido for testing")
     parser.add_argument('--overwrite', action='store_true', help="Overwrite existing 3D json files")
     parser.add_argument('--upload', action='store_true', help="Automatically upload to Cloudflare R2 after building")
+    parser.add_argument('--include-apartment-neighbors', action='store_true', help="Add apartment complex references within 500m of each complex footprint")
+    parser.add_argument('--apartment-neighbor-distance', type=float, default=500.0, help="Maximum footprint-to-footprint apartment distance in meters")
     parser.add_argument('--failed-out', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vworld_fallback_targets.json'), help="Output JSON manifest for SHP-failed complexes needing VWorld fallback")
     args = parser.parse_args()
     
@@ -1080,6 +1085,17 @@ def main():
             json.dump(failed_targets, fp, ensure_ascii=False)
         print(f"Saved {len(failed_targets)} fallback targets to: {args.failed_out}")
     print(f"==========================================")
+
+    if args.include_apartment_neighbors:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        if script_dir not in sys.path:
+            sys.path.insert(0, script_dir)
+        from enrich_apartment_neighbors import enrich_apartment_neighbors
+        enrich_apartment_neighbors(
+            OUTPUT_DIR,
+            os.path.join(REPO_ROOT, 'data', '3d'),
+            max_distance_m=args.apartment_neighbor_distance,
+        )
     
     if args.upload:
         print("\n[*] Triggering Cloudflare R2 Synchronization...")

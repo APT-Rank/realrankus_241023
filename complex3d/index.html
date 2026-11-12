@@ -268,7 +268,7 @@
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 13px;
       color: #334155;
       font-weight: 600;
       user-select: none;
@@ -289,7 +289,7 @@
       flex-shrink: 0;
     }
     .infra-tag {
-      font-size: 11px;
+      font-size: 13px;
       display: inline-flex;
       align-items: center;
       gap: 3px;
@@ -299,6 +299,7 @@
     }
     .infra-tag small {
       display: none;
+      font-size: 12px !important;
     }
 
     /* Tooltip */
@@ -336,7 +337,7 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(226, 232, 240, 0.9);
-      border-radius: 9999px;
+      border-radius: 5px;
       box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
       animation: povBannerSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       flex-wrap: nowrap;
@@ -368,6 +369,36 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
+    .pov-selection-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .pov-selection-field {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      white-space: nowrap;
+    }
+    .pov-selection-field select {
+      max-width: 132px;
+      height: 28px;
+      padding: 2px 20px 2px 7px;
+      color: #1e293b;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pov-controls-row {
+      display: contents;
+    }
     .pov-sub {
       font-size: 11.5px;
       font-weight: 500;
@@ -377,27 +408,28 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
-    .pov-exit-btn {
-      padding: 5px 13px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #475569;
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-radius: 20px;
-      cursor: pointer;
+    .pov-back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      transition: all 0.18s ease;
-      white-space: nowrap;
-      flex-shrink: 0;
+      justify-content: center;
+      flex: 0 0 32px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      color: #E43B46;
+      background: rgba(228, 59, 70, 0.1);
+      border: 1px solid rgba(228, 59, 70, 0.22);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.18s ease, color 0.18s ease;
     }
-    .pov-exit-btn:hover {
-      background: #E43B46;
-      border-color: #E43B46;
+    .pov-back-btn:hover {
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(228, 59, 70, 0.3);
+      background: #E43B46;
+    }
+    .pov-banner-content {
+      display: contents;
     }
     .pov-mode-tabs {
       display: inline-flex;
@@ -761,9 +793,9 @@
         text-overflow: ellipsis;
       }
 
-      /* 3) 나침반과 컨트롤러: 우상단, 타이틀바 바로 아래 배치, 현재의 2/3 사이즈 (72px) */
+      /* 3) 나침반과 컨트롤러: 우상단 상단 배치, 현재의 2/3 사이즈 (72px) */
       .nav-toolbar {
-        top: 60px !important;
+        top: max(12px, env(safe-area-inset-top)) !important;
         right: 10px !important;
         left: auto !important;
         gap: 5px !important;
@@ -1079,29 +1111,131 @@
 
       .floor-pov-banner {
         top: 8px !important;
-        width: 96% !important;
-        max-width: 460px;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none;
         height: auto !important;
-        padding: 5px 10px;
+        padding: 6px 8px 7px 12px;
         gap: 6px;
-        border-radius: 16px;
-        flex-wrap: wrap;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 5px;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        align-content: flex-start;
+        max-height: 48vh;
+        overflow-y: auto;
+        transform: none !important;
+        animation: none;
+      }
+      .pov-back-btn {
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        color: #E43B46;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 700;
+        transition: all 0.16s ease;
+      }
+      .pov-back-btn:hover,
+      .pov-back-btn:active {
+        background: rgba(228, 59, 70, 0.10);
+        color: #E43B46;
+      }
+      .pov-banner-content {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        min-width: 0;
       }
       .floor-pov-banner .pov-badge {
         display: none !important; /* 모바일에서 배지 숨김으로 세로 폭 축소 및 줄바꿈 최소화 */
       }
       .pov-fov-floating-bar {
-        top: 96px !important; /* 상단바/배너와 겹치지 않도록 충분히 아래로 배치 */
+        position: fixed !important;
+        top: var(--mobile-pov-fov-top, max(164px, calc(env(safe-area-inset-top) + 156px))) !important;
         padding: 4px 10px;
         gap: 6px;
       }
+      .pov-balcony-nav {
+        display: none !important;
+      }
       .pov-title {
         font-size: 12px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .pov-selection-controls {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        width: 100%;
+        gap: 5px;
+      }
+      .pov-selection-field {
+        min-width: 0;
+        gap: 3px;
+      }
+      .pov-selection-field select {
+        min-width: 0;
+        width: 100%;
+        max-width: none;
+        height: 30px;
+        box-sizing: border-box;
+        padding-left: 5px;
+        font-size: 10px;
       }
       .pov-tab-btn {
         padding: 3px 7px;
         font-size: 10px;
+      }
+      .pov-controls-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        min-width: 0;
+      }
+      .pov-controls-row .pov-selection-controls {
+        display: flex;
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        gap: 4px;
+      }
+      .pov-controls-row .pov-selection-field {
+        flex: 1 1 0;
+      }
+      .pov-controls-row .pov-selection-field select {
+        padding-right: 17px;
+      }
+      .pov-controls-row .pov-mode-tabs {
+        gap: 1px;
+        height: 32px;
+        box-sizing: border-box;
+        align-items: stretch;
+        padding: 0 2px;
+        flex: 0 0 auto;
+      }
+      .pov-controls-row .pov-tab-btn {
+        gap: 3px;
+        height: 30px;
+        box-sizing: border-box;
+        padding: 3px 5px;
+        font-size: 9px;
       }
       .pov-unit-label {
         font-size: 10px;
@@ -1592,7 +1726,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261111_0835"></script>
+  <script src="./js/complex_3d_view.js?v=20261112_500m"></script>
 </head>
 <body>
 
@@ -1731,7 +1865,7 @@
       </div>
     </div>
 
-    <div class="panel-card panel-card-primary">
+      <div class="panel-card panel-card-primary" id="dong-selection-panel">
       <div class="panel-title">
         <span>🏢 동별 선택 (포커스)</span>
       </div>
@@ -1753,7 +1887,7 @@
         </div>
       </div>
 
-      <div class="panel-card">
+      <div class="panel-card" id="camera-preset-panel">
         <div class="panel-title">
           <span>🎥 카메라 시점 (뷰 프리셋)</span>
         </div>
@@ -1933,28 +2067,54 @@
 
   <!-- Floor POV HUD Banner -->
   <div id="floor-pov-banner" class="floor-pov-banner" style="display: none;">
-    <span class="pov-badge"><i class="fa-solid fa-eye"></i> 세대 뷰</span>
-    <span class="pov-title" id="pov-title-text">604동 12층 (고층)</span>
-    <div class="pov-mode-tabs">
-      <button id="pov-tab-focus" class="pov-tab-btn active" title="해당 세대 외관 및 일조/그림자 확인"><i class="fa-solid fa-sun me-1"></i>외관·일조</button>
-      <button id="pov-tab-outward" class="pov-tab-btn" title="세대 발코니에서 밖을 내다보는 1인칭 조망"><i class="fa-solid fa-panorama me-1"></i>창밖 조망</button>
-    </div>
-    <!-- 창밖 조망 시 세대 좌/우 라인 위치 이동 컨트롤러 -->
-    <div id="pov-balcony-nav" class="pov-balcony-nav" style="display: none;">
-      <span class="pov-nav-divider"></span>
-      <div class="pov-unit-selector">
-        <button id="pov-btn-prev-unit" class="pov-unit-btn" title="좌측 호수로 이동 (단축키: ← 또는 A)">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <span id="pov-unit-label" class="pov-unit-label">호수 선택</span>
-        <button id="pov-btn-next-unit" class="pov-unit-btn" title="우측 호수로 이동 (단축키: → 또는 D)">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
+    <button id="pov-back-btn" class="pov-back-btn" type="button" title="세대뷰 종료" aria-label="세대뷰 종료">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <div class="pov-banner-content">
+      <span class="pov-badge"><i class="fa-solid fa-eye"></i> 세대 뷰</span>
+      <span class="pov-title" id="pov-title-text">604동 12층 (고층)</span>
+      <!-- 기존 동·호 선택 및 모드 버튼 마크업 (원복용)
+      <div class="pov-selection-controls">
+        <label class="pov-selection-field">동
+          <select id="pov-dong-select" aria-label="동 선택"></select>
+        </label>
+        <label class="pov-selection-field">호
+          <select id="pov-ho-select" aria-label="호수 선택"></select>
+        </label>
+      </div>
+      <div class="pov-mode-tabs">
+        <button id="pov-tab-focus" class="pov-tab-btn active" title="해당 세대 외관 및 일조/그림자 확인"><i class="fa-solid fa-sun me-1"></i>외관·일조</button>
+        <button id="pov-tab-outward" class="pov-tab-btn" title="세대 발코니에서 밖을 내다보는 1인칭 조망"><i class="fa-solid fa-panorama me-1"></i>창밖 조망</button>
+      </div>
+      -->
+      <div class="pov-controls-row">
+        <div class="pov-selection-controls">
+          <label class="pov-selection-field">
+            <select id="pov-dong-select" aria-label="동 선택"></select>
+          </label>
+          <label class="pov-selection-field">
+            <select id="pov-ho-select" aria-label="호수 선택"></select>
+          </label>
+        </div>
+        <div class="pov-mode-tabs">
+          <button id="pov-tab-focus" class="pov-tab-btn active" title="해당 세대 외관 및 일조/그림자 확인"><i class="fa-solid fa-sun"></i>외관·일조</button>
+          <button id="pov-tab-outward" class="pov-tab-btn" title="세대 발코니에서 밖을 내다보는 1인칭 조망"><i class="fa-solid fa-panorama"></i>창밖 조망</button>
+        </div>
+      </div>
+      <!-- 창밖 조망 시 세대 좌/우 라인 위치 이동 컨트롤러 -->
+      <div id="pov-balcony-nav" class="pov-balcony-nav" style="display: none;">
+        <span class="pov-nav-divider"></span>
+        <div class="pov-unit-selector">
+          <button id="pov-btn-prev-unit" class="pov-unit-btn" title="좌측 호수로 이동 (단축키: ← 또는 A)">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span id="pov-unit-label" class="pov-unit-label">호수 선택</span>
+          <button id="pov-btn-next-unit" class="pov-unit-btn" title="우측 호수로 이동 (단축키: → 또는 D)">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
       </div>
     </div>
-    <button id="floor-pov-exit" class="pov-exit-btn">
-      <i class="fa-solid fa-xmark"></i> 종료
-    </button>
   </div>
 
   <!-- 분리된 창밖 조망 제어 플로팅 바 (화각 설정 및 가상 발코니 창틀 On/Off) -->
@@ -2152,7 +2312,7 @@
       if (!code) code = "111515"; // Default fallback to Heliocity
 
       // Fetch 3D data from Cloudflare R2 CDN (or local in dev environment)
-      var r2Url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/" + code + ".json";
+      var r2Url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/" + code + ".json?v=20261112_500m";
       var isLocalDev = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:');
       var primaryUrl = isLocalDev ? ("./data/3d/" + code + ".json") : r2Url;
       var fallbackUrl = isLocalDev ? r2Url : ("./data/3d/" + code + ".json");
@@ -2179,6 +2339,55 @@
               var a = Number(cRaw[0]), b = Number(cRaw[1]);
               data3d.center = (a > 100) ? { lat: b, lng: a } : { lat: a, lng: b };
             }
+          }
+
+          var apartmentNeighborModelsPromise = null;
+          function fetchApartmentComplex(code) {
+            var encodedCode = encodeURIComponent(code);
+            var localUrl = './data/3d/' + encodedCode + '.json';
+            var r2Url = 'https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/' + encodedCode + '.json?v=20261112_500m';
+            var urls = isLocalDev ? [localUrl, r2Url] : [r2Url, localUrl];
+            function fetchAt(index) {
+              if (index >= urls.length) return Promise.reject(new Error('주변 단지 데이터를 찾을 수 없습니다: ' + code));
+              return fetch(urls[index]).then(function (res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+              }).catch(function () {
+                return fetchAt(index + 1);
+              });
+            }
+            return fetchAt(0);
+          }
+
+          function loadApartmentNeighborModels() {
+            if (!viewInstance || typeof viewInstance.setApartmentNeighborModels !== 'function') return Promise.resolve([]);
+            if (apartmentNeighborModelsPromise) return apartmentNeighborModelsPromise;
+            var neighbors = (data3d.apartmentNeighbors || []).filter(function (neighbor) {
+              return neighbor && neighbor.code && Number(neighbor.distanceM) <= 500;
+            });
+            if (!neighbors.length) return Promise.resolve([]);
+            var loadedModels = [];
+            var nextIndex = 0;
+            function loadNext() {
+              if (nextIndex >= neighbors.length) return Promise.resolve();
+              var neighbor = neighbors[nextIndex++];
+              return fetchApartmentComplex(neighbor.code).then(function (model) {
+                model.searchCode = model.searchCode || String(neighbor.code);
+                model.name = model.name || neighbor.name || '';
+                loadedModels.push(model);
+              }).catch(function (error) {
+                console.warn('주변 단지 3D 데이터를 불러오지 못했습니다:', neighbor.code, error);
+              }).then(loadNext);
+            }
+            var workerCount = Math.min(8, neighbors.length);
+            apartmentNeighborModelsPromise = Promise.all(Array.from({ length: workerCount }, loadNext)).then(function () {
+              if (window.viewInstance === viewInstance) viewInstance.setApartmentNeighborModels(loadedModels);
+              return loadedModels;
+            }).catch(function (error) {
+              apartmentNeighborModelsPromise = null;
+              throw error;
+            });
+            return apartmentNeighborModelsPromise;
           }
 
           LoadingManager.update(45, "동·호수별 입체 세대 모델 구축 중...");
@@ -2313,6 +2522,9 @@
               el.addEventListener('change', function () {
                 if (viewInstance && typeof viewInstance.toggleInfraLayer === 'function') {
                   viewInstance.toggleInfraLayer(item.key, el.checked);
+                  if (item.key === 'neighbors' && el.checked) {
+                    loadApartmentNeighborModels().catch(function () {});
+                  }
                 }
               });
             }
@@ -2430,6 +2642,113 @@
           var povUnitLabel = document.getElementById('pov-unit-label');
           var povBtnPrevUnit = document.getElementById('pov-btn-prev-unit');
           var povBtnNextUnit = document.getElementById('pov-btn-next-unit');
+          var povDongSelect = document.getElementById('pov-dong-select');
+          var povHoSelect = document.getElementById('pov-ho-select');
+          var currentPOVInfo = null;
+
+          function isMobilePOVViewport() {
+            return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+          }
+
+          function positionMobilePOVFovBar() {
+            if (!povFovBar) return;
+            var banner = document.getElementById('floor-pov-banner');
+            if (currentPOVInfo && currentPOVInfo.subMode === 'outward' && isMobilePOVViewport() && banner && banner.style.display !== 'none') {
+              povFovBar.style.setProperty('--mobile-pov-fov-top', Math.ceil(banner.getBoundingClientRect().bottom + 8) + 'px');
+            } else {
+              povFovBar.style.removeProperty('--mobile-pov-fov-top');
+            }
+          }
+
+          window.addEventListener('resize', function () {
+            if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
+          });
+
+          function formatPOVDongLabel(dongKey, dongName) {
+            var nameMatch = String(dongName || '').match(/(\d+)\s*동/);
+            var keyMatch = String(dongKey || '').match(/\d+/);
+            var nameNumber = nameMatch && nameMatch[1];
+            var keyNumber = keyMatch && keyMatch[0];
+            var dongNumber = nameNumber || keyNumber;
+            return dongNumber ? dongNumber + '동' : String(dongName || dongKey || '');
+          }
+
+          function formatPOVHoLabel(hoName) {
+            var hoText = String(hoName || '');
+            var hoMatch = hoText.match(/(\d+)\s*호/);
+            var hoNumber = hoMatch ? hoMatch[1] : (hoText.match(/\d+/) || [])[0];
+            return hoNumber ? hoNumber + '호' : hoText;
+          }
+
+          function getPOVUnitOptions() {
+            if (!viewInstance || typeof viewInstance.getPOVUnitOptions !== 'function') return [];
+            return viewInstance.getPOVUnitOptions();
+          }
+
+          function updatePOVHoOptions(dongKey, selectedFloor, selectedHoName, unitOptions) {
+            if (!povHoSelect) return [];
+            var options = (unitOptions || getPOVUnitOptions()).filter(function (unit) {
+              return String(unit.dong) === String(dongKey);
+            });
+            povHoSelect.innerHTML = '';
+            options.forEach(function (unit) {
+              var option = document.createElement('option');
+              option.value = unit.floor + '|' + unit.hoName;
+              option.textContent = formatPOVHoLabel(unit.hoName);
+              povHoSelect.appendChild(option);
+            });
+            var selected = options.find(function (unit) {
+              return Number(unit.floor) === Number(selectedFloor) && unit.hoName === selectedHoName;
+            }) || options.find(function (unit) {
+              return Number(unit.floor) === Number(selectedFloor);
+            }) || options[0];
+            povHoSelect.disabled = !selected;
+            if (selected) povHoSelect.value = selected.floor + '|' + selected.hoName;
+            return options;
+          }
+
+          function syncPOVUnitSelectors(info) {
+            if (!info || !povDongSelect || !povHoSelect) return;
+            var unitOptions = getPOVUnitOptions();
+            var dongOptions = {};
+            unitOptions.forEach(function (unit) {
+              dongOptions[String(unit.dong)] = formatPOVDongLabel(unit.dong, unit.dongName);
+            });
+            povDongSelect.innerHTML = '';
+            Object.keys(dongOptions).sort(function (a, b) {
+              return a.localeCompare(b, 'ko', { numeric: true });
+            }).forEach(function (dongKey) {
+              var option = document.createElement('option');
+              option.value = dongKey;
+              option.textContent = dongOptions[dongKey];
+              povDongSelect.appendChild(option);
+            });
+            povDongSelect.value = String(info.dong);
+            updatePOVHoOptions(info.dong, info.floor, info.unit && info.unit.hoName, unitOptions);
+          }
+
+          if (povDongSelect) {
+            povDongSelect.addEventListener('change', function () {
+              if (!viewInstance || !currentPOVInfo) return;
+              var options = getPOVUnitOptions().filter(function (unit) {
+                return String(unit.dong) === povDongSelect.value;
+              });
+              var target = options.find(function (unit) {
+                return Number(unit.floor) === Number(currentPOVInfo.floor);
+              }) || options[0];
+              if (!target) return;
+              updatePOVHoOptions(target.dong, target.floor, target.hoName, options);
+              viewInstance.selectPOVUnit(target.dong, target.floor, target.hoName);
+            });
+          }
+
+          if (povHoSelect) {
+            povHoSelect.addEventListener('change', function () {
+              if (!viewInstance || !povDongSelect) return;
+              var selection = povHoSelect.value.split('|');
+              viewInstance.selectPOVUnit(povDongSelect.value, parseInt(selection.shift(), 10), selection.join('|'));
+            });
+          }
 
           if (btnToggleFrame) {
             btnToggleFrame.addEventListener('click', function () {
@@ -2526,7 +2845,6 @@
           var dirRotGroup = document.getElementById('dir-rot-group');
           var dirHeadingBadge = document.getElementById('dir-heading-badge');
           var dirUnitCaption = document.getElementById('dir-unit-caption');
-          var currentPOVInfo = null;
 
           var DIRECTIONS_16 = [
             '북향 (N)', '북북동 (NNE)', '북동향 (NE)', '동북동 (ENE)',
@@ -2554,6 +2872,13 @@
             }
           }
 
+          function setPOVBottomMenuVisibility(visible) {
+            ['camera-preset-panel', 'dong-selection-panel'].forEach(function (id) {
+              var panel = document.getElementById(id);
+              if (panel) panel.style.display = visible ? '' : 'none';
+            });
+          }
+
           window.onFloorPOVStart = function (info) {
             currentPOVInfo = info;
             var banner = document.getElementById('floor-pov-banner');
@@ -2562,14 +2887,15 @@
             var topBar = document.querySelector('.top-bar');
             if (topBar) topBar.classList.add('pov-hidden');
             if (banner && titleEl) {
-              var lineSuffix = info.lineDesc ? ' · ' + info.lineDesc : '';
-              titleEl.innerText = info.dongName + ' ' + info.floor + '층 (' + info.bandLabel + lineSuffix + ')';
+              titleEl.innerText = info.dongName + ' ' + info.floor + '층 (' + info.bandLabel + ')';
+              syncPOVUnitSelectors(info);
               if (info.subMode === 'outward') {
                 if (povTabOutward) povTabOutward.classList.add('active');
                 if (povTabFocus) povTabFocus.classList.remove('active');
                 if (povBalconyNav) povBalconyNav.style.display = 'inline-flex';
                 if (povFovBar) povFovBar.style.display = 'inline-flex';
                 if (layerNb) layerNb.checked = true;
+                loadApartmentNeighborModels().catch(function () {});
 
                 // 3) 창밖 조망 시 동작하면 안 되는 버튼들 숨김
                 var dongGroup = document.getElementById('dong_btn_group');
@@ -2584,9 +2910,11 @@
                 var zoomOut = document.getElementById('btn-zoom-out');
                 var viewTop = document.getElementById('btn-view-top');
                 var viewBird = document.getElementById('btn-view-bird');
-                [cpReset, cpTop, cpBird, cpExplode, zoomReset, zoomIn, zoomOut, viewTop, viewBird].forEach(function (b) {
-                  if (b) b.style.display = 'none';
-                });
+                if (!isMobilePOVViewport()) {
+                  [cpReset, cpTop, cpBird, cpExplode, zoomReset, zoomIn, zoomOut, viewTop, viewBird].forEach(function (b) {
+                    if (b) b.style.display = 'none';
+                  });
+                }
 
                 var infraCard = document.getElementById('infra-panel-card');
                 if (infraCard) infraCard.style.display = 'none';
@@ -2595,7 +2923,8 @@
                 if (navDock) navDock.style.display = 'none';
 
                 var cp = document.getElementById('control-panel');
-                if (cp) cp.classList.add('pov-hidden');
+                if (cp) cp.classList.remove('pov-hidden');
+                if (isMobilePOVViewport()) setMobileSheetStage(2);
 
                 // 2) 2D 발코니 프레임 오버레이 표출 (기본 ON)
                 var frame2d = document.getElementById('balcony-2d-frame-overlay');
@@ -2659,23 +2988,27 @@
                 if (infraCard) infraCard.style.display = '';
 
                 var navDock = document.querySelector('.nav-toolbar');
-                if (navDock) navDock.style.display = '';
+                if (navDock) navDock.style.display = isMobilePOVViewport() ? 'none' : '';
 
                 if (layerNb && viewInstance && typeof viewInstance.getNeighborsVisible === 'function') {
                   layerNb.checked = viewInstance.getNeighborsVisible();
                 }
               }
+              setPOVBottomMenuVisibility(false);
               if (info.unit && povUnitLabel) {
                 povUnitLabel.innerText = info.unit.label;
               }
               if (povBtnPrevUnit) povBtnPrevUnit.disabled = info.unitIndex <= 0;
               if (povBtnNextUnit) povBtnNextUnit.disabled = info.unitIndex >= (info.totalUnits - 1);
               banner.style.display = 'flex';
+              window.requestAnimationFrame(positionMobilePOVFovBar);
             }
           };
 
           window.onFloorPOVExit = function () {
             currentPOVInfo = null;
+            setPOVBottomMenuVisibility(true);
+            positionMobilePOVFovBar();
             var banner = document.getElementById('floor-pov-banner');
             if (banner) {
               banner.style.display = 'none';
@@ -2738,9 +3071,10 @@
 
             if (currentPOVInfo && data && data.unit) {
               currentPOVInfo.unit = data.unit;
+              syncPOVUnitSelectors(currentPOVInfo);
               var titleEl = document.getElementById('pov-title-text');
               if (titleEl) {
-                titleEl.innerText = currentPOVInfo.dongName + ' ' + currentPOVInfo.floor + '층 (' + currentPOVInfo.bandLabel + ' · ' + data.unit.label + ')';
+                titleEl.innerText = currentPOVInfo.dongName + ' ' + currentPOVInfo.floor + '층 (' + currentPOVInfo.bandLabel + ')';
               }
               if (dirUnitCaption) {
                 var unitShort = data.unit.shortLabel || '세대';
@@ -2753,9 +3087,9 @@
             updateDirectionIndicator(yaw);
           };
 
-          var povExitBtn = document.getElementById('floor-pov-exit');
-          if (povExitBtn) {
-            povExitBtn.addEventListener('click', function () {
+          var povBackBtn = document.getElementById('pov-back-btn');
+          if (povBackBtn) {
+            povBackBtn.addEventListener('click', function () {
               if (viewInstance && typeof viewInstance.exitFloorPOV === 'function') {
                 viewInstance.exitFloorPOV();
               }

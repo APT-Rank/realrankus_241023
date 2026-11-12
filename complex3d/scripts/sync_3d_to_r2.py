@@ -176,9 +176,9 @@ def upload_single_file(s3, bucket_name, full_path, r2_key, size):
     return r2_key, size
 
 
-def sync_3d_to_r2(force=False, max_workers=UPLOAD_WORKERS, dry_run=False, target_dir=None, delete_orphans=DELETE_ORPHAN_R2_OBJECTS):
+def sync_3d_to_r2(force=False, max_workers=UPLOAD_WORKERS, dry_run=False, target_dir=None, delete_orphans=DELETE_ORPHAN_R2_OBJECTS, purge_local=True):
     bucket_name = get_env_var("R2_BUCKET_NAME", R2_BUCKET_NAME)
-    if PURGE_LOCAL_V1_BEFORE_SYNC:
+    if PURGE_LOCAL_V1_BEFORE_SYNC and purge_local:
         purged = purge_local_unofficial_files([target_dir] if target_dir else [PRIMARY_OUTPUT_DIR, MIRROR_OUTPUT_DIR], dry_run=dry_run)
         if purged:
             print(f"[*] Purged {purged:,} local non-v2/unofficial files before R2 sync.")
@@ -246,6 +246,7 @@ if __name__ == "__main__":
     parser.add_argument("--workers", type=int, default=UPLOAD_WORKERS, help="Number of upload threads")
     parser.add_argument("--dir", default=None, help="Target directory containing 3D JSON files")
     parser.add_argument("--no-delete-orphans", action="store_true", help="Do not delete orphan R2 objects")
+    parser.add_argument("--no-purge-local", action="store_true", help="Do not remove local files before syncing")
     args = parser.parse_args()
 
     sync_3d_to_r2(
@@ -254,4 +255,5 @@ if __name__ == "__main__":
         dry_run=args.dry_run,
         target_dir=args.dir,
         delete_orphans=not args.no_delete_orphans,
+        purge_local=not args.no_purge_local,
     )

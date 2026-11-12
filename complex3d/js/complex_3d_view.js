@@ -1315,9 +1315,42 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   neighborGroup.visible = false;
   scene.add(neighborGroup);
 
-  var neighbors = data3d.neighbors || [];
-  neighbors.forEach(function (n) {
+  var neighborObjectKeys = Object.create(null);
+  var genericNeighborSignatures = Object.create(null);
+  function getNeighborFootprintSignature(ring) {
+    var points = [];
+    (ring || []).forEach(function (coordinate) {
+      if (!coordinate || coordinate.length < 2) return;
+      var point = toLocalXY(Number(coordinate[0]), Number(coordinate[1]));
+      if (isFinite(point.x) && isFinite(point.y)) {
+        points.push([Math.round(point.x * 10) / 10, Math.round(point.y * 10) / 10]);
+      }
+    });
+    if (points.length > 1 && points[0][0] === points[points.length - 1][0] && points[0][1] === points[points.length - 1][1]) {
+      points.pop();
+    }
+    points.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+    return points.length >= 3 ? JSON.stringify(points) : '';
+  }
+
+  function removeNeighborBuilding(objectKey) {
+    var entry = neighborObjectKeys[objectKey];
+    if (!entry || entry.isApartmentNeighbor) return;
+    neighborGroup.remove(entry.mesh);
+    neighborGroup.remove(entry.line);
+    entry.mesh.geometry.dispose();
+    entry.line.geometry.dispose();
+    delete neighborObjectKeys[objectKey];
+  }
+
+  function addNeighborBuilding(n, apartmentCode) {
     if (!n.rings || !n.rings[0]) return;
+    var objectKey = String(apartmentCode || '') + ':' + String(n.id || n.dong || neighborGroup.children.length);
+    if (neighborObjectKeys[objectKey]) return;
+    var footprintSignature = getNeighborFootprintSignature(n.rings[0]);
+    if (apartmentCode && footprintSignature) {
+      (genericNeighborSignatures[footprintSignature] || []).forEach(removeNeighborBuilding);
+    }
     var shape = createShapeFromRing(n.rings[0]);
     if (!shape) return;
 
@@ -1328,7 +1361,12 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var mesh = new THREE.Mesh(geom, neighborMat);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    mesh.userData = { isNeighbor: true, name: n.name };
+    mesh.userData = {
+      isNeighbor: true,
+      isApartmentNeighbor: !!apartmentCode,
+      complexCode: apartmentCode || '',
+      name: n.name || n.dong || ''
+    };
     neighborGroup.add(mesh);
 
     // 미세한 원경 펜선
@@ -1336,6 +1374,19 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var line = new THREE.LineSegments(edges, neighborLineMat);
     line.position.copy(mesh.position);
     neighborGroup.add(line);
+    neighborObjectKeys[objectKey] = {
+      mesh: mesh,
+      line: line,
+      isApartmentNeighbor: !!apartmentCode
+    };
+    if (!apartmentCode && footprintSignature) {
+      if (!genericNeighborSignatures[footprintSignature]) genericNeighborSignatures[footprintSignature] = [];
+      genericNeighborSignatures[footprintSignature].push(objectKey);
+    }
+  }
+
+  (data3d.neighbors || []).forEach(function (neighbor) {
+    addNeighborBuilding(neighbor, '');
   });
 
   // --- 7. 대상 단지 아파트 (Target Complex): 극장판 애니메이션 셀 작화풍 ---
@@ -3029,6 +3080,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   var isDraggingPOVLook = false;
   var wasInPOVOutward = false;
   var prevNeighborVisible = false;
+  var povCameraTransitionId = null;
+  var cameraAnimationFrames = {};
+  var cameraAnimationSerial = 0;
 
   // 발코니 세대 좌/우 호수 이동 관리 시스템
   var currentFloorUnits = [];
@@ -3146,8 +3200,78 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     }
   }
 
+  function cancelPOVCameraTransition() {
+    if (povCameraTransitionId !== null) {
+      cancelAnimationFrame(povCameraTransitionId);
+      povCameraTransitionId = null;
+    }
+  }
+
+  function cancelCameraAnimation() {
+    Object.keys(cameraAnimationFrames).forEach(function (animationId) {
+      cancelAnimationFrame(cameraAnimationFrames[animationId]);
+      delete cameraAnimationFrames[animationId];
+    });
+  }
+
+  function animatePOVCameraTo(endPos, endTarget, duration, targetFOV) {
+    cancelPOVCameraTransition();
+    if (balconyShiftAnimId !== null) {
+      cancelAnimationFrame(balconyShiftAnimId);
+      balconyShiftAnimId = null;
+    }
+    cancelCameraAnimation();
+
+    var startPos = balconyEyePos.clone();
+    var startTarget = controls.target.clone();
+    var startFOV = camera.fov;
+    var endFOV = (typeof targetFOV === 'number') ? targetFOV : startFOV;
+    var destination = endPos.clone();
+    var destinationTarget = endTarget.clone();
+    var startTime = performance.now();
+    controls.enabled = false;
+
+    function step(now) {
+      if (!isPOVMode || currentPOVSubMode !== 'outward') {
+        povCameraTransitionId = null;
+        return;
+      }
+
+      var progress = Math.min(1, (now - startTime) / duration);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      balconyEyePos.lerpVectors(startPos, destination, eased);
+      camera.position.copy(balconyEyePos);
+      controls.target.lerpVectors(startTarget, destinationTarget, eased);
+      if (startFOV !== endFOV) {
+        camera.fov = startFOV + (endFOV - startFOV) * eased;
+        camera.updateProjectionMatrix();
+      }
+      camera.lookAt(controls.target);
+
+      if (progress < 1) {
+        povCameraTransitionId = requestAnimationFrame(step);
+        return;
+      }
+
+      balconyEyePos.copy(destination);
+      camera.position.copy(destination);
+      controls.target.copy(destinationTarget);
+      if (startFOV !== endFOV) {
+        camera.fov = endFOV;
+        camera.updateProjectionMatrix();
+      }
+      camera.lookAt(controls.target);
+      povCameraTransitionId = null;
+      if (sunTrajectoryGroup && sunTrajectoryGroup.visible) updateSunTrajectory();
+    }
+
+    povCameraTransitionId = requestAnimationFrame(step);
+  }
+
   function viewFloorPOV(floorMesh, subMode) {
     if (!floorMesh || !floorMesh.userData) return;
+    var isOutwardUnitSwitch = isPOVMode && currentPOVSubMode === 'outward' && (!subMode || subMode === 'outward');
+    if (!isOutwardUnitSwitch) cancelPOVCameraTransition();
     var u = floorMesh.userData;
     var dong = u.dong;
     var floor = u.floor;
@@ -3183,6 +3307,15 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     activePOVFloor.material.emissive.setHex(0xd97706);
     activePOVFloor.material.emissiveIntensity = 0.55;
 
+    if (currentPOVSubMode === 'outward' && currentFloorUnits.length) {
+      currentFloorUnits.forEach(function (unitMesh) {
+        unitMesh.visible = true;
+        if (unitMesh.userData && unitMesh.userData.edgeLine) {
+          unitMesh.userData.edgeLine.visible = true;
+        }
+      });
+    }
+
     // 해당 층의 모든 호수 목록 갱신
     currentFloorUnits = getFloorUnits(dong, floor);
     var foundIdx = currentFloorUnits.indexOf(floorMesh);
@@ -3197,7 +3330,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       // [창밖 조망 모드]:
       // ★ 1. 생활권 반경원 자동 Hide ★
       if (radiusRingsGroup) {
-        prevRadiusRingsVisible = radiusRingsGroup.visible;
+        if (!wasInPOVOutward) prevRadiusRingsVisible = radiusRingsGroup.visible;
         radiusRingsGroup.visible = false;
       }
       // ★ 2. 아실/직방형 3D 시간별 태양 궤적 표시 ★
@@ -3226,16 +3359,19 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var uBox = new THREE.Box3().setFromObject(activeUnit);
       var unitPosX = (uBox.min.x + uBox.max.x) / 2;
       var unitPosZ = uBox.max.z - 0.45;
-      balconyEyePos.set(unitPosX, eyeY, unitPosZ);
+      var targetEyePos = new THREE.Vector3(unitPosX, eyeY, unitPosZ);
 
       // 직방/호갱노노 3D 실측 앵글: 하향 약 -8도(pitch -0.14 rad), 정면 시야
-      povYaw = 0.08;
-      povPitch = -0.14;
-      camPos = balconyEyePos.clone();
+      if (!isOutwardUnitSwitch) {
+        povYaw = 0.08;
+        povPitch = -0.14;
+        balconyEyePos.copy(targetEyePos);
+      }
+      camPos = targetEyePos;
       var lookX = Math.sin(povYaw) * Math.cos(povPitch);
       var lookY = Math.sin(povPitch);
       var lookZ = Math.cos(povYaw) * Math.cos(povPitch);
-      camTarget = new THREE.Vector3(unitPosX + lookX * 80.0, eyeY + lookY * 80.0, unitPosZ + lookZ * 80.0);
+      camTarget = new THREE.Vector3(targetEyePos.x + lookX * 80.0, targetEyePos.y + lookY * 80.0, targetEyePos.z + lookZ * 80.0);
 
       // 선택 층 전 세대 메시 및 펜선 은폐 (실내에서 창밖 조망 시 벽체 차단 방지)
       currentFloorUnits.forEach(function (uMesh) {
@@ -3274,13 +3410,27 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       if (container) container.style.cursor = 'default';
 
       var dist = Math.max(50, bBox.spanX * 1.35);
-      camPos = new THREE.Vector3(dongCenter.x + dist * 0.40, eyeY + dist * 0.30, bBox.maxZ + dist * 0.90);
-      camTarget = new THREE.Vector3(dongCenter.x, eyeY, (bBox.minZ + bBox.maxZ) / 2);
+      var selectedUnitBox = new THREE.Box3().setFromObject(activeUnit);
+      camTarget = new THREE.Vector3(
+        (selectedUnitBox.min.x + selectedUnitBox.max.x) / 2,
+        eyeY,
+        (selectedUnitBox.min.z + selectedUnitBox.max.z) / 2
+      );
+      var buildingCenterZ = (bBox.minZ + bBox.maxZ) / 2;
+      camPos = new THREE.Vector3(
+        camTarget.x + dist * 0.40,
+        camTarget.y + dist * 0.30,
+        camTarget.z + bBox.maxZ - buildingCenterZ + dist * 0.90
+      );
     }
 
     // 부드러운 시네마틱 카메라 이동 (750ms)
     var targetFOV = (currentPOVSubMode === 'outward') ? currentPOVFOV : 40;
-    complex3d_instance.animateCameraTo(camPos, camTarget, 750, targetFOV);
+    if (isOutwardUnitSwitch) {
+      animatePOVCameraTo(camPos, camTarget, 750, targetFOV);
+    } else {
+      complex3d_instance.animateCameraTo(camPos, camTarget, 750, targetFOV);
+    }
 
     var unitInfo = getUnitInfo(activeUnit);
 
@@ -3316,6 +3466,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   function exitFloorPOV() {
     if (!isPOVMode) return;
     isPOVMode = false;
+    cancelPOVCameraTransition();
     if (balconyShiftAnimId) {
       cancelAnimationFrame(balconyShiftAnimId);
       balconyShiftAnimId = null;
@@ -3488,7 +3639,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var intersects = clickRaycaster.intersectObjects(candidateFloors);
     if (intersects.length > 0) {
       var hit = intersects[0].object;
-      viewFloorPOV(hit, 'outward');
+      viewFloorPOV(hit, 'focus');
     }
   }
   // 창밖 조망 시 마우스 휠로 사용자 맞춤형 화각(FOV 55도~105도) 미세조정 지원
@@ -3799,6 +3950,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     },
     animateCameraTo: function (newPos, newTarget, duration, targetFOV) {
       duration = duration || 650;
+      var animationId = ++cameraAnimationSerial;
       var startPos = camera.position.clone();
       var startTarget = controls.target.clone();
       var startFOV = camera.fov;
@@ -3822,8 +3974,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         camera.lookAt(controls.target);
 
         if (progress < 1.0) {
-          requestAnimationFrame(step);
+          cameraAnimationFrames[animationId] = requestAnimationFrame(step);
         } else {
+          delete cameraAnimationFrames[animationId];
           camera.position.copy(endPos);
           controls.target.copy(endTarget);
           if (startFOV !== endFOV) {
@@ -3839,7 +3992,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           controls.update();
         }
       }
-      requestAnimationFrame(step);
+      cameraAnimationFrames[animationId] = requestAnimationFrame(step);
     },
     getSunInfo: function () {
       var declMap = { winter: -23.44, equinox: 0.0, summer: 23.44 };
@@ -3962,6 +4115,35 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         return a.localeCompare(b, 'ko', { numeric: true });
       });
     },
+    getPOVUnitOptions: function () {
+      return interactiveFloors.map(function (mesh) {
+        var unit = mesh.userData || {};
+        return {
+          dong: String(unit.dong || ''),
+          dongName: unit.dongName || String(unit.dong || ''),
+          floor: Number(unit.floor) || 1,
+          hoName: unit.hoName || '',
+          lineNum: Number(unit.lineNum) || 0
+        };
+      }).filter(function (unit) {
+        return unit.dong && unit.hoName;
+      }).sort(function (a, b) {
+        return a.dong.localeCompare(b.dong, 'ko', { numeric: true }) ||
+          a.floor - b.floor || a.lineNum - b.lineNum;
+      });
+    },
+    selectPOVUnit: function (dongKey, floor, hoName) {
+      if (!isPOVMode) return false;
+      var selectedUnit = interactiveFloors.find(function (mesh) {
+        var unit = mesh.userData || {};
+        return String(unit.dong) === String(dongKey) &&
+          Number(unit.floor) === Number(floor) &&
+          unit.hoName === hoName;
+      });
+      if (!selectedUnit) return false;
+      viewFloorPOV(selectedUnit, currentPOVSubMode);
+      return true;
+    },
     // 아파트 층별 저층/중층/고층 색상 동적 변경 및 조회 메서드
     setFloorColors: function (low, mid, high) {
       if (low) bandColors.low.set(low);
@@ -3987,6 +4169,19 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     controls: controls,
     infraGroups: infraGroups,
     neighborGroup: neighborGroup,
+    setApartmentNeighborModels: function (models) {
+      (models || []).forEach(function (model) {
+        var complexCode = String(model.searchCode || '');
+        var complexName = model.name || '';
+        (model.buildings || []).forEach(function (building) {
+          if (!building.residential) return;
+          addNeighborBuilding(Object.assign({}, building, {
+            id: 'apt_' + complexCode + '_' + (building.id || building.dong || ''),
+            name: complexName + (building.dong ? ' ' + building.dong : '')
+          }), complexCode);
+        });
+      });
+    },
     toggleInfraLayer: function (layerKey, visible) {
       if (layerKey === 'neighbors' && neighborGroup) {
         neighborGroup.visible = !!visible;
