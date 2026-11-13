@@ -1226,6 +1226,12 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return shape;
   }
 
+  function toSunlightFootprint(points) {
+    return (points || []).map(function (point) {
+      return { x: point.x, z: point.y };
+    });
+  }
+
   // 건물의 주요 축(PCA) 산출: 긴 판상형 아파트의 주동 방향 및 길이 측정
   function computePolygonPCA(pts) {
     if (!pts || pts.length < 3) return { ux: 1, uy: 0, sMin: 0, sMax: 1, L: 1 };
@@ -1689,6 +1695,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var sliceHeight = floorHeight - 0.22;
     var lineGeomCache = [];
     var lineEdgesCache = [];
+    var sunlightBuildingFootprint = toSunlightFootprint(basePts);
+    var sunlightUnitFootprints = linePolygonCache
+      ? linePolygonCache.map(toSunlightFootprint)
+      : [sunlightBuildingFootprint];
 
     if (lines.length > 1 && basePts.length >= 3 && pca) {
       var lineLayout = chooseLineGridLayout(lineWeights, pca.L, pca.T);
@@ -1784,6 +1794,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             baseColor: baseColor,
             isFloor: true,
             isUnit: true,
+            directSunlightFootprint: sunlightUnitFootprints[li] || sunlightBuildingFootprint,
+            directSunlightBuildingFootprint: sunlightBuildingFootprint,
             lineDesc: hoName
           };
 
@@ -1824,6 +1836,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           baseColor: baseColor,
           isFloor: true,
           isUnit: true,
+          directSunlightFootprint: sunlightUnitFootprints[0] || sunlightBuildingFootprint,
+          directSunlightBuildingFootprint: sunlightBuildingFootprint,
           lineDesc: hoName
         };
 
@@ -3345,6 +3359,98 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   var directSunlightRaycaster = new THREE.Raycaster();
 
+  var directSunlightDirectionNames = ['북향', '북동향', '동향', '남동향', '남향', '남서향', '서향', '북서향'];
+  var excludedDirectSunlightDirections = { 0: true, 1: true, 7: true };
+
+  function isPointInSunlightFootprint(x, z, polygon) {
+    var inside = false;
+    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      var first = polygon[i];
+      var second = polygon[j];
+      var crosses = ((first.z > z) !== (second.z > z)) &&
+        (x < (second.x - first.x) * (z - first.z) / ((second.z - first.z) || 1e-9) + first.x);
+      if (crosses) inside = !inside;
+    }
+    return inside;
+  }
+
+  function getDirectSunlightFacade(unitMesh) {
+    var userData = unitMesh && unitMesh.userData;
+    if (!userData) return { status: 'unknown', directionLabel: '방향 미확인' };
+    if (userData.directSunlightFacade) return userData.directSunlightFacade;
+
+    var unitFootprint = userData.directSunlightFootprint;
+    var buildingFootprint = userData.directSunlightBuildingFootprint;
+    if (!unitFootprint || unitFootprint.length < 3 || !buildingFootprint || buildingFootprint.length < 3) {
+      userData.directSunlightFacade = { status: 'unknown', directionLabel: '방향 미확인' };
+      return userData.directSunlightFacade;
+    }
+
+    var sectors = [];
+    for (var sectorIndex = 0; sectorIndex < 8; sectorIndex++) {
+      sectors.push({ index: sectorIndex, length: 0, segments: [] });
+    }
+
+    for (var edgeIndex = 0; edgeIndex < unitFootprint.length; edgeIndex++) {
+      var start = unitFootprint[edgeIndex];
+      var end = unitFootprint[(edgeIndex + 1) % unitFootprint.length];
+      var dx = end.x - start.x;
+      var dz = end.z - start.z;
+      var edgeLength = Math.sqrt(dx * dx + dz * dz);
+      if (edgeLength < 0.1) continue;
+
+      var normalX = -dz / edgeLength;
+      var normalZ = dx / edgeLength;
+      var midX = (start.x + end.x) / 2;
+      var midZ = (start.z + end.z) / 2;
+      var insidePlus = isPointInSunlightFootprint(midX + normalX * 0.2, midZ + normalZ * 0.2, buildingFootprint);
+      var insideMinus = isPointInSunlightFootprint(midX - normalX * 0.2, midZ - normalZ * 0.2, buildingFootprint);
+      if (insidePlus === insideMinus) continue;
+
+      if (insidePlus) {
+        normalX *= -1;
+        normalZ *= -1;
+      }
+      var bearing = (Math.atan2(normalX, -normalZ) * 180 / Math.PI + 360) % 360;
+      var sector = Math.round(bearing / 45) % 8;
+      sectors[sector].length += edgeLength;
+      sectors[sector].segments.push({
+        start: start,
+        end: end,
+        length: edgeLength,
+        normalX: normalX,
+        normalZ: normalZ
+      });
+    }
+
+    sectors.sort(function (a, b) { return b.length - a.length; });
+    if (!sectors[0] || sectors[0].length < 0.1) {
+      userData.directSunlightFacade = { status: 'unknown', directionLabel: '방향 미확인' };
+      return userData.directSunlightFacade;
+    }
+
+    var dominant = sectors[0];
+    var runnerUp = sectors[1];
+    if (runnerUp && runnerUp.length > 0 && (dominant.length - runnerUp.length) / dominant.length < 0.04) {
+      var ambiguousDirections = [directSunlightDirectionNames[dominant.index], directSunlightDirectionNames[runnerUp.index]];
+      userData.directSunlightFacade = {
+        status: 'ambiguous',
+        directionLabel: ambiguousDirections.join('/') + ' 구분 불가',
+        candidateDirections: ambiguousDirections
+      };
+      return userData.directSunlightFacade;
+    }
+
+    var result = {
+      status: excludedDirectSunlightDirections[dominant.index] ? 'excluded' : 'eligible',
+      directionIndex: dominant.index,
+      directionLabel: directSunlightDirectionNames[dominant.index] + ' 추정',
+      segments: dominant.segments
+    };
+    userData.directSunlightFacade = result;
+    return result;
+  }
+
   function getDirectSunlightOccluders() {
     if (directSunlightOccluderMeshes) return directSunlightOccluderMeshes;
     directSunlightOccluderMeshes = [];
@@ -3358,64 +3464,76 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var sampleCount = 49;
     var rayDirection = direction || sunUnitDir;
     var isNight = typeof nightMode === 'boolean' ? nightMode : isNightMode;
-    if (!unitMesh || !unitMesh.geometry || isNight || rayDirection.y <= 0.01 || rayDirection.z <= 0.02) {
-      return { value: 0, exposedCount: 0, sampleCount: sampleCount, isNightMode: isNight };
+    var facade = getDirectSunlightFacade(unitMesh);
+    var baseResult = {
+      exposedCount: 0,
+      sampleCount: sampleCount,
+      isNightMode: isNight,
+      direction: facade.directionLabel,
+      status: facade.status
+    };
+    if (!unitMesh || !unitMesh.geometry || facade.status !== 'eligible') {
+      baseResult.value = null;
+      return baseResult;
     }
 
     var sampleOrigins = unitMesh.userData.directSunlightSampleOrigins;
     if (!sampleOrigins) {
       unitMesh.updateMatrixWorld(true);
       var unitBox = new THREE.Box3().setFromObject(unitMesh);
-      var frontZ = unitBox.max.z;
-      var frontTolerance = Math.max(0.05, (unitBox.max.z - unitBox.min.z) * 0.01);
-      var positions = unitMesh.geometry.attributes.position;
-      var minX = Infinity;
-      var maxX = -Infinity;
-      var vertex = new THREE.Vector3();
-
-      if (positions) {
-        for (var vertexIndex = 0; vertexIndex < positions.count; vertexIndex++) {
-          vertex.set(positions.getX(vertexIndex), positions.getY(vertexIndex), positions.getZ(vertexIndex))
-            .applyMatrix4(unitMesh.matrixWorld);
-          if (vertex.z >= frontZ - frontTolerance) {
-            minX = Math.min(minX, vertex.x);
-            maxX = Math.max(maxX, vertex.x);
-          }
-        }
-      }
-
-      if (!isFinite(minX) || maxX - minX < 0.1) {
-        minX = unitBox.min.x;
-        maxX = unitBox.max.x;
-      }
-
-      var width = maxX - minX;
       var height = unitBox.max.y - unitBox.min.y;
-      if (width <= 0 || height <= 0) {
-        return { value: 0, exposedCount: 0, sampleCount: sampleCount, isNightMode: isNight };
+      var totalFacadeLength = facade.segments.reduce(function (sum, segment) { return sum + segment.length; }, 0);
+      if (height <= 0 || totalFacadeLength <= 0) {
+        baseResult.value = null;
+        baseResult.status = 'unknown';
+        baseResult.direction = '방향 미확인';
+        return baseResult;
       }
 
       sampleOrigins = [];
-      var xFractions = [0.15, 0.2667, 0.3833, 0.5, 0.6167, 0.7333, 0.85];
+      var sampleNormals = [];
       var yFractions = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
-      for (var yi = 0; yi < yFractions.length; yi++) {
-        for (var xi = 0; xi < xFractions.length; xi++) {
+      for (var xi = 0; xi < 7; xi++) {
+        var targetDistance = totalFacadeLength * (xi + 0.5) / 7;
+        var segment = facade.segments[facade.segments.length - 1];
+        var segmentStartDistance = 0;
+        for (var segmentIndex = 0; segmentIndex < facade.segments.length; segmentIndex++) {
+          var candidate = facade.segments[segmentIndex];
+          if (targetDistance <= segmentStartDistance + candidate.length) {
+            segment = candidate;
+            break;
+          }
+          segmentStartDistance += candidate.length;
+        }
+        var segmentFraction = Math.max(0, Math.min(1, (targetDistance - segmentStartDistance) / segment.length));
+        var sampleX = segment.start.x + (segment.end.x - segment.start.x) * segmentFraction + segment.normalX * 0.15;
+        var sampleZ = segment.start.z + (segment.end.z - segment.start.z) * segmentFraction + segment.normalZ * 0.15;
+        for (var yi = 0; yi < yFractions.length; yi++) {
           sampleOrigins.push(new THREE.Vector3(
-            minX + width * xFractions[xi],
+            sampleX,
             unitBox.min.y + height * yFractions[yi],
-            unitBox.max.z + 0.15
+            sampleZ
           ));
+          sampleNormals.push(new THREE.Vector2(segment.normalX, segment.normalZ));
         }
       }
       unitMesh.userData.directSunlightSampleOrigins = sampleOrigins;
+      unitMesh.userData.directSunlightSampleNormals = sampleNormals;
     }
 
+    if (isNight || rayDirection.y <= 0.01) {
+      baseResult.value = 0;
+      return baseResult;
+    }
     var occluders = getDirectSunlightOccluders();
     var exposedCount = 0;
+    var sampleNormals = unitMesh.userData.directSunlightSampleNormals || [];
     directSunlightRaycaster.near = 0.01;
     directSunlightRaycaster.far = 3000;
 
     for (var sampleIndex = 0; sampleIndex < sampleOrigins.length; sampleIndex++) {
+      var sampleNormal = sampleNormals[sampleIndex];
+      if (!sampleNormal || rayDirection.x * sampleNormal.x + rayDirection.z * sampleNormal.y <= 0.01) continue;
       directSunlightRaycaster.set(sampleOrigins[sampleIndex], rayDirection);
       var intersections = directSunlightRaycaster.intersectObjects(occluders, false);
       var isBlocked = intersections.some(function (hit) {
@@ -3428,7 +3546,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       value: Math.round(exposedCount / sampleCount * 100),
       exposedCount: exposedCount,
       sampleCount: sampleCount,
-      isNightMode: isNight
+      isNightMode: isNight,
+      direction: facade.directionLabel,
+      status: facade.status
     };
   }
 
@@ -3440,6 +3560,19 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   function updateDirectSunlightTimeline(unitMesh) {
     if (!isPOVMode || !unitMesh || !unitMesh.geometry) return;
     var cacheKey = unitMesh.uuid + ':' + currentSeason;
+    var facade = getDirectSunlightFacade(unitMesh);
+    if (facade.status !== 'eligible') {
+      directSunTimelineRequestId++;
+      directSunTimelinePendingKey = null;
+      if (typeof window.onComplex3dSunlightTimelineUpdate === 'function') {
+        window.onComplex3dSunlightTimelineUpdate({
+          status: 'unavailable',
+          key: cacheKey,
+          reason: facade.status === 'excluded' ? '북향 계열은 직달일조 계산에서 제외됩니다.' : '세대 방향을 신뢰성 있게 추정할 수 없어 시간별 계산을 생략합니다.'
+        });
+      }
+      return;
+    }
     if (directSunTimelineCacheKey === cacheKey && directSunTimelineCacheValues) {
       if (directSunTimelinePendingKey && directSunTimelinePendingKey !== cacheKey) {
         directSunTimelineRequestId++;
