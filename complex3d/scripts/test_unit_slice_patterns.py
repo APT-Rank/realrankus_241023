@@ -60,10 +60,78 @@ class UnitSlicePatternTests(unittest.TestCase):
     def test_slab_uses_parallel_bands_in_local_frame(self):
         self.assert_partition(box(0, 0, 42, 12), make_lines(4), "slab", rotation_degrees=23)
 
+    def test_slab_assigns_sequential_lines_east_to_west(self):
+        footprint = box(0, 0, 60, 10)
+        lines = [
+            {"line": "03", "count": 30},
+            {"line": "01", "count": 10},
+            {"line": "02", "count": 20},
+        ]
+
+        slices = precompute_unit_slices(footprint, lines, TO_4326)
+        self.assertEqual([item["line"] for item in slices], ["01", "02", "03"])
+
+        cells = [
+            transform(TO_5186.transform, Polygon(item["polygons"][0]["outer"]))
+            for item in slices
+        ]
+        centroids_x = [cell.centroid.x for cell in cells]
+        self.assertEqual(centroids_x, sorted(centroids_x, reverse=True))
+        self.assertAlmostEqual(cells[0].area / cells[1].area, 0.5, delta=0.03)
+        self.assertAlmostEqual(cells[1].area / cells[2].area, 2 / 3, delta=0.03)
+
+    def test_square_grid_starts_at_eastern_side(self):
+        slices = precompute_unit_slices(box(0, 0, 20, 20), make_lines(4), TO_4326)
+        cells = [
+            unary_union([
+                transform(TO_5186.transform, Polygon(polygon["outer"], polygon["holes"]))
+                for polygon in item["polygons"]
+            ])
+            for item in slices
+        ]
+        self.assertGreater(cells[0].centroid.x, cells[-1].centroid.x)
+
     def test_l_shape_is_split_by_wings(self):
         footprint = Polygon([(0, 0), (30, 0), (30, 10), (10, 10), (10, 30), (0, 30)])
         areas = self.assert_partition(footprint, make_lines(4), "l-shape")
         self.assertGreater(min(areas), footprint.area / 4 * 0.55)
+
+    def test_l_shape_line_order_follows_long_axis(self):
+        footprint = Polygon([(0, 0), (30, 0), (30, 10), (10, 10), (10, 30), (0, 30)])
+        slices = precompute_unit_slices(footprint, make_lines(4), TO_4326)
+        cells = [
+            unary_union([
+                transform(TO_5186.transform, Polygon(polygon["outer"], polygon["holes"]))
+                for polygon in item["polygons"]
+            ])
+            for item in slices
+        ]
+        centroids_x = [cell.centroid.x for cell in cells]
+        self.assertEqual(centroids_x, sorted(centroids_x, reverse=True))
+
+    def test_l_shape_uses_weighted_bands_when_wing_areas_do_not_match_lines(self):
+        footprint = Polygon([(0, 0), (30, 0), (30, 10), (10, 10), (10, 30), (0, 30)])
+        lines = [
+            {"line": "01", "count": 40},
+            {"line": "02", "count": 10},
+            {"line": "03", "count": 10},
+            {"line": "04", "count": 40},
+        ]
+        slices = precompute_unit_slices(footprint, lines, TO_4326)
+        cells = [
+            unary_union([
+                transform(TO_5186.transform, Polygon(polygon["outer"], polygon.get("holes") or []))
+                for polygon in item["polygons"]
+            ])
+            for item in slices
+        ]
+
+        self.assertEqual([item["line"] for item in slices], ["01", "02", "03", "04"])
+        self.assertEqual([cell.centroid.x for cell in cells],
+                         sorted((cell.centroid.x for cell in cells), reverse=True))
+        self.assertAlmostEqual(cells[0].area / cells[1].area, 4.0, delta=0.1)
+        self.assertAlmostEqual(cells[1].area / cells[2].area, 1.0, delta=0.1)
+        self.assertAlmostEqual(cells[3].area / cells[2].area, 4.0, delta=0.1)
 
     def test_mirrored_l_shape_is_split_by_wings(self):
         footprint = Polygon([(0, 0), (30, 0), (30, 10), (10, 10), (10, 30), (0, 30)])

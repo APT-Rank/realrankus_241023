@@ -306,19 +306,53 @@ def _parallel_bands(geometry, lines):
     return cells
 
 
-def _order_cells(cells):
+def _area_fit_error(cells, lines, geometry):
+    weights = [max(0.001, float(line.get("count") or line.get("supply") or line.get("exclusive") or 1.0))
+               for line in lines]
+    total_weight = sum(weights)
+    return sum(
+        abs(cell.area / geometry.area - weight / total_weight)
+        for cell, weight in zip(cells, weights)
+    )
+
+
+def _order_cells(cells, angle):
     if not cells:
         return cells
-    center_x = sum(cell.centroid.x for cell in cells) / len(cells)
-    center_y = sum(cell.centroid.y for cell in cells) / len(cells)
-    return sorted(cells, key=lambda cell: math.atan2(cell.centroid.x - center_x,
-                                                      cell.centroid.y - center_y))
+    cosine = math.cos(angle)
+    sine = math.sin(angle)
+
+    def south_facing_position(cell):
+        x, y = cell.centroid.coords[0]
+        east = x * cosine - y * sine
+        north = x * sine + y * cosine
+        return -east, north
+
+    return sorted(cells, key=south_facing_position)
+
+
+def _parallel_bands_in_line_order(geometry, lines, angle):
+    bounds = geometry.bounds
+    split_axis = "x" if bounds[2] - bounds[0] >= bounds[3] - bounds[1] else "y"
+    eastward_delta = math.cos(angle) if split_axis == "x" else -math.sin(angle)
+    ordered_lines = list(reversed(lines)) if eastward_delta > 0 else lines
+    cells = _parallel_bands(geometry, ordered_lines)
+    return _order_cells(cells, angle)
+
+
+def _line_order_key(line):
+    label = str(line.get("line", ""))
+    try:
+        return (0, int(label), label)
+    except ValueError:
+        return (1, label, label)
 
 
 def precompute_unit_slices(geometry, lines, transformer_to_4326):
     """Partition a footprint with template rules and only orthogonal interior cuts."""
     if geometry is None or geometry.is_empty or not lines or len(lines) < 2:
         return None
+    lines = sorted(lines, key=_line_order_key)
     if not geometry.is_valid:
         geometry = geometry.buffer(0)
     parts = _polygon_parts(geometry)
@@ -333,19 +367,19 @@ def precompute_unit_slices(geometry, lines, transformer_to_4326):
     pattern = classify_unit_slice_pattern(footprint)
     if pattern == "square-compact":
         cells = _grid_cells(local, len(lines))
-    elif pattern in ("l-shape", "two-notch-wing", "multi-wing", "irregular"):
+    elif pattern in ("l-shape", "two-notch-wing", "multi-wing"):
         cells = _partition_wings(local, len(lines))
         if not cells:
-            cells = _parallel_bands(local, lines)
+            cells = _parallel_bands_in_line_order(local, lines, angle)
     else:
-        cells = _parallel_bands(local, lines)
+        cells = _parallel_bands_in_line_order(local, lines, angle)
+    if len(cells) == len(lines):
+        cells = _order_cells(cells, angle)
+    if cells and _area_fit_error(cells, lines, local) > 0.25:
+        cells = _parallel_bands_in_line_order(local, lines, angle)
     if len(cells) != len(lines):
         return None
-
-    cells = _order_cells(cells)
-    ordered_lines = sorted(lines, key=lambda line: (float(line.get("count") or 1.0), str(line.get("line", ""))))
-    ordered_cells = sorted(cells, key=lambda cell: cell.area)
-    assignments = {str(line["line"]): cell for cell, line in zip(ordered_cells, ordered_lines)}
+    assignments = {str(line["line"]): cell for cell, line in zip(cells, lines)}
 
     union = unary_union(cells)
     area_tolerance = max(0.02, local.area * 1e-7)

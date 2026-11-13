@@ -1,4 +1,4 @@
-"""Stage and optionally commit pattern-v3 unit slices for all local 3D complexes."""
+"""Stage and optionally commit pattern-v5 unit slices for all local 3D complexes."""
 
 import argparse
 import json
@@ -18,7 +18,7 @@ from unit_slice_patterns import classify_unit_slice_pattern, precompute_unit_sli
 ROOT = Path(__file__).resolve().parents[2]
 PRIMARY_DIR = ROOT / "complex3d" / "data" / "3d"
 MIRROR_DIR = ROOT / "data" / "3d"
-REPORT_PATH = ROOT / "complex3d" / "national_unit_slice_v3_report.json"
+REPORT_PATH = ROOT / "complex3d" / "national_unit_slice_v5_report.json"
 TO_5186 = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:5186", always_xy=True)
 TO_4326 = pyproj.Transformer.from_crs("EPSG:5186", "EPSG:4326", always_xy=True)
 
@@ -95,12 +95,13 @@ def process_complex(source_path, stage_dir, counters, exceptions):
             pattern = classify_unit_slice_pattern(geometry)
             slices = precompute_unit_slices(geometry, lines, TO_4326)
             if not slices:
-                raise ValueError("pattern-v3-partition-failed")
+                raise ValueError("pattern-v5-partition-failed")
         except Exception as error:
             building["unitSlices"] = None
             building["unitSlicePattern"] = pattern
             building["unitSliceStatus"] = "needs-review"
-            building["unitSliceAlgorithm"] = "pattern-v3"
+            building["unitSliceAlgorithm"] = "pattern-v5"
+            building["unitSliceLineOrder"] = "south-facing-left-to-right"
             building["unitSliceReviewReasons"] = [str(error)]
             review_dongs.append(str(dong))
             exceptions.append({
@@ -113,7 +114,8 @@ def process_complex(source_path, stage_dir, counters, exceptions):
 
         building["unitSlices"] = slices
         building["unitSlicePattern"] = pattern
-        building["unitSliceAlgorithm"] = "pattern-v3"
+        building["unitSliceAlgorithm"] = "pattern-v5"
+        building["unitSliceLineOrder"] = "south-facing-left-to-right"
         building["unitSliceStatus"] = "precomputed"
         building["unitSliceReviewReasons"] = []
         patterns[pattern] += 1
@@ -127,7 +129,8 @@ def process_complex(source_path, stage_dir, counters, exceptions):
     if not isinstance(coverage, dict):
         coverage = {}
         data["coverage"] = coverage
-    coverage["patternAlgorithm"] = "pattern-v3"
+    coverage["patternAlgorithm"] = "pattern-v5"
+    coverage["unitSliceLineOrder"] = "south-facing-left-to-right"
     coverage["precomputedUnitSliceCount"] = sum(
         1 for building in buildings if building.get("unitSliceStatus") == "precomputed"
     )
@@ -166,7 +169,7 @@ def commit_staged_files(stage_dir, staged_paths):
         for destination_dir in (PRIMARY_DIR, MIRROR_DIR):
             destination = destination_dir / stage_path.name
             descriptor, temporary_path = tempfile.mkstemp(
-                prefix=f".{destination.name}.unit-slice-v3.",
+                prefix=f".{destination.name}.unit-slice-v5.",
                 suffix=".tmp",
                 dir=destination_dir,
             )
@@ -224,7 +227,7 @@ def repair_staged_report(stage_dir, report):
                 pattern = classify_unit_slice_pattern(geometry)
                 slices = precompute_unit_slices(geometry, building.get("lines") or [], TO_4326)
                 if not slices:
-                    raise ValueError("pattern-v3-partition-failed")
+                    raise ValueError("pattern-v5-partition-failed")
             except Exception as error:
                 exception["reason"] = str(error)
                 remaining.append(exception)
@@ -232,7 +235,8 @@ def repair_staged_report(stage_dir, report):
 
             building["unitSlices"] = slices
             building["unitSlicePattern"] = pattern
-            building["unitSliceAlgorithm"] = "pattern-v3"
+            building["unitSliceAlgorithm"] = "pattern-v5"
+            building["unitSliceLineOrder"] = "south-facing-left-to-right"
             building["unitSliceStatus"] = "precomputed"
             building["unitSliceReviewReasons"] = []
             repaired_patterns[pattern] += 1
@@ -244,7 +248,8 @@ def repair_staged_report(stage_dir, report):
             if not isinstance(coverage, dict):
                 coverage = {}
                 data["coverage"] = coverage
-            coverage["patternAlgorithm"] = "pattern-v3"
+            coverage["patternAlgorithm"] = "pattern-v5"
+            coverage["unitSliceLineOrder"] = "south-facing-left-to-right"
             coverage["precomputedUnitSliceCount"] = sum(
                 1 for building in data.get("buildings", [])
                 if isinstance(building, dict) and building.get("unitSliceStatus") == "precomputed"
@@ -293,6 +298,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Analyze only; write no staged or source JSON")
     parser.add_argument("--commit", action="store_true", help="Commit staged files only if exceptions stay within the limit")
     parser.add_argument("--max-review", type=int, default=50, help="Maximum allowed failed apartment buildings")
+    parser.add_argument("--report-path", default=str(REPORT_PATH), help="Output path for this run's report")
     parser.add_argument("--stage-dir", default=None, help="Optional staging directory")
     parser.add_argument("--resume-stage", default=None, help="Repair and optionally commit a previous staged run")
     parser.add_argument("--resume-report", default=str(REPORT_PATH), help="Report file for --resume-stage")
@@ -343,7 +349,7 @@ def main():
     exceptions = []
     stage_dir = None
     if not args.dry_run:
-        stage_dir = Path(args.stage_dir) if args.stage_dir else Path(tempfile.mkdtemp(prefix="unit-slices-pattern-v3-"))
+        stage_dir = Path(args.stage_dir) if args.stage_dir else Path(tempfile.mkdtemp(prefix="unit-slices-pattern-v5-"))
         stage_dir.mkdir(parents=True, exist_ok=True)
 
     start = time.time()
@@ -356,7 +362,7 @@ def main():
             print(f"Scanned {index:,}/{len(source_paths):,} files; partitioned {counters['residentialDongsProcessed']:,} buildings", flush=True)
 
     report = {
-        "algorithm": "pattern-v3",
+        "algorithm": "pattern-v5",
         "maxReviewAllowed": args.max_review,
         "filesScanned": len(source_paths),
         "filesProcessed": counters["filesProcessed"],
@@ -399,13 +405,13 @@ def main():
     elif args.dry_run:
         report["commitStatus"] = "dry-run"
 
-    write_atomic(REPORT_PATH, json.dumps(report, ensure_ascii=False, indent=2))
+    write_atomic(args.report_path, json.dumps(report, ensure_ascii=False, indent=2))
     print(json.dumps({key: report[key] for key in (
         "filesScanned", "filesProcessed", "residentialDongsProcessed", "dongsPrecomputed",
         "dongsNeedingReview", "parseErrors", "incompatibleFiles", "patterns", "commitStatus",
         "stageDirectory", "elapsedSeconds",
     )}, ensure_ascii=False, indent=2))
-    print(f"Report: {REPORT_PATH}")
+    print(f"Report: {args.report_path}")
     if args.commit and total_exceptions > args.max_review:
         raise SystemExit(f"Commit blocked: {total_exceptions} exceptions exceed limit {args.max_review}.")
     if report["commitStatus"] == "commit-failed":
