@@ -18,6 +18,7 @@ import os
 import sys
 import glob
 import json
+import hashlib
 import re
 import math
 import time
@@ -28,10 +29,13 @@ try:
     import pyproj
     import geopandas as gpd
     import pandas as pd
-    from shapely.geometry import mapping
+    from shapely.geometry import mapping, Polygon
+    from shapely.ops import unary_union
 except ImportError:
     print("Required packages: pyproj, geopandas, pandas, shapely")
     sys.exit(1)
+
+from unit_slice_patterns import classify_unit_slice_pattern, precompute_unit_slices
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 GIS_DIR = r"D:\real_estate_data\99_GIS_Building_shp"
@@ -50,7 +54,7 @@ SIDO_MAP = {
     '48': '경남', '50': '제주', '51': '강원', '52': '전북'
 }
 
-def load_all_target_complexes(month_dir=os.path.join(REPO_ROOT, "202611"), filter_sido=None):
+def load_all_target_complexes(month_dir=os.path.join(REPO_ROOT, "202611"), filter_sido=None, complex_code=None):
     """Load all unique complexes from RealRankus month folder."""
     files = [f for f in os.listdir(month_dir) if f.endswith('.json') and not f.startswith('1000000000') and not f.startswith('summary')]
     
@@ -67,6 +71,8 @@ def load_all_target_complexes(month_dir=os.path.join(REPO_ROOT, "202611"), filte
                 for it in d.get('data', []):
                     code = str(it.get('검색코드') or it.get('searchCode') or '')
                     if not code or code in complexes:
+                        continue
+                    if complex_code and code != str(complex_code):
                         continue
                     
                     addr = it.get('법정동주소') or ''
@@ -442,6 +448,289 @@ def _geom_to_rings(geom):
             rings.append([list(transformer_to_4326.transform(x, y)) for x, y in interior.coords])
     return rings
 
+def _polygon_parts(geom):
+    if geom is None or geom.is_empty:
+        return []
+    if geom.geom_type == 'Polygon':
+        return [geom]
+    if geom.geom_type == 'MultiPolygon':
+        return list(geom.geoms)
+    if hasattr(geom, 'geoms'):
+        return [part for child in geom.geoms for part in _polygon_parts(child)]
+    return []
+
+def _unit_slice_pattern(aspect_ratio, solidity, edge_alignment, rectangle_fill):
+    if solidity < 0.78 and aspect_ratio < 1.8:
+        return 'compact-complex'
+    if solidity < 0.88 and aspect_ratio >= 1.8:
+        return 'stepped-linear'
+    if edge_alignment < 0.72:
+        return 'irregular'
+    if aspect_ratio >= 3.2 and solidity >= 0.9:
+        return 'slab'
+    if aspect_ratio >= 1.8:
+        return 'linear'
+    if rectangle_fill >= 0.82 and solidity >= 0.88:
+        return 'compact'
+    return 'multi-wing'
+
+def _dominant_outline_axis(coords, fallback):
+    orientation_x = 0.0
+    orientation_y = 0.0
+    total_length = 0.0
+    for index in range(len(coords) - 1):
+        dx = coords[index + 1][0] - coords[index][0]
+        dy = coords[index + 1][1] - coords[index][1]
+        length = math.hypot(dx, dy)
+        if length <= 1e-6:
+            continue
+        angle = math.atan2(dy, dx)
+        orientation_x += length * math.cos(2.0 * angle)
+        orientation_y += length * math.sin(2.0 * angle)
+        total_length += length
+    strength = math.hypot(orientation_x, orientation_y) / max(total_length, 1e-6)
+    if strength < 0.08:
+        return fallback
+    angle = 0.5 * math.atan2(orientation_y, orientation_x)
+    axis = (math.cos(angle), math.sin(angle))
+    if axis[0] * fallback[0] + axis[1] * fallback[1] < 0:
+        axis = (-axis[0], -axis[1])
+    return axis
+
+def _unit_slice_pattern_id(footprint):
+    corners = list(footprint.minimum_rotated_rectangle.exterior.coords)
+    longest_edge = None
+    for index in range(len(corners) - 1):
+        dx = corners[index + 1][0] - corners[index][0]
+        dy = corners[index + 1][1] - corners[index][1]
+        length = math.hypot(dx, dy)
+        if length > 1e-6 and (longest_edge is None or length > longest_edge[0]):
+            longest_edge = (length, dx / length, dy / length)
+    if longest_edge is None:
+        return None
+
+    points = list(footprint.exterior.coords)
+    signatures = []
+    base_axis = (longest_edge[1], longest_edge[2])
+    for axis in (base_axis, (-base_axis[1], base_axis[0])):
+        for direction in (1.0, -1.0):
+            ux, uy = axis[0] * direction, axis[1] * direction
+            vx, vy = -uy, ux
+            projected = [(x * ux + y * uy, x * vx + y * vy) for x, y in points]
+            min_s = min(point[0] for point in projected)
+            max_s = max(point[0] for point in projected)
+            min_t = min(point[1] for point in projected)
+            max_t = max(point[1] for point in projected)
+            scale = max(max_s - min_s, max_t - min_t)
+            if scale <= 1e-6:
+                continue
+            normalized = [((s - min_s) / scale, (t - min_t) / scale) for s, t in projected]
+            segments = [(normalized[index], normalized[index + 1]) for index in range(len(normalized) - 1)]
+            lengths = [math.hypot(end[0] - start[0], end[1] - start[1]) for start, end in segments]
+            perimeter = sum(lengths)
+            if perimeter <= 1e-6:
+                continue
+            sampled = []
+            segment_index = 0
+            segment_start = 0.0
+            for sample_index in range(64):
+                target = perimeter * sample_index / 64
+                while segment_index < len(lengths) - 1 and segment_start + lengths[segment_index] < target:
+                    segment_start += lengths[segment_index]
+                    segment_index += 1
+                start, end = segments[segment_index]
+                fraction = (target - segment_start) / max(lengths[segment_index], 1e-9)
+                sampled.append((math.floor((start[0] + (end[0] - start[0]) * fraction) * 40 + 0.5),
+                                math.floor((start[1] + (end[1] - start[1]) * fraction) * 40 + 0.5)))
+
+            minimum = min(sampled)
+            for sequence in (sampled, list(reversed(sampled))):
+                for start_index, point in enumerate(sequence):
+                    if point == minimum:
+                        rotated = sequence[start_index:] + sequence[:start_index]
+                        signatures.append(';'.join(f'{x},{y}' for x, y in rotated))
+    if not signatures:
+        return None
+    return hashlib.sha1(min(signatures).encode('ascii')).hexdigest()[:12]
+
+def _assess_unit_slice_confidence(geom, lines):
+    """Classify a footprint and reject only geometry that cannot be sliced safely."""
+    reasons = []
+    if geom is None or geom.is_empty:
+        return 0.0, ['missing-footprint'], False, 'unclassified', None
+    if not geom.is_valid:
+        geom = geom.buffer(0)
+    parts = _polygon_parts(geom)
+    if not parts:
+        return 0.0, ['invalid-footprint'], False, 'unclassified', None
+
+    footprint = max(parts, key=lambda part: part.area)
+    rectangle = footprint.minimum_rotated_rectangle
+    corners = list(rectangle.exterior.coords)
+    longest_edge = None
+    for edge_index in range(len(corners) - 1):
+        dx = corners[edge_index + 1][0] - corners[edge_index][0]
+        dy = corners[edge_index + 1][1] - corners[edge_index][1]
+        edge_length = math.hypot(dx, dy)
+        if edge_length > 1e-6 and (longest_edge is None or edge_length > longest_edge[0]):
+            longest_edge = (edge_length, dx / edge_length, dy / edge_length)
+    if not longest_edge or rectangle.area <= 0 or footprint.area <= 0:
+        return 0.0, ['degenerate-footprint'], False, 'unclassified', None
+
+    ux, uy = longest_edge[1], longest_edge[2]
+    vx, vy = -uy, ux
+    rectangle_edges = [
+        math.hypot(corners[index + 1][0] - corners[index][0], corners[index + 1][1] - corners[index][1])
+        for index in range(len(corners) - 1)
+    ]
+    spans = sorted((value for value in rectangle_edges if value > 1e-6), reverse=True)
+    long_span = spans[0] if spans else 0.0
+    short_span = spans[-1] if spans else 0.0
+    aspect_ratio = long_span / max(short_span, 1e-6)
+    solidity = min(1.0, footprint.area / max(footprint.convex_hull.area, 1e-6))
+    rectangle_fill = min(1.0, footprint.area / max(rectangle.area, 1e-6))
+
+    aligned_length = 0.0
+    perimeter = 0.0
+    alignment_cosine = math.cos(math.radians(12.0))
+    exterior = list(footprint.exterior.coords)
+    for edge_index in range(len(exterior) - 1):
+        dx = exterior[edge_index + 1][0] - exterior[edge_index][0]
+        dy = exterior[edge_index + 1][1] - exterior[edge_index][1]
+        edge_length = math.hypot(dx, dy)
+        if edge_length <= 1e-6:
+            continue
+        perimeter += edge_length
+        dot_long = abs((dx * ux + dy * uy) / edge_length)
+        dot_cross = abs((dx * vx + dy * vy) / edge_length)
+        if max(dot_long, dot_cross) >= alignment_cosine:
+            aligned_length += edge_length
+    edge_alignment = aligned_length / max(perimeter, 1e-6)
+    aspect_score = min(1.0, aspect_ratio / 2.5)
+    confidence = (0.32 * edge_alignment + 0.28 * solidity +
+                  0.22 * aspect_score + 0.18 * rectangle_fill)
+
+    pattern = classify_unit_slice_pattern(footprint)
+    pattern_id = _unit_slice_pattern_id(footprint)
+    if not lines or len(lines) < 2:
+        reasons.append('unsupported-line-count')
+    return round(confidence, 3), reasons, not reasons, pattern, pattern_id
+
+def _precompute_unit_slices_legacy(geom, lines, pattern='slab'):
+    """Split one residential footprint into straight, facade-normal line bands."""
+    if geom is None or geom.is_empty or not lines or len(lines) < 2:
+        return None
+
+    if not geom.is_valid:
+        geom = geom.buffer(0)
+    parts = _polygon_parts(geom)
+    if not parts:
+        return None
+    footprint = max(parts, key=lambda part: part.area)
+    if footprint.area <= 0:
+        return None
+
+    from shapely.affinity import scale
+    renderer_footprint = scale(footprint, xfact=1.0, yfact=-1.0, origin=(0, 0))
+    rectangle = renderer_footprint.minimum_rotated_rectangle
+    corners = list(rectangle.exterior.coords)
+    longest_edge = None
+    for edge_index in range(len(corners) - 1):
+        dx = corners[edge_index + 1][0] - corners[edge_index][0]
+        dy = corners[edge_index + 1][1] - corners[edge_index][1]
+        edge_length = math.hypot(dx, dy)
+        if edge_length > 1e-6 and (longest_edge is None or edge_length > longest_edge[0]):
+            longest_edge = (edge_length, dx / edge_length, dy / edge_length)
+    if longest_edge is None:
+        return None
+
+    ux, uy = longest_edge[1], longest_edge[2]
+    if ux > 1e-4 or (abs(ux) <= 1e-4 and uy > 0):
+        ux, uy = -ux, -uy
+    fallback_axis = (ux, uy)
+    if pattern in ('compact-complex', 'irregular', 'multi-wing', 'compact'):
+        ux, uy = _dominant_outline_axis(list(renderer_footprint.exterior.coords), fallback_axis)
+    vx, vy = -uy, ux
+    renderer_coords = list(renderer_footprint.exterior.coords)
+    s_values = [x * ux + y * uy for x, y in renderer_coords]
+    t_values = [x * vx + y * vy for x, y in renderer_coords]
+    s_min, s_max = min(s_values), max(s_values)
+    t_min, t_max = min(t_values), max(t_values)
+    if s_max - s_min < 0.1 or t_max - t_min < 0.1:
+        return None
+
+    def strip_polygon(left, right):
+        pad = max(1.0, t_max - t_min)
+        corners_st = [
+            (left, t_min - pad), (right, t_min - pad),
+            (right, t_max + pad), (left, t_max + pad)
+        ]
+        coordinates = [(s * ux + t * vx, -(s * uy + t * vy)) for s, t in corners_st]
+        return Polygon(coordinates)
+
+    def clipped(left, right):
+        return footprint.intersection(strip_polygon(left, right))
+
+    slices = []
+    left = s_min
+    cumulative_weight = 0.0
+    line_weights = [max(0.001, float(line.get('supply') or line.get('exclusive') or 1.0)) for line in lines]
+    total_weight = sum(line_weights)
+    for line_index, line in enumerate(lines):
+        cumulative_weight += line_weights[line_index]
+        if line_index == len(lines) - 1:
+            right = s_max
+        else:
+            target_area = footprint.area * cumulative_weight / total_weight
+            low, high = left, s_max
+            for _ in range(36):
+                middle = (low + high) / 2.0
+                if clipped(s_min, middle).area < target_area:
+                    low = middle
+                else:
+                    high = middle
+            right = (low + high) / 2.0
+
+        cell_parts = [part for part in _polygon_parts(clipped(left, right)) if part.area > 0.01]
+        if not cell_parts:
+            return None
+        slices.append((line, cell_parts))
+        left = right
+
+    all_parts = [part for _, cell_parts in slices for part in cell_parts]
+    union = unary_union(all_parts)
+    area_tolerance = max(0.02, footprint.area * 1e-7)
+    if (footprint.symmetric_difference(union).area > area_tolerance or
+            sum(part.area for part in all_parts) - union.area > area_tolerance):
+        return None
+
+    result = []
+    for line, cell_parts in slices:
+        polygons = []
+        for part in cell_parts:
+            outer = []
+            for x, y in part.exterior.coords:
+                lng, lat = transformer_to_4326.transform(x, y)
+                outer.append([round(lng, 10), round(lat, 10)])
+            holes = []
+            for interior in part.interiors:
+                hole = []
+                for x, y in interior.coords:
+                    lng, lat = transformer_to_4326.transform(x, y)
+                    hole.append([round(lng, 10), round(lat, 10)])
+                if len(hole) >= 4:
+                    holes.append(hole)
+            if len(outer) >= 4:
+                polygons.append({'outer': outer, 'holes': holes})
+        if not polygons:
+            return None
+        result.append({'line': str(line['line']), 'polygons': polygons})
+    return result
+
+def _precompute_unit_slices(geom, lines, pattern='slab'):
+    """Split footprints using a geometry-family-specific orthogonal template."""
+    return precompute_unit_slices(geom, lines, transformer_to_4326)
+
 def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data, source_label='korea_gis_ledger_fused_v2'):
     """Build a rich 3D JSON using PNU + strict complex name + Pyoje ground-truth orphan rescue."""
     cx, cy = transformer_to_5186.transform(cpx['x'], cpx['y'])
@@ -793,6 +1082,12 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data, source_label='kor
         is_small_aux = (geom.area < 65.0 or min_span < 6.5)
 
         lines = []
+        unit_slices = None
+        unit_slice_status = 'not-applicable'
+        unit_slice_confidence = None
+        unit_slice_pattern = None
+        unit_slice_pattern_id = None
+        unit_slice_review_reasons = []
         piloti = False
         is_res_bld = (not is_aux_name(dong_name)) and (not is_small_aux) and (flr >= 3 or (p_dong is not None and p_dong.get('is_res', False) and flr >= 2))
 
@@ -809,6 +1104,20 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data, source_label='kor
                     'count': l_data['count']
                 })
             piloti = (j_dong['min_floor'] > 1)
+
+        if is_res_bld and len(lines) > 1:
+            unit_slice_confidence, unit_slice_review_reasons, geometry_supported, unit_slice_pattern, unit_slice_pattern_id = _assess_unit_slice_confidence(geom, lines)
+            if geometry_supported:
+                unit_slices = _precompute_unit_slices(geom, lines, unit_slice_pattern)
+                if not unit_slices:
+                    unit_slices = _precompute_unit_slices(geom, lines, 'slab')
+                    if unit_slices:
+                        unit_slice_review_reasons = ['pattern-axis-fallback']
+                unit_slice_status = 'precomputed' if unit_slices else 'validation-failed'
+                if not unit_slices:
+                    unit_slice_review_reasons = ['slice-geometry-validation-failed']
+            else:
+                unit_slice_status = 'needs-review'
 
         if is_res_bld:
             res_built_count += 1
@@ -829,6 +1138,13 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data, source_label='kor
             'approvalDate': p_dong['use_apr'] if p_dong else '',
             'piloti': piloti,
             'lines': lines,
+            'unitSlices': unit_slices,
+            'unitSliceStatus': unit_slice_status,
+            'unitSliceConfidence': unit_slice_confidence,
+            'unitSlicePattern': unit_slice_pattern,
+            'unitSlicePatternId': unit_slice_pattern_id,
+            'unitSliceAlgorithm': 'pattern-v3' if len(lines) > 1 and is_res_bld else None,
+            'unitSliceReviewReasons': unit_slice_review_reasons,
             'units': j_dong['units'] if (j_dong and not is_small_aux) else [],
             'hardware': {
                 'elevPass': p_dong['elev_pass'] if p_dong else 0,
@@ -922,12 +1238,15 @@ def build_complex_json(cpx, gdf_sido, pyoje_data, jeonyu_data, source_label='kor
         'coverage': {
             'primaryCount': len(buildings),
             'residentialCount': res_built_count,
-            'steppedCount': sum(1 for b in buildings if len(b['lines']) > 1)
+            'steppedCount': sum(1 for b in buildings if len(b['lines']) > 1),
+            'precomputedUnitSliceCount': sum(1 for b in buildings if b.get('unitSliceStatus') == 'precomputed'),
+            'needsReviewUnitSliceCount': sum(1 for b in buildings if b.get('unitSliceStatus') == 'needs-review'),
+            'unresolvedUnitSliceCount': sum(1 for b in buildings if b.get('unitSliceStatus') in ('needs-review', 'validation-failed'))
         },
         'source': source_label
     }
 
-def process_sido(sido_code, limit=None, overwrite=False, pre_ledgers=None, failed_list=None):
+def process_sido(sido_code, limit=None, overwrite=False, pre_ledgers=None, failed_list=None, complex_code=None):
     """Process all complexes in a given Sido."""
     sido_name = SIDO_MAP.get(sido_code, sido_code)
     print(f"\n==========================================")
@@ -935,7 +1254,7 @@ def process_sido(sido_code, limit=None, overwrite=False, pre_ledgers=None, faile
     print(f"==========================================")
     
     # 1. Load target complexes for this sido
-    complexes = load_all_target_complexes(filter_sido=sido_code)
+    complexes = load_all_target_complexes(filter_sido=sido_code, complex_code=complex_code)
     cpx_list = list(complexes.values())
     if limit:
         cpx_list = cpx_list[:limit]
@@ -1005,9 +1324,9 @@ def process_sido(sido_code, limit=None, overwrite=False, pre_ledgers=None, faile
             try:
                 with open(out_file, 'r', encoding='utf-8') as fp:
                     existing_txt = fp.read()
-                if ('"korea_gis_ledger_fused_v2"' in existing_txt or
+                if (not complex_code and ('"korea_gis_ledger_fused_v2"' in existing_txt or
                     '"vworld_ledger_fused_v2"' in existing_txt or
-                    '"vworld_ledger_pure_v2"' in existing_txt):
+                    '"vworld_ledger_pure_v2"' in existing_txt)):
                     if not os.path.exists(root_out) or os.path.getsize(root_out) != os.path.getsize(out_file):
                         with open(root_out, 'wb') as wp:
                             wp.write(existing_txt.encode('utf-8'))
@@ -1019,6 +1338,7 @@ def process_sido(sido_code, limit=None, overwrite=False, pre_ledgers=None, faile
         try:
             data = build_complex_json(cpx, combined_gdf, pyoje_data, jeonyu_data)
         except Exception as e:
+            print(f"Build error for {cpx['code']} ({cpx['name']}): {e}")
             data = None
         if data and len(data['buildings']) > 0:
             compact_txt = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
@@ -1042,6 +1362,7 @@ def main():
     parser = argparse.ArgumentParser(description="Build rich 3D complex data from nationwide GIS & ledgers")
     parser.add_argument('--sido', default='11', help="Sido code (e.g. 11 for Seoul, 41 for Gyeonggi, or 'all')")
     parser.add_argument('--limit', type=int, default=None, help="Limit number of complexes per Sido for testing")
+    parser.add_argument('--complex-code', default=None, help="Build only one complex code")
     parser.add_argument('--overwrite', action='store_true', help="Overwrite existing 3D json files")
     parser.add_argument('--upload', action='store_true', help="Automatically upload to Cloudflare R2 after building")
     parser.add_argument('--include-apartment-neighbors', action='store_true', help="Add apartment complex references within 500m of each complex footprint")
@@ -1059,7 +1380,7 @@ def main():
 
     # Pre-scan ledgers ONCE for all target complexes when processing multiple Sidos
     pre_ledgers = None
-    if len(sido_list) > 1:
+    if len(sido_list) > 1 and not args.complex_code:
         all_targets = []
         for s in sido_list:
             c_map = load_all_target_complexes(filter_sido=s)
@@ -1074,16 +1395,18 @@ def main():
     total_fail = 0
     failed_targets = []
     for s in sido_list:
-        succ, fail = process_sido(s, limit=args.limit, overwrite=args.overwrite, pre_ledgers=pre_ledgers, failed_list=failed_targets)
+        succ, fail = process_sido(s, limit=args.limit, overwrite=args.overwrite, pre_ledgers=pre_ledgers, failed_list=failed_targets, complex_code=args.complex_code)
         total_success += succ
         total_fail += fail
         
     print(f"\n==========================================")
     print(f"Total 3D generation complete: {total_success} generated, {total_fail} failed")
-    if args.failed_out:
+    if args.failed_out and not args.complex_code:
         with open(args.failed_out, 'w', encoding='utf-8') as fp:
             json.dump(failed_targets, fp, ensure_ascii=False)
         print(f"Saved {len(failed_targets)} fallback targets to: {args.failed_out}")
+    elif args.complex_code and failed_targets:
+        print(f"Targeted build failed for {len(failed_targets)} complex(es); fallback manifest was left unchanged.")
     print(f"==========================================")
 
     if args.include_apartment_neighbors:

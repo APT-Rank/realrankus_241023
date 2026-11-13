@@ -219,6 +219,7 @@ def sync_3d_to_r2(force=False, max_workers=UPLOAD_WORKERS, dry_run=False, target
     start_time = time.time()
     uploaded_files = 0
     uploaded_bytes = 0
+    upload_errors = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {executor.submit(upload_single_file, s3, bucket_name, item[0], item[1], item[2]): item for item in to_upload}
@@ -234,9 +235,17 @@ def sync_3d_to_r2(force=False, max_workers=UPLOAD_WORKERS, dry_run=False, target
             except Exception as e:
                 item = futures[future]
                 print(f"[!] Error uploading {item[1]}: {e}", flush=True)
+                upload_errors.append((item[1], str(e)))
 
     total_time = time.time() - start_time
     print(f"[+] 3D R2 sync complete: {uploaded_files:,} files ({uploaded_bytes / (1024 * 1024):.2f} MB) in {total_time:.2f}s")
+    if upload_errors:
+        print(f"[!] Upload failed for {len(upload_errors):,} files; first failures:", flush=True)
+        for r2_key, error in upload_errors[:20]:
+            print(f"    {r2_key}: {error}", flush=True)
+        raise SystemExit(1)
+    if uploaded_files != len(to_upload):
+        raise SystemExit(f"Upload count mismatch: expected {len(to_upload):,}, got {uploaded_files:,}.")
 
 
 if __name__ == "__main__":

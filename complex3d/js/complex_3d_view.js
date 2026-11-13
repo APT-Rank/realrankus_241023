@@ -1226,46 +1226,124 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return shape;
   }
 
+  function createShapesFromUnitSlice(slice, centerY) {
+    var shapes = [];
+    var primaryPoints = null;
+    var primaryArea = 0;
+    var polygons = slice && Array.isArray(slice.polygons) ? slice.polygons : [];
+    polygons.forEach(function (polygon) {
+      var ring = Array.isArray(polygon) ? polygon : polygon && Array.isArray(polygon.outer) ? polygon.outer : [];
+      if (!Array.isArray(ring) || ring.length < 3) return;
+      var points = [];
+      ring.forEach(function (coordinate) {
+        if (!coordinate || coordinate.length < 2) return;
+        var lng = Number(coordinate[0]);
+        var lat = Number(coordinate[1]);
+        if (!isFinite(lng) || !isFinite(lat)) return;
+        var local = toLocalXY(lng, lat);
+        if (isFinite(local.x) && isFinite(local.y)) {
+          points.push({ x: local.x, y: 2 * centerY - local.y });
+        }
+      });
+      if (points.length > 1 && Math.abs(points[0].x - points[points.length - 1].x) < 1e-6 &&
+          Math.abs(points[0].y - points[points.length - 1].y) < 1e-6) {
+        points.pop();
+      }
+      var shape = createShapeFromPts(points);
+      if (!shape) return;
+      var holes = polygon && !Array.isArray(polygon) && Array.isArray(polygon.holes) ? polygon.holes : [];
+      holes.forEach(function (holeRing) {
+        if (!Array.isArray(holeRing) || holeRing.length < 3) return;
+        var holePoints = [];
+        holeRing.forEach(function (coordinate) {
+          if (!coordinate || coordinate.length < 2) return;
+          var local = toLocalXY(Number(coordinate[0]), Number(coordinate[1]));
+          if (isFinite(local.x) && isFinite(local.y)) {
+            holePoints.push({ x: local.x, y: 2 * centerY - local.y });
+          }
+        });
+        if (holePoints.length > 1 && Math.abs(holePoints[0].x - holePoints[holePoints.length - 1].x) < 1e-6 &&
+            Math.abs(holePoints[0].y - holePoints[holePoints.length - 1].y) < 1e-6) {
+          holePoints.pop();
+        }
+        if (holePoints.length < 3) return;
+        var holePath = new THREE.Path();
+        holePath.moveTo(holePoints[0].x, holePoints[0].y);
+        for (var holeIndex = 1; holeIndex < holePoints.length; holeIndex++) {
+          holePath.lineTo(holePoints[holeIndex].x, holePoints[holeIndex].y);
+        }
+        holePath.closePath();
+        shape.holes.push(holePath);
+      });
+      shapes.push(shape);
+      var area = getPolygonArea2D(points);
+      if (area > primaryArea) {
+        primaryArea = area;
+        primaryPoints = points;
+      }
+    });
+    return { shapes: shapes, primaryPoints: primaryPoints };
+  }
+
   function toSunlightFootprint(points) {
     return (points || []).map(function (point) {
       return { x: point.x, z: point.y };
     });
   }
 
-  // 건물의 주요 축(PCA) 산출: 긴 판상형 아파트의 주동 방향 및 길이 측정
-  function computePolygonPCA(pts) {
+  // 최소 면적 회전 외접 사각형의 장축을 사용해 주동 방향과 평행하게 세대 분할
+  function computePolygonOrientedAxes(pts) {
     if (!pts || pts.length < 3) return { ux: 1, uy: 0, sMin: 0, sMax: 1, L: 1 };
     var n = pts.length;
-    var cx = 0, cy = 0;
-    for (var i = 0; i < n; i++) {
-      cx += pts[i].x;
-      cy += pts[i].y;
-    }
-    cx /= n;
-    cy /= n;
+    var bestAxis = null;
 
-    var cxx = 0, cyy = 0, cxy = 0;
-    for (var i = 0; i < n; i++) {
-      var dx = pts[i].x - cx;
-      var dy = pts[i].y - cy;
-      cxx += dx * dx;
-      cyy += dy * dy;
-      cxy += dx * dy;
+    for (var edgeIndex = 0; edgeIndex < n; edgeIndex++) {
+      var edgeStart = pts[edgeIndex];
+      var edgeEnd = pts[(edgeIndex + 1) % n];
+      var edgeX = edgeEnd.x - edgeStart.x;
+      var edgeY = edgeEnd.y - edgeStart.y;
+      var edgeLength = Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+      if (edgeLength < 1e-4) continue;
+
+      var axisX = edgeX / edgeLength;
+      var axisY = edgeY / edgeLength;
+      var perpendicularX = -axisY;
+      var perpendicularY = axisX;
+      var axisMin = Infinity, axisMax = -Infinity;
+      var perpendicularMin = Infinity, perpendicularMax = -Infinity;
+
+      for (var pointIndex = 0; pointIndex < n; pointIndex++) {
+        var axisProjection = pts[pointIndex].x * axisX + pts[pointIndex].y * axisY;
+        var perpendicularProjection = pts[pointIndex].x * perpendicularX + pts[pointIndex].y * perpendicularY;
+        axisMin = Math.min(axisMin, axisProjection);
+        axisMax = Math.max(axisMax, axisProjection);
+        perpendicularMin = Math.min(perpendicularMin, perpendicularProjection);
+        perpendicularMax = Math.max(perpendicularMax, perpendicularProjection);
+      }
+
+      var spanAlongEdge = axisMax - axisMin;
+      var spanAcrossEdge = perpendicularMax - perpendicularMin;
+      var rectangleArea = spanAlongEdge * spanAcrossEdge;
+      if (!bestAxis || rectangleArea < bestAxis.area) {
+        bestAxis = {
+          x: spanAlongEdge >= spanAcrossEdge ? axisX : perpendicularX,
+          y: spanAlongEdge >= spanAcrossEdge ? axisY : perpendicularY,
+          area: rectangleArea
+        };
+      }
     }
 
-    var theta = 0.5 * Math.atan2(2 * cxy, cxx - cyy);
-    var ux = Math.cos(theta);
-    var uy = Math.sin(theta);
-    // 방향 통일: 남쪽(+Z)을 바라봤을 때 좌측(East, +X)이 1호(t=0), 우측(West, -X)이 N호(t=1)
-    // 따라서 주축 벡터는 동(+X) -> 서(-X) 방향(ux < 0)으로 정렬하여 일관된 호수 배치 보장
+    var ux = bestAxis ? bestAxis.x : -1;
+    var uy = bestAxis ? bestAxis.y : 0;
+    // 라인 번호 방향을 동쪽에서 서쪽으로 정렬해 단지 간 번호 방향을 일관되게 유지
     if (ux > 1e-4 || (Math.abs(ux) <= 1e-4 && uy > 0)) {
       ux = -ux;
       uy = -uy;
     }
 
-    var sMin = 999999, sMax = -999999;
+    var sMin = Infinity, sMax = -Infinity;
     var vx = -uy, vy = ux;
-    var tMin = 999999, tMax = -999999;
+    var tMin = Infinity, tMax = -Infinity;
     for (var i = 0; i < n; i++) {
       var s = pts[i].x * ux + pts[i].y * uy;
       var t = pts[i].x * vx + pts[i].y * vy;
@@ -1287,48 +1365,6 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     };
   }
 
-  function chooseLineGridLayout(lineWeights, majorLength, minorLength) {
-    var lineCount = lineWeights.length;
-    var totalWeight = lineWeights.reduce(function (sum, weight) { return sum + weight; }, 0);
-    var bestLayout = null;
-    var targetAspect = 1.45;
-
-    for (var rowCount = 1; rowCount <= lineCount; rowCount++) {
-      var baseCount = Math.floor(lineCount / rowCount);
-      var extraCount = lineCount % rowCount;
-      var rowCounts = [];
-      var lineIndex = 0;
-      var score = (rowCount - 1) * 0.01;
-
-      for (var row = 0; row < rowCount; row++) {
-        var cellsInRow = baseCount + (row < extraCount ? 1 : 0);
-        var rowWeight = 0;
-        for (var cell = 0; cell < cellsInRow; cell++) {
-          rowWeight += lineWeights[lineIndex + cell];
-        }
-
-        var rowDepth = minorLength * rowWeight / totalWeight;
-        for (var cell = 0; cell < cellsInRow; cell++) {
-          var weight = lineWeights[lineIndex + cell];
-          var cellWidth = majorLength * weight / rowWeight;
-          var aspect = Math.max(cellWidth, rowDepth) / Math.max(0.1, Math.min(cellWidth, rowDepth));
-          var aspectError = Math.abs(Math.log(aspect / targetAspect));
-          if (aspect > 2.2) aspectError += (aspect - 2.2) * 0.8;
-          score += weight / totalWeight * aspectError;
-        }
-
-        rowCounts.push(cellsInRow);
-        lineIndex += cellsInRow;
-      }
-
-      if (!bestLayout || score < bestLayout.score) {
-        bestLayout = { rowCounts: rowCounts, score: score };
-      }
-    }
-
-    return bestLayout || { rowCounts: [lineCount], score: 0 };
-  }
-
   function getPolygonArea2D(pts) {
     if (!pts || pts.length < 3) return 0;
     var area = 0;
@@ -1339,18 +1375,18 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return Math.abs(area) * 0.5;
   }
 
-  function clipPolygonIntoLineCells(polygon, pca, lineWeights, rowCounts) {
+  function clipPolygonIntoLineCells(polygon, axes, lineWeights, rowCounts) {
     var totalWeight = lineWeights.reduce(function (sum, weight) { return sum + weight; }, 0);
-    var perpendicularX = -pca.uy;
-    var perpendicularY = pca.ux;
     var sourceArea = getPolygonArea2D(polygon);
     var clippedArea = 0;
     var result = [];
     var lineIndex = 0;
-    var tStart = pca.tMin;
+    var tStart = axes.tMin;
+    var perpendicularX = -axes.uy;
+    var perpendicularY = axes.ux;
 
     function clipBounds(sMin, sMax, tMin, tMax) {
-      var clipped = clipPolygonWithSlab(polygon, pca.ux, pca.uy, sMin, sMax);
+      var clipped = clipPolygonWithSlab(polygon, axes.ux, axes.uy, sMin, sMax);
       return clipPolygonWithSlab(clipped, perpendicularX, perpendicularY, tMin, tMax);
     }
 
@@ -1368,6 +1404,30 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       return (low + high) / 2;
     }
 
+    function hasSelfIntersection(points) {
+      function orientation(a, b, c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+      }
+
+      for (var first = 0; first < points.length; first++) {
+        var firstNext = (first + 1) % points.length;
+        for (var second = first + 2; second < points.length; second++) {
+          var secondNext = (second + 1) % points.length;
+          if (first === 0 && secondNext === 0) continue;
+
+          var firstSideA = orientation(points[first], points[firstNext], points[second]);
+          var firstSideB = orientation(points[first], points[firstNext], points[secondNext]);
+          var secondSideA = orientation(points[second], points[secondNext], points[first]);
+          var secondSideB = orientation(points[second], points[secondNext], points[firstNext]);
+          if (firstSideA * firstSideB < -1e-8 && secondSideA * secondSideB < -1e-8) return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (sourceArea <= 0 || totalWeight <= 0) return null;
+    var cumulativeRowWeight = 0;
     for (var row = 0; row < rowCounts.length; row++) {
       var cellsInRow = rowCounts[row];
       var rowWeight = 0;
@@ -1375,36 +1435,37 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         rowWeight += lineWeights[lineIndex + cell];
       }
 
-      var tEnd = rowCounts.length === 1
-        ? pca.tMax
-        : findAreaBoundary('t', tStart, pca.tMax, sourceArea * rowWeight / totalWeight,
-          pca.sMin, pca.sMax, tStart, pca.tMax);
-      var rowArea = getPolygonArea2D(clipBounds(pca.sMin, pca.sMax, tStart, tEnd));
-      var sStart = pca.sMin;
+      cumulativeRowWeight += rowWeight;
+      var tEnd = row === rowCounts.length - 1
+        ? axes.tMax
+        : findAreaBoundary('t', axes.tMin, axes.tMax, sourceArea * cumulativeRowWeight / totalWeight,
+          axes.sMin, axes.sMax, axes.tMin, axes.tMax);
+      var rowArea = getPolygonArea2D(clipBounds(axes.sMin, axes.sMax, tStart, tEnd));
+      var sStart = axes.sMin;
+      var cumulativeCellWeight = 0;
+
       for (var cell = 0; cell < cellsInRow; cell++) {
         var cellWeight = lineWeights[lineIndex];
-        var sEnd = rowCounts.length === 1
-          ? sStart + pca.L * cellWeight / totalWeight
-          : findAreaBoundary('s', sStart, pca.sMax, rowArea * cellWeight / rowWeight,
-            sStart, pca.sMax, tStart, tEnd);
+        cumulativeCellWeight += cellWeight;
+        var sEnd = cell === cellsInRow - 1
+          ? axes.sMax
+          : findAreaBoundary('s', sStart, axes.sMax, rowArea * cumulativeCellWeight / rowWeight,
+            sStart, axes.sMax, tStart, tEnd);
         var clipped = clipBounds(sStart, sEnd, tStart, tEnd);
         var cellArea = getPolygonArea2D(clipped);
-        if (!clipped || clipped.length < 3 || cellArea <= 0.01) return null;
+        var expectedArea = sourceArea * cellWeight / totalWeight;
+        if (!clipped || clipped.length < 3 || hasSelfIntersection(clipped) || cellArea <= 0.01 || expectedArea <= 0) return null;
+        if (Math.abs(cellArea - expectedArea) / expectedArea > 0.2) return null;
 
         clippedArea += cellArea;
         result.push(clipped);
-        if (rowCounts.length > 1) {
-          var expectedArea = sourceArea * cellWeight / totalWeight;
-          if (Math.abs(cellArea - expectedArea) / expectedArea > 0.2) return null;
-        }
         sStart = sEnd;
         lineIndex++;
       }
       tStart = tEnd;
     }
 
-    if (result.length !== lineWeights.length || sourceArea <= 0) return null;
-    if (rowCounts.length > 1 && Math.abs(clippedArea - sourceArea) / sourceArea > 0.03) return null;
+    if (result.length !== lineWeights.length || Math.abs(clippedArea - sourceArea) / sourceArea > 0.03) return null;
     return result;
   }
 
@@ -1665,7 +1726,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     // ★ [핵심 혁신] 라인별 층수 단차 및 호수별(Unit) 3D 분할 압출 시스템 ★
     var lines = Array.isArray(b.lines) ? b.lines.filter(function (l) { return l && l.line; }) : [];
-    var pca = null;
+    var buildingAxes = null;
     var basePts = baseShape.transformedPts || [];
 
     if (lines.length > 0) {
@@ -1683,10 +1744,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       // 라인별 면적 가중치 계산 (supply > exclusive > 1.0)
       var lineWeights = [];
       lines.forEach(function (l) {
-        var w = l.supply || l.exclusive || 1.0;
-        lineWeights.push(w);
+        var weight = Number(l.supply || l.exclusive || 1.0);
+        lineWeights.push(isFinite(weight) && weight > 0 ? weight : 1.0);
       });
-      pca = computePolygonPCA(basePts);
+      buildingAxes = computePolygonOrientedAxes(basePts);
     }
 
     dongTotalFloors[dongKey] = totalFloors;
@@ -1695,22 +1756,51 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var sliceHeight = floorHeight - 0.22;
     var lineGeomCache = [];
     var lineEdgesCache = [];
+    var linePolygonCache = null;
+    var lineShapesCache = null;
+    var hasValidUnitSlices = false;
     var sunlightBuildingFootprint = toSunlightFootprint(basePts);
-    var sunlightUnitFootprints = linePolygonCache
-      ? linePolygonCache.map(toSunlightFootprint)
-      : [sunlightBuildingFootprint];
 
-    if (lines.length > 1 && basePts.length >= 3 && pca) {
-      var lineLayout = chooseLineGridLayout(lineWeights, pca.L, pca.T);
-      var linePolygonCache = clipPolygonIntoLineCells(basePts, pca, lineWeights, lineLayout.rowCounts);
-      if (!linePolygonCache && lineLayout.rowCounts.length > 1) {
-        linePolygonCache = clipPolygonIntoLineCells(basePts, pca, lineWeights, [lines.length]);
+    if (lines.length > 1 && basePts.length >= 3 && buildingAxes) {
+      var baseCenterY = basePts.reduce(function (sum, point) { return sum + point.y; }, 0) / basePts.length;
+      var requiresManualUnitSliceReview = b.unitSliceStatus === 'needs-review' || b.unitSliceStatus === 'validation-failed';
+      var savedUnitSlices = !requiresManualUnitSliceReview && Array.isArray(b.unitSlices) ? b.unitSlices : null;
+      var savedSlicesMatchLines = !!savedUnitSlices && savedUnitSlices.length === lines.length &&
+        savedUnitSlices.every(function (slice, sliceIndex) {
+          return slice && String(slice.line) === String(lines[sliceIndex].line);
+        });
+
+      if (savedSlicesMatchLines) {
+        linePolygonCache = [];
+        lineShapesCache = [];
+        savedUnitSlices.forEach(function (slice) {
+          if (!linePolygonCache || !lineShapesCache) return;
+          var converted = createShapesFromUnitSlice(slice, baseCenterY);
+          if (!converted.shapes.length || !converted.primaryPoints) {
+            linePolygonCache = null;
+            lineShapesCache = null;
+            return;
+          }
+          linePolygonCache.push(converted.primaryPoints);
+          lineShapesCache.push(converted.shapes);
+        });
+        if (!linePolygonCache || linePolygonCache.length !== lines.length) {
+          linePolygonCache = null;
+          lineShapesCache = null;
+        }
       }
 
-      if (linePolygonCache) {
-        for (var li = 0; li < linePolygonCache.length; li++) {
-          var sShape = createShapeFromPts(linePolygonCache[li]);
-          var sGeom = new THREE.ExtrudeGeometry(sShape, {
+      if (!linePolygonCache && !requiresManualUnitSliceReview) {
+        linePolygonCache = clipPolygonIntoLineCells(basePts, buildingAxes, lineWeights, [lines.length]);
+        if (linePolygonCache) {
+          lineShapesCache = linePolygonCache.map(function (points) { return [createShapeFromPts(points)]; });
+        }
+      }
+
+      if (linePolygonCache && lineShapesCache) {
+        hasValidUnitSlices = true;
+        for (var li = 0; li < lineShapesCache.length; li++) {
+          var sGeom = new THREE.ExtrudeGeometry(lineShapesCache[li], {
             depth: sliceHeight,
             bevelEnabled: true,
             bevelSegments: 1,
@@ -1723,10 +1813,17 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           lineEdgesCache.push(new THREE.EdgesGeometry(sGeom, 26));
         }
       } else {
-        for (var li = 0; li < lines.length; li++) {
-          lineGeomCache.push(null);
-          lineEdgesCache.push(null);
-        }
+        var unslicedGeom = new THREE.ExtrudeGeometry(baseShape, {
+          depth: sliceHeight,
+          bevelEnabled: true,
+          bevelSegments: 1,
+          steps: 1,
+          bevelSize: 0.08,
+          bevelThickness: 0.08
+        });
+        unslicedGeom.rotateX(-Math.PI / 2);
+        lineGeomCache.push(unslicedGeom);
+        lineEdgesCache.push(new THREE.EdgesGeometry(unslicedGeom, 26));
       }
     } else {
       var singleGeom = new THREE.ExtrudeGeometry(baseShape, {
@@ -1741,6 +1838,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       lineGeomCache.push(singleGeom);
       lineEdgesCache.push(new THREE.EdgesGeometry(singleGeom, 26));
     }
+    var sunlightUnitFootprints = linePolygonCache
+      ? linePolygonCache.map(toSunlightFootprint)
+      : [sunlightBuildingFootprint];
 
     for (var f = 1; f <= totalFloors; f++) {
       var band = 'mid';
@@ -1754,7 +1854,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       }
       var baseColor = bandColors[band].clone();
 
-      if (lines.length > 1 && pca) {
+      if (lines.length > 1 && buildingAxes && hasValidUnitSlices) {
         for (var li = 0; li < lines.length; li++) {
           var lineObj = lines[li];
           var lineMin = lineObj.floorMin || 1;
@@ -1821,24 +1921,25 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         floorMesh.castShadow = true;
         floorMesh.receiveShadow = true;
 
-        var hoName = f + '01호';
+        var hasUnitLineData = lines.length <= 1;
+        var hoName = hasUnitLineData ? f + '01호' : '';
         floorMesh.userData = {
           dong: dongKey,
           dongName: b.name || dongKey,
           floor: f,
-          line: '01',
-          lineNum: 1,
+          line: hasUnitLineData ? '01' : null,
+          lineNum: hasUnitLineData ? 1 : null,
           lineIndex: 0,
-          hoName: hoName,
+          hoName: hasUnitLineData ? hoName : null,
           totalFloors: totalFloors,
           band: band,
           bandLabel: bandLabel,
           baseColor: baseColor,
           isFloor: true,
-          isUnit: true,
+          isUnit: hasUnitLineData,
           directSunlightFootprint: sunlightUnitFootprints[0] || sunlightBuildingFootprint,
           directSunlightBuildingFootprint: sunlightBuildingFootprint,
-          lineDesc: hoName
+          lineDesc: hasUnitLineData ? hoName : '세대 분할 정보 없음'
         };
 
         scene.add(floorMesh);
@@ -1857,7 +1958,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     // ★ 동 호수 배지: 투명한 프로스트 글래스모피즘 HUD 배지 (주거동 위주로 정갈하게 배치) ★
     var isResidential = b.residential !== false && !dongKey.includes('근린생활') && !dongKey.includes('상가') && !isAuxiliaryStructure;
     if (isResidential) {
-      var isMobileDongLabel = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      var isMobileDongLabel = window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
       var dongLabelScale = isMobileDongLabel ? 0.8 : 1;
       var canvas = document.createElement('canvas');
       canvas.width = Math.round(180 * dongLabelScale);
