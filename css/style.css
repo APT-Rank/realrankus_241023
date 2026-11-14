@@ -918,6 +918,12 @@
     background-color: #E43B46;
     color: #fff;
   }
+  #btn_complex_3d_map:disabled {
+    color: #64748b;
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    box-shadow: none;
+  }
 
   .searchedListBox {
     align-items: center;

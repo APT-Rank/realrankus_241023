@@ -1763,17 +1763,30 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
     if (lines.length > 1 && basePts.length >= 3 && buildingAxes) {
       var baseCenterY = basePts.reduce(function (sum, point) { return sum + point.y; }, 0) / basePts.length;
+      var normLineKey = function (val) {
+        var s = String(val == null ? '' : val).trim();
+        return s.replace(/^0+(?=\d)/, '');
+      };
       var requiresManualUnitSliceReview = b.unitSliceStatus === 'needs-review' || b.unitSliceStatus === 'validation-failed';
       var savedUnitSlices = !requiresManualUnitSliceReview && Array.isArray(b.unitSlices) ? b.unitSlices : null;
-      var savedSlicesMatchLines = !!savedUnitSlices && savedUnitSlices.length === lines.length &&
-        savedUnitSlices.every(function (slice, sliceIndex) {
-          return slice && String(slice.line) === String(lines[sliceIndex].line);
+      var matchedOrderedSlices = null;
+      if (savedUnitSlices && savedUnitSlices.length === lines.length) {
+        var sliceByKey = {};
+        savedUnitSlices.forEach(function (sl) {
+          if (sl && sl.line != null) sliceByKey[normLineKey(sl.line)] = sl;
         });
+        var tempOrdered = lines.map(function (ln) {
+          return sliceByKey[normLineKey(ln.line)] || null;
+        });
+        if (tempOrdered.every(function (sl) { return !!sl; })) {
+          matchedOrderedSlices = tempOrdered;
+        }
+      }
 
-      if (savedSlicesMatchLines) {
+      if (matchedOrderedSlices) {
         linePolygonCache = [];
         lineShapesCache = [];
-        savedUnitSlices.forEach(function (slice) {
+        matchedOrderedSlices.forEach(function (slice) {
           if (!linePolygonCache || !lineShapesCache) return;
           var converted = createShapesFromUnitSlice(slice, baseCenterY);
           if (!converted.shapes.length || !converted.primaryPoints) {
@@ -2082,6 +2095,26 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     camera.position.copy(defaultCamPos);
     camera.lookAt(controls.target);
     controls.update();
+    updateDynamicFog();
+  }
+
+  function updateDynamicFog() {
+    if (!scene || !scene.fog || !camera || !controls) return;
+    if (isPOVMode && currentPOVSubMode === 'outward') {
+      scene.fog.near = 1000;
+      scene.fog.far = 2600;
+      return;
+    }
+    var camDist = camera.position.distanceTo(controls.target);
+    var span = Math.max(250, complexMaxSpan || 250);
+    var near = Math.max(1000, camDist + span * 0.6);
+    var far = Math.max(2600, near + Math.max(1600, span * 1.6));
+    scene.fog.near = near;
+    scene.fog.far = far;
+    if (camera.far < far + 2000) {
+      camera.far = far + 2000;
+      camera.updateProjectionMatrix();
+    }
   }
 
   // --- 8-1. Constant Screen-Size Camera-Facing 2D Billboards (Method 1) ---
@@ -3430,32 +3463,123 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return units;
   }
 
+  var UNIT_ORIENTATIONS = {
+    W:  { key: 'W',  label: '서향',   directionIndex: 6, normalX: -1,             normalZ: 0,              yaw: -Math.PI / 2 },
+    SW: { key: 'SW', label: '남서향', directionIndex: 5, normalX: -Math.SQRT1_2, normalZ: Math.SQRT1_2,  yaw: -Math.PI / 4 },
+    S:  { key: 'S',  label: '남향',   directionIndex: 4, normalX: 0,              normalZ: 1,              yaw: 0 },
+    SE: { key: 'SE', label: '남동향', directionIndex: 3, normalX: Math.SQRT1_2,  normalZ: Math.SQRT1_2,  yaw: Math.PI / 4 },
+    E:  { key: 'E',  label: '동향',   directionIndex: 2, normalX: 1,              normalZ: 0,              yaw: Math.PI / 2 },
+    NE: { key: 'NE', label: '북동향', directionIndex: 1, normalX: Math.SQRT1_2,  normalZ: -Math.SQRT1_2, yaw: 3 * Math.PI / 4 },
+    N:  { key: 'N',  label: '북향',   directionIndex: 0, normalX: 0,              normalZ: -1,             yaw: Math.PI },
+    NW: { key: 'NW', label: '북서향', directionIndex: 7, normalX: -Math.SQRT1_2, normalZ: -Math.SQRT1_2, yaw: -3 * Math.PI / 4 }
+  };
+
+  function getDefaultUnitOrientationKey(unitMesh) {
+    if (!unitMesh) return 'S';
+    unitMesh.updateMatrixWorld(true);
+    var unitBox = new THREE.Box3().setFromObject(unitMesh);
+    var ewSpan = Math.max(0.5, (isFinite(unitBox.max.x) && isFinite(unitBox.min.x)) ? (unitBox.max.x - unitBox.min.x) : 2);
+    var nsSpan = Math.max(0.5, (isFinite(unitBox.max.z) && isFinite(unitBox.min.z)) ? (unitBox.max.z - unitBox.min.z) : 2);
+    var userData = unitMesh.userData || {};
+    var bFp = userData.directSunlightBuildingFootprint;
+    if (Array.isArray(bFp) && bFp.length >= 3) {
+      var bMinX = Infinity, bMaxX = -Infinity, bMinZ = Infinity, bMaxZ = -Infinity;
+      for (var bi = 0; bi < bFp.length; bi++) {
+        if (bFp[bi].x < bMinX) bMinX = bFp[bi].x;
+        if (bFp[bi].x > bMaxX) bMaxX = bFp[bi].x;
+        if (bFp[bi].z < bMinZ) bMinZ = bFp[bi].z;
+        if (bFp[bi].z > bMaxZ) bMaxZ = bFp[bi].z;
+      }
+      if (isFinite(bMinX) && isFinite(bMaxX) && isFinite(bMinZ) && isFinite(bMaxZ)) {
+        ewSpan = Math.max(0.5, bMaxX - bMinX);
+        nsSpan = Math.max(0.5, bMaxZ - bMinZ);
+      }
+    } else if (userData.dongKey && dongBBoxes[userData.dongKey]) {
+      ewSpan = Math.max(0.5, dongBBoxes[userData.dongKey].spanX || ewSpan);
+      nsSpan = Math.max(0.5, dongBBoxes[userData.dongKey].spanZ || nsSpan);
+    }
+    return nsSpan > ewSpan ? 'E' : 'S';
+  }
+
+  function getEffectiveUnitOrientation(unitMesh) {
+    var userData = (unitMesh && unitMesh.userData) || {};
+    var defaultKey = getDefaultUnitOrientationKey(unitMesh);
+    var manualKey = userData.manualOrientationKey;
+    var activeKey = (manualKey && UNIT_ORIENTATIONS[manualKey]) ? manualKey : defaultKey;
+    var spec = UNIT_ORIENTATIONS[activeKey] || UNIT_ORIENTATIONS.S;
+    return {
+      key: spec.key,
+      label: spec.label,
+      defaultKey: defaultKey,
+      isManual: Boolean(manualKey && UNIT_ORIENTATIONS[manualKey]),
+      directionIndex: spec.directionIndex,
+      normalX: spec.normalX,
+      normalZ: spec.normalZ,
+      yaw: spec.yaw
+    };
+  }
+
   function getBalconyEyePosition(unitMesh) {
     unitMesh.updateMatrixWorld(true);
     var unitBox = new THREE.Box3().setFromObject(unitMesh);
-    var frontZ = unitBox.max.z;
+    var orientation = getEffectiveUnitOrientation(unitMesh);
     var geometryPosition = unitMesh.geometry && unitMesh.geometry.attributes && unitMesh.geometry.attributes.position;
-    var frontTolerance = Math.max(0.05, (unitBox.max.z - unitBox.min.z) * 0.01);
-    var frontXTotal = 0;
-    var frontVertexCount = 0;
+    var eyeY = unitMesh.position.y + 1.6;
+    var centerX = (unitBox.min.x + unitBox.max.x) / 2;
+    var centerZ = (unitBox.min.z + unitBox.max.z) / 2;
+    var spanX = Math.max(0.5, unitBox.max.x - unitBox.min.x);
+    var spanZ = Math.max(0.5, unitBox.max.z - unitBox.min.z);
+    var nx = orientation.normalX;
+    var nz = orientation.normalZ;
 
-    if (geometryPosition) {
+    if (geometryPosition && geometryPosition.count > 0) {
       var vertex = new THREE.Vector3();
-      for (var vertexIndex = 0; vertexIndex < geometryPosition.count; vertexIndex++) {
+      var maxProj = -Infinity;
+      for (var i = 0; i < geometryPosition.count; i++) {
         vertex.set(
-          geometryPosition.getX(vertexIndex),
-          geometryPosition.getY(vertexIndex),
-          geometryPosition.getZ(vertexIndex)
+          geometryPosition.getX(i),
+          geometryPosition.getY(i),
+          geometryPosition.getZ(i)
         ).applyMatrix4(unitMesh.matrixWorld);
-        if (vertex.z >= frontZ - frontTolerance) {
-          frontXTotal += vertex.x;
-          frontVertexCount++;
+        var proj = vertex.x * nx + vertex.z * nz;
+        if (proj > maxProj) maxProj = proj;
+      }
+
+      if (isFinite(maxProj)) {
+        var directionalSpan = Math.abs(nx) * spanX + Math.abs(nz) * spanZ;
+        var tol = Math.max(0.12, directionalSpan * 0.03);
+        var sumX = 0;
+        var sumZ = 0;
+        var count = 0;
+        for (var j = 0; j < geometryPosition.count; j++) {
+          vertex.set(
+            geometryPosition.getX(j),
+            geometryPosition.getY(j),
+            geometryPosition.getZ(j)
+          ).applyMatrix4(unitMesh.matrixWorld);
+          var p = vertex.x * nx + vertex.z * nz;
+          if (p >= maxProj - tol) {
+            sumX += vertex.x;
+            sumZ += vertex.z;
+            count++;
+          }
+        }
+        if (count > 0) {
+          var edgeX = sumX / count;
+          var edgeZ = sumZ / count;
+          var inset = Math.min(0.45, Math.max(0.15, directionalSpan * 0.15));
+          return new THREE.Vector3(edgeX - nx * inset, eyeY, edgeZ - nz * inset);
         }
       }
     }
 
-    var eyeX = frontVertexCount ? frontXTotal / frontVertexCount : (unitBox.min.x + unitBox.max.x) / 2;
-    return new THREE.Vector3(eyeX, unitMesh.position.y + 1.6, frontZ - 0.45);
+    var fallbackInsetX = Math.min(0.45, spanX * 0.25);
+    var fallbackInsetZ = Math.min(0.45, spanZ * 0.25);
+    return new THREE.Vector3(
+      centerX + nx * Math.max(0, spanX * 0.5 - fallbackInsetX),
+      eyeY,
+      centerZ + nz * Math.max(0, spanZ * 0.5 - fallbackInsetZ)
+    );
   }
 
   var directSunlightRaycaster = new THREE.Raycaster();
@@ -3478,75 +3602,131 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   function getDirectSunlightFacade(unitMesh) {
     var userData = unitMesh && unitMesh.userData;
     if (!userData) return { status: 'unknown', directionLabel: '방향 미확인' };
-    if (userData.directSunlightFacade) return userData.directSunlightFacade;
-
-    var unitFootprint = userData.directSunlightFootprint;
-    var buildingFootprint = userData.directSunlightBuildingFootprint;
-    if (!unitFootprint || unitFootprint.length < 3 || !buildingFootprint || buildingFootprint.length < 3) {
-      userData.directSunlightFacade = { status: 'unknown', directionLabel: '방향 미확인' };
+    var orientation = getEffectiveUnitOrientation(unitMesh);
+    if (userData.directSunlightFacade && userData.directSunlightFacade.orientationKey === orientation.key) {
       return userData.directSunlightFacade;
     }
 
-    var sectors = [];
-    for (var sectorIndex = 0; sectorIndex < 8; sectorIndex++) {
-      sectors.push({ index: sectorIndex, length: 0, segments: [] });
-    }
+    unitMesh.updateMatrixWorld(true);
+    var unitBox = new THREE.Box3().setFromObject(unitMesh);
+    var minX = isFinite(unitBox.min.x) ? unitBox.min.x : -1;
+    var maxX = isFinite(unitBox.max.x) ? unitBox.max.x : 1;
+    var minZ = isFinite(unitBox.min.z) ? unitBox.min.z : -1;
+    var maxZ = isFinite(unitBox.max.z) ? unitBox.max.z : 1;
+    var midX = (minX + maxX) / 2;
+    var midZ = (minZ + maxZ) / 2;
+    var spanX = Math.max(0.5, maxX - minX);
+    var spanZ = Math.max(0.5, maxZ - minZ);
 
-    for (var edgeIndex = 0; edgeIndex < unitFootprint.length; edgeIndex++) {
-      var start = unitFootprint[edgeIndex];
-      var end = unitFootprint[(edgeIndex + 1) % unitFootprint.length];
-      var dx = end.x - start.x;
-      var dz = end.z - start.z;
-      var edgeLength = Math.sqrt(dx * dx + dz * dz);
-      if (edgeLength < 0.1) continue;
-
-      var normalX = -dz / edgeLength;
-      var normalZ = dx / edgeLength;
-      var midX = (start.x + end.x) / 2;
-      var midZ = (start.z + end.z) / 2;
-      var insidePlus = isPointInSunlightFootprint(midX + normalX * 0.2, midZ + normalZ * 0.2, buildingFootprint);
-      var insideMinus = isPointInSunlightFootprint(midX - normalX * 0.2, midZ - normalZ * 0.2, buildingFootprint);
-      if (insidePlus === insideMinus) continue;
-
-      if (insidePlus) {
-        normalX *= -1;
-        normalZ *= -1;
-      }
-      var bearing = (Math.atan2(normalX, -normalZ) * 180 / Math.PI + 360) % 360;
-      var sector = Math.round(bearing / 45) % 8;
-      sectors[sector].length += edgeLength;
-      sectors[sector].segments.push({
-        start: start,
-        end: end,
-        length: edgeLength,
-        normalX: normalX,
-        normalZ: normalZ
-      });
-    }
-
-    sectors.sort(function (a, b) { return b.length - a.length; });
-    if (!sectors[0] || sectors[0].length < 0.1) {
-      userData.directSunlightFacade = { status: 'unknown', directionLabel: '방향 미확인' };
-      return userData.directSunlightFacade;
-    }
-
-    var dominant = sectors[0];
-    var runnerUp = sectors[1];
-    if (runnerUp && runnerUp.length > 0 && (dominant.length - runnerUp.length) / dominant.length < 0.04) {
-      var ambiguousDirections = [directSunlightDirectionNames[dominant.index], directSunlightDirectionNames[runnerUp.index]];
-      userData.directSunlightFacade = {
-        status: 'ambiguous',
-        directionLabel: ambiguousDirections.join('/') + ' 구분 불가',
-        candidateDirections: ambiguousDirections
-      };
-      return userData.directSunlightFacade;
+    var segments;
+    if (orientation.key === 'E') {
+      segments = [{
+        start: { x: maxX, z: minZ },
+        end: { x: maxX, z: maxZ },
+        length: spanZ,
+        normalX: orientation.normalX,
+        normalZ: orientation.normalZ
+      }];
+    } else if (orientation.key === 'W') {
+      segments = [{
+        start: { x: minX, z: minZ },
+        end: { x: minX, z: maxZ },
+        length: spanZ,
+        normalX: orientation.normalX,
+        normalZ: orientation.normalZ
+      }];
+    } else if (orientation.key === 'SE') {
+      segments = [
+        {
+          start: { x: midX, z: maxZ },
+          end: { x: maxX, z: maxZ },
+          length: spanX * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        },
+        {
+          start: { x: maxX, z: maxZ },
+          end: { x: maxX, z: midZ },
+          length: spanZ * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        }
+      ];
+    } else if (orientation.key === 'SW') {
+      segments = [
+        {
+          start: { x: minX, z: midZ },
+          end: { x: minX, z: maxZ },
+          length: spanZ * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        },
+        {
+          start: { x: minX, z: maxZ },
+          end: { x: midX, z: maxZ },
+          length: spanX * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        }
+      ];
+    } else if (orientation.key === 'NE') {
+      segments = [
+        {
+          start: { x: midX, z: minZ },
+          end: { x: maxX, z: minZ },
+          length: spanX * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        },
+        {
+          start: { x: maxX, z: minZ },
+          end: { x: maxX, z: midZ },
+          length: spanZ * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        }
+      ];
+    } else if (orientation.key === 'N') {
+      segments = [{
+        start: { x: minX, z: minZ },
+        end: { x: maxX, z: minZ },
+        length: spanX,
+        normalX: orientation.normalX,
+        normalZ: orientation.normalZ
+      }];
+    } else if (orientation.key === 'NW') {
+      segments = [
+        {
+          start: { x: minX, z: midZ },
+          end: { x: minX, z: minZ },
+          length: spanZ * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        },
+        {
+          start: { x: minX, z: minZ },
+          end: { x: midX, z: minZ },
+          length: spanX * 0.5,
+          normalX: orientation.normalX,
+          normalZ: orientation.normalZ
+        }
+      ];
+    } else {
+      segments = [{
+        start: { x: minX, z: maxZ },
+        end: { x: maxX, z: maxZ },
+        length: spanX,
+        normalX: orientation.normalX,
+        normalZ: orientation.normalZ
+      }];
     }
 
     var result = {
-      status: excludedDirectSunlightDirections[dominant.index] ? 'excluded' : 'eligible',
-      directionIndex: dominant.index,
-      directionLabel: directSunlightDirectionNames[dominant.index] + ' 추정',
-      segments: dominant.segments
+      status: 'eligible',
+      orientationKey: orientation.key,
+      directionIndex: orientation.directionIndex,
+      directionLabel: orientation.label,
+      segments: segments
     };
     userData.directSunlightFacade = result;
     return result;
@@ -3660,8 +3840,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   function updateDirectSunlightTimeline(unitMesh) {
     if (!isPOVMode || !unitMesh || !unitMesh.geometry) return;
-    var cacheKey = unitMesh.uuid + ':' + currentSeason;
     var facade = getDirectSunlightFacade(unitMesh);
+    var cacheKey = unitMesh.uuid + ':' + currentSeason + ':' + (facade.orientationKey || 'auto');
     if (facade.status !== 'eligible') {
       directSunTimelineRequestId++;
       directSunTimelinePendingKey = null;
@@ -3971,12 +4151,13 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       neighborLineMat.transparent = false;
       neighborLineMat.opacity = 0.65;
 
-      // ★ 4. 아파트 실내 안쪽에서 외부를 바라보도록 타겟 호수의 3D 좌표 기준 카메라 배치 (외벽 bBox.maxZ/unitZ 기준 실내 안쪽 -0.45m) ★
+      // ★ 4. 아파트 실내 안쪽에서 외부를 바라보도록 타겟 호수의 3D 좌표 기준 카메라 배치 ★
       var targetEyePos = getBalconyEyePosition(activeUnit);
+      var unitOrientation = getEffectiveUnitOrientation(activeUnit);
 
-      // 직방/호갱노노 3D 실측 앵글: 하향 약 -8도(pitch -0.14 rad), 정면 시야
+      // 직방/호갱노노 3D 실측 앵글: 하향 약 -8도(pitch -0.14 rad), 선택 향 기준 시야
       if (!isOutwardUnitSwitch) {
-        povYaw = 0.08;
+        povYaw = unitOrientation.yaw;
         povPitch = -0.14;
         balconyEyePos.copy(targetEyePos);
       }
@@ -4046,6 +4227,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     }
 
     var unitInfo = getUnitInfo(activeUnit);
+    var activeOrientation = getEffectiveUnitOrientation(activeUnit);
 
     // UI 콜백 (상단 플로팅 HUD 배너 표출)
     updateDirectSunlightIndex();
@@ -4064,7 +4246,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         totalUnits: currentFloorUnits ? currentFloorUnits.length : 1,
         povYaw: povYaw,
         povPitch: povPitch,
-        fov: currentPOVFOV
+        fov: currentPOVFOV,
+        orientationKey: activeOrientation.key,
+        defaultOrientationKey: activeOrientation.defaultKey,
+        isManualOrientation: activeOrientation.isManual,
+        orientationLabel: activeOrientation.label
       });
     }
     if (currentPOVSubMode === 'outward' && typeof window.onPOVLookChange === 'function') {
@@ -4431,6 +4617,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     }
 
     checkHover();
+    updateDynamicFog();
     renderer.render(scene, camera);
   }
   animate();
@@ -4727,6 +4914,51 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     },
     isPOVMode: function () {
       return isPOVMode;
+    },
+    setUnitOrientation: function (orientationKey) {
+      if (!isPOVMode || !activePOVFloor) return null;
+      var targetUnit = activePOVFloor;
+      if (!targetUnit.userData) targetUnit.userData = {};
+      if (!orientationKey || orientationKey === 'auto' || !UNIT_ORIENTATIONS[orientationKey]) {
+        targetUnit.userData.manualOrientationKey = null;
+      } else {
+        targetUnit.userData.manualOrientationKey = orientationKey;
+      }
+      targetUnit.userData.directSunlightFacade = null;
+      targetUnit.userData.directSunlightSampleOrigins = null;
+      directSunTimelineCacheKey = null;
+      directSunTimelineCacheValues = null;
+      directSunTimelinePendingKey = null;
+
+      var orientation = getEffectiveUnitOrientation(targetUnit);
+      updateDirectSunlightIndex();
+
+      if (currentPOVSubMode === 'outward') {
+        povYaw = orientation.yaw;
+        povPitch = -0.14;
+        var targetEyePos = getBalconyEyePosition(targetUnit);
+        var lookX = Math.sin(povYaw) * Math.cos(povPitch);
+        var lookY = Math.sin(povPitch);
+        var lookZ = Math.cos(povYaw) * Math.cos(povPitch);
+        var camTarget = new THREE.Vector3(
+          targetEyePos.x + lookX * 80.0,
+          targetEyePos.y + lookY * 80.0,
+          targetEyePos.z + lookZ * 80.0
+        );
+        animatePOVCameraTo(targetEyePos, camTarget, 420, currentPOVFOV);
+        if (typeof window.onPOVLookChange === 'function') {
+          window.onPOVLookChange(povYaw, povPitch);
+        }
+      }
+
+      return {
+        orientationKey: orientation.key,
+        defaultOrientationKey: orientation.defaultKey,
+        isManualOrientation: orientation.isManual,
+        orientationLabel: orientation.label,
+        povYaw: povYaw,
+        povPitch: povPitch
+      };
     },
     focusDong: function (dongKey) {
       activeFocusedDong = dongKey || 'all';

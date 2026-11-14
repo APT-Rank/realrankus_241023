@@ -470,10 +470,11 @@ function checkMobile() {
   }
 }
 
-if (UserAgent.match(/iPhone|ipad|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null || UserAgent.match(/LG|SAMSUNG|Samsung/) != null) {
-  if (scr_width < scr_height) {
-    isMobile = true
-  }
+var isTouchFirstViewport = navigator.maxTouchPoints > 0 &&
+  window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+if (UserAgent.match(/iPhone|ipad|Android|Windows CE|BlackBerry|Symbian|Windows Phone|webOS|Opera Mini|Opera Mobi|POLARIS|IEMobile|lgtelecom|nokia|SonyEricsson/i) != null ||
+  UserAgent.match(/LG|SAMSUNG|Samsung/) != null || isTouchFirstViewport) {
+  isMobile = true;
 }
 
 var connectionOS = ""

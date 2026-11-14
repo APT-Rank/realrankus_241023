@@ -2809,9 +2809,10 @@ function showDetail(index, forceMapCenter) {
         </div>
         <div id='aptrankLoginGuide' style='text-align:center; margin-top:5px'>${tSafe('ui.report.map_click_guide', '지도를 선택하면 주변 입지를 확인할 수 있어요!')}</div>
         <div style='padding: 6px 10px 10px 10px;'>
-          <div type='button' id='btn_complex_3d_map' onclick='openComplex3dMap("${searchCode}")' style='font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;'>
+          <button type='button' id='btn_complex_3d_map' data-code='${searchCode}' data-availability='checking' aria-describedby='complex3d_availability_message' disabled onclick='openComplex3dMap("${searchCode}")' style='font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;'>
             <i class='fa-solid fa-cube'></i> ${tSafe('ui.report.complex_3d_btn', '리얼 FLY 맵 [3D BETA]')}
-          </div>
+          </button>
+          <div id='complex3d_availability_message' role='status' style='margin-top: 5px; text-align: center; font-size: 12px; color: #64748b;'>${isEn ? 'Checking 3D model availability…' : '3D 데이터 확인 중입니다…'}</div>
         </div>
         </div></div></div>
       `;
@@ -3497,6 +3498,7 @@ function showDetail(index, forceMapCenter) {
 
   $("#baseModalLabel").html(titleHtml);
   $("#aptDetail").html(detailHtml);
+  checkComplex3dAvailability(searchCode);
   $("#footer").html(footerHtml);
 
   let randomIndex = Math.floor(Math.random() * default_comment.length);
@@ -5252,7 +5254,89 @@ var complex3dModalViewInstance = null;
 var complex3dModalHistoryToken = null;
 var complex3dModalHistorySequence = 0;
 
+var complex3dAvailabilityCache = Object.create(null);
+
+function updateComplex3dAvailability(code, state) {
+  var button = document.getElementById('btn_complex_3d_map');
+  var message = document.getElementById('complex3d_availability_message');
+  if (!button || button.dataset.code !== String(code)) return;
+
+  button.dataset.availability = state;
+  button.disabled = state !== 'available';
+  button.style.opacity = state === 'available' ? '1' : '0.55';
+  button.style.cursor = state === 'available' ? 'pointer' : 'not-allowed';
+  if (!message) return;
+
+  if (state === 'available') {
+    message.textContent = '';
+    message.style.display = 'none';
+  } else {
+    message.style.display = '';
+    message.style.color = state === 'missing' ? '#b4232d' : '#64748b';
+    message.textContent = state === 'checking'
+      ? (isEn ? 'Checking 3D model availability…' : '3D 데이터 확인 중입니다…')
+      : state === 'missing'
+        ? (isEn ? '3D model data is not available for this complex.' : '현재 이 단지의 리얼FLY 3D 데이터가 없습니다.')
+        : (isEn ? 'Could not verify 3D data. Check your connection and reload.' : '3D 데이터 확인에 실패했습니다. 네트워크 확인 후 다시 불러와 주세요.');
+  }
+}
+
+function checkComplex3dAvailability(searchCode) {
+  var code = String(searchCode || '');
+  if (!code) return;
+
+  var cached = complex3dAvailabilityCache[code];
+  if (cached && Date.now() - cached.checkedAt < 5 * 60 * 1000) {
+    updateComplex3dAvailability(code, cached.state);
+    return;
+  }
+
+  updateComplex3dAvailability(code, 'checking');
+  var encodedCode = encodeURIComponent(code);
+  var localUrl = './complex3d/data/3d/' + encodedCode + '.json';
+  var remoteUrl = 'https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/' + encodedCode + '.json?v=20261112_500m';
+  var isLocalHost = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+  var urls = isLocalHost ? [localUrl, remoteUrl] : [remoteUrl, localUrl];
+  var hadIndeterminateResponse = false;
+
+  function probe(index) {
+    if (index >= urls.length) {
+      var state = hadIndeterminateResponse ? 'unverified' : 'missing';
+      complex3dAvailabilityCache[code] = { state: state, checkedAt: Date.now() };
+      updateComplex3dAvailability(code, state);
+      return;
+    }
+
+    var controller = typeof AbortController === 'function' ? new AbortController() : null;
+    var timeout = controller ? setTimeout(function () { controller.abort(); }, 8000) : null;
+    var options = { method: 'GET', cache: 'no-store', headers: { Range: 'bytes=0-0' } };
+    if (controller) options.signal = controller.signal;
+
+    fetch(urls[index], options).then(function (response) {
+      if (response.body && typeof response.body.cancel === 'function') response.body.cancel().catch(function () {});
+      if (response.ok) {
+        complex3dAvailabilityCache[code] = { state: 'available', checkedAt: Date.now() };
+        updateComplex3dAvailability(code, 'available');
+        return;
+      }
+      if (response.status !== 404) hadIndeterminateResponse = true;
+      probe(index + 1);
+    }).catch(function () {
+      hadIndeterminateResponse = true;
+      probe(index + 1);
+    }).finally(function () {
+      if (timeout) clearTimeout(timeout);
+    });
+  }
+
+  probe(0);
+}
+
 function openComplex3dMap(searchCode) {
+  var availabilityButton = document.getElementById('btn_complex_3d_map');
+  if (availabilityButton && availabilityButton.dataset.code === String(searchCode) &&
+    availabilityButton.dataset.availability !== 'available') return;
+
   var gunguCode = $("#gungu option:selected").val();
 
   // 현재 로드된 aptData 목록에서 단지 정보 탐색

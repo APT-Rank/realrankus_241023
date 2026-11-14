@@ -232,6 +232,39 @@
       font-weight: 600;
       color: #64748b;
     }
+    .direct-sunlight-orientation-bar {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 3px;
+      margin: 4px 0 6px;
+    }
+    .direct-sunlight-orientation-bar[hidden] {
+      display: none !important;
+    }
+    .direct-sunlight-dir-btn {
+      height: 24px;
+      padding: 0 2px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      background: #f8fafc;
+      color: #475569;
+      font: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .direct-sunlight-dir-btn:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    .direct-sunlight-dir-btn.active {
+      background: #E43B46;
+      border-color: #E43B46;
+      color: #ffffff;
+    }
     .direct-sunlight-score {
       font-size: 9px;
       font-weight: 600;
@@ -504,8 +537,20 @@
       font-size: 11px;
       font-weight: 700;
     }
+    .pov-title-row {
+      display: contents;
+    }
+    .pov-orientation-field {
+      order: 1;
+    }
     .pov-controls-row {
       display: contents;
+    }
+    .pov-mode-tabs {
+      order: 2;
+    }
+    .pov-balcony-nav {
+      order: 3;
     }
     .pov-sub {
       font-size: 11.5px;
@@ -858,7 +903,7 @@
     }
 
     /* 모바일 반응형 뷰 레이아웃 (화면 폭 768px 이하 최적화 - 직방/호갱노노 스타일 모바일 3D 인터랙션) */
-    @media (max-width: 768px) {
+    @media (max-width: 768px), (pointer: coarse) {
       .mobile-back-btn {
         display: inline-flex;
       }
@@ -1392,11 +1437,30 @@
       .pov-balcony-nav {
         display: none !important;
       }
+      .pov-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        width: 100%;
+        min-width: 0;
+      }
       .pov-title {
         font-size: 12px;
         max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+      .pov-orientation-field {
+        order: 0;
+        flex: 0 0 auto;
+      }
+      .pov-orientation-field select {
+        width: auto;
+        max-width: 106px;
+        height: 26px;
+        padding: 1px 18px 1px 6px;
+        font-size: 10px;
       }
       .pov-selection-controls {
         display: grid;
@@ -1948,7 +2012,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261113_0107"></script>
+  <script src="./js/complex_3d_view.js?v=20261113_0109"></script>
 </head>
 <body>
 
@@ -2087,6 +2151,16 @@
       <div class="direct-sunlight-explanation" id="direct-sunlight-explanation" hidden>
         세대 폴리곤의 외곽면 길이를 방위별로 합산해 주방향을 추정하고 7×7 표본으로 계산합니다. 북향·북동향·북서향은 제외하며, 방향이 모호하면 점수를 표시하지 않습니다. 실제 창문 위치와 실내 밝기, 날씨는 반영하지 않은 3D 모델 추정치입니다.
         시간 바의 회색은 직달일조가 없는 구간, 노랑에서 빨강으로 갈수록 표본 기준 일조 비율이 높습니다.
+      </div>
+      <div class="direct-sunlight-orientation-bar" id="direct-sunlight-orientation-bar" role="radiogroup" aria-label="세대 향 선택" hidden>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="W">서</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="SW">남서</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="S">남</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="SE">남동</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="E">동</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="NE">북동</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="N">북</button>
+        <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="NW">북서</button>
       </div>
       <input type="range" id="time-slider" min="0" max="24" step="any" value="14.0" aria-label="선택 세대의 시간대별 직달일조">
       
@@ -2313,7 +2387,21 @@
     </button>
     <div class="pov-banner-content">
       <span class="pov-badge"><i class="fa-solid fa-eye"></i> 세대 뷰</span>
-      <span class="pov-title" id="pov-title-text">604동 12층 (고층)</span>
+      <div class="pov-title-row">
+        <span class="pov-title" id="pov-title-text">604동 12층 (고층)</span>
+        <label class="pov-selection-field pov-orientation-field">
+          <select id="pov-orientation-select" aria-label="세대 향 선택">
+            <option value="W">서향</option>
+            <option value="SW">남서향</option>
+            <option value="S" selected>남향</option>
+            <option value="SE">남동향</option>
+            <option value="E">동향</option>
+            <option value="NE">북동향</option>
+            <option value="N">북향</option>
+            <option value="NW">북서향</option>
+          </select>
+        </label>
+      </div>
       <!-- 기존 동·호 선택 및 모드 버튼 마크업 (원복용)
       <div class="pov-selection-controls">
         <label class="pov-selection-field">동
@@ -2913,6 +3001,20 @@
           var povBtnNextUnit = document.getElementById('pov-btn-next-unit');
           var povDongSelect = document.getElementById('pov-dong-select');
           var povHoSelect = document.getElementById('pov-ho-select');
+          var povOrientationSelect = document.getElementById('pov-orientation-select');
+          var directSunlightOrientationBar = document.getElementById('direct-sunlight-orientation-bar');
+          var directSunlightDirBtns = document.querySelectorAll('.direct-sunlight-dir-btn');
+          var POV_ORIENTATION_ORDER = ['W', 'SW', 'S', 'SE', 'E', 'NE', 'N', 'NW'];
+          var POV_ORIENTATION_LABELS = {
+            W: '서향',
+            SW: '남서향',
+            S: '남향',
+            SE: '남동향',
+            E: '동향',
+            NE: '북동향',
+            N: '북향',
+            NW: '북서향'
+          };
           var currentPOVInfo = null;
           var previousPOVNeighborsVisible = null;
           var mobileSheetFollowFrame = null;
@@ -2992,7 +3094,7 @@
           };
 
           function isMobilePOVViewport() {
-            return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+            return window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
           }
 
           function positionMobilePOVFovBar() {
@@ -3127,13 +3229,67 @@
             });
           }
 
-          if (povHoSelect) {
-            povHoSelect.addEventListener('change', function () {
-              if (!viewInstance || !povDongSelect) return;
-              var selection = povHoSelect.value.split('|');
-              viewInstance.selectPOVUnit(povDongSelect.value, parseInt(selection.shift(), 10), selection.join('|'));
-            });
-          }
+            if (povHoSelect) {
+              povHoSelect.addEventListener('change', function () {
+                if (!viewInstance || !povDongSelect) return;
+                var selection = povHoSelect.value.split('|');
+                viewInstance.selectPOVUnit(povDongSelect.value, parseInt(selection.shift(), 10), selection.join('|'));
+              });
+            }
+
+            function syncPOVOrientationSelect(info) {
+              if (!info) return;
+              var defaultKey = info.defaultOrientationKey || 'S';
+              var activeKey = info.orientationKey || defaultKey;
+              var resolvedKey = POV_ORIENTATION_LABELS[activeKey] ? activeKey : defaultKey;
+              if (povOrientationSelect) {
+                Array.prototype.forEach.call(povOrientationSelect.options, function (opt) {
+                  var baseLabel = POV_ORIENTATION_LABELS[opt.value] || opt.textContent;
+                  opt.textContent = (opt.value === defaultKey) ? (baseLabel + ' (기본)') : baseLabel;
+                });
+                povOrientationSelect.value = resolvedKey;
+              }
+              if (directSunlightDirBtns && directSunlightDirBtns.length) {
+                directSunlightDirBtns.forEach(function (btn) {
+                  var isMatch = btn.getAttribute('data-orientation') === resolvedKey;
+                  btn.classList.toggle('active', isMatch);
+                  btn.setAttribute('aria-checked', String(isMatch));
+                });
+              }
+            }
+
+            function applySelectedUnitOrientation(nextKey) {
+              if (!viewInstance || typeof viewInstance.setUnitOrientation !== 'function') return;
+              var updated = viewInstance.setUnitOrientation(nextKey);
+              if (!updated) return;
+              if (currentPOVInfo) {
+                currentPOVInfo.orientationKey = updated.orientationKey;
+                currentPOVInfo.defaultOrientationKey = updated.defaultOrientationKey;
+                currentPOVInfo.isManualOrientation = updated.isManualOrientation;
+                currentPOVInfo.orientationLabel = updated.orientationLabel;
+                currentPOVInfo.povYaw = updated.povYaw;
+                currentPOVInfo.povPitch = updated.povPitch;
+              }
+              syncPOVOrientationSelect(updated);
+              if (typeof updated.povYaw === 'number') {
+                updateDirectionIndicator(updated.povYaw);
+              }
+            }
+
+            if (povOrientationSelect) {
+              povOrientationSelect.addEventListener('change', function () {
+                applySelectedUnitOrientation(povOrientationSelect.value);
+              });
+            }
+
+            if (directSunlightDirBtns && directSunlightDirBtns.length) {
+              directSunlightDirBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                  var nextKey = btn.getAttribute('data-orientation');
+                  if (nextKey) applySelectedUnitOrientation(nextKey);
+                });
+              });
+            }
 
           if (btnToggleFrame) {
             btnToggleFrame.addEventListener('click', function () {
@@ -3282,6 +3438,7 @@
             }
             currentPOVInfo = info;
             if (directSunlightWidget) directSunlightWidget.hidden = false;
+            if (directSunlightOrientationBar) directSunlightOrientationBar.hidden = false;
             var banner = document.getElementById('floor-pov-banner');
             var titleEl = document.getElementById('pov-title-text');
             var layerNb = document.getElementById('layer-neighbors');
@@ -3290,6 +3447,7 @@
             if (banner && titleEl) {
               titleEl.innerText = info.dongName + ' ' + info.floor + '층 (' + info.bandLabel + ')';
               syncPOVUnitSelectors(info);
+              syncPOVOrientationSelect(info);
               if (info.subMode === 'outward') {
                 if (povTabOutward) povTabOutward.classList.add('active');
                 if (povTabFocus) povTabFocus.classList.remove('active');
@@ -3417,6 +3575,7 @@
             }
             currentPOVInfo = null;
             if (directSunlightWidget) directSunlightWidget.hidden = true;
+            if (directSunlightOrientationBar) directSunlightOrientationBar.hidden = true;
             if (directSunlightExplanation) directSunlightExplanation.hidden = true;
             if (directSunlightInfoButton) directSunlightInfoButton.setAttribute('aria-expanded', 'false');
             window.onComplex3dSunlightTimelineUpdate({ status: 'clear' });
@@ -3528,7 +3687,7 @@
 
           function updateSeasonPanelLayout() {
             if (!seasonButtons || !timePanel || !seasonPanel || !controlPanelExpandable) return;
-            if (window.matchMedia('(max-width: 768px)').matches) {
+            if (isMobilePOVViewport()) {
               if (seasonButtons.parentElement !== timePanel) timePanel.appendChild(seasonButtons);
               if (seasonPanel.parentElement) seasonPanel.remove();
             } else {
@@ -3538,7 +3697,7 @@
               }
             }
           }
-          var mobileSheetMedia = window.matchMedia('(max-width: 768px)');
+          var mobileSheetMedia = window.matchMedia('(max-width: 768px), (pointer: coarse)');
           updateSeasonPanelLayout();
           if (mobileSheetMedia.addEventListener) {
             mobileSheetMedia.addEventListener('change', function () {
@@ -3729,7 +3888,7 @@
 
           if (sheetToggle && controlPanel) {
             sheetToggle.addEventListener('pointerdown', function (event) {
-              if (!window.matchMedia('(max-width: 768px)').matches) return;
+              if (!isMobilePOVViewport()) return;
               if (event.target.closest('.sheet-stage-btn')) return;
               if (event.button !== undefined && event.button !== 0) return;
               mobileSheetReleasedRect = null;
