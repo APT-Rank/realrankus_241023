@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>전국 아파트 3D 호수 분할 상단 평면 검수기</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      overflow: hidden;
+    }
+    .app {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #ffffff;
+      border-bottom: 1px solid #cbd5e1;
+      z-index: 10;
+    }
+    .brand {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-right: 6px;
+      white-space: nowrap;
+    }
+    .field {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+    }
+    select, input[type="text"] {
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fff;
+      color: #0f172a;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    select { max-width: 220px; }
+    input[type="text"] { width: 150px; }
+    button {
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { background: #e2e8f0; }
+    button.primary {
+      background: #e43b46;
+      border-color: #e43b46;
+      color: #fff;
+    }
+    button.primary:hover { background: #dc2626; }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .canvas-wrap {
+      position: relative;
+      flex: 1 1 auto;
+      min-width: 0;
+      background: #f8fafc;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+    .hud-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+      pointer-events: none;
+      max-width: 420px;
+    }
+    .hud-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+    .hud-meta {
+      color: #475569;
+      font-size: 11.5px;
+      line-height: 1.45;
+    }
+    .compass {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cbd5e1;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #334155;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+    .compass span.n { color: #e43b46; }
+    .legend {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #334155;
+      pointer-events: none;
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid rgba(15, 23, 42, 0.25);
+    }
+    .sidebar {
+      width: 320px;
+      flex: 0 0 320px;
+      background: #ffffff;
+      border-left: 1px solid #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .sidebar-header {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dong-list {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .dong-card {
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 7px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .dong-card:hover { background: #f1f5f9; border-color: #94a3b8; }
+    .dong-card.active { background: #fef2f2; border-color: #e43b46; }
+    .dong-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .badge.ok { background: #dcfce7; color: #166534; }
+    .badge.warn { background: #ffedd5; color: #9a3412; }
+    .badge.nonres { background: #f1f5f9; color: #64748b; }
+    .dong-card-sub {
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+    .status-msg {
+      color: #64748b;
+      font-size: 12px;
+      margin-left: auto;
+    }
+    @media (max-width: 900px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; flex: 0 0 230px; border-left: none; border-top: 1px solid #cbd5e1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <span class="brand">📐 3D 호수 분할 평면 검수</span>
+      <label class="field">시도
+        <select id="sido-select"></select>
+      </label>
+      <label class="field">시군구
+        <select id="gungu-select"></select>
+      </label>
+      <label class="field">검색
+        <input type="text" id="complex-filter" placeholder="단지명 필터..." />
+      </label>
+      <label class="field">단지
+        <select id="complex-select"></select>
+      </label>
+      <label class="field">코드직접
+        <input type="text" id="code-input" placeholder="예: 8289" style="width:88px;" />
+      </label>
+      <button id="btn-load-code" class="primary" type="button">열기</button>
+      <button id="btn-fit" type="button">전체 맞춤</button>
+      <button id="btn-toggle-labels" type="button">라벨 ON</button>
+      <span class="status-msg" id="status-msg">지역 데이터 로딩 중...</span>
+    </div>
+
+    <div class="main">
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="plan-canvas"></canvas>
+        <div class="hud-overlay" id="hud-overlay">
+          <div class="hud-title" id="hud-title">단지를 선택하세요</div>
+          <div class="hud-meta" id="hud-meta">시도 → 시군구 → 단지를 선택하면 상단 평면도와 호수 분할 결과를 확인할 수 있습니다.</div>
+        </div>
+        <div class="compass" title="상단=북(N), 하단=남(S), 좌=서(W), 우=동(E)">
+          <div><span class="n">N</span><br />W · E<br />S</div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="swatch" style="background:#bae6fd;"></span>1호</span>
+          <span class="legend-item"><span class="swatch" style="background:#bbf7d0;"></span>2호</span>
+          <span class="legend-item"><span class="swatch" style="background:#fde68a;"></span>3호</span>
+          <span class="legend-item"><span class="swatch" style="background:#fbcfe8;"></span>4호</span>
+          <span class="legend-item"><span class="swatch" style="background:#ddd6fe;"></span>5호+</span>
+          <span class="legend-item"><span class="swatch" style="background:#fed7aa; border-style:dashed;"></span>needs-review</span>
+          <span class="legend-item"><span class="swatch" style="background:#e2e8f0;"></span>비주거/부속</span>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <span>동별 분할 현황</span>
+          <span id="dong-summary" style="font-size:11px; color:#64748b;">0개 동</span>
+        </div>
+        <div class="dong-list" id="dong-list"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var LINE_COLORS = [
+        'rgba(56, 189, 248, 0.45)',
+        'rgba(74, 222, 128, 0.45)',
+        'rgba(250, 204, 21, 0.45)',
+        'rgba(244, 114, 182, 0.45)',
+        'rgba(167, 139, 250, 0.45)',
+        'rgba(45, 212, 191, 0.45)',
+        'rgba(251, 146, 60, 0.45)',
+        'rgba(129, 140, 248, 0.45)'
+      ];
+
+      var sidoSelect = document.getElementById('sido-select');
+      var gunguSelect = document.getElementById('gungu-select');
+      var complexFilter = document.getElementById('complex-filter');
+      var complexSelect = document.getElementById('complex-select');
+      var codeInput = document.getElementById('code-input');
+      var btnLoadCode = document.getElementById('btn-load-code');
+      var btnFit = document.getElementById('btn-fit');
+      var btnToggleLabels = document.getElementById('btn-toggle-labels');
+      var statusMsg = document.getElementById('status-msg');
+      var hudTitle = document.getElementById('hud-title');
+      var hudMeta = document.getElementById('hud-meta');
+      var dongSummary = document.getElementById('dong-summary');
+      var dongListEl = document.getElementById('dong-list');
+      var canvasWrap = document.getElementById('canvas-wrap');
+      var canvas = document.getElementById('plan-canvas');
+      var ctx = canvas.getContext('2d');
+
+      var regionTree = {};
+      var currentComplexList = [];
+      var currentComplexData = null;
+      var selectedDongIdx = -1;
+      var showLabels = true;
+
+      var originLng = 127.0;
+      var originLat = 37.5;
+      var cosLat = Math.cos(37.5 * Math.PI / 180);
+      var viewScale = 2.0; // px per meter
+      var viewOffsetX = 0;
+      var viewOffsetY = 0;
+      var isDragging = false;
+      var dragLastX = 0;
+      var dragLastY = 0;
+
+      function setStatus(msg) {
+        statusMsg.textContent = msg;
+      }
+
+      function lngLatToMeters(lng, lat) {
+        var x = (lng - originLng) * 111320 * cosLat;
+        var y = (lat - originLat) * 110540;
+        return [x, y];
+      }
+
+      function metersToScreen(mx, my) {
+        return [
+          canvas.width / 2 + (mx - viewOffsetX) * viewScale,
+          canvas.height / 2 - (my - viewOffsetY) * viewScale
+        ];
+      }
+
+      function resizeCanvas() {
+        var rect = canvasWrap.getBoundingClientRect();
+        canvas.width = Math.max(100, Math.floor(rect.width));
+        canvas.height = Math.max(100, Math.floor(rect.height));
+        drawPlan();
+      }
+      window.addEventListener('resize', resizeCanvas);
+
+      function computeBoundsForBuildings(buildings) {
+        var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        buildings.forEach(function (b) {
+          (b.rings || []).forEach(function (ring) {
+            ring.forEach(function (pt) {
+              var m = lngLatToMeters(pt[0], pt[1]);
+              if (m[0] < minX) minX = m[0];
+              if (m[0] > maxX) maxX = m[0];
+              if (m[1] < minY) minY = m[1];
+              if (m[1] > maxY) maxY = m[1];
+            });
+          });
+        });
+        return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+      }
+
+      function fitToBuildings(buildings) {
+        if (!buildings || !buildings.length) return;
+        var b = computeBoundsForBuildings(buildings);
+        if (!isFinite(b.minX)) return;
+        var spanX = Math.max(20, b.maxX - b.minX);
+        var spanY = Math.max(20, b.maxY - b.minY);
+        viewOffsetX = (b.minX + b.maxX) / 2;
+        viewOffsetY = (b.minY + b.maxY) / 2;
+        var pad = 0.78;
+        viewScale = Math.min((canvas.width * pad) / spanX, (canvas.height * pad) / spanY);
+        viewScale = Math.max(0.15, Math.min(25, viewScale));
+        drawPlan();
+      }
+
+      function traceRing(ring) {
+        if (!ring || !ring.length) return;
+        for (var i = 0; i < ring.length; i++) {
+          var m = lngLatToMeters(ring[i][0], ring[i][1]);
+          var s = metersToScreen(m[0], m[1]);
+          if (i === 0) ctx.moveTo(s[0], s[1]);
+          else ctx.lineTo(s[0], s[1]);
+        }
+        ctx.closePath();
+      }
+
+      function drawPlan() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!currentComplexData || !Array.isArray(currentComplexData.buildings)) return;
+
+        var buildings = currentComplexData.buildings;
+        buildings.forEach(function (b, bIdx) {
+          var isRes = b.residential !== false;
+          var isSelected = bIdx === selectedDongIdx;
+          var slices = Array.isArray(b.unitSlices) ? b.unitSlices : [];
+
+          // 1. Building footprint base
+          ctx.save();
+          ctx.beginPath();
+          (b.rings || []).forEach(function (ring) { traceRing(ring); });
+          ctx.fillStyle = isRes ? 'rgba(226, 232, 240, 0.35)' : 'rgba(203, 213, 225, 0.45)';
+          ctx.fill('evenodd');
+          if (b.unitSliceStatus === 'needs-review') {
+            ctx.setLineDash([5, 4]);
+            ctx.strokeStyle = '#ea580c';
+            ctx.lineWidth = isSelected ? 3 : 1.8;
+          } else {
+            ctx.strokeStyle = isSelected ? '#e43b46' : (isRes ? '#334155' : '#94a3b8');
+            ctx.lineWidth = isSelected ? 3 : (isRes ? 1.4 : 1);
+          }
+          ctx.stroke();
+          ctx.restore();
+
+          // 2. Unit slices
+          slices.forEach(function (sl, sIdx) {
+            var lineNo = parseInt(String(sl.line || '').replace(/\D+/g, ''), 10);
+            var colorIdx = (!isNaN(lineNo) && lineNo > 0) ? (lineNo - 1) % LINE_COLORS.length : (sIdx % LINE_COLORS.length);
+            var fillColor = LINE_COLORS[colorIdx];
+            (sl.polygons || []).forEach(function (poly) {
+              var outer = Array.isArray(poly) ? poly : (poly.outer || []);
+              var holes = (!Array.isArray(poly) && Array.isArray(poly.holes)) ? poly.holes : [];
+              if (!outer.length) return;
+              ctx.save();
+              ctx.beginPath();
+              traceRing(outer);
+              holes.forEach(function (h) { traceRing(h); });
+              ctx.fillStyle = fillColor;
+              ctx.fill('evenodd');
+              ctx.strokeStyle = isSelected ? '#b91c1c' : '#1e293b';
+              ctx.lineWidth = isSelected ? 1.8 : 1.0;
+              ctx.stroke();
+              ctx.restore();
+            });
+
+            if (showLabels && Array.isArray(sl.labelPoint) && sl.labelPoint.length >= 2) {
+              var lm = lngLatToMeters(sl.labelPoint[0], sl.labelPoint[1]);
+              var ls = metersToScreen(lm[0], lm[1]);
+              var labelText = (sl.line ? String(parseInt(sl.line, 10) || sl.line) + '호' : '');
+              if (labelText && viewScale >= 0.7) {
+                ctx.save();
+                ctx.font = '700 ' + Math.max(9, Math.min(13, Math.round(viewScale * 2.2))) + 'px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#0f172a';
+                ctx.fillText(labelText, ls[0], ls[1]);
+                ctx.restore();
+              }
+            }
+          });
+
+          // 3. Dong name label at centroid
+          if (showLabels && b.rings && b.rings[0] && b.rings[0].length) {
+            var sumLng = 0, sumLat = 0, r0 = b.rings[0];
+            for (var ri = 0; ri < r0.length; ri++) {
+              sumLng += r0[ri][0];
+              sumLat += r0[ri][1];
+            }
+            var cm = lngLatToMeters(sumLng / r0.length, sumLat / r0.length);
+            var cs = metersToScreen(cm[0], cm[1]);
+            var dongLabel = b.dong || b.name || '';
+            if (dongLabel) {
+              ctx.save();
+              ctx.font = '800 11px sans-serif';
+              var tw = ctx.measureText(dongLabel).width + 10;
+              ctx.fillStyle = isSelected ? 'rgba(228, 59, 70, 0.92)' : 'rgba(15, 23, 42, 0.78)';
+              ctx.fillRect(cs[0] - tw / 2, cs[1] - 18, tw, 16);
+              ctx.fillStyle = '#ffffff';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(dongLabel, cs[0], cs[1] - 10);
+              ctx.restore();
+            }
+          }
+        });
+      }
+
+      function renderDongSidebar(data) {
+        var blds = data.buildings || [];
+        var resCnt = 0, slicedCnt = 0, reviewCnt = 0;
+        dongListEl.innerHTML = '';
+
+        blds.forEach(function (b, idx) {
+          var isRes = b.residential !== false;
+          var slices = Array.isArray(b.unitSlices) ? b.unitSlices : [];
+          if (isRes) resCnt++;
+          if (slices.length > 0) slicedCnt++;
+          if (b.unitSliceStatus === 'needs-review') reviewCnt++;
+
+          var card = document.createElement('div');
+          card.className = 'dong-card' + (idx === selectedDongIdx ? ' active' : '');
+          var badgeHtml = !isRes
+            ? '<span class="badge nonres">비주거</span>'
+            : (b.unitSliceStatus === 'needs-review'
+              ? '<span class="badge warn">needs-review</span>'
+              : (slices.length > 0
+                ? '<span class="badge ok">' + slices.length + '호 분할</span>'
+                : '<span class="badge">미분할</span>'));
+
+          var linesStr = (b.lines || []).map(function (ln) { return ln.line + '호'; }).join(', ') || '-';
+          card.innerHTML =
+            '<div class="dong-card-top"><span>' + (b.dong || b.name || ('동_' + (idx + 1))) + ' (' + (b.floors || '?') + '층)</span>' + badgeHtml + '</div>' +
+            '<div class="dong-card-sub">' +
+              '패턴: ' + (b.unitSlicePattern || '-') + ' / 알고리즘: ' + (b.unitSliceAlgorithm || '-') + '<br/>' +
+              '라인: ' + linesStr +
+            '</div>';
+          card.addEventListener('click', function () {
+            selectedDongIdx = idx;
+            renderDongSidebar(data);
+            fitToBuildings([b]);
+          });
+          dongListEl.appendChild(card);
+        });
+
+        dongSummary.textContent = '총 ' + blds.length + '동 (주거 ' + resCnt + ' / 분할 ' + slicedCnt + ' / 보류 ' + reviewCnt + ')';
+      }
+
+      async function loadComplex3D(code) {
+        if (!code) return;
+        setStatus('3D JSON 로딩 중 (' + code + ')...');
+        selectedDongIdx = -1;
+        try {
+          var resp = await fetch('./data/3d/' + encodeURIComponent(code) + '.json?v=' + Date.now(), { cache: 'no-store' });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          var data = await resp.json();
+          currentComplexData = data;
+          codeInput.value = code;
+
+          // Compute origin center for local meter projection
+          var sumLng = 0, sumLat = 0, cnt = 0;
+          (data.buildings || []).forEach(function (b) {
+            (b.rings || []).forEach(function (ring) {
+              ring.forEach(function (pt) { sumLng += pt[0]; sumLat += pt[1]; cnt++; });
+            });
+          });
+          if (cnt > 0) {
+            originLng = sumLng / cnt;
+            originLat = sumLat / cnt;
+            cosLat = Math.cos(originLat * Math.PI / 180);
+          }
+
+          hudTitle.textContent = (data.name || '단지 ' + code) + ' (' + code + ')';
+          hudMeta.textContent = '소스: ' + (data.source || '-') + ' | 동 수: ' + ((data.buildings || []).length) + '개 | 마우스 휠: 확대/축소, 드래그: 이동';
+          renderDongSidebar(data);
+          fitToBuildings(data.buildings || []);
+          setStatus('로드 완료: ' + code + '.json');
+        } catch (err) {
+          currentComplexData = null;
+          drawPlan();
+          dongListEl.innerHTML = '';
+          dongSummary.textContent = '0개 동';
+          hudTitle.textContent = '3D 데이터 없음 (' + code + ')';
+          hudMeta.textContent = './data/3d/' + code + '.json 파일을 찾을 수 없습니다 (' + err.message + ').';
+          setStatus('미생성 단지 (' + code + ')');
+        }
+      }
+
+      function renderComplexDropdown() {
+        var q = (complexFilter.value || '').trim().toLowerCase();
+        var filtered = currentComplexList.filter(function (c) {
+          return !q || c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
+        });
+        complexSelect.innerHTML = '';
+        filtered.forEach(function (c) {
+          var opt = document.createElement('option');
+          opt.value = c.code;
+          opt.textContent = c.name + (c.households ? ' (' + c.households + '세대)' : '') + ' [' + c.code + ']';
+          complexSelect.appendChild(opt);
+        });
+        if (filtered.length > 0) {
+          loadComplex3D(filtered[0].code);
+        } else {
+          setStatus('조건에 맞는 단지가 없습니다.');
+        }
+      }
+
+      async function loadGunguComplexes(linkName) {
+        if (!linkName) return;
+        setStatus('단지 목록 로딩 중...');
+        try {
+          var resp = await fetch('../202611/' + encodeURIComponent(linkName) + '.json');
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          var raw = await resp.json();
+          var map = new Map();
+          (raw.data || []).forEach(function (row) {
+            var code = String(row['검색코드'] || '').trim();
+            if (!code || map.has(code)) return;
+            map.set(code, {
+              code: code,
+              name: String(row['아파트명'] || code).trim(),
+              households: row['세대수'] || ''
+            });
+          });
+          currentComplexList = Array.from(map.values()).sort(function (a, b) {
+            return a.name.localeCompare(b.name, 'ko');
+          });
+          renderComplexDropdown();
+        } catch (err) {
+          setStatus('지역 JSON 로드 실패: ' + err.message);
+        }
+      }
+
+      function populateGungu() {
+        var sido = sidoSelect.value;
+        var list = (regionTree[sido] || []).slice().sort(function (a, b) {
+          return a.gungu.localeCompare(b.gungu, 'ko');
+        });
+        gunguSelect.innerHTML = '';
+        list.forEach(function (item) {
+          var opt = document.createElement('option');
+          opt.value = item.link;
+          opt.textContent = item.gungu;
+          gunguSelect.appendChild(opt);
+        });
+        if (list.length > 0) loadGunguComplexes(list[0].link);
+      }
+
+      async function initRegions() {
+        try {
+          var resp = await fetch('../202611/1000000000_Korea.json');
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          var raw = await resp.json();
+          (raw.data || []).forEach(function (row) {
+            var label = String(row['시도'] || '').trim();
+            var link = String(row['연결명'] || '').trim();
+            if (!label || !link) return;
+            var parts = label.split(/\s+/);
+            var sido = parts[0];
+            var gungu = parts.slice(1).join(' ') || sido;
+            if (!regionTree[sido]) regionTree[sido] = [];
+            regionTree[sido].push({ gungu: gungu, link: link });
+          });
+
+          sidoSelect.innerHTML = '';
+          Object.keys(regionTree).sort(function (a, b) {
+            return a.localeCompare(b, 'ko');
+          }).forEach(function (sido) {
+            var opt = document.createElement('option');
+            opt.value = sido;
+            opt.textContent = sido;
+            sidoSelect.appendChild(opt);
+          });
+          if (regionTree['서울시']) sidoSelect.value = '서울시';
+          populateGungu();
+        } catch (err) {
+          setStatus('1000000000_Korea.json 로드 실패 (로컬 HTTP 서버로 열어주세요): ' + err.message);
+        }
+      }
+
+      sidoSelect.addEventListener('change', populateGungu);
+      gunguSelect.addEventListener('change', function () { loadGunguComplexes(gunguSelect.value); });
+      complexFilter.addEventListener('input', renderComplexDropdown);
+      complexSelect.addEventListener('change', function () { loadComplex3D(complexSelect.value); });
+      btnLoadCode.addEventListener('click', function () { loadComplex3D(codeInput.value.trim()); });
+      codeInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadComplex3D(codeInput.value.trim()); });
+      btnFit.addEventListener('click', function () {
+        selectedDongIdx = -1;
+        if (currentComplexData) {
+          renderDongSidebar(currentComplexData);
+          fitToBuildings(currentComplexData.buildings || []);
+        }
+      });
+      btnToggleLabels.addEventListener('click', function () {
+        showLabels = !showLabels;
+        btnToggleLabels.textContent = showLabels ? '라벨 ON' : '라벨 OFF';
+        drawPlan();
+      });
+
+      // Pan & zoom
+      canvas.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        var factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+        viewScale = Math.max(0.15, Math.min(40, viewScale * factor));
+        drawPlan();
+      }, { passive: false });
+
+      canvas.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        dragLastX = e.clientX;
+        dragLastY = e.clientY;
+      });
+      window.addEventListener('mousemove', function (e) {
+        if (!isDragging) return;
+        var dx = e.clientX - dragLastX;
+        var dy = e.clientY - dragLastY;
+        dragLastX = e.clientX;
+        dragLastY = e.clientY;
+        viewOffsetX -= dx / viewScale;
+        viewOffsetY += dy / viewScale;
+        drawPlan();
+      });
+      window.addEventListener('mouseup', function () { isDragging = false; });
+
+      resizeCanvas();
+      initRegions();
+    })();
+  </script>
+</body>
+</html>

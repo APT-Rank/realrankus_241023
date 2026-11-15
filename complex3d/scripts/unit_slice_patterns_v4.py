@@ -1083,7 +1083,7 @@ def _recursive_shortest_perpendicular_partition(
     if len(left_cells) != k or len(right_cells) != n - k:
         return []
     cells = left_cells + right_cells
-    if _is_root and nearly_equal_weights:
+    if nearly_equal_weights:
         cells = _order_cells_south_facing(cells, global_angle)
     return cells
 
@@ -1279,51 +1279,61 @@ def _order_cells(cells, angle):
     return sorted(cells, key=south_facing_position)
 
 
-def _order_cells_south_facing(cells, angle):
-    """Order cells from left (East) to right (West) when facing South, preserving adjacency."""
+def _is_courtyard_or_tower_layout(world_pts, pattern=None):
+    if pattern in ("square-compact", "cross-h"):
+        return True
+    if pattern in ("slab", "linear", "l-shape", "t-shape"):
+        return False
+    if len(world_pts) < 4:
+        return False
+    xs = [p[0] for p in world_pts]
+    ys = [p[1] for p in world_pts]
+    cx = sum(xs) / len(xs)
+    cy = sum(ys) / len(ys)
+    span_x = max(xs) - min(xs)
+    span_y = max(ys) - min(ys)
+    if span_x < 6.0 or span_y < 6.0:
+        return False
+    quads = set()
+    for px, py in world_pts:
+        quads.add((px >= cx, py >= cy))
+    # 4사분면 모두에 세대가 분포하고 정사각에 가까운 ㅁ자(타워)형만 시계방향 적용
+    return len(quads) == 4 and (min(span_x, span_y) / max(span_x, span_y)) >= 0.70
+
+
+def _order_cells_south_facing(cells, angle, pattern=None):
+    """Order cells in true world coordinates:
+    - ㅁ형(square-compact/cross-h/4사분면 타워): 동쪽 아래(SE)부터 시계방향 회전
+    - ㅡ/ㄱ/ㄴ 및 그 외: 동쪽(East, +x) -> 서쪽(West, -x), 동일 동서열 내 남쪽(-y) -> 북쪽(+y)
+    """
     n = len(cells)
     if n <= 1:
         return cells
 
     cosine = math.cos(angle)
     sine = math.sin(angle)
+    world_pts = []
+    for cell in cells:
+        lx, ly = cell.centroid.coords[0]
+        east = lx * cosine - ly * sine
+        north = lx * sine + ly * cosine
+        world_pts.append((east, north))
 
-    def compass_key(idx):
-        x, y = cells[idx].centroid.coords[0]
-        east = x * cosine - y * sine
-        north = x * sine + y * cosine
-        return (-round(east, 3), round(north, 3))
+    if _is_courtyard_or_tower_layout(world_pts, pattern=pattern):
+        cx = sum(p[0] for p in world_pts) / n
+        cy = sum(p[1] for p in world_pts) / n
+        indices = sorted(
+            range(n),
+            key=lambda i: ((-math.atan2(world_pts[i][1] - cy, world_pts[i][0] - cx)) % (2.0 * math.pi), -world_pts[i][0], world_pts[i][1]),
+        )
+        return [cells[i] for i in indices]
 
-    buffered = [cell.buffer(0.35) for cell in cells]
-    adj = {i: [] for i in range(n)}
-    for i in range(n):
-        for j in range(i + 1, n):
-            if buffered[i].intersects(buffered[j]):
-                adj[i].append(j)
-                adj[j].append(i)
-
-    endpoints = [i for i in range(n) if len(adj[i]) <= 1]
-    start_candidates = endpoints if endpoints else list(range(n))
-    start = min(start_candidates, key=compass_key)
-
-    visited = [False] * n
-    ordered_indices = []
-    queue = deque([start])
-    visited[start] = True
-
-    while queue:
-        curr = queue.popleft()
-        ordered_indices.append(curr)
-        neighbors = sorted([nb for nb in adj[curr] if not visited[nb]], key=compass_key)
-        for nb in neighbors:
-            visited[nb] = True
-            queue.append(nb)
-
-    if len(ordered_indices) < n:
-        remaining = sorted([i for i in range(n) if not visited[i]], key=compass_key)
-        ordered_indices.extend(remaining)
-
-    return [cells[i] for i in ordered_indices]
+    # 일자(ㅡ), ㄱ, ㄴ, 기타: 동쪽(+east) -> 서쪽(-east), 동서 오차 3m 이내(수직 날개 등)는 남(-north) -> 북(+north)
+    indices = sorted(
+        range(n),
+        key=lambda i: (-round(world_pts[i][0] / 3.0), world_pts[i][1], -world_pts[i][0]),
+    )
+    return [cells[i] for i in indices]
 
 
 def _parallel_bands_in_line_order(geometry, lines, angle):
@@ -1398,6 +1408,10 @@ def precompute_unit_slices(geometry, lines, transformer_to_4326, pattern=None):
         return None
 
     cells = _rectify_acute_corners_between_cells(cells, local, min_allowed_deg=62.0)
+
+    weights = [max(float(line.get("count") or 1), 1.0) for line in lines]
+    if (max(weights) / max(min(weights), 1e-6)) <= 1.25:
+        cells = _order_cells_south_facing(cells, angle, pattern=pattern)
 
     assignments = {str(line["line"]): cell for cell, line in zip(cells, lines)}
 

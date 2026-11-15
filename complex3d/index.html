@@ -214,6 +214,20 @@
       font-size: 11px;
       font-weight: 800;
       line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .direct-sunlight-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #cbd5e1;
+      border-top-color: #e43b46;
+      border-radius: 50%;
+      animation: directSunSpin 0.7s linear infinite;
+    }
+    @keyframes directSunSpin {
+      to { transform: rotate(360deg); }
     }
     .direct-sunlight-copy {
       display: flex;
@@ -580,6 +594,31 @@
     .pov-back-btn:hover {
       color: #ffffff;
       background: #E43B46;
+    }
+    .pov-close-btn {
+      order: 4;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 10px;
+      margin-left: 2px;
+      color: #E43B46;
+      background: rgba(228, 59, 70, 0.08);
+      border: 1px solid rgba(228, 59, 70, 0.28);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+    .pov-close-btn:hover {
+      color: #ffffff;
+      background: #E43B46;
+      border-color: #E43B46;
     }
     .pov-banner-content {
       display: contents;
@@ -1416,6 +1455,9 @@
       .pov-back-btn:active {
         background: rgba(228, 59, 70, 0.10);
         color: #E43B46;
+      }
+      .pov-close-btn {
+        display: none !important;
       }
       .pov-banner-content {
         display: flex;
@@ -2283,6 +2325,10 @@
             <input type="checkbox" id="layer-radius-rings" checked>
             <span class="infra-tag">⭕ <b>생활권 반경원</b> <small style="display:inline; margin-left:auto; color:#E43B46; font-size:10px; font-weight:700;">250m·500m·1km</small></span>
           </label>
+          <label class="infra-toggle-item" style="grid-column: span 2; border-top: 1px dashed rgba(0,0,0,0.08); margin-top: 2px; padding-top: 4px;">
+            <input type="checkbox" id="layer-dong-labels" checked>
+            <span class="infra-tag">🏷️ <b>동 이름 표시</b></span>
+          </label>
         </div>
       </div>
     </div>
@@ -2444,6 +2490,9 @@
         </div>
       </div>
     </div>
+    <button id="pov-close-btn" class="pov-close-btn" type="button" title="세대뷰 닫기" aria-label="세대뷰 닫기">
+      <i class="fa-solid fa-xmark"></i> 세대뷰 닫기
+    </button>
   </div>
 
   <!-- 분리된 창밖 조망 제어 플로팅 바 (화각 설정 및 가상 발코니 창틀 On/Off) -->
@@ -2645,22 +2694,24 @@
 
       if (!code) code = "111515"; // Default fallback to Heliocity
 
-      // Fetch 3D data from Cloudflare R2 CDN (or local in dev environment)
-      var r2Url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/" + code + ".json?v=20261112_500m";
+      // Fetch 3D data from Cloudflare R2 CDN (or local in dev environment) with cache-busting
+      var cacheBuster = "v=" + Date.now();
+      var r2Url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/" + code + ".json?" + cacheBuster;
+      var localDataUrl = "./data/3d/" + code + ".json?" + cacheBuster;
       var isLocalDev = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:');
-      var primaryUrl = isLocalDev ? ("./data/3d/" + code + ".json") : r2Url;
-      var fallbackUrl = isLocalDev ? r2Url : ("./data/3d/" + code + ".json");
+      var primaryUrl = isLocalDev ? localDataUrl : r2Url;
+      var fallbackUrl = isLocalDev ? r2Url : localDataUrl;
 
-      fetch(primaryUrl)
+      fetch(primaryUrl, { cache: 'no-store' })
         .then(function (res) {
           if (res.ok) return res.json();
-          return fetch(fallbackUrl).then(function (fbRes) {
+          return fetch(fallbackUrl, { cache: 'no-store' }).then(function (fbRes) {
             if (!fbRes.ok) throw new Error("3D 데이터를 찾을 수 없습니다.");
             return fbRes.json();
           });
         })
         .catch(function () {
-          return fetch(fallbackUrl).then(function (fbRes) {
+          return fetch(fallbackUrl, { cache: 'no-store' }).then(function (fbRes) {
             if (!fbRes.ok) throw new Error("3D 데이터를 찾을 수 없습니다.");
             return fbRes.json();
           });
@@ -2678,12 +2729,13 @@
           var apartmentNeighborModelsPromise = null;
           function fetchApartmentComplex(code) {
             var encodedCode = encodeURIComponent(code);
-            var localUrl = './data/3d/' + encodedCode + '.json';
-            var r2Url = 'https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/' + encodedCode + '.json?v=20261112_500m';
+            var neighborCacheBuster = 'v=' + Date.now();
+            var localUrl = './data/3d/' + encodedCode + '.json?' + neighborCacheBuster;
+            var r2Url = 'https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/' + encodedCode + '.json?' + neighborCacheBuster;
             var urls = isLocalDev ? [localUrl, r2Url] : [r2Url, localUrl];
             function fetchAt(index) {
               if (index >= urls.length) return Promise.reject(new Error('주변 단지 데이터를 찾을 수 없습니다: ' + code));
-              return fetch(urls[index]).then(function (res) {
+              return fetch(urls[index], { cache: 'no-store' }).then(function (res) {
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 return res.json();
               }).catch(function () {
@@ -2897,6 +2949,16 @@
             });
           }
 
+          // 동 이름표 (3D 동 라벨 스프라이트) ON/OFF 토글 (웹/모바일 공통)
+          var layerDongLabels = document.getElementById('layer-dong-labels');
+          if (layerDongLabels) {
+            layerDongLabels.addEventListener('change', function () {
+              if (viewInstance && typeof viewInstance.setDongLabelsVisible === 'function') {
+                viewInstance.setDongLabelsVisible(layerDongLabels.checked);
+              }
+            });
+          }
+
           // 1. Compass Cardinal direction buttons binding (동서남북 카메라 전환)
           document.querySelectorAll('[data-dir]').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
@@ -3026,16 +3088,10 @@
           var directSunlightInfoButton = document.getElementById('direct-sunlight-info');
           var directSunlightExplanation = document.getElementById('direct-sunlight-explanation');
           var renderedDirectSunlightTimelineKey = null;
+          var pendingDirectSunlightInfo = null;
+          var isDirectSunlightTimelinePending = false;
 
-          if (directSunlightInfoButton && directSunlightExplanation) {
-            directSunlightInfoButton.addEventListener('click', function () {
-              var isExpanded = directSunlightInfoButton.getAttribute('aria-expanded') === 'true';
-              directSunlightInfoButton.setAttribute('aria-expanded', String(!isExpanded));
-              directSunlightExplanation.hidden = isExpanded;
-            });
-          }
-
-          window.onComplex3dSunlightIndexUpdate = function (info) {
+          function renderDirectSunlightGaugeInfo(info) {
             if (!info) return;
             var isEligible = info.status === 'eligible';
             var value = Math.max(0, Math.min(100, Math.round(Number(info.value) || 0)));
@@ -3050,6 +3106,38 @@
               directSunlightGauge.style.setProperty('--score-pct', (isEligible ? value : 0) + '%');
               directSunlightGauge.setAttribute('aria-valuenow', String(value));
             }
+          }
+
+          function showDirectSunlightSpinner(directionText) {
+            if (directSunlightValue) {
+              directSunlightValue.innerHTML = '<span class="direct-sunlight-spinner" aria-label="계산 중"></span>';
+            }
+            if (directSunlightScore) directSunlightScore.textContent = '계산 중...';
+            if (directSunlightDirection && directionText) {
+              directSunlightDirection.textContent = directionText;
+            }
+            if (directSunlightGauge) {
+              directSunlightGauge.style.setProperty('--score-pct', '0%');
+              directSunlightGauge.setAttribute('aria-valuenow', '0');
+            }
+          }
+
+          if (directSunlightInfoButton && directSunlightExplanation) {
+            directSunlightInfoButton.addEventListener('click', function () {
+              var isExpanded = directSunlightInfoButton.getAttribute('aria-expanded') === 'true';
+              directSunlightInfoButton.setAttribute('aria-expanded', String(!isExpanded));
+              directSunlightExplanation.hidden = isExpanded;
+            });
+          }
+
+          window.onComplex3dSunlightIndexUpdate = function (info) {
+            if (!info) return;
+            pendingDirectSunlightInfo = info;
+            if (isDirectSunlightTimelinePending) {
+              if (directSunlightDirection) directSunlightDirection.textContent = info.direction || '방향 미확인';
+              return;
+            }
+            renderDirectSunlightGaugeInfo(info);
           };
 
           window.onComplex3dSunlightTimelineUpdate = function (info) {
@@ -3057,40 +3145,48 @@
             if (!slider || !info) return;
             if (info.status === 'clear') {
               renderedDirectSunlightTimelineKey = null;
+              pendingDirectSunlightInfo = null;
+              isDirectSunlightTimelinePending = false;
               slider.style.background = '';
               slider.title = '';
               return;
             }
             if (info.status === 'start') {
+              isDirectSunlightTimelinePending = true;
               slider.style.background = '#e2e8f0';
               slider.title = '선택 세대의 시간별 직달일조를 계산 중입니다.';
+              showDirectSunlightSpinner(pendingDirectSunlightInfo && pendingDirectSunlightInfo.direction);
               return;
             }
             if (info.status === 'unavailable') {
+              isDirectSunlightTimelinePending = false;
               renderedDirectSunlightTimelineKey = info.key || null;
               slider.style.background = '#e2e8f0';
               slider.title = info.reason || '세대 방향을 확인할 수 없어 시간별 직달일조를 계산하지 않습니다.';
+              if (pendingDirectSunlightInfo) renderDirectSunlightGaugeInfo(pendingDirectSunlightInfo);
               return;
             }
             if (info.status !== 'complete' || !info.values || !info.values.length) return;
-            if (info.key && renderedDirectSunlightTimelineKey === info.key) return;
-
-            var stops = info.values.map(function (score, index) {
-              var color = '#e2e8f0';
-              if (score > 0) {
-                var warmth = 0.25 + Math.min(100, score) / 100 * 0.75;
-                var start = [251, 191, 36];
-                var end = [228, 59, 70];
-                var red = Math.round(start[0] + (end[0] - start[0]) * warmth);
-                var green = Math.round(start[1] + (end[1] - start[1]) * warmth);
-                var blue = Math.round(start[2] + (end[2] - start[2]) * warmth);
-                color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-              }
-              return color + ' ' + (index / (info.values.length - 1) * 100) + '%';
-            });
-            slider.style.background = 'linear-gradient(to right, ' + stops.join(', ') + ')';
-            slider.title = '회색은 직달일조 없음, 노랑~빨강은 표본 기준 일조 정도입니다.';
-            renderedDirectSunlightTimelineKey = info.key || null;
+            isDirectSunlightTimelinePending = false;
+            if (!info.key || renderedDirectSunlightTimelineKey !== info.key) {
+              var stops = info.values.map(function (score, index) {
+                var color = '#e2e8f0';
+                if (score > 0) {
+                  var warmth = 0.25 + Math.min(100, score) / 100 * 0.75;
+                  var start = [251, 191, 36];
+                  var end = [228, 59, 70];
+                  var red = Math.round(start[0] + (end[0] - start[0]) * warmth);
+                  var green = Math.round(start[1] + (end[1] - start[1]) * warmth);
+                  var blue = Math.round(start[2] + (end[2] - start[2]) * warmth);
+                  color = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+                }
+                return color + ' ' + (index / (info.values.length - 1) * 100) + '%';
+              });
+              slider.style.background = 'linear-gradient(to right, ' + stops.join(', ') + ')';
+              slider.title = '회색은 직달일조 없음, 노랑~빨강은 표본 기준 일조 정도입니다.';
+              renderedDirectSunlightTimelineKey = info.key || null;
+            }
+            if (pendingDirectSunlightInfo) renderDirectSunlightGaugeInfo(pendingDirectSunlightInfo);
           };
 
           function isMobilePOVViewport() {
@@ -3664,6 +3760,15 @@
           var povBackBtn = document.getElementById('pov-back-btn');
           if (povBackBtn) {
             povBackBtn.addEventListener('click', function () {
+              if (viewInstance && typeof viewInstance.exitFloorPOV === 'function') {
+                viewInstance.exitFloorPOV();
+              }
+            });
+          }
+
+          var povCloseBtn = document.getElementById('pov-close-btn');
+          if (povCloseBtn) {
+            povCloseBtn.addEventListener('click', function () {
               if (viewInstance && typeof viewInstance.exitFloorPOV === 'function') {
                 viewInstance.exitFloorPOV();
               }

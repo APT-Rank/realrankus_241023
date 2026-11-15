@@ -3900,11 +3900,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   function updateDirectSunlightIndex() {
     if (!isPOVMode || !activePOVFloor) return;
+    updateDirectSunlightTimeline(activePOVFloor);
     var result = calculateDirectSunlightIndex(activePOVFloor);
     if (typeof window.onComplex3dSunlightIndexUpdate === 'function') {
       window.onComplex3dSunlightIndexUpdate(result);
     }
-    updateDirectSunlightTimeline(activePOVFloor);
   }
 
   function getUnitInfo(unitMesh) {
@@ -5159,6 +5159,14 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     },
     getNeighborsVisible: function () {
       return neighborGroup ? neighborGroup.visible : false;
+    },
+    setDongLabelsVisible: function (visible) {
+      var isVisible = !!visible;
+      scene.traverse(function (obj) {
+        if (obj.isSprite && obj.userData && obj.userData.isDongLabel) {
+          obj.visible = isVisible;
+        }
+      });
     },
     shiftBalconyUnit: shiftBalconyUnit,
     setBalconyUnit: setBalconyUnit,
