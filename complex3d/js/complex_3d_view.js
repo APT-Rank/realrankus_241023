@@ -3732,13 +3732,35 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return result;
   }
 
+  function isMeshActiveSunlightOccluder(object) {
+    var node = object;
+    while (node) {
+      if (node === neighborGroup && !node.visible) return false;
+      node = node.parent;
+    }
+    return true;
+  }
+
   function getDirectSunlightOccluders() {
     if (directSunlightOccluderMeshes) return directSunlightOccluderMeshes;
     directSunlightOccluderMeshes = [];
     scene.traverse(function (object) {
-      if (object.isMesh && object.castShadow) directSunlightOccluderMeshes.push(object);
+      if (object.isMesh && object.castShadow && isMeshActiveSunlightOccluder(object)) {
+        directSunlightOccluderMeshes.push(object);
+      }
     });
     return directSunlightOccluderMeshes;
+  }
+
+  function invalidateDirectSunlight(recompute) {
+    directSunlightOccluderMeshes = null;
+    directSunTimelineCacheKey = null;
+    directSunTimelineCacheValues = null;
+    directSunTimelinePendingKey = null;
+    directSunTimelineRequestId++;
+    if (recompute && isPOVMode && activePOVFloor) {
+      updateDirectSunlightIndex();
+    }
   }
 
   function calculateDirectSunlightIndex(unitMesh, direction, nightMode) {
@@ -5117,10 +5139,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           apartmentNeighborLabels[complexCode] = label;
         }
       });
+      if (models && models.length) {
+        invalidateDirectSunlight(true);
+      }
     },
     toggleInfraLayer: function (layerKey, visible) {
       if (layerKey === 'neighbors' && neighborGroup) {
-        neighborGroup.visible = !!visible;
+        var nextVisible = !!visible;
+        var changed = neighborGroup.visible !== nextVisible;
+        neighborGroup.visible = nextVisible;
+        if (changed) invalidateDirectSunlight(true);
         return;
       }
       // 하위 호환 레거시 그룹 키 지원
@@ -5155,7 +5183,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       }
     },
     setNeighborsVisible: function (visible) {
-      if (neighborGroup) neighborGroup.visible = !!visible;
+      if (!neighborGroup) return;
+      var nextVisible = !!visible;
+      var changed = neighborGroup.visible !== nextVisible;
+      neighborGroup.visible = nextVisible;
+      if (changed) invalidateDirectSunlight(true);
     },
     getNeighborsVisible: function () {
       return neighborGroup ? neighborGroup.visible : false;
