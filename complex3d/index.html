@@ -3452,7 +3452,14 @@
                 }
               }
             } else {
-              if (povFovBar) povFovBar.style.removeProperty('--mobile-pov-fov-top');
+              if (povFovBar) {
+                povFovBar.style.removeProperty('--mobile-pov-fov-top');
+                if (isOutwardPOVVisible && !isMobile && disclaimer && disclaimer.style.display !== 'none') {
+                  povFovBar.style.top = Math.ceil(disclaimer.getBoundingClientRect().bottom + 8) + 'px';
+                } else {
+                  povFovBar.style.removeProperty('top');
+                }
+              }
               if (radarHud) {
                 radarHud.style.removeProperty('bottom');
                 if (!isMobile && isOutwardPOVVisible) radarHud.classList.remove('sheet-stage-hidden');
