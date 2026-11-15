@@ -339,6 +339,31 @@
       cursor: pointer;
       border: 2px solid #ffffff;
     }
+    #time-slider.is-night::-webkit-slider-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: none;
+      background-color: transparent;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fde047' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' d='M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 18px 18px;
+      box-shadow: none;
+      filter: drop-shadow(0 1px 3px rgba(15, 23, 42, 0.55));
+    }
+    #time-slider.is-night::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: none;
+      background-color: transparent;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fde047' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' d='M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 18px 18px;
+      filter: drop-shadow(0 1px 3px rgba(15, 23, 42, 0.55));
+    }
 
     .btn-group-custom {
       display: grid;
@@ -3010,26 +3035,38 @@
             var displayH = floorH % 12 || 12;
             timeDisplay.textContent = floorH.toString().padStart(2, '0') + ':' + min.toString().padStart(2, '0') + ' (' + ampm + ' ' + displayH + '시' + (min ? ' ' + min + '분' : '') + ')';
           }
-          function updateComplexViewTimeSliderGradient() {
-            if (!timeSlider || currentPOVInfo) return;
+          function getSolarAltitudeDeg(hour) {
             var activeSeasonBtn = document.querySelector('[data-season].active');
             var season = activeSeasonBtn ? activeSeasonBtn.getAttribute('data-season') : 'equinox';
             var declMap = { winter: -23.44, equinox: 0.0, summer: 23.44 };
             var decl = (declMap[season] || 0.0) * Math.PI / 180;
             var latDeg = (data3d && data3d.center && typeof data3d.center.lat === 'number') ? data3d.center.lat : 37.5;
             var lat = latDeg * Math.PI / 180;
+            var hourAngle = (hour - 12.0) * 15 * Math.PI / 180;
+            var sinAlt = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(hourAngle);
+            return Math.asin(Math.max(-1, Math.min(1, sinAlt))) * 180 / Math.PI;
+          }
+
+          function getNightTrackColor(altDeg) {
+            return altDeg <= -6 ? '#172554' : '#1e3a8a';
+          }
+
+          function syncTimeSliderNightThumb(hour) {
+            if (!timeSlider) return;
+            var numericHour = (typeof hour === 'number' && !isNaN(hour)) ? hour : parseFloat(timeSlider.value);
+            timeSlider.classList.toggle('is-night', getSolarAltitudeDeg(numericHour) <= 0);
+          }
+
+          function updateComplexViewTimeSliderGradient() {
+            if (!timeSlider || currentPOVInfo) return;
             var stops = [];
             var steps = 48;
             for (var i = 0; i <= steps; i++) {
               var hour = i * 0.5;
-              var hourAngle = (hour - 12.0) * 15 * Math.PI / 180;
-              var sinAlt = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(hourAngle);
-              var altDeg = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * 180 / Math.PI;
+              var altDeg = getSolarAltitudeDeg(hour);
               var color;
-              if (altDeg <= -6) {
-                color = '#1e293b';
-              } else if (altDeg <= 0) {
-                color = '#475569';
+              if (altDeg <= 0) {
+                color = getNightTrackColor(altDeg);
               } else if (altDeg <= 12) {
                 color = '#fb923c';
               } else if (altDeg <= 32) {
@@ -3040,13 +3077,15 @@
               stops.push(color + ' ' + (i / steps * 100) + '%');
             }
             timeSlider.style.background = 'linear-gradient(to right, ' + stops.join(', ') + ')';
-            timeSlider.title = '어두운 남색: 야간(달궤적) · 주황: 일출/일몰 · 노랑/금빛: 일조 시간대';
+            timeSlider.title = '진남색: 야간(달궤적) · 주황: 일출/일몰 · 노랑/금빛: 일조 시간대';
           }
           updateComplexViewTimeSliderGradient();
+          syncTimeSliderNightThumb(parseFloat(timeSlider.value));
 
           timeSlider.addEventListener('input', function (e) {
             var h = parseFloat(e.target.value);
             updateTimeDisplay(h);
+            syncTimeSliderNightThumb(h);
             viewInstance.setTime(h);
           });
 
@@ -3056,6 +3095,7 @@
               document.querySelectorAll('[data-season]').forEach(function (b) { b.classList.remove('active'); });
               btn.classList.add('active');
               viewInstance.setSeason(btn.getAttribute('data-season'));
+              syncTimeSliderNightThumb(parseFloat(timeSlider.value));
               if (!currentPOVInfo) updateComplexViewTimeSliderGradient();
             });
           });
@@ -3350,8 +3390,10 @@
             isDirectSunlightTimelinePending = false;
             if (!info.key || renderedDirectSunlightTimelineKey !== info.key) {
               var stops = info.values.map(function (score, index) {
-                var color = '#e2e8f0';
-                if (score > 0) {
+                var hour = (index / Math.max(1, info.values.length - 1)) * 24;
+                var altDeg = getSolarAltitudeDeg(hour);
+                var color = altDeg <= 0 ? getNightTrackColor(altDeg) : '#e2e8f0';
+                if (altDeg > 0 && score > 0) {
                   var warmth = 0.25 + Math.min(100, score) / 100 * 0.75;
                   var start = [251, 191, 36];
                   var end = [228, 59, 70];
@@ -3363,6 +3405,7 @@
                 return color + ' ' + (index / (info.values.length - 1) * 100) + '%';
               });
               slider.style.background = 'linear-gradient(to right, ' + stops.join(', ') + ')';
+              slider.title = '진남색: 야간 · 회색: 주간 음영(일조 없음) · 노랑~빨강: 직달일조';
               slider.title = '회색은 직달일조 없음, 노랑~빨강은 표본 기준 일조 정도입니다.';
               renderedDirectSunlightTimelineKey = info.key || null;
             }
