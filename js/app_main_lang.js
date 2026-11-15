@@ -5276,8 +5276,8 @@ function updateComplex3dAvailability(code, state) {
     message.textContent = state === 'checking'
       ? (isEn ? 'Checking 3D model availability…' : '3D 데이터 확인 중입니다…')
       : state === 'missing'
-        ? (isEn ? '3D model data is not available for this complex.' : '현재 이 단지의 리얼FLY 3D 데이터가 없습니다.')
-        : (isEn ? 'Could not verify 3D data. Check your connection and reload.' : '3D 데이터 확인에 실패했습니다. 네트워크 확인 후 다시 불러와 주세요.');
+        ? (isEn ? 'Real Fly Map data is not available for this complex.' : '단지의 리얼FLY맵 데이터가 없습니다.')
+        : (isEn ? 'Could not verify data. Check your connection and reload.' : '데이터 확인에 실패했습니다. 네트워크 확인 후 다시 불러와 주세요.');
   }
 }
 
