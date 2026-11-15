@@ -376,7 +376,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      max-height: 140px;
+      max-height: 108px;
       overflow-y: auto;
       padding-right: 2px;
     }
@@ -2186,7 +2186,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261115_1655"></script>
+  <script src="./js/complex_3d_view.js?v=20261115_1955"></script>
 </head>
 <body>
 
@@ -3010,6 +3010,40 @@
             var displayH = floorH % 12 || 12;
             timeDisplay.textContent = floorH.toString().padStart(2, '0') + ':' + min.toString().padStart(2, '0') + ' (' + ampm + ' ' + displayH + '시' + (min ? ' ' + min + '분' : '') + ')';
           }
+          function updateComplexViewTimeSliderGradient() {
+            if (!timeSlider || currentPOVInfo) return;
+            var activeSeasonBtn = document.querySelector('[data-season].active');
+            var season = activeSeasonBtn ? activeSeasonBtn.getAttribute('data-season') : 'equinox';
+            var declMap = { winter: -23.44, equinox: 0.0, summer: 23.44 };
+            var decl = (declMap[season] || 0.0) * Math.PI / 180;
+            var latDeg = (data3d && data3d.center && typeof data3d.center.lat === 'number') ? data3d.center.lat : 37.5;
+            var lat = latDeg * Math.PI / 180;
+            var stops = [];
+            var steps = 48;
+            for (var i = 0; i <= steps; i++) {
+              var hour = i * 0.5;
+              var hourAngle = (hour - 12.0) * 15 * Math.PI / 180;
+              var sinAlt = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(hourAngle);
+              var altDeg = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * 180 / Math.PI;
+              var color;
+              if (altDeg <= -6) {
+                color = '#1e293b';
+              } else if (altDeg <= 0) {
+                color = '#475569';
+              } else if (altDeg <= 12) {
+                color = '#fb923c';
+              } else if (altDeg <= 32) {
+                color = '#fbbf24';
+              } else {
+                color = '#fde047';
+              }
+              stops.push(color + ' ' + (i / steps * 100) + '%');
+            }
+            timeSlider.style.background = 'linear-gradient(to right, ' + stops.join(', ') + ')';
+            timeSlider.title = '어두운 남색: 야간(달궤적) · 주황: 일출/일몰 · 노랑/금빛: 일조 시간대';
+          }
+          updateComplexViewTimeSliderGradient();
+
           timeSlider.addEventListener('input', function (e) {
             var h = parseFloat(e.target.value);
             updateTimeDisplay(h);
@@ -3022,6 +3056,7 @@
               document.querySelectorAll('[data-season]').forEach(function (b) { b.classList.remove('active'); });
               btn.classList.add('active');
               viewInstance.setSeason(btn.getAttribute('data-season'));
+              if (!currentPOVInfo) updateComplexViewTimeSliderGradient();
             });
           });
 
@@ -3293,8 +3328,7 @@
               renderedDirectSunlightTimelineKey = null;
               pendingDirectSunlightInfo = null;
               isDirectSunlightTimelinePending = false;
-              slider.style.background = '';
-              slider.title = '';
+              updateComplexViewTimeSliderGradient();
               return;
             }
             if (info.status === 'start') {

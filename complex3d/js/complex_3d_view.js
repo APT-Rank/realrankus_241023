@@ -108,11 +108,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   }
 
   function updateDynamicCameraClamp() {
-    if (!controls || !controls.enabled || isPOVMode) return;
+    if (!controls || !controls.enabled) return;
     var dist = camera.position.distanceTo(controls.target);
-    var maxPolarAngle = getDynamicMaxPolarAngle(dist);
     var cosPolarAngle = (camera.position.y - controls.target.y) / Math.max(0.001, dist);
     var currentPolarAngle = Math.acos(Math.max(-1, Math.min(1, cosPolarAngle)));
+    if (isPOVMode) {
+      controls.minDistance = Math.min(45, Math.max(5, dist * 0.5));
+      controls.maxPolarAngle = Math.max(1.455, Math.min(Math.PI * 0.495, currentPolarAngle + 0.02));
+      return;
+    }
+    var maxPolarAngle = getDynamicMaxPolarAngle(dist);
     controls.maxPolarAngle = Math.max(maxPolarAngle, currentPolarAngle);
   }
 
@@ -4288,6 +4293,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   function exitFloorPOV() {
     if (!isPOVMode) return;
     isPOVMode = false;
+    controls.minDistance = 45;
     directSunTimelineRequestId++;
     directSunTimelinePendingKey = null;
     if (typeof window.onComplex3dSunlightTimelineUpdate === 'function') {
@@ -4868,20 +4874,26 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           camera.lookAt(controls.target);
           isCameraAnimating = false;
           if (!isPOVMode || currentPOVSubMode !== 'outward') {
-            controls.enabled = true;
-            if (container) container.style.cursor = 'default';
-            updateDynamicCameraClamp();
-            var finalPosition = camera.position.clone();
-            var finalTarget = controls.target.clone();
+            var finalPosition = endPos.clone();
+            var finalTarget = endTarget.clone();
+            var finalDist = Math.max(0.001, finalPosition.distanceTo(finalTarget));
+            var cosFinalPolar = (finalPosition.y - finalTarget.y) / finalDist;
+            var finalPolarAngle = Math.acos(Math.max(-1, Math.min(1, cosFinalPolar)));
+            controls.minDistance = isPOVMode ? Math.min(45, Math.max(5, finalDist * 0.5)) : 45;
+            if (isPOVMode) {
+              controls.maxPolarAngle = Math.max(1.455, Math.min(Math.PI * 0.495, finalPolarAngle + 0.02));
+            } else {
+              controls.maxPolarAngle = Math.max(getDynamicMaxPolarAngle(finalDist), finalPolarAngle);
+            }
             var dampingEnabled = controls.enableDamping;
-            controls.enabled = false;
             controls.enableDamping = false;
-            controls.update();
-            controls.enableDamping = dampingEnabled;
             controls.target.copy(finalTarget);
             camera.position.copy(finalPosition);
+            controls.update();
+            controls.enableDamping = dampingEnabled;
             camera.lookAt(controls.target);
             controls.enabled = true;
+            if (container) container.style.cursor = 'default';
           }
         }
       }
