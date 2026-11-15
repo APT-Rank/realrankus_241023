@@ -476,12 +476,19 @@
     #complex3d_tt_price { font-size: 11px; color: #94a3b8; margin-top: 2px; }
 
     /* 세대 조망권 뷰 (Floor POV) Floating HUD Banner */
-    .floor-pov-banner {
+    .pov-top-hud {
       position: absolute;
       top: 18px;
-      left: 50%;
+      left: 48%;
       transform: translateX(-50%);
       z-index: 1050;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: povBannerSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .floor-pov-banner {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -494,12 +501,11 @@
       border: 1px solid rgba(226, 232, 240, 0.9);
       border-radius: 5px;
       box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
-      animation: povBannerSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       flex-wrap: nowrap;
       white-space: nowrap;
     }
     @keyframes povBannerSlideDown {
-      from { opacity: 0; transform: translate(-50%, -14px); }
+      from { opacity: 0; transform: translate(-50%, -18px); }
       to { opacity: 1; transform: translate(-50%, 0); }
     }
     .pov-badge {
@@ -576,49 +582,134 @@
       flex-shrink: 0;
     }
     .pov-back-btn {
+      position: absolute;
+      top: -1px;
+      right: calc(100% + 10px);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      flex: 0 0 32px;
-      width: 32px;
-      height: 32px;
+      width: 44px;
+      height: 44px;
       padding: 0;
       color: #E43B46;
-      background: rgba(228, 59, 70, 0.1);
-      border: 1px solid rgba(228, 59, 70, 0.22);
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 5px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
       cursor: pointer;
-      font-size: 18px;
-      transition: background 0.18s ease, color 0.18s ease;
+      font-size: 16px;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     }
     .pov-back-btn:hover {
       color: #ffffff;
       background: #E43B46;
+      border-color: #E43B46;
     }
     .pov-close-btn {
-      order: 4;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      height: 28px;
-      padding: 0 10px;
-      margin-left: 2px;
+      gap: 6px;
+      height: 44px;
+      padding: 0 14px;
       color: #E43B46;
-      background: rgba(228, 59, 70, 0.08);
-      border: 1px solid rgba(228, 59, 70, 0.28);
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 5px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
       cursor: pointer;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
       flex-shrink: 0;
       transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     }
+    .pov-close-btn i {
+      color: #E43B46;
+      font-size: 13px;
+      transition: color 0.18s ease;
+    }
     .pov-close-btn:hover {
       color: #ffffff;
       background: #E43B46;
       border-color: #E43B46;
+    }
+    .pov-close-btn:hover i {
+      color: #ffffff;
+    }
+    .pov-unit-disclaimer {
+      position: absolute;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1045;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: min(92vw, 760px);
+      padding: 6px 12px;
+      box-sizing: border-box;
+      background: rgba(15, 23, 42, 0.84);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
+      color: #f8fafc;
+      font-size: 11.5px;
+      line-height: 1.4;
+    }
+    .pov-unit-disclaimer-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pov-unit-disclaimer-text i {
+      color: #fbbf24;
+      flex-shrink: 0;
+    }
+    .pov-disclaimer-hide {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+      padding-left: 10px;
+      border-left: 1px solid rgba(148, 163, 184, 0.35);
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pov-disclaimer-hide input {
+      accent-color: #38bdf8;
+      cursor: pointer;
+      margin: 0;
+    }
+    .pov-disclaimer-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 12px;
+      flex-shrink: 0;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .pov-disclaimer-close:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
     }
     .pov-banner-content {
       display: contents;
@@ -1412,7 +1503,14 @@
         gap: 8px;
       }
 
+      .pov-top-hud {
+        display: contents;
+        animation: none;
+        transform: none;
+      }
       .floor-pov-banner {
+        position: absolute;
+        z-index: 1050;
         top: 8px !important;
         left: 8px !important;
         right: 8px !important;
@@ -1435,6 +1533,9 @@
         animation: none;
       }
       .pov-back-btn {
+        position: static;
+        top: auto;
+        right: auto;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1446,6 +1547,7 @@
         background: transparent;
         border: none;
         border-radius: 6px;
+        box-shadow: none;
         cursor: pointer;
         font-size: 18px;
         font-weight: 700;
@@ -1458,6 +1560,32 @@
       }
       .pov-close-btn {
         display: none !important;
+      }
+      .pov-unit-disclaimer {
+        position: fixed !important;
+        top: var(--mobile-pov-disclaimer-top, 118px) !important;
+        left: 8px !important;
+        right: 8px !important;
+        transform: none !important;
+        max-width: none;
+        width: auto;
+        flex-wrap: wrap;
+        gap: 6px 8px;
+        padding: 6px 10px;
+        font-size: 10.5px;
+        line-height: 1.35;
+      }
+      .pov-unit-disclaimer-text {
+        flex: 1 1 100%;
+      }
+      .pov-disclaimer-hide {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        font-size: 10.5px;
+      }
+      .pov-disclaimer-close {
+        margin-left: auto;
       }
       .pov-banner-content {
         display: flex;
@@ -2191,8 +2319,8 @@
         </div>
       </div>
       <div class="direct-sunlight-explanation" id="direct-sunlight-explanation" hidden>
-        세대 폴리곤의 외곽면 길이를 방위별로 합산해 주방향을 추정하고 7×7 표본으로 계산합니다. 북향·북동향·북서향은 제외하며, 방향이 모호하면 점수를 표시하지 않습니다. 실제 창문 위치와 실내 밝기, 날씨는 반영하지 않은 3D 모델 추정치입니다.
-        시간 바의 회색은 직달일조가 없는 구간, 노랑에서 빨강으로 갈수록 표본 기준 일조 비율이 높습니다.
+        8방향(서-남서-남-남동-동-북동-북-북서) 세대 향을 선택할 수 있으며, 선택한 향의 실제 외벽 방향을 기준으로 7×7 표본 직달일조를 계산합니다.
+        시간 바는 일출~일몰 구간을 20분 간격으로 일조가 있는 시간대는 노랑~빨강(표본 기준 일조 비율 높음), 일조가 없는 시간대는 회색으로 표시됩니다. 실제 창문 위치와 실내 밝기, 날씨는 반영하지 않은 3D 모델 추정치입니다.
       </div>
       <div class="direct-sunlight-orientation-bar" id="direct-sunlight-orientation-bar" role="radiogroup" aria-label="세대 향 선택" hidden>
         <button type="button" class="direct-sunlight-dir-btn" role="radio" aria-checked="false" data-orientation="W">서</button>
@@ -2427,6 +2555,7 @@
   </div>
 
   <!-- Floor POV HUD Banner -->
+  <div id="pov-top-hud" class="pov-top-hud" style="display: none;">
   <div id="floor-pov-banner" class="floor-pov-banner" style="display: none;">
     <button id="pov-back-btn" class="pov-back-btn" type="button" title="세대뷰 종료" aria-label="세대뷰 종료">
       <i class="fa-solid fa-chevron-left"></i>
@@ -2490,8 +2619,21 @@
         </div>
       </div>
     </div>
-    <button id="pov-close-btn" class="pov-close-btn" type="button" title="세대뷰 닫기" aria-label="세대뷰 닫기">
-      <i class="fa-solid fa-xmark"></i> 세대뷰 닫기
+  </div>
+  <button id="pov-close-btn" class="pov-close-btn" type="button" title="세대뷰 닫기" aria-label="세대뷰 닫기">
+    <i class="fa-solid fa-xmark"></i> 세대뷰 닫기
+  </button>
+  </div>
+  <div id="pov-unit-disclaimer" class="pov-unit-disclaimer" role="note" style="display: none;">
+    <span class="pov-unit-disclaimer-text">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>각 동의 호수는 건물 형태와 방위를 기준으로 임의 분할된 결과로 실제 호수와 다를 수 있습니다.</span>
+    </span>
+    <label class="pov-disclaimer-hide">
+      <input type="checkbox" id="pov-disclaimer-hide-90d"> 90일간 보지 않기
+    </label>
+    <button id="pov-disclaimer-close-btn" class="pov-disclaimer-close" type="button" title="안내 닫기" aria-label="안내 닫기">
+      <i class="fa-solid fa-xmark"></i>
     </button>
   </div>
 
@@ -3193,14 +3335,48 @@
             return window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
           }
 
+          var POV_UNIT_DISCLAIMER_STORAGE_KEY = 'apt_rank_pov_unit_disclaimer_hide_until';
+          var povDisclaimerDismissedThisPOV = false;
+
+          function isPOVUnitDisclaimerSuppressed() {
+            if (povDisclaimerDismissedThisPOV) return true;
+            try {
+              var raw = window.localStorage.getItem(POV_UNIT_DISCLAIMER_STORAGE_KEY);
+              if (!raw) return false;
+              var hideUntil = Number(raw);
+              if (Number.isFinite(hideUntil) && Date.now() < hideUntil) return true;
+              window.localStorage.removeItem(POV_UNIT_DISCLAIMER_STORAGE_KEY);
+            } catch (e) {}
+            return false;
+          }
+
+          function syncPOVUnitDisclaimerVisibility(isPOVActive) {
+            var disclaimer = document.getElementById('pov-unit-disclaimer');
+            var hideCheckbox = document.getElementById('pov-disclaimer-hide-90d');
+            if (!disclaimer) return;
+            if (!isPOVActive || isPOVUnitDisclaimerSuppressed()) {
+              disclaimer.style.display = 'none';
+              return;
+            }
+            if (hideCheckbox) hideCheckbox.checked = false;
+            disclaimer.style.display = 'flex';
+          }
+
           function positionMobilePOVFovBar() {
             var banner = document.getElementById('floor-pov-banner');
+            var disclaimer = document.getElementById('pov-unit-disclaimer');
             var isMobile = isMobilePOVViewport();
             var isOutwardPOVVisible = currentPOVInfo && currentPOVInfo.subMode === 'outward' && banner && banner.style.display !== 'none';
             var radarHud = document.getElementById('pov-direction-hud');
             var bottomSheet = document.getElementById('control-panel');
             var povNeighborToggle = document.getElementById('pov-mobile-neighbor-toggle');
             var isMobilePOVVisible = currentPOVInfo && banner && banner.style.display !== 'none';
+
+            if (disclaimer && isMobile && isMobilePOVVisible && disclaimer.style.display !== 'none') {
+              disclaimer.style.setProperty('--mobile-pov-disclaimer-top', Math.ceil(banner.getBoundingClientRect().bottom + 8) + 'px');
+            } else if (disclaimer) {
+              disclaimer.style.removeProperty('--mobile-pov-disclaimer-top');
+            }
 
             if (povNeighborToggle) {
               if (isMobilePOVVisible && isMobile) {
@@ -3221,7 +3397,10 @@
 
             if (isOutwardPOVVisible && isMobile) {
               if (povFovBar) {
-                povFovBar.style.setProperty('--mobile-pov-fov-top', Math.ceil(banner.getBoundingClientRect().bottom + 8) + 'px');
+                var topAnchorBottom = (disclaimer && disclaimer.style.display !== 'none')
+                  ? disclaimer.getBoundingClientRect().bottom
+                  : banner.getBoundingClientRect().bottom;
+                povFovBar.style.setProperty('--mobile-pov-fov-top', Math.ceil(topAnchorBottom + 8) + 'px');
               }
               if (radarHud) {
                 if (bottomSheet && bottomSheet.classList.contains('stage-3')) {
@@ -3535,13 +3714,17 @@
             currentPOVInfo = info;
             if (directSunlightWidget) directSunlightWidget.hidden = false;
             if (directSunlightOrientationBar) directSunlightOrientationBar.hidden = false;
+            var povTopHud = document.getElementById('pov-top-hud');
             var banner = document.getElementById('floor-pov-banner');
             var titleEl = document.getElementById('pov-title-text');
             var layerNb = document.getElementById('layer-neighbors');
             var topBar = document.querySelector('.top-bar');
             if (topBar) topBar.classList.add('pov-hidden');
             if (banner && titleEl) {
-              titleEl.innerText = info.dongName + ' ' + info.floor + '층 (' + info.bandLabel + ')';
+              var povBaseTitle = info.dongName + ' ' + info.floor + '층 (' + info.bandLabel + ')';
+              titleEl.innerText = (!isMobilePOVViewport() && aptName && povBaseTitle.indexOf(aptName) !== 0)
+                ? (aptName + ' ' + povBaseTitle)
+                : povBaseTitle;
               syncPOVUnitSelectors(info);
               syncPOVOrientationSelect(info);
               if (info.subMode === 'outward') {
@@ -3657,7 +3840,9 @@
               }
               if (povBtnPrevUnit) povBtnPrevUnit.disabled = info.unitIndex <= 0;
               if (povBtnNextUnit) povBtnNextUnit.disabled = info.unitIndex >= (info.totalUnits - 1);
+              if (povTopHud) povTopHud.style.display = 'flex';
               banner.style.display = 'flex';
+              syncPOVUnitDisclaimerVisibility(true);
               window.requestAnimationFrame(positionMobilePOVFovBar);
             }
           };
@@ -3670,6 +3855,8 @@
               previousPOVNeighborsVisible = null;
             }
             currentPOVInfo = null;
+            povDisclaimerDismissedThisPOV = false;
+            syncPOVUnitDisclaimerVisibility(false);
             if (directSunlightWidget) directSunlightWidget.hidden = true;
             if (directSunlightOrientationBar) directSunlightOrientationBar.hidden = true;
             if (directSunlightExplanation) directSunlightExplanation.hidden = true;
@@ -3677,6 +3864,10 @@
             window.onComplex3dSunlightTimelineUpdate({ status: 'clear' });
             setPOVBottomMenuVisibility(true);
             positionMobilePOVFovBar();
+            var povTopHud = document.getElementById('pov-top-hud');
+            if (povTopHud) {
+              povTopHud.style.display = 'none';
+            }
             var banner = document.getElementById('floor-pov-banner');
             if (banner) {
               banner.style.display = 'none';
@@ -3772,6 +3963,29 @@
               if (viewInstance && typeof viewInstance.exitFloorPOV === 'function') {
                 viewInstance.exitFloorPOV();
               }
+            });
+          }
+
+          var povDisclaimerHideCheckbox = document.getElementById('pov-disclaimer-hide-90d');
+          if (povDisclaimerHideCheckbox) {
+            povDisclaimerHideCheckbox.addEventListener('change', function () {
+              if (!this.checked) return;
+              try {
+                var ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
+                window.localStorage.setItem(POV_UNIT_DISCLAIMER_STORAGE_KEY, String(Date.now() + ninetyDaysMs));
+              } catch (e) {}
+              povDisclaimerDismissedThisPOV = true;
+              syncPOVUnitDisclaimerVisibility(false);
+              positionMobilePOVFovBar();
+            });
+          }
+
+          var povDisclaimerCloseBtn = document.getElementById('pov-disclaimer-close-btn');
+          if (povDisclaimerCloseBtn) {
+            povDisclaimerCloseBtn.addEventListener('click', function () {
+              povDisclaimerDismissedThisPOV = true;
+              syncPOVUnitDisclaimerVisibility(false);
+              positionMobilePOVFovBar();
             });
           }
 
