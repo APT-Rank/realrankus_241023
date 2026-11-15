@@ -1504,17 +1504,21 @@
       }
 
       .pov-top-hud {
-        display: contents;
-        animation: none;
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        z-index: 1050;
         transform: none;
+        animation: none;
       }
       .floor-pov-banner {
-        position: absolute;
+        position: relative;
         z-index: 1050;
-        top: 8px !important;
-        left: 8px !important;
-        right: 8px !important;
-        width: auto !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
         max-width: none;
         height: auto !important;
         padding: 6px 8px 7px 12px;
