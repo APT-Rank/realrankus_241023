@@ -2253,7 +2253,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261116_1717"></script>
+  <script src="./js/complex_3d_view.js?v=20261116_1758"></script>
 </head>
 <body>
 
@@ -4274,7 +4274,8 @@
 
           var mobileSheetStageCacheKey = '';
           function getMobileSheetCacheKey() {
-            var dongCount = dongBtnGroup ? dongBtnGroup.children.length : 0;
+            var dg = document.getElementById('dong_btn_group');
+            var dongCount = dg ? dg.children.length : 0;
             return window.innerWidth + 'x' + window.innerHeight + ':' + dongCount;
           }
 
