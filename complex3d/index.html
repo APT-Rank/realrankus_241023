@@ -1320,7 +1320,8 @@
         border-top: 1px solid rgba(226, 232, 240, 0.95);
         z-index: 1100;
         gap: 4px;
-        transition: transform 0.32s cubic-bezier(0.25, 1, 0.5, 1), max-height 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+        transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
         box-sizing: border-box;
         overflow-x: hidden;
         overflow-y: hidden;
@@ -1390,6 +1391,10 @@
       .control-panel.is-free-dragging {
         max-height: var(--sheet-free-height, 94vh) !important;
         transform: translateY(0) !important;
+        transition: none !important;
+      }
+      .control-panel.is-dragging {
+        transition: none !important;
       }
       .control-panel.is-free-dragging > #dong-selection-panel {
         display: block !important;
@@ -1533,7 +1538,7 @@
         max-height: 0 !important;
         overflow: hidden !important;
         opacity: 0 !important;
-        transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+        transition: none !important;
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -4322,52 +4327,81 @@
               mobileSheetStageAnimation = null;
             }
             mobileSheetStageRects = measureMobileSheetStages();
+            var targetRect = mobileSheetStageRects && mobileSheetStageRects[stage]
+              ? mobileSheetStageRects[stage]
+              : controlPanel.getBoundingClientRect();
+
             controlPanel.classList.add('is-stage-preparing');
-            controlPanel.style.top = startRect.top + 'px';
-            controlPanel.style.height = startRect.height + 'px';
             controlPanel.style.removeProperty('--sheet-stage-offset');
             controlPanel.classList.add('is-stage-positioned');
             controlPanel.classList.remove('is-free-dragging');
             controlPanel.style.removeProperty('--sheet-free-height');
             mobileSheetReleasedRect = null;
             currentMobileStage = stage;
-            controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
-            controlPanel.classList.add('stage-' + stage);
-            var targetRect = mobileSheetStageRects && mobileSheetStageRects[stage]
-              ? mobileSheetStageRects[stage]
-              : controlPanel.getBoundingClientRect();
-            controlPanel.classList.remove('is-stage-preparing');
-            controlPanel.getBoundingClientRect();
-            if ((Math.abs(startRect.top - targetRect.top) > 0.5 || Math.abs(startRect.height - targetRect.height) > 0.5) && typeof controlPanel.animate === 'function') {
+
+            stageBtns.forEach(function (btn) {
+              var s = parseInt(btn.getAttribute('data-stage'), 10);
+              btn.classList.toggle('active', s === stage);
+            });
+
+            var deltaY = startRect.top - targetRect.top;
+            var isExpanding = deltaY > 0.5;
+            var isCollapsing = deltaY < -0.5;
+
+            if (isExpanding && typeof controlPanel.animate === 'function') {
+              // 확장 시: 최종 크기/위치를 즉시 반영하고 GPU transform(translateY)만 부드럽게 슬라이드
+              controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
+              controlPanel.classList.add('stage-' + stage);
+              controlPanel.style.top = targetRect.top + 'px';
+              controlPanel.style.height = targetRect.height + 'px';
+              controlPanel.classList.remove('is-stage-preparing');
+
               var stageAnimation = controlPanel.animate([
-                { top: startRect.top + 'px', height: startRect.height + 'px' },
-                { top: targetRect.top + 'px', height: targetRect.height + 'px' }
+                { transform: 'translate3d(0, ' + deltaY + 'px, 0)' },
+                { transform: 'translate3d(0, 0, 0)' }
               ], {
-                duration: 360,
-                easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-                fill: 'forwards'
+                duration: 300,
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
               });
               mobileSheetStageAnimation = stageAnimation;
               stageAnimation.onfinish = function () {
                 if (mobileSheetStageAnimation !== stageAnimation) return;
+                mobileSheetStageAnimation = null;
+              };
+            } else if (isCollapsing && typeof controlPanel.animate === 'function') {
+              // 축소 시: 현재 크기 유지한 채 GPU transform(translateY)으로 내려간 뒤 최종 stage 클래스 적용
+              controlPanel.style.top = startRect.top + 'px';
+              controlPanel.style.height = startRect.height + 'px';
+              controlPanel.classList.remove('is-stage-preparing');
+
+              var collapseAnim = controlPanel.animate([
+                { transform: 'translate3d(0, 0, 0)' },
+                { transform: 'translate3d(0, ' + (-deltaY) + 'px, 0)' }
+              ], {
+                duration: 280,
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+                fill: 'forwards'
+              });
+              mobileSheetStageAnimation = collapseAnim;
+              collapseAnim.onfinish = function () {
+                if (mobileSheetStageAnimation !== collapseAnim) return;
+                controlPanel.classList.add('is-stage-preparing');
+                controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
+                controlPanel.classList.add('stage-' + stage);
                 controlPanel.style.top = targetRect.top + 'px';
                 controlPanel.style.height = targetRect.height + 'px';
                 mobileSheetStageAnimation = null;
-                stageAnimation.cancel();
+                collapseAnim.cancel();
+                controlPanel.classList.remove('is-stage-preparing');
+                if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
               };
             } else {
+              controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
+              controlPanel.classList.add('stage-' + stage);
               controlPanel.style.top = targetRect.top + 'px';
               controlPanel.style.height = targetRect.height + 'px';
+              controlPanel.classList.remove('is-stage-preparing');
             }
-            
-            stageBtns.forEach(function (btn) {
-              var s = parseInt(btn.getAttribute('data-stage'), 10);
-              if (s === stage) {
-                btn.classList.add('active');
-              } else {
-                btn.classList.remove('active');
-              }
-            });
             if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
             if (mobileSheetFollowFrame) {
               window.cancelAnimationFrame(mobileSheetFollowFrame);
