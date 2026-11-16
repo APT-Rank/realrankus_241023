@@ -2484,25 +2484,24 @@
         <div class="panel-title">
           <span>🗺️ 바닥 스킨 · 색상</span>
         </div>
-        <div class="btn-group-custom" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
           <button class="btn-custom active" data-map="custom_color">지정색상</button>
           <button class="btn-custom" data-map="normal">일반 지도</button>
           <button class="btn-custom" data-map="hybrid">위성+도로</button>
-          <button class="btn-custom" data-map="virtual">가상 조경</button>
         </div>
-        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px; padding-top: 8px; border-top: 1px solid rgba(148, 163, 184, 0.25);">
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: #334155;">
-            <span>바닥 색상</span>
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <input type="color" id="ground-color-picker" value="#BBD59A" style="width: 34px; height: 24px; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; background: transparent; cursor: pointer;" />
-              <button type="button" id="btn-reset-ground-color" class="btn-custom" style="padding: 2px 8px; font-size: 11px; line-height: 1.4;">기본값</button>
+        <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 8px; border-top: 1px solid rgba(148, 163, 184, 0.25);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 12px; font-weight: 600; color: #334155;">
+            <span style="white-space: nowrap;">바닥</span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="color" id="ground-color-picker" value="#BBD59A" style="width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e1; border-radius: 5px; background: transparent; cursor: pointer;" />
+              <button type="button" id="btn-reset-ground-color" class="btn-custom" style="padding: 2px 6px; font-size: 10px; line-height: 1.4; white-space: nowrap;">기본값</button>
             </div>
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: #334155;">
-            <span>건물 색상</span>
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <input type="color" id="building-color-picker" value="#D7B19D" style="width: 34px; height: 24px; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; background: transparent; cursor: pointer;" />
-              <button type="button" id="btn-reset-building-color" class="btn-custom" style="padding: 2px 8px; font-size: 11px; line-height: 1.4;">기본값</button>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 12px; font-weight: 600; color: #334155;">
+            <span style="white-space: nowrap;">건물</span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="color" id="building-color-picker" value="#D7B19D" style="width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e1; border-radius: 5px; background: transparent; cursor: pointer;" />
+              <button type="button" id="btn-reset-building-color" class="btn-custom" style="padding: 2px 6px; font-size: 10px; line-height: 1.4; white-space: nowrap;">기본값</button>
             </div>
           </div>
         </div>
@@ -3201,7 +3200,7 @@
             groundColorPicker.value = savedGroundColor;
           }
           var savedMapType = read3dPref(LS_GROUND_MAP_KEY);
-          if (savedMapType && ['custom_color', 'normal', 'hybrid', 'virtual'].indexOf(savedMapType) !== -1) {
+          if (savedMapType && ['custom_color', 'normal', 'hybrid'].indexOf(savedMapType) !== -1) {
             document.querySelectorAll('[data-map]').forEach(function (b) {
               b.classList.toggle('active', b.getAttribute('data-map') === savedMapType);
             });
