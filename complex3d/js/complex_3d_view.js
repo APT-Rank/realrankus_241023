@@ -625,8 +625,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       }
     }
 
-    // 야간 시 건물 와이어프레임(외곽선)을 차분한 밝은 회색(#94a3b8)으로, 주간 시 슬레이트(#1e293b)로 전환
-    var wireframeHex = isNightMode ? 0x94a3b8 : 0x1e293b;
+    // 야간 및 황혼/노을(태양 고도 15° 미만) 시 건물 와이어프레임(외곽선)을 차분한 밝은 회색(#94a3b8)으로, 주간 시 슬레이트(#1e293b)로 전환
+    var altDegForWireframe = Math.round(Math.asin(Math.max(-1, Math.min(1, alt))) * 180 / Math.PI);
+    var isTwilightOrNight = isNightMode || altDegForWireframe < 15;
+    var wireframeHex = isTwilightOrNight ? 0x94a3b8 : 0x1e293b;
     if (typeof celLineMat !== 'undefined' && celLineMat && celLineMat.color) {
       celLineMat.color.setHex(wireframeHex);
     }
