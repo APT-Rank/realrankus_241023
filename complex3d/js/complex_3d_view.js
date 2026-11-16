@@ -433,6 +433,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   var currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
   var currentSeason = 'equinox';
   var isNightMode = false;
+  var currentWireframeHex = 0x1e293b;
   var celestialBody = 'sun';
 
   // --- 3-1. 3D 태양 아이콘 오브젝트 (눈부심 없는 정갈한 ☀️ 그래픽 태양 아이콘 - 2배 크기 & 고해상도) ---
@@ -629,6 +630,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var altDegForWireframe = Math.round(Math.asin(Math.max(-1, Math.min(1, alt))) * 180 / Math.PI);
     var isTwilightOrNight = isNightMode || altDegForWireframe < 15;
     var wireframeHex = isTwilightOrNight ? 0x94a3b8 : 0x1e293b;
+    currentWireframeHex = wireframeHex;
     if (typeof celLineMat !== 'undefined' && celLineMat && celLineMat.color) {
       celLineMat.color.setHex(wireframeHex);
     }
@@ -1724,9 +1726,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   // 층간 화이트 몰딩 슬래브 색상
   var slabColor = new THREE.Color(0xf8fafc);
 
-  // 셀 작화(Cel Outline) 펜선 기본 머티리얼 템플릿 (선명하고 깔끔한 슬레이트 네이비)
+  // 셀 작화(Cel Outline) 펜선 기본 머티리얼 템플릿 (주간 슬레이트 / 황혼·야간 밝은 회색)
   var celLineMat = new THREE.LineBasicMaterial({
-    color: 0x1e293b,
+    color: currentWireframeHex,
     transparent: true,
     opacity: 0.55
   });

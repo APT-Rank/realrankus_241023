@@ -2253,7 +2253,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261116_1758"></script>
+  <script src="./js/complex_3d_view.js?v=20261116_1809"></script>
 </head>
 <body>
 
@@ -4803,6 +4803,7 @@
             if (initialSun && window.onComplex3dSunUpdate) {
               timeSlider.value = initialSun.hour;
               updateTimeDisplay(initialSun.hour);
+              syncTimeSliderNightThumb(initialSun.hour);
               var initDir = "정남";
               var azD = initialSun.azimuthDeg;
               if (azD >= 337.5 || azD < 22.5) initDir = "정북";
