@@ -1306,7 +1306,8 @@
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 85vh;
+        max-height: 94vh;
+        max-height: 94dvh;
         padding: 4px 12px 14px 12px;
         border-radius: 10px 10px 0 0; /* 10) 바텀시트 Radius 1/2 (20px -> 10px) */
         background: rgba(255, 255, 255, 0.96);
@@ -1353,7 +1354,10 @@
       /* 3단계: 모든 메뉴가 상단으로 다 올라온 상태 */
       .control-panel.stage-3 {
         transform: translateY(0);
-        max-height: 85vh !important;
+        max-height: 94vh !important;
+        max-height: 94dvh !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
       }
       .control-panel.is-stage-preparing,
       .control-panel.is-stage-preparing * {
@@ -1366,18 +1370,22 @@
         transform: none !important;
         transition: none !important;
       }
+      .control-panel.is-stage-positioned.stage-3 {
+        max-height: 94vh !important;
+        max-height: 94dvh !important;
+      }
       .control-panel.pov-hidden.is-stage-positioned {
         transform: translateY(120%) !important;
       }
       .control-panel.stage-3 .control-panel-expandable {
-        max-height: 1200px !important;
+        max-height: 2400px !important;
         opacity: 1 !important;
-        overflow: hidden !important;
+        overflow: visible !important;
         padding-top: 4px;
-        padding-bottom: 8px;
+        padding-bottom: 12px;
       }
       .control-panel.is-free-dragging {
-        max-height: var(--sheet-free-height, 85vh) !important;
+        max-height: var(--sheet-free-height, 94vh) !important;
         transform: translateY(0) !important;
       }
       .control-panel.is-free-dragging > #dong-selection-panel {
@@ -1385,11 +1393,11 @@
       }
       .control-panel.is-free-dragging .control-panel-expandable {
         display: block !important;
-        max-height: 1200px !important;
+        max-height: 2400px !important;
         opacity: 1 !important;
         overflow: visible !important;
         padding-top: 4px;
-        padding-bottom: 8px;
+        padding-bottom: 12px;
       }
 
       .mobile-sheet-header {
@@ -2211,7 +2219,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261115_1955"></script>
+  <script src="./js/complex_3d_view.js?v=20261116_1453"></script>
 </head>
 <body>
 
@@ -2377,6 +2385,11 @@
           <span class="sun-metric-val" id="sun-cond-val" style="color: #059669;">우수</span>
         </div>
       </div>
+      <div class="btn-group-custom" style="margin-top: 8px;">
+        <button class="btn-custom active" data-season="equinox">춘추분</button>
+        <button class="btn-custom" data-season="summer">하지</button>
+        <button class="btn-custom" data-season="winter">동지</button>
+      </div>
     </div>
 
       <div class="panel-card panel-card-primary" id="dong-selection-panel">
@@ -2390,44 +2403,6 @@
 
     <!-- Expandable Section (모바일에서는 상세설정 토글 시 열림 / 데스크톱에서는 항상 열림) -->
     <div class="control-panel-expandable" id="control-panel-expandable">
-      <div class="panel-card">
-        <div class="panel-title">
-          <span>🍂 계절 설정</span>
-        </div>
-        <div class="btn-group-custom">
-          <button class="btn-custom active" data-season="equinox">춘추분</button>
-          <button class="btn-custom" data-season="summer">하지</button>
-          <button class="btn-custom" data-season="winter">동지</button>
-        </div>
-      </div>
-
-      <div class="panel-card" id="camera-preset-panel">
-        <div class="panel-title">
-          <span>🎥 카메라 뷰</span>
-        </div>
-        <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
-          <button class="btn-custom" id="cp-btn-reset"><i class="fa-solid fa-arrows-rotate me-1"></i>기본 뷰</button>
-          <button class="btn-custom" id="cp-btn-top"><i class="fa-solid fa-border-all me-1"></i>상단 뷰</button>
-          <button class="btn-custom" id="cp-btn-bird"><i class="fa-solid fa-cube me-1"></i>조감 뷰</button>
-        </div>
-        <div style="margin-top: 6px;">
-          <button class="btn-custom" id="cp-btn-explode" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <i class="fa-solid fa-layer-group"></i> <span id="cp-btn-explode-text">💥 층별 분해 뷰 (단면 펼치기)</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">
-          <span>🗺️ 바닥 스킨</span>
-        </div>
-        <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
-          <button class="btn-custom active" data-map="normal">일반 지도</button>
-          <button class="btn-custom" data-map="hybrid">위성+도로</button>
-          <button class="btn-custom" data-map="virtual">가상 조경</button>
-        </div>
-      </div>
-
       <!-- Surrounding Infrastructure 3D Layer Toggle Card -->
       <div class="panel-card" id="infra-panel-card">
         <div class="panel-title">
@@ -2486,6 +2461,50 @@
             <input type="checkbox" id="layer-dong-labels" checked>
             <span class="infra-tag">🏷️ <b>동 이름 표시</b></span>
           </label>
+        </div>
+      </div>
+
+      <div class="panel-card" id="camera-preset-panel">
+        <div class="panel-title">
+          <span>🎥 카메라 뷰</span>
+        </div>
+        <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
+          <button class="btn-custom" id="cp-btn-reset"><i class="fa-solid fa-arrows-rotate me-1"></i>기본 뷰</button>
+          <button class="btn-custom" id="cp-btn-top"><i class="fa-solid fa-border-all me-1"></i>상단 뷰</button>
+          <button class="btn-custom" id="cp-btn-bird"><i class="fa-solid fa-cube me-1"></i>조감 뷰</button>
+        </div>
+        <div style="margin-top: 6px;">
+          <button class="btn-custom" id="cp-btn-explode" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <i class="fa-solid fa-layer-group"></i> <span id="cp-btn-explode-text">💥 층별 분해 뷰 (단면 펼치기)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>🗺️ 바닥 스킨 · 색상</span>
+        </div>
+        <div class="btn-group-custom" style="grid-template-columns: repeat(2, 1fr);">
+          <button class="btn-custom active" data-map="custom_color">지정색상</button>
+          <button class="btn-custom" data-map="normal">일반 지도</button>
+          <button class="btn-custom" data-map="hybrid">위성+도로</button>
+          <button class="btn-custom" data-map="virtual">가상 조경</button>
+        </div>
+        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px; padding-top: 8px; border-top: 1px solid rgba(148, 163, 184, 0.25);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: #334155;">
+            <span>바닥 색상</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="color" id="ground-color-picker" value="#BBD59A" style="width: 34px; height: 24px; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; background: transparent; cursor: pointer;" />
+              <button type="button" id="btn-reset-ground-color" class="btn-custom" style="padding: 2px 8px; font-size: 11px; line-height: 1.4;">기본값</button>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: #334155;">
+            <span>건물 색상</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="color" id="building-color-picker" value="#D7B19D" style="width: 34px; height: 24px; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; background: transparent; cursor: pointer;" />
+              <button type="button" id="btn-reset-building-color" class="btn-custom" style="padding: 2px 8px; font-size: 11px; line-height: 1.4;">기본값</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -3100,14 +3119,108 @@
             });
           });
 
-          // Map style buttons binding (일반지도 / 위성+도로 / 가상조경)
+          // Map style buttons binding (지정색상 / 일반지도 / 위성+도로 / 가상조경) + localStorage 영구 저장
+          var LS_GROUND_MAP_KEY = 'apt_rank_3d_ground_map_type';
+          var LS_GROUND_COLOR_KEY = 'apt_rank_3d_ground_color';
+          var LS_BUILDING_COLOR_KEY = 'apt_rank_3d_building_color';
+          var groundColorPicker = document.getElementById('ground-color-picker');
+
+          function save3dPref(k, v) {
+            try { localStorage.setItem(k, v); } catch (e) {}
+          }
+          function read3dPref(k) {
+            try { return localStorage.getItem(k); } catch (e) { return null; }
+          }
+
           document.querySelectorAll('[data-map]').forEach(function (btn) {
             btn.addEventListener('click', function () {
               document.querySelectorAll('[data-map]').forEach(function (b) { b.classList.remove('active'); });
               btn.classList.add('active');
-              viewInstance.setGroundMapType(btn.getAttribute('data-map'));
+              var mapType = btn.getAttribute('data-map');
+              save3dPref(LS_GROUND_MAP_KEY, mapType);
+              if (mapType === 'custom_color' && groundColorPicker) {
+                save3dPref(LS_GROUND_COLOR_KEY, groundColorPicker.value);
+                viewInstance.setGroundColor(groundColorPicker.value);
+              } else {
+                viewInstance.setGroundMapType(mapType);
+              }
             });
           });
+
+          if (groundColorPicker) {
+            groundColorPicker.addEventListener('input', function () {
+              document.querySelectorAll('[data-map]').forEach(function (b) {
+                b.classList.toggle('active', b.getAttribute('data-map') === 'custom_color');
+              });
+              save3dPref(LS_GROUND_MAP_KEY, 'custom_color');
+              save3dPref(LS_GROUND_COLOR_KEY, groundColorPicker.value);
+              viewInstance.setGroundColor(groundColorPicker.value);
+            });
+          }
+
+          var resetGroundColorBtn = document.getElementById('btn-reset-ground-color');
+          if (resetGroundColorBtn) {
+            resetGroundColorBtn.addEventListener('click', function () {
+              if (groundColorPicker) groundColorPicker.value = '#BBD59A';
+              document.querySelectorAll('[data-map]').forEach(function (b) {
+                b.classList.toggle('active', b.getAttribute('data-map') === 'custom_color');
+              });
+              save3dPref(LS_GROUND_MAP_KEY, 'custom_color');
+              save3dPref(LS_GROUND_COLOR_KEY, '#BBD59A');
+              viewInstance.setGroundColor('#BBD59A');
+            });
+          }
+
+          var defaultFloorColors = typeof viewInstance.getFloorColors === 'function' ? viewInstance.getFloorColors() : null;
+          var buildingColorPicker = document.getElementById('building-color-picker');
+          var resetBuildingColorBtn = document.getElementById('btn-reset-building-color');
+          if (buildingColorPicker && defaultFloorColors && defaultFloorColors.mid) {
+            buildingColorPicker.value = defaultFloorColors.mid;
+            buildingColorPicker.addEventListener('input', function () {
+              save3dPref(LS_BUILDING_COLOR_KEY, buildingColorPicker.value);
+              if (typeof viewInstance.setFloorColors === 'function') {
+                viewInstance.setFloorColors(buildingColorPicker.value, buildingColorPicker.value, buildingColorPicker.value);
+              }
+            });
+          }
+          if (resetBuildingColorBtn && defaultFloorColors) {
+            resetBuildingColorBtn.addEventListener('click', function () {
+              try { localStorage.removeItem(LS_BUILDING_COLOR_KEY); } catch (e) {}
+              if (typeof viewInstance.setFloorColors === 'function') {
+                viewInstance.setFloorColors(defaultFloorColors.low, defaultFloorColors.mid, defaultFloorColors.high);
+              }
+              if (buildingColorPicker && defaultFloorColors.mid) {
+                buildingColorPicker.value = defaultFloorColors.mid;
+              }
+            });
+          }
+
+          // 저장된 마지막 바닥 스킨/색상 및 건물 색상 복원
+          var savedGroundColor = read3dPref(LS_GROUND_COLOR_KEY);
+          if (savedGroundColor && /^#[0-9a-f]{6}$/i.test(savedGroundColor) && groundColorPicker) {
+            groundColorPicker.value = savedGroundColor;
+          }
+          var savedMapType = read3dPref(LS_GROUND_MAP_KEY);
+          if (savedMapType && ['custom_color', 'normal', 'hybrid', 'virtual'].indexOf(savedMapType) !== -1) {
+            document.querySelectorAll('[data-map]').forEach(function (b) {
+              b.classList.toggle('active', b.getAttribute('data-map') === savedMapType);
+            });
+            if (savedMapType === 'custom_color') {
+              var initGroundHex = groundColorPicker ? groundColorPicker.value : '#BBD59A';
+              if (initGroundHex.toUpperCase() !== '#BBD59A') {
+                viewInstance.setGroundColor(initGroundHex);
+              }
+            } else {
+              viewInstance.setGroundMapType(savedMapType);
+            }
+          }
+          var savedBuildingColor = read3dPref(LS_BUILDING_COLOR_KEY);
+          if (savedBuildingColor && /^#[0-9a-f]{6}$/i.test(savedBuildingColor)) {
+            if (buildingColorPicker) buildingColorPicker.value = savedBuildingColor;
+            if (typeof viewInstance.setFloorColors === 'function') {
+              viewInstance.setFloorColors(savedBuildingColor, savedBuildingColor, savedBuildingColor);
+            }
+          }
 
           // 주변 입지 인프라 3D 레이어 토글 바인딩 (11종 세부 레이어)
           var infraLayerMap = [
@@ -4150,7 +4263,7 @@
             controlPanel.style.setProperty('left', '0px');
             controlPanel.style.setProperty('width', '100%');
             controlPanel.style.setProperty('height', 'auto');
-            controlPanel.style.setProperty('max-height', '85vh');
+            controlPanel.style.setProperty('max-height', '94vh');
             controlPanel.style.setProperty('transform', 'none');
 
             var stageRects = {};
@@ -4339,7 +4452,7 @@
               }
               if (!sheetDrag.moved) return;
               var minHeight = 46;
-              var maxHeight = window.innerHeight * 0.85;
+              var maxHeight = window.innerHeight * 0.94;
               var height = Math.max(minHeight, Math.min(maxHeight, sheetDrag.startHeight - deltaY));
               controlPanel.style.setProperty('--sheet-free-height', height + 'px');
               if (currentPOVInfo) positionMobilePOVFovBar();

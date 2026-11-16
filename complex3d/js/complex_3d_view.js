@@ -988,7 +988,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
 
   // 네이버 지도 및 가상 조경 지반 로드 (CORS 클린 로더 & 신카이 가상 조경 지원)
-  function loadNaverMapGroundTexture(mapType) {
+  function loadNaverMapGroundTexture(mapType, customHex) {
     // 1. 가상 지반 옵션: 9종 상호 연결 모듈러 타일 (도로 & 연두색 평지 블록)
     if (mapType === 'virtual') {
       console.warn("[3D View] Loading 9-Tile Interconnected Modular Ground Texture (Roads & Light-Green Grounds)...");
@@ -1006,6 +1006,60 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       }, undefined, function (err) {
         console.warn("[3D View] Virtual ground texture fallback:", err);
       });
+      return;
+    }
+
+    // 1-2. 사용자 지정 단색(컬러피커) 또는 파스텔 연녹색 바닥 스킨
+    if (mapType === 'pastel_green' || mapType === 'custom_color') {
+      var baseCol = new THREE.Color(customHex || '#BBD59A');
+      var centerCol = baseCol.clone().lerp(new THREE.Color('#ffffff'), 0.22);
+      var edgeCol = baseCol.clone().lerp(new THREE.Color('#000000'), 0.06);
+      var gridCol = baseCol.clone().lerp(new THREE.Color('#000000'), 0.25);
+
+      var pgCanvas = document.createElement('canvas');
+      pgCanvas.width = 1280;
+      pgCanvas.height = 1280;
+      var pgCtx = pgCanvas.getContext('2d');
+      var pgGrad = pgCtx.createRadialGradient(640, 640, 80, 640, 640, 640);
+      pgGrad.addColorStop(0.0, '#' + centerCol.getHexString());
+      pgGrad.addColorStop(0.55, '#' + baseCol.getHexString());
+      pgGrad.addColorStop(1.0, '#' + edgeCol.getHexString());
+      pgCtx.fillStyle = pgGrad;
+      pgCtx.fillRect(0, 0, 1280, 1280);
+
+      // 은은한 건축 그리드 라인
+      pgCtx.strokeStyle = 'rgba(' + Math.round(gridCol.r * 255) + ',' + Math.round(gridCol.g * 255) + ',' + Math.round(gridCol.b * 255) + ',0.16)';
+      pgCtx.lineWidth = 1.5;
+      var pgStep = 64;
+      for (var px = 0; px <= 1280; px += pgStep) {
+        pgCtx.beginPath();
+        pgCtx.moveTo(px, 0);
+        pgCtx.lineTo(px, 1280);
+        pgCtx.stroke();
+      }
+      for (var py = 0; py <= 1280; py += pgStep) {
+        pgCtx.beginPath();
+        pgCtx.moveTo(0, py);
+        pgCtx.lineTo(1280, py);
+        pgCtx.stroke();
+      }
+
+      // 지평선 포그(#d6e8f6)와 자연스럽게 페이드아웃
+      var pgEdge = pgCtx.createRadialGradient(640, 640, 525, 640, 640, 640);
+      pgEdge.addColorStop(0.0, 'rgba(214, 232, 246, 0.0)');
+      pgEdge.addColorStop(1.0, '#d6e8f6');
+      pgCtx.fillStyle = pgEdge;
+      pgCtx.fillRect(0, 0, 1280, 1280);
+
+      var pgTex = new THREE.CanvasTexture(pgCanvas);
+      pgTex.encoding = THREE.sRGBEncoding;
+      pgTex.wrapS = THREE.ClampToEdgeWrapping;
+      pgTex.wrapT = THREE.ClampToEdgeWrapping;
+
+      groundMat.map = pgTex;
+      groundMat.roughness = 0.88;
+      groundMat.needsUpdate = true;
+      window.debugNaverStatus = { called: true, mapType: mapType, updated: true, tileCount: 0 };
       return;
     }
 
@@ -1183,8 +1237,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     tryInit();
   }
 
-  // 바닥 지반 기본값: 실제 네이버 일반 지도('normal')를 디폴트로 로드
-  loadNaverMapGroundTexture('normal');
+  // 바닥 지반 기본값: 지정색상('#BBD59A')을 디폴트로 로드
+  loadNaverMapGroundTexture('custom_color', '#BBD59A');
 
   // --- 5. Extrude Helper ---
   function createShapeFromRing(ring) {
@@ -1633,9 +1687,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   // ★ [1) 커스텀 색상 설정 변수] 아파트 층별(저층, 중층, 고층) 외벽 색상 변수 ★
   // 사용자가 원하는 색상 코드(HEX: '#475569' 등)로 쉽게 변경 가능합니다.
   // =========================================================================
-  var APT_COLOR_LOW  = '#475569'; // 저층 (1~5층)  - 딥 슬레이트 그레이 (차분하고 묵직한 하부 그레이스케일)
-  var APT_COLOR_MID  = '#64748b'; // 중층 (6~10층) - 미디엄 슬레이트 그레이 (균형감 있는 중간 그레이스케일)
-  var APT_COLOR_HIGH = '#8f9fae'; // 고층 (11층+)  - 세련되고 차분한 상부 슬레이트 그레이 (선명한 그레이스케일 계조)
+  var APT_COLOR_LOW  = '#D7B19D'; // 저층 (1~5층)
+  var APT_COLOR_MID  = '#D7B19D'; // 중층 (6~10층)
+  var APT_COLOR_HIGH = '#D7B19D'; // 고층 (11층+)
 
   // 외부 전역(window.APT_FLOOR_COLORS) 설정이 사전에 정의되어 있는 경우 우선 적용
   if (typeof window !== 'undefined' && window.APT_FLOOR_COLORS) {
@@ -4674,8 +4728,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       currentSeason = season;
       updateSun();
     },
-    setGroundMapType: function (type) {
-      loadNaverMapGroundTexture(type);
+    setGroundMapType: function (type, customHex) {
+      loadNaverMapGroundTexture(type, customHex);
+    },
+    setGroundColor: function (hex) {
+      loadNaverMapGroundTexture('custom_color', hex);
     },
     lookDirection: function (dir) {
       // 1) 동서남북 버튼 클릭 시: 카메라 뷰포인트(타겟 위치, 관측 고도 h, 관측 거리 d)는 100% 유지하고 수평 방향만 해당 방향을 전방으로 회전
