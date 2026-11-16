@@ -1389,8 +1389,12 @@
       .control-panel.is-stage-positioned {
         bottom: auto !important;
         max-height: none !important;
-        transform: none !important;
         transition: none !important;
+      }
+      .control-panel.is-stage-positioned.stage-1,
+      .control-panel.is-stage-positioned.stage-2,
+      .control-panel.is-stage-positioned.stage-3 {
+        transform: none;
       }
       .control-panel.is-stage-positioned.stage-3 {
         max-height: 94vh !important;
