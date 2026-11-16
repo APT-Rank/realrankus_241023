@@ -2784,6 +2784,7 @@ function showDetail(index, forceMapCenter) {
 
   detailHtml += `</div></div>`;
 
+  /* [숨김처리: 추후 복원 가능] 기존 리얼레이더맵 단일 카드 & 리얼Fly맵 단독 테스트 카드
   //지도
   detailHtml += `
         <div class='card'>
@@ -2815,6 +2816,115 @@ function showDetail(index, forceMapCenter) {
           <div id='complex3d_availability_message' role='status' style='margin-top: 5px; text-align: center; font-size: 12px; color: #64748b;'>${isEn ? 'Checking 3D model availability…' : '3D 데이터 확인 중입니다…'}</div>
         </div>
         </div></div></div>
+      `;
+
+  //리얼Fly맵 (테스트 카드)
+  detailHtml += `
+        <div class='card' id='flyMapTestCard'>
+        <div class='card-header'>
+        <div class='popTitle'><i class='fa-solid fa-cube'></i>&nbsp&nbsp${tSafe('ui.report.real_fly_map', '리얼Fly맵')} <span style='font-size: 11px; font-weight: 700; color: #ffffff; background: #E43B46; padding: 1px 6px; border-radius: 4px; margin-left: 4px; vertical-align: middle;'>TEST</span></div>
+        </div>
+        <div class='card-body' style='padding: 0'>
+          <div id='fly_map_wrap' data-code='${searchCode}' data-availability='checking' onclick='openComplex3dMap("${searchCode}")' style='position: relative; width: 100%; height: 200px; overflow: hidden; cursor: not-allowed; opacity: 0.72; background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 55%, #e2e8f0 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; user-select: none; transition: opacity 0.2s ease, transform 0.2s ease;'>
+            <img id='fly_map_preview_img' alt='3D 단지 프리뷰' style='display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 1;' />
+            <svg id='fly_map_fallback_svg' viewBox='0 0 360 200' preserveAspectRatio='xMidYMid slice' style='position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;'>
+              <defs>
+                <linearGradient id='flySkyGrad' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='0%' stop-color='#2563eb' stop-opacity='0.82'/>
+                  <stop offset='55%' stop-color='#38bdf8' stop-opacity='0.65'/>
+                  <stop offset='100%' stop-color='#e0f2fe' stop-opacity='0.95'/>
+                </linearGradient>
+                <radialGradient id='flySunGlow' cx='78%' cy='26%' r='28%'>
+                  <stop offset='0%' stop-color='#fef08a' stop-opacity='1'/>
+                  <stop offset='45%' stop-color='#fde047' stop-opacity='0.55'/>
+                  <stop offset='100%' stop-color='#fde047' stop-opacity='0'/>
+                </radialGradient>
+              </defs>
+              <rect width='360' height='200' fill='url(#flySkyGrad)'/>
+              <circle cx='280' cy='52' r='54' fill='url(#flySunGlow)'/>
+              <circle cx='280' cy='52' r='13' fill='#fef9c3'/>
+              <path d='M0 154 Q90 140 180 152 T360 148 L360 200 L0 200 Z' fill='#a7f3d0' opacity='0.65'/>
+              <path d='M0 168 Q110 156 220 168 T360 164 L360 200 L0 200 Z' fill='#6ee7b7' opacity='0.55'/>
+              <!-- Stylized 3D isometric apartment blocks -->
+              <g transform='translate(72, 66)'>
+                <polygon points='0,24 28,10 56,24 28,38' fill='#f8fafc'/>
+                <polygon points='0,24 28,38 28,108 0,94' fill='#cbd5e1'/>
+                <polygon points='28,38 56,24 56,94 28,108' fill='#94a3b8'/>
+                <line x1='8' y1='42' x2='22' y2='49' stroke='#38bdf8' stroke-width='2.5'/>
+                <line x1='8' y1='56' x2='22' y2='63' stroke='#38bdf8' stroke-width='2.5'/>
+                <line x1='8' y1='70' x2='22' y2='77' stroke='#38bdf8' stroke-width='2.5'/>
+                <line x1='34' y1='49' x2='48' y2='42' stroke='#64748b' stroke-width='2.5'/>
+                <line x1='34' y1='63' x2='48' y2='56' stroke='#64748b' stroke-width='2.5'/>
+                <line x1='34' y1='77' x2='48' y2='70' stroke='#64748b' stroke-width='2.5'/>
+              </g>
+              <g transform='translate(146, 44)'>
+                <polygon points='0,26 34,10 68,26 34,42' fill='#ffffff'/>
+                <polygon points='0,26 34,42 34,132 0,116' fill='#e2e8f0'/>
+                <polygon points='34,42 68,26 68,116 34,132' fill='#94a3b8'/>
+                <line x1='10' y1='48' x2='26' y2='56' stroke='#0284c7' stroke-width='2.8'/>
+                <line x1='10' y1='64' x2='26' y2='72' stroke='#0284c7' stroke-width='2.8'/>
+                <line x1='10' y1='80' x2='26' y2='88' stroke='#0284c7' stroke-width='2.8'/>
+                <line x1='10' y1='96' x2='26' y2='104' stroke='#0284c7' stroke-width='2.8'/>
+                <line x1='42' y1='56' x2='58' y2='48' stroke='#475569' stroke-width='2.8'/>
+                <line x1='42' y1='72' x2='58' y2='64' stroke='#475569' stroke-width='2.8'/>
+                <line x1='42' y1='88' x2='58' y2='80' stroke='#475569' stroke-width='2.8'/>
+                <line x1='42' y1='104' x2='58' y2='96' stroke='#475569' stroke-width='2.8'/>
+              </g>
+              <g transform='translate(228, 76)'>
+                <polygon points='0,20 26,8 52,20 26,32' fill='#f8fafc'/>
+                <polygon points='0,20 26,32 26,98 0,86' fill='#cbd5e1'/>
+                <polygon points='26,32 52,20 52,86 26,98' fill='#94a3b8'/>
+                <line x1='7' y1='38' x2='20' y2='44' stroke='#38bdf8' stroke-width='2.2'/>
+                <line x1='7' y1='52' x2='20' y2='58' stroke='#38bdf8' stroke-width='2.2'/>
+                <line x1='7' y1='66' x2='20' y2='72' stroke='#38bdf8' stroke-width='2.2'/>
+              </g>
+            </svg>
+            <div id='fly_map_overlay_box' style='position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 12px; background: rgba(15, 23, 42, 0.56); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: #ffffff; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);'>
+              <div style='font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px;'>
+                <i class='fa-solid fa-cube' style='color: #38bdf8;'></i>
+                <span>${tSafe('ui.report.fly_map_launch_title', '3D 단지 모형 · 실시간 일조량 보기')}</span>
+              </div>
+              <div id='fly_map_status_badge' style='font-size: 12px; font-weight: 600; color: #e2e8f0;'>${isEn ? 'Checking 3D model availability…' : '3D 데이터 확인 중입니다…'}</div>
+            </div>
+            <div id='fly_map_launch_pill' style='display: none; position: absolute; right: 10px; bottom: 10px; z-index: 3; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: #ffffff; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28); pointer-events: none;'>
+              <i class='fa-solid fa-cube' style='color: #38bdf8;'></i>
+              <span>${isEn ? 'Open 3D Fly Map →' : '3D 리얼Fly맵 실행 →'}</span>
+            </div>
+          </div>
+          <div id='flyMapGuide' style='text-align:center; margin-top:5px; padding-bottom:5px; font-size:0.85em;'>${tSafe('ui.report.fly_map_click_guide', '3D 지도를 선택하면 일조량·조망·동호수를 입체로 확인할 수 있어요!')}</div>
+        </div></div>
+      `;
+  */
+
+  //리얼레이더맵 · 리얼Fly맵 좌우 분할 카드 (대각선 구분 테스트)
+  detailHtml += `
+        <div class='card' id='dualMapTestCard' style='overflow: hidden;'>
+        <div class='card-body' style='padding: 0;'>
+          <div id='dual_map_split_box' style='position: relative; width: 100%; height: 190px; overflow: hidden; background: #e5ddd0;'>
+            <div id='dual_radar_btn' role='button' tabindex='0' onclick='openRadarMap("${searchCode}")' style='position: absolute; inset: 0; clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); -webkit-clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); background: #f1f5f9; cursor: pointer; user-select: none; z-index: 1;'>
+              <div id='dual_radar_map' style='position: absolute; left: 0; top: 0; width: 56%; height: 100%; pointer-events: none;'></div>
+              <div style='position: absolute; top: 10px; left: 10px; z-index: 5; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.88); border: 1px solid rgba(148, 163, 184, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: #1e293b; font-size: 12px; font-weight: 700; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12); pointer-events: none;'>
+                <i class='fa-solid fa-bullseye' style='color: #1e293b;'></i>
+                <span>${tSafe('ui.report.real_radar_map', '리얼레이더맵')}</span>
+              </div>
+            </div>
+            <div id='dual_fly_map_wrap' role='button' tabindex='0' data-code='${searchCode}' data-availability='checking' onclick='openComplex3dMap("${searchCode}")' style='position: absolute; inset: 0; clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); -webkit-clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); background: linear-gradient(180deg, #faf6ef 0%, #e5ddd0 100%); cursor: not-allowed; opacity: 0.72; user-select: none; transition: opacity 0.2s ease; z-index: 2;'>
+              <img id='dual_fly_preview_img' alt='리얼Fly맵 프리뷰' style='display: none; position: absolute; right: 0; top: 0; width: 58%; height: 100%; object-fit: cover; object-position: right center; pointer-events: none; z-index: 1;' />
+              <div id='dual_fly_status_text' style='position: absolute; right: 0; top: 0; width: 52%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 2; font-size: 11px; font-weight: 600; color: #64748b; text-align: center; padding: 0 8px;'>${isEn ? 'Loading…' : '불러오는 중…'}</div>
+              <div style='position: absolute; bottom: 10px; right: 10px; z-index: 5; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.88); border: 1px solid rgba(148, 163, 184, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: #1e293b; font-size: 12px; font-weight: 700; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12); pointer-events: none;'>
+                <i class='fa-solid fa-cube' style='color: #1e293b;'></i>
+                <span>${tSafe('ui.report.real_fly_map', '리얼Fly맵')}</span>
+              </div>
+            </div>
+            <svg viewBox='0 0 100 100' preserveAspectRatio='none' style='position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4;'>
+              <line x1='56' y1='0' x2='44' y2='100' stroke='rgba(255, 255, 255, 0.92)' stroke-width='2.5' vector-effect='non-scaling-stroke' />
+            </svg>
+          </div>
+          <div style='display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 6px 10px 8px 10px; background: #ffffff; border-top: 1px solid #e2e8f0;'>
+            <div style='text-align: center; font-size: 11px; color: #64748b; line-height: 1.35;'>${tSafe('ui.report.dual_radar_desc', '걸어서 누리는 동네의 모든 것')}</div>
+            <div style='text-align: center; font-size: 11px; color: #64748b; line-height: 1.35;'>${tSafe('ui.report.dual_fly_desc', '집 안으로 들어오는 빛과 풍경')}</div>
+          </div>
+        </div></div>
       `;
 
   //주거 (2026-11-07: #baseModal 이미지 캡처 평가 카드 식별자 추가)
@@ -3532,7 +3642,8 @@ function showDetail(index, forceMapCenter) {
       disableTwoFingerTapZoom: true,
     };
 
-    var detailMap = new naver.maps.Map("detail_map", detailMapOptions);
+    var detailMapEl = document.getElementById("detail_map");
+    var detailMap = detailMapEl ? new naver.maps.Map("detail_map", detailMapOptions) : null;
 
     ///////////////////////////////////////
     var last_sales_date = last_sales[0].toString();
@@ -3600,57 +3711,146 @@ function showDetail(index, forceMapCenter) {
         </g>
         </svg>
         `;
-    var detailMarker = new naver.maps.Marker({
-      position: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
-      icon: {
-        content: svg_loc_detail,
-        size: new naver.maps.Size(24, 37),
-        anchor: new naver.maps.Point(6, 55),
-        origin: new naver.maps.Point(Number(coord_y), Number(coord_x)),
-      },
-      zIndex: 100,
-      map: detailMap,
-    });
-
-    circle_center = new naver.maps.LatLng(Number(coord_y) + 0.0003, Number(coord_x) + 0.0003);
-
-    // 반경 리스트 (미터 단위)
-    radii = [100, 200, 300, 400];
-
-    // 원 색상 및 스타일
-    colors = ["#E43B46", "#E43B46", "#E43B46", "#E43B46"];
-
-    // 원 생성
-    radii.forEach((radius, index) => {
-      // 원 그리기
-      window["detailMap_circle_" + radius] = new naver.maps.Circle({
+    if (detailMap) {
+      var detailMarker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(Number(coord_y), Number(coord_x)),
+        icon: {
+          content: svg_loc_detail,
+          size: new naver.maps.Size(24, 37),
+          anchor: new naver.maps.Point(6, 55),
+          origin: new naver.maps.Point(Number(coord_y), Number(coord_x)),
+        },
+        zIndex: 100,
         map: detailMap,
-        center: circle_center,
-        radius: radius,
-        strokeColor: colors[index % colors.length],
-        strokeOpacity: 0.6,
-        strokeWeight: 1.5,
-        fillColor: colors[index % colors.length],
-        fillOpacity: 0.0,
       });
-    });
 
-    random_marker_num = Math.random() * 5 + 4;
+      circle_center = new naver.maps.LatLng(Number(coord_y) + 0.0003, Number(coord_x) + 0.0003);
 
-    for (var k = 0; k < random_marker_num; k++) {
-      let randomNumber1 = Math.floor(Math.random() * 700) + 300;
-      let randomNumber2 = Math.floor(Math.random() * 700) + 300;
-      randomNumber1 = (randomNumber1 * 1) / 300000;
-      randomNumber2 = (randomNumber2 * 1) / 800000;
+      // 반경 리스트 (미터 단위)
+      radii = [100, 200, 300, 400];
 
-      if (Math.random() < 0.5) {
-        randomNumber1 *= -1;
+      // 원 색상 및 스타일
+      colors = ["#E43B46", "#E43B46", "#E43B46", "#E43B46"];
+
+      // 원 생성
+      radii.forEach((radius, index) => {
+        // 원 그리기
+        window["detailMap_circle_" + radius] = new naver.maps.Circle({
+          map: detailMap,
+          center: circle_center,
+          radius: radius,
+          strokeColor: colors[index % colors.length],
+          strokeOpacity: 0.6,
+          strokeWeight: 1.5,
+          fillColor: colors[index % colors.length],
+          fillOpacity: 0.0,
+        });
+      });
+    }
+
+    // 좌우 분할 카드용 리얼레이더맵 (지도 및 마커 정중앙 정렬)
+    var dualRadarEl = document.getElementById("dual_radar_map");
+    if (dualRadarEl) {
+      var dualW = dualRadarEl.clientWidth || Math.max(150, Math.round(dw * 0.56));
+      var dualH = dualRadarEl.clientHeight || 190;
+      var dualCenter = new naver.maps.LatLng(Number(coord_y), Number(coord_x));
+      var dualRadarMap = new naver.maps.Map("dual_radar_map", {
+        center: dualCenter,
+        size: new naver.maps.Size(dualW, dualH),
+        zoom: 15,
+        zoomControl: false,
+        draggable: false,
+        pinchZoom: false,
+        scrollWheel: false,
+        keyboardShortcuts: false,
+        disableDoubleTapZoom: true,
+        disableDoubleClickZoom: true,
+        disableTwoFingerTapZoom: true,
+      });
+      new naver.maps.Marker({
+        position: dualCenter,
+        icon: {
+          content: svg_loc_detail,
+          size: new naver.maps.Size(50, 50),
+          anchor: new naver.maps.Point(25, 25),
+        },
+        zIndex: 100,
+        map: dualRadarMap,
+      });
+      [100, 200, 300].forEach(function (radius) {
+        new naver.maps.Circle({
+          map: dualRadarMap,
+          center: dualCenter,
+          radius: radius,
+          strokeColor: "#E43B46",
+          strokeOpacity: 0.55,
+          strokeWeight: 1.2,
+          fillColor: "#E43B46",
+          fillOpacity: 0.0,
+        });
+      });
+      var dualSmallSvg = `
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="22" height="22">
+          <path fill="#555" stroke="#222" stroke-width="1" d="M17.89,4.43,9.86.31a1.67,1.67,0,0,0-1.55,0L.36,4.43a.48.48,0,0,0-.24.42v9.58c0,.74.35,1.35.76,1.35h1l2.26,3.35,2.25-3.35h11c.41,0,.75-.61.75-1.35V4.86A.48.48,0,0,0,17.89,4.43Z"/>
+          <text fill="#fff" font-size="9" font-weight="600" text-anchor="middle" x="9" y="12">?</text>
+        </svg>
+      `;
+      var placedDualPts = [];
+      for (var qIdx = 0; qIdx < 3; qIdx++) {
+        var jx = 0, jy = 0;
+        for (var attempt = 0; attempt < 20; attempt++) {
+          var randAngle = Math.random() * Math.PI * 2;
+          var randDist = 0.00055 + Math.random() * 0.00095;
+          jx = Math.cos(randAngle) * randDist * 1.15;
+          jy = Math.sin(randAngle) * randDist * 0.85;
+          var tooClose = placedDualPts.some(function (pt) {
+            return Math.hypot(pt.x - jx, pt.y - jy) < 0.00055;
+          });
+          if (!tooClose) break;
+        }
+        placedDualPts.push({ x: jx, y: jy });
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(Number(coord_y) + jy, Number(coord_x) + jx),
+          icon: {
+            content: dualSmallSvg,
+            size: new naver.maps.Size(22, 22),
+            anchor: new naver.maps.Point(11, 11),
+          },
+          zIndex: 95,
+          map: dualRadarMap,
+        });
       }
-      if (Math.random() < 0.5) {
-        randomNumber2 *= -1;
+      function syncDualRadarSize() {
+        var el = document.getElementById("dual_radar_map");
+        if (!el || !dualRadarMap) return;
+        var curW = el.clientWidth || dualW;
+        var curH = el.clientHeight || 190;
+        dualRadarMap.setSize(new naver.maps.Size(curW, curH));
+        naver.maps.Event.trigger(dualRadarMap, "resize");
+        dualRadarMap.setCenter(dualCenter);
       }
+      setTimeout(syncDualRadarSize, 180);
+      setTimeout(syncDualRadarSize, 420);
+      $("#baseModal").off("shown.bs.modal.dualRadar").on("shown.bs.modal.dualRadar", syncDualRadarSize);
+    }
 
-      svg_loc_small = `            
+    if (detailMap) {
+      random_marker_num = Math.random() * 5 + 4;
+
+      for (var k = 0; k < random_marker_num; k++) {
+        let randomNumber1 = Math.floor(Math.random() * 700) + 300;
+        let randomNumber2 = Math.floor(Math.random() * 700) + 300;
+        randomNumber1 = (randomNumber1 * 1) / 300000;
+        randomNumber2 = (randomNumber2 * 1) / 800000;
+
+        if (Math.random() < 0.5) {
+          randomNumber1 *= -1;
+        }
+        if (Math.random() < 0.5) {
+          randomNumber2 *= -1;
+        }
+
+        svg_loc_small = `            
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 20 20" style="enable-background:new 0 0 800 1200;" xml:space="preserve" width="30", height="30">
               <defs>
@@ -3663,17 +3863,18 @@ function showDetail(index, forceMapCenter) {
               <text class="cls-2_small_text" text-anchor="middle" x="9" y="12">?</text>
               </svg>
               `;
-      new naver.maps.Marker({
-        position: new naver.maps.LatLng(Number(coord_y) + randomNumber2, Number(coord_x) + randomNumber1),
-        icon: {
-          content: svg_loc_small,
-          size: new naver.maps.Size(24, 37),
-          anchor: new naver.maps.Point(6, 55),
-          origin: new naver.maps.Point(Number(coord_y), Number(coord_x)),
-        },
-        zIndex: 100,
-        map: detailMap,
-      });
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(Number(coord_y) + randomNumber2, Number(coord_x) + randomNumber1),
+          icon: {
+            content: svg_loc_small,
+            size: new naver.maps.Size(24, 37),
+            anchor: new naver.maps.Point(6, 55),
+            origin: new naver.maps.Point(Number(coord_y), Number(coord_x)),
+          },
+          zIndex: 100,
+          map: detailMap,
+        });
+      }
     }
   }
 
@@ -5259,6 +5460,62 @@ var complex3dAvailabilityCache = Object.create(null);
 function updateComplex3dAvailability(code, state) {
   var button = document.getElementById('btn_complex_3d_map');
   var message = document.getElementById('complex3d_availability_message');
+  var flyWrap = document.getElementById('fly_map_wrap');
+  var flyBadge = document.getElementById('fly_map_status_badge');
+
+  if (flyWrap && flyWrap.dataset.code === String(code)) {
+    flyWrap.dataset.availability = state;
+    flyWrap.style.opacity = state === 'available' ? '1' : '0.68';
+    flyWrap.style.cursor = state === 'available' ? 'pointer' : 'not-allowed';
+    if (flyBadge) {
+      if (state === 'available') {
+        flyBadge.style.color = '#7dd3fc';
+        flyBadge.textContent = isEn ? 'Tap to launch 3D Fly Map →' : '터치하여 리얼Fly맵 실행 →';
+      } else if (state === 'checking') {
+        flyBadge.style.color = '#e2e8f0';
+        flyBadge.textContent = isEn ? 'Checking 3D model availability…' : '3D 데이터 확인 중입니다…';
+      } else if (state === 'missing') {
+        flyBadge.style.color = '#fca5a5';
+        flyBadge.textContent = isEn ? '3D Fly Map data is not available for this complex.' : '단지의 리얼FLY맵 데이터가 없습니다.';
+      } else {
+        flyBadge.style.color = '#cbd5e1';
+        flyBadge.textContent = isEn ? 'Could not verify data. Check connection.' : '데이터 확인 실패 · 네트워크를 확인해 주세요.';
+      }
+    }
+  }
+
+  var dualFlyWrap = document.getElementById('dual_fly_map_wrap');
+  var dualFlyText = document.getElementById('dual_fly_status_text');
+  if (dualFlyWrap && dualFlyWrap.dataset.code === String(code)) {
+    dualFlyWrap.dataset.availability = state;
+    dualFlyWrap.style.cursor = state === 'available' ? 'pointer' : 'default';
+    if (state === 'available') {
+      dualFlyWrap.style.opacity = '1';
+      dualFlyWrap.style.background = 'linear-gradient(180deg, #faf6ef 0%, #e5ddd0 100%)';
+    } else if (state === 'checking') {
+      dualFlyWrap.style.opacity = '0.88';
+      dualFlyWrap.style.background = 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)';
+    } else {
+      dualFlyWrap.style.opacity = '1';
+      dualFlyWrap.style.background = 'linear-gradient(180deg, #f8fafc 0%, #e9eef5 100%)';
+    }
+    if (dualFlyText) {
+      if (state === 'available') {
+        dualFlyText.style.display = 'none';
+      } else {
+        dualFlyText.style.display = 'flex';
+        dualFlyText.style.color = '#64748b';
+        if (state === 'checking') {
+          dualFlyText.innerHTML = "<div style='display:flex;flex-direction:column;align-items:center;gap:5px;color:#64748b;'><i class='fa-solid fa-cube' style='font-size:18px;color:#94a3b8;'></i><span>" + (isEn ? 'Preparing view…' : '단지 뷰 불러오는 중…') + "</span></div>";
+        } else if (state === 'missing') {
+          dualFlyText.innerHTML = "<div style='display:flex;flex-direction:column;align-items:center;gap:6px;color:#64748b;'><i class='fa-regular fa-building' style='font-size:20px;color:#94a3b8;'></i><span>" + (isEn ? 'Preparing data' : '데이터 준비 중') + "</span></div>";
+        } else {
+          dualFlyText.innerHTML = "<div style='display:flex;flex-direction:column;align-items:center;gap:5px;color:#64748b;'><i class='fa-solid fa-circle-exclamation' style='font-size:17px;color:#94a3b8;'></i><span>" + (isEn ? 'Check connection' : '네트워크 확인 필요') + "</span></div>";
+        }
+      }
+    }
+  }
+
   if (!button || button.dataset.code !== String(code)) return;
 
   button.dataset.availability = state;
@@ -5281,6 +5538,361 @@ function updateComplex3dAvailability(code, state) {
   }
 }
 
+function applyComplex3dThumbnail(code, dataUrl, dualDataUrl) {
+  var flyWrap = document.getElementById('fly_map_wrap');
+  if (flyWrap && flyWrap.dataset.code === String(code) && dataUrl) {
+    var previewImg = document.getElementById('fly_map_preview_img');
+    var fallbackSvg = document.getElementById('fly_map_fallback_svg');
+    var overlayBox = document.getElementById('fly_map_overlay_box');
+    var launchPill = document.getElementById('fly_map_launch_pill');
+
+    if (previewImg) {
+      previewImg.src = dataUrl;
+      previewImg.style.display = 'block';
+    }
+    if (fallbackSvg) fallbackSvg.style.display = 'none';
+    if (overlayBox) overlayBox.style.display = 'none';
+    if (launchPill) launchPill.style.display = 'inline-flex';
+  }
+
+  var dualFlyWrap = document.getElementById('dual_fly_map_wrap');
+  var dualSrc = dualDataUrl || dataUrl;
+  if (dualFlyWrap && dualFlyWrap.dataset.code === String(code) && dualSrc) {
+    var dualImg = document.getElementById('dual_fly_preview_img');
+    var dualText = document.getElementById('dual_fly_status_text');
+    if (dualImg) {
+      dualImg.src = dualSrc;
+      dualImg.style.display = 'block';
+    }
+    if (dualText) dualText.style.display = 'none';
+  }
+}
+
+function renderComplex3dThumbnail(code, data3d, opts) {
+  try {
+    if (!data3d || !Array.isArray(data3d.buildings) || data3d.buildings.length === 0) return null;
+
+    var opt = opts || {};
+    var W = opt.width || 760;
+    var H = opt.height || 400;
+    var zoomScale = opt.zoomScale || 1.0;
+    var centerOffsetXRatio = opt.centerOffsetXRatio || 0.5;
+    var centerOffsetYRatio = opt.centerOffsetYRatio || 0.52;
+    var canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    var centerRaw = data3d.center || {};
+    var cLat = Number(Array.isArray(centerRaw) ? (centerRaw[0] > 100 ? centerRaw[1] : centerRaw[0]) : (centerRaw.lat || 37.5));
+    var cLng = Number(Array.isArray(centerRaw) ? (centerRaw[0] > 100 ? centerRaw[0] : centerRaw[1]) : (centerRaw.lng || 127.0));
+    if (!isFinite(cLat) || !isFinite(cLng)) { cLat = 37.5; cLng = 127.0; }
+
+    var latMeters = 111000;
+    var lngMeters = 111320 * Math.cos(cLat * Math.PI / 180);
+    // 오쏘고널 45도 우측 상단 쿼터뷰
+    var theta = -45 * Math.PI / 180;
+    var cosT = Math.cos(theta);
+    var sinT = Math.sin(theta);
+    var tiltY = 0.58;
+    var elevScale = 0.78;
+
+    function toRot(lng, lat) {
+      var mx = (lng - cLng) * lngMeters;
+      var my = (lat - cLat) * latMeters;
+      return {
+        rx: mx * cosT - my * sinT,
+        ry: mx * sinT + my * cosT
+      };
+    }
+
+    // 1. Primary buildings 파싱
+    var primaryList = [];
+    for (var i = 0; i < data3d.buildings.length; i++) {
+      var b = data3d.buildings[i];
+      if (!b || !Array.isArray(b.rings) || !b.rings[0] || b.rings[0].length < 3) continue;
+      var ring = b.rings[0];
+      var h = Number(b.heightM);
+      if (!isFinite(h) || h <= 0) {
+        h = (Number(b.floors) > 0 ? Number(b.floors) * 3.0 : 18);
+      }
+      var pts = [];
+      var sumRx = 0, sumRy = 0;
+      for (var j = 0; j < ring.length; j++) {
+        var pt = toRot(Number(ring[j][0]), Number(ring[j][1]));
+        pts.push(pt);
+        sumRx += pt.rx;
+        sumRy += pt.ry;
+      }
+      primaryList.push({
+        b: b,
+        h: h,
+        pts: pts,
+        cRx: sumRx / pts.length,
+        cRy: sumRy / pts.length
+      });
+    }
+
+    if (primaryList.length === 0) return null;
+
+    var midRx = 0, midRy = 0;
+    for (var cIdx = 0; cIdx < primaryList.length; cIdx++) {
+      midRx += primaryList[cIdx].cRx;
+      midRy += primaryList[cIdx].cRy;
+    }
+    midRx /= primaryList.length;
+    midRy /= primaryList.length;
+
+    // 순수 오쏘고널(직교) 투영
+    function rawOrtho(rx, ry, z) {
+      return {
+        x: rx - midRx,
+        y: -((ry - midRy) * tiltY + z * elevScale)
+      };
+    }
+
+    var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (var k = 0; k < primaryList.length; k++) {
+      var pb = primaryList[k];
+      for (var m = 0; m < pb.pts.length; m++) {
+        var p0 = rawOrtho(pb.pts[m].rx, pb.pts[m].ry, 0);
+        var p1 = rawOrtho(pb.pts[m].rx, pb.pts[m].ry, pb.h);
+        if (p0.x < minX) minX = p0.x;
+        if (p0.x > maxX) maxX = p0.x;
+        if (p0.y < minY) minY = p0.y;
+        if (p0.y > maxY) maxY = p0.y;
+        if (p1.y < minY) minY = p1.y;
+        if (p1.y > maxY) maxY = p1.y;
+      }
+    }
+
+    var spanX = Math.max(40, maxX - minX);
+    var spanY = Math.max(40, maxY - minY);
+    var scale = Math.min((W - 64) / spanX, (H - 52) / spanY) * zoomScale;
+    var midRawX = (minX + maxX) * 0.5;
+    var midRawY = (minY + maxY) * 0.5;
+    var offsetX = W * centerOffsetXRatio - midRawX * scale;
+    var offsetY = H * centerOffsetYRatio - midRawY * scale;
+
+    function project(rx, ry, z) {
+      var rp = rawOrtho(rx, ry, z);
+      return {
+        x: offsetX + rp.x * scale,
+        y: offsetY + rp.y * scale
+      };
+    }
+
+    // 2. 따스한 파스텔 연녹색 바닥 배경 (건물 웜톤과 대비)
+    var bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#eef5eb');
+    bgGrad.addColorStop(0.45, '#e2eedd');
+    bgGrad.addColorStop(1, '#d6e6d0');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // 은은한 웜 햇살 글로우
+    var warmSun = ctx.createRadialGradient(W * 0.82, H * 0.14, 10, W * 0.82, H * 0.14, W * 0.55);
+    warmSun.addColorStop(0, 'rgba(255, 232, 175, 0.32)');
+    warmSun.addColorStop(1, 'rgba(255, 232, 175, 0)');
+    ctx.fillStyle = warmSun;
+    ctx.fillRect(0, 0, W, H);
+
+    // 은은한 도로/블록 느낌의 연녹색 그리드 라인
+    ctx.save();
+    ctx.strokeStyle = 'rgba(116, 148, 108, 0.14)';
+    ctx.lineWidth = 1;
+    var gridStep = 52;
+    for (var gx = midRx - 600; gx <= midRx + 600; gx += gridStep) {
+      var ga = project(gx, midRy - 600, 0);
+      var gb = project(gx, midRy + 600, 0);
+      ctx.beginPath();
+      ctx.moveTo(ga.x, ga.y);
+      ctx.lineTo(gb.x, gb.y);
+      ctx.stroke();
+    }
+    for (var gy = midRy - 600; gy <= midRy + 600; gy += gridStep) {
+      var gc = project(midRx - 600, gy, 0);
+      var gd = project(midRx + 600, gy, 0);
+      ctx.beginPath();
+      ctx.moveTo(gc.x, gc.y);
+      ctx.lineTo(gd.x, gd.y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // 3. 주변 건물 (반경 280m 이내, 은은한 원경 매스)
+    if (Array.isArray(data3d.neighbors) && data3d.neighbors.length > 0) {
+      var nbList = [];
+      for (var ni = 0; ni < data3d.neighbors.length; ni++) {
+        var nb = data3d.neighbors[ni];
+        if (!nb || !Array.isArray(nb.rings) || !nb.rings[0] || nb.rings[0].length < 3) continue;
+        var nRing = nb.rings[0];
+        var nPts = [];
+        var nSumRx = 0, nSumRy = 0;
+        for (var nj = 0; nj < nRing.length; nj++) {
+          var npt = toRot(Number(nRing[nj][0]), Number(nRing[nj][1]));
+          nPts.push(npt);
+          nSumRx += npt.rx;
+          nSumRy += npt.ry;
+        }
+        var nCRx = nSumRx / nPts.length;
+        var nCRy = nSumRy / nPts.length;
+        var dRx = nCRx - midRx;
+        var dRy = nCRy - midRy;
+        if (dRx * dRx + dRy * dRy > 320 * 320) continue;
+        var nh = Number(nb.heightM) || (Number(nb.floors) > 0 ? Number(nb.floors) * 3.0 : 15);
+        nbList.push({ h: nh, pts: nPts, cRy: nCRy });
+      }
+      nbList.sort(function (a, b) { return b.cRy - a.cRy; });
+
+      ctx.save();
+      ctx.globalAlpha = 0.48;
+      for (var nk = 0; nk < nbList.length; nk++) {
+        var nItem = nbList[nk];
+        drawExtrudedBuilding(ctx, nItem.pts, nItem.h, project, scale, false, true, 0);
+      }
+      ctx.restore();
+    }
+
+    // 4. 주 단지 선명한 대각선 웜 섀도우
+    ctx.save();
+    ctx.fillStyle = 'rgba(68, 52, 38, 0.22)';
+    for (var si = 0; si < primaryList.length; si++) {
+      var sb = primaryList[si];
+      var shDx = -0.34 * sb.h;
+      var shDy = 0.42 * sb.h;
+      ctx.beginPath();
+      for (var sj = 0; sj < sb.pts.length; sj++) {
+        var sp = project(sb.pts[sj].rx + shDx, sb.pts[sj].ry + shDy, 0);
+        if (sj === 0) ctx.moveTo(sp.x, sp.y);
+        else ctx.lineTo(sp.x, sp.y);
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // 5. 주 단지 모던 건축 매스 렌더링 (백투프론트)
+    primaryList.sort(function (a, b) { return b.cRy - a.cRy; });
+    for (var pi = 0; pi < primaryList.length; pi++) {
+      var item = primaryList[pi];
+      drawExtrudedBuilding(ctx, item.pts, item.h, project, scale, !!item.b.residential, false, Number(item.b.floors) || 0);
+    }
+
+    // 6. 상단 원경 소프트 연녹색 대기 안개
+    var topHaze = ctx.createLinearGradient(0, 0, 0, H * 0.26);
+    topHaze.addColorStop(0, 'rgba(238, 245, 235, 0.72)');
+    topHaze.addColorStop(1, 'rgba(238, 245, 235, 0)');
+    ctx.fillStyle = topHaze;
+    ctx.fillRect(0, 0, W, H * 0.26);
+
+    return canvas.toDataURL('image/png');
+  } catch (e) {
+    return null;
+  }
+}
+
+function drawExtrudedBuilding(ctx, pts, h, project, scale, isResidential, isNeighbor, floors) {
+  if (!pts || pts.length < 3) return;
+
+  var signedArea = 0;
+  for (var a = 0; a < pts.length - 1; a++) {
+    signedArea += (pts[a].rx * pts[a + 1].ry - pts[a + 1].rx * pts[a].ry);
+  }
+  var ccw = signedArea >= 0;
+
+  var quads = [];
+  for (var i = 0; i < pts.length - 1; i++) {
+    var p0 = pts[i];
+    var p1 = pts[i + 1];
+    var dx = p1.rx - p0.rx;
+    var dy = p1.ry - p0.ry;
+    var len = Math.hypot(dx, dy);
+    if (len < 0.05) continue;
+    var midRy = (p0.ry + p1.ry) * 0.5;
+    var nx = ccw ? (dy / len) : (-dy / len);
+    var ny = ccw ? (-dx / len) : (dx / len);
+    // 우측 상단에서 비추는 광원 (그림자 좌상/후방 방향과 일치) -> 전면/우측면 밝고 좌측면 음영
+    var dot = nx * 0.62 + ny * (-0.78);
+    var shade = Math.max(0, Math.min(1, (dot + 1) * 0.5));
+    quads.push({ p0: p0, p1: p1, midRy: midRy, shade: shade });
+  }
+  quads.sort(function (a, b) { return b.midRy - a.midRy; });
+
+  function lerpColor(c1, c2, t) {
+    var r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+    var g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+    var b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  for (var q = 0; q < quads.length; q++) {
+    var qd = quads[q];
+    var b0 = project(qd.p0.rx, qd.p0.ry, 0);
+    var b1 = project(qd.p1.rx, qd.p1.ry, 0);
+    var t1 = project(qd.p1.rx, qd.p1.ry, h);
+    var t0 = project(qd.p0.rx, qd.p0.ry, h);
+
+    if (isNeighbor) {
+      ctx.fillStyle = lerpColor([184, 174, 162], [218, 210, 200], qd.shade);
+    } else if (isResidential) {
+      // 따뜻한 햇살 샌드스톤 · 웜아이보리 건축 매스
+      ctx.fillStyle = lerpColor([146, 126, 110], [236, 222, 206], qd.shade);
+    } else {
+      ctx.fillStyle = lerpColor([152, 140, 128], [216, 206, 194], qd.shade);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(b0.x, b0.y);
+    ctx.lineTo(b1.x, b1.y);
+    ctx.lineTo(t1.x, t1.y);
+    ctx.lineTo(t0.x, t0.y);
+    ctx.closePath();
+    ctx.fill();
+
+    // 아파트 층별 수평 라인 (픽셀 밀도에 맞춰 깔끔하게 표시)
+    if (!isNeighbor && isResidential && floors >= 3) {
+      var pxH = Math.hypot(t0.x - b0.x, t0.y - b0.y);
+      var maxLines = Math.max(2, Math.floor(pxH / 4.2));
+      var step = Math.max(1, Math.ceil(floors / maxLines));
+      ctx.strokeStyle = qd.shade > 0.5 ? 'rgba(110, 88, 68, 0.24)' : 'rgba(68, 52, 38, 0.26)';
+      ctx.lineWidth = 0.85;
+      for (var f = step; f < floors; f += step) {
+        var fz = (f / floors) * h;
+        var fl0 = project(qd.p0.rx, qd.p0.ry, fz);
+        var fl1 = project(qd.p1.rx, qd.p1.ry, fz);
+        ctx.beginPath();
+        ctx.moveTo(fl0.x, fl0.y);
+        ctx.lineTo(fl1.x, fl1.y);
+        ctx.stroke();
+      }
+    }
+
+    if (!isNeighbor) {
+      ctx.strokeStyle = 'rgba(82, 66, 52, 0.30)';
+      ctx.lineWidth = 0.85;
+      ctx.stroke();
+    }
+  }
+
+  // 지붕면
+  ctx.beginPath();
+  for (var r = 0; r < pts.length; r++) {
+    var rp = project(pts[r].rx, pts[r].ry, h);
+    if (r === 0) ctx.moveTo(rp.x, rp.y);
+    else ctx.lineTo(rp.x, rp.y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = isNeighbor ? '#e8e1d6' : (isResidential ? '#fbf7f0' : '#efe8de');
+  ctx.fill();
+  if (!isNeighbor) {
+    ctx.strokeStyle = 'rgba(82, 66, 52, 0.38)';
+    ctx.lineWidth = 1.0;
+    ctx.stroke();
+  }
+}
+
 function checkComplex3dAvailability(searchCode) {
   var code = String(searchCode || '');
   if (!code) return;
@@ -5288,13 +5900,16 @@ function checkComplex3dAvailability(searchCode) {
   var cached = complex3dAvailabilityCache[code];
   if (cached && Date.now() - cached.checkedAt < 5 * 60 * 1000) {
     updateComplex3dAvailability(code, cached.state);
+    if (cached.state === 'available' && (cached.dataUrl || cached.dualDataUrl)) {
+      applyComplex3dThumbnail(code, cached.dataUrl, cached.dualDataUrl);
+    }
     return;
   }
 
   updateComplex3dAvailability(code, 'checking');
   var encodedCode = encodeURIComponent(code);
   var localUrl = './complex3d/data/3d/' + encodedCode + '.json';
-  var remoteUrl = 'https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/' + encodedCode + '.json?v=20261112_500m';
+  var remoteUrl = 'https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/3d/' + encodedCode + '.json?v=20261116';
   var isLocalHost = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
   var urls = isLocalHost ? [localUrl, remoteUrl] : [remoteUrl, localUrl];
   var hadIndeterminateResponse = false;
@@ -5309,15 +5924,32 @@ function checkComplex3dAvailability(searchCode) {
 
     var controller = typeof AbortController === 'function' ? new AbortController() : null;
     var timeout = controller ? setTimeout(function () { controller.abort(); }, 8000) : null;
-    var options = { method: 'GET', cache: 'no-store', headers: { Range: 'bytes=0-0' } };
+    var options = { method: 'GET', cache: 'default' };
     if (controller) options.signal = controller.signal;
 
     fetch(urls[index], options).then(function (response) {
-      if (response.body && typeof response.body.cancel === 'function') response.body.cancel().catch(function () {});
       if (response.ok) {
-        complex3dAvailabilityCache[code] = { state: 'available', checkedAt: Date.now() };
-        updateComplex3dAvailability(code, 'available');
-        return;
+        return response.json().then(function (data3d) {
+          var dataUrl = renderComplex3dThumbnail(code, data3d);
+          var dualDataUrl = renderComplex3dThumbnail(code, data3d, {
+            width: 400,
+            height: 360,
+            zoomScale: 0.72,
+            centerOffsetXRatio: 0.58,
+            centerOffsetYRatio: 0.47
+          });
+          complex3dAvailabilityCache[code] = {
+            state: 'available',
+            dataUrl: dataUrl,
+            dualDataUrl: dualDataUrl,
+            checkedAt: Date.now()
+          };
+          updateComplex3dAvailability(code, 'available');
+          if (dataUrl || dualDataUrl) applyComplex3dThumbnail(code, dataUrl, dualDataUrl);
+        }).catch(function () {
+          complex3dAvailabilityCache[code] = { state: 'available', dataUrl: null, dualDataUrl: null, checkedAt: Date.now() };
+          updateComplex3dAvailability(code, 'available');
+        });
       }
       if (response.status !== 404) hadIndeterminateResponse = true;
       probe(index + 1);
@@ -5333,7 +5965,7 @@ function checkComplex3dAvailability(searchCode) {
 }
 
 function openComplex3dMap(searchCode) {
-  var availabilityButton = document.getElementById('btn_complex_3d_map');
+  var availabilityButton = document.getElementById('btn_complex_3d_map') || document.getElementById('dual_fly_map_wrap');
   if (availabilityButton && availabilityButton.dataset.code === String(searchCode) &&
     availabilityButton.dataset.availability !== 'available') return;
 
