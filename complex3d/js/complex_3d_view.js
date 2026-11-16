@@ -1005,6 +1005,471 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   scene.add(ground);
 
 
+  // MapLibre GL JS 동적 로더 (OpenFreeMap 무료 벡터 타일 기반 일반 지도 & 배경 건물 추출 공용)
+  function ensureMapLibreLoaded(cb) {
+    if (typeof window.maplibregl !== 'undefined') { cb(true); return; }
+    if (window.__loadingMapLibrePromise) {
+      window.__loadingMapLibrePromise.then(cb);
+      return;
+    }
+    window.__loadingMapLibrePromise = new Promise(function (resolve) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js';
+      s.async = true;
+      s.onload = function () { resolve(typeof window.maplibregl !== 'undefined'); };
+      s.onerror = function () { resolve(false); };
+      document.head.appendChild(s);
+    });
+    window.__loadingMapLibrePromise.then(cb);
+  }
+
+  var cachedOpenFreeMapBuildings = null;
+  var contextBuildingsState = 'idle'; // 'idle' | 'loading' | 'done'
+  var contextBuildingsMesh = null;
+  var infraHighlightPOIs = []; // [{ category, x, y, colorHex }]
+  var contextBuildingColorMeta = []; // [{ startVertex, count, category, colorHex }]
+  var neighborColorMeta = []; // [{ mesh, category, colorHex }]
+  var neighborHighlightMats = {}; // { colorHex: THREE.MeshStandardMaterial }
+  var CONTEXT_DEFAULT_COLOR = new THREE.Color(0xdbe2ea);
+
+  function getInfraHighlightMat(colorHex) {
+    if (!neighborHighlightMats[colorHex]) {
+      neighborHighlightMats[colorHex] = new THREE.MeshStandardMaterial({
+        color: colorHex,
+        roughness: 0.72,
+        metalness: 0.04
+      });
+    }
+    return neighborHighlightMats[colorHex];
+  }
+
+  function isPointInPolygon2D(px, py, pts) {
+    var inside = false;
+    for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      var xi = pts[i].x, yi = pts[i].y;
+      var xj = pts[j].x, yj = pts[j].y;
+      var intersect = ((yi > py) !== (yj > py)) &&
+        (px < (xj - xi) * (py - yi) / ((yj - yi) || 1e-12) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  function collectNeighborCandidateEntries() {
+    var list = [];
+    if (!neighborGroup || !neighborGroup.children) return list;
+    neighborGroup.children.forEach(function (child) {
+      if (!child.isMesh || !child.geometry) return;
+      if (child.userData && child.userData.isOpenFreeMapContext) return;
+      if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+      var bb = child.geometry.boundingBox;
+      if (!bb) return;
+      var minX = bb.min.x, maxX = bb.max.x;
+      var minY = -bb.max.z, maxY = -bb.min.z;
+      list.push({
+        mesh: child,
+        localPts: (child.userData && child.userData.localPts) || null,
+        height: Math.max(0, bb.max.y - bb.min.y),
+        minX: minX,
+        maxX: maxX,
+        minY: minY,
+        maxY: maxY,
+        cx: (minX + maxX) / 2,
+        cy: (minY + maxY) / 2,
+        matchedPoi: null
+      });
+    });
+    return list;
+  }
+
+  function matchInfraPOIsToCandidates(candidates) {
+    for (var ci = 0; ci < candidates.length; ci++) {
+      candidates[ci].matchedPoi = null;
+    }
+    for (var pi = 0; pi < infraHighlightPOIs.length; pi++) {
+      var poi = infraHighlightPOIs[pi];
+      var hitEntry = null;
+      for (var ei = 0; ei < candidates.length; ei++) {
+        var ent = candidates[ei];
+        if (poi.x >= ent.minX && poi.x <= ent.maxX && poi.y >= ent.minY && poi.y <= ent.maxY) {
+          if (!ent.localPts || isPointInPolygon2D(poi.x, poi.y, ent.localPts)) {
+            hitEntry = ent;
+            break;
+          }
+        }
+      }
+      if (!hitEntry) {
+        var isSchoolCat = (poi.category === 'elementary' || poi.category === 'middle');
+        var maxEdgeDist = isSchoolCat ? 80 : 55;
+        var maxEdgeDistSq = maxEdgeDist * maxEdgeDist;
+        var bestEdgeDistSq = maxEdgeDistSq;
+        var bestCentroidDistSq = Infinity;
+        for (var ei2 = 0; ei2 < candidates.length; ei2++) {
+          var ent2 = candidates[ei2];
+          // 초/중학교는 저층(보통 3~5층, 26m 이하)이므로 인접 고층 아파트/상가 타워 오매칭 방지
+          if (isSchoolCat && isFinite(ent2.height) && ent2.height > 26) continue;
+          var dxBox = Math.max(0, ent2.minX - poi.x, poi.x - ent2.maxX);
+          var dyBox = Math.max(0, ent2.minY - poi.y, poi.y - ent2.maxY);
+          var edgeDistSq = dxBox * dxBox + dyBox * dyBox;
+          if (edgeDistSq > maxEdgeDistSq) continue;
+          var dcx = ent2.cx - poi.x;
+          var dcy = ent2.cy - poi.y;
+          var cDistSq = dcx * dcx + dcy * dcy;
+          if (edgeDistSq < bestEdgeDistSq - 1e-3 || (Math.abs(edgeDistSq - bestEdgeDistSq) <= 1e-3 && cDistSq < bestCentroidDistSq)) {
+            bestEdgeDistSq = edgeDistSq;
+            bestCentroidDistSq = cDistSq;
+            hitEntry = ent2;
+          }
+        }
+      }
+      if (hitEntry) {
+        if (!hitEntry.matchedPoi) hitEntry.matchedPoi = poi;
+        if (poi.category === 'elementary' || poi.category === 'middle') {
+          for (var si = 0; si < candidates.length; si++) {
+            var sib = candidates[si];
+            if (sib === hitEntry || sib.matchedPoi) continue;
+            // 학교 본관/체육관 등 저층(26m 이하) 교내 건물만 8m 이내에서 함께 강조 (인접 아파트 단지 제외)
+            if (isFinite(sib.height) && sib.height > 26) continue;
+            var sdx = Math.max(0, hitEntry.minX - sib.maxX, sib.minX - hitEntry.maxX);
+            var sdy = Math.max(0, hitEntry.minY - sib.maxY, sib.minY - hitEntry.maxY);
+            if (sdx * sdx + sdy * sdy <= 8 * 8) {
+              var pdx = Math.max(0, sib.minX - poi.x, poi.x - sib.maxX);
+              var pdy = Math.max(0, sib.minY - poi.y, poi.y - sib.maxY);
+              if (pdx * pdx + pdy * pdy <= 80 * 80) {
+                sib.matchedPoi = poi;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function refreshOpenFreeMapInfraColors() {
+    if (contextBuildingsMesh && contextBuildingsMesh.geometry && contextBuildingColorMeta.length) {
+      var colorAttr = contextBuildingsMesh.geometry.getAttribute('color');
+      if (colorAttr && colorAttr.array) {
+        var arr = colorAttr.array;
+        var tmpColor = new THREE.Color();
+        for (var mi = 0; mi < contextBuildingColorMeta.length; mi++) {
+          var meta = contextBuildingColorMeta[mi];
+          var isCatVisible = Boolean(infraGroups && infraGroups[meta.category] && infraGroups[meta.category].visible);
+          if (isCatVisible) {
+            tmpColor.setHex(meta.colorHex);
+          } else {
+            tmpColor.copy(CONTEXT_DEFAULT_COLOR);
+          }
+          var endV = meta.startVertex + meta.count;
+          for (var v = meta.startVertex; v < endV; v++) {
+            var idx = v * 3;
+            arr[idx] = tmpColor.r;
+            arr[idx + 1] = tmpColor.g;
+            arr[idx + 2] = tmpColor.b;
+          }
+        }
+        colorAttr.needsUpdate = true;
+      }
+    }
+    if (neighborColorMeta.length) {
+      for (var ni = 0; ni < neighborColorMeta.length; ni++) {
+        var nMeta = neighborColorMeta[ni];
+        var isNCatVisible = Boolean(infraGroups && infraGroups[nMeta.category] && infraGroups[nMeta.category].visible);
+        nMeta.mesh.material = isNCatVisible ? getInfraHighlightMat(nMeta.colorHex) : neighborMat;
+      }
+    }
+  }
+
+  function buildMergedOpenFreeMapContextBuildings(features) {
+    if (contextBuildingsMesh || !features || !features.length) return;
+
+    // 기존 단지(primary) 및 기존 주변단지/건물(neighborGroup) 바운딩박스 수집 -> 중복 압출 방지
+    var occupiedBoxes = [];
+    (data3d.buildings || []).forEach(function (b) {
+      if (!b.rings || !b.rings[0]) return;
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      b.rings[0].forEach(function (pt) {
+        var xy = toLocalXY(Number(pt[0]), Number(pt[1]));
+        if (xy.x < minX) minX = xy.x;
+        if (xy.x > maxX) maxX = xy.x;
+        if (xy.y < minY) minY = xy.y;
+        if (xy.y > maxY) maxY = xy.y;
+      });
+      if (isFinite(minX)) {
+        occupiedBoxes.push({ minX: minX - 4, maxX: maxX + 4, minY: minY - 4, maxY: maxY + 4 });
+      }
+    });
+    neighborGroup.children.forEach(function (child) {
+      if (!child.isMesh || !child.geometry) return;
+      if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+      var bb = child.geometry.boundingBox;
+      if (bb) {
+        // ExtrudeGeometry rotateX(-PI/2) 후 local y -> -z 대응
+        occupiedBoxes.push({
+          minX: bb.min.x - 3,
+          maxX: bb.max.x + 3,
+          minY: -bb.max.z - 3,
+          maxY: -bb.min.z + 3
+        });
+      }
+    });
+
+    var buildingEntries = [];
+    var totalFloats = 0;
+    var seenCentroids = Object.create(null);
+    var maxRadiusSq = Math.pow(groundRadius * 0.99, 2);
+    var countAdded = 0;
+
+    function processPolygonRings(rings, h) {
+      if (!rings || !rings[0] || rings[0].length < 3) return;
+      var outer = rings[0];
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      var sumX = 0, sumY = 0;
+      var localPts = [];
+      for (var i = 0; i < outer.length; i++) {
+        var lng = Number(outer[i][0]);
+        var lat = Number(outer[i][1]);
+        if (!isFinite(lng) || !isFinite(lat)) continue;
+        var xy = toLocalXY(lng, lat);
+        localPts.push(xy);
+        sumX += xy.x;
+        sumY += xy.y;
+        if (xy.x < minX) minX = xy.x;
+        if (xy.x > maxX) maxX = xy.x;
+        if (xy.y < minY) minY = xy.y;
+        if (xy.y > maxY) maxY = xy.y;
+      }
+      if (localPts.length < 3 || !isFinite(minX)) return;
+      if ((maxX - minX) < 2.2 || (maxY - minY) < 2.2) return;
+
+      var cx = sumX / localPts.length;
+      var cy = sumY / localPts.length;
+      if (cx * cx + cy * cy > maxRadiusSq) return;
+
+      var dedupKey = Math.round(cx / 4) + ',' + Math.round(cy / 4);
+      if (seenCentroids[dedupKey]) return;
+      seenCentroids[dedupKey] = true;
+
+      for (var bi = 0; bi < occupiedBoxes.length; bi++) {
+        var ob = occupiedBoxes[bi];
+        if (cx >= ob.minX && cx <= ob.maxX && cy >= ob.minY && cy <= ob.maxY) {
+          return;
+        }
+      }
+
+      var shape = new THREE.Shape();
+      shape.moveTo(localPts[0].x, localPts[0].y);
+      for (var j = 1; j < localPts.length; j++) {
+        shape.lineTo(localPts[j].x, localPts[j].y);
+      }
+      shape.closePath();
+
+      var geom = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+      geom.rotateX(-Math.PI / 2);
+      var nonIdx = geom.index ? geom.toNonIndexed() : geom;
+      var posAttr = nonIdx.attributes.position;
+      var normAttr = nonIdx.attributes.normal;
+      if (posAttr && normAttr && posAttr.array.length > 0) {
+        buildingEntries.push({
+          posArray: new Float32Array(posAttr.array),
+          normArray: new Float32Array(normAttr.array),
+          localPts: localPts,
+          height: h,
+          minX: minX,
+          maxX: maxX,
+          minY: minY,
+          maxY: maxY,
+          cx: cx,
+          cy: cy,
+          matchedPoi: null
+        });
+        totalFloats += posAttr.array.length;
+        countAdded++;
+      }
+      if (nonIdx !== geom) nonIdx.dispose();
+      geom.dispose();
+    }
+
+    for (var fi = 0; fi < features.length; fi++) {
+      var feat = features[fi];
+      if (!feat || !feat.geometry) continue;
+      var props = feat.properties || {};
+      var h = Number(props.render_height || props.height);
+      if (!isFinite(h) || h <= 0) {
+        var lv = Number(props['building:levels'] || props.levels);
+        h = (isFinite(lv) && lv > 0) ? lv * 3.0 : 9.0;
+      }
+      h = Math.max(3.0, Math.min(250.0, h));
+
+      if (feat.geometry.type === 'Polygon') {
+        processPolygonRings(feat.geometry.coordinates, h);
+      } else if (feat.geometry.type === 'MultiPolygon') {
+        var polys = feat.geometry.coordinates || [];
+        for (var pi = 0; pi < polys.length; pi++) {
+          processPolygonRings(polys[pi], h);
+        }
+      }
+      if (countAdded >= 9000) break;
+    }
+
+    if (totalFloats === 0) return;
+
+    // VWorld 주변건물(neighborGroup) + OpenFreeMap 배경건물을 통합 후보로 매칭 (중복 방지 + 정확한 건물 타겟팅)
+    var neighborEntries = collectNeighborCandidateEntries();
+    var allCandidates = neighborEntries.concat(buildingEntries);
+    matchInfraPOIsToCandidates(allCandidates);
+
+    neighborColorMeta = [];
+    for (var nei = 0; nei < neighborEntries.length; nei++) {
+      var ne = neighborEntries[nei];
+      if (ne.matchedPoi) {
+        neighborColorMeta.push({
+          mesh: ne.mesh,
+          category: ne.matchedPoi.category,
+          colorHex: ne.matchedPoi.colorHex
+        });
+      } else if (ne.mesh.material !== neighborMat) {
+        ne.mesh.material = neighborMat;
+      }
+    }
+
+    var mergedPos = new Float32Array(totalFloats);
+    var mergedNorm = new Float32Array(totalFloats);
+    var mergedColor = new Float32Array(totalFloats);
+    contextBuildingColorMeta = [];
+    var offset = 0;
+    for (var ci = 0; ci < buildingEntries.length; ci++) {
+      var entry = buildingEntries[ci];
+      var len = entry.posArray.length;
+      mergedPos.set(entry.posArray, offset);
+      mergedNorm.set(entry.normArray, offset);
+
+      var vertexStart = offset / 3;
+      var vertexCount = len / 3;
+      for (var vi = offset; vi < offset + len; vi += 3) {
+        mergedColor[vi] = CONTEXT_DEFAULT_COLOR.r;
+        mergedColor[vi + 1] = CONTEXT_DEFAULT_COLOR.g;
+        mergedColor[vi + 2] = CONTEXT_DEFAULT_COLOR.b;
+      }
+      if (entry.matchedPoi) {
+        contextBuildingColorMeta.push({
+          startVertex: vertexStart,
+          count: vertexCount,
+          category: entry.matchedPoi.category,
+          colorHex: entry.matchedPoi.colorHex
+        });
+      }
+      offset += len;
+    }
+
+    var mergedGeom = new THREE.BufferGeometry();
+    mergedGeom.setAttribute('position', new THREE.BufferAttribute(mergedPos, 3));
+    mergedGeom.setAttribute('normal', new THREE.BufferAttribute(mergedNorm, 3));
+    mergedGeom.setAttribute('color', new THREE.BufferAttribute(mergedColor, 3));
+    mergedGeom.computeBoundingSphere();
+
+    var contextMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      roughness: 0.9,
+      metalness: 0.02
+    });
+    contextBuildingsMesh = new THREE.Mesh(mergedGeom, contextMat);
+    refreshOpenFreeMapInfraColors();
+    contextBuildingsMesh.castShadow = true;
+    contextBuildingsMesh.receiveShadow = true;
+    contextBuildingsMesh.userData = {
+      isNeighbor: true,
+      isOpenFreeMapContext: true
+    };
+    neighborGroup.add(contextBuildingsMesh);
+    directSunlightOccluderMeshes = null;
+    if (typeof invalidateDirectSunlight === 'function') {
+      invalidateDirectSunlight(true);
+    }
+  }
+
+  function ensureOpenFreeMapContextBuildings() {
+    if (contextBuildingsState === 'done') {
+      if (!contextBuildingsMesh && cachedOpenFreeMapBuildings) {
+        buildMergedOpenFreeMapContextBuildings(cachedOpenFreeMapBuildings);
+      }
+      return;
+    }
+    if (contextBuildingsState === 'loading') return;
+    if (cachedOpenFreeMapBuildings) {
+      contextBuildingsState = 'done';
+      buildMergedOpenFreeMapContextBuildings(cachedOpenFreeMapBuildings);
+      return;
+    }
+
+    contextBuildingsState = 'loading';
+    ensureMapLibreLoaded(function (ok) {
+      if (!ok) {
+        contextBuildingsState = 'idle';
+        return;
+      }
+      try {
+        var offId = 'openfreemap_context_bld_cache';
+        var oldEl = document.getElementById(offId);
+        if (oldEl && oldEl.parentNode) oldEl.parentNode.removeChild(oldEl);
+
+        var offDiv = document.createElement('div');
+        offDiv.id = offId;
+        offDiv.style.cssText = 'position:fixed; left:-9999px; top:-9999px; width:1280px; height:1280px; pointer-events:none; visibility:hidden;';
+        document.body.appendChild(offDiv);
+
+        var mlMap = new window.maplibregl.Map({
+          container: offDiv,
+          style: 'https://tiles.openfreemap.org/styles/positron',
+          center: [center.lng, center.lat],
+          zoom: 15,
+          interactive: false,
+          attributionControl: false,
+          fadeDuration: 0
+        });
+
+        var finished = false;
+        var timer = setTimeout(function () {
+          if (!finished) {
+            finished = true;
+            contextBuildingsState = 'idle';
+            try { mlMap.remove(); } catch (e) {}
+            if (offDiv.parentNode) offDiv.parentNode.removeChild(offDiv);
+          }
+        }, 9000);
+
+        mlMap.on('error', function () {
+          if (!finished) {
+            finished = true;
+            clearTimeout(timer);
+            contextBuildingsState = 'idle';
+            try { mlMap.remove(); } catch (e) {}
+            if (offDiv.parentNode) offDiv.parentNode.removeChild(offDiv);
+          }
+        });
+
+        mlMap.once('idle', function () {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try {
+            var feats = mlMap.querySourceFeatures('openmaptiles', { sourceLayer: 'building' }) || [];
+            cachedOpenFreeMapBuildings = feats;
+            contextBuildingsState = 'done';
+            buildMergedOpenFreeMapContextBuildings(feats);
+          } catch (err) {
+            contextBuildingsState = 'idle';
+          } finally {
+            try { mlMap.remove(); } catch (e) {}
+            if (offDiv.parentNode) offDiv.parentNode.removeChild(offDiv);
+          }
+        });
+      } catch (err) {
+        contextBuildingsState = 'idle';
+      }
+    });
+  }
+
   // 네이버 지도 및 가상 조경 지반 로드 (CORS 클린 로더 & 신카이 가상 조경 지원)
   function loadNaverMapGroundTexture(mapType, customHex) {
     // 1. 가상 지반 옵션: 9종 상호 연결 모듈러 타일 (도로 & 연두색 평지 블록)
@@ -1077,7 +1542,141 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       groundMat.map = pgTex;
       groundMat.roughness = 0.88;
       groundMat.needsUpdate = true;
+      ground.scale.set(1, 1, 1);
+      ground.position.set(0, -0.2, 0);
       window.debugNaverStatus = { called: true, mapType: mapType, updated: true, tileCount: 0 };
+      return;
+    }
+
+    // 1-3. 일반 지도('normal'): OpenFreeMap Positron(무료/무제한) 오프스크린 MapLibre 1회 캡처 (실패 시 네이버 지도 폴백)
+    if (mapType === 'normal' || !mapType) {
+      ensureMapLibreLoaded(function (ok) {
+        if (!ok) {
+          tryInit();
+          return;
+        }
+        try {
+          var offId = 'openfreemap_3d_ground_cache';
+          var oldEl = document.getElementById(offId);
+          if (oldEl && oldEl.parentNode) oldEl.parentNode.removeChild(oldEl);
+
+          var offDiv = document.createElement('div');
+          offDiv.id = offId;
+          offDiv.style.cssText = 'position:fixed; left:-9999px; top:-9999px; width:1280px; height:1280px; pointer-events:none; visibility:hidden;';
+          document.body.appendChild(offDiv);
+
+          var mlMap = new window.maplibregl.Map({
+            container: offDiv,
+            style: 'https://tiles.openfreemap.org/styles/positron',
+            center: [center.lng, center.lat],
+            zoom: 15, // MapLibre 512px 기준 z15 == 256px 기준 z16 (1280px == 2 * groundRadius)
+            interactive: false,
+            attributionControl: false,
+            preserveDrawingBuffer: true,
+            fadeDuration: 0,
+            pixelRatio: 1.5
+          });
+
+          var captured = false;
+          var fallbackTimer = setTimeout(function () {
+            if (!captured) {
+              captured = true;
+              try { mlMap.remove(); } catch (e) {}
+              if (offDiv.parentNode) offDiv.parentNode.removeChild(offDiv);
+              tryInit();
+            }
+          }, 9000);
+
+          mlMap.on('error', function () {
+            if (!captured) {
+              captured = true;
+              clearTimeout(fallbackTimer);
+              try { mlMap.remove(); } catch (e) {}
+              if (offDiv.parentNode) offDiv.parentNode.removeChild(offDiv);
+              tryInit();
+            }
+          });
+
+          mlMap.once('idle', function () {
+            if (captured) return;
+            captured = true;
+            clearTimeout(fallbackTimer);
+            try {
+              var srcCanvas = mlMap.getCanvas();
+              var outSize = srcCanvas.width || 1920;
+              var pCanvas = document.createElement('canvas');
+              pCanvas.width = outSize;
+              pCanvas.height = outSize;
+              var pCtx = pCanvas.getContext('2d');
+              pCtx.drawImage(srcCanvas, 0, 0, outSize, outSize);
+
+              // 지평선 포그(#d6e8f6)와 자연스럽게 페더링
+              var halfOut = outSize / 2;
+              var pRad = pCtx.createRadialGradient(halfOut, halfOut, halfOut * 0.84, halfOut, halfOut, halfOut);
+              pRad.addColorStop(0.0, 'rgba(214, 232, 246, 0.0)');
+              pRad.addColorStop(1.0, '#d6e8f6');
+              pCtx.fillStyle = pRad;
+              pCtx.fillRect(0, 0, outSize, outSize);
+
+              var posTex = new THREE.CanvasTexture(pCanvas);
+              posTex.encoding = THREE.sRGBEncoding;
+              posTex.wrapS = THREE.ClampToEdgeWrapping;
+              posTex.wrapT = THREE.ClampToEdgeWrapping;
+              posTex.anisotropy = renderer.capabilities.getMaxAnisotropy ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 4;
+
+              groundMat.map = posTex;
+              groundMat.roughness = 0.88;
+              groundMat.needsUpdate = true;
+
+              // MapLibre 실제 지리 경계(getBounds)를 3D 미터 좌표계에 정확히 1:1 정렬
+              try {
+                var mlBounds = mlMap.getBounds();
+                if (mlBounds) {
+                  var swXY = toLocalXY(mlBounds.getWest(), mlBounds.getSouth());
+                  var neXY = toLocalXY(mlBounds.getEast(), mlBounds.getNorth());
+                  var spanX = Math.abs(neXY.x - swXY.x);
+                  var spanY = Math.abs(neXY.y - swXY.y);
+                  var baseDiam = groundRadius * 2;
+                  if (spanX > 10 && spanY > 10 && baseDiam > 10) {
+                    ground.scale.set(spanX / baseDiam, spanY / baseDiam, 1);
+                    ground.position.set((swXY.x + neXY.x) * 0.5, -0.2, -(swXY.y + neXY.y) * 0.5);
+                  }
+                  window.debugNaverStatus = {
+                    called: true,
+                    mapType: 'normal_openfreemap',
+                    updated: true,
+                    spanX: Math.round(spanX),
+                    spanY: Math.round(spanY),
+                    baseDiam: Math.round(baseDiam)
+                  };
+                }
+              } catch (bErr) {
+                ground.scale.set(1, 1, 1);
+                ground.position.set(0, -0.2, 0);
+                window.debugNaverStatus = { called: true, mapType: 'normal_openfreemap', updated: true };
+              }
+
+              // 이미 로드된 MapLibre 인스턴스에서 일반 건물 3D 데이터도 함께 캐싱
+              if (!cachedOpenFreeMapBuildings) {
+                try {
+                  cachedOpenFreeMapBuildings = mlMap.querySourceFeatures('openmaptiles', { sourceLayer: 'building' }) || [];
+                  if (neighborGroup.visible && contextBuildingsState === 'idle') {
+                    contextBuildingsState = 'done';
+                    buildMergedOpenFreeMapContextBuildings(cachedOpenFreeMapBuildings);
+                  }
+                } catch (qErr) {}
+              }
+            } catch (err) {
+              tryInit();
+            } finally {
+              try { mlMap.remove(); } catch (e) {}
+              if (offDiv.parentNode) offDiv.parentNode.removeChild(offDiv);
+            }
+          });
+        } catch (err) {
+          tryInit();
+        }
+      });
       return;
     }
 
@@ -1222,6 +1821,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             groundMat.map = naverTex;
             groundMat.roughness = 0.85; // 지도의 텍스트와 라인이 또렷하게 보이도록 조명 난반사 억제
             groundMat.needsUpdate = true;
+            ground.scale.set(1, 1, 1);
+            ground.position.set(0, -0.2, 0);
             window.debugNaverStatus.updated = true;
             console.warn("[3D View] Ground texture successfully updated with CRISP 1:1 Naver Map tiles! Drawn:", drawnCount);
           }).catch(function (err) {
@@ -1255,8 +1856,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     tryInit();
   }
 
-  // 바닥 지반 기본값: 지정색상('#BBD59A')을 디폴트로 로드
-  loadNaverMapGroundTexture('custom_color', '#BBD59A');
+  // 바닥 지반 기본값: 일반 지도(OpenFreeMap Positron)를 디폴트로 로드
+  loadNaverMapGroundTexture('normal');
 
   // --- 5. Extrude Helper ---
   function createShapeFromRing(ring) {
@@ -1275,13 +1876,12 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       sumY += p.y;
     }
     if (pts.length < 3) return null;
-    var bCenterY = sumY / pts.length;
 
-    // 건물 위치(Position): -bCenterY (북쪽=-Z, 남쪽=+Z로 단지 내 동배치 100% 정위치)
-    // 건물 향(Facing Orientation): 원본 전면 발코니/후면 복도 방향(+dy) 그대로 정상 보존
+    // toLocalXY(lng, lat)는 +x=동쪽, +y=북쪽이며, ExtrudeGeometry 후 rotateX(-PI/2)는 (x, y) -> (x, -y)로 변환함.
+    // 따라서 shape에 pts[j].y를 그대로 넣어야 모든 동과 세대의 위치(-y = 북쪽 -Z) 및 방위/형상이 지도와 1:1 정방향으로 일치함.
     var transformedPts = [];
     for (var j = 0; j < pts.length; j++) {
-      var sy = 2 * bCenterY - pts[j].y;
+      var sy = pts[j].y;
       transformedPts.push({ x: pts[j].x, y: sy });
       if (j === 0) shape.moveTo(pts[j].x, sy);
       else shape.lineTo(pts[j].x, sy);
@@ -1319,7 +1919,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         if (!isFinite(lng) || !isFinite(lat)) return;
         var local = toLocalXY(lng, lat);
         if (isFinite(local.x) && isFinite(local.y)) {
-          points.push({ x: local.x, y: 2 * centerY - local.y });
+          points.push({ x: local.x, y: local.y });
         }
       });
       if (points.length > 1 && Math.abs(points[0].x - points[points.length - 1].x) < 1e-6 &&
@@ -1336,7 +1936,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
           if (!coordinate || coordinate.length < 2) return;
           var local = toLocalXY(Number(coordinate[0]), Number(coordinate[1]));
           if (isFinite(local.x) && isFinite(local.y)) {
-            holePoints.push({ x: local.x, y: 2 * centerY - local.y });
+            holePoints.push({ x: local.x, y: local.y });
           }
         });
         if (holePoints.length > 1 && Math.abs(holePoints[0].x - holePoints[holePoints.length - 1].x) < 1e-6 &&
@@ -1364,7 +1964,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   function toSunlightFootprint(points) {
     return (points || []).map(function (point) {
-      return { x: point.x, z: point.y };
+      return { x: point.x, z: -point.y };
     });
   }
 
@@ -1600,10 +2200,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     opacity: 0.28
   });
 
-  // 주변 건물 전용 그룹 (기본값: 숨김/Hide - 사용자가 필요할 때 체크박스로 On 가능)
+  // 주변 건물 전용 그룹 (기본값: 표시/ON - 사용자가 체크박스로 Off 가능)
   var neighborGroup = new THREE.Group();
   neighborGroup.name = "neighborBuildingsGroup";
-  neighborGroup.visible = false;
+  neighborGroup.visible = true;
   scene.add(neighborGroup);
   var directSunlightOccluderMeshes = null;
 
@@ -1668,7 +2268,8 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       isNeighbor: true,
       isApartmentNeighbor: !!apartmentCode,
       complexCode: apartmentCode || '',
-      name: n.name || n.dong || ''
+      name: n.name || n.dong || '',
+      localPts: shape.transformedPts || null
     };
     neighborGroup.add(mesh);
 
@@ -1705,9 +2306,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   // ★ [1) 커스텀 색상 설정 변수] 아파트 층별(저층, 중층, 고층) 외벽 색상 변수 ★
   // 사용자가 원하는 색상 코드(HEX: '#475569' 등)로 쉽게 변경 가능합니다.
   // =========================================================================
-  var APT_COLOR_LOW  = '#D7B19D'; // 저층 (1~5층)
-  var APT_COLOR_MID  = '#D7B19D'; // 중층 (6~10층)
-  var APT_COLOR_HIGH = '#D7B19D'; // 고층 (11층+)
+  var APT_COLOR_LOW  = '#e68f60'; // 저층 (1~5층)
+  var APT_COLOR_MID  = '#e68f60'; // 중층 (6~10층)
+  var APT_COLOR_HIGH = '#e68f60'; // 고층 (11층+)
 
   // 외부 전역(window.APT_FLOOR_COLORS) 설정이 사전에 정의되어 있는 경우 우선 적용
   if (typeof window !== 'undefined' && window.APT_FLOOR_COLORS) {
@@ -2473,452 +3074,39 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return createFloatingLabel(null, title, null, '#fbbf24', 'rgba(30, 41, 59, 0.96)');
   }
 
-  // 1. 학교 절차적 3D 모델링 (본관 4개층 교실창문 멀리언 + 강당 아치형 볼트지붕 + 연결통로 + 시계탑 & 국기게양대)
+  // 1. 학교: OpenFreeMap 배경 건물과 중복을 피하기 위해 3D 건물 모델링 대신 이름표만 표시 (건물 색상은 OpenFreeMap 폴리곤에 반영)
   function createSchool3DModel(name, distStr) {
     var group = new THREE.Group();
-
-    // 캠퍼스 바닥 포디움
-    var groundMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.85 });
-    var groundPlinth = new THREE.Mesh(new THREE.BoxGeometry(58, 0.6, 38), groundMat);
-    groundPlinth.position.y = 0.3;
-    groundPlinth.receiveShadow = true;
-    group.add(groundPlinth);
-
-    // 본관 외벽 매스 (따뜻한 학교 크림 벽돌톤)
-    var brickMat = new THREE.MeshStandardMaterial({
-      color: 0xfef08a, // 따뜻한 연노랑 크림 벽돌
-      roughness: 0.65,
-      metalness: 0.05
-    });
-    var mainBody = new THREE.Mesh(new THREE.BoxGeometry(38, 16, 15), brickMat);
-    mainBody.position.set(-6, 8.3, 0);
-    mainBody.castShadow = true;
-    mainBody.receiveShadow = true;
-    group.add(mainBody);
-
-    // 본관 4개 층 교실 창문 리본 & 창문 격자 멀리언
-    var winMat = new THREE.MeshStandardMaterial({
-      color: 0x0284c7,
-      roughness: 0.15,
-      metalness: 0.4,
-      transparent: true,
-      opacity: 0.88
-    });
-    var mullionMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-
-    for (var f = 0; f < 4; f++) {
-      var fy = 3.2 + f * 3.6;
-      // 전면 창문띠
-      var winFront = new THREE.Mesh(new THREE.BoxGeometry(35, 1.8, 0.5), winMat);
-      winFront.position.set(-6, fy, 7.6);
-      group.add(winFront);
-
-      // 창문 세로 멀리언 기둥 (교실 창문 격자 분할)
-      for (var col = -5; col <= 5; col++) {
-        var mullion = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.85, 0.6), mullionMat);
-        mullion.position.set(-6 + col * 3.2, fy, 7.65);
-        group.add(mullion);
-      }
-
-      // 후면 창문띠
-      var winBack = new THREE.Mesh(new THREE.BoxGeometry(35, 1.8, 0.5), winMat);
-      winBack.position.set(-6, fy, -7.6);
-      group.add(winBack);
-    }
-
-    // 본관 옥상 난간 (Parapet) & 테라코타 몰딩
-    var parapetMat = new THREE.MeshStandardMaterial({ color: 0xc2410c, roughness: 0.5 });
-    var parapet = new THREE.Mesh(new THREE.BoxGeometry(39, 1.0, 16), parapetMat);
-    parapet.position.set(-6, 16.8, 0);
-    group.add(parapet);
-
-    // 주출입구 포티코 & 캐노피 (Entrance Canopy with Columns)
-    var canopyMat = new THREE.MeshStandardMaterial({ color: 0x0369a1, roughness: 0.3 });
-    var canopy = new THREE.Mesh(new THREE.BoxGeometry(9, 0.8, 4.5), canopyMat);
-    canopy.position.set(-6, 4.5, 9.5);
-    canopy.castShadow = true;
-    group.add(canopy);
-
-    var colMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-    var colLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 3.8, 12), colMat);
-    colLeft.position.set(-9.5, 2.3, 10.8);
-    group.add(colLeft);
-    var colRight = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 3.8, 12), colMat);
-    colRight.position.set(-2.5, 2.3, 10.8);
-    group.add(colRight);
-
-    // 체육관 / 강당 별관 (Gymnasium with Curved Barrel-Vault Roof)
-    var gymMat = new THREE.MeshStandardMaterial({ color: 0xfde68a, roughness: 0.55 });
-    var gymBody = new THREE.Mesh(new THREE.BoxGeometry(18, 10, 22), gymMat);
-    gymBody.position.set(22, 5.3, 0);
-    gymBody.castShadow = true;
-    gymBody.receiveShadow = true;
-    group.add(gymBody);
-
-    // 강당 둥근 아치형 지붕 (Cylinder Half-Shell)
-    var archRoofGeom = new THREE.CylinderGeometry(11.2, 11.2, 18.2, 24, 1, false, 0, Math.PI);
-    archRoofGeom.rotateZ(Math.PI / 2);
-    archRoofGeom.rotateY(Math.PI / 2);
-    var archRoofMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.2 });
-    var gymRoof = new THREE.Mesh(archRoofGeom, archRoofMat);
-    gymRoof.position.set(22, 10.3, 0);
-    gymRoof.castShadow = true;
-    group.add(gymRoof);
-
-    // 2층 연결 통로 (Skybridge Corridor)
-    var bridgeMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      roughness: 0.2,
-      transparent: true,
-      opacity: 0.8
-    });
-    var bridge = new THREE.Mesh(new THREE.BoxGeometry(6, 3.8, 4), bridgeMat);
-    bridge.position.set(11, 7.5, 0);
-    group.add(bridge);
-
-    // 중앙 시계탑 (Clock Tower & Spire)
-    var towerBody = new THREE.Mesh(new THREE.BoxGeometry(5.5, 8.5, 5.5), brickMat);
-    towerBody.position.set(-16, 20.5, 0);
-    towerBody.castShadow = true;
-    group.add(towerBody);
-
-    // 시계 다이얼 (Clock Dials - Front & Back)
-    var dialMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    var dialRimMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
-    var dialFront = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.2, 16), dialMat);
-    dialFront.rotateX(Math.PI / 2);
-    dialFront.position.set(-16, 22, 2.8);
-    group.add(dialFront);
-    var rimFront = new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.15, 8, 24), dialRimMat);
-    rimFront.position.set(-16, 22, 2.9);
-    group.add(rimFront);
-
-    // 시계탑 피라미드 박공지붕
-    var steepleGeom = new THREE.ConeGeometry(4.2, 5.5, 4);
-    steepleGeom.rotateY(Math.PI / 4);
-    var steeple = new THREE.Mesh(steepleGeom, parapetMat);
-    steeple.position.set(-16, 27.5, 0);
-    steeple.castShadow = true;
-    group.add(steeple);
-
-    // 깃대 & 학교 깃발
-    var poleMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8 });
-    var pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4.5, 8), poleMat);
-    pole.position.set(-16, 31.5, 0);
-    group.add(pole);
-
-    var flagMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6, side: THREE.DoubleSide });
-    var flag = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.4), flagMat);
-    flag.position.set(-14.8, 32.5, 0);
-    group.add(flag);
-
-    // 플로팅 라벨 (시계탑 최상단 위로 여유 있게 배치)
     var label = createFloatingLabel('🏫', name, distStr, '#38bdf8');
-    label.position.set(0, 42, 0);
+    label.position.set(0, 32, 0);
     group.add(label);
-
     return group;
   }
 
-  // 2. 대형병원 절차적 3D 모델링 (트윈 메디컬 타워 + 글래스 아트리움 + 헬리패드 + 응급센터)
+  // 2. 대형병원: 이름표만 표시 (건물 색상은 OpenFreeMap 폴리곤에 반영)
   function createHospital3DModel(name, distStr) {
     var group = new THREE.Group();
-
-    // 병원 단지 베이스
-    var baseMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.6 });
-    var basePlinth = new THREE.Mesh(new THREE.BoxGeometry(50, 0.6, 38), baseMat);
-    basePlinth.position.y = 0.3;
-    basePlinth.receiveShadow = true;
-    group.add(basePlinth);
-
-    // 1~3층 포디움 & 응급의료센터(ER) 진입부
-    var hospWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.1 });
-    var podium = new THREE.Mesh(new THREE.BoxGeometry(44, 9, 32), hospWhiteMat);
-    podium.position.y = 4.8;
-    podium.castShadow = true;
-    podium.receiveShadow = true;
-    group.add(podium);
-
-    // 응급센터 빨간색 캐노피 (Emergency Bay Canopy)
-    var erMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 });
-    var erCanopy = new THREE.Mesh(new THREE.BoxGeometry(14, 1.0, 6), erMat);
-    erCanopy.position.set(12, 4.8, 17);
-    group.add(erCanopy);
-
-    // 메인 고층 병동 타워 (Main Ward Tower)
-    var towerBody = new THREE.Mesh(new THREE.BoxGeometry(26, 26, 20), hospWhiteMat);
-    towerBody.position.set(-4, 21, 0);
-    towerBody.castShadow = true;
-    towerBody.receiveShadow = true;
-    group.add(towerBody);
-
-    // 중앙 수직 아쿠아 글래스 커튼월 (Vertical Glass Spine)
-    var glassMat = new THREE.MeshStandardMaterial({
-      color: 0x06b6d4,
-      roughness: 0.15,
-      metalness: 0.4,
-      transparent: true,
-      opacity: 0.85
-    });
-    var glassSpine = new THREE.Mesh(new THREE.BoxGeometry(12, 28, 20.8), glassMat);
-    glassSpine.position.set(-4, 20, 0);
-    group.add(glassSpine);
-
-    // 옥상 헬리패드 데크 (Helipad Deck with Elevated Pillars)
-    var heliDeckMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.7 });
-    var helipad = new THREE.Mesh(new THREE.CylinderGeometry(7.5, 7.5, 0.8, 32), heliDeckMat);
-    helipad.position.set(-4, 34.5, 0);
-    group.add(helipad);
-
-    // 헬리패드 원형 옐로우 서클 및 H 마크
-    var hRingMat = new THREE.MeshBasicMaterial({ color: 0xfacc15, side: THREE.DoubleSide });
-    var hRing = new THREE.Mesh(new THREE.RingGeometry(5.2, 5.8, 32), hRingMat);
-    hRing.rotateX(-Math.PI / 2);
-    hRing.position.set(-4, 34.95, 0);
-    group.add(hRing);
-
-    // 붉은 십자 메디컬 엠블럼 (+)
-    var crossMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-    var crossV = new THREE.Mesh(new THREE.BoxGeometry(1.2, 4.2, 0.3), crossMat);
-    crossV.position.set(-4, 30.5, 10.6);
-    group.add(crossV);
-    var crossH = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.2, 0.3), crossMat);
-    crossH.position.set(-4, 30.5, 10.6);
-    group.add(crossH);
-
     var label = createFloatingLabel('🏥', name, distStr, '#10b981');
-    label.position.set(0, 46, 0);
-    group.add(label);
-
-    return group;
-  }
-
-  // 3. 마트 및 복합몰 절차적 3D 모델링 (1층 글래스 쇼윈도 + 브랜드 패널 + 대형 캐노피 + 옥상공조설비 + 자립형 사인타워)
-  function createMart3DModel(name, distStr, isMall) {
-    var group = new THREE.Group();
-
-    // 쇼핑몰 대지 베이스
-    var plazaMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.8 });
-    var plaza = new THREE.Mesh(new THREE.BoxGeometry(56, 0.6, 44), plazaMat);
-    plaza.position.y = 0.3;
-    plaza.receiveShadow = true;
-    group.add(plaza);
-
-    // 1층 전면 투명 글래스 로비 & 쇼윈도 (Ground Floor Glazed Shopfronts)
-    var glassLobbyMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      roughness: 0.1,
-      metalness: 0.35,
-      transparent: true,
-      opacity: 0.85
-    });
-    var lobby = new THREE.Mesh(new THREE.BoxGeometry(44, 4.5, 30), glassLobbyMat);
-    lobby.position.y = 2.5;
-    group.add(lobby);
-
-    // 쇼윈도 기둥 프레임 (Glass Divider Mullions)
-    var mullionMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2 });
-    for (var m = -4; m <= 4; m++) {
-      var mul = new THREE.Mesh(new THREE.BoxGeometry(0.3, 4.6, 0.6), mullionMat);
-      mul.position.set(m * 4.8, 2.5, 15.2);
-      group.add(mul);
-    }
-
-    // 2~3층 대형 복합 매스 (상징 컬러 패널링: 몰은 세련된 인디고/바이올렛, 마트는 비비드 오렌지/옐로우)
-    var mainPanelMat = new THREE.MeshStandardMaterial({
-      color: isMall ? 0x4f46e5 : 0xf97316,
-      roughness: 0.45,
-      metalness: 0.15
-    });
-    var upperBody = new THREE.Mesh(new THREE.BoxGeometry(42, 11, 28), mainPanelMat);
-    upperBody.position.y = 10.2;
-    upperBody.castShadow = true;
-    upperBody.receiveShadow = true;
-    group.add(upperBody);
-
-    // 전면 브랜드 시그니처 띠 & 대형 로고 패널 (Brand Banner Strip)
-    var brandBannerMat = new THREE.MeshStandardMaterial({
-      color: isMall ? 0x312e81 : 0xdc2626,
-      roughness: 0.3
-    });
-    var brandBanner = new THREE.Mesh(new THREE.BoxGeometry(32, 2.8, 0.8), brandBannerMat);
-    brandBanner.position.set(0, 11.5, 14.4);
-    group.add(brandBanner);
-
-    // 수평 LED 액센트 밴드 (Horizontal Glowing Trim Band)
-    var accentMat = new THREE.MeshStandardMaterial({
-      color: isMall ? 0x38bdf8 : 0xfde047,
-      emissive: isMall ? 0x0284c7 : 0xeab308,
-      emissiveIntensity: 0.45,
-      roughness: 0.2
-    });
-    var trimBand = new THREE.Mesh(new THREE.BoxGeometry(43, 0.8, 28.8), accentMat);
-    trimBand.position.y = 15.8;
-    group.add(trimBand);
-
-    // 웅장한 돌출 입구 캐노피 (Grand Entrance Portal & Glass Canopy)
-    var canopyMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3 });
-    var canopyPortal = new THREE.Mesh(new THREE.BoxGeometry(22, 4.0, 7), canopyMat);
-    canopyPortal.position.set(0, 4.5, 17);
-    canopyPortal.castShadow = true;
-    group.add(canopyPortal);
-
-    var canopyGlass = new THREE.Mesh(new THREE.BoxGeometry(20, 0.6, 8), glassLobbyMat);
-    canopyGlass.position.set(0, 5.0, 18.5);
-    group.add(canopyGlass);
-
-    // 옥상 설비 (HVAC 공조기 유닛 & 환기 칠러 팬)
-    var hvacMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.7 });
-    var hvac1 = new THREE.Mesh(new THREE.BoxGeometry(6, 3, 5), hvacMat);
-    hvac1.position.set(-10, 17.2, 4);
-    group.add(hvac1);
-    // 직사각형 옥상 배기 그릴 박스 (원형 오브젝트 제거)
-    var ventGrille = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.5, 2.6), accentMat);
-    ventGrille.position.set(-10, 18.8, 4);
-    group.add(ventGrille);
-
-    var hvac2 = new THREE.Mesh(new THREE.BoxGeometry(7, 3.5, 6), hvacMat);
-    hvac2.position.set(8, 17.5, -4);
-    group.add(hvac2);
-
-    // 입구 측면 자립형 사각 폴사인 타워 (원형 기둥 -> 사각 기둥 기하구조로 변경)
-    var pylonPoleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.5 });
-    var pylonPole = new THREE.Mesh(new THREE.BoxGeometry(1.4, 22, 1.4), pylonPoleMat);
-    pylonPole.position.set(24, 11, 16);
-    pylonPole.castShadow = true;
-    group.add(pylonPole);
-
-    var signBoxMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      emissive: isMall ? 0x818cf8 : 0xfbbf24,
-      emissiveIntensity: 0.4,
-      roughness: 0.2
-    });
-    var signBox = new THREE.Mesh(new THREE.BoxGeometry(7.5, 7.5, 2.5), signBoxMat);
-    signBox.position.set(24, 20, 16);
-    signBox.castShadow = true;
-    group.add(signBox);
-
-    var label = createFloatingLabel(isMall ? '🏬' : '🛒', name, distStr, isMall ? '#818cf8' : '#f59e0b');
     label.position.set(0, 38, 0);
     group.add(label);
-
     return group;
   }
 
-  // 4. 백화점 절차적 3D 모델링 (연갈색 계열 대리석 + 1.3배 높이 파사드 + 수직 사각 핀 루버 + 스텝 펜트하우스 크라운)
+  // 3. 마트 및 복합몰: 이름표만 표시 (건물 색상은 OpenFreeMap 폴리곤에 반영)
+  function createMart3DModel(name, distStr, isMall) {
+    var group = new THREE.Group();
+    var label = createFloatingLabel(isMall ? '🏬' : '🛒', name, distStr, isMall ? '#818cf8' : '#f59e0b');
+    label.position.set(0, 34, 0);
+    group.add(label);
+    return group;
+  }
+
+  // 4. 백화점: 이름표만 표시 (건물 색상은 OpenFreeMap 폴리곤에 반영)
   function createDeptStore3DModel(name, distStr) {
     var group = new THREE.Group();
-
-    // 럭셔리 대리석 단지 베이스
-    var plazaMat = new THREE.MeshStandardMaterial({ color: 0xede8e1, roughness: 0.6 });
-    var plaza = new THREE.Mesh(new THREE.BoxGeometry(58, 0.6, 48), plazaMat);
-    plaza.position.y = 0.3;
-    plaza.receiveShadow = true;
-    group.add(plaza);
-
-    // 1층 호텔식 드롭오프(Drop-off) & 필로티 포디움 (높이 1.3x 반영: 6.5 -> 8.5)
-    var marbleMat = new THREE.MeshStandardMaterial({ color: 0xf5ede3, roughness: 0.35, metalness: 0.05 });
-    var basePodium = new THREE.Mesh(new THREE.BoxGeometry(46, 8.5, 36), marbleMat);
-    basePodium.position.y = 4.25;
-    basePodium.castShadow = true;
-    basePodium.receiveShadow = true;
-    group.add(basePodium);
-
-    // 전면 드롭오프 대리석 사각 열주 (Colonnade Square Pillars - 원형 기둥 제거 및 사각 기둥 적용)
-    var colMat = new THREE.MeshStandardMaterial({ color: 0xe6dacb, roughness: 0.3, metalness: 0.1 });
-    for (var c = -3; c <= 3; c++) {
-      var pillar = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8.5, 1.2), colMat);
-      pillar.position.set(c * 6, 4.25, 18.5);
-      pillar.castShadow = true;
-      group.add(pillar);
-    }
-
-    // 웅장한 웜 브론즈 & 글래스 입구 캐노피 (Grand Warm Bronze Canopy)
-    var bronzeMat = new THREE.MeshStandardMaterial({
-      color: 0xb48b50,
-      metalness: 0.65,
-      roughness: 0.25,
-      emissive: 0x5c3d18,
-      emissiveIntensity: 0.2
-    });
-    var canopy = new THREE.Mesh(new THREE.BoxGeometry(26, 1.0, 9), bronzeMat);
-    canopy.position.set(0, 7.5, 20);
-    canopy.castShadow = true;
-    group.add(canopy);
-
-    // 2~6층 백화점 본체 매스 (1.3배 높이: 22 -> 29, 고급 연갈색 웜 샌드 트래버틴 파사드)
-    var facadeMat = new THREE.MeshStandardMaterial({
-      color: 0xc4a686, // 품격 있는 웜 샌드 / 연갈색 트래버틴 스톤톤
-      roughness: 0.55,
-      metalness: 0.12
-    });
-    var mainBody = new THREE.Mesh(new THREE.BoxGeometry(42, 29, 32), facadeMat);
-    mainBody.position.y = 23.0;
-    mainBody.castShadow = true;
-    mainBody.receiveShadow = true;
-    group.add(mainBody);
-
-    // 전면/후면/측면 수직 핀 루버 (1.3배 높이: 19 -> 25, 웜 브론즈 사각 핀)
-    var finMat = new THREE.MeshStandardMaterial({
-      color: 0x8c5e34, // 웜 브론즈 / 카라멜 핀 루버
-      metalness: 0.5,
-      roughness: 0.35
-    });
-    // 전면 & 후면 핀 루버
-    for (var i = -8; i <= 8; i++) {
-      var finFront = new THREE.Mesh(new THREE.BoxGeometry(0.45, 25, 0.8), finMat);
-      finFront.position.set(i * 2.3, 23.0, 16.4);
-      group.add(finFront);
-
-      var finBack = new THREE.Mesh(new THREE.BoxGeometry(0.45, 25, 0.8), finMat);
-      finBack.position.set(i * 2.3, 23.0, -16.4);
-      group.add(finBack);
-    }
-    // 좌측 & 우측 핀 루버
-    for (var j = -6; j <= 6; j++) {
-      var finLeft = new THREE.Mesh(new THREE.BoxGeometry(0.8, 25, 0.45), finMat);
-      finLeft.position.set(-21.4, 23.0, j * 2.2);
-      group.add(finLeft);
-
-      var finRight = new THREE.Mesh(new THREE.BoxGeometry(0.8, 25, 0.45), finMat);
-      finRight.position.set(21.4, 23.0, j * 2.2);
-      group.add(finRight);
-    }
-
-    // 7~8층 스텝백 펜트하우스 (1.3배 높이: 6 -> 8, 딥 모카 에스프레소)
-    var setbackMat = new THREE.MeshStandardMaterial({ color: 0x453120, roughness: 0.45 });
-    var setbackPenthouse = new THREE.Mesh(new THREE.BoxGeometry(32, 8, 24), setbackMat);
-    setbackPenthouse.position.y = 41.5;
-    setbackPenthouse.castShadow = true;
-    group.add(setbackPenthouse);
-
-    // 옥상 테라스 루프탑 가든 (Sky Garden Green Patch)
-    var grassMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.8 });
-    var skyGarden = new THREE.Mesh(new THREE.BoxGeometry(38, 0.4, 28), grassMat);
-    skyGarden.position.y = 37.6;
-    group.add(skyGarden);
-
-    // 최상단 아트리움 클리어스토리 글래스 크라운 (원형 돔/토러스 링 제거 -> 직사각형 글래스 크라운)
-    var crownGlassMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.8,
-      roughness: 0.1,
-      metalness: 0.4
-    });
-    var crownGlass = new THREE.Mesh(new THREE.BoxGeometry(20, 5, 14), crownGlassMat);
-    crownGlass.position.set(0, 48.0, 0);
-    crownGlass.castShadow = true;
-    group.add(crownGlass);
-
-    // 옥상 상부 정사각형 박스 삭제 요청 반영 완료 (emblemTower 제거)
-
-    // 플로팅 라벨 (최상단 건축물 위로 안정적으로 배치)
     var label = createFloatingLabel('🏬', name, distStr, '#d97706');
-    label.position.set(0, 58, 0);
+    label.position.set(0, 40, 0);
     group.add(label);
-
     return group;
   }
 
@@ -3138,7 +3326,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     var data = aptRankInfo || {};
     var isHeliocity = (data3d.searchCode === '111515' || (data3d.name && data3d.name.indexOf('헬리오') !== -1));
 
-    // A-1. 초등학교 (3D 모델링)
+    // A-1. 초등학교 (이름표 + OpenFreeMap 건물 색상 강조)
     var pSchoolCoord = data["초등학교좌표"];
     var pSchoolName = data["초등학교명"] || "초등학교";
     if (pSchoolCoord && pSchoolCoord[0] && pSchoolCoord[1]) {
@@ -3147,6 +3335,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var m = createSchool3DModel(pSchoolName, getDistanceString(pos));
         m.position.copy(pos);
         infraGroups.elementary.add(m);
+        infraHighlightPOIs.push({ category: 'elementary', x: pos.x, y: -pos.z, colorHex: 0x38bdf8 });
 
         var dash = createConnectingDashline(new THREE.Vector3(complexCenterX, 0, complexCenterZ), pos, 0x38bdf8);
         infraGroups.elementary.add(dash);
@@ -3158,6 +3347,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var m1 = createSchool3DModel("서울가락초등학교", getDistanceString(hGarakCho));
         m1.position.copy(hGarakCho);
         infraGroups.elementary.add(m1);
+        infraHighlightPOIs.push({ category: 'elementary', x: hGarakCho.x, y: -hGarakCho.z, colorHex: 0x38bdf8 });
         infraGroups.elementary.add(createConnectingDashline(new THREE.Vector3(complexCenterX, 0, complexCenterZ), hGarakCho, 0x38bdf8));
       }
 
@@ -3166,10 +3356,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var m2 = createSchool3DModel("서울해누리초등학교", getDistanceString(hHaenuriCho));
         m2.position.copy(hHaenuriCho);
         infraGroups.elementary.add(m2);
+        infraHighlightPOIs.push({ category: 'elementary', x: hHaenuriCho.x, y: -hHaenuriCho.z, colorHex: 0x38bdf8 });
       }
     }
 
-    // A-2. 중학교 (3D 모델링)
+    // A-2. 중학교 (이름표 + OpenFreeMap 건물 색상 강조)
     var mSchoolArr = data["중학교정보"];
     if (mSchoolArr && mSchoolArr.length) {
       mSchoolArr.forEach(function (ms) {
@@ -3182,6 +3373,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             var scm = createSchool3DModel(mName, getDistanceString(mPos));
             scm.position.copy(mPos);
             infraGroups.middle.add(scm);
+            infraHighlightPOIs.push({ category: 'middle', x: mPos.x, y: -mPos.z, colorHex: 0x0ea5e9 });
           }
         }
       });
@@ -3191,6 +3383,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var ms1 = createSchool3DModel("가락중학교", getDistanceString(hGarakJung));
         ms1.position.copy(hGarakJung);
         infraGroups.middle.add(ms1);
+        infraHighlightPOIs.push({ category: 'middle', x: hGarakJung.x, y: -hGarakJung.z, colorHex: 0x0ea5e9 });
       }
 
       var hHaenuriJung = toWorldPos(37.4962, 127.1102);
@@ -3198,10 +3391,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var ms2 = createSchool3DModel("해누리중학교", getDistanceString(hHaenuriJung));
         ms2.position.copy(hHaenuriJung);
         infraGroups.middle.add(ms2);
+        infraHighlightPOIs.push({ category: 'middle', x: hHaenuriJung.x, y: -hHaenuriJung.z, colorHex: 0x0ea5e9 });
       }
     }
 
-    // B-1. 대형마트 (3D 모델링)
+    // B-1. 대형마트 (이름표 + OpenFreeMap 건물 색상 강조)
     var martArr = data["대형마트정보"];
     if (martArr && martArr.length) {
       martArr.forEach(function (it) {
@@ -3211,6 +3405,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             var mm = createMart3DModel(it[0], getDistanceString(wPos), false);
             mm.position.copy(wPos);
             infraGroups.mart.add(mm);
+            infraHighlightPOIs.push({ category: 'mart', x: wPos.x, y: -wPos.z, colorHex: 0xf59e0b });
           }
         }
       });
@@ -3220,10 +3415,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var mm1 = createMart3DModel("롯데마트 송파점", getDistanceString(hLotteMart), false);
         mm1.position.copy(hLotteMart);
         infraGroups.mart.add(mm1);
+        infraHighlightPOIs.push({ category: 'mart', x: hLotteMart.x, y: -hLotteMart.z, colorHex: 0xf59e0b });
       }
     }
 
-    // B-2. 백화점 및 복합쇼핑몰 (3D 모델링)
+    // B-2. 백화점 및 복합쇼핑몰 (이름표 + OpenFreeMap 건물 색상 강조)
     var deptArr = (data["백화점정보"] || []).concat(data["아울렛몰정보"] || []);
     if (deptArr && deptArr.length) {
       deptArr.forEach(function (it) {
@@ -3234,6 +3430,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             var dm = isMall ? createMart3DModel(it[0], getDistanceString(dPos), true) : createDeptStore3DModel(it[0], getDistanceString(dPos));
             dm.position.copy(dPos);
             infraGroups.dept_mall.add(dm);
+            infraHighlightPOIs.push({ category: 'dept_mall', x: dPos.x, y: -dPos.z, colorHex: isMall ? 0x818cf8 : 0xd97706 });
           }
         }
       });
@@ -3243,6 +3440,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var dm1 = createDeptStore3DModel("롯데백화점 잠실점", getDistanceString(hLotteDept));
         dm1.position.copy(hLotteDept);
         infraGroups.dept_mall.add(dm1);
+        infraHighlightPOIs.push({ category: 'dept_mall', x: hLotteDept.x, y: -hLotteDept.z, colorHex: 0xd97706 });
       }
 
       var hGarakMall = toWorldPos(37.4945, 127.1142);
@@ -3250,10 +3448,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var mm2 = createMart3DModel("가락몰 복합유통센터", getDistanceString(hGarakMall), true);
         mm2.position.copy(hGarakMall);
         infraGroups.dept_mall.add(mm2);
+        infraHighlightPOIs.push({ category: 'dept_mall', x: hGarakMall.x, y: -hGarakMall.z, colorHex: 0x818cf8 });
       }
     }
 
-    // B-3. 대형병원 / 종합병원 (3D 모델링)
+    // B-3. 대형병원 / 종합병원 (이름표 + OpenFreeMap 건물 색상 강조)
     var bigHospArr = data["종합병원정보"];
     if (bigHospArr && bigHospArr.length) {
       bigHospArr.forEach(function (it) {
@@ -3263,6 +3462,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             var hm = createHospital3DModel(it[0], getDistanceString(hPos));
             hm.position.copy(hPos);
             infraGroups.hospital.add(hm);
+            infraHighlightPOIs.push({ category: 'hospital', x: hPos.x, y: -hPos.z, colorHex: 0x10b981 });
           }
         }
       });
@@ -3272,7 +3472,25 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         var hm1 = createHospital3DModel("국립경찰병원 (종합병원)", getDistanceString(hPoliceHosp));
         hm1.position.copy(hPoliceHosp);
         infraGroups.hospital.add(hm1);
+        infraHighlightPOIs.push({ category: 'hospital', x: hPoliceHosp.x, y: -hPoliceHosp.z, colorHex: 0x10b981 });
       }
+    }
+
+    // VWorld 주변건물(data3d.neighbors)이 먼저 생성된 경우에도 즉시 인프라 색상 반영
+    var initNeighborEntries = collectNeighborCandidateEntries();
+    if (initNeighborEntries.length && infraHighlightPOIs.length) {
+      matchInfraPOIsToCandidates(initNeighborEntries);
+      neighborColorMeta = [];
+      for (var ini = 0; ini < initNeighborEntries.length; ini++) {
+        if (initNeighborEntries[ini].matchedPoi) {
+          neighborColorMeta.push({
+            mesh: initNeighborEntries[ini].mesh,
+            category: initNeighborEntries[ini].matchedPoi.category,
+            colorHex: initNeighborEntries[ini].matchedPoi.colorHex
+          });
+        }
+      }
+      refreshOpenFreeMapInfraColors();
     }
 
     // C. 지하철역 (2D 입간판 & 보행선)
@@ -4241,7 +4459,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         prevNeighborVisible = neighborGroup ? neighborGroup.visible : false;
         wasInPOVOutward = true;
       }
-      if (neighborGroup) neighborGroup.visible = true;
+      if (neighborGroup) {
+        neighborGroup.visible = true;
+        ensureOpenFreeMapContextBuildings();
+      }
       neighborMat.color.setHex(0xd4d8df);
       neighborMat.transparent = false;
       neighborMat.opacity = 1.0;
@@ -5204,45 +5425,36 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     neighborGroup: neighborGroup,
     setApartmentNeighborModels: function (models) {
       (models || []).forEach(function (model) {
-        var complexCode = String(model.searchCode || '');
+        var complexCode = String(model.searchCode || model.code || '');
         var complexName = model.name || '';
-        var tallestBuilding = null;
-        var tallestBuildingHeight = -1;
-        (model.buildings || []).forEach(function (building) {
-          if (!building.residential) return;
-          var buildingHeight = getNeighborBuildingHeight(building);
-          var buildingMesh = addNeighborBuilding(Object.assign({}, building, {
-            id: 'apt_' + complexCode + '_' + (building.id || building.dong || ''),
-            name: complexName + (building.dong ? ' ' + building.dong : '')
-          }), complexCode);
-          if (buildingMesh && buildingHeight > tallestBuildingHeight) {
-            tallestBuilding = buildingMesh;
-            tallestBuildingHeight = buildingHeight;
-          }
-        });
-        if (complexCode && complexName && tallestBuilding && !apartmentNeighborLabels[complexCode]) {
-          var bounds = tallestBuilding.geometry.boundingBox;
-          var label = createApartmentNeighborLabel(complexName);
-          label.position.set(
-            (bounds.min.x + bounds.max.x) / 2,
-            bounds.max.y + 5,
-            (bounds.min.z + bounds.max.z) / 2
-          );
-          label.userData.isApartmentNeighborLabel = true;
-          label.userData.complexCode = complexCode;
-          neighborGroup.add(label);
-          apartmentNeighborLabels[complexCode] = label;
+        if (!complexCode || !complexName || apartmentNeighborLabels[complexCode]) return;
+
+        var cObj = model.center;
+        var cLng = null, cLat = null;
+        if (Array.isArray(cObj) && cObj.length >= 2) {
+          cLng = Number(cObj[0]) > 100 ? Number(cObj[0]) : Number(cObj[1]);
+          cLat = Number(cObj[0]) > 100 ? Number(cObj[1]) : Number(cObj[0]);
+        } else if (cObj && typeof cObj === 'object') {
+          cLng = Number(cObj.lng !== undefined ? cObj.lng : cObj.x);
+          cLat = Number(cObj.lat !== undefined ? cObj.lat : cObj.y);
         }
+        if (!isFinite(cLng) || !isFinite(cLat)) return;
+
+        var xy = toLocalXY(cLng, cLat);
+        var label = createApartmentNeighborLabel(complexName);
+        label.position.set(xy.x, 45, -xy.y);
+        label.userData.isApartmentNeighborLabel = true;
+        label.userData.complexCode = complexCode;
+        neighborGroup.add(label);
+        apartmentNeighborLabels[complexCode] = label;
       });
-      if (models && models.length) {
-        invalidateDirectSunlight(true);
-      }
     },
     toggleInfraLayer: function (layerKey, visible) {
       if (layerKey === 'neighbors' && neighborGroup) {
         var nextVisible = !!visible;
         var changed = neighborGroup.visible !== nextVisible;
         neighborGroup.visible = nextVisible;
+        if (nextVisible) ensureOpenFreeMapContextBuildings();
         if (changed) invalidateDirectSunlight(true);
         return;
       }
@@ -5250,11 +5462,13 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       if (layerKey === 'school') {
         if (infraGroups.elementary) infraGroups.elementary.visible = !!visible;
         if (infraGroups.middle) infraGroups.middle.visible = !!visible;
+        refreshOpenFreeMapInfraColors();
         return;
       }
       if (layerKey === 'shopping') {
         if (infraGroups.dept_mall) infraGroups.dept_mall.visible = !!visible;
         if (infraGroups.mart) infraGroups.mart.visible = !!visible;
+        refreshOpenFreeMapInfraColors();
         return;
       }
       if (layerKey === 'transit') {
@@ -5270,11 +5484,13 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         if (infraGroups.hospital) infraGroups.hospital.visible = !!visible;
         if (infraGroups.park) infraGroups.park.visible = !!visible;
         if (infraGroups.bank) infraGroups.bank.visible = !!visible;
+        refreshOpenFreeMapInfraColors();
         return;
       }
       // 11종 세부 레이어 키 직접 토글
       if (infraGroups && infraGroups[layerKey]) {
         infraGroups[layerKey].visible = !!visible;
+        refreshOpenFreeMapInfraColors();
       }
     },
     setNeighborsVisible: function (visible) {
@@ -5282,6 +5498,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var nextVisible = !!visible;
       var changed = neighborGroup.visible !== nextVisible;
       neighborGroup.visible = nextVisible;
+      if (nextVisible) ensureOpenFreeMapContextBuildings();
       if (changed) invalidateDirectSunlight(true);
     },
     getNeighborsVisible: function () {

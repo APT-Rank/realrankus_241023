@@ -2253,7 +2253,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261116_1809"></script>
+  <script src="./js/complex_3d_view.js?v=20261116_2152"></script>
 </head>
 <body>
 
@@ -2330,7 +2330,7 @@
       </div>
     </div>
     <label class="mobile-neighbor-toggle" for="mobile-layer-neighbors">
-      <input type="checkbox" id="mobile-layer-neighbors">
+      <input type="checkbox" id="mobile-layer-neighbors" checked>
       <span>주변건물</span>
     </label>
   </div>
@@ -2484,7 +2484,7 @@
             <span class="infra-tag">🏦 <b>은행</b></span>
           </label>
           <label class="infra-toggle-item" style="grid-column: span 2; border-top: 1px dashed rgba(0,0,0,0.08); margin-top: 2px; padding-top: 4px;">
-            <input type="checkbox" id="layer-neighbors">
+            <input type="checkbox" id="layer-neighbors" checked>
             <span class="infra-tag">🏢 <b>주변단지/건물</b></span>
           </label>
           <label class="infra-toggle-item" style="grid-column: span 2; border-top: 1px dashed rgba(0,0,0,0.08); margin-top: 2px; padding-top: 4px;">
@@ -2519,8 +2519,8 @@
           <span>🗺️ 바닥 스킨 · 색상</span>
         </div>
         <div class="btn-group-custom" style="grid-template-columns: repeat(3, 1fr);">
-          <button class="btn-custom active" data-map="custom_color">지정색상</button>
-          <button class="btn-custom" data-map="normal">일반 지도</button>
+          <button class="btn-custom active" data-map="normal">일반 지도</button>
+          <button class="btn-custom" data-map="custom_color">지정색상</button>
           <button class="btn-custom" data-map="hybrid">위성+도로</button>
         </div>
         <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 8px; border-top: 1px solid rgba(148, 163, 184, 0.25);">
@@ -2534,7 +2534,7 @@
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 12px; font-weight: 600; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 5px 8px;">
             <span style="white-space: nowrap;">건물</span>
             <div style="display: flex; align-items: center; gap: 4px;">
-              <input type="color" id="building-color-picker" value="#D7B19D" style="width: 26px; height: 22px; padding: 0; border: 1px solid #cbd5e1; border-radius: 5px; background: transparent; cursor: pointer;" />
+              <input type="color" id="building-color-picker" value="#e68f60" style="width: 26px; height: 22px; padding: 0; border: 1px solid #cbd5e1; border-radius: 5px; background: transparent; cursor: pointer;" />
               <button type="button" id="btn-reset-building-color" class="btn-custom" style="padding: 2px 6px; font-size: 10px; line-height: 1.4; white-space: nowrap;">기본값</button>
             </div>
           </div>
@@ -2737,7 +2737,7 @@
   </div>
 
   <label id="pov-mobile-neighbor-toggle" class="pov-mobile-neighbor-toggle sheet-stage-hidden" for="pov-mobile-layer-neighbors" aria-label="주변건물 표시">
-    <input type="checkbox" id="pov-mobile-layer-neighbors">
+    <input type="checkbox" id="pov-mobile-layer-neighbors" checked>
     <span>주변건물</span>
   </label>
 
@@ -2975,27 +2975,9 @@
               return neighbor && neighbor.code && Number(neighbor.distanceM) <= 500;
             });
             if (!neighbors.length) return Promise.resolve([]);
-            var loadedModels = [];
-            var nextIndex = 0;
-            function loadNext() {
-              if (nextIndex >= neighbors.length) return Promise.resolve();
-              var neighbor = neighbors[nextIndex++];
-              return fetchApartmentComplex(neighbor.code).then(function (model) {
-                model.searchCode = model.searchCode || String(neighbor.code);
-                model.name = model.name || neighbor.name || '';
-                loadedModels.push(model);
-              }).catch(function (error) {
-                console.warn('주변 단지 3D 데이터를 불러오지 못했습니다:', neighbor.code, error);
-              }).then(loadNext);
-            }
-            var workerCount = Math.min(8, neighbors.length);
-            apartmentNeighborModelsPromise = Promise.all(Array.from({ length: workerCount }, loadNext)).then(function () {
-              if (window.viewInstance === viewInstance) viewInstance.setApartmentNeighborModels(loadedModels);
-              return loadedModels;
-            }).catch(function (error) {
-              apartmentNeighborModelsPromise = null;
-              throw error;
-            });
+            // 추가 JSON fetch 없이 이름표만 즉시 배치 (주변 건물은 OpenFreeMap 1-Draw-Call 추출로 통합)
+            viewInstance.setApartmentNeighborModels(neighbors);
+            apartmentNeighborModelsPromise = Promise.resolve(neighbors);
             return apartmentNeighborModelsPromise;
           }
 
@@ -3290,6 +3272,10 @@
               });
             }
           });
+          var initNeighborEl = document.getElementById('layer-neighbors');
+          if (initNeighborEl && initNeighborEl.checked) {
+            loadApartmentNeighborModels().catch(function () {});
+          }
           if (mobileNeighborCheckbox) {
             mobileNeighborCheckbox.addEventListener('change', function () {
               var neighborCheckbox = document.getElementById('layer-neighbors');
