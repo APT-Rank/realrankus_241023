@@ -1298,6 +1298,28 @@
         text-overflow: ellipsis;
       }
 
+      /* 바텀메뉴 드래그/애니메이션 중 리소스 집중 모드 (모든 배경 블러/포인터/스크롤 레이어 일시 중지) */
+      body.is-sheet-busy #complex3d_container {
+        pointer-events: none !important;
+      }
+      body.is-sheet-busy .top-bar,
+      body.is-sheet-busy .compass-container,
+      body.is-sheet-busy .map-controls,
+      body.is-sheet-busy .pov-top-hud,
+      body.is-sheet-busy .floor-pov-banner,
+      body.is-sheet-busy .sun-info-hud,
+      body.is-sheet-busy .pov-direction-hud,
+      body.is-sheet-busy .pov-fov-bar,
+      body.is-sheet-busy .pov-mobile-neighbor-toggle {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        pointer-events: none !important;
+      }
+      body.is-sheet-busy .control-panel {
+        overflow-y: hidden !important;
+        will-change: transform;
+      }
+
       /* 5, 8, 10) Mobile Bottom Sheet (하단 슬라이딩 서랍 시트) */
       .control-panel {
         position: absolute;
@@ -1310,18 +1332,14 @@
         max-height: 94dvh;
         padding: 4px 12px 14px 12px;
         border-radius: 10px 10px 0 0; /* 10) 바텀시트 Radius 1/2 (20px -> 10px) */
-        background: rgba(255, 255, 255, 0.98);
+        background: rgba(255, 255, 255, 0.99);
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        contain: layout style;
         box-shadow: 0 -6px 26px rgba(15, 23, 42, 0.16);
         border-top: 1px solid rgba(226, 232, 240, 0.95);
         z-index: 1100;
         gap: 4px;
         transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1);
-        will-change: transform;
         box-sizing: border-box;
         overflow-x: hidden;
         overflow-y: hidden;
@@ -1490,6 +1508,10 @@
       .panel-card {
         padding: 8px 10px;
         border-radius: 8px;
+        background: #ffffff !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
       }
       .panel-card-primary {
         padding: 4px 10px 8px 10px;
@@ -2227,7 +2249,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261116_1554"></script>
+  <script src="./js/complex_3d_view.js?v=20261116_1717"></script>
 </head>
 <body>
 
@@ -4246,8 +4268,18 @@
             });
           }
 
-          function measureMobileSheetStages() {
+          var mobileSheetStageCacheKey = '';
+          function getMobileSheetCacheKey() {
+            var dongCount = dongBtnGroup ? dongBtnGroup.children.length : 0;
+            return window.innerWidth + 'x' + window.innerHeight + ':' + dongCount;
+          }
+
+          function measureMobileSheetStages(force) {
             if (!controlPanel) return null;
+            var cacheKey = getMobileSheetCacheKey();
+            if (!force && mobileSheetStageRects && mobileSheetStageCacheKey === cacheKey) {
+              return mobileSheetStageRects;
+            }
             var originalClassName = controlPanel.className;
             var styleProperties = ['position', 'top', 'right', 'bottom', 'left', 'width', 'height', 'max-height', 'transform', '--sheet-free-height', '--sheet-stage-offset'];
             var originalStyles = {};
@@ -4292,6 +4324,7 @@
               }
             });
             mobileSheetStageRects = stageRects;
+            mobileSheetStageCacheKey = cacheKey;
             return stageRects;
           }
 
@@ -4348,7 +4381,21 @@
             var isExpanding = deltaY > 0.5;
             var isCollapsing = deltaY < -0.5;
 
+            function setSheetBusy(busy) {
+              document.body.classList.toggle('is-sheet-busy', !!busy);
+              if (viewInstance && typeof viewInstance.setRenderPaused === 'function') {
+                if (busy) {
+                  viewInstance.setRenderPaused(true);
+                } else {
+                  var isFullCovered = controlPanel.classList.contains('stage-3') ||
+                    (mobileSheetReleasedRect && mobileSheetReleasedRect.height > window.innerHeight * 0.8);
+                  viewInstance.setRenderPaused(!!isFullCovered);
+                }
+              }
+            }
+
             if (isExpanding && typeof controlPanel.animate === 'function') {
+              setSheetBusy(true);
               // 확장 시: 최종 크기/위치를 즉시 반영하고 GPU transform(translateY)만 부드럽게 슬라이드
               controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
               controlPanel.classList.add('stage-' + stage);
@@ -4360,15 +4407,18 @@
                 { transform: 'translate3d(0, ' + deltaY + 'px, 0)' },
                 { transform: 'translate3d(0, 0, 0)' }
               ], {
-                duration: 300,
+                duration: 280,
                 easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
               });
               mobileSheetStageAnimation = stageAnimation;
               stageAnimation.onfinish = function () {
                 if (mobileSheetStageAnimation !== stageAnimation) return;
                 mobileSheetStageAnimation = null;
+                setSheetBusy(false);
+                if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
               };
             } else if (isCollapsing && typeof controlPanel.animate === 'function') {
+              setSheetBusy(true);
               // 축소 시: 현재 크기 유지한 채 GPU transform(translateY)으로 내려간 뒤 최종 stage 클래스 적용
               controlPanel.style.top = startRect.top + 'px';
               controlPanel.style.height = startRect.height + 'px';
@@ -4378,7 +4428,7 @@
                 { transform: 'translate3d(0, 0, 0)' },
                 { transform: 'translate3d(0, ' + (-deltaY) + 'px, 0)' }
               ], {
-                duration: 280,
+                duration: 260,
                 easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
                 fill: 'forwards'
               });
@@ -4390,10 +4440,14 @@
                 controlPanel.classList.add('stage-' + stage);
                 controlPanel.style.top = targetRect.top + 'px';
                 controlPanel.style.height = targetRect.height + 'px';
+                void controlPanel.offsetHeight;
                 mobileSheetStageAnimation = null;
                 collapseAnim.cancel();
-                controlPanel.classList.remove('is-stage-preparing');
-                if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
+                window.requestAnimationFrame(function () {
+                  controlPanel.classList.remove('is-stage-preparing');
+                  setSheetBusy(false);
+                  if (currentPOVInfo) positionMobilePOVFovBar();
+                });
               };
             } else {
               controlPanel.classList.remove('stage-1', 'stage-2', 'stage-3');
@@ -4401,6 +4455,7 @@
               controlPanel.style.top = targetRect.top + 'px';
               controlPanel.style.height = targetRect.height + 'px';
               controlPanel.classList.remove('is-stage-preparing');
+              setSheetBusy(false);
             }
             if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
             if (mobileSheetFollowFrame) {
@@ -4452,6 +4507,13 @@
             }
 
             controlPanel.classList.remove('is-dragging');
+            document.body.classList.remove('is-sheet-busy');
+            if (currentPOVInfo) window.requestAnimationFrame(positionMobilePOVFovBar);
+            if (viewInstance && typeof viewInstance.setRenderPaused === 'function') {
+              var isFullCovered = controlPanel.classList.contains('stage-3') ||
+                (mobileSheetReleasedRect && mobileSheetReleasedRect.height > window.innerHeight * 0.8);
+              viewInstance.setRenderPaused(!!isFullCovered);
+            }
           }
 
           if (sheetToggle && controlPanel) {
@@ -4488,6 +4550,10 @@
               var deltaY = event.clientY - sheetDrag.startY;
               if (!sheetDrag.moved && Math.abs(deltaY) > 4) {
                 sheetDrag.moved = true;
+                document.body.classList.add('is-sheet-busy');
+                if (viewInstance && typeof viewInstance.setRenderPaused === 'function') {
+                  viewInstance.setRenderPaused(true);
+                }
                 controlPanel.classList.add('is-stage-preparing');
                 controlPanel.style.setProperty('--sheet-free-height', sheetDrag.startHeight + 'px');
                 controlPanel.classList.add('is-free-dragging', 'is-dragging');
@@ -4507,7 +4573,6 @@
                   dragPendingFrame = null;
                   if (dragLatestHeight !== null) {
                     controlPanel.style.setProperty('--sheet-free-height', dragLatestHeight + 'px');
-                    if (currentPOVInfo) positionMobilePOVFovBar();
                   }
                 });
               }

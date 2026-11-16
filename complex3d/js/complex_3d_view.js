@@ -4630,9 +4630,11 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
 
   // --- 10. Animation Loop ---
   var isAnimating = true;
+  var isRenderPaused = false;
   function animate() {
     if (!isAnimating) return;
     requestAnimationFrame(animate);
+    if (isRenderPaused) return;
 
     // 창밖 조망 모드에서는 카메라 좌표를 발코니 난간에 엄격히 고정
     if (isPOVMode && currentPOVSubMode === 'outward') {
@@ -4747,6 +4749,12 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     },
     setGroundColor: function (hex) {
       loadNaverMapGroundTexture('custom_color', hex);
+    },
+    setRenderPaused: function (paused) {
+      isRenderPaused = !!paused;
+      if (!isRenderPaused) {
+        renderer.render(scene, camera);
+      }
     },
     lookDirection: function (dir) {
       // 1) 동서남북 버튼 클릭 시: 카메라 뷰포인트(타겟 위치, 관측 고도 h, 관측 거리 d)는 100% 유지하고 수평 방향만 해당 방향을 전방으로 회전
