@@ -625,6 +625,20 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       }
     }
 
+    // 야간 시 건물 와이어프레임(외곽선)을 차분한 밝은 회색(#94a3b8)으로, 주간 시 슬레이트(#1e293b)로 전환
+    var wireframeHex = isNightMode ? 0x94a3b8 : 0x1e293b;
+    if (typeof celLineMat !== 'undefined' && celLineMat && celLineMat.color) {
+      celLineMat.color.setHex(wireframeHex);
+    }
+    if (typeof interactiveFloors !== 'undefined' && Array.isArray(interactiveFloors)) {
+      for (var wfIdx = 0; wfIdx < interactiveFloors.length; wfIdx++) {
+        var wfMesh = interactiveFloors[wfIdx];
+        if (wfMesh && wfMesh.userData && wfMesh.userData.edgeLine && wfMesh.userData.edgeLine.material) {
+          wfMesh.userData.edgeLine.material.color.setHex(wireframeHex);
+        }
+      }
+    }
+
     renderShinkaiSky(currentHour);
 
     if (typeof window.onComplex3dSunUpdate === 'function') {
