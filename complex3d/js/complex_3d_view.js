@@ -1577,6 +1577,37 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             pixelRatio: 1.5
           });
 
+          // 수계(연파랑), 공원·산림(연녹색), 주요 도로(연노랑/웜화이트) 스타일 커스터마이징
+          mlMap.once('styledata', function () {
+            try {
+              var st = mlMap.getStyle();
+              var layers = (st && st.layers) || [];
+              for (var li = 0; li < layers.length; li++) {
+                var lyr = layers[li];
+                if (!lyr || !lyr.id) continue;
+                var srcLayer = lyr['source-layer'] || '';
+                var id = lyr.id;
+                try {
+                  if (srcLayer === 'water' || srcLayer === 'waterway' || /water/i.test(id)) {
+                    if (lyr.type === 'fill') {
+                      mlMap.setPaintProperty(id, 'fill-color', '#bae6fd');
+                    } else if (lyr.type === 'line') {
+                      mlMap.setPaintProperty(id, 'line-color', '#bae6fd');
+                    }
+                  } else if (srcLayer === 'park' && lyr.type === 'fill') {
+                    mlMap.setPaintProperty(id, 'fill-color', '#d1fae5');
+                  } else if (id === 'landcover_wood' && lyr.type === 'fill') {
+                    mlMap.setPaintProperty(id, 'fill-color', '#cfead6');
+                  } else if (lyr.type === 'line' && /highway_motorway.*inner|tunnel_motorway_inner/.test(id)) {
+                    mlMap.setPaintProperty(id, 'line-color', '#fde68a');
+                  } else if (lyr.type === 'line' && id === 'highway_major_inner') {
+                    mlMap.setPaintProperty(id, 'line-color', '#fef9c3');
+                  }
+                } catch (pErr) {}
+              }
+            } catch (sErr) {}
+          });
+
           var captured = false;
           var fallbackTimer = setTimeout(function () {
             if (!captured) {
