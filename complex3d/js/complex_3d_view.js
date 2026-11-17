@@ -1224,16 +1224,31 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     for (var dy = -1; dy <= 1; dy++) {
       for (var dx = -1; dx <= 1; dx++) {
         (function (ox, oy) {
-          jobs.push(new Promise(function (resolve) {
-            var img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = function () {
-              demCtx.drawImage(img, (ox + 1) * 256, (oy + 1) * 256, 256, 256);
-              resolve(true);
-            };
-            img.onerror = function () { resolve(false); };
-            img.src = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + terrainDemZoom + '/' + (cTx + ox) + '/' + (cTy + oy) + '.png';
-          }));
+          var tileUrl = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + terrainDemZoom + '/' + (cTx + ox) + '/' + (cTy + oy) + '.png';
+          var p = (typeof fetch === 'function' && typeof createImageBitmap === 'function')
+            ? fetch(tileUrl, { mode: 'cors' })
+                .then(function (resp) {
+                  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                  return resp.blob();
+                })
+                .then(function (blob) { return createImageBitmap(blob); })
+                .then(function (bmp) {
+                  demCtx.drawImage(bmp, (ox + 1) * 256, (oy + 1) * 256, 256, 256);
+                  if (bmp && typeof bmp.close === 'function') bmp.close();
+                  return true;
+                })
+                .catch(function () { return false; })
+            : new Promise(function (resolve) {
+                var img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function () {
+                  demCtx.drawImage(img, (ox + 1) * 256, (oy + 1) * 256, 256, 256);
+                  resolve(true);
+                };
+                img.onerror = function () { resolve(false); };
+                img.src = tileUrl;
+              });
+          jobs.push(p);
         })(dx, dy);
       }
     }
@@ -1241,17 +1256,26 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     Promise.all(jobs).then(function (results) {
       if (!results.some(Boolean)) {
         terrainDemState = 'error';
+        window.debugTerrainStatus = { state: 'error', reason: 'no_tiles_loaded' };
+        console.warn('[3D Terrain] DEM tile load failed.');
         return;
       }
       terrainDemData = demCtx.getImageData(0, 0, terrainDemSize, terrainDemSize).data;
       terrainCenterElev = sampleTerrainRawElev(0, 0);
       terrainDemState = 'ready';
+      window.debugTerrainStatus = {
+        state: 'ready',
+        enabled: terrainEnabled,
+        centerElev: Math.round(terrainCenterElev * 10) / 10
+      };
       if (terrainEnabled) {
         applyTerrainToGround();
         applyTerrainToSceneObjects();
       }
-    }).catch(function () {
+    }).catch(function (err) {
       terrainDemState = 'error';
+      window.debugTerrainStatus = { state: 'error', reason: String(err) };
+      console.warn('[3D Terrain] DEM error:', err);
     });
   }
 
