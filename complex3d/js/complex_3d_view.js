@@ -1839,7 +1839,7 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             pixelRatio: 1.5
           });
 
-          // 수계(연파랑), 공원·산림(연녹색), 주요 도로(연노랑/웜화이트) 스타일 커스터마이징
+          // 수계(선명한 스카이블루), 공원·산림(생동감 있는 녹지), 주요 도로(연노랑/웜화이트) 스타일 커스터마이징
           mlMap.once('styledata', function () {
             try {
               var st = mlMap.getStyle();
@@ -1852,14 +1852,18 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
                 try {
                   if (srcLayer === 'water' || srcLayer === 'waterway' || /water/i.test(id)) {
                     if (lyr.type === 'fill') {
-                      mlMap.setPaintProperty(id, 'fill-color', '#bae6fd');
+                      mlMap.setPaintProperty(id, 'fill-color', '#7dd3fc');
+                      mlMap.setPaintProperty(id, 'fill-opacity', 1);
                     } else if (lyr.type === 'line') {
-                      mlMap.setPaintProperty(id, 'line-color', '#bae6fd');
+                      mlMap.setPaintProperty(id, 'line-color', '#60a5fa');
+                      mlMap.setPaintProperty(id, 'line-opacity', 1);
                     }
                   } else if (srcLayer === 'park' && lyr.type === 'fill') {
-                    mlMap.setPaintProperty(id, 'fill-color', '#d1fae5');
+                    mlMap.setPaintProperty(id, 'fill-color', '#86efac');
+                    mlMap.setPaintProperty(id, 'fill-opacity', 0.85);
                   } else if (id === 'landcover_wood' && lyr.type === 'fill') {
-                    mlMap.setPaintProperty(id, 'fill-color', '#cfead6');
+                    mlMap.setPaintProperty(id, 'fill-color', '#68d391');
+                    mlMap.setPaintProperty(id, 'fill-opacity', 0.85);
                   } else if (lyr.type === 'line' && /highway_motorway.*inner|tunnel_motorway_inner/.test(id)) {
                     mlMap.setPaintProperty(id, 'line-color', '#fde68a');
                   } else if (lyr.type === 'line' && id === 'highway_major_inner') {
