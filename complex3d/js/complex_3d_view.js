@@ -1330,6 +1330,63 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     return inside;
   }
 
+  var primaryBuildingFootprints = [];
+  (data3d.buildings || []).forEach(function (b) {
+    if (!b || !b.rings || !b.rings[0] || b.rings[0].length < 3) return;
+    var pts = [];
+    var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (var i = 0; i < b.rings[0].length; i++) {
+      var pt = b.rings[0][i];
+      if (!pt || pt.length < 2) continue;
+      var xy = toLocalXY(Number(pt[0]), Number(pt[1]));
+      if (!isFinite(xy.x) || !isFinite(xy.y)) continue;
+      pts.push(xy);
+      if (xy.x < minX) minX = xy.x;
+      if (xy.x > maxX) maxX = xy.x;
+      if (xy.y < minY) minY = xy.y;
+      if (xy.y > maxY) maxY = xy.y;
+    }
+    if (pts.length < 3 || !isFinite(minX)) return;
+    var area = Math.max(1, (maxX - minX) * (maxY - minY));
+    primaryBuildingFootprints.push({
+      pts: pts,
+      minX: minX,
+      maxX: maxX,
+      minY: minY,
+      maxY: maxY,
+      area: area
+    });
+  });
+
+  function overlapsPrimaryComplexBuilding(localPts, minX, maxX, minY, maxY, cx, cy) {
+    if (!primaryBuildingFootprints.length) return false;
+    var candArea = Math.max(1, (maxX - minX) * (maxY - minY));
+    for (var i = 0; i < primaryBuildingFootprints.length; i++) {
+      var pb = primaryBuildingFootprints[i];
+      if (maxX < pb.minX - 2 || minX > pb.maxX + 2 || maxY < pb.minY - 2 || minY > pb.maxY + 2) continue;
+
+      if (cx >= pb.minX && cx <= pb.maxX && cy >= pb.minY && cy <= pb.maxY && isPointInPolygon2D(cx, cy, pb.pts)) {
+        return true;
+      }
+
+      var ix = Math.max(0, Math.min(maxX, pb.maxX) - Math.max(minX, pb.minX));
+      var iy = Math.max(0, Math.min(maxY, pb.maxY) - Math.max(minY, pb.minY));
+      if (ix * iy >= 0.25 * Math.min(candArea, pb.area)) {
+        return true;
+      }
+
+      if (localPts && localPts.length) {
+        for (var vi = 0; vi < localPts.length; vi++) {
+          var v = localPts[vi];
+          if (v.x >= pb.minX && v.x <= pb.maxX && v.y >= pb.minY && v.y <= pb.maxY && isPointInPolygon2D(v.x, v.y, pb.pts)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   function collectNeighborCandidateEntries() {
     var list = [];
     if (!neighborGroup || !neighborGroup.children) return list;
@@ -1523,6 +1580,10 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var dedupKey = Math.round(cx / 4) + ',' + Math.round(cy / 4);
       if (seenCentroids[dedupKey]) return;
       seenCentroids[dedupKey] = true;
+
+      if (overlapsPrimaryComplexBuilding(localPts, minX, maxX, minY, maxY, cx, cy)) {
+        return;
+      }
 
       for (var bi = 0; bi < occupiedBoxes.length; bi++) {
         var ob = occupiedBoxes[bi];
@@ -2581,6 +2642,24 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     }
     var shape = createShapeFromRing(n.rings[0]);
     if (!shape) return;
+    if (shape.transformedPts && shape.transformedPts.length >= 3) {
+      var nMinX = Infinity, nMaxX = -Infinity, nMinY = Infinity, nMaxY = -Infinity;
+      var nSumX = 0, nSumY = 0;
+      for (var ni = 0; ni < shape.transformedPts.length; ni++) {
+        var np = shape.transformedPts[ni];
+        nSumX += np.x;
+        nSumY += np.y;
+        if (np.x < nMinX) nMinX = np.x;
+        if (np.x > nMaxX) nMaxX = np.x;
+        if (np.y < nMinY) nMinY = np.y;
+        if (np.y > nMaxY) nMaxY = np.y;
+      }
+      var nCx = nSumX / shape.transformedPts.length;
+      var nCy = nSumY / shape.transformedPts.length;
+      if (overlapsPrimaryComplexBuilding(shape.transformedPts, nMinX, nMaxX, nMinY, nMaxY, nCx, nCy)) {
+        return;
+      }
+    }
 
     var height = getNeighborBuildingHeight(n);
     var geom = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
