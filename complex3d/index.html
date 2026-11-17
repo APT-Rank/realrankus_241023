@@ -2539,6 +2539,10 @@
             </div>
           </div>
         </div>
+        <label class="infra-toggle-item" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(148, 163, 184, 0.35);">
+          <input type="checkbox" id="layer-terrain-3d" checked>
+          <span class="infra-tag">⛰️ <b>지형 고저차</b></span>
+        </label>
       </div>
     </div>
   </div>
@@ -2698,6 +2702,10 @@
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
+        <label class="infra-toggle-item" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(148, 163, 184, 0.35);">
+          <input type="checkbox" id="layer-terrain-3d" checked>
+          <span class="infra-tag">⛰️ <b>지형 고저차</b></span>
+        </label>
       </div>
     </div>
   </div>
@@ -3308,6 +3316,16 @@
             layerDongLabels.addEventListener('change', function () {
               if (viewInstance && typeof viewInstance.setDongLabelsVisible === 'function') {
                 viewInstance.setDongLabelsVisible(layerDongLabels.checked);
+              }
+            });
+          }
+
+          // 지형 고저차 (3D DEM 테스트) 토글
+          var layerTerrain3d = document.getElementById('layer-terrain-3d');
+          if (layerTerrain3d) {
+            layerTerrain3d.addEventListener('change', function () {
+              if (viewInstance && typeof viewInstance.setTerrainEnabled === 'function') {
+                viewInstance.setTerrainEnabled(layerTerrain3d.checked);
               }
             });
           }

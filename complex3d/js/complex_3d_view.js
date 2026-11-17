@@ -1004,6 +1004,257 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   ground.receiveShadow = true;
   scene.add(ground);
 
+  // --- 4-1. 3D 지형 고저차 (AWS Mapzen Terrarium DEM 타일 기반, 기본값 ON) ---
+  var terrainEnabled = true;
+  var terrainDemState = 'idle'; // 'idle' | 'loading' | 'ready' | 'error'
+  var terrainDemData = null;
+  var terrainDemSize = 768; // 3x3 tiles (256px * 3)
+  var terrainDemZoom = 13;
+  var terrainDemOriginTileX = 0;
+  var terrainDemOriginTileY = 0;
+  var terrainCenterElev = 0;
+
+  function lngLatToTileFloat(lng, lat, z) {
+    var n = Math.pow(2, z);
+    var tx = ((lng + 180) / 360) * n;
+    var latRad = lat * Math.PI / 180;
+    var ty = (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n;
+    return { tx: tx, ty: ty };
+  }
+
+  function decodeTerrariumPixel(px, py) {
+    if (!terrainDemData) return 0;
+    var ix = Math.max(0, Math.min(terrainDemSize - 1, px));
+    var iy = Math.max(0, Math.min(terrainDemSize - 1, py));
+    var idx = (iy * terrainDemSize + ix) * 4;
+    var r = terrainDemData[idx];
+    var g = terrainDemData[idx + 1];
+    var b = terrainDemData[idx + 2];
+    return (r * 256 + g + b / 256) - 32768;
+  }
+
+  function sampleTerrainRawElev(worldX, worldZ) {
+    if (!terrainDemData) return 0;
+    var lng = center.lng + worldX / lngMeters;
+    var lat = center.lat - worldZ / latMeters;
+    var tf = lngLatToTileFloat(lng, lat, terrainDemZoom);
+    var px = (tf.tx - terrainDemOriginTileX) * 256;
+    var py = (tf.ty - terrainDemOriginTileY) * 256;
+    var x0 = Math.floor(px), y0 = Math.floor(py);
+    var fx = px - x0, fy = py - y0;
+    var e00 = decodeTerrariumPixel(x0, y0);
+    var e10 = decodeTerrariumPixel(x0 + 1, y0);
+    var e01 = decodeTerrariumPixel(x0, y0 + 1);
+    var e11 = decodeTerrariumPixel(x0 + 1, y0 + 1);
+    var e0 = e00 + (e10 - e00) * fx;
+    var e1 = e01 + (e11 - e01) * fx;
+    return e0 + (e1 - e0) * fy;
+  }
+
+  function getTerrainY(worldX, worldZ) {
+    if (!terrainEnabled || terrainDemState !== 'ready' || !terrainDemData) return 0;
+    return sampleTerrainRawElev(worldX, worldZ) - terrainCenterElev;
+  }
+
+  function buildTerrainCircleGeometry(radius, radialSegs, ringSegs) {
+    var geom = new THREE.BufferGeometry();
+    var positions = [];
+    var uvs = [];
+    var indices = [];
+
+    // 중심점 (index 0)
+    positions.push(0, 0, 0);
+    uvs.push(0.5, 0.5);
+
+    for (var rIdx = 1; rIdx <= ringSegs; rIdx++) {
+      var rFrac = rIdx / ringSegs;
+      var r = radius * rFrac;
+      for (var aIdx = 0; aIdx <= radialSegs; aIdx++) {
+        var theta = (aIdx / radialSegs) * Math.PI * 2;
+        var vx = r * Math.cos(theta);
+        var vy = r * Math.sin(theta);
+        positions.push(vx, vy, 0);
+        uvs.push(0.5 + vx / (2 * radius), 0.5 + vy / (2 * radius));
+      }
+    }
+
+    var stride = radialSegs + 1;
+    // 첫 번째 링 삼각형 팬
+    for (var a0 = 0; a0 < radialSegs; a0++) {
+      indices.push(0, 1 + a0, 1 + a0 + 1);
+    }
+    // 나머지 링 쿼드
+    for (var r1 = 1; r1 < ringSegs; r1++) {
+      var rowA = 1 + (r1 - 1) * stride;
+      var rowB = 1 + r1 * stride;
+      for (var a1 = 0; a1 < radialSegs; a1++) {
+        var i00 = rowA + a1;
+        var i01 = rowA + a1 + 1;
+        var i10 = rowB + a1;
+        var i11 = rowB + a1 + 1;
+        indices.push(i00, i10, i01);
+        indices.push(i01, i10, i11);
+      }
+    }
+
+    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geom.setIndex(indices);
+    geom.computeVertexNormals();
+    return geom;
+  }
+
+  function applyTerrainToGround() {
+    if (!ground) return;
+    if (ground.geometry) ground.geometry.dispose();
+    if (!terrainEnabled || terrainDemState !== 'ready') {
+      ground.geometry = new THREE.CircleGeometry(groundRadius, 64);
+      return;
+    }
+    var tGeom = buildTerrainCircleGeometry(groundRadius, 84, 56);
+    var posAttr = tGeom.getAttribute('position');
+    var sx = ground.scale.x || 1;
+    var sy = ground.scale.y || 1;
+    var gx = ground.position.x || 0;
+    var gz = ground.position.z || 0;
+    for (var i = 0; i < posAttr.count; i++) {
+      var vx = posAttr.getX(i);
+      var vy = posAttr.getY(i);
+      var wx = gx + vx * sx;
+      var wz = gz - vy * sy;
+      posAttr.setZ(i, getTerrainY(wx, wz));
+    }
+    posAttr.needsUpdate = true;
+    tGeom.computeVertexNormals();
+    ground.geometry = tGeom;
+  }
+
+  function applyTerrainToSceneObjects() {
+    // 1. 주 단지 층별 메쉬 + 와이어프레임 + 동 라벨
+    interactiveFloors.forEach(function (m) {
+      if (m.userData._origBaseY === undefined) m.userData._origBaseY = m.position.y;
+      var dongKey = m.userData.dong;
+      var dc = dongKey && dongCenters[dongKey];
+      var gy = dc ? getTerrainY(dc.x, dc.z) : 0;
+      m.position.y = m.userData._origBaseY + gy;
+      if (m.userData.edgeLine) {
+        if (m.userData.edgeLine.userData._origBaseY === undefined) {
+          m.userData.edgeLine.userData._origBaseY = m.userData.edgeLine.position.y;
+        }
+        m.userData.edgeLine.position.y = m.userData.edgeLine.userData._origBaseY + gy;
+      }
+    });
+    scene.traverse(function (obj) {
+      if (obj.isSprite && obj.userData && obj.userData.isDongLabel) {
+        if (obj.userData._origBaseY === undefined) obj.userData._origBaseY = obj.position.y;
+        obj.position.y = obj.userData._origBaseY + getTerrainY(obj.position.x, obj.position.z);
+      }
+    });
+
+    // 2. VWorld 주변 건물 메쉬/라인
+    if (neighborGroup && neighborGroup.children) {
+      var meshYMap = [];
+      neighborGroup.children.forEach(function (child) {
+        if (child.userData && child.userData.isOpenFreeMapContext) return;
+        if (child.isMesh && child.geometry) {
+          if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+          var bb = child.geometry.boundingBox;
+          if (bb) {
+            var gy = getTerrainY((bb.min.x + bb.max.x) * 0.5, (bb.min.z + bb.max.z) * 0.5);
+            child.position.y = gy;
+            meshYMap.push(gy);
+          }
+        }
+      });
+      Object.keys(neighborObjectKeys).forEach(function (k) {
+        var ent = neighborObjectKeys[k];
+        if (ent && ent.mesh && ent.line) {
+          ent.line.position.y = ent.mesh.position.y;
+        }
+      });
+    }
+
+    // 3. OpenFreeMap 배경 건물 1-draw-call 재빌드
+    if (contextBuildingsMesh) {
+      neighborGroup.remove(contextBuildingsMesh);
+      if (contextBuildingsMesh.geometry) contextBuildingsMesh.geometry.dispose();
+      if (contextBuildingsMesh.material) contextBuildingsMesh.material.dispose();
+      contextBuildingsMesh = null;
+    }
+    if (cachedOpenFreeMapBuildings && neighborGroup.visible) {
+      buildMergedOpenFreeMapContextBuildings(cachedOpenFreeMapBuildings);
+    }
+
+    // 4. 인프라 라벨/마커
+    Object.keys(infraGroups).forEach(function (cat) {
+      var grp = infraGroups[cat];
+      if (!grp || !grp.children) return;
+      grp.children.forEach(function (ch) {
+        if (ch.userData._origBaseY === undefined) ch.userData._origBaseY = ch.position.y;
+        ch.position.y = ch.userData._origBaseY + getTerrainY(ch.position.x, ch.position.z);
+      });
+    });
+
+    if (typeof invalidateDirectSunlight === 'function') {
+      invalidateDirectSunlight(true);
+    }
+  }
+
+  function loadTerrariumDEMAndApply() {
+    if (terrainDemState === 'ready') {
+      applyTerrainToGround();
+      applyTerrainToSceneObjects();
+      return;
+    }
+    if (terrainDemState === 'loading') return;
+    terrainDemState = 'loading';
+
+    var cTile = lngLatToTileFloat(center.lng, center.lat, terrainDemZoom);
+    var cTx = Math.floor(cTile.tx);
+    var cTy = Math.floor(cTile.ty);
+    terrainDemOriginTileX = cTx - 1;
+    terrainDemOriginTileY = cTy - 1;
+
+    var demCanvas = document.createElement('canvas');
+    demCanvas.width = terrainDemSize;
+    demCanvas.height = terrainDemSize;
+    var demCtx = demCanvas.getContext('2d');
+
+    var jobs = [];
+    for (var dy = -1; dy <= 1; dy++) {
+      for (var dx = -1; dx <= 1; dx++) {
+        (function (ox, oy) {
+          jobs.push(new Promise(function (resolve) {
+            var img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function () {
+              demCtx.drawImage(img, (ox + 1) * 256, (oy + 1) * 256, 256, 256);
+              resolve(true);
+            };
+            img.onerror = function () { resolve(false); };
+            img.src = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + terrainDemZoom + '/' + (cTx + ox) + '/' + (cTy + oy) + '.png';
+          }));
+        })(dx, dy);
+      }
+    }
+
+    Promise.all(jobs).then(function (results) {
+      if (!results.some(Boolean)) {
+        terrainDemState = 'error';
+        return;
+      }
+      terrainDemData = demCtx.getImageData(0, 0, terrainDemSize, terrainDemSize).data;
+      terrainCenterElev = sampleTerrainRawElev(0, 0);
+      terrainDemState = 'ready';
+      if (terrainEnabled) {
+        applyTerrainToGround();
+        applyTerrainToSceneObjects();
+      }
+    }).catch(function () {
+      terrainDemState = 'error';
+    });
+  }
+
 
   // MapLibre GL JS 동적 로더 (OpenFreeMap 무료 벡터 타일 기반 일반 지도 & 배경 건물 추출 공용)
   function ensureMapLibreLoaded(cb) {
@@ -1341,6 +1592,14 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       var entry = buildingEntries[ci];
       var len = entry.posArray.length;
       mergedPos.set(entry.posArray, offset);
+      if (terrainEnabled && terrainDemState === 'ready') {
+        var bldgGroundY = getTerrainY(entry.cx, -entry.cy);
+        if (bldgGroundY !== 0) {
+          for (var yi = offset + 1; yi < offset + len; yi += 3) {
+            mergedPos[yi] += bldgGroundY;
+          }
+        }
+      }
       mergedNorm.set(entry.normArray, offset);
 
       var vertexStart = offset / 3;
@@ -1544,6 +1803,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
       groundMat.needsUpdate = true;
       ground.scale.set(1, 1, 1);
       ground.position.set(0, -0.2, 0);
+      if (terrainEnabled && terrainDemState === 'ready') {
+        applyTerrainToGround();
+      }
       window.debugNaverStatus = { called: true, mapType: mapType, updated: true, tileCount: 0 };
       return;
     }
@@ -1671,6 +1933,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
                   if (spanX > 10 && spanY > 10 && baseDiam > 10) {
                     ground.scale.set(spanX / baseDiam, spanY / baseDiam, 1);
                     ground.position.set((swXY.x + neXY.x) * 0.5, -0.2, -(swXY.y + neXY.y) * 0.5);
+                    if (terrainEnabled && terrainDemState === 'ready') {
+                      applyTerrainToGround();
+                    }
                   }
                   window.debugNaverStatus = {
                     called: true,
@@ -1854,6 +2119,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
             groundMat.needsUpdate = true;
             ground.scale.set(1, 1, 1);
             ground.position.set(0, -0.2, 0);
+            if (terrainEnabled && terrainDemState === 'ready') {
+              applyTerrainToGround();
+            }
             window.debugNaverStatus.updated = true;
             console.warn("[3D View] Ground texture successfully updated with CRISP 1:1 Naver Map tiles! Drawn:", drawnCount);
           }).catch(function (err) {
@@ -4975,6 +5243,9 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     renderer.render(scene, camera);
   }
   animate();
+  if (terrainEnabled) {
+    loadTerrariumDEMAndApply();
+  }
 
   function onResize() {
     if (!container) return;
@@ -5589,6 +5860,18 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     },
     getRadiusRingsVisible: function () {
       return radiusRingsGroup ? radiusRingsGroup.visible : true;
+    },
+    setTerrainEnabled: function (enabled) {
+      terrainEnabled = !!enabled;
+      if (terrainEnabled) {
+        loadTerrariumDEMAndApply();
+      } else {
+        applyTerrainToGround();
+        applyTerrainToSceneObjects();
+      }
+    },
+    getTerrainEnabled: function () {
+      return terrainEnabled;
     },
     getInfraStats: function () {
       return {
