@@ -5986,11 +5986,14 @@ function openComplex3dMap(searchCode) {
       regionCode: gunguCode
     };
     sessionStorage.setItem("complex3dData", JSON.stringify(dataToSend));
+    try {
+      localStorage.setItem("complex3dDataLaunch", JSON.stringify(dataToSend));
+    } catch (e) {}
 
     if (isMobile) {
       openComplex3dModal(searchCode, aptDataFull);
     } else {
-      window.open("./complex3d/index.html?code=" + searchCode + "&region=" + (gunguCode || "") + "&v=20261116_1825", "_blank");
+      window.open("./complex3d/index.html", "_blank");
     }
   }
 
@@ -6036,10 +6039,7 @@ function openComplex3dModal(searchCode, aptDataFull) {
     $("#complex3d_modal_loader_title").text("3D 단지 모형 준비 중");
   }
 
-  var gunguCode = aptDataFull ? (aptDataFull["시군구코드"] || "") : "";
-  var iframeUrl = "./complex3d/index.html?code=" + encodeURIComponent(searchCode) + 
-                  (gunguCode ? "&region=" + encodeURIComponent(gunguCode) : "") + 
-                  "&embedded=1&v=20261116_1825";
+  var iframeUrl = "./complex3d/index.html?embedded=1";
 
   var $modal = $("#complex3dModal");
   var oldIframe = document.getElementById("complex3d_iframe");

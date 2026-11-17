@@ -2888,17 +2888,48 @@
 
     window.addEventListener('DOMContentLoaded', function () {
       var urlParams = new URLSearchParams(window.location.search);
-      var code = urlParams.get('code') || urlParams.get('searchCode');
-      var region = urlParams.get('region');
+      var urlCode = urlParams.get('code') || urlParams.get('searchCode');
+      var urlRegion = urlParams.get('region');
+      var code = urlCode;
+      var region = urlRegion;
+      if (window.location.search && window.history && typeof window.history.replaceState === 'function') {
+        try {
+          window.history.replaceState(null, '', window.location.pathname + (window.location.hash || ''));
+        } catch (e) {}
+      }
+
       var raw = sessionStorage.getItem('complex3dData');
+      if (!raw) {
+        try {
+          var launchRaw = localStorage.getItem('complex3dDataLaunch');
+          if (launchRaw) {
+            raw = launchRaw;
+            sessionStorage.setItem('complex3dData', launchRaw);
+            localStorage.removeItem('complex3dDataLaunch');
+          }
+        } catch (e) {}
+      }
       var aptData = null;
 
       if (raw) {
         try {
           var parsed = JSON.parse(raw);
-          if (parsed.searchCode && !code) code = parsed.searchCode;
-          if (parsed.regionCode && !region) region = parsed.regionCode;
-          if (parsed.aptData) aptData = parsed.aptData;
+          // URL 파라미터가 명시된 경우 다른 단지의 기존 sessionStorage 데이터와 섞이지 않도록 일치할 때만 사용
+          if (!urlCode || String(parsed.searchCode || '') === String(urlCode)) {
+            if (parsed.searchCode && !code) code = parsed.searchCode;
+            if (parsed.regionCode && !region) region = parsed.regionCode;
+            if (parsed.aptData) aptData = parsed.aptData;
+          }
+        } catch (e) {}
+      }
+
+      if (urlCode) {
+        try {
+          sessionStorage.setItem('complex3dData', JSON.stringify({
+            searchCode: urlCode,
+            regionCode: region || '',
+            aptData: aptData
+          }));
         } catch (e) {}
       }
 
