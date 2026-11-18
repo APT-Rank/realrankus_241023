@@ -1144,6 +1144,16 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
         m.userData.edgeLine.position.y = m.userData.edgeLine.userData._origBaseY + gy;
       }
     });
+    // 1-1. 비주거 부대시설(관리소, 노인정, 상가 등) 단일 메쉬 지형 고도 반영
+    auxBuildingMeshes.forEach(function (am) {
+      var dongKey = am.userData && am.userData.dong;
+      var dc = dongKey && dongCenters[dongKey];
+      var gy = dc ? getTerrainY(dc.x, dc.z) : 0;
+      am.position.y = gy;
+      if (am.userData && am.userData.edgeLine) {
+        am.userData.edgeLine.position.y = gy;
+      }
+    });
     scene.traverse(function (obj) {
       if (obj.isSprite && obj.userData && obj.userData.isDongLabel) {
         if (obj.userData._origBaseY === undefined) obj.userData._origBaseY = obj.position.y;
@@ -2703,6 +2713,12 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
   // --- 7. 대상 단지 아파트 (Target Complex): 극장판 애니메이션 셀 작화풍 ---
   var constantScreenBillboards = [];
   var interactiveFloors = [];
+  var auxBuildingMeshes = [];
+  var auxBuildingMat = new THREE.MeshStandardMaterial({
+    color: 0xe2e8f0,
+    roughness: 0.72,
+    metalness: 0.04
+  });
   var dongMeshes = {};
   var dongCenters = {};
   var dongBBoxes = {};
@@ -2807,6 +2823,35 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     if (bBox.max.z > complexMaxZ) complexMaxZ = bBox.max.z;
 
     sampleGeom.dispose();
+
+    // 비주거 부대시설(관리소, 노인정, 경비실, 상가 등)은 층/라인 분할 및 베벨 없이 단일 매스로 압출해 폴리곤 절감
+    var auxNameRe = /(경비|관리|노인|경로당|주차|상가|유치원|어린이집|근린|펌프|전기|변전|발전|기계|보일러|창고|쓰레기|분리|화장실|주민|커뮤니티|복지|문고|독서|헬스|테니스|정자|공공|문주|스포츠|체육)/;
+    var isNonResidentialAux = (b.residential === false) || isAuxiliaryStructure ||
+      (auxNameRe.test(dongKey) && (!b.households || b.households <= 0) && totalFloors <= 4);
+    if (isNonResidentialAux) {
+      dongTotalFloors[dongKey] = totalFloors;
+      var auxGeom = new THREE.ExtrudeGeometry(baseShape, { depth: Math.max(2.5, bldgHeight), bevelEnabled: false });
+      auxGeom.rotateX(-Math.PI / 2);
+      var auxMesh = new THREE.Mesh(auxGeom, auxBuildingMat);
+      auxMesh.castShadow = true;
+      auxMesh.receiveShadow = true;
+      auxMesh.userData = {
+        dong: dongKey,
+        dongName: b.name || dongKey,
+        isAuxiliary: true,
+        isFloor: false
+      };
+      scene.add(auxMesh);
+      auxBuildingMeshes.push(auxMesh);
+      dongList.push(auxMesh);
+
+      var auxEdges = new THREE.EdgesGeometry(auxGeom, 35);
+      var auxLine = new THREE.LineSegments(auxEdges, celLineMat);
+      scene.add(auxLine);
+      auxMesh.userData.edgeLine = auxLine;
+      dongMeshes[dongKey] = dongList;
+      return;
+    }
 
     // ★ [핵심 혁신] 라인별 층수 단차 및 호수별(Unit) 3D 분할 압출 시스템 ★
     var lines = Array.isArray(b.lines) ? b.lines.filter(function (l) { return l && l.line; }) : [];
