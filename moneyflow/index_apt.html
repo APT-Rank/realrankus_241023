@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MoneyFlow APT - 통화량과 전국 부동산</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MoneyFlow APT">
+  <meta property="og:description" content="한국·미국 통화량과 전국 235개 지역 아파트 가격 흐름 비교">
+  <meta property="og:image" content="https://www.realrankus.com/moneyflow/thumbnail_mf.jpg">
+  <meta property="og:url" content="https://www.realrankus.com/moneyflow/index_apt.html">
+  <meta name="keyword" content="경제, 통화량, 부동산, 아파트, 시세, 리얼랭커스, MoneyFlow">
+  <meta name="description" content="리얼랭커스 MoneyFlow APT - 한국/미국 통화량 대비 전국 아파트 가격 추이">
+  <meta name="author" content="리얼랭커스">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=yes, minimal-ui, viewport-fit=cover">
+
+  <link rel="shortcut icon" href="https://www.realrankus.com/moneyflow/apt-rank-mf.png"/>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+
+  <link href="../css/style_common.css" rel="stylesheet"/>
+  <link href="./style_mf.css?v=20261106_4" rel="stylesheet"/>
+
+  <style>
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+    }
+
+    #apt_wrapper {
+      max-width: 1440px;
+      margin: 12px auto 28px auto;
+      padding: 0 12px;
+    }
+
+    #Money_Flow {
+      background: #ffffff;
+      border-radius: 6px;
+      margin: 0;
+      padding-bottom: 14px;
+    }
+
+    .apt_graph_container {
+      position: relative;
+      width: 100%;
+      height: 540px;
+      padding: 8px 10px 4px 10px;
+      box-sizing: border-box;
+    }
+
+    .apt_controls_panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      margin-top: 12px;
+      padding: 14px 16px;
+      box-shadow: rgba(60, 64, 67, 0.12) 0px 1px 3px 0px;
+    }
+
+    .apt_controls_header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .apt_preset_group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .apt_preset_btn {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 16px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .apt_preset_btn:hover {
+      background: #1355ac;
+      border-color: #1355ac;
+      color: #ffffff;
+    }
+
+    .apt_preset_btn.btn_reset:hover {
+      background: #d12145;
+      border-color: #d12145;
+      color: #ffffff;
+    }
+
+    .apt_filter_row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .apt_filter_row select {
+      width: 180px;
+      font-size: 0.84rem;
+    }
+
+    .apt_filter_row input {
+      flex: 1;
+      min-width: 200px;
+      max-width: 360px;
+      font-size: 0.84rem;
+    }
+
+    .apt_selected_tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      min-height: 28px;
+    }
+
+    .apt_tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f1f5f9;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+    }
+
+    .apt_tag_dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .apt_tag_remove {
+      cursor: pointer;
+      color: #64748b;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+
+    .apt_tag_remove:hover {
+      color: #d12145;
+    }
+
+    .apt_region_grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 6px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+
+    .apt_region_item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      font-size: 0.78rem;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.12s ease;
+    }
+
+    .apt_region_item:hover {
+      border-color: #1355ac;
+      background: #eff6ff;
+    }
+
+    .apt_region_item.selected {
+      background: #1355ac;
+      border-color: #1355ac;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .apt_region_item input[type="checkbox"] {
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .apt_status_note {
+      font-size: 0.76rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+      .daily_title_mf {
+        grid-template-columns: 1fr;
+        padding: 8px 10px;
+      }
+      .apt_graph_container {
+        height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 타이틀 영역 -->
+  <div id="titleBar_theme">
+    <div></div>
+    <div id="title" onClick="window.location.reload()">
+      <div style="display:flex; align-items: center">
+        <div style="padding-top: 8px;">
+          MoneyFlow<span id="themeLogo">APT</span> <span style="font-size: 0.6em; font-weight: 400; color:#777">powered by 리얼랭커스</span>
+        </div>
+      </div>
+    </div>
+    <div id="ref">
+      <div style="line-height: 30px; font-weight: 300">Copyright 2023 | 리얼랭커스 MoneyFlow</div>
+      <div style="line-height: 10px; font-weight: 300"><a href="mailto:aptranking@gmail.com" style="text-decoration:None; color:black">협업/광고/제휴문의는 aptranking@gmail.com으로 문의해 주세요</a></div>
+    </div>
+    <div></div>
+  </div>
+
+  <!-- 메인 컨테이너 -->
+  <div id="apt_wrapper">
+    <div class="daily_header_mf" id="Money_Flow">
+      <div class="daily_title_mf">
+        <div>
+          <svg viewBox="0 0 388 102" width="50" height="15" style="vertical-align: middle; margin-right: 0;">
+            <path fill="none" stroke="#1355ac" stroke-width="4" stroke-miterlimit="10" d="M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43"></path>
+            <path fill="none" stroke="#1355ac" stroke-width="8" stroke-miterlimit="10" d="M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43"></path>
+          </svg>
+          MoneyFlow APT <span style="font-size: 0.7em"> (2019년 6월 = 1.00)</span>
+        </div>
+
+        <div class="subSelection">
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_1Y_MONEY_FLOW_APT" onClick="changeAptDuration('1Y')"><label class="btn btn-outline-danger" for="redraw_1Y_MONEY_FLOW_APT">1Y</label></div>
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_3Y_MONEY_FLOW_APT" onClick="changeAptDuration('3Y')"><label class="btn btn-outline-danger" for="redraw_3Y_MONEY_FLOW_APT">3Y</label></div>
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_5Y_MONEY_FLOW_APT" onClick="changeAptDuration('5Y')" checked><label class="btn btn-outline-danger" for="redraw_5Y_MONEY_FLOW_APT">5Y</label></div>
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_10Y_MONEY_FLOW_APT" onClick="changeAptDuration('10Y')"><label class="btn btn-outline-danger" for="redraw_10Y_MONEY_FLOW_APT">10Y</label></div>
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_15Y_MONEY_FLOW_APT" onClick="changeAptDuration('15Y')"><label class="btn btn-outline-danger" for="redraw_15Y_MONEY_FLOW_APT">15Y</label></div>
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_20Y_MONEY_FLOW_APT" onClick="changeAptDuration('20Y')"><label class="btn btn-outline-danger" for="redraw_20Y_MONEY_FLOW_APT">20Y</label></div>
+          <div><input type="radio" class="btnRadio" name="MONEY_FLOW_APT" autocomplete="off" id="redraw_30Y_MONEY_FLOW_APT" onClick="changeAptDuration('30Y')"><label class="btn btn-outline-danger" for="redraw_30Y_MONEY_FLOW_APT">30Y</label></div>
+        </div>
+
+        <div class="daily_sub_mf">
+          <span id="moneyflow_apt_updated">-</span>
+          <div class="card_download_wrapper" data-html2canvas-ignore="true">
+            <button type="button" class="btn_card_download" title="MoneyFlow APT 이미지 다운로드" onClick="downloadMoneyFlowAptImage(this, event)">
+              <i class="fa-solid fa-camera"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="graph_item_mf">
+        <div class="apt_graph_container">
+          <canvas id="MoneyFlow_APT_Chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 지역 선택 컨트롤 패널 -->
+    <div class="apt_controls_panel">
+      <div class="apt_controls_header">
+        <div class="apt_preset_group">
+          <span style="font-size: 0.84rem; font-weight: 700; color: #1355ac; margin-right: 4px;">빠른 선택</span>
+          <button type="button" class="apt_preset_btn" onClick="applyAptPreset('major')">주요 권역</button>
+          <button type="button" class="apt_preset_btn" onClick="applyAptPreset('seoul_core')">서울 핵심구</button>
+          <button type="button" class="apt_preset_btn" onClick="applyAptPreset('gyeonggi_core')">경기 핵심지</button>
+          <button type="button" class="apt_preset_btn" onClick="applyAptPreset('metro6')">광역시/세종</button>
+          <button type="button" class="apt_preset_btn btn_reset" onClick="clearSelectedRegions()">선택 초기화</button>
+        </div>
+        <div class="apt_status_note" id="apt_region_count">로딩 중...</div>
+      </div>
+
+      <div class="apt_selected_tags" id="apt_selected_tags"></div>
+
+      <div class="apt_filter_row">
+        <select class="form-select form-select-sm" id="apt_sido_filter" onChange="renderRegionGrid()">
+          <option value="ALL">전체 시/도</option>
+        </select>
+        <input type="text" class="form-control form-control-sm" id="apt_region_search" placeholder="지역명 검색 (예: 강남구, 분당구, 해운대구, 수성구...)" onInput="renderRegionGrid()">
+      </div>
+
+      <div class="apt_region_grid" id="apt_region_grid"></div>
+    </div>
+  </div>
+
+  <script src="./draw_chart_mf_apt.js?v=20261123_01" type="text/javascript"></script>
+  <script src="./moneyflow_apt.js?v=20261123_01" type="text/javascript"></script>
+</body>
+</html>

@@ -38,6 +38,7 @@ jobs:
     - name: get Weekly MoneyFlow Update
       run: |
         python ./moneyflow/Moneyflow.py
+        python ./moneyflow/Moneyflow_apt.py
     - name: Upload to Cloudflare R2
       env:
         R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
@@ -45,14 +46,14 @@ jobs:
         R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         R2_BUCKET_NAME: "realrankus-data"
       run: |
-        python ./scripts/upload_to_r2.py ./moneyflow/market_moneyflow.json
+        python ./scripts/upload_to_r2.py ./moneyflow/market_moneyflow.json ./moneyflow/market_moneyflow_apt.json
     - name: Commits
       run: |        
         git pull
         git config --local user.email "aptranking@gmail.com"
         git config --local user.name "APT-Rank"
-        git add ./moneyflow/market_moneyflow.json
-        git commit -m "Weekly MoneyFlow Update"
+        git add ./moneyflow/market_moneyflow.json ./moneyflow/market_moneyflow_apt.json
+        git diff --staged --quiet || git commit -m "Weekly MoneyFlow & APT Update"
     - name: Push
       uses: ad-m/github-push-action@master
       with:
