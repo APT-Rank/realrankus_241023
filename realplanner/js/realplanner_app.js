@@ -203,6 +203,10 @@
             renderCourseList();
             renderSummary();
             setRouteLoading(false);
+          }).catch(function () {
+            if (myVersion === state.routeVersion) {
+              setRouteLoading(false);
+            }
           });
         }, 180);
       }
@@ -256,7 +260,7 @@
   }
 
   function resetToHome() {
-    // 2026-11-22: 초기화 시 진행 중인 이동경로 탐색 요청/타이머/로딩 오버레이 즉시 중단 및 제거
+    // 2026-11-22: 초기화 시 진행 중인 이동경로 탐색 요청/타이머/캐시/로딩 오버레이 전체 완전 초기화
     state.routeVersion += 1;
     if (routeFetchDebounceTimer) {
       clearTimeout(routeFetchDebounceTimer);
@@ -264,6 +268,9 @@
     }
     if (global.RealCrewRoute && typeof global.RealCrewRoute.cancelActiveRequests === "function") {
       global.RealCrewRoute.cancelActiveRequests();
+    }
+    if (global.RealCrewRoute && typeof global.RealCrewRoute.clearRouteCache === "function") {
+      global.RealCrewRoute.clearRouteCache();
     }
     setRouteLoading(false);
 

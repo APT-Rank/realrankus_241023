@@ -113,30 +113,48 @@
     return refDist >= CAR_THRESHOLD_METERS ? "driving" : "foot";
   }
 
-  // 2026-11-22: 진행 중인 OSRM 경로 탐색 요청 일괄 취소(AbortController + jobId) 및 대기 타이머 관리
+  // 2026-11-22: 진행 중인 경로 탐색 요청 일괄 취소(AbortController + jobId + 대기 Promise 즉시 해소)
   var activeJobId = 0;
   var activeControllers = [];
   var activeTimers = [];
 
-  function registerTimer(id) {
-    activeTimers.push(id);
-    return id;
+  function waitCancelable(ms, jobId) {
+    return new Promise(function (resolve) {
+      if (jobId !== activeJobId) {
+        resolve(false);
+        return;
+      }
+      var entry = { tid: null, resolve: resolve };
+      entry.tid = setTimeout(function () {
+        var idx = activeTimers.indexOf(entry);
+        if (idx !== -1) activeTimers.splice(idx, 1);
+        resolve(jobId === activeJobId);
+      }, ms);
+      activeTimers.push(entry);
+    });
   }
 
   function clearAllActiveTimers() {
-    for (var i = 0; i < activeTimers.length; i++) {
-      clearTimeout(activeTimers[i]);
-    }
+    var list = activeTimers.slice();
     activeTimers = [];
+    for (var i = 0; i < list.length; i++) {
+      clearTimeout(list[i].tid);
+      try { list[i].resolve(false); } catch (e) {}
+    }
   }
 
   function cancelActiveRequests() {
     activeJobId += 1;
     clearAllActiveTimers();
-    for (var i = 0; i < activeControllers.length; i++) {
-      try { activeControllers[i].abort(); } catch (e) {}
-    }
+    var ctrls = activeControllers.slice();
     activeControllers = [];
+    for (var i = 0; i < ctrls.length; i++) {
+      try { ctrls[i].abort(); } catch (e) {}
+    }
+  }
+
+  function clearRouteCache() {
+    segmentCache = Object.create(null);
   }
 
   function getCachedOrReversedFootSegment(fromCpx, toCpx, routeProfile) {
@@ -401,14 +419,9 @@
           return null;
         }
         if (attempt < 1) {
-          return new Promise(function (resolve) {
-            registerTimer(setTimeout(function () {
-              if (jobId !== activeJobId) {
-                resolve(null);
-                return;
-              }
-              resolve(fetchOsrmSegment(fromCpx, toCpx, routeProfile, attempt + 1, jobId));
-            }, 350));
+          return waitCancelable(350, jobId).then(function (ok) {
+            if (!ok) return null;
+            return fetchOsrmSegment(fromCpx, toCpx, routeProfile, attempt + 1, jobId);
           });
         }
         return fetchOsrmFromEndpoint(osrmPrimaryUrl, fromCpx, toCpx, routeProfile, straight, 5500, jobId)
@@ -463,9 +476,108 @@
     return segments;
   }
 
+  // 2026-11-22: Valhalla 다중 경유지 단일 일괄 요청 (최대 30개 단지를 1회 요청 ~0.8초로 계산해 429 무응답 원천 차단)
+  function fetchValhallaBatch(stops, routeProfile, timeoutMs, jobId) {
+    if (jobId !== activeJobId || !stops || stops.length < 2) {
+      return Promise.reject(new Error("ABORTED"));
+    }
+    var isDrive = routeProfile === "driving";
+    var locations = [];
+    for (var i = 0; i < stops.length; i++) {
+      locations.push({ lat: stops[i].lat, lon: stops[i].lng, type: "break" });
+    }
+    var payload = {
+      locations: locations,
+      costing: isDrive ? "auto" : "pedestrian",
+      units: "kilometers"
+    };
+    var url = "https://valhalla1.openstreetmap.de/route?json=" + encodeURIComponent(JSON.stringify(payload));
+
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    if (controller) activeControllers.push(controller);
+    var timer = controller ? setTimeout(function () { controller.abort(); }, timeoutMs) : null;
+
+    function cleanup() {
+      if (timer) clearTimeout(timer);
+      if (controller) {
+        var idx = activeControllers.indexOf(controller);
+        if (idx !== -1) activeControllers.splice(idx, 1);
+      }
+    }
+
+    return fetch(url, controller ? { signal: controller.signal } : undefined)
+      .then(function (res) {
+        cleanup();
+        if (jobId !== activeJobId) throw new Error("ABORTED");
+        if (!res.ok) throw new Error("VALHALLA_BATCH HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (json) {
+        if (jobId !== activeJobId) throw new Error("ABORTED");
+        var legs = json && json.trip && json.trip.legs;
+        if (!Array.isArray(legs) || legs.length !== stops.length - 1) {
+          throw new Error("VALHALLA_BATCH LegCountMismatch");
+        }
+        var parsedSegments = [];
+        for (var k = 0; k < legs.length; k++) {
+          var leg = legs[k];
+          var fromCpx = stops[k];
+          var toCpx = stops[k + 1];
+          var straight = haversineMeters(fromCpx.lat, fromCpx.lng, toCpx.lat, toCpx.lng);
+          if (!leg || !leg.shape || !leg.summary) {
+            parsedSegments.push(null);
+            continue;
+          }
+          var distMeters = Math.max(10, Math.round((leg.summary.length || 0) * 1000));
+          var maxDetourRatio = isDrive ? 6.0 : 5.0;
+          var minStraightCheck = isDrive ? 250 : 150;
+          if (straight >= minStraightCheck && distMeters > straight * maxDetourRatio) {
+            parsedSegments.push(null);
+            continue;
+          }
+          var decoded = decodePolyline6(leg.shape);
+          if (!decoded || decoded.length < 2) {
+            parsedSegments.push(null);
+            continue;
+          }
+          var path = [{ lat: fromCpx.lat, lng: fromCpx.lng }];
+          for (var p = 0; p < decoded.length; p++) {
+            path.push(decoded[p]);
+          }
+          path.push({ lat: toCpx.lat, lng: toCpx.lng });
+
+          var mins = isDrive
+            ? (leg.summary.time
+                ? Math.max(2, Math.round((leg.summary.time / 60) * 1.25))
+                : Math.max(2, Math.round(distMeters / DRIVING_SPEED_M_PER_MIN)))
+            : Math.max(1, Math.round(distMeters / WALKING_SPEED_M_PER_MIN));
+
+          var segObj = {
+            fromCode: fromCpx.code,
+            toCode: toCpx.code,
+            profile: routeProfile,
+            isCar: isDrive,
+            distanceMeters: distMeters,
+            durationMinutes: mins,
+            displayMinutes: mins,
+            path: path,
+            source: "osrm"
+          };
+          segmentCache[getSegmentCacheKey(fromCpx, toCpx, routeProfile)] = segObj;
+          parsedSegments.push(segObj);
+        }
+        return parsedSegments;
+      })
+      .catch(function (err) {
+        cleanup();
+        throw err;
+      });
+  }
+
   /**
-   * 실제 도보(foot) 또는 차량(driving) 경로(OSRM) 비동기 보강
-   * 새 탐색 시작 시 이전 미완료 요청을 즉시 취소(abort)하여 429 지연/충돌을 원천 방지
+   * 실제 도보(foot) 또는 차량(driving) 경로 비동기 보강
+   * 1) 동일 프로필의 연속 미캐시 구간을 Valhalla 단일 일괄 요청으로 묶어 ~0.8초 내 일괄 해결
+   * 2) 일괄 실패 구간만 개별 페일오버로 보완
    */
   function fetchDetailedSegments(courseList, options, onProgress) {
     cancelActiveRequests();
@@ -475,49 +587,119 @@
     if (total === 0) return Promise.resolve([]);
 
     var results = computeInstantSegments(courseList, options);
-    var nextIndex = 0;
     var completed = 0;
-    var CONCURRENCY = 2;
+    var uncachedIndices = [];
 
-    function runWorker() {
-      if (myJobId !== activeJobId || nextIndex >= total) return Promise.resolve();
-      var idx = nextIndex++;
-      var fromCpx = courseList[idx];
-      var toCpx = courseList[idx + 1];
-      var profile = resolveSegmentProfile(fromCpx, toCpx, carOver600);
-      var wasCached = !!getCachedOrReversedFootSegment(fromCpx, toCpx, profile);
-
-      return fetchOsrmSegment(fromCpx, toCpx, profile, 0, myJobId).then(function (segResult) {
-        if (myJobId !== activeJobId || !segResult) return;
-        results[idx] = segResult;
+    for (var i = 0; i < total; i++) {
+      var prof = resolveSegmentProfile(courseList[i], courseList[i + 1], carOver600);
+      if (getCachedOrReversedFootSegment(courseList[i], courseList[i + 1], prof)) {
         completed += 1;
-        if (typeof onProgress === "function") {
-          onProgress(results.slice(), completed, total);
-        }
-        if (wasCached || nextIndex >= total) {
-          return runWorker();
-        }
-        return new Promise(function (resolve) {
-          registerTimer(setTimeout(function () {
-            if (myJobId !== activeJobId) {
-              resolve();
-              return;
+      } else {
+        uncachedIndices.push({ idx: i, profile: prof });
+      }
+    }
+
+    if (uncachedIndices.length === 0) {
+      return Promise.resolve(results);
+    }
+
+    // 동일 프로필의 연속 미캐시 구간을 최대 20개 경유지 단위의 배치 런으로 그룹화
+    var runs = [];
+    for (var u = 0; u < uncachedIndices.length; u++) {
+      var item = uncachedIndices[u];
+      var lastRun = runs.length > 0 ? runs[runs.length - 1] : null;
+      if (
+        lastRun &&
+        lastRun.profile === item.profile &&
+        lastRun.endIdx + 1 === item.idx &&
+        (lastRun.endIdx - lastRun.startIdx + 1) < 19
+      ) {
+        lastRun.endIdx = item.idx;
+      } else {
+        runs.push({ startIdx: item.idx, endIdx: item.idx, profile: item.profile });
+      }
+    }
+
+    var fallbackQueue = [];
+
+    function processRun(runPos) {
+      if (myJobId !== activeJobId || runPos >= runs.length) {
+        return Promise.resolve();
+      }
+      var run = runs[runPos];
+      var stops = courseList.slice(run.startIdx, run.endIdx + 2);
+
+      return fetchValhallaBatch(stops, run.profile, 9000, myJobId)
+        .then(function (batchSegs) {
+          if (myJobId !== activeJobId) return;
+          for (var k = 0; k < batchSegs.length; k++) {
+            var segIdx = run.startIdx + k;
+            if (batchSegs[k]) {
+              results[segIdx] = batchSegs[k];
+              completed += 1;
+            } else {
+              fallbackQueue.push({ idx: segIdx, profile: run.profile });
             }
-            resolve(runWorker());
-          }, 120));
+          }
+          if (typeof onProgress === "function") {
+            onProgress(results.slice(), Math.min(completed, total), total);
+          }
+          return processRun(runPos + 1);
+        })
+        .catch(function (err) {
+          if (myJobId !== activeJobId || (err && (err.name === "AbortError" || err.message === "ABORTED"))) {
+            return;
+          }
+          for (var segIdx = run.startIdx; segIdx <= run.endIdx; segIdx++) {
+            fallbackQueue.push({ idx: segIdx, profile: run.profile });
+          }
+          return processRun(runPos + 1);
         });
+    }
+
+    function processFallbacks() {
+      if (myJobId !== activeJobId || fallbackQueue.length === 0) {
+        return Promise.resolve();
+      }
+      var nextPos = 0;
+      var CONCURRENCY = 2;
+
+      function runWorker() {
+        if (myJobId !== activeJobId || nextPos >= fallbackQueue.length) return Promise.resolve();
+        var task = fallbackQueue[nextPos++];
+        var fromCpx = courseList[task.idx];
+        var toCpx = courseList[task.idx + 1];
+
+        return fetchOsrmSegment(fromCpx, toCpx, task.profile, 0, myJobId).then(function (segResult) {
+          if (myJobId !== activeJobId || !segResult) return;
+          results[task.idx] = segResult;
+          completed += 1;
+          if (typeof onProgress === "function") {
+            onProgress(results.slice(), Math.min(completed, total), total);
+          }
+          if (nextPos >= fallbackQueue.length) return runWorker();
+          return waitCancelable(120, myJobId).then(function (ok) {
+            if (!ok) return;
+            return runWorker();
+          });
+        });
+      }
+
+      var workers = [];
+      var workerCount = Math.min(CONCURRENCY, fallbackQueue.length);
+      for (var w = 0; w < workerCount; w++) {
+        workers.push(runWorker());
+      }
+      return Promise.all(workers);
+    }
+
+    return processRun(0)
+      .then(function () {
+        return processFallbacks();
+      })
+      .then(function () {
+        return results;
       });
-    }
-
-    var workers = [];
-    var workerCount = Math.min(CONCURRENCY, total);
-    for (var w = 0; w < workerCount; w++) {
-      workers.push(runWorker());
-    }
-
-    return Promise.all(workers).then(function () {
-      return results;
-    });
   }
 
   function formatDistance(meters) {
@@ -554,6 +736,7 @@
     computeInstantSegments: computeInstantSegments,
     fetchDetailedSegments: fetchDetailedSegments,
     cancelActiveRequests: cancelActiveRequests,
+    clearRouteCache: clearRouteCache,
     formatDistance: formatDistance,
     formatDuration: formatDuration,
     formatCircledNumber: formatCircledNumber
