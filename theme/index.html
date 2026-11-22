@@ -124,7 +124,7 @@
             <option value="rebuild">재건축</option>
             <option value="hPriceRatio">최고가 대비 변동</option>
             <option value="ratioFrom202107">'21.7월 대비 변동</option>
-            <option value="tripGuide">동별 임장 가이드</option>
+            <option value="tripGuide">현장답사 코스 만들기</option>
           </select>
         </div>
       </div>
@@ -340,6 +340,16 @@
       </div>
     </div>
   </div>  
+
+  <!-- 리얼플래너(현장답사) 모바일 풀스크린 모달 -->
+  <div id="realplannerModal"
+    style="display: none; position: fixed; inset: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 100001; overscroll-behavior: none;">
+    <div id="realplanner_modal_loader"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; pointer-events: none;">
+      <div class="spinner-border text-danger mb-2" role="status" style="width: 2rem; height: 2rem;"></div>
+      <div style="font-size: 14px; font-weight: 700; color: #0f172a;">리얼플래너 (현장답사) 준비 중...</div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
@@ -696,8 +706,132 @@
     //updateRegion()    
   }
 
+  // 2026-11-22: Theme 우측 드롭다운 '현장답사 코스 만들기' 선택 시 비로그인 체크 및 모바일 iFrame / 웹 새창 리얼플래너 실행
+  var isThemeRealPlannerOpen = false;
+
+  function openThemeRealPlanner() {
+    if (typeof login_status === "undefined" || !login_status) {
+      try {
+        if (typeof showLogin === "function") showLogin();
+        var loginEl = document.getElementById("loginModal");
+        if (loginEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+          bootstrap.Modal.getOrCreateInstance(loginEl).show();
+        } else if (typeof $ !== "undefined") {
+          $("#loginModal").modal("show");
+        }
+      } catch (e) {
+        if (typeof $ !== "undefined") $("#loginModal").modal("show");
+      }
+      return;
+    }
+
+    var centerLat = null;
+    var centerLng = null;
+    try {
+      if (typeof listData !== "undefined" && listData && Array.isArray(listData.data) && listData.data.length > 0) {
+        var sumLat = 0, sumLng = 0, cnt = 0;
+        for (var i = 0; i < listData.data.length; i++) {
+          var row = listData.data[i];
+          var y = Number(row && (row["Y"] || row.lat));
+          var x = Number(row && (row["X"] || row.lng));
+          if (isFinite(y) && isFinite(x) && y > 30 && x > 120) {
+            sumLat += y;
+            sumLng += x;
+            cnt++;
+          }
+        }
+        if (cnt > 0) {
+          centerLat = sumLat / cnt;
+          centerLng = sumLng / cnt;
+        }
+      }
+    } catch (e) {}
+
+    if (!centerLat || !centerLng) {
+      centerLat = parseFloat(localStorage.getItem("lastMapLat")) || 37.4979;
+      centerLng = parseFloat(localStorage.getItem("lastMapLng")) || 127.0276;
+    }
+
+    var launchContext = {
+      selectedMonth: "202611",
+      dbName: "202611_02",
+      selectedRegion: typeof selectedRegion !== "undefined" ? selectedRegion : "Seoul",
+      selectedSubRegion: typeof selectedSubRegion !== "undefined" ? selectedSubRegion : "",
+      lat: centerLat,
+      lng: centerLng,
+      zoom: 15,
+      loginStatus: typeof login_status !== "undefined" ? !!login_status : false,
+      isMobile: typeof isMobile !== "undefined" ? !!isMobile : (window.innerWidth <= 768),
+      startComplex: null,
+      launchedAt: Date.now()
+    };
+
+    try {
+      sessionStorage.setItem("realplannerLaunchContext", JSON.stringify(launchContext));
+      localStorage.setItem("realplannerLaunchContext", JSON.stringify(launchContext));
+    } catch (e) {}
+
+    if (typeof isMobile !== "undefined" && isMobile) {
+      openThemeRealPlannerModal();
+    } else {
+      window.open("../realplanner/index.html", "_blank");
+    }
+  }
+
+  function openThemeRealPlannerModal() {
+    if (isThemeRealPlannerOpen) return;
+    isThemeRealPlannerOpen = true;
+    var $modal = $("#realplannerModal");
+    var oldIframe = document.getElementById("realplanner_iframe");
+    if (oldIframe) oldIframe.remove();
+
+    var iframe = document.createElement("iframe");
+    iframe.id = "realplanner_iframe";
+    iframe.src = "../realplanner/index.html?embedded=1";
+    iframe.allow = "geolocation; fullscreen";
+    iframe.style.cssText = "position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; display: block;";
+
+    var loader = document.getElementById("realplanner_modal_loader");
+    if (loader) loader.style.display = "flex";
+    iframe.addEventListener("load", function () {
+      setTimeout(function () {
+        var ld = document.getElementById("realplanner_modal_loader");
+        if (ld) ld.style.display = "none";
+      }, 250);
+    });
+
+    $modal.append(iframe);
+    $modal.stop(true, false).fadeIn(220);
+  }
+
+  function closeThemeRealPlannerModal() {
+    if (!isThemeRealPlannerOpen) return;
+    isThemeRealPlannerOpen = false;
+    var iframe = document.getElementById("realplanner_iframe");
+    if (iframe) iframe.remove();
+    $("#realplannerModal").stop(true, false).fadeOut(180);
+  }
+
+  window.addEventListener("message", function (event) {
+    var iframe = document.getElementById("realplanner_iframe");
+    if (!iframe || event.source !== iframe.contentWindow || !event.data) return;
+    if (event.data.type === "closeRealPlannerModal") {
+      closeThemeRealPlannerModal();
+    } else if (event.data.type === "realplannerReady") {
+      var loader = document.getElementById("realplanner_modal_loader");
+      if (loader) loader.style.display = "none";
+    }
+  });
+
   function updateTheme(){
-    selectedTheme = $("#theme option:selected").val()
+    var nextTheme = $("#theme option:selected").val();
+    if (nextTheme === "tripGuide") {
+      var fallbackTheme = (selectedTheme && selectedTheme !== "tripGuide") ? selectedTheme : "under200M";
+      $("#theme").val(fallbackTheme).prop("selected", true);
+      openThemeRealPlanner();
+      return;
+    }
+    selectedTheme = nextTheme;
     updateRegion()
     regionName = $("#sido option:selected").text()
     //saveLocalStorage()

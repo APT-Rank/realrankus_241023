@@ -3972,12 +3972,29 @@ function captureRadarMapView(event, captureOptions) {
 
             var padX = 10 * realScale;
 
-            // 상단 좌측 회색 타이틀 (YYYY년 MM월 DD일 주변 입지 환경 분석 | 리얼랭커스)
-            var headerTitle = yyyy + "년 " + mm + "월 " + dd + "일 주변 입지 환경 분석 | 리얼랭커스";
+            // 2026-11-22: PDF 개별 단지 페이지용 상단 좌/우 커스텀 헤더(안내 표시 교체 및 날짜 제거) 지원
+            var customHeaderLeft = (captureOptions && typeof captureOptions.headerLeftText === 'string') ? captureOptions.headerLeftText : null;
+            var customHeaderRight = (captureOptions && typeof captureOptions.headerRightText === 'string') ? captureOptions.headerRightText : null;
             ctx.font = '600 ' + (11.5 * realScale) + 'px "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
             ctx.fillStyle = '#64748b';
             ctx.textBaseline = 'top';
-            ctx.fillText(headerTitle, padX, 10 * realScale);
+            if (customHeaderLeft !== null || customHeaderRight !== null) {
+              if (customHeaderLeft) {
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#475569';
+                ctx.fillText(customHeaderLeft, padX, 10 * realScale);
+              }
+              if (customHeaderRight) {
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#64748b';
+                ctx.fillText(customHeaderRight, finalCanvas.width - padX, 10 * realScale);
+              }
+              ctx.textAlign = 'left';
+            } else {
+              var headerTitle = yyyy + "년 " + mm + "월 " + dd + "일 주변 입지 환경 분석 | 리얼랭커스";
+              ctx.textAlign = 'left';
+              ctx.fillText(headerTitle, padX, 10 * realScale);
+            }
 
             // 상단 워터마크와 본문 영역 경계선 (#e2e8f0)
             ctx.beginPath();

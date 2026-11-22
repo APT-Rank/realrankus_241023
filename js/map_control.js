@@ -1966,7 +1966,9 @@ function mapListModeChange() {
     $("#filterOnOff").hide()
     $("#gradeSelector").hide()
     $("#graphButtonContainer").hide()
+    // 2026-11-22: 모바일 리스트/지도 전환 시 #map_banner3(현장답사 코스 만들기) 동기화
     $("#map_banner").hide()
+    $("#map_banner3").hide()
 
     mobile_mode = "list"
   }
@@ -1985,6 +1987,7 @@ function mapListModeChange() {
     if (typeof selectedSubRegion !== "undefined" && selectedSubRegion !== "1000000000_Korea" && !selectedSubRegion.endsWith("_Top300")) {
       $("#graphButtonContainer").show()
       $("#map_banner").show()
+      $("#map_banner3").show()
     }
 
     mobile_mode = "map"

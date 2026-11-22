@@ -63,18 +63,30 @@
     return String(n);
   }
 
+  // 2026-11-22: 마커 좌측 상단 순번 배지(1,2,3...) 캡처 시 중앙 정렬 보장용 SVG 배지 빌더
+  function buildOrderBadgeHtml(orderNum, sizePx, topPx, leftPx) {
+    if (!orderNum) return "";
+    var str = String(orderNum);
+    var fontSize = str.length >= 2 ? 10.2 : 12;
+    return (
+      '<div class="rc-order-badge" style="top:' + topPx + 'px;left:' + leftPx + 'px;width:' + sizePx + 'px;height:' + sizePx + 'px;">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' + sizePx + '" height="' + sizePx + '">' +
+          '<circle cx="12" cy="12" r="10.2" fill="#0f172a" stroke="#ffffff" stroke-width="2.1"/>' +
+          '<text x="12" y="12.2" fill="#ffffff" font-family="Pretendard, -apple-system, BlinkMacSystemFont, Malgun Gothic, sans-serif" font-size="' + fontSize + '" font-weight="800" text-anchor="middle" dominant-baseline="central">' + escapeHtml(str) + '</text>' +
+        '</svg>' +
+      '</div>'
+    );
+  }
+
   function buildLargeMarkerHtml(cpx, orderNum) {
     var color = cpx.gradeColor;
     var s = RealCrewMap.captureMarkerScale || 1;
     var w = Math.round(68 * s);
     var h = Math.round(60 * s);
     var badgeSize = Math.round(23 * s);
-    var badgeFont = Math.max(9, Math.round(12 * s));
     var badgeTop = Math.round(-7 * s);
     var badgeLeft = Math.round(-8 * s);
-    var badgeHtml = orderNum
-      ? '<div class="rc-order-badge" style="top:' + badgeTop + 'px;left:' + badgeLeft + 'px;min-width:' + badgeSize + 'px;height:' + badgeSize + 'px;font-size:' + badgeFont + 'px;">' + orderNum + '</div>'
-      : "";
+    var badgeHtml = buildOrderBadgeHtml(orderNum, badgeSize, badgeTop, badgeLeft);
     var selectedCls = orderNum ? " is-selected" : "";
 
     var svg =
@@ -84,7 +96,8 @@
           '<path fill="#fff" stroke="' + color + '" stroke-width="0.5" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>' +
           '<text fill="#fff" font-size="8" font-weight="600" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
           '<text fill="#000" font-size="6.8" font-weight="600" text-anchor="middle" x="17" y="19.5">' + escapeHtml(cpx.priceText) + '</text>' +
-          '<text fill="#000" font-size="4.3" font-weight="600" text-anchor="middle" x="17" y="25.8">' + escapeHtml(cpx.areaText) + '</text>' +
+          // 2026-11-22: 지도 마커 평(m2) 폰트 크기 +2px 확대 (font-size 4.3 -> 5.4)
+          '<text fill="#000" font-size="5.4" font-weight="600" letter-spacing="-0.1" text-anchor="middle" x="17" y="26.1">' + escapeHtml(cpx.areaText) + '</text>' +
         '</g>' +
       '</svg>';
 
@@ -98,9 +111,7 @@
 
   function buildSmallMarkerHtml(cpx, orderNum) {
     var color = cpx.gradeColor;
-    var badgeHtml = orderNum
-      ? '<div class="rc-order-badge" style="top:-9px;left:-10px;min-width:21px;height:21px;font-size:11px;">' + orderNum + '</div>'
-      : "";
+    var badgeHtml = buildOrderBadgeHtml(orderNum, 21, -9, -10);
     var selectedCls = orderNum ? " is-selected" : "";
 
     var svg =

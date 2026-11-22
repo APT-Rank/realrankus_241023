@@ -1075,27 +1075,15 @@ body.is-embedded .rc-back-btn {
   filter: drop-shadow(0 3px 8px rgba(15, 23, 42, 0.35));
 }
 
-/* 선택 단지 좌측 상단 순번 원형 배지 (배경 원 + 숫자) */
+/* 2026-11-22: 선택 단지 좌측 상단 순번 원형 배지 (캡처 시 숫자 중앙 정렬을 위해 SVG 기반으로 전환) */
 .rc-order-badge {
   position: absolute;
   top: -7px;
   left: -8px;
-  min-width: 23px;
-  height: 23px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: #0f172a;
-  color: #ffffff;
-  border: 2px solid #ffffff;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
+  line-height: 0;
   z-index: 10;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.42);
-  white-space: nowrap;
+  filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.38));
   pointer-events: none;
 }
 
@@ -1135,14 +1123,14 @@ body.is-embedded .rc-back-btn {
   cursor: pointer;
 }
 
-/* 로딩 오버레이 */
+/* 2026-11-22: PDF 생성 로딩 화면 블러링 완화 (blur 12px -> 3.5px)로 뒤 화면 가시성 확보 */
 .rc-loading {
   position: absolute;
   inset: 0;
   z-index: 60;
-  background: rgba(255, 255, 255, 0.42);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(3.5px);
+  -webkit-backdrop-filter: blur(3.5px);
   display: flex;
   flex-direction: column;
   align-items: center;

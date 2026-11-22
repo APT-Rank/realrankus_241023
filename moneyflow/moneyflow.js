@@ -3869,6 +3869,10 @@ function updateActiveChartsLivePoint() {
 
 function initMarketAutoRefresh() {
   if (marketRefreshTimer) clearInterval(marketRefreshTimer);
+  // 2026-11-22: 머니플로우 진입 즉시 실시간 새로고침을 실행해 지표 및 갱신 시간 최신화
+  if (!document.hidden) {
+    refreshLiveMarket(null, true);
+  }
   // 60초마다 활성 탭일 때만 사일런트 백그라운드 갱신
   marketRefreshTimer = setInterval(function() {
     if (!document.hidden) {

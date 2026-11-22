@@ -4364,6 +4364,10 @@ function updateActiveChartsLivePoint() {
 
 function initMarketAutoRefresh() {
   if (marketRefreshTimer) clearInterval(marketRefreshTimer);
+  // 2026-11-22: 머니플로우 Pro 진입 즉시 실시간 새로고침을 실행해 지표 및 갱신 시간 최신화
+  if (!document.hidden) {
+    refreshLiveMarket(null, true);
+  }
   marketRefreshTimer = setInterval(function() {
     if (!document.hidden) {
       refreshLiveMarket(null, true);

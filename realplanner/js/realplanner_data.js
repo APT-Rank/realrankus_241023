@@ -43,6 +43,8 @@
       lng: (ctx && Number(ctx.lng)) || defaultLng,
       zoom: (ctx && Number(ctx.zoom)) || defaultZoom,
       loginStatus: !!(ctx && ctx.loginStatus),
+      // 2026-11-22: 단지 상세 모달('현재 단지부터 답사 코스 만들기') 진입 시 출발 단지 컨텍스트 전달
+      startComplex: (ctx && ctx.startComplex) || null,
       embedded: embedded,
       isMobile: embedded || window.innerWidth <= 820
     };

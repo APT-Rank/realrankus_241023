@@ -308,7 +308,12 @@
       "총 " + totals.count + "단지 / 예상 " + timeStr + " 소요 / 이동 " + distStr +
       (optTags.length ? " (" + optTags.join(", ") + ")" : "");
 
-    drawReportHeader(ctx, formatKoreanDate() + " 현장답사 코스 | 리얼플래너", rightSummary);
+    // 2026-11-22: PDF 본문 페이지(2페이지) 좌/우 상단 안내 교체 및 우측 날짜 제거
+    if (options.isPdf) {
+      drawReportHeader(ctx, rightSummary, "현장답사 코스 | 리얼플래너");
+    } else {
+      drawReportHeader(ctx, formatKoreanDate() + " 현장답사 코스 | 리얼플래너", rightSummary);
+    }
 
     // 1) 선택 단지 수에 따라 하단 단지 이동순서 영역 높이 먼저 계산 (빈 공간 제거 + 가변 크기)
     var n = course.length;
@@ -448,8 +453,8 @@
     ctx.fillRect(0, 0, A4_W, A4_H);
 
     var fd = cpx.fullData || {};
-    var headerRight = toCircled(idx + 1) + " " + cpx.name + " / Rank " + cpx.grade + " (" + cpx.score.toFixed(1) + "점)";
-    drawReportHeader(ctx, formatKoreanDate() + " 주변 입지 환경 분석 | 리얼플래너", headerRight);
+    var headerLeft = toCircled(idx + 1) + " " + cpx.name + " / Rank " + cpx.grade + " (" + cpx.score.toFixed(1) + "점)";
+    drawReportHeader(ctx, headerLeft, "주변 입지 환경 분석 | 리얼플래너");
 
     var contentTop = HEADER_H + 4;
     var contentH = A4_H - FOOTER_H - 8 - contentTop;
@@ -929,7 +934,7 @@
     );
   }
 
-  function captureRadarPageViaIframe(iframe, complexInfo, cpx, loginStatus, extraBottomCardHtml) {
+  function captureRadarPageViaIframe(iframe, complexInfo, cpx, loginStatus, extraBottomCardHtml, courseIndex) {
     return new Promise(function (resolve, reject) {
       var win = iframe && iframe.contentWindow;
       if (!win || !complexInfo) {
@@ -938,12 +943,19 @@
       }
 
       try {
+        // 2026-11-22: PDF 개별 단지 페이지 단지명 앞에 원문자 순번(①, ②, ③...) 자동 부착
+        var baseName = complexInfo["아파트명"] || cpx.name || "";
+        var numberedName = (typeof courseIndex === "number" && courseIndex >= 0)
+          ? (toCircled(courseIndex + 1) + " " + baseName)
+          : baseName;
+        var clonedInfo = Object.assign({}, complexInfo, { "아파트명": numberedName });
+
         win.login_status = !!loginStatus;
         win.selectedSubRegion = cpx.gungu || "";
         win.origin_x = complexInfo["X"] || cpx.lng || 0;
         win.origin_y = complexInfo["Y"] || cpx.lat || 0;
-        win.apt_name = complexInfo["아파트명"] || cpx.name || "";
-        win.renderRadarModalView(complexInfo);
+        win.apt_name = numberedName;
+        win.renderRadarModalView(clonedInfo);
       } catch (e) {
         reject(e);
         return;
@@ -959,8 +971,12 @@
         }, 18000);
 
         try {
+          var radarHeaderLeft = numberedName + " / Rank " + (cpx.grade || "-") +
+            (typeof cpx.score === "number" ? " (" + cpx.score.toFixed(1) + "점)" : "");
           win.captureRadarMapView(null, {
             extraBottomCardHtml: extraBottomCardHtml || "",
+            headerLeftText: radarHeaderLeft,
+            headerRightText: "주변 입지 환경 분석 | 리얼랭커스",
             onCaptured: function (base64Data, width, height) {
               if (finished) return;
               finished = true;
@@ -1433,7 +1449,8 @@
         var page2Canvas = renderOverviewPageCanvas(overviewSnapshot, course, segments, {
           dwellEnabled: options.dwellEnabled,
           carOver600Enabled: options.carOver600Enabled,
-          pageLabel: "Page 2 / " + totalPages
+          pageLabel: "Page 2 / " + totalPages,
+          isPdf: true
         });
         pdf.addPage("a4", "landscape");
         pdf.addImage(page2Canvas.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, 297, 210);
@@ -1454,12 +1471,12 @@
             chain = chain.then(function () {
               var cpx = course[index];
               var pageNum = index + 3;
-              notify("PDF 계획서 생성 중... (" + (index + 1) + " / " + course.length + " | " + cpx.name + " 정보 확인 중)");
+              notify("PDF 계획서 생성 중... " + cpx.name + " (" + (index + 1) + " / " + course.length + ") ");
 
               return fetchComplexRadarInfo(cpx).then(function (radarInfo) {
                 if (hiddenIframe && radarInfo) {
                   var courseNavHtml = buildCourseNavCardHtml(index, course, segments);
-                  return captureRadarPageViaIframe(hiddenIframe, radarInfo, cpx, loginStatus, courseNavHtml)
+                  return captureRadarPageViaIframe(hiddenIframe, radarInfo, cpx, loginStatus, courseNavHtml, index)
                     .then(function (captured) {
                       return composeRadarImageToA4Canvas(captured.base64Data, pageNum, totalPages);
                     })

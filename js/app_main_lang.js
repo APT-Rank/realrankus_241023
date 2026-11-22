@@ -697,7 +697,19 @@ $(document).ready(function () {
       $("#commentListModal").css({ "z-index": "1050" });
       $(".modal-backdrop").css({ "z-index": "1050" });
     }
+    // 2026-11-22: 리얼랭커스 로그인 모달 표시 시 modal-backdrop 전체 화면(100%) 적용 및 닫힘 시 데스크톱 baseModal 폭 복원
+    if (modalId == "loginModal") {
+      setTimeout(function () {
+        $(".modal-backdrop").css({ width: "100%", "z-index": "1050" });
+      }, 0);
+    }
     if (modalId == "requestReportModal") {
+    }
+  });
+
+  $(".modal").on("shown.bs.modal", function () {
+    if (this.id == "loginModal") {
+      $(".modal-backdrop").css({ width: "100%", "z-index": "1050" });
     }
   });
 
@@ -730,7 +742,11 @@ $(document).ready(function () {
     }
     if (modalId == "commentModifyModal" || modalId == "blogModal" || modalId == "commentModal" || modalId == "loginModal") {
       $("#commentListModal").css({ "z-index": "1055" });
-      $(".modal-backdrop").css({ "z-index": "1050" });
+      if (modalId == "loginModal" && !isMobile && $("#baseModal").hasClass("show")) {
+        $(".modal-backdrop").css({ "z-index": "1000", width: "600px" });
+      } else {
+        $(".modal-backdrop").css({ "z-index": "1050" });
+      }
     }
 
     // 히스토리도 자동으로 맞추기
@@ -1530,6 +1546,7 @@ function updateRegion() {
       $("#graphButtonContainer").hide();
       $("#map_banner").hide();
       $("#map_banner2").hide();
+      $("#map_banner3").hide();
       updateTopTable(selectedMonth, selectedSubRegion);
     } else {
       //로딩
@@ -1538,12 +1555,11 @@ function updateRegion() {
         $("#gradeSelector").show();
         $("#filterSelector").show();
       }
+      $("#map_banner2").hide();
       if (!isMobile || mobile_mode === "map") {
         $("#graphButtonContainer").show();
         $("#map_banner").show();
-        if (!isMobile) {
-          $("#map_banner2").show();
-        }
+        $("#map_banner3").show();
       }
       $("#dataList").html("");
 
@@ -1556,6 +1572,7 @@ function updateRegion() {
     $("#graphButtonContainer").hide();
     $("#map_banner").hide();
     $("#map_banner2").hide();
+    $("#map_banner3").hide();
     updateRegionTable(selectedMonth, selectedSubRegion);
   }
   showWeight();
@@ -2759,13 +2776,15 @@ function showDetail(index, forceMapCenter) {
             <div id='advanced_feature'>
             <div class='popupSubtitle' style='text-align: center; margin-top: 10px'>${tSafe('ui.report.simul_guide', '↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓')}</div>
             <div id='rankSimul' onclick='openSimulation(aptData.data,${index})'>${tSafe('ui.report.simul_button', '랭크 시뮬레이션')}</div>
-            <div id='btn_complex_compare' onclick='openCompare(aptData.data[${index}])'>${tSafe('ui.report.compare_button', '단지 비교하기')} <span id='newFeature'>NEW!!</span></div>
+            <div id='btn_complex_compare' onclick='openCompare(aptData.data[${index}])'>${tSafe('ui.report.compare_button', '단지 비교하기')}</div>
+            <div id='btn_realplanner_start' onclick='openRealPlannerFromComplex(aptData.data[${index}])'>현재 단지부터 답사 코스 만들기 <span id='newFeature'>NEW!!</span></div>
             </div>
           `;
     } else {
       detailHtml += `
             <div class='popupSubtitle' style='text-align: center; margin-top: 10px'>${tSafe('ui.report.simul_guide', '↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓')}</div>
             <div id='rankSimul' onclick='openSimulation(aptData.data,${index})'>${tSafe('ui.report.simul_button', '랭크 시뮬레이션')}</div>
+            <div id='btn_realplanner_start' onclick='openRealPlannerFromComplex(aptData.data[${index}])'>현재 단지부터 답사 코스 만들기 <span id='newFeature'>NEW!!</span></div>
           `;
     }
 
@@ -5162,6 +5181,8 @@ function showNotice() {
         <div class='popupTitle' style='text-align: center; padding-bottom: 1em;'>${coffeeChatTitle}</div>
         <div class='notice'>${t('ui.notice.coffeechat_desc', '<strong>2022년 런칭 이후 1인 기업으로서 꾸준한 데이터 업데이트와 고도화를 통해 시장의 신뢰를 쌓아왔습니다. 서비스의 미래 비전 혹은 협업에 관한 가벼운 커피챗 제안을 기다리고 있습니다.</strong>')}</div>
         <div class='notice' onClick='openOuterLink("https://open.kakao.com/me/realrankus")'>${t('ui.notice.coffeechat_label', '커피챗 : ')}<a href="#">https://open.kakao.com/me/realrankus </a></div>
+        <!-- 2026-11-22: 공지사항 커피챗 하단 리얼랭커스 카카오톡 브리핑 공유방 링크 추가 -->
+        <div class='notice' onClick='openOuterLink("https://open.kakao.com/o/gJsjPjWf")'>리얼랭커스 카카오톡 브리핑 공유방 : <a href="#">https://open.kakao.com/o/gJsjPjWf</a></div>
         <hr>
       `;
 
@@ -5190,11 +5211,6 @@ function showNotice() {
         <li><div class='notice'>${t('ui.notice.bullet_11', '문의사항, 오류수정, 개선제안은 이메일 또는 카카오톡을 통해 문의해 주세요.')}</div></li>
         <li><div class='notice'>${connectionStatus}</div></li>
         </ul>
-        <div style='margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e2e8f0; text-align: center;'>
-          <button type='button' id='btn_open_realplanner_test' class='btn btn-sm' onclick='openRealPlanner()' style='background: #E43B46; color: #fff; font-weight: 700; border-radius: 8px; padding: 7px 14px; font-size: 0.85em; box-shadow: 0 2px 6px rgba(228, 59, 70, 0.28);'>
-            <i class='fa-solid fa-route' style='margin-right: 5px;'></i>리얼플래너 (현장답사) 테스트
-          </button>
-        </div>
       `;
 
   footerHtml += `
@@ -6112,7 +6128,50 @@ var isRealPlannerModalOpen = false;
 var realplannerModalHistoryToken = null;
 var realplannerModalHistorySequence = 0;
 
-function openRealPlanner() {
+// 2026-11-22: 단지 상세 모달에서 현재 단지부터 답사 코스 만들기 진입 + 비로그인 시 로그인 모달 표시
+function openRealPlannerFromComplex(complexData) {
+  if (!complexData) {
+    openRealPlanner();
+    return;
+  }
+  try {
+    var baseModalEl = document.getElementById("baseModal");
+    if (baseModalEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+      var bmInstance = bootstrap.Modal.getInstance(baseModalEl);
+      if (bmInstance) bmInstance.hide();
+    } else if (typeof $ !== "undefined") {
+      $("#baseModal").modal("hide");
+    }
+  } catch (e) {}
+
+  var latNum = Number(complexData["Y"] || complexData.lat);
+  var lngNum = Number(complexData["X"] || complexData.lng);
+  var startComplex = {
+    code: String(complexData["검색코드"] || complexData["단지코드"] || complexData.code || ""),
+    name: String(complexData["아파트명"] || complexData.name || ""),
+    lat: isFinite(latNum) ? latNum : null,
+    lng: isFinite(lngNum) ? lngNum : null,
+    gungu: typeof selectedSubRegion !== "undefined" ? selectedSubRegion : ""
+  };
+  openRealPlanner(startComplex);
+}
+
+function openRealPlanner(startComplex) {
+  if (typeof login_status === "undefined" || !login_status) {
+    try {
+      if (typeof showLogin === "function") showLogin();
+      var loginEl = document.getElementById("loginModal");
+      if (loginEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(loginEl).show();
+      } else if (typeof $ !== "undefined") {
+        $("#loginModal").modal("show");
+      }
+    } catch (e) {
+      if (typeof $ !== "undefined") $("#loginModal").modal("show");
+    }
+    return;
+  }
+
   try {
     var noticeEl = document.getElementById("noticeModal");
     if (noticeEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
@@ -6126,16 +6185,23 @@ function openRealPlanner() {
   var centerLat = null;
   var centerLng = null;
   var zoomVal = 16;
-  try {
-    if (typeof defaultMap !== "undefined" && defaultMap && typeof defaultMap.getCenter === "function") {
-      var c = defaultMap.getCenter();
-      if (c) {
-        centerLat = typeof c.lat === "function" ? c.lat() : c.y;
-        centerLng = typeof c.lng === "function" ? c.lng() : c.x;
+
+  if (startComplex && isFinite(startComplex.lat) && isFinite(startComplex.lng) && startComplex.lat !== 0 && startComplex.lng !== 0) {
+    centerLat = startComplex.lat;
+    centerLng = startComplex.lng;
+    zoomVal = 16;
+  } else {
+    try {
+      if (typeof defaultMap !== "undefined" && defaultMap && typeof defaultMap.getCenter === "function") {
+        var c = defaultMap.getCenter();
+        if (c) {
+          centerLat = typeof c.lat === "function" ? c.lat() : c.y;
+          centerLng = typeof c.lng === "function" ? c.lng() : c.x;
+        }
+        zoomVal = defaultMap.getZoom();
       }
-      zoomVal = defaultMap.getZoom();
-    }
-  } catch (e) {}
+    } catch (e) {}
+  }
 
   if (!centerLat || !centerLng) {
     centerLat = parseFloat(localStorage.getItem("lastMapLat")) || 37.4979;
@@ -6153,6 +6219,7 @@ function openRealPlanner() {
     zoom: zoomVal,
     loginStatus: typeof login_status !== "undefined" ? !!login_status : false,
     isMobile: typeof isMobile !== "undefined" ? !!isMobile : (window.innerWidth <= 768),
+    startComplex: startComplex || null,
     launchedAt: Date.now()
   };
 

@@ -198,7 +198,9 @@
     transform: translateY(2px);
   }
 
-  #map_banner2 {
+  /* 2026-11-22: 지도 위 리얼플래너 진입 배너(#map_banner3) 스타일 추가 */
+  #map_banner2,
+  #map_banner3 {
     position: absolute;
     justify-content: center;
     display: flex;
@@ -212,7 +214,7 @@
     padding-left: 15px;
     padding-right: 15px;
     border-radius: 10px;
-    bottom: 60px;
+    bottom: 98px;
     left: -8px;
     background: #8E2DE2;
     /* fallback for old browsers */
@@ -223,9 +225,11 @@
     color: #fff;
     box-shadow: rgba(0, 0, 0, 0.32) 2px 3px 8px, rgba(0, 0, 0, 0.48) 2px 3px 8px;
     z-index: 850;
+    cursor: pointer;
   }
 
-  #map_banner2:active {
+  #map_banner2:active,
+  #map_banner3:active {
     transform: translateY(2px);
   }
 
@@ -1261,7 +1265,8 @@
   }
 
   #rankSimul,
-  #btn_complex_compare {
+  #btn_complex_compare,
+  #btn_realplanner_start {
     justify-items: center;
     text-align: center;
     color: #fff;
@@ -1274,9 +1279,16 @@
     margin-top: 5px;
     border-radius: 5px;
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.4) 0px 1px 2px;
+    cursor: pointer;
   }
 
+  /* 2026-11-22: 단지 상세 모달 단지 비교하기 적색 변경 및 현재 단지부터 답사 코스 만들기(#btn_realplanner_start) 버튼 추가 */
   #btn_complex_compare {
+    background: #E43B46;
+    color: #fff;
+  }
+
+  #btn_realplanner_start {
     background: #8E2DE2;
     /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
@@ -1329,7 +1341,8 @@
   }
 
   #rankSimul:active,
-  #btn_complex_compare:active {
+  #btn_complex_compare:active,
+  #btn_realplanner_start:active {
     transform: translateY(1px);
   }
 
@@ -3215,7 +3228,8 @@
       left: unset;
     }
 
-    #map_banner2 {
+    #map_banner2,
+    #map_banner3 {
       width: 300px;
       height: auto;
       font-size: 1em;

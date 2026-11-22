@@ -1070,6 +1070,44 @@
             }
           }
         });
+
+        // 2026-11-22: 특정 단지에서 "현재 단지부터 답사 코스 만들기"로 진입한 경우 해당 단지를 1번 출발지로 자동 선택
+        if (ctx.startComplex) {
+          var matched = null;
+          if (ctx.startComplex.code && global.RealCrewData.complexByCode[ctx.startComplex.code]) {
+            matched = global.RealCrewData.complexByCode[ctx.startComplex.code];
+          }
+          if (!matched && ctx.startComplex.lat && ctx.startComplex.lng) {
+            var bestDist = 180;
+            for (var sc = 0; sc < global.RealCrewData.complexes.length; sc++) {
+              var cand = global.RealCrewData.complexes[sc];
+              var d = global.RealCrewRoute.haversineMeters(ctx.startComplex.lat, ctx.startComplex.lng, cand.lat, cand.lng);
+              if (d < bestDist && (!ctx.startComplex.name || cand.name === ctx.startComplex.name || d < 40)) {
+                bestDist = d;
+                matched = cand;
+              }
+            }
+          }
+          if (matched) {
+            setMode("manual");
+            state.course = [matched];
+            recalculateRoute();
+            global.RealCrewMap.panToComplex(matched);
+            showToast("① " + matched.name + "부터 시작합니다. 지도에서 다음 단지를 선택해 주세요.");
+          }
+          try {
+            var rawCtx = sessionStorage.getItem("realplannerLaunchContext") || localStorage.getItem("realplannerLaunchContext");
+            if (rawCtx) {
+              var parsedCtx = JSON.parse(rawCtx);
+              if (parsedCtx && parsedCtx.startComplex) {
+                delete parsedCtx.startComplex;
+                sessionStorage.setItem("realplannerLaunchContext", JSON.stringify(parsedCtx));
+                localStorage.setItem("realplannerLaunchContext", JSON.stringify(parsedCtx));
+              }
+            }
+          } catch (e) {}
+        }
+
         var loader = $("rcLoading");
         if (loader) loader.style.display = "none";
 
