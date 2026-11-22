@@ -93,11 +93,8 @@
 
     var isCap = !!RealCrewMap.isCapturing;
     var gradeFontSize = isCap ? "7.2" : "8";
-    var gradeWeight = isCap ? "400" : "600";
     var priceFontSize = isCap ? "5.6" : "6.8";
-    var priceWeight = isCap ? "400" : "600";
     var areaFontSize = isCap ? "3.9" : "5.4";
-    var areaWeight = isCap ? "400" : "600";
     var areaSpacing = isCap ? "-0.15" : "-0.1";
     var priceFitAttr = (isCap && String(cpx.priceText || "").length >= 7) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
     var areaFitAttr = (isCap && String(cpx.areaText || "").length >= 10) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
@@ -107,10 +104,10 @@
         '<g>' +
           '<path fill="' + color + '" stroke="' + color + '" stroke-width="0.5" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>' +
           '<path fill="#fff" stroke="' + color + '" stroke-width="0.5" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>' +
-          // 2026-11-23: 캡처 화면(모바일/웹)에서 마커 내부 글자 넘침 방지를 위해 폰트 크기 축소 및 font-weight 400 적용
-          '<text fill="#fff" font-size="' + gradeFontSize + '" font-weight="' + gradeWeight + '" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
-          '<text fill="#000" font-size="' + priceFontSize + '" font-weight="' + priceWeight + '" text-anchor="middle" x="17" y="19.3"' + priceFitAttr + '>' + escapeHtml(cpx.priceText) + '</text>' +
-          '<text fill="#000" font-size="' + areaFontSize + '" font-weight="' + areaWeight + '" letter-spacing="' + areaSpacing + '" text-anchor="middle" x="17" y="25.6"' + areaFitAttr + '>' + escapeHtml(cpx.areaText) + '</text>' +
+          // 2026-11-23: 캡처 화면 마커 넘침 방지용 폰트 크기 축소 유지, font-weight는 600으로 원복
+          '<text fill="#fff" font-size="' + gradeFontSize + '" font-weight="600" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
+          '<text fill="#000" font-size="' + priceFontSize + '" font-weight="600" text-anchor="middle" x="17" y="19.3"' + priceFitAttr + '>' + escapeHtml(cpx.priceText) + '</text>' +
+          '<text fill="#000" font-size="' + areaFontSize + '" font-weight="600" letter-spacing="' + areaSpacing + '" text-anchor="middle" x="17" y="25.6"' + areaFitAttr + '>' + escapeHtml(cpx.areaText) + '</text>' +
         '</g>' +
       '</svg>';
 
@@ -152,6 +149,7 @@
     var ctx = global.RealCrewData.context;
     var initialZoom = Math.max(11, Math.min(18, ctx.zoom || 16));
 
+    var isMobileInit = window.innerWidth <= 820;
     RealCrewMap.map = new naver.maps.Map("realcrewMap", {
       center: new naver.maps.LatLng(ctx.lat, ctx.lng),
       zoom: initialZoom,
@@ -160,6 +158,9 @@
         style: naver.maps.ZoomControlStyle.SMALL,
         position: naver.maps.Position.TOP_RIGHT
       },
+      // 2026-11-23: 모바일 하단 축척(scaleControl) 및 © NAVER Corp.(mapDataControl) 숨김 처리
+      scaleControl: !isMobileInit,
+      mapDataControl: !isMobileInit,
       draggable: true,
       pinchZoom: true,
       scrollWheel: true,

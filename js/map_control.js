@@ -106,6 +106,9 @@ function loadMap(center_x, center_y) {
       style: naver.maps.ZoomControlStyle.SMALL,
       position: naver.maps.Position.TOP_RIGHT
     },
+    // 2026-11-23: 모바일 하단 축척(scaleControl) 및 © NAVER Corp.(mapDataControl) 숨김 처리
+    scaleControl: !isMobile,
+    mapDataControl: !isMobile,
     draggable: true,
     pinchZoom: true,
     scrollWheel: true,
