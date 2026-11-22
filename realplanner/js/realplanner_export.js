@@ -119,7 +119,7 @@
   /* ------------------------------------------------------------------------
    * 지도 캡처 (overlayLayer 내부에 마운트된 경로 언더레이 캔버스 + 선택 마커 + 거리 라벨을 단일 패스로 캡처)
    * ------------------------------------------------------------------------ */
-  function captureMapSnapshot(radarCenterCpx) {
+  function captureMapSnapshot(radarCenterCpx, visualScale) {
     var mapEl = document.getElementById("realcrewMap");
     if (!mapEl || typeof global.html2canvas !== "function") {
       return Promise.resolve({ canvas: null });
@@ -127,13 +127,14 @@
 
     var capW = mapEl.clientWidth || 1280;
     var capH = mapEl.clientHeight || 720;
+    var capScale = capW > 1800 ? 1.5 : 2;
 
-    return global.RealCrewMap.mountCaptureRouteCanvas(radarCenterCpx)
+    return global.RealCrewMap.mountCaptureRouteCanvas(radarCenterCpx, visualScale)
       .then(function () {
         return global.html2canvas(mapEl, {
           useCORS: true,
           allowTaint: false,
-          scale: 2,
+          scale: capScale,
           backgroundColor: "#e2e8f0",
           logging: false,
           width: capW,
@@ -624,12 +625,29 @@
     document.body.removeChild(link);
   }
 
+  function lngToWorldX(lng, zoom) {
+    return ((lng + 180) / 360) * 256 * Math.pow(2, zoom);
+  }
+
+  function latToWorldY(lat, zoom) {
+    var clamped = Math.max(-85, Math.min(85, lat));
+    var rad = (clamped * Math.PI) / 180;
+    var sin = Math.sin(rad);
+    return (0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * 256 * Math.pow(2, zoom);
+  }
+
+  function worldYToLat(y, zoom) {
+    var n = Math.PI - (2 * Math.PI * y) / (256 * Math.pow(2, zoom));
+    return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+  }
+
   /**
-   * 선택된 단지 수에 따른 Overview 페이지의 지도 영역 치수(mapW, mapH) 선계산
-   * -> 캡처 시 #realcrewMap을 이 종횡비와 동일한 표준 1280px 폭으로 맞춰 마커 크기를 항상 균등하게 유지
+   * 선택된 단지 수 및 전체 코스(단지 + 이동경로)의 지리적 범위를 분석해
+   * 네이버 지도 정수 줌 단계의 여백 손실 없이 마커/경로가 A4 지도 높이·폭에 최대한 꽉 차도록
+   * 최적 줌(Z), 캡처 컨테이너 크기(capW, capH), 시각적 중심좌표 및 균일 마커/경로 스케일을 계산
    */
-  function computeOverviewLayoutMetrics(courseLength) {
-    var n = Math.max(1, courseLength || 1);
+  function computeOverviewLayoutMetrics(course, segments) {
+    var n = Math.max(1, (course && course.length) || 1);
     var cols = n <= 6 ? n : (n <= 12 ? Math.ceil(n / 2) : (n <= 21 ? Math.ceil(n / 3) : Math.ceil(n / 4)));
     cols = Math.max(1, Math.min(8, cols));
     var rows = Math.ceil(n / cols);
@@ -649,12 +667,76 @@
     var mapW = A4_W - MARGIN_X * 2;
     var mapH = stripY - mapY - 12;
 
-    // 표준 캡처 폭 1440px + 최종 A4(1754px) 상 마커 폭을 항상 74px로 일정하게 유지하는 동적 스케일 계산
-    var capW = 1440;
-    var capH = Math.max(520, Math.round(capW * (mapH / mapW)));
+    // 코스 내 모든 단지 좌표 + 실제 이동경로 좌표의 최소/최대 바운딩 박스 계산
+    var minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+    if (course && course.length) {
+      for (var i = 0; i < course.length; i++) {
+        var c = course[i];
+        if (!c || !isFinite(c.lat) || !isFinite(c.lng)) continue;
+        if (c.lat < minLat) minLat = c.lat;
+        if (c.lat > maxLat) maxLat = c.lat;
+        if (c.lng < minLng) minLng = c.lng;
+        if (c.lng > maxLng) maxLng = c.lng;
+      }
+    }
+    if (segments && segments.length) {
+      for (var s = 0; s < segments.length; s++) {
+        var path = segments[s] && segments[s].path;
+        if (!path) continue;
+        for (var p = 0; p < path.length; p++) {
+          var pt = path[p];
+          if (!pt || !isFinite(pt.lat) || !isFinite(pt.lng)) continue;
+          if (pt.lat < minLat) minLat = pt.lat;
+          if (pt.lat > maxLat) maxLat = pt.lat;
+          if (pt.lng < minLng) minLng = pt.lng;
+          if (pt.lng > maxLng) maxLng = pt.lng;
+        }
+      }
+    }
+
+    // 최종 A4 지도 영역 내 마커 지붕(상단) 및 여백 확보 후 실제 코스 영역이 채울 가용 영역
+    var padTopA4 = 74;
+    var padBottomA4 = 26;
+    var padLeftA4 = 52;
+    var padRightA4 = 52;
+    var availW = Math.max(200, mapW - padLeftA4 - padRightA4);
+    var availH = Math.max(200, mapH - padTopA4 - padBottomA4);
+
+    var bestZoom = 16;
+    var bestS = 0.85;
+    var centerLat = isFinite(minLat) ? (minLat + maxLat) / 2 : 37.5665;
+    var centerLng = isFinite(minLng) ? (minLng + maxLng) / 2 : 126.978;
+
+    if (isFinite(minLat) && isFinite(minLng) && (maxLat > minLat || maxLng > minLng)) {
+      // S = capW / mapW = capH / mapH 가 [0.72, 1.45] 구간에 들어오는 가장 높은 정수 줌 선택
+      // (연속 줌 효과로 높이/폭 기준 코스 영역을 최대치로 확대 + 고해상도 네이티브 타일 확보)
+      bestZoom = 10;
+      bestS = 1.0;
+      for (var z = 18; z >= 10; z--) {
+        var spanX = Math.max(1, lngToWorldX(maxLng, z) - lngToWorldX(minLng, z));
+        var spanY = Math.max(1, latToWorldY(minLat, z) - latToWorldY(maxLat, z));
+        var reqS = Math.max(spanX / availW, spanY / availH);
+        if (reqS <= 1.45) {
+          bestZoom = z;
+          bestS = Math.max(0.72, reqS);
+          break;
+        }
+      }
+      // 상단 마커 높이(padTopA4 > padBottomA4)를 고려해 중심 좌표를 약간 북쪽으로 보정
+      var midWorldY = (latToWorldY(maxLat, bestZoom) + latToWorldY(minLat, bestZoom)) / 2;
+      var shiftWorldY = ((padTopA4 - padBottomA4) / 2) * bestS;
+      centerLat = worldYToLat(midWorldY - shiftWorldY, bestZoom);
+      centerLng = (minLng + maxLng) / 2;
+    }
+
+    var capW = Math.max(960, Math.round(mapW * bestS));
+    var capH = Math.max(480, Math.round(mapH * bestS));
+
+    // 최종 A4(mapW × mapH) 상 마커 폭을 항상 74px로 일정하게 유지하는 동적 스케일
     var targetA4MarkerW = 74;
-    var a4Ratio = mapW / capW;
-    var markerScale = Math.max(0.75, Math.min(1.15, targetA4MarkerW / (68 * a4Ratio)));
+    var a4Ratio = mapW / capW; // = 1 / bestS
+    var markerScale = Math.max(0.72, Math.min(1.65, targetA4MarkerW / (68 * a4Ratio)));
+    var visualScale = Math.max(0.72, Math.min(1.55, capW / mapW));
 
     return {
       n: n,
@@ -673,7 +755,11 @@
       mapH: mapH,
       capW: capW,
       capH: capH,
-      markerScale: markerScale
+      zoom: bestZoom,
+      centerLat: centerLat,
+      centerLng: centerLng,
+      markerScale: markerScale,
+      visualScale: visualScale
     };
   }
 
@@ -687,7 +773,7 @@
     var savedView = global.RealCrewMap.getViewState();
     var savedFocused = global.RealCrewMap.lastFocusedIndex;
     var savedSize = null;
-    var metrics = computeOverviewLayoutMetrics(course.length);
+    var metrics = computeOverviewLayoutMetrics(course, segments);
 
     notify("전체 답사 지도 화면을 준비하는 중...");
 
@@ -697,15 +783,14 @@
         global.RealCrewMap.captureMarkerScale = metrics.markerScale; // 지도 크기에 무관하게 A4 상 74px 균일 마커 크기 보장
         savedSize = global.RealCrewMap.resizeForCapture(metrics.capW, metrics.capH);
         global.RealCrewMap.renderRoute(segments, -1); // 전체 경로 표시
-        global.RealCrewMap.fitCourseBounds(course, { top: 58, right: 44, bottom: 38, left: 44 });
-        return global.RealCrewMap.waitForMapSettle(500);
+        return global.RealCrewMap.setViewForCapture(metrics.centerLat, metrics.centerLng, metrics.zoom);
       })
       .then(function () {
-        // fitBounds 이후 최종 줌 기준으로 마커/경로 엔트리 갱신
+        // 최종 줌 기준으로 마커/경로 엔트리 갱신
         global.RealCrewMap.renderMarkers();
         global.RealCrewMap.renderRoute(segments, -1);
         notify("스크린샷을 생성하는 중...");
-        return captureMapSnapshot();
+        return captureMapSnapshot(null, metrics.visualScale);
       })
       .then(function (mapSnapshot) {
         var pageCanvas = renderOverviewPageCanvas(mapSnapshot, course, segments, {
@@ -1306,7 +1391,7 @@
     var savedView = global.RealCrewMap.getViewState();
     var savedFocused = global.RealCrewMap.lastFocusedIndex;
     var savedSize = null;
-    var metrics = computeOverviewLayoutMetrics(course.length);
+    var metrics = computeOverviewLayoutMetrics(course, segments);
     var loginStatus = !!(global.RealCrewData && global.RealCrewData.context && global.RealCrewData.context.loginStatus);
     var hiddenIframe = null;
     var totalPages = course.length + 3; // 표지(1) + 전체코스(1) + 단지별(N) + 종료(1)
@@ -1326,19 +1411,18 @@
         var coverCanvas = renderCoverPageCanvas(course, segments, options);
         pdf.addImage(coverCanvas.toDataURL("image/jpeg", 0.94), "JPEG", 0, 0, 297, 210);
 
-        // 2페이지: 전체 코스 지도 + 가로 이동 순서 (지도 크기와 무관하게 A4 상 74px 균일 마커 크기 보장)
+        // 2페이지: 전체 코스 지도 + 가로 이동 순서 (높이·폭 기준 최대 확대 + A4 상 74px 균일 마커 크기 보장)
         notify("PDF 전체 코스 페이지 생성 중...");
         global.RealCrewMap.clearTempRadarCircles();
         global.RealCrewMap.captureMarkerScale = metrics.markerScale;
         savedSize = global.RealCrewMap.resizeForCapture(metrics.capW, metrics.capH);
         global.RealCrewMap.renderRoute(segments, -1);
-        global.RealCrewMap.fitCourseBounds(course, { top: 58, right: 44, bottom: 38, left: 44 });
-        return global.RealCrewMap.waitForMapSettle(500);
+        return global.RealCrewMap.setViewForCapture(metrics.centerLat, metrics.centerLng, metrics.zoom);
       })
       .then(function () {
         global.RealCrewMap.renderMarkers();
         global.RealCrewMap.renderRoute(segments, -1);
-        return captureMapSnapshot();
+        return captureMapSnapshot(null, metrics.visualScale);
       })
       .then(function (overviewSnapshot) {
         global.RealCrewMap.captureMarkerScale = 1;

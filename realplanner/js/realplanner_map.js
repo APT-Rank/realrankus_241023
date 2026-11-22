@@ -620,6 +620,8 @@
         }
       }
       placedLabels.push(midPoint);
+      entry.midPoint = midPoint;
+      entry.labelAnchorY = labelAnchorY;
 
       var distText = global.RealCrewRoute.formatDistance(segItem.distanceMeters);
       var displayMin = segItem.displayMinutes != null ? segItem.displayMinutes : segItem.durationMinutes;
@@ -1049,15 +1051,25 @@
     }
     RealCrewMap.captureUnderlayCanvas = null;
 
-    // 숨겼던 기본 폴리라인 복원
+    if (RealCrewMap.captureLabelCanvas && RealCrewMap.captureLabelCanvas.parentNode) {
+      RealCrewMap.captureLabelCanvas.parentNode.removeChild(RealCrewMap.captureLabelCanvas);
+    }
+    RealCrewMap.captureLabelCanvas = null;
+
+    // 숨겼던 기본 폴리라인 및 거리 라벨 복원
     if (RealCrewMap.map && RealCrewMap.routePolylines) {
       for (var i = 0; i < RealCrewMap.routePolylines.length; i++) {
         RealCrewMap.routePolylines[i].setMap(RealCrewMap.map);
       }
     }
+    if (RealCrewMap.map && RealCrewMap.routeLabels) {
+      for (var j = 0; j < RealCrewMap.routeLabels.length; j++) {
+        RealCrewMap.routeLabels[j].setMap(RealCrewMap.map);
+      }
+    }
   }
 
-  function mountCaptureRouteCanvas(radarCenterCpx) {
+  function mountCaptureRouteCanvas(radarCenterCpx, visualScale) {
     unmountCaptureRouteCanvas();
     var map = RealCrewMap.map;
     var mapEl = document.getElementById("realcrewMap");
@@ -1065,14 +1077,19 @@
       return Promise.resolve();
     }
 
-    // 캡처 중 네이버 기본 SVG 폴리라인은 숨기고 overlayLayer 내부 고해상도 캔버스로 대체
+    // 캡처 중 네이버 기본 SVG 폴리라인과 DOM 거리 라벨은 숨기고 overlayLayer 내부 고해상도 캔버스로 대체
     for (var i = 0; i < RealCrewMap.routePolylines.length; i++) {
       RealCrewMap.routePolylines[i].setMap(null);
     }
+    for (var j = 0; j < RealCrewMap.routeLabels.length; j++) {
+      RealCrewMap.routeLabels[j].setMap(null);
+    }
 
-    var scale = 2;
     var mapW = mapEl.clientWidth || 1280;
     var mapH = mapEl.clientHeight || 720;
+    var scale = mapW > 1800 ? 1.5 : 2;
+    var vs = (typeof visualScale === "number" && isFinite(visualScale) && visualScale > 0) ? visualScale : 1;
+    var u = scale * vs;
 
     var underlayCanvas = document.createElement("canvas");
     underlayCanvas.id = "rpTempRouteUnderlayCanvas";
@@ -1080,6 +1097,13 @@
     underlayCanvas.height = Math.round(mapH * scale);
     underlayCanvas.style.cssText =
       "position:absolute;left:0px;top:0px;width:" + mapW + "px;height:" + mapH + "px;pointer-events:none;";
+
+    var labelCanvas = document.createElement("canvas");
+    labelCanvas.id = "rpTempRouteLabelCanvas";
+    labelCanvas.width = Math.round(mapW * scale);
+    labelCanvas.height = Math.round(mapH * scale);
+    labelCanvas.style.cssText =
+      "position:absolute;left:0px;top:0px;width:" + mapW + "px;height:" + mapH + "px;pointer-events:none;z-index:9999;";
 
     var underlayPane = null;
     var overlayView = new naver.maps.OverlayView();
@@ -1092,6 +1116,7 @@
         } else {
           underlayPane.appendChild(underlayCanvas);
         }
+        underlayPane.appendChild(labelCanvas);
       }
     };
     overlayView.draw = function () {};
@@ -1099,11 +1124,15 @@
       if (underlayCanvas && underlayCanvas.parentNode) {
         underlayCanvas.parentNode.removeChild(underlayCanvas);
       }
+      if (labelCanvas && labelCanvas.parentNode) {
+        labelCanvas.parentNode.removeChild(labelCanvas);
+      }
     };
     overlayView.setMap(map);
 
     RealCrewMap.captureUnderlayView = overlayView;
     RealCrewMap.captureUnderlayCanvas = underlayCanvas;
+    RealCrewMap.captureLabelCanvas = labelCanvas;
 
     return new Promise(function (resolve) {
       setTimeout(function () {
@@ -1117,6 +1146,9 @@
           if (underlayPane.firstChild !== underlayCanvas) {
             underlayPane.insertBefore(underlayCanvas, underlayPane.firstChild);
           }
+          if (underlayPane.lastChild !== labelCanvas) {
+            underlayPane.appendChild(labelCanvas);
+          }
 
           var mapRect = mapEl.getBoundingClientRect();
           var paneRect = underlayPane.getBoundingClientRect();
@@ -1124,10 +1156,16 @@
           var paneOffsetY = mapRect.top - paneRect.top;
           underlayCanvas.style.left = paneOffsetX + "px";
           underlayCanvas.style.top = paneOffsetY + "px";
+          labelCanvas.style.left = paneOffsetX + "px";
+          labelCanvas.style.top = paneOffsetY + "px";
 
           var ctx = underlayCanvas.getContext("2d");
           ctx.setTransform(1, 0, 0, 1, 0, 0);
           ctx.clearRect(0, 0, underlayCanvas.width, underlayCanvas.height);
+
+          var lctx = labelCanvas.getContext("2d");
+          lctx.setTransform(1, 0, 0, 1, 0, 0);
+          lctx.clearRect(0, 0, labelCanvas.width, labelCanvas.height);
 
           function toCanvasPt(lat, lng) {
             var cOff = canvasProj.fromCoordToOffset(new naver.maps.LatLng(lat, lng));
@@ -1189,12 +1227,12 @@
             // 2-1) 드롭 섀도우
             ctx.save();
             ctx.beginPath();
-            ctx.moveTo(pts[0].x + 2 * scale, pts[0].y + 2.5 * scale);
+            ctx.moveTo(pts[0].x + 2 * u, pts[0].y + 2.5 * u);
             for (var s1 = 1; s1 < pts.length; s1++) {
-              ctx.lineTo(pts[s1].x + 2 * scale, pts[s1].y + 2.5 * scale);
+              ctx.lineTo(pts[s1].x + 2 * u, pts[s1].y + 2.5 * u);
             }
             ctx.strokeStyle = "rgba(15, 23, 42, 0.28)";
-            ctx.lineWidth = 9 * scale;
+            ctx.lineWidth = 9 * u;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
             ctx.stroke();
@@ -1208,7 +1246,7 @@
               ctx.lineTo(pts[s2].x, pts[s2].y);
             }
             ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 8 * scale;
+            ctx.lineWidth = 8 * u;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
             ctx.stroke();
@@ -1222,11 +1260,11 @@
               ctx.lineTo(pts[s3].x, pts[s3].y);
             }
             ctx.strokeStyle = palette.line;
-            ctx.lineWidth = 4.6 * scale;
+            ctx.lineWidth = 4.6 * u;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
             if (segItem.source !== "osrm") {
-              ctx.setLineDash([8 * scale, 6 * scale]);
+              ctx.setLineDash([8 * u, 6 * u]);
             }
             ctx.stroke();
             ctx.setLineDash([]);
@@ -1235,10 +1273,10 @@
             // 2-4) 시작점 동그라미
             ctx.save();
             ctx.beginPath();
-            ctx.arc(pts[0].x, pts[0].y, 5 * scale, 0, Math.PI * 2);
+            ctx.arc(pts[0].x, pts[0].y, 5 * u, 0, Math.PI * 2);
             ctx.fillStyle = palette.line;
             ctx.fill();
-            ctx.lineWidth = 2 * scale;
+            ctx.lineWidth = 2 * u;
             ctx.strokeStyle = "#ffffff";
             ctx.stroke();
             ctx.restore();
@@ -1248,29 +1286,95 @@
             var prevPt = pts[pts.length - 2];
             for (var back = pts.length - 2; back >= 0; back--) {
               var distSq = Math.pow(endPt.x - pts[back].x, 2) + Math.pow(endPt.y - pts[back].y, 2);
-              if (distSq >= 9 * scale * scale) {
+              if (distSq >= 9 * u * u) {
                 prevPt = pts[back];
                 break;
               }
             }
             var angle = Math.atan2(endPt.y - prevPt.y, endPt.x - prevPt.x);
-            var arrowLen = 12 * scale;
-            var arrowHalfW = 6.5 * scale;
+            var arrowLen = 12 * u;
+            var arrowHalfW = 6.5 * u;
 
             ctx.save();
             ctx.translate(endPt.x, endPt.y);
             ctx.rotate(angle);
             ctx.beginPath();
-            ctx.moveTo(3 * scale, 0);
-            ctx.lineTo(-arrowLen + 3 * scale, -arrowHalfW);
-            ctx.lineTo(-arrowLen + 3 * scale, arrowHalfW);
+            ctx.moveTo(3 * u, 0);
+            ctx.lineTo(-arrowLen + 3 * u, -arrowHalfW);
+            ctx.lineTo(-arrowLen + 3 * u, arrowHalfW);
             ctx.closePath();
             ctx.fillStyle = palette.line;
             ctx.fill();
-            ctx.lineWidth = 1.8 * scale;
+            ctx.lineWidth = 1.8 * u;
             ctx.strokeStyle = "#ffffff";
             ctx.stroke();
             ctx.restore();
+
+            // 3) 최상단 라벨 캔버스에 구간 이동경로 정보(순번 / 거리 / 시간) 직접 벡터 렌더링
+            var midCoord = entry.midPoint || getPathMidpoint(rawPath);
+            var midPt = midCoord ? toCanvasPt(midCoord.lat, midCoord.lng) : null;
+            if (midPt) {
+              var idxLabel = toCircled(idx + 1) + "→" + toCircled(idx + 2);
+              var distLabel = global.RealCrewRoute.formatDistance(segItem.distanceMeters);
+              var dispMin = segItem.displayMinutes != null ? segItem.displayMinutes : segItem.durationMinutes;
+              var detailLabel = (segItem.isCar ? "차 " : "") + distLabel + " / " + dispMin + "분";
+              var fontFamily = "'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif";
+
+              lctx.save();
+              lctx.font = "800 " + (11 * u) + "px " + fontFamily;
+              var idxW = lctx.measureText(idxLabel).width;
+              lctx.font = "700 " + (11 * u) + "px " + fontFamily;
+              var detailW = lctx.measureText(detailLabel).width;
+
+              var padX = 8 * u;
+              var gapW = 5 * u;
+              var pillW = padX * 2 + idxW + gapW + detailW;
+              var pillH = 22 * u;
+              var pillR = pillH / 2;
+              var anchorY = (entry.labelAnchorY != null ? entry.labelAnchorY : 12) * u;
+              var pillX = midPt.x - pillW / 2;
+              var pillY = midPt.y - anchorY;
+
+              // 캔버스 경계 안쪽으로 안전하게 보정
+              pillX = Math.max(6 * u, Math.min(labelCanvas.width - pillW - 6 * u, pillX));
+              pillY = Math.max(6 * u, Math.min(labelCanvas.height - pillH - 6 * u, pillY));
+
+              // 그림자 + 흰색 라운드 필 배경
+              lctx.shadowColor = "rgba(15, 23, 42, 0.24)";
+              lctx.shadowBlur = 7 * u;
+              lctx.shadowOffsetX = 0;
+              lctx.shadowOffsetY = 2 * u;
+              lctx.beginPath();
+              lctx.moveTo(pillX + pillR, pillY);
+              lctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, pillR);
+              lctx.arcTo(pillX + pillW, pillY + pillH, pillX, pillY + pillH, pillR);
+              lctx.arcTo(pillX, pillY + pillH, pillX, pillY, pillR);
+              lctx.arcTo(pillX, pillY, pillX + pillW, pillY, pillR);
+              lctx.closePath();
+              lctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+              lctx.fill();
+
+              // 테두리
+              lctx.shadowColor = "transparent";
+              lctx.shadowBlur = 0;
+              lctx.shadowOffsetY = 0;
+              lctx.strokeStyle = palette.line;
+              lctx.lineWidth = 1.6 * u;
+              lctx.stroke();
+
+              // 텍스트 렌더링 (순번 + 거리/시간)
+              var textY = pillY + pillH / 2 + 0.5 * u;
+              lctx.textBaseline = "middle";
+              lctx.textAlign = "left";
+              lctx.font = "800 " + (11 * u) + "px " + fontFamily;
+              lctx.fillStyle = palette.text;
+              lctx.fillText(idxLabel, pillX + padX, textY);
+
+              lctx.font = "700 " + (11 * u) + "px " + fontFamily;
+              lctx.fillStyle = "#0f172a";
+              lctx.fillText(detailLabel, pillX + padX + idxW + gapW, textY);
+              lctx.restore();
+            }
           }
         } catch (err) {
           console.warn("캡처 언더레이 경로 렌더링 경고:", err);
