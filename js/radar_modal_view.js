@@ -2552,7 +2552,7 @@ function initRadarModalMap(aptData) {
  * @param {number} panelWidth - 좌측 요약 패널 고정 폭 (CSS px)
  * @returns {{ el: HTMLElement, hasTransport: boolean }}
  */
-function buildRadarDesktopSummaryDom(aptData, panelWidth) {
+function buildRadarDesktopSummaryDom(aptData, panelWidth, extraBottomCardHtml) {
   var t = (typeof window.tSafe === 'function') ? window.tSafe : function (k, d) { return d; };
   var isEn = (typeof LANG !== 'undefined' && LANG === 'en') || (sessionStorage.getItem('LANG') === 'en');
   var scoreColor = (typeof SCORE_CHART_COLOR !== 'undefined') ? SCORE_CHART_COLOR : '#e43b46';
@@ -2820,7 +2820,7 @@ function buildRadarDesktopSummaryDom(aptData, panelWidth) {
     'font-family:"Spoqa Han Sans Neo","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;' +
     'z-index:-1;pointer-events:none;';
 
-  // 순서: 상단 단지정보 → 주거 → 교육 → 교통(있을 때만) → 인프라
+  // 순서: 상단 단지정보 → 주거 → 교육 → 교통(있을 때만) → 인프라 → (선택) 추가 하단 카드
   wrapEl.innerHTML =
     topHeaderHtml +
     '<div style="display:flex;flex-direction:column;gap:8px;flex:1;">' +
@@ -2828,6 +2828,7 @@ function buildRadarDesktopSummaryDom(aptData, panelWidth) {
       eduCardHtml +
       transCardHtml +
       infraCardHtml +
+      (extraBottomCardHtml || '') +
     '</div>';
 
   return { el: wrapEl, hasTransport: hasTransport };
@@ -2889,14 +2890,23 @@ function createDeepCloneWithCanvas(sourceEl) {
  * 파일명: 리얼랭커스_{아파트명}_주변입지환경_{YYYYMMDD}_{HHMMSS}.png
  * 수정일: 2026-11-07
  */
-function captureRadarMapView(event) {
+function captureRadarMapView(event, captureOptions) {
   if (event) {
     event.preventDefault();
     event.stopPropagation();
   }
 
+  var hasCustomCallback = !!(captureOptions && typeof captureOptions.onCaptured === 'function');
+  var notifyError = function (msg) {
+    if (captureOptions && typeof captureOptions.onError === 'function') {
+      captureOptions.onError(new Error(msg));
+    } else if (!hasCustomCallback) {
+      alert(msg);
+    }
+  };
+
   if (typeof html2canvas === 'undefined') {
-    alert("캡처 라이브러리(html2canvas)를 로드 중입니다. 잠시 후 다시 시도해 주세요.");
+    notifyError("캡처 라이브러리(html2canvas)를 로드 중입니다. 잠시 후 다시 시도해 주세요.");
     return;
   }
 
@@ -2940,7 +2950,7 @@ function captureRadarMapView(event) {
   var mapElement = document.getElementById("radarDataMap") || document.getElementById("dataMap");
   var captureTarget = document.getElementById("radarMapCaptureArea") || mapElement;
   if (!captureTarget) {
-    alert("캡처할 지도 영역을 찾을 수 없습니다.");
+    notifyError("캡처할 지도 영역을 찾을 수 없습니다.");
     return;
   }
 
@@ -3083,7 +3093,8 @@ function captureRadarMapView(event) {
     var leftPanelEl = null;
     var leftPanelWidth = 420;
     if (useSideBySideWebLayout) {
-      var summaryBuilt = buildRadarDesktopSummaryDom(window.currentRadarAptData, leftPanelWidth);
+      var extraBottomHtml = (captureOptions && captureOptions.extraBottomCardHtml) ? captureOptions.extraBottomCardHtml : '';
+      var summaryBuilt = buildRadarDesktopSummaryDom(window.currentRadarAptData, leftPanelWidth, extraBottomHtml);
       leftPanelEl = summaryBuilt.el;
       bgHost.appendChild(leftPanelEl);
       var naturalLeftH = Math.ceil(leftPanelEl.getBoundingClientRect().height) || 720;
@@ -4045,7 +4056,7 @@ function captureRadarMapView(event) {
             var base64Data = finalCanvas.toDataURL('image/png');
             if (!base64Data || base64Data.length < 200 || base64Data === 'data:,') {
               restoreAllOnError();
-              alert("생성된 이미지 데이터가 비어 있습니다 (0KB). 잠시 후 다시 시도해 주세요.");
+              notifyError("생성된 이미지 데이터가 비어 있습니다 (0KB). 잠시 후 다시 시도해 주세요.");
               return;
             }
 
@@ -4053,6 +4064,11 @@ function captureRadarMapView(event) {
             restoreMapAndDomState();
 
             updateProgress(100);
+            if (hasCustomCallback) {
+              finishButtonState();
+              captureOptions.onCaptured(base64Data, finalCanvas.width, finalCanvas.height);
+              return;
+            }
             // 100% 진행률을 사용자가 충분히 인지할 수 있도록 300ms 유지 (price/index.html 동일)
             setTimeout(function () {
               if (window.Android && typeof window.Android.downloadImage === 'function') {
@@ -4071,12 +4087,12 @@ function captureRadarMapView(event) {
           } catch (err) {
             restoreAllOnError();
             console.error("이미지 변환 오류:", err);
-            alert("이미지 변환에 실패했습니다: " + err.message);
+            notifyError("이미지 변환에 실패했습니다: " + err.message);
           }
         }).catch(function (err) {
           restoreAllOnError();
           console.error("html2canvas capture error:", err);
-          alert("캡처에 실패했습니다: " + err.message);
+          notifyError("캡처에 실패했습니다: " + err.message);
         });
       }, 80);
     });

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>리얼플래너 (현장답사) - 리얼랭커스</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/realplanner.css?v=20261122_07" />
+
+  <!-- Naver Maps API v3 (리얼랭커스 동일 키) -->
+  <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+</head>
+<body>
+  <div id="rcApp" class="rc-app">
+    <!-- 좌측 정보창 (모바일: 하단 바텀시트) -->
+    <aside id="rcSidebar" class="rc-sidebar" aria-label="리얼플래너 패널">
+      <!-- 모바일 바텀시트 드래그/토글 핸들 -->
+      <div id="rcSheetHandle" class="rc-sheet-handle" role="button" tabindex="0" aria-label="패널 펼치기/접기">
+        <span class="rc-sheet-bar"></span>
+      </div>
+
+      <!-- 상단 헤더 -->
+      <header id="rcHeader" class="rc-header">
+        <div class="rc-header-left">
+          <button type="button" id="rcBackBtn" class="rc-icon-btn rc-back-btn" title="닫기" aria-label="닫기">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="rc-brand">
+            <img src="../apt-rank_blank2.png" alt="리얼랭커스" class="rc-brand-logo" onerror="this.style.display='none'" />
+            <span class="rc-brand-title">리얼플래너</span>
+            <span class="rc-brand-badge">현장답사</span>
+          </div>
+        </div>
+        <div class="rc-header-right">
+          <button type="button" id="rcResetBtn" class="rc-header-action" style="display:none;" title="코스 초기화">
+            <i class="fa-solid fa-rotate-left"></i> 초기화
+          </button>
+        </div>
+      </header>
+
+      <!-- 1) 초기 진입: 모드 선택 화면 -->
+      <section id="rcModeHome" class="rc-mode-home">
+        <div class="rc-mode-home-inner">
+        <div class="rc-home-intro">
+          <div class="rc-home-kicker">REALPLANNER FIELD COURSE</div>
+          <h2>나만의 답사 코스를<br />빠르게 설계해 보세요</h2>
+          <p>원하는 방식을 선택하면 우측 지도와 연동하여<br />최적의 현장답사 동선과 예상 소요시간을 계산합니다.</p>
+        </div>
+
+        <div class="rc-mode-buttons">
+          <button type="button" id="btnStartAuto" class="rc-mode-card rc-mode-card--auto">
+            <div class="rc-mode-card-icon">
+              <i class="fa-solid fa-vector-square"></i>
+            </div>
+            <div class="rc-mode-card-body">
+              <div class="rc-mode-card-title">
+                자동 코스 만들기
+                <span class="rc-pill-rec">추천</span>
+              </div>
+              <div class="rc-mode-card-desc">
+                지도에서 사각 박스로 영역을 선택하면<br />
+                최고 점수 단지부터 도보 최소거리 순으로 자동 생성합니다.
+              </div>
+            </div>
+            <div class="rc-mode-card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+          </button>
+
+          <button type="button" id="btnStartManual" class="rc-mode-card rc-mode-card--manual">
+            <div class="rc-mode-card-icon">
+              <i class="fa-solid fa-hand-pointer"></i>
+            </div>
+            <div class="rc-mode-card-body">
+              <div class="rc-mode-card-title">수동 코스 만들기</div>
+              <div class="rc-mode-card-desc">
+                지도에서 시작 단지를 직접 선택한 뒤<br />
+                원하는 단지를 하나씩 클릭해 코스를 구성합니다.
+              </div>
+            </div>
+            <div class="rc-mode-card-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+          </button>
+        </div>
+
+        <div class="rc-home-tips">
+          <div class="rc-tip-item"><i class="fa-solid fa-circle-check"></i> 코스 생성 후 드래그, 버튼으로 순서 이동 및 삭제 가능</div>
+          <div class="rc-tip-item"><i class="fa-solid fa-circle-check"></i> 리스트 사이 <strong>(+)</strong> 버튼으로 중간 단지 추가 가능</div>
+          <div class="rc-tip-item"><i class="fa-solid fa-circle-check"></i> 지도에 ①, ②... 순번과 이동경로, 거리 자동 표시</div>
+        </div>
+        </div>
+      </section>
+
+      <!-- 2) 모드 활성화 후: 코스 작업 영역 -->
+      <section id="rcWorkspace" class="rc-workspace" style="display:none;">
+        <!-- 모드 전환 및 내보내기(스크린샷 / PDF) 바 -->
+        <div class="rc-mode-bar">
+          <div class="rc-mode-tabs">
+            <button type="button" id="tabModeAuto" class="rc-mode-tab">
+              <i class="fa-solid fa-vector-square"></i> 자동 코스
+            </button>
+            <button type="button" id="tabModeManual" class="rc-mode-tab">
+              <i class="fa-solid fa-hand-pointer"></i> 수동 코스
+            </button>
+          </div>
+          <div class="rc-mode-actions">
+            <button type="button" id="btnRedrawBox" class="rc-redraw-btn" style="display:none;" title="지도에서 사각 영역 다시 그리기">
+              <i class="fa-solid fa-crop-simple"></i> 영역
+            </button>
+            <button type="button" id="btnExportImage" class="rc-export-btn" title="A4 가로 스크린샷 이미지 저장">
+              <i class="fa-solid fa-camera"></i>
+            </button>
+            <button type="button" id="btnExportPdf" class="rc-export-btn rc-export-btn--pdf" title="A4 가로 답사북 PDF 저장 (전체 + 단지별 레이더맵)">
+              <i class="fa-solid fa-file-pdf"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 상태 안내 배너 -->
+        <div id="rcGuideBanner" class="rc-guide-banner" style="display:none;">
+          <div class="rc-guide-text" id="rcGuideText"></div>
+          <button type="button" id="rcGuideCancelBtn" class="rc-guide-cancel" style="display:none;">취소</button>
+        </div>
+
+        <!-- 코스 리스트 스크롤 영역 -->
+        <div id="rcListScroll" class="rc-list-scroll">
+          <div id="rcListNote" class="rc-list-note" style="display:none;">
+            <label class="rc-car-toggle-wrap" title="체크 시 600m 이상 구간을 차량 이동 기준으로 계산합니다">
+              <input type="checkbox" id="rcCarOver600Checkbox" class="rc-car-checkbox" />
+              <span>600m 이상 차량 이동</span>
+            </label>
+          </div>
+          <div id="rcEmptyState" class="rc-empty-state">
+            <div class="rc-empty-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+            <div id="rcEmptyTitle" class="rc-empty-title">지도에서 영역을 선택해 주세요</div>
+            <div id="rcEmptyDesc" class="rc-empty-desc">우측 지도 위를 드래그해 사각 박스를 그리면 영역 안의 단지들로 답사 코스가 자동 생성됩니다.</div>
+          </div>
+          <div id="rcCourseList" class="rc-course-list"></div>
+          <div id="rcAppendWrap" class="rc-append-wrap" style="display:none;">
+            <button type="button" id="btnAppendComplex" class="rc-append-btn">
+              <i class="fa-solid fa-plus"></i> 코스 끝에 단지 추가하기
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 좌측 하단 고정 결과 요약 바 -->
+      <footer id="rcSummaryBar" class="rc-summary-bar">
+        <div class="rc-summary-main">
+          <div class="rc-summary-stat">
+            <span class="rc-summary-label">총</span>
+            <strong id="rcTotalCount" class="rc-summary-num">0</strong>
+            <span class="rc-summary-label">단지</span>
+          </div>
+          <span class="rc-summary-divider"></span>
+          <div class="rc-summary-stat">
+            <span class="rc-summary-label">예상</span>
+            <strong id="rcTotalTime" class="rc-summary-time">0분</strong>
+            <span class="rc-summary-label">소요</span>
+          </div>
+        </div>
+        <div class="rc-summary-sub">
+          <span class="rc-summary-dist">
+            <i class="fa-solid fa-person-walking"></i> 이동 <span id="rcTotalDist">0m</span> (<span id="rcWalkTime">0분</span>)
+          </span>
+          <label class="rc-dwell-check-wrap" title="체크 시 단지당 15분 답사 체류시간을 예상 소요시간에 포함합니다">
+            <input type="checkbox" id="rcDwellCheckbox" class="rc-dwell-checkbox" checked />
+            <span>단지당 15분 체류시간 포함</span>
+          </label>
+        </div>
+      </footer>
+    </aside>
+
+    <!-- 우측 네이버 지도 영역 -->
+    <main id="rcMapWrap" class="rc-map-wrap">
+      <!-- 모바일 전용 상단 플로팅 타이틀 카드 (리얼레이더맵 스타일) -->
+      <div id="rcMobileTopBar" class="rc-mobile-top-bar">
+        <div class="rc-mobile-top-left">
+          <button type="button" id="rcMobileBackBtn" class="rc-mobile-back-chevron" title="닫기" aria-label="닫기">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="rc-mobile-top-texts">
+            <div class="rc-mobile-top-title">
+              <span>리얼플래너</span>
+              <span class="rc-mobile-top-badge">현장답사</span>
+            </div>
+            <div id="rcMobileTopDesc" class="rc-mobile-top-desc">자동/수동 현장답사 동선 플래너</div>
+          </div>
+        </div>
+        <button type="button" id="rcMobileResetBtn" class="rc-mobile-reset-btn" style="display:none;" title="코스 초기화">
+          <i class="fa-solid fa-rotate-left"></i> 초기화
+        </button>
+      </div>
+
+      <div id="realcrewMap" class="rc-map"></div>
+
+      <!-- 지도 위 사각박스 드래그 인터랙션 레이어 (자동 모드 드래그 활성 시에만 pointer-events 활성화) -->
+      <div id="rcDrawOverlay" class="rc-draw-overlay" style="display:none;">
+        <div id="rcSelectionRect" class="rc-selection-rect" style="display:none;"></div>
+      </div>
+
+      <!-- 지도 상단 플로팅 안내 배너 -->
+      <div id="rcMapBanner" class="rc-map-banner" style="display:none;">
+        <span id="rcMapBannerIcon" class="rc-map-banner-icon"><i class="fa-solid fa-vector-square"></i></span>
+        <span id="rcMapBannerText" class="rc-map-banner-text">지도에서 사각 박스를 드래그하세요</span>
+        <button type="button" id="rcMapBannerCancel" class="rc-map-banner-cancel">취소</button>
+      </div>
+
+      <!-- 지도 우측 플로팅 현위치 버튼 -->
+      <button type="button" id="rcLocationBtn" class="rc-map-loc-btn" title="현재 위치로 이동" aria-label="현재 위치로 이동">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="7"></circle>
+          <circle cx="12" cy="12" r="2"></circle>
+          <line x1="12" y1="1" x2="12" y2="5"></line>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+          <line x1="1" y1="12" x2="5" y2="12"></line>
+          <line x1="19" y1="12" x2="23" y2="12"></line>
+        </svg>
+      </button>
+
+      <!-- 데이터 로딩 오버레이 -->
+      <div id="rcLoading" class="rc-loading">
+        <div class="rc-spinner"></div>
+        <div class="rc-loading-text">단지 데이터를 불러오는 중...</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 토스트 알림 -->
+  <div id="rcToast" class="rc-toast" role="status" aria-live="polite"></div>
+
+  <!-- 캡처, PDF 및 QR코드 생성 라이브러리 -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+
+  <script src="./js/realplanner_data.js?v=20261122_07"></script>
+  <script src="./js/realplanner_route.js?v=20261122_07"></script>
+  <script src="./js/realplanner_map.js?v=20261122_07"></script>
+  <script src="./js/realplanner_export.js?v=20261122_07"></script>
+  <script src="./js/realplanner_app.js?v=20261122_07"></script>
+</body>
+</html>

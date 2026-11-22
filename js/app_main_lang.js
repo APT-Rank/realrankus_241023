@@ -5190,6 +5190,11 @@ function showNotice() {
         <li><div class='notice'>${t('ui.notice.bullet_11', '문의사항, 오류수정, 개선제안은 이메일 또는 카카오톡을 통해 문의해 주세요.')}</div></li>
         <li><div class='notice'>${connectionStatus}</div></li>
         </ul>
+        <div style='margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e2e8f0; text-align: center;'>
+          <button type='button' id='btn_open_realplanner_test' class='btn btn-sm' onclick='openRealPlanner()' style='background: #E43B46; color: #fff; font-weight: 700; border-radius: 8px; padding: 7px 14px; font-size: 0.85em; box-shadow: 0 2px 6px rgba(228, 59, 70, 0.28);'>
+            <i class='fa-solid fa-route' style='margin-right: 5px;'></i>리얼플래너 (현장답사) 테스트
+          </button>
+        </div>
       `;
 
   footerHtml += `
@@ -5444,6 +5449,13 @@ window.addEventListener("popstate", function (e) {
     (!e.state || e.state.complex3dModalToken !== complex3dModalHistoryToken)
   ) {
     closeComplex3dModal(true);
+  }
+  if (
+    isRealPlannerModalOpen &&
+    realplannerModalHistoryToken &&
+    (!e.state || e.state.realplannerModalToken !== realplannerModalHistoryToken)
+  ) {
+    closeRealPlannerModal(true);
   }
 });
 
@@ -6086,6 +6098,144 @@ function closeComplex3dModal(fromPopState) {
     closingHistoryToken &&
     history.state &&
     history.state.complex3dModalToken === closingHistoryToken
+  ) {
+    history.back();
+  }
+}
+
+/**
+ * ==========================================================================
+ * 리얼플래너(RealPlanner) 현장답사 코스 연동 모듈 (웹 새창 / 모바일 iframe 모달)
+ * ==========================================================================
+ */
+var isRealPlannerModalOpen = false;
+var realplannerModalHistoryToken = null;
+var realplannerModalHistorySequence = 0;
+
+function openRealPlanner() {
+  try {
+    var noticeEl = document.getElementById("noticeModal");
+    if (noticeEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+      var noticeInstance = bootstrap.Modal.getInstance(noticeEl);
+      if (noticeInstance) noticeInstance.hide();
+    } else if (typeof $ !== "undefined") {
+      $("#noticeModal").modal("hide");
+    }
+  } catch (e) {}
+
+  var centerLat = null;
+  var centerLng = null;
+  var zoomVal = 16;
+  try {
+    if (typeof defaultMap !== "undefined" && defaultMap && typeof defaultMap.getCenter === "function") {
+      var c = defaultMap.getCenter();
+      if (c) {
+        centerLat = typeof c.lat === "function" ? c.lat() : c.y;
+        centerLng = typeof c.lng === "function" ? c.lng() : c.x;
+      }
+      zoomVal = defaultMap.getZoom();
+    }
+  } catch (e) {}
+
+  if (!centerLat || !centerLng) {
+    centerLat = parseFloat(localStorage.getItem("lastMapLat")) || 37.4979;
+    centerLng = parseFloat(localStorage.getItem("lastMapLng")) || 127.0276;
+    zoomVal = parseInt(localStorage.getItem("lastMapZoom"), 10) || 16;
+  }
+
+  var launchContext = {
+    selectedMonth: typeof selectedMonth !== "undefined" ? selectedMonth : "202611",
+    dbName: typeof DB_Date !== "undefined" ? DB_Date : "202611_02",
+    selectedRegion: typeof selectedRegion !== "undefined" ? selectedRegion : "Seoul",
+    selectedSubRegion: typeof selectedSubRegion !== "undefined" ? selectedSubRegion : "",
+    lat: centerLat,
+    lng: centerLng,
+    zoom: zoomVal,
+    loginStatus: typeof login_status !== "undefined" ? !!login_status : false,
+    isMobile: typeof isMobile !== "undefined" ? !!isMobile : (window.innerWidth <= 768),
+    launchedAt: Date.now()
+  };
+
+  try {
+    sessionStorage.setItem("realplannerLaunchContext", JSON.stringify(launchContext));
+    localStorage.setItem("realplannerLaunchContext", JSON.stringify(launchContext));
+  } catch (e) {}
+
+  if (typeof isMobile !== "undefined" && isMobile) {
+    openRealPlannerModal();
+  } else {
+    window.open("./realplanner/index.html", "_blank");
+  }
+}
+
+window.addEventListener("message", function (event) {
+  var iframe = document.getElementById("realplanner_iframe");
+  if (!iframe || event.source !== iframe.contentWindow || !event.data) return;
+  if (event.data.type === "closeRealPlannerModal") {
+    closeRealPlannerModal();
+  } else if (event.data.type === "realplannerReady") {
+    var loader = document.getElementById("realplanner_modal_loader");
+    if (loader) loader.style.display = "none";
+  }
+});
+
+function openRealPlannerModal() {
+  if (isRealPlannerModalOpen) return;
+  isRealPlannerModalOpen = true;
+
+  var iframeUrl = "./realplanner/index.html?embedded=1";
+  var $modal = $("#realplannerModal");
+  var oldIframe = document.getElementById("realplanner_iframe");
+  if (oldIframe) oldIframe.remove();
+
+  var iframe = document.createElement("iframe");
+  iframe.id = "realplanner_iframe";
+  iframe.src = iframeUrl;
+  iframe.allow = "geolocation; fullscreen";
+  iframe.style.cssText = "position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; display: block;";
+
+  var loader = document.getElementById("realplanner_modal_loader");
+  if (loader) loader.style.display = "flex";
+  iframe.addEventListener("load", function () {
+    setTimeout(function () {
+      var ld = document.getElementById("realplanner_modal_loader");
+      if (ld) ld.style.display = "none";
+    }, 250);
+  });
+
+  $modal.append(iframe);
+  $modal.stop(true, false).fadeIn(220);
+
+  realplannerModalHistorySequence += 1;
+  realplannerModalHistoryToken = Date.now().toString(36) + "-" + realplannerModalHistorySequence;
+  var currentHistoryState = history.state && typeof history.state === "object" ? history.state : {};
+  history.pushState(
+    Object.assign({}, currentHistoryState, {
+      realplannerModalOpen: true,
+      realplannerModalToken: realplannerModalHistoryToken
+    }),
+    "",
+    ""
+  );
+}
+
+function closeRealPlannerModal(fromPopState) {
+  if (!isRealPlannerModalOpen) return;
+  var closingHistoryToken = realplannerModalHistoryToken;
+  isRealPlannerModalOpen = false;
+  realplannerModalHistoryToken = null;
+
+  var $modal = $("#realplannerModal");
+  var iframe = document.getElementById("realplanner_iframe");
+  if (iframe) iframe.remove();
+
+  $modal.stop(true, false).fadeOut(180);
+
+  if (
+    !fromPopState &&
+    closingHistoryToken &&
+    history.state &&
+    history.state.realplannerModalToken === closingHistoryToken
   ) {
     history.back();
   }

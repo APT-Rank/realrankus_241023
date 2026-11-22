@@ -1,4 +1,24 @@
 {
     "workbench.settings.editor": "json",
-    "liveServer.settings.port": 5500
+    "liveServer.settings.port": 5500,
+    "liveServer.settings.ignoreFiles": [
+        "**/.vscode/**",
+        "**/play/**",
+        "**/complex3d/data/**",
+        "**/data/**",
+        "**/functions/**",
+        "**/price/**",
+        "**/theme/**",
+        "**/op/**",
+        "**/2026*/**",
+        "**/*.json",
+        "**/*.png",
+        "**/*.jpg"
+    ],
+    "files.watcherExclude": {
+        "**/play/**": true,
+        "**/complex3d/data/**": true,
+        "**/data/**": true,
+        "**/functions/node_modules/**": true
+    }
 }
