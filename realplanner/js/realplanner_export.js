@@ -621,13 +621,127 @@
     return canvas;
   }
 
-  function downloadCanvasPng(canvas, filename) {
+  // 2026-11-22: 모바일 앱 WebView(Android.downloadImage / parent 브릿지) 및 모바일 웹(iOS 공유/Blob) 갤러리 저장 완벽 지원
+  function getAndroidBridge() {
+    try {
+      if (window.Android && typeof window.Android.downloadImage === "function") return window.Android;
+    } catch (e) {}
+    try {
+      if (window.parent && window.parent !== window && window.parent.Android && typeof window.parent.Android.downloadImage === "function") {
+        return window.parent.Android;
+      }
+    } catch (e) {}
+    try {
+      if (window.top && window.top !== window && window.top.Android && typeof window.top.Android.downloadImage === "function") {
+        return window.top.Android;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function triggerBlobDownload(blob, filename) {
+    var blobUrl = URL.createObjectURL(blob);
     var link = document.createElement("a");
     link.download = filename;
-    link.href = canvas.toDataURL("image/png");
+    link.href = blobUrl;
+    link.rel = "noopener";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setTimeout(function () {
+      try { URL.revokeObjectURL(blobUrl); } catch (e) {}
+    }, 8000);
+  }
+
+  function downloadCanvasPng(canvas, filename) {
+    var base64Data = canvas.toDataURL("image/png");
+    var androidBridge = getAndroidBridge();
+    if (androidBridge) {
+      androidBridge.downloadImage(base64Data, filename);
+      return;
+    }
+
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+    if (typeof canvas.toBlob === "function") {
+      canvas.toBlob(function (blob) {
+        if (!blob) {
+          var fallbackLink = document.createElement("a");
+          fallbackLink.download = filename;
+          fallbackLink.href = base64Data;
+          document.body.appendChild(fallbackLink);
+          fallbackLink.click();
+          document.body.removeChild(fallbackLink);
+          return;
+        }
+        // iOS Safari/모바일 웹: 네이티브 공유 시트("이미지 저장") 우선 시도 -> 미지원/취소 시 Blob 다운로드
+        if (isIOS && typeof File !== "undefined" && navigator.share && navigator.canShare) {
+          try {
+            var imgFile = new File([blob], filename, { type: "image/png" });
+            if (navigator.canShare({ files: [imgFile] })) {
+              navigator.share({ files: [imgFile], title: filename }).catch(function (err) {
+                if (err && err.name === "AbortError") return;
+                triggerBlobDownload(blob, filename);
+              });
+              return;
+            }
+          } catch (e) {}
+        }
+        triggerBlobDownload(blob, filename);
+      }, "image/png");
+      return;
+    }
+
+    var link = document.createElement("a");
+    link.download = filename;
+    link.href = base64Data;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // 2026-11-22: 모바일 앱/웹(Android 브릿지, iOS 공유 시트, Blob URL) PDF 저장 지원
+  function savePdfDocument(pdf, filename) {
+    var androidBridge = getAndroidBridge();
+    if (androidBridge) {
+      try {
+        var dataUri = pdf.output("datauristring");
+        if (typeof androidBridge.downloadPdf === "function") {
+          androidBridge.downloadPdf(dataUri, filename);
+          return;
+        }
+        if (typeof androidBridge.downloadFile === "function") {
+          androidBridge.downloadFile(dataUri, filename, "application/pdf");
+          return;
+        }
+      } catch (e) {
+        console.warn("Android PDF 브릿지 호출 경고:", e);
+      }
+    }
+
+    var pdfBlob = null;
+    try {
+      pdfBlob = pdf.output("blob");
+    } catch (e) {}
+
+    if (pdfBlob) {
+      var isMobileUa = /iphone|ipad|ipod|android/i.test(navigator.userAgent || "");
+      if (isMobileUa && typeof File !== "undefined" && navigator.share && navigator.canShare) {
+        try {
+          var pdfFile = new File([pdfBlob], filename, { type: "application/pdf" });
+          if (navigator.canShare({ files: [pdfFile] })) {
+            navigator.share({ files: [pdfFile], title: filename }).catch(function (err) {
+              if (err && err.name === "AbortError") return;
+              triggerBlobDownload(pdfBlob, filename);
+            });
+            return;
+          }
+        } catch (e) {}
+      }
+      triggerBlobDownload(pdfBlob, filename);
+      return;
+    }
+
+    pdf.save(filename);
   }
 
   function lngToWorldX(lng, zoom) {
@@ -1508,7 +1622,7 @@
         }
 
         notify("PDF 파일 저장 중...");
-        pdf.save(buildExportFilename(course, "pdf"));
+        savePdfDocument(pdf, buildExportFilename(course, "pdf"));
       })
       .finally(function () {
         global.RealCrewMap.captureMarkerScale = 1;
