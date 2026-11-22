@@ -198,9 +198,8 @@
     transform: translateY(2px);
   }
 
-  /* 2026-11-22: 지도 위 리얼플래너 진입 배너(#map_banner3) 스타일 추가 */
-  #map_banner2,
-  #map_banner3 {
+  /* 2026-11-22: 지도 위 리얼플래너 진입 배너(#map_banner3) — 모바일은 상단 좌측 그래프 버튼 하단 배치로 좌측 하단 겹침 해소 */
+  #map_banner2 {
     position: absolute;
     justify-content: center;
     display: flex;
@@ -225,6 +224,29 @@
     color: #fff;
     box-shadow: rgba(0, 0, 0, 0.32) 2px 3px 8px, rgba(0, 0, 0, 0.48) 2px 3px 8px;
     z-index: 850;
+    cursor: pointer;
+  }
+
+  #map_banner3 {
+    position: fixed;
+    top: 164px;
+    left: 12px;
+    bottom: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #8E2DE2;
+    background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
+    background: linear-gradient(to right, #4A00E0, #8E2DE2);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(74, 0, 224, 0.34);
+    z-index: 900;
     cursor: pointer;
   }
 
@@ -3230,6 +3252,8 @@
 
     #map_banner2,
     #map_banner3 {
+      position: absolute;
+      display: flex;
       width: 300px;
       height: auto;
       font-size: 1em;
@@ -3238,9 +3262,12 @@
       padding-left: 15px;
       padding-right: 15px;
       border-radius: 10px;
+      top: unset;
       bottom: 75px;
       right: 5px;
       left: unset;
+      z-index: 850;
+      box-shadow: rgba(0, 0, 0, 0.32) 2px 3px 8px, rgba(0, 0, 0, 0.48) 2px 3px 8px;
     }
 
     #compare_wrapper,
