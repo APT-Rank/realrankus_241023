@@ -78,9 +78,11 @@
     );
   }
 
-  function buildLargeMarkerHtml(cpx, orderNum) {
+  function buildLargeMarkerHtml(cpx, orderNum, markerScaleOverride) {
     var color = cpx.gradeColor;
-    var s = RealCrewMap.captureMarkerScale || 1;
+    var s = (typeof markerScaleOverride === "number" && markerScaleOverride > 0)
+      ? markerScaleOverride
+      : (RealCrewMap.captureMarkerScale || 1);
     var w = Math.round(68 * s);
     var h = Math.round(60 * s);
     var badgeSize = Math.round(23 * s);
@@ -89,15 +91,26 @@
     var badgeHtml = buildOrderBadgeHtml(orderNum, badgeSize, badgeTop, badgeLeft);
     var selectedCls = orderNum ? " is-selected" : "";
 
+    var isCap = !!RealCrewMap.isCapturing;
+    var gradeFontSize = isCap ? "7.2" : "8";
+    var gradeWeight = isCap ? "400" : "600";
+    var priceFontSize = isCap ? "5.6" : "6.8";
+    var priceWeight = isCap ? "400" : "600";
+    var areaFontSize = isCap ? "3.9" : "5.4";
+    var areaWeight = isCap ? "400" : "600";
+    var areaSpacing = isCap ? "-0.15" : "-0.1";
+    var priceFitAttr = (isCap && String(cpx.priceText || "").length >= 7) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
+    var areaFitAttr = (isCap && String(cpx.areaText || "").length >= 10) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
+
     var svg =
       '<svg version="1.1" class="large_marker ' + cpx.gradeClass + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 35" width="' + w + '" height="' + h + '">' +
         '<g>' +
           '<path fill="' + color + '" stroke="' + color + '" stroke-width="0.5" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>' +
           '<path fill="#fff" stroke="' + color + '" stroke-width="0.5" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>' +
-          '<text fill="#fff" font-size="8" font-weight="600" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
-          '<text fill="#000" font-size="6.8" font-weight="600" text-anchor="middle" x="17" y="19.5">' + escapeHtml(cpx.priceText) + '</text>' +
-          // 2026-11-22: 지도 마커 평(m2) 폰트 크기 +2px 확대 (font-size 4.3 -> 5.4)
-          '<text fill="#000" font-size="5.4" font-weight="600" letter-spacing="-0.1" text-anchor="middle" x="17" y="26.1">' + escapeHtml(cpx.areaText) + '</text>' +
+          // 2026-11-23: 캡처 화면(모바일/웹)에서 마커 내부 글자 넘침 방지를 위해 폰트 크기 축소 및 font-weight 400 적용
+          '<text fill="#fff" font-size="' + gradeFontSize + '" font-weight="' + gradeWeight + '" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
+          '<text fill="#000" font-size="' + priceFontSize + '" font-weight="' + priceWeight + '" text-anchor="middle" x="17" y="19.3"' + priceFitAttr + '>' + escapeHtml(cpx.priceText) + '</text>' +
+          '<text fill="#000" font-size="' + areaFontSize + '" font-weight="' + areaWeight + '" letter-spacing="' + areaSpacing + '" text-anchor="middle" x="17" y="25.6"' + areaFitAttr + '>' + escapeHtml(cpx.areaText) + '</text>' +
         '</g>' +
       '</svg>';
 
@@ -273,8 +286,14 @@
   }
 
   function addComplexMarker(cpx, useLarge, orderNum) {
-    var s = RealCrewMap.captureMarkerScale || 1;
-    var html = useLarge ? buildLargeMarkerHtml(cpx, orderNum) : buildSmallMarkerHtml(cpx, orderNum);
+    var baseScale = RealCrewMap.captureMarkerScale || 1;
+    // 2026-11-23: 메인 지도(js/map_control.js) 모바일 규칙 동일 적용 — 모바일 zoom 15에서 중간 축소 크기(35/45 ≈ 0.78배)로 표시
+    var isMobileView = window.innerWidth <= 820;
+    var curZoom = RealCrewMap.map ? RealCrewMap.map.getZoom() : 16;
+    var mobileZoomScale = (!RealCrewMap.isCapturing && isMobileView && curZoom === 15) ? (35 / 45) : 1;
+    var s = baseScale * mobileZoomScale;
+
+    var html = useLarge ? buildLargeMarkerHtml(cpx, orderNum, s) : buildSmallMarkerHtml(cpx, orderNum);
     var size = useLarge
       ? new naver.maps.Size(Math.round(68 * s), Math.round(60 * s))
       : new naver.maps.Size(30, 30);

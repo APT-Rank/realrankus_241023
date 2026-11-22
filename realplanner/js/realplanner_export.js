@@ -899,6 +899,7 @@
     return global.RealCrewData.enrichCourseDetails(course)
       .then(function () {
         global.RealCrewMap.clearTempRadarCircles();
+        global.RealCrewMap.isCapturing = true;
         global.RealCrewMap.captureMarkerScale = metrics.markerScale; // 지도 크기에 무관하게 A4 상 74px 균일 마커 크기 보장
         savedSize = global.RealCrewMap.resizeForCapture(metrics.capW, metrics.capH);
         global.RealCrewMap.renderRoute(segments, -1); // 전체 경로 표시
@@ -920,6 +921,7 @@
         downloadCanvasPng(pageCanvas, buildExportFilename(course, "png"));
       })
       .finally(function () {
+        global.RealCrewMap.isCapturing = false;
         global.RealCrewMap.captureMarkerScale = 1;
         global.RealCrewMap.clearTempRadarCircles();
         if (savedSize) {
@@ -928,6 +930,7 @@
         if (savedView) {
           global.RealCrewMap.setViewForCapture(savedView.lat, savedView.lng, savedView.zoom);
         }
+        global.RealCrewMap.renderMarkers();
         global.RealCrewMap.renderRoute(segments, savedFocused);
       });
   }
@@ -1544,6 +1547,7 @@
         // 2페이지: 전체 코스 지도 + 가로 이동 순서 (높이·폭 기준 최대 확대 + A4 상 74px 균일 마커 크기 보장)
         notify("PDF 전체 코스 페이지 생성 중...");
         global.RealCrewMap.clearTempRadarCircles();
+        global.RealCrewMap.isCapturing = true;
         global.RealCrewMap.captureMarkerScale = metrics.markerScale;
         savedSize = global.RealCrewMap.resizeForCapture(metrics.capW, metrics.capH);
         global.RealCrewMap.renderRoute(segments, -1);
@@ -1555,6 +1559,7 @@
         return captureMapSnapshot(null, metrics.visualScale);
       })
       .then(function (overviewSnapshot) {
+        global.RealCrewMap.isCapturing = false;
         global.RealCrewMap.captureMarkerScale = 1;
         if (savedSize) {
           global.RealCrewMap.restoreSizeAfterCapture(savedSize);
@@ -1625,6 +1630,7 @@
         savePdfDocument(pdf, buildExportFilename(course, "pdf"));
       })
       .finally(function () {
+        global.RealCrewMap.isCapturing = false;
         global.RealCrewMap.captureMarkerScale = 1;
         if (hiddenIframe && hiddenIframe.parentNode) {
           hiddenIframe.parentNode.removeChild(hiddenIframe);
@@ -1636,6 +1642,7 @@
         if (savedView) {
           global.RealCrewMap.setViewForCapture(savedView.lat, savedView.lng, savedView.zoom);
         }
+        global.RealCrewMap.renderMarkers();
         global.RealCrewMap.renderRoute(segments, savedFocused);
       });
   }
