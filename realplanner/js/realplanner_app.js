@@ -150,13 +150,24 @@
 
   /* ------------------------------------------------------------------------
    * 경로 재계산 (즉시 추정 렌더 -> OSRM 보행로/차량도로 비동기 업그레이드 + 로딩 표시)
+   * 2026-11-22: 새 계산/순서 변경 시 이전 미완료 OSRM 요청 즉시 abort + 연타 디바운스(180ms)
    * ------------------------------------------------------------------------ */
+  var routeFetchDebounceTimer = null;
+
   function recalculateRoute() {
     state.routeVersion += 1;
     var myVersion = state.routeVersion;
     var routeOptions = { carOver600: state.carOver600Enabled };
 
-    // 1) 즉시 추정값(또는 캐시)으로 0ms 반영
+    if (routeFetchDebounceTimer) {
+      clearTimeout(routeFetchDebounceTimer);
+      routeFetchDebounceTimer = null;
+    }
+    if (global.RealCrewRoute && typeof global.RealCrewRoute.cancelActiveRequests === "function") {
+      global.RealCrewRoute.cancelActiveRequests();
+    }
+
+    // 1) 즉시 추정값(또는 캐시/역방향 캐시)으로 0ms 반영
     state.segments = global.RealCrewRoute.computeInstantSegments(state.course, routeOptions);
     global.RealCrewMap.updateCourse(state.course, state.segments, getFocusedIndex());
     renderCourseList();
@@ -169,27 +180,32 @@
         ? global.RealCrewRoute.countUncachedSegments(state.course, routeOptions)
         : totalSegs;
 
-      if (uncachedCount > 0) {
-        setRouteLoading(true, "실제 이동 경로 탐색 중... (0 / " + totalSegs + " 구간)");
-      }
-
-      global.RealCrewRoute.fetchDetailedSegments(state.course, routeOptions, function (partialSegments, completed, total) {
-        if (myVersion !== state.routeVersion) return;
-        state.segments = partialSegments;
-        global.RealCrewMap.renderRoute(state.segments, getFocusedIndex());
-        renderCourseList();
-        renderSummary();
-        if (uncachedCount > 0) {
-          setRouteLoading(true, "실제 이동 경로 탐색 중... (" + completed + " / " + total + " 구간)");
-        }
-      }).then(function (detailedSegments) {
-        if (myVersion !== state.routeVersion) return;
-        state.segments = detailedSegments;
-        global.RealCrewMap.renderRoute(state.segments, getFocusedIndex());
-        renderCourseList();
-        renderSummary();
+      if (uncachedCount === 0) {
         setRouteLoading(false);
-      });
+      } else {
+        setRouteLoading(true, "실제 이동 경로 탐색 중... (0 / " + totalSegs + " 구간)");
+        var courseSnapshot = state.course.slice();
+        routeFetchDebounceTimer = setTimeout(function () {
+          routeFetchDebounceTimer = null;
+          if (myVersion !== state.routeVersion) return;
+
+          global.RealCrewRoute.fetchDetailedSegments(courseSnapshot, routeOptions, function (partialSegments, completed, total) {
+            if (myVersion !== state.routeVersion) return;
+            state.segments = partialSegments;
+            global.RealCrewMap.renderRoute(state.segments, getFocusedIndex());
+            renderCourseList();
+            renderSummary();
+            setRouteLoading(true, "실제 이동 경로 탐색 중... (" + completed + " / " + total + " 구간)");
+          }).then(function (detailedSegments) {
+            if (myVersion !== state.routeVersion) return;
+            state.segments = detailedSegments;
+            global.RealCrewMap.renderRoute(state.segments, getFocusedIndex());
+            renderCourseList();
+            renderSummary();
+            setRouteLoading(false);
+          });
+        }, 180);
+      }
     } else {
       setRouteLoading(false);
     }
@@ -240,6 +256,17 @@
   }
 
   function resetToHome() {
+    // 2026-11-22: 초기화 시 진행 중인 이동경로 탐색 요청/타이머/로딩 오버레이 즉시 중단 및 제거
+    state.routeVersion += 1;
+    if (routeFetchDebounceTimer) {
+      clearTimeout(routeFetchDebounceTimer);
+      routeFetchDebounceTimer = null;
+    }
+    if (global.RealCrewRoute && typeof global.RealCrewRoute.cancelActiveRequests === "function") {
+      global.RealCrewRoute.cancelActiveRequests();
+    }
+    setRouteLoading(false);
+
     state.mode = null;
     state.course = [];
     state.segments = [];

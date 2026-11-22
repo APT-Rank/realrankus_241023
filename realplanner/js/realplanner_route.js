@@ -113,7 +113,63 @@
     return refDist >= CAR_THRESHOLD_METERS ? "driving" : "foot";
   }
 
-  function fetchOsrmFromEndpoint(baseUrl, fromCpx, toCpx, routeProfile, straight, timeoutMs) {
+  // 2026-11-22: 진행 중인 OSRM 경로 탐색 요청 일괄 취소(AbortController + jobId) 및 대기 타이머 관리
+  var activeJobId = 0;
+  var activeControllers = [];
+  var activeTimers = [];
+
+  function registerTimer(id) {
+    activeTimers.push(id);
+    return id;
+  }
+
+  function clearAllActiveTimers() {
+    for (var i = 0; i < activeTimers.length; i++) {
+      clearTimeout(activeTimers[i]);
+    }
+    activeTimers = [];
+  }
+
+  function cancelActiveRequests() {
+    activeJobId += 1;
+    clearAllActiveTimers();
+    for (var i = 0; i < activeControllers.length; i++) {
+      try { activeControllers[i].abort(); } catch (e) {}
+    }
+    activeControllers = [];
+  }
+
+  function getCachedOrReversedFootSegment(fromCpx, toCpx, routeProfile) {
+    var key = getSegmentCacheKey(fromCpx, toCpx, routeProfile);
+    if (segmentCache[key]) return segmentCache[key];
+
+    // 2026-11-22: 도보(foot) 경로는 역방향(B->A) 캐시가 있으면 path를 뒤집어 0ms 즉시 재사용
+    if (routeProfile === "foot") {
+      var revKey = getSegmentCacheKey(toCpx, fromCpx, routeProfile);
+      var revSeg = segmentCache[revKey];
+      if (revSeg && Array.isArray(revSeg.path) && revSeg.path.length >= 2) {
+        var reversed = {
+          fromCode: fromCpx.code,
+          toCode: toCpx.code,
+          profile: routeProfile,
+          isCar: false,
+          distanceMeters: revSeg.distanceMeters,
+          durationMinutes: revSeg.durationMinutes,
+          displayMinutes: revSeg.displayMinutes,
+          path: revSeg.path.slice().reverse(),
+          source: revSeg.source
+        };
+        segmentCache[key] = reversed;
+        return reversed;
+      }
+    }
+    return null;
+  }
+
+  function fetchOsrmFromEndpoint(baseUrl, fromCpx, toCpx, routeProfile, straight, timeoutMs, jobId) {
+    if (jobId !== activeJobId) {
+      return Promise.reject(new Error("ABORTED"));
+    }
     var isDrive = routeProfile === "driving";
     var url =
       baseUrl +
@@ -122,15 +178,26 @@
       "?overview=full&geometries=geojson";
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    if (controller) activeControllers.push(controller);
     var timer = controller ? setTimeout(function () { controller.abort(); }, timeoutMs) : null;
+
+    function cleanup() {
+      if (timer) clearTimeout(timer);
+      if (controller) {
+        var idx = activeControllers.indexOf(controller);
+        if (idx !== -1) activeControllers.splice(idx, 1);
+      }
+    }
 
     return fetch(url, controller ? { signal: controller.signal } : undefined)
       .then(function (res) {
-        if (timer) clearTimeout(timer);
+        cleanup();
+        if (jobId !== activeJobId) throw new Error("ABORTED");
         if (!res.ok) throw new Error("OSRM HTTP " + res.status);
         return res.json();
       })
       .then(function (json) {
+        if (jobId !== activeJobId) throw new Error("ABORTED");
         if (!json || json.code !== "Ok" || !json.routes || !json.routes.length) {
           throw new Error("OSRM NoRoute");
         }
@@ -177,18 +244,22 @@
         };
       })
       .catch(function (err) {
-        if (timer) clearTimeout(timer);
+        cleanup();
         throw err;
       });
   }
 
-  function fetchOsrmSegment(fromCpx, toCpx, profile, retryCount) {
+  function fetchOsrmSegment(fromCpx, toCpx, profile, retryCount, jobId) {
+    if (jobId !== activeJobId) {
+      return Promise.resolve(null);
+    }
     var routeProfile = profile === "driving" ? "driving" : "foot";
     var isDrive = routeProfile === "driving";
     var attempt = retryCount || 0;
     var key = getSegmentCacheKey(fromCpx, toCpx, routeProfile);
-    if (segmentCache[key]) {
-      return Promise.resolve(segmentCache[key]);
+    var cached = getCachedOrReversedFootSegment(fromCpx, toCpx, routeProfile);
+    if (cached) {
+      return Promise.resolve(cached);
     }
 
     var fallback = estimateFallbackSegment(fromCpx, toCpx, routeProfile);
@@ -200,28 +271,39 @@
       ? "https://routing.openstreetmap.de/routed-car/route/v1/driving/"
       : "https://router.project-osrm.org/route/v1/foot/";
 
-    return fetchOsrmFromEndpoint(primaryUrl, fromCpx, toCpx, routeProfile, straight, 12000)
+    return fetchOsrmFromEndpoint(primaryUrl, fromCpx, toCpx, routeProfile, straight, 8000, jobId)
       .then(function (result) {
+        if (jobId !== activeJobId) return null;
         segmentCache[key] = result;
         return result;
       })
-      .catch(function () {
-        // 1차 서버 일시 실패/429 시 최대 3회 백오프 재시도
-        if (attempt < 3) {
-          var backoffMs = 700 * (attempt + 1);
+      .catch(function (err) {
+        if (jobId !== activeJobId || (err && (err.name === "AbortError" || err.message === "ABORTED"))) {
+          return null;
+        }
+        // 1차 서버 일시 실패/429 시 최대 2회 백오프 재시도
+        if (attempt < 2) {
+          var backoffMs = 450 * (attempt + 1);
           return new Promise(function (resolve) {
-            setTimeout(function () {
-              resolve(fetchOsrmSegment(fromCpx, toCpx, routeProfile, attempt + 1));
-            }, backoffMs);
+            var tid = registerTimer(setTimeout(function () {
+              if (jobId !== activeJobId) {
+                resolve(null);
+                return;
+              }
+              resolve(fetchOsrmSegment(fromCpx, toCpx, routeProfile, attempt + 1, jobId));
+            }, backoffMs));
+            void tid;
           });
         }
         // 1차 서버 모두 실패 시 2차 보조 OSRM 서버로 실도로 경로 재시도
-        return fetchOsrmFromEndpoint(secondaryUrl, fromCpx, toCpx, routeProfile, straight, 10000)
+        return fetchOsrmFromEndpoint(secondaryUrl, fromCpx, toCpx, routeProfile, straight, 7000, jobId)
           .then(function (backupResult) {
+            if (jobId !== activeJobId) return null;
             segmentCache[key] = backupResult;
             return backupResult;
           })
           .catch(function () {
+            if (jobId !== activeJobId) return null;
             return fallback;
           });
       });
@@ -232,8 +314,7 @@
     var uncached = 0;
     for (var i = 0; i < courseList.length - 1; i++) {
       var profile = resolveSegmentProfile(courseList[i], courseList[i + 1], carOver600);
-      var key = getSegmentCacheKey(courseList[i], courseList[i + 1], profile);
-      if (!segmentCache[key]) uncached += 1;
+      if (!getCachedOrReversedFootSegment(courseList[i], courseList[i + 1], profile)) uncached += 1;
     }
     return uncached;
   }
@@ -246,9 +327,9 @@
     var segments = [];
     for (var i = 0; i < courseList.length - 1; i++) {
       var profile = resolveSegmentProfile(courseList[i], courseList[i + 1], carOver600);
-      var key = getSegmentCacheKey(courseList[i], courseList[i + 1], profile);
-      if (segmentCache[key]) {
-        segments.push(segmentCache[key]);
+      var cached = getCachedOrReversedFootSegment(courseList[i], courseList[i + 1], profile);
+      if (cached) {
+        segments.push(cached);
       } else {
         segments.push(estimateFallbackSegment(courseList[i], courseList[i + 1], profile));
       }
@@ -258,9 +339,11 @@
 
   /**
    * 실제 도보(foot) 또는 차량(driving) 경로(OSRM) 비동기 보강
-   * 동시 2개 + 구간 간 120ms 간격으로 429 제한을 원천 회피하여 실경로 성공률 극대화
+   * 새 탐색 시작 시 이전 미완료 요청을 즉시 취소(abort)하여 429 지연/충돌을 원천 방지
    */
   function fetchDetailedSegments(courseList, options, onProgress) {
+    cancelActiveRequests();
+    var myJobId = activeJobId;
     var carOver600 = !!(options && options.carOver600);
     var total = Math.max(0, courseList.length - 1);
     if (total === 0) return Promise.resolve([]);
@@ -271,14 +354,15 @@
     var CONCURRENCY = 2;
 
     function runWorker() {
-      if (nextIndex >= total) return Promise.resolve();
+      if (myJobId !== activeJobId || nextIndex >= total) return Promise.resolve();
       var idx = nextIndex++;
       var fromCpx = courseList[idx];
       var toCpx = courseList[idx + 1];
       var profile = resolveSegmentProfile(fromCpx, toCpx, carOver600);
-      var wasCached = !!segmentCache[getSegmentCacheKey(fromCpx, toCpx, profile)];
+      var wasCached = !!getCachedOrReversedFootSegment(fromCpx, toCpx, profile);
 
-      return fetchOsrmSegment(fromCpx, toCpx, profile, 0).then(function (segResult) {
+      return fetchOsrmSegment(fromCpx, toCpx, profile, 0, myJobId).then(function (segResult) {
+        if (myJobId !== activeJobId || !segResult) return;
         results[idx] = segResult;
         completed += 1;
         if (typeof onProgress === "function") {
@@ -288,9 +372,13 @@
           return runWorker();
         }
         return new Promise(function (resolve) {
-          setTimeout(function () {
+          registerTimer(setTimeout(function () {
+            if (myJobId !== activeJobId) {
+              resolve();
+              return;
+            }
             resolve(runWorker());
-          }, 120);
+          }, 120));
         });
       });
     }
@@ -339,6 +427,7 @@
     countUncachedSegments: countUncachedSegments,
     computeInstantSegments: computeInstantSegments,
     fetchDetailedSegments: fetchDetailedSegments,
+    cancelActiveRequests: cancelActiveRequests,
     formatDistance: formatDistance,
     formatDuration: formatDuration,
     formatCircledNumber: formatCircledNumber
