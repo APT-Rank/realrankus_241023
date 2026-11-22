@@ -92,11 +92,8 @@
     var selectedCls = orderNum ? " is-selected" : "";
 
     var isCap = !!RealCrewMap.isCapturing;
-    var gradeFontSize = isCap ? "7.2" : "8";
-    var priceFontSize = isCap ? "5.6" : "6.8";
     var areaFontSize = isCap ? "3.9" : "5.4";
     var areaSpacing = isCap ? "-0.15" : "-0.1";
-    var priceFitAttr = (isCap && String(cpx.priceText || "").length >= 7) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
     var areaFitAttr = (isCap && String(cpx.areaText || "").length >= 10) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
 
     var svg =
@@ -104,9 +101,9 @@
         '<g>' +
           '<path fill="' + color + '" stroke="' + color + '" stroke-width="0.5" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>' +
           '<path fill="#fff" stroke="' + color + '" stroke-width="0.5" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>' +
-          // 2026-11-23: 캡처 화면 마커 넘침 방지용 폰트 크기 축소 유지, font-weight는 600으로 원복
-          '<text fill="#fff" font-size="' + gradeFontSize + '" font-weight="600" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
-          '<text fill="#000" font-size="' + priceFontSize + '" font-weight="600" text-anchor="middle" x="17" y="19.3"' + priceFitAttr + '>' + escapeHtml(cpx.priceText) + '</text>' +
+          // 2026-11-23: 등급/가격 폰트 크기 기존(8 / 6.8) 원복, 하단 평(m2)만 캡처 축소 크기(3.9) 유지
+          '<text fill="#fff" font-size="8" font-weight="600" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
+          '<text fill="#000" font-size="6.8" font-weight="600" text-anchor="middle" x="17" y="19.5">' + escapeHtml(cpx.priceText) + '</text>' +
           '<text fill="#000" font-size="' + areaFontSize + '" font-weight="600" letter-spacing="' + areaSpacing + '" text-anchor="middle" x="17" y="25.6"' + areaFitAttr + '>' + escapeHtml(cpx.areaText) + '</text>' +
         '</g>' +
       '</svg>';
