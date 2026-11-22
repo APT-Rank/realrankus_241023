@@ -130,7 +130,8 @@
     var svg =
       '<svg version="1.1" class="small_marker ' + cpx.gradeClass + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="30" height="30">' +
         '<g>' +
-          '<path fill="' + color + '" stroke="' + color + '" stroke-width="0.5" d="M17.89,4.43,9.86.31a1.67,1.67,0,0,0-1.55,0L.36,4.43a.48.48,0,0,0-.24.42v9.58c0,.74.35,1.35.76,1.35h1l2.26,3.35,2.25-3.35h11c.41,0,.75-.61.75-1.35V4.86A.48.48,0,0,0,17.89,4.43Z"/>' +
+          // 2026-11-23: 메인 지도(js/map_control.js createSmallMarker)와 동일한 #a70000 외곽선(stroke-width 0.5) 적용
+          '<path fill="' + color + '" stroke="#a70000" stroke-width="0.5" d="M17.89,4.43,9.86.31a1.67,1.67,0,0,0-1.55,0L.36,4.43a.48.48,0,0,0-.24.42v9.58c0,.74.35,1.35.76,1.35h1l2.26,3.35,2.25-3.35h11c.41,0,.75-.61.75-1.35V4.86A.48.48,0,0,0,17.89,4.43Z"/>' +
           '<text fill="#fff" font-size="9" font-weight="600" text-anchor="middle" x="9" y="12">' + escapeHtml(cpx.grade) + '</text>' +
         '</g>' +
       '</svg>';
