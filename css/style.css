@@ -22,6 +22,40 @@
     background-color: #801c2d;
   }
 
+  /* 2026-11-22: 초기 로딩 중 플로팅 UI 겹침/점프 방지 — JS 레이아웃 정리 완료 후 일괄 페이드인 */
+  body.ui-booting #graphButtonContainer,
+  body.ui-booting #map_banner,
+  body.ui-booting #map_banner2,
+  body.ui-booting #map_banner3,
+  body.ui-booting #gradeSelector,
+  body.ui-booting #filterOnOff,
+  body.ui-booting #filterSelector,
+  body.ui-booting #mobile_map_list {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  @keyframes uiOverlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  body.ui-ready #map_banner,
+  body.ui-ready #map_banner2,
+  body.ui-ready #gradeSelector,
+  body.ui-ready #filterOnOff,
+  body.ui-ready #filterSelector,
+  body.ui-ready #mobile_map_list {
+    animation: uiOverlayFadeIn 0.24s ease-out both;
+  }
+
+  /* 2026-11-22: 동별 고/저평가 아파트 분석 및 현장답사 코스 만들기 버튼이 가장 마지막에 페이드인 */
+  body.ui-ready #graphButtonContainer,
+  body.ui-ready #map_banner3 {
+    animation: uiOverlayFadeIn 0.3s ease-out 0.22s both;
+  }
+
   #mobile_map_list {
     position: absolute;
     top: unset;
@@ -229,30 +263,44 @@
 
   #map_banner3 {
     position: fixed;
-    top: 164px;
-    left: 12px;
+    top: 152px;
+    left: 5px;
     bottom: unset;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: auto;
+    width: 152px;
+    box-sizing: border-box;
+    white-space: nowrap;
     height: auto;
-    font-size: 0.85em;
+    font-size: 11px;
     font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 4px 10px;
+    border-radius: 7px;
     background: #8E2DE2;
     background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
     background: linear-gradient(to right, #4A00E0, #8E2DE2);
     color: #fff;
-    box-shadow: 0 3px 10px rgba(74, 0, 224, 0.34);
+    box-shadow: 0 2px 8px rgba(74, 0, 224, 0.32);
     z-index: 900;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.2s ease-in-out;
   }
 
-  #map_banner2:active,
-  #map_banner3:active {
+  #map_banner3:hover {
+    filter: brightness(1.08);
+  }
+
+  #map_banner2:active {
     transform: translateY(2px);
+  }
+
+  /* 2026-11-22: #graphButton과 동일한 탭/클릭 눌림 인터랙션(scale 0.98 + 0.2s ease-in-out) 적용 */
+  #map_banner3:active {
+    transform: scale(0.98);
+    opacity: 0.88;
   }
 
   #titleBar {

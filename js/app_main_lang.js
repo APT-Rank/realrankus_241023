@@ -897,16 +897,15 @@ $(document).ready(function () {
       $("#gradeSelector").hide();
     }
 
-    //가치대비가격괴리도진단 버튼 크기 조정
-    if (isEn) {
-      $("#graphButtonContainer").css({ top: "123px", left: "33%" });
-    }
-    else {
-      $("#graphButtonContainer").css({ top: "123px", left: "24%" });
-    }
+    // 2026-11-22: 모바일 상단 좌측 그래프 버튼 & 현장답사 버튼 좌측 시작점(5px), 가로폭(152px) 통일 및 폰트/크기 축소
+    $("#graphButtonContainer").css({ top: "123px", left: "5px", transform: "none" });
     $("#graphButton").css({
-      padding: "0.375em 0.75em",
-      "font-size": "0.875em",
+      width: "152px",
+      padding: "4px 10px",
+      "font-size": "11px",
+      "border-radius": "7px",
+      "box-sizing": "border-box",
+      "white-space": "nowrap"
     });
   }
 
@@ -940,6 +939,19 @@ $(document).ready(function () {
   });
 
   $("#commentBack").hide();
+
+  // 2026-11-22: 초기 웹/모바일 플로팅 UI 위치 계산 완료 후 일괄 페이드인 표시 (로딩 중 겹침/깜빡임 방지)
+  var revealMainUi = function () {
+    document.body.classList.remove("ui-booting");
+    document.body.classList.add("ui-ready");
+  };
+  if (typeof requestAnimationFrame === "function") {
+    requestAnimationFrame(function () {
+      requestAnimationFrame(revealMainUi);
+    });
+  } else {
+    setTimeout(revealMainUi, 50);
+  }
 });
 
 /**
