@@ -249,6 +249,124 @@
       });
   }
 
+  // 2026-11-22: Valhalla Polyline6(1e6 정밀도) 디코더
+  function decodePolyline6(str) {
+    var index = 0;
+    var lat = 0;
+    var lng = 0;
+    var coords = [];
+    var len = str ? str.length : 0;
+    while (index < len) {
+      var b;
+      var shift = 0;
+      var result = 0;
+      do {
+        b = str.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      lat += (result & 1) ? ~(result >> 1) : (result >> 1);
+
+      shift = 0;
+      result = 0;
+      do {
+        b = str.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      lng += (result & 1) ? ~(result >> 1) : (result >> 1);
+
+      coords.push({ lat: lat / 1e6, lng: lng / 1e6 });
+    }
+    return coords;
+  }
+
+  // 2026-11-22: FOSSGIS Valhalla 보행자(pedestrian)/차량(auto) 라우팅 엔진 (전국 지원, OSRM 장애 시에도 안정 응답)
+  function fetchValhallaSegment(fromCpx, toCpx, routeProfile, straight, timeoutMs, jobId) {
+    if (jobId !== activeJobId) {
+      return Promise.reject(new Error("ABORTED"));
+    }
+    var isDrive = routeProfile === "driving";
+    var payload = {
+      locations: [
+        { lat: fromCpx.lat, lon: fromCpx.lng },
+        { lat: toCpx.lat, lon: toCpx.lng }
+      ],
+      costing: isDrive ? "auto" : "pedestrian",
+      units: "kilometers"
+    };
+    var url = "https://valhalla1.openstreetmap.de/route?json=" + encodeURIComponent(JSON.stringify(payload));
+
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    if (controller) activeControllers.push(controller);
+    var timer = controller ? setTimeout(function () { controller.abort(); }, timeoutMs) : null;
+
+    function cleanup() {
+      if (timer) clearTimeout(timer);
+      if (controller) {
+        var idx = activeControllers.indexOf(controller);
+        if (idx !== -1) activeControllers.splice(idx, 1);
+      }
+    }
+
+    return fetch(url, controller ? { signal: controller.signal } : undefined)
+      .then(function (res) {
+        cleanup();
+        if (jobId !== activeJobId) throw new Error("ABORTED");
+        if (!res.ok) throw new Error("VALHALLA HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (json) {
+        if (jobId !== activeJobId) throw new Error("ABORTED");
+        var leg = json && json.trip && json.trip.legs && json.trip.legs[0];
+        if (!leg || !leg.shape || !leg.summary) {
+          throw new Error("VALHALLA NoRoute");
+        }
+        var distMeters = Math.max(10, Math.round((leg.summary.length || 0) * 1000));
+        var maxDetourRatio = isDrive ? 6.0 : 5.0;
+        var minStraightCheck = isDrive ? 250 : 150;
+        if (straight >= minStraightCheck && distMeters > straight * maxDetourRatio) {
+          throw new Error("VALHALLA ExtremeDetour");
+        }
+
+        var decoded = decodePolyline6(leg.shape);
+        if (!decoded || decoded.length < 2) {
+          throw new Error("VALHALLA EmptyGeometry");
+        }
+
+        var path = [{ lat: fromCpx.lat, lng: fromCpx.lng }];
+        for (var i = 0; i < decoded.length; i++) {
+          path.push(decoded[i]);
+        }
+        path.push({ lat: toCpx.lat, lng: toCpx.lng });
+
+        var mins;
+        if (isDrive) {
+          mins = leg.summary.time
+            ? Math.max(2, Math.round((leg.summary.time / 60) * 1.25))
+            : Math.max(2, Math.round(distMeters / DRIVING_SPEED_M_PER_MIN));
+        } else {
+          mins = Math.max(1, Math.round(distMeters / WALKING_SPEED_M_PER_MIN));
+        }
+
+        return {
+          fromCode: fromCpx.code,
+          toCode: toCpx.code,
+          profile: routeProfile,
+          isCar: isDrive,
+          distanceMeters: distMeters,
+          durationMinutes: mins,
+          displayMinutes: mins,
+          path: path,
+          source: "osrm"
+        };
+      })
+      .catch(function (err) {
+        cleanup();
+        throw err;
+      });
+  }
+
   function fetchOsrmSegment(fromCpx, toCpx, profile, retryCount, jobId) {
     if (jobId !== activeJobId) {
       return Promise.resolve(null);
@@ -264,14 +382,15 @@
 
     var fallback = estimateFallbackSegment(fromCpx, toCpx, routeProfile);
     var straight = haversineMeters(fromCpx.lat, fromCpx.lng, toCpx.lat, toCpx.lng);
-    var primaryUrl = isDrive
+    var osrmPrimaryUrl = isDrive
       ? "https://router.project-osrm.org/route/v1/driving/"
       : "https://routing.openstreetmap.de/routed-foot/route/v1/foot/";
-    var secondaryUrl = isDrive
+    var osrmSecondaryUrl = isDrive
       ? "https://routing.openstreetmap.de/routed-car/route/v1/driving/"
       : "https://router.project-osrm.org/route/v1/foot/";
 
-    return fetchOsrmFromEndpoint(primaryUrl, fromCpx, toCpx, routeProfile, straight, 8000, jobId)
+    // 1차: Valhalla (보행자/차량 전국 실도로 안정 응답) -> 2차: OSRM Primary -> 3차: OSRM Secondary -> 4차: 추정 폴백
+    return fetchValhallaSegment(fromCpx, toCpx, routeProfile, straight, 6500, jobId)
       .then(function (result) {
         if (jobId !== activeJobId) return null;
         segmentCache[key] = result;
@@ -281,30 +400,37 @@
         if (jobId !== activeJobId || (err && (err.name === "AbortError" || err.message === "ABORTED"))) {
           return null;
         }
-        // 1차 서버 일시 실패/429 시 최대 2회 백오프 재시도
-        if (attempt < 2) {
-          var backoffMs = 450 * (attempt + 1);
+        if (attempt < 1) {
           return new Promise(function (resolve) {
-            var tid = registerTimer(setTimeout(function () {
+            registerTimer(setTimeout(function () {
               if (jobId !== activeJobId) {
                 resolve(null);
                 return;
               }
               resolve(fetchOsrmSegment(fromCpx, toCpx, routeProfile, attempt + 1, jobId));
-            }, backoffMs));
-            void tid;
+            }, 350));
           });
         }
-        // 1차 서버 모두 실패 시 2차 보조 OSRM 서버로 실도로 경로 재시도
-        return fetchOsrmFromEndpoint(secondaryUrl, fromCpx, toCpx, routeProfile, straight, 7000, jobId)
-          .then(function (backupResult) {
+        return fetchOsrmFromEndpoint(osrmPrimaryUrl, fromCpx, toCpx, routeProfile, straight, 5500, jobId)
+          .then(function (osrmRes) {
             if (jobId !== activeJobId) return null;
-            segmentCache[key] = backupResult;
-            return backupResult;
+            segmentCache[key] = osrmRes;
+            return osrmRes;
           })
-          .catch(function () {
-            if (jobId !== activeJobId) return null;
-            return fallback;
+          .catch(function (err2) {
+            if (jobId !== activeJobId || (err2 && (err2.name === "AbortError" || err2.message === "ABORTED"))) {
+              return null;
+            }
+            return fetchOsrmFromEndpoint(osrmSecondaryUrl, fromCpx, toCpx, routeProfile, straight, 5000, jobId)
+              .then(function (backupResult) {
+                if (jobId !== activeJobId) return null;
+                segmentCache[key] = backupResult;
+                return backupResult;
+              })
+              .catch(function () {
+                if (jobId !== activeJobId) return null;
+                return fallback;
+              });
           });
       });
   }
