@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/realplanner.css?v=20261122_11" />
+  <link rel="stylesheet" href="./css/realplanner.css?v=20261122_16" />
 
   <!-- Naver Maps API v3 (리얼랭커스 동일 키) -->
   <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
@@ -225,6 +225,23 @@
     </main>
   </div>
 
+  <!-- 2026-11-22: 직접 URL 진입 시 비로그인 사용자 로그인 유도 오버레이 -->
+  <div id="rcLoginGate" class="rc-login-gate" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="rcLoginGateTitle">
+    <div class="rc-login-gate-card">
+      <div class="rc-login-gate-badge">REALPLANNER</div>
+      <div class="rc-login-gate-icon"><i class="fa-solid fa-route"></i></div>
+      <h2 id="rcLoginGateTitle" class="rc-login-gate-title">로그인이 필요한 서비스입니다</h2>
+      <p class="rc-login-gate-desc">
+        리얼랭커스에 로그인하시면 AI 추천 현장답사 코스 설계와<br />
+        A4 스크린샷 및 PDF 계획서 저장 기능을 바로 이용하실 수 있습니다.
+      </p>
+      <button type="button" id="btnRcGateLogin" class="rc-login-gate-btn">
+        <i class="fa-solid fa-right-to-bracket"></i> 리얼랭커스 로그인하기
+      </button>
+      <a href="../index.html" class="rc-login-gate-sub">리얼랭커스 메인으로 이동</a>
+    </div>
+  </div>
+
   <!-- 토스트 알림 -->
   <div id="rcToast" class="rc-toast" role="status" aria-live="polite"></div>
 
@@ -233,10 +250,10 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
-  <script src="./js/realplanner_data.js?v=20261122_14"></script>
-  <script src="./js/realplanner_route.js?v=20261122_14"></script>
-  <script src="./js/realplanner_map.js?v=20261122_14"></script>
-  <script src="./js/realplanner_export.js?v=20261122_14"></script>
-  <script src="./js/realplanner_app.js?v=20261122_14"></script>
+  <script src="./js/realplanner_data.js?v=20261122_16"></script>
+  <script src="./js/realplanner_route.js?v=20261122_16"></script>
+  <script src="./js/realplanner_map.js?v=20261122_16"></script>
+  <script src="./js/realplanner_export.js?v=20261122_16"></script>
+  <script src="./js/realplanner_app.js?v=20261122_16"></script>
 </body>
 </html>

@@ -20,19 +20,51 @@
     }
   };
 
+  // 2026-11-22: 동일 도메인 localStorage('nLOG') 기반 로그인 세션 유효성 검증
+  function hasValidLoginSession() {
+    try {
+      var raw = window.localStorage.getItem("nLOG");
+      if (!raw) return false;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !parsed.value) return false;
+      if (parsed.expire && Date.now() > parsed.expire) {
+        window.localStorage.removeItem("nLOG");
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function getLaunchContext() {
     var ctx = null;
     try {
-      var raw = sessionStorage.getItem("realplannerLaunchContext") || localStorage.getItem("realplannerLaunchContext");
-      if (raw) ctx = JSON.parse(raw);
+      var sRaw = sessionStorage.getItem("realplannerLaunchContext");
+      var lRaw = localStorage.getItem("realplannerLaunchContext");
+      var sCtx = sRaw ? JSON.parse(sRaw) : null;
+      var lCtx = lRaw ? JSON.parse(lRaw) : null;
+      if (sCtx && lCtx) {
+        ctx = ((lCtx.launchedAt || 0) >= (sCtx.launchedAt || 0)) ? lCtx : sCtx;
+      } else {
+        ctx = lCtx || sCtx;
+      }
     } catch (e) {}
 
     var urlParams = new URLSearchParams(window.location.search);
     var embedded = urlParams.get("embedded") === "1";
+    var urlStartCode = urlParams.get("startCode");
+    var startComplex = (ctx && ctx.startComplex) || null;
+    if (!startComplex && urlStartCode) {
+      startComplex = { code: urlStartCode };
+    }
 
     var defaultLat = parseFloat(localStorage.getItem("lastMapLat")) || 37.4979;
     var defaultLng = parseFloat(localStorage.getItem("lastMapLng")) || 127.0276;
     var defaultZoom = parseInt(localStorage.getItem("lastMapZoom"), 10) || 16;
+
+    var isRecentLaunchLogin = !!(ctx && ctx.loginStatus && (Date.now() - (ctx.launchedAt || 0) < 600000));
+    var isLoggedIn = hasValidLoginSession() || isRecentLaunchLogin;
 
     RealCrewData.context = {
       selectedMonth: (ctx && ctx.selectedMonth) || "202611",
@@ -42,9 +74,9 @@
       lat: (ctx && Number(ctx.lat)) || defaultLat,
       lng: (ctx && Number(ctx.lng)) || defaultLng,
       zoom: (ctx && Number(ctx.zoom)) || defaultZoom,
-      loginStatus: !!(ctx && ctx.loginStatus),
+      loginStatus: isLoggedIn,
       // 2026-11-22: 단지 상세 모달('현재 단지부터 답사 코스 만들기') 진입 시 출발 단지 컨텍스트 전달
-      startComplex: (ctx && ctx.startComplex) || null,
+      startComplex: startComplex,
       embedded: embedded,
       isMobile: embedded || window.innerWidth <= 820
     };

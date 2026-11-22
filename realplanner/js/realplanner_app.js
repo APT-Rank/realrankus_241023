@@ -1056,6 +1056,31 @@
       document.body.classList.add("is-embedded");
     }
 
+    // 2026-11-22: 직접 URL 진입 시 비로그인 상태이면 로그인 유도 오버레이 표시 (메인 로그인 후 자동 복귀)
+    if (!ctx.loginStatus) {
+      var gateEl = $("rcLoginGate");
+      var loaderEl = $("rcLoading");
+      if (loaderEl) loaderEl.style.display = "none";
+      if (gateEl) gateEl.style.display = "flex";
+      var loginBtn = $("btnRcGateLogin");
+      if (loginBtn) {
+        loginBtn.addEventListener("click", function () {
+          try {
+            localStorage.setItem("realplannerReturnAfterLogin", "1");
+          } catch (e) {}
+          if (ctx.embedded && window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: "closeRealPlannerModal" }, "*");
+          } else {
+            window.location.href = "../index.html?openLogin=1&returnTo=realplanner";
+          }
+        });
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: "realplannerReady" }, "*");
+      }
+      return;
+    }
+
     bindGlobalControls();
     renderSummary();
 
@@ -1089,8 +1114,8 @@
             }
           }
           if (matched) {
-            setMode("manual");
             state.course = [matched];
+            enterMode("manual");
             recalculateRoute();
             global.RealCrewMap.panToComplex(matched);
             showToast("① " + matched.name + "부터 시작합니다. 지도에서 다음 단지를 선택해 주세요.");

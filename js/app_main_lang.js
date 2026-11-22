@@ -755,12 +755,78 @@ $(document).ready(function () {
     }
   });
 
-  if ($.cookie("popCookie") != "202611" && urlParams.has("reg") == false && urlParams.has("cpx") == false && login_status == false) {
+  if ($.cookie("popCookie") != "202611" && urlParams.has("reg") == false && urlParams.has("cpx") == false && urlParams.get("openLogin") !== "1" && login_status == false) {
     startNotice = true;
     showNotice();
     //초기 진입 시 공지 팝업 표시하는 경우, 변수 startNotice에 true 할당
     openModal("noticeModal");
   }
+
+  // 2026-11-22: 리얼플래너 직접 URL 진입 후 로그인 유도 시 자동 로그인 모달 표시 및 로그인 완료 시 리얼플래너 자동 복귀
+  (function handleRealPlannerLoginReturn() {
+    var wantsReturn = urlParams.get("returnTo") === "realplanner" || localStorage.getItem("realplannerReturnAfterLogin") === "1";
+    var wantsOpenLogin = urlParams.get("openLogin") === "1";
+    if (!wantsReturn && !wantsOpenLogin) return;
+
+    if (urlParams.get("returnTo") === "realplanner") {
+      try { localStorage.setItem("realplannerReturnAfterLogin", "1"); } catch (e) {}
+    }
+
+    function hasValidNLog() {
+      try {
+        var raw = localStorage.getItem("nLOG");
+        if (!raw) return false;
+        var parsed = JSON.parse(raw);
+        return !!(parsed && parsed.value && (!parsed.expire || Date.now() <= parsed.expire));
+      } catch (e) {
+        return false;
+      }
+    }
+
+    if ((typeof login_status !== "undefined" && login_status) || hasValidNLog()) {
+      try { localStorage.removeItem("realplannerReturnAfterLogin"); } catch (e) {}
+      window.location.href = "./realplanner/index.html";
+      return;
+    }
+
+    if (wantsOpenLogin) {
+      setTimeout(function () {
+        if ((typeof login_status !== "undefined" && login_status) || hasValidNLog()) {
+          try { localStorage.removeItem("realplannerReturnAfterLogin"); } catch (e) {}
+          window.location.href = "./realplanner/index.html";
+          return;
+        }
+        try {
+          if (typeof showLogin === "function") showLogin();
+          var loginEl = document.getElementById("loginModal");
+          if (loginEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(loginEl).show();
+          } else if (typeof $ !== "undefined") {
+            $("#loginModal").modal("show");
+          }
+        } catch (e) {}
+      }, 350);
+    }
+
+    // 비동기 소셜 로그인(Firebase/Kakao/Naver/Apple) 완료 감지 시 즉시 리얼플래너로 복귀
+    var returnWatchCount = 0;
+    var returnWatchTimer = setInterval(function () {
+      returnWatchCount += 1;
+      if (returnWatchCount > 120) {
+        clearInterval(returnWatchTimer);
+        return;
+      }
+      if (localStorage.getItem("realplannerReturnAfterLogin") !== "1") {
+        clearInterval(returnWatchTimer);
+        return;
+      }
+      if ((typeof login_status !== "undefined" && login_status) || hasValidNLog()) {
+        clearInterval(returnWatchTimer);
+        try { localStorage.removeItem("realplannerReturnAfterLogin"); } catch (e) {}
+        window.location.href = "./realplanner/index.html";
+      }
+    }, 500);
+  })();
 
   blank_height = "3em";
   $("#linkToAptrank").css("height", blank_height);
@@ -6228,10 +6294,12 @@ function openRealPlanner(startComplex) {
     localStorage.setItem("realplannerLaunchContext", JSON.stringify(launchContext));
   } catch (e) {}
 
+  var startCodeParam = (startComplex && startComplex.code) ? encodeURIComponent(startComplex.code) : "";
   if (typeof isMobile !== "undefined" && isMobile) {
-    openRealPlannerModal();
+    openRealPlannerModal(startCodeParam);
   } else {
-    window.open("./realplanner/index.html", "_blank");
+    var targetUrl = "./realplanner/index.html" + (startCodeParam ? "?startCode=" + startCodeParam : "");
+    window.open(targetUrl, "_blank");
   }
 }
 
@@ -6246,11 +6314,11 @@ window.addEventListener("message", function (event) {
   }
 });
 
-function openRealPlannerModal() {
+function openRealPlannerModal(startCodeParam) {
   if (isRealPlannerModalOpen) return;
   isRealPlannerModalOpen = true;
 
-  var iframeUrl = "./realplanner/index.html?embedded=1";
+  var iframeUrl = "./realplanner/index.html?embedded=1" + (startCodeParam ? "&startCode=" + startCodeParam : "");
   var $modal = $("#realplannerModal");
   var oldIframe = document.getElementById("realplanner_iframe");
   if (oldIframe) oldIframe.remove();
