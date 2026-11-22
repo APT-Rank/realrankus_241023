@@ -946,8 +946,42 @@
       });
     }
 
-    // 2026-11-22: 현재 답사 코스 공유 URL 생성 및 공유하기(모바일 네이티브 공유 / PC 클립보드 복사)
-    function buildCourseShareUrl() {
+    // 2026-11-22: 코스 대표 지역명('{서울시 강남구}' 형식) 추출 및 공유 URL 생성
+    function extractShareRegionLabel() {
+      var addr = "";
+      for (var i = 0; i < state.course.length; i++) {
+        if (state.course[i] && state.course[i].address) {
+          addr = String(state.course[i].address).trim();
+          break;
+        }
+      }
+      if (!addr) return "";
+      var parts = addr.split(/\s+/).filter(Boolean);
+      if (!parts.length) return "";
+      var sidoMap = {
+        "서울특별시": "서울시",
+        "부산광역시": "부산시",
+        "인천광역시": "인천시",
+        "대구광역시": "대구시",
+        "광주광역시": "광주시",
+        "대전광역시": "대전시",
+        "울산광역시": "울산시",
+        "세종특별자치시": "세종시",
+        "제주특별자치도": "제주도",
+        "강원특별자치도": "강원도",
+        "전북특별자치도": "전북도"
+      };
+      var first = sidoMap[parts[0]] || parts[0];
+      if (parts.length >= 3 && (parts[2].endsWith("구") || parts[2].endsWith("군"))) {
+        return first + " " + parts[1] + " " + parts[2];
+      }
+      if (parts.length >= 2) {
+        return first + " " + parts[1];
+      }
+      return first;
+    }
+
+    function buildCourseShareUrl(regionLabel) {
       var codes = [];
       for (var i = 0; i < state.course.length; i++) {
         if (state.course[i] && state.course[i].code) codes.push(state.course[i].code);
@@ -961,7 +995,8 @@
         "&c=" + encodeURIComponent(codes.join(",")) +
         "&d=" + (state.dwellEnabled ? "1" : "0") +
         "&v=" + (state.carOver600Enabled ? "1" : "0") +
-        "&m=" + (state.mode === "auto" ? "a" : "m");
+        "&m=" + (state.mode === "auto" ? "a" : "m") +
+        (regionLabel ? "&r=" + encodeURIComponent(regionLabel) : "");
       return baseUrl + qs;
     }
 
@@ -993,42 +1028,51 @@
         showToast("먼저 답사 코스를 생성해 주세요.");
         return;
       }
-      var shareUrl = buildCourseShareUrl();
-      var totalDist = 0;
-      var totalMoveMin = 0;
-      for (var i = 0; i < state.segments.length; i++) {
-        var seg = state.segments[i];
-        totalDist += seg.distanceMeters || 0;
-        totalMoveMin += seg.displayMinutes != null ? seg.displayMinutes : (seg.durationMinutes || 0);
-      }
-      var dwellMin = state.dwellEnabled ? state.course.length * 15 : 0;
-      var totalMin = totalMoveMin + dwellMin;
-      var namesPreview = state.course.slice(0, 5).map(function (c, idx) {
-        return toCircled(idx + 1) + " " + c.name;
-      }).join(" → ") + (state.course.length > 5 ? " 외 " + (state.course.length - 5) + "곳" : "");
+      var ensureAddrPromise = (state.course[0] && !state.course[0].address && typeof global.RealCrewData.enrichCourseDetails === "function")
+        ? global.RealCrewData.enrichCourseDetails([state.course[0]]).catch(function () {})
+        : Promise.resolve();
 
-      var shareTitle = "[리얼랭커스] 현장답사 코스 공유 (총 " + state.course.length + "단지)";
-      var shareText =
-        namesPreview + "\n" +
-        "총 " + state.course.length + "단지 / 예상 " + global.RealCrewRoute.formatDuration(totalMin) +
-        " 소요 / 이동 " + global.RealCrewRoute.formatDistance(totalDist);
+      ensureAddrPromise.then(function () {
+        var regionLabel = extractShareRegionLabel();
+        var shareUrl = buildCourseShareUrl(regionLabel);
+        var totalDist = 0;
+        var totalMoveMin = 0;
+        for (var i = 0; i < state.segments.length; i++) {
+          var seg = state.segments[i];
+          totalDist += seg.distanceMeters || 0;
+          totalMoveMin += seg.displayMinutes != null ? seg.displayMinutes : (seg.durationMinutes || 0);
+        }
+        var dwellMin = state.dwellEnabled ? state.course.length * 15 : 0;
+        var totalMin = totalMoveMin + dwellMin;
+        var namesPreview = state.course.slice(0, 5).map(function (c, idx) {
+          return toCircled(idx + 1) + " " + c.name;
+        }).join(" → ") + (state.course.length > 5 ? " 외 " + (state.course.length - 5) + "곳" : "");
 
-      if (navigator.share) {
-        navigator.share({
-          title: shareTitle,
-          text: shareText,
-          url: shareUrl
-        }).catch(function (err) {
-          if (err && err.name === "AbortError") return;
+        var shareTitle = regionLabel
+          ? (regionLabel + " 현장 답사 코스")
+          : ("현장 답사 코스 (총 " + state.course.length + "단지)");
+        var shareText =
+          namesPreview + "\n" +
+          "총 " + state.course.length + "단지 / 예상 " + global.RealCrewRoute.formatDuration(totalMin) +
+          " 소요 / 이동 " + global.RealCrewRoute.formatDistance(totalDist);
+
+        if (navigator.share) {
+          navigator.share({
+            title: shareTitle,
+            text: shareText,
+            url: shareUrl
+          }).catch(function (err) {
+            if (err && err.name === "AbortError") return;
+            copyTextToClipboard(shareUrl)
+              .then(function () { showToast("공유 링크가 복사되었습니다. 링크를 열면 동일한 코스가 표시됩니다."); })
+              .catch(function () { showToast("공유 링크를 복사하지 못했습니다."); });
+          });
+        } else {
           copyTextToClipboard(shareUrl)
             .then(function () { showToast("공유 링크가 복사되었습니다. 링크를 열면 동일한 코스가 표시됩니다."); })
             .catch(function () { showToast("공유 링크를 복사하지 못했습니다."); });
-        });
-      } else {
-        copyTextToClipboard(shareUrl)
-          .then(function () { showToast("공유 링크가 복사되었습니다. 링크를 열면 동일한 코스가 표시됩니다."); })
-          .catch(function () { showToast("공유 링크를 복사하지 못했습니다."); });
-      }
+        }
+      });
     }
 
     var shareBtn = $("btnShareCourse");
@@ -1250,6 +1294,12 @@
 
         // 2026-11-22: 공유 링크(?share=1) 복원 — 단지 순서, 체류시간/차량 옵션, 모드, 경로 100% 동일하게 재현
         if (isSharedEntry) {
+          if (ctx.shareSpec.regionLabel) {
+            var dynamicPageTitle = ctx.shareSpec.regionLabel + " 현장 답사 코스";
+            document.title = dynamicPageTitle + " - 리얼랭커스";
+            var ogTitleMeta = document.querySelector('meta[property="og:title"]');
+            if (ogTitleMeta) ogTitleMeta.setAttribute("content", dynamicPageTitle);
+          }
           state.dwellEnabled = ctx.shareSpec.dwellEnabled;
           state.carOver600Enabled = ctx.shareSpec.carOver600Enabled;
           var dwellChkEl = $("rcDwellCheckbox");

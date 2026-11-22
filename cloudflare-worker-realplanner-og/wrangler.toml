@@ -1,0 +1,9 @@
+name = "realrankus-realplanner-og"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Cloudflare 대시보드 또는 wrangler deploy 시 아래 라우트에 연결:
+# routes = [
+#   { pattern = "www.realrankus.com/realplanner/*", zone_name = "realrankus.com" },
+#   { pattern = "realrankus.com/realplanner/*", zone_name = "realrankus.com" }
+# ]

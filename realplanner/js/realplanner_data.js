@@ -59,7 +59,7 @@
       startComplex = { code: urlStartCode };
     }
 
-    // 2026-11-22: 공유 링크 파라미터(?share=1&c=...&d=...&v=...&m=...) 파싱
+    // 2026-11-22: 공유 링크 파라미터(?share=1&c=...&d=...&v=...&m=...&r=지역명) 파싱
     var shareSpec = null;
     if (urlParams.get("share") === "1" && urlParams.get("c")) {
       var rawCodes = urlParams.get("c").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
@@ -68,7 +68,8 @@
           codes: rawCodes.slice(0, 30),
           dwellEnabled: urlParams.get("d") !== "0",
           carOver600Enabled: urlParams.get("v") === "1",
-          mode: urlParams.get("m") === "a" ? "auto" : "manual"
+          mode: urlParams.get("m") === "a" ? "auto" : "manual",
+          regionLabel: (urlParams.get("r") || "").trim().slice(0, 40)
         };
       }
     }
