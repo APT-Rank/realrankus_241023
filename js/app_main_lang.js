@@ -762,6 +762,15 @@ $(document).ready(function () {
     openModal("noticeModal");
   }
 
+  // 2026-11-22: 리얼플래너 공유 딥링크(?rpShare=...) 수신 시 즉시 리얼플래너 공유 화면으로 포워딩
+  if (urlParams.get("rpShare")) {
+    try {
+      var decodedShareQs = decodeURIComponent(urlParams.get("rpShare")).replace(/^\?/, "");
+      window.location.replace("./realplanner/index.html?" + decodedShareQs);
+      return;
+    } catch (e) {}
+  }
+
   // 2026-11-22: 리얼플래너 직접 URL 진입 후 로그인 유도 시 자동 로그인 모달 표시 및 로그인 완료 시 리얼플래너 자동 복귀
   (function handleRealPlannerLoginReturn() {
     var wantsReturn = urlParams.get("returnTo") === "realplanner" || localStorage.getItem("realplannerReturnAfterLogin") === "1";
@@ -770,6 +779,19 @@ $(document).ready(function () {
 
     if (urlParams.get("returnTo") === "realplanner") {
       try { localStorage.setItem("realplannerReturnAfterLogin", "1"); } catch (e) {}
+    }
+
+    function redirectBackToRealPlanner() {
+      var target = "./realplanner/index.html";
+      try {
+        var savedUrl = localStorage.getItem("realplannerReturnUrl");
+        if (savedUrl && savedUrl.indexOf("/realplanner/") > -1) {
+          target = savedUrl;
+        }
+        localStorage.removeItem("realplannerReturnAfterLogin");
+        localStorage.removeItem("realplannerReturnUrl");
+      } catch (e) {}
+      window.location.href = target;
     }
 
     function hasValidNLog() {
@@ -784,16 +806,14 @@ $(document).ready(function () {
     }
 
     if ((typeof login_status !== "undefined" && login_status) || hasValidNLog()) {
-      try { localStorage.removeItem("realplannerReturnAfterLogin"); } catch (e) {}
-      window.location.href = "./realplanner/index.html";
+      redirectBackToRealPlanner();
       return;
     }
 
     if (wantsOpenLogin) {
       setTimeout(function () {
         if ((typeof login_status !== "undefined" && login_status) || hasValidNLog()) {
-          try { localStorage.removeItem("realplannerReturnAfterLogin"); } catch (e) {}
-          window.location.href = "./realplanner/index.html";
+          redirectBackToRealPlanner();
           return;
         }
         try {
@@ -822,8 +842,7 @@ $(document).ready(function () {
       }
       if ((typeof login_status !== "undefined" && login_status) || hasValidNLog()) {
         clearInterval(returnWatchTimer);
-        try { localStorage.removeItem("realplannerReturnAfterLogin"); } catch (e) {}
-        window.location.href = "./realplanner/index.html";
+        redirectBackToRealPlanner();
       }
     }, 500);
   })();

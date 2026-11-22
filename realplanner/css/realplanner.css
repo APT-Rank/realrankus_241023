@@ -883,7 +883,97 @@ body.is-embedded .rc-back-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+}
+
+.rc-summary-stats-group {
+  display: flex;
+  align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+
+/* 2026-11-22: 좌측 하단 요약 바 우측 공유하기 버튼 */
+.rc-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.rc-share-btn:hover {
+  background: #E43B46;
+  border-color: #E43B46;
+  color: #ffffff;
+}
+
+.rc-share-btn:active {
+  transform: translateY(1px);
+}
+
+/* 2026-11-22: 비로그인 공유 링크 뷰어 모드 배너 및 읽기 전용 제어 */
+.rc-viewer-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #fff7ed;
+  border-bottom: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rc-viewer-banner-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rc-viewer-login-btn {
+  border: none;
+  border-radius: 6px;
+  background: #E43B46;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rc-viewer-login-btn:hover {
+  background: #d12e39;
+}
+
+body.is-viewer-mode .rc-toolbar,
+body.is-viewer-mode .rc-guide-banner,
+body.is-viewer-mode .rc-append-wrap,
+body.is-viewer-mode .rc-drag-handle,
+body.is-viewer-mode .rc-stop-actions,
+body.is-viewer-mode .rc-segment-add-btn,
+body.is-viewer-mode #btnResetAll,
+body.is-viewer-mode #btnMobileReset {
+  display: none !important;
+}
+
+body.is-viewer-mode .rc-car-toggle-wrap,
+body.is-viewer-mode .rc-dwell-check-wrap {
+  pointer-events: none;
+  opacity: 0.72;
 }
 
 .rc-summary-stat {

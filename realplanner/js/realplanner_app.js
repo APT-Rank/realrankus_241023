@@ -23,7 +23,8 @@
     activeStopCode: null,
     dwellEnabled: true,
     carOver600Enabled: false,
-    dragSourceIndex: null
+    dragSourceIndex: null,
+    viewerMode: false
   };
 
   var toastTimer = null;
@@ -410,6 +411,24 @@
   function handleMapComplexClick(cpx) {
     if (!cpx) return;
 
+    var existingIdx = isComplexInCourse(cpx.code);
+
+    // 2026-11-22: 비로그인 공유 링크 뷰어 모드에서는 코스에 포함된 단지의 경로 포커스 토글만 허용
+    if (state.viewerMode) {
+      if (existingIdx !== -1) {
+        var vFocus = state.activeStopCode === cpx.code ? null : cpx.code;
+        setFocusedStop(vFocus, false);
+        if (vFocus) {
+          var vCard = document.querySelector('.rc-stop-card[data-code="' + cpx.code + '"]');
+          if (vCard) vCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          showToast(toCircled(existingIdx + 1) + " '" + cpx.name + "' 앞/뒤 경로만 표시합니다.");
+        } else {
+          showToast("전체 이동 경로를 표시합니다.");
+        }
+      }
+      return;
+    }
+
     // 아직 모드 선택 전이면 수동 모드로 자연스럽게 시작
     if (!state.mode) {
       state.mode = "manual";
@@ -417,8 +436,6 @@
       $("rcWorkspace").style.display = "flex";
       setResetButtonsVisible(true);
     }
-
-    var existingIdx = isComplexInCourse(cpx.code);
 
     // 1) 중간 추가(+) 또는 끝 추가 대기 모드
     if (state.insertAfterIndex !== null) {
@@ -596,7 +613,7 @@
       var naverUrl = getNaverLandUrl(cpx.code);
 
       html.push(
-        '<div class="rc-stop-row" draggable="true" data-index="' + i + '" data-code="' + escapeHtml(cpx.code) + '">' +
+        '<div class="rc-stop-row" draggable="' + (state.viewerMode ? 'false' : 'true') + '" data-index="' + i + '" data-code="' + escapeHtml(cpx.code) + '">' +
           '<div class="rc-stop-card' + (isActive ? ' is-active' : '') + '" data-code="' + escapeHtml(cpx.code) + '">' +
             '<div class="rc-drag-handle" title="드래그하여 순서 변경"><i class="fa-solid fa-grip-vertical"></i></div>' +
             '<div class="rc-stop-info">' +
@@ -902,6 +919,96 @@
       });
     }
 
+    // 2026-11-22: 현재 답사 코스 공유 URL 생성 및 공유하기(모바일 네이티브 공유 / PC 클립보드 복사)
+    function buildCourseShareUrl() {
+      var codes = [];
+      for (var i = 0; i < state.course.length; i++) {
+        if (state.course[i] && state.course[i].code) codes.push(state.course[i].code);
+      }
+      var isProdHost = /realrankus\.com$/i.test(window.location.hostname);
+      var baseUrl = isProdHost
+        ? "https://www.realrankus.com/realplanner/index.html"
+        : (window.location.origin + window.location.pathname);
+      var qs =
+        "?share=1" +
+        "&c=" + encodeURIComponent(codes.join(",")) +
+        "&d=" + (state.dwellEnabled ? "1" : "0") +
+        "&v=" + (state.carOver600Enabled ? "1" : "0") +
+        "&m=" + (state.mode === "auto" ? "a" : "m");
+      return baseUrl + qs;
+    }
+
+    function copyTextToClipboard(text) {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise(function (resolve, reject) {
+        try {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          var ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          if (ok) resolve();
+          else reject(new Error("COPY_FAILED"));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    function handleShareCourse() {
+      if (!state.course || state.course.length === 0) {
+        showToast("먼저 답사 코스를 생성해 주세요.");
+        return;
+      }
+      var shareUrl = buildCourseShareUrl();
+      var totalDist = 0;
+      var totalMoveMin = 0;
+      for (var i = 0; i < state.segments.length; i++) {
+        var seg = state.segments[i];
+        totalDist += seg.distanceMeters || 0;
+        totalMoveMin += seg.displayMinutes != null ? seg.displayMinutes : (seg.durationMinutes || 0);
+      }
+      var dwellMin = state.dwellEnabled ? state.course.length * 15 : 0;
+      var totalMin = totalMoveMin + dwellMin;
+      var namesPreview = state.course.slice(0, 5).map(function (c, idx) {
+        return toCircled(idx + 1) + " " + c.name;
+      }).join(" → ") + (state.course.length > 5 ? " 외 " + (state.course.length - 5) + "곳" : "");
+
+      var shareTitle = "[리얼랭커스] 현장답사 코스 공유 (총 " + state.course.length + "단지)";
+      var shareText =
+        namesPreview + "\n" +
+        "총 " + state.course.length + "단지 / 예상 " + global.RealCrewRoute.formatDuration(totalMin) +
+        " 소요 / 이동 " + global.RealCrewRoute.formatDistance(totalDist);
+
+      if (navigator.share) {
+        navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl
+        }).catch(function (err) {
+          if (err && err.name === "AbortError") return;
+          copyTextToClipboard(shareUrl)
+            .then(function () { showToast("공유 링크가 복사되었습니다. 링크를 열면 동일한 코스가 표시됩니다."); })
+            .catch(function () { showToast("공유 링크를 복사하지 못했습니다."); });
+        });
+      } else {
+        copyTextToClipboard(shareUrl)
+          .then(function () { showToast("공유 링크가 복사되었습니다. 링크를 열면 동일한 코스가 표시됩니다."); })
+          .catch(function () { showToast("공유 링크를 복사하지 못했습니다."); });
+      }
+    }
+
+    var shareBtn = $("btnShareCourse");
+    if (shareBtn) {
+      shareBtn.addEventListener("click", handleShareCourse);
+    }
+
     $("rcLocationBtn").addEventListener("click", function () {
       global.RealCrewMap.locateUser(function (errMsg) {
         showToast(errMsg);
@@ -1056,8 +1163,9 @@
       document.body.classList.add("is-embedded");
     }
 
-    // 2026-11-22: 직접 URL 진입 시 비로그인 상태이면 로그인 유도 오버레이 표시 (메인 로그인 후 자동 복귀)
-    if (!ctx.loginStatus) {
+    // 2026-11-22: 직접 URL 진입 시 비로그인 상태이면 로그인 유도 오버레이 표시 (단, 공유 링크(?share=1)는 비로그인 뷰어 모드 허용)
+    var isSharedEntry = !!(ctx.shareSpec && ctx.shareSpec.codes && ctx.shareSpec.codes.length > 0);
+    if (!ctx.loginStatus && !isSharedEntry) {
       var gateEl = $("rcLoginGate");
       var loaderEl = $("rcLoading");
       if (loaderEl) loaderEl.style.display = "none";
@@ -1081,6 +1189,23 @@
       return;
     }
 
+    if (isSharedEntry && !ctx.loginStatus) {
+      state.viewerMode = true;
+      document.body.classList.add("is-viewer-mode");
+      var viewerBanner = $("rcViewerBanner");
+      if (viewerBanner) viewerBanner.style.display = "flex";
+      var viewerLoginBtn = $("btnViewerLogin");
+      if (viewerLoginBtn) {
+        viewerLoginBtn.addEventListener("click", function () {
+          try {
+            localStorage.setItem("realplannerReturnAfterLogin", "1");
+            localStorage.setItem("realplannerReturnUrl", window.location.href);
+          } catch (e) {}
+          window.location.href = "../index.html?openLogin=1&returnTo=realplanner";
+        });
+      }
+    }
+
     bindGlobalControls();
     renderSummary();
 
@@ -1096,8 +1221,37 @@
           }
         });
 
-        // 2026-11-22: 특정 단지에서 "현재 단지부터 답사 코스 만들기"로 진입한 경우 해당 단지를 1번 출발지로 자동 선택
-        if (ctx.startComplex) {
+        // 2026-11-22: 공유 링크(?share=1) 복원 — 단지 순서, 체류시간/차량 옵션, 모드, 경로 100% 동일하게 재현
+        if (isSharedEntry) {
+          state.dwellEnabled = ctx.shareSpec.dwellEnabled;
+          state.carOver600Enabled = ctx.shareSpec.carOver600Enabled;
+          var dwellChkEl = $("rcDwellCheckbox");
+          if (dwellChkEl) dwellChkEl.checked = state.dwellEnabled;
+          var carChkEl = $("rcCarOver600Checkbox");
+          if (carChkEl) carChkEl.checked = state.carOver600Enabled;
+
+          var restoredCourse = [];
+          for (var si = 0; si < ctx.shareSpec.codes.length; si++) {
+            var codeKey = ctx.shareSpec.codes[si];
+            var foundCpx = global.RealCrewData.complexByCode[codeKey];
+            if (foundCpx) restoredCourse.push(foundCpx);
+          }
+          if (restoredCourse.length > 0) {
+            state.course = restoredCourse;
+            state.mode = ctx.shareSpec.mode || "manual";
+            $("rcModeHome").style.display = "none";
+            $("rcWorkspace").style.display = "flex";
+            setResetButtonsVisible(!state.viewerMode);
+            updateModeUI();
+            recalculateRoute();
+            global.RealCrewMap.fitCourseBounds(state.course);
+            if (state.viewerMode) {
+              showToast("공유된 현장답사 코스입니다. (보기 전용)");
+            } else {
+              showToast("공유된 현장답사 코스를 불러왔습니다. (" + state.course.length + "개 단지)");
+            }
+          }
+        } else if (ctx.startComplex) {
           var matched = null;
           if (ctx.startComplex.code && global.RealCrewData.complexByCode[ctx.startComplex.code]) {
             matched = global.RealCrewData.complexByCode[ctx.startComplex.code];

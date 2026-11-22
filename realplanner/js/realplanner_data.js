@@ -59,6 +59,20 @@
       startComplex = { code: urlStartCode };
     }
 
+    // 2026-11-22: 공유 링크 파라미터(?share=1&c=...&d=...&v=...&m=...) 파싱
+    var shareSpec = null;
+    if (urlParams.get("share") === "1" && urlParams.get("c")) {
+      var rawCodes = urlParams.get("c").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      if (rawCodes.length > 0) {
+        shareSpec = {
+          codes: rawCodes.slice(0, 30),
+          dwellEnabled: urlParams.get("d") !== "0",
+          carOver600Enabled: urlParams.get("v") === "1",
+          mode: urlParams.get("m") === "a" ? "auto" : "manual"
+        };
+      }
+    }
+
     var defaultLat = parseFloat(localStorage.getItem("lastMapLat")) || 37.4979;
     var defaultLng = parseFloat(localStorage.getItem("lastMapLng")) || 127.0276;
     var defaultZoom = parseInt(localStorage.getItem("lastMapZoom"), 10) || 16;
@@ -77,6 +91,7 @@
       loginStatus: isLoggedIn,
       // 2026-11-22: 단지 상세 모달('현재 단지부터 답사 코스 만들기') 진입 시 출발 단지 컨텍스트 전달
       startComplex: startComplex,
+      shareSpec: shareSpec,
       embedded: embedded,
       isMobile: embedded || window.innerWidth <= 820
     };

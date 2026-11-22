@@ -7,7 +7,77 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/realplanner.css?v=20261122_16" />
+  <link rel="stylesheet" href="./css/realplanner.css?v=20261122_17" />
+  <!-- 2026-11-22: 공유 링크 모바일 앱 딥링크(설치 시 앱 실행, 미설치 시 모바일 웹 폴백) -->
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get("share") !== "1" || params.get("embedded") === "1") return;
+        if (params.get("web") === "1") return;
+
+        var ua = (navigator.userAgent || "").toLowerCase();
+        var isIOS = /iphone|ipad|ipod/i.test(ua);
+        var isAndroid = /android/i.test(ua);
+        if (!isIOS && !isAndroid) return;
+
+        var isOurApp = Boolean(window.Android) || ua.indexOf("_ios_app") > -1 || ua.indexOf("aptrank") > -1;
+        if (isOurApp) return;
+
+        var isKakao = ua.indexOf("kakaotalk") > -1;
+        var isInApp = isKakao || ua.indexOf("naver") > -1 || ua.indexOf("fban") > -1 ||
+          ua.indexOf("fbav") > -1 || ua.indexOf("instagram") > -1 ||
+          ua.indexOf("line") > -1 || ua.indexOf("band") > -1 || ua.indexOf("everytime") > -1;
+
+        var targetUrl = window.location.href;
+        var sep = targetUrl.indexOf("?") > -1 ? "&" : "?";
+        var webFallbackUrl = targetUrl + sep + "web=1";
+        var encodedShareQuery = encodeURIComponent(window.location.search.replace(/^\?/, ""));
+
+        if (params.get("inappfallback") === "1") {
+          var cleanUrl = targetUrl
+            .replace(/([?&])inappfallback=1(&|$)/, "$1")
+            .replace(/[?&]$/, "");
+          var cleanWebUrl = cleanUrl + (cleanUrl.indexOf("?") > -1 ? "&" : "?") + "web=1";
+          var noProto = cleanWebUrl.replace(/^https?:\/\//i, "");
+          window.location.href = "intent://" + noProto + "#Intent;scheme=https;package=com.android.chrome;end;";
+          setTimeout(function () {
+            if (isKakao) window.location.href = "kakaotalk://inappbrowser/close";
+            else { try { window.close(); } catch (e) {} }
+          }, 250);
+          return;
+        }
+
+        if (isAndroid) {
+          var fallbackTarget = isInApp ? (targetUrl + sep + "inappfallback=1") : webFallbackUrl;
+          window.location.href =
+            "intent://main?rpShare=" + encodedShareQuery +
+            "#Intent;scheme=realrankus;package=com.aptrank.app;S.URL=" +
+            encodeURIComponent(targetUrl) +
+            ";S.browser_fallback_url=" + encodeURIComponent(fallbackTarget) + ";end;";
+          if (isInApp) {
+            setTimeout(function () {
+              if (isKakao) window.location.href = "kakaotalk://inappbrowser/close";
+              else { try { window.close(); } catch (e) {} }
+            }, 500);
+          }
+        } else if (isIOS && isInApp) {
+          var clickedAt = Date.now();
+          window.location.href = "realrankus://main?rpShare=" + encodedShareQuery;
+          setTimeout(function () {
+            if (Date.now() - clickedAt < 1500) {
+              if (isKakao) {
+                window.location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(webFallbackUrl);
+                setTimeout(function () { window.location.href = "kakaoweb://closeBrowser"; }, 200);
+              }
+            } else if (isKakao) {
+              window.location.href = "kakaoweb://closeBrowser";
+            }
+          }, 450);
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- Naver Maps API v3 (리얼랭커스 동일 키) -->
   <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
@@ -115,6 +185,12 @@
           </div>
         </div>
 
+        <!-- 2026-11-22: 비로그인 공유 링크 뷰어 모드 배너 -->
+        <div id="rcViewerBanner" class="rc-viewer-banner" style="display:none;">
+          <span class="rc-viewer-banner-text"><i class="fa-solid fa-eye"></i> 공유된 코스 (보기 전용)</span>
+          <button type="button" id="btnViewerLogin" class="rc-viewer-login-btn">로그인하여 편집</button>
+        </div>
+
         <!-- 상태 안내 배너 -->
         <div id="rcGuideBanner" class="rc-guide-banner" style="display:none;">
           <div class="rc-guide-text" id="rcGuideText"></div>
@@ -146,17 +222,23 @@
       <!-- 좌측 하단 고정 결과 요약 바 -->
       <footer id="rcSummaryBar" class="rc-summary-bar">
         <div class="rc-summary-main">
-          <div class="rc-summary-stat">
-            <span class="rc-summary-label">총</span>
-            <strong id="rcTotalCount" class="rc-summary-num">0</strong>
-            <span class="rc-summary-label">단지</span>
+          <div class="rc-summary-stats-group">
+            <div class="rc-summary-stat">
+              <span class="rc-summary-label">총</span>
+              <strong id="rcTotalCount" class="rc-summary-num">0</strong>
+              <span class="rc-summary-label">단지</span>
+            </div>
+            <span class="rc-summary-divider"></span>
+            <div class="rc-summary-stat">
+              <span class="rc-summary-label">예상</span>
+              <strong id="rcTotalTime" class="rc-summary-time">0분</strong>
+              <span class="rc-summary-label">소요</span>
+            </div>
           </div>
-          <span class="rc-summary-divider"></span>
-          <div class="rc-summary-stat">
-            <span class="rc-summary-label">예상</span>
-            <strong id="rcTotalTime" class="rc-summary-time">0분</strong>
-            <span class="rc-summary-label">소요</span>
-          </div>
+          <!-- 2026-11-22: 현재 코스 공유하기 버튼 -->
+          <button type="button" id="btnShareCourse" class="rc-share-btn" title="현재 답사 코스 링크 공유하기">
+            <i class="fa-solid fa-share-nodes"></i><span>공유</span>
+          </button>
         </div>
         <div class="rc-summary-sub">
           <span class="rc-summary-dist">
@@ -250,10 +332,10 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
-  <script src="./js/realplanner_data.js?v=20261122_16"></script>
-  <script src="./js/realplanner_route.js?v=20261122_16"></script>
-  <script src="./js/realplanner_map.js?v=20261122_16"></script>
-  <script src="./js/realplanner_export.js?v=20261122_16"></script>
-  <script src="./js/realplanner_app.js?v=20261122_16"></script>
+  <script src="./js/realplanner_data.js?v=20261122_17"></script>
+  <script src="./js/realplanner_route.js?v=20261122_17"></script>
+  <script src="./js/realplanner_map.js?v=20261122_17"></script>
+  <script src="./js/realplanner_export.js?v=20261122_17"></script>
+  <script src="./js/realplanner_app.js?v=20261122_17"></script>
 </body>
 </html>
