@@ -198,6 +198,17 @@ def save_BOK_currency_info():
         df['TIME'] = df['TIME'].apply(lambda x: f"{x[0:4]}-{x[4:6]}-{x[6:8]}" if len(x) >= 8 else x)
     return df
 
+def fetch_naver_index_series(symbol, col_name, count=3000):
+    url = f'https://fchart.stock.naver.com/sise.nhn?symbol={symbol}&timeframe=day&count={count}&requestType=0'
+    r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+    root = ET.fromstring(r.text)
+    data = [
+        {'Date': f"{v[0][:4]}-{v[0][4:6]}-{v[0][6:8]}", col_name: float(v[4])}
+        for v in (item.attrib['data'].split('|') for item in root.findall('.//item'))
+        if len(v) >= 5 and v[4] not in ('', 'null', 'None')
+    ]
+    return pd.DataFrame(data)
+
 def save_YF_stock_info():
     df_close = pd.DataFrame()
     symbols = ['^KS11', '^KQ11', '^IXIC', '^GSPC', '^DJI']
@@ -208,13 +219,22 @@ def save_YF_stock_info():
     df_close['Date'] = df_close['Date'].str[0:10]
     df_close.rename(columns = {'^KS11':'yf_KOSPI', '^KQ11':'yf_KOSDAQ','^IXIC':'yf_NASDAQ','^GSPC':'yf_SNP','^DJI':'yf_DOW'}, inplace=True)
 
+    # Yahoo Finance에서 ^KS11 / ^KQ11 누락 시 네이버 금융으로 자동 폴백
+    for col_name, naver_sym in [('yf_KOSPI', 'KOSPI'), ('yf_KOSDAQ', 'KOSDAQ')]:
+        if col_name not in df_close.columns or df_close[col_name].notna().sum() < 100:
+            try:
+                print(f"Fallback to Naver {naver_sym} for {col_name}")
+                df_nv = fetch_naver_index_series(naver_sym, col_name)
+                if not df_nv.empty:
+                    if col_name in df_close.columns:
+                        df_close.drop(columns=[col_name], inplace=True)
+                    df_close = pd.merge(df_close, df_nv, on='Date', how='left')
+            except Exception as e:
+                print(f"Failed to fetch Naver {naver_sym}:", e)
+
     try:
         print("Start to get Naver KOSPI200")
-        url = 'https://fchart.stock.naver.com/sise.nhn?symbol=KPI200&timeframe=day&count=3000&requestType=0'
-        r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-        root = ET.fromstring(r.text)
-        data = [{'Date': f"{v[0][:4]}-{v[0][4:6]}-{v[0][6:8]}", 'yf_KOSPI200': float(v[4])} for v in (item.attrib['data'].split('|') for item in root.findall('.//item'))]
-        df_kpi200 = pd.DataFrame(data)
+        df_kpi200 = fetch_naver_index_series('KPI200', 'yf_KOSPI200')
         df_close = pd.merge(df_close, df_kpi200, on='Date', how='left')
     except Exception as e:
         print("Failed to fetch Naver KPI200:", e)
