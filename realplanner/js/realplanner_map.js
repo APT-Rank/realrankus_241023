@@ -92,19 +92,21 @@
     var selectedCls = orderNum ? " is-selected" : "";
 
     var isCap = !!RealCrewMap.isCapturing;
-    var areaFontSize = isCap ? "3.9" : "5.4";
-    var areaSpacing = isCap ? "-0.15" : "-0.1";
-    var areaFitAttr = (isCap && String(cpx.areaText || "").length >= 10) ? ' textLength="30" lengthAdjust="spacingAndGlyphs"' : "";
+    // 2026-11-23: 모바일 WebView 최소 폰트 크기 강제 확대 및 spacingAndGlyphs 찌그러짐 방지
+    // viewBox를 10배(0 0 350 350)로 확장하고 텍스트를 39~80 단위로 지정해 최소 폰트 제한 우회
+    var areaFontSize = isCap ? "39" : "54";
+    var areaSpacing = isCap ? "-1.5" : "-1";
 
     var svg =
-      '<svg version="1.1" class="large_marker ' + cpx.gradeClass + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 35" width="' + w + '" height="' + h + '">' +
-        '<g>' +
+      '<svg version="1.1" class="large_marker ' + cpx.gradeClass + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 350" width="' + w + '" height="' + h + '" style="-webkit-text-size-adjust:none;text-size-adjust:none;">' +
+        '<g transform="scale(10)">' +
           '<path fill="' + color + '" stroke="' + color + '" stroke-width="0.5" d="M.12,12.29V8.81A.88.88,0,0,1,.55,8L15.31.47a3.07,3.07,0,0,1,2.83,0L33,8a.85.85,0,0,1,.43.77v3.48Z"/>' +
           '<path fill="#fff" stroke="' + color + '" stroke-width="0.5" d="M.13,12.29V26.36c0,1.37.63,2.47,1.4,2.47H3.36L4.52,31l1.16,2.15L6.84,31,8,28.83H32.06c.78,0,1.41-1.1,1.41-2.47V12.29Z"/>' +
-          // 2026-11-23: 등급/가격 폰트 크기 기존(8 / 6.8) 원복, 하단 평(m2)만 캡처 축소 크기(3.9) 유지
-          '<text fill="#fff" font-size="8" font-weight="600" text-anchor="middle" x="16.5" y="10">' + escapeHtml(cpx.grade) + '</text>' +
-          '<text fill="#000" font-size="6.8" font-weight="600" text-anchor="middle" x="17" y="19.5">' + escapeHtml(cpx.priceText) + '</text>' +
-          '<text fill="#000" font-size="' + areaFontSize + '" font-weight="600" letter-spacing="' + areaSpacing + '" text-anchor="middle" x="17" y="25.6"' + areaFitAttr + '>' + escapeHtml(cpx.areaText) + '</text>' +
+        '</g>' +
+        '<g font-family="Pretendard, Noto Sans KR, -apple-system, BlinkMacSystemFont, Malgun Gothic, sans-serif">' +
+          '<text fill="#fff" font-size="80" font-weight="600" text-anchor="middle" x="165" y="100">' + escapeHtml(cpx.grade) + '</text>' +
+          '<text fill="#000" font-size="68" font-weight="600" text-anchor="middle" x="170" y="195">' + escapeHtml(cpx.priceText) + '</text>' +
+          '<text fill="#000" font-size="' + areaFontSize + '" font-weight="600" letter-spacing="' + areaSpacing + '" text-anchor="middle" x="170" y="256">' + escapeHtml(cpx.areaText) + '</text>' +
         '</g>' +
       '</svg>';
 
@@ -122,12 +124,12 @@
     var selectedCls = orderNum ? " is-selected" : "";
 
     var svg =
-      '<svg version="1.1" class="small_marker ' + cpx.gradeClass + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="30" height="30">' +
-        '<g>' +
+      '<svg version="1.1" class="small_marker ' + cpx.gradeClass + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="30" height="30" style="-webkit-text-size-adjust:none;text-size-adjust:none;">' +
+        '<g transform="scale(10)">' +
           // 2026-11-23: 메인 지도(js/map_control.js createSmallMarker)와 동일한 #a70000 외곽선(stroke-width 0.5) 적용
           '<path fill="' + color + '" stroke="#a70000" stroke-width="0.5" d="M17.89,4.43,9.86.31a1.67,1.67,0,0,0-1.55,0L.36,4.43a.48.48,0,0,0-.24.42v9.58c0,.74.35,1.35.76,1.35h1l2.26,3.35,2.25-3.35h11c.41,0,.75-.61.75-1.35V4.86A.48.48,0,0,0,17.89,4.43Z"/>' +
-          '<text fill="#fff" font-size="9" font-weight="600" text-anchor="middle" x="9" y="12">' + escapeHtml(cpx.grade) + '</text>' +
         '</g>' +
+        '<text fill="#fff" font-family="Pretendard, Noto Sans KR, -apple-system, BlinkMacSystemFont, Malgun Gothic, sans-serif" font-size="90" font-weight="600" text-anchor="middle" x="90" y="120">' + escapeHtml(cpx.grade) + '</text>' +
       '</svg>';
 
     return (
