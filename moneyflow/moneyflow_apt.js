@@ -73,6 +73,10 @@ function extractAllAptRegions(data) {
 }
 
 function assignRegionColors() {
+  if (typeof mfSyncColorMap === "function") {
+    mfSyncColorMap(selectedAptRegions, regionColorMap);
+    return;
+  }
   selectedAptRegions.forEach(function(region, idx) {
     if (!regionColorMap[region]) {
       regionColorMap[region] = getAptRegionColor(idx);
@@ -104,14 +108,20 @@ function renderSelectedTags() {
   var $tags = $("#apt_selected_tags");
   $tags.empty();
 
+  assignRegionColors();
   if (selectedAptRegions.length === 0) {
     $tags.append('<span class="apt_pro_count">선택된 부동산 지역이 없습니다. (현재 미국·한국 통화량만 표시 중)</span>');
   } else {
     selectedAptRegions.forEach(function(region, idx) {
       var color = regionColorMap[region] || getAptRegionColor(idx);
-      var $tag = $('<span class="apt_tag"></span>');
+      var $tag = $('<span class="apt_tag" style="cursor:pointer;"></span>');
       $tag.append('<span class="apt_tag_dot" style="background:' + color + ';"></span>');
       $tag.append($('<span></span>').text(region));
+      $tag.on("mouseenter", function() {
+        if (typeof mfFocusByLabel === "function") mfFocusByLabel(myMoneyFlowApt_Chart, region);
+      }).on("mouseleave", function() {
+        if (typeof mfFocusByLabel === "function") mfFocusByLabel(myMoneyFlowApt_Chart, null);
+      });
       var $remove = $('<span class="apt_tag_remove" title="제거">&times;</span>');
       $remove.on("click", function() {
         toggleAptRegion(region);

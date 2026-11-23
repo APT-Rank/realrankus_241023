@@ -4135,6 +4135,7 @@ var MF_PRESETS = {
 };
 
 var selectedMfAssets = ["미국 S&P", "한국 코스피", "금"];
+var mfGlobalColorMap = {};
 var mf_latest_time_arr = [];
 var mf_latest_dataset = [];
 var currentMoneyFlowMode = "global";
@@ -4257,15 +4258,23 @@ function renderMfSelectedTags() {
   if ($tags.length === 0) return;
   $tags.empty();
 
+  if (typeof mfSyncColorMap === "function") mfSyncColorMap(selectedMfAssets, mfGlobalColorMap);
+
   if (selectedMfAssets.length === 0) {
     $tags.append('<span class="apt_pro_count">선택된 비교 지표가 없습니다. (현재 미국·한국 통화량만 표시 중)</span>');
   } else {
     selectedMfAssets.forEach(function(key) {
       var meta = getMfAssetMeta(key);
       if (!meta) return;
-      var $tag = $('<span class="apt_tag"></span>');
-      $tag.append('<span class="apt_tag_dot" style="background:' + meta.color + ';"></span>');
+      var color = mfGlobalColorMap[key] || meta.color;
+      var $tag = $('<span class="apt_tag" style="cursor:pointer;"></span>');
+      $tag.append('<span class="apt_tag_dot" style="background:' + color + ';"></span>');
       $tag.append($('<span></span>').text(meta.key));
+      $tag.on("mouseenter", function() {
+        if (typeof mfFocusByLabel === "function") mfFocusByLabel(myMoneyFlow_Chart, key);
+      }).on("mouseleave", function() {
+        if (typeof mfFocusByLabel === "function") mfFocusByLabel(myMoneyFlow_Chart, null);
+      });
       var $remove = $('<span class="apt_tag_remove" title="제거">&times;</span>');
       $remove.on("click", function() {
         toggleMfAsset(key);
@@ -4375,14 +4384,16 @@ function renderMoneyFlowChartFromState() {
     }
   ];
 
+  if (typeof mfSyncColorMap === "function") mfSyncColorMap(selectedMfAssets, mfGlobalColorMap);
   selectedMfAssets.forEach(function(key) {
     var meta = getMfAssetMeta(key);
     if (!meta || !mf_latest_dataset[meta.idx]) return;
+    var color = mfGlobalColorMap[key] || meta.color;
     datasets.push({
       label: meta.key,
       data: mf_latest_dataset[meta.idx],
-      borderColor: meta.color,
-      backgroundColor: meta.color,
+      borderColor: color,
+      backgroundColor: color,
       pointRadius: 0,
       borderWidth: 2,
       tension: 0.2,

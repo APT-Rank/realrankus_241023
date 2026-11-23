@@ -10,9 +10,13 @@ function drawMoneyFlowChart(chartDate, datasets, id_name){
   const delayBetweenPoints = chartDate.length > 0 ? (totalDuration / chartDate.length) : 0;
   var ctx = document.getElementById(id_name).getContext('2d');
 
+  var pluginsList = [ChartDataLabels];
+  if (typeof mfFocusShadowPlugin !== 'undefined') pluginsList.push(mfFocusShadowPlugin);
+  if (typeof mfEndLabelPlugin !== 'undefined') pluginsList.push(mfEndLabelPlugin);
+
   myMoneyFlow_Chart = new Chart(ctx, {
     type: 'line',
-    plugins: [ChartDataLabels],
+    plugins: pluginsList,
     data: {
       labels: chartDate,
       datasets: datasets
@@ -27,7 +31,7 @@ function drawMoneyFlowChart(chartDate, datasets, id_name){
       layout: {
         padding: {
           left: 0,
-          right: 30,
+          right: 132,
           top: 10,
           bottom: 10
         }
@@ -80,10 +84,24 @@ function drawMoneyFlowChart(chartDate, datasets, id_name){
         tooltip: {
           enabled: (typeof mfTooltipEnabled !== 'undefined' ? mfTooltipEnabled : true)
         },
+        mfEndLabels: {
+          enabled: true,
+          compact: false
+        },
         legend: {
           display: true,
           position: 'left',
           align: 'start',
+          onHover: function(e, legendItem, legend) {
+            if (typeof mfApplyFocus === 'function') {
+              mfApplyFocus(legend.chart, legendItem.datasetIndex);
+            }
+          },
+          onLeave: function(e, legendItem, legend) {
+            if (typeof mfApplyFocus === 'function') {
+              mfApplyFocus(legend.chart, null);
+            }
+          },
           labels: {
             boxWidth: 10,
             boxHeight: 10,

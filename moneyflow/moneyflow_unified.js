@@ -11,7 +11,9 @@ var mfuIsMobileUI = false;
 var mfuSelectedGlobal = ["미국 S&P", "한국 코스피", "금"];
 var mfuSelectedApt = ["전국", "수도권", "서울시"];
 var mfuAllAptRegions = [];
+var mfuGlobalColorMap = {};
 var mfuAptColorMap = {};
+var mfuFocusedLabel = null;
 
 var mfuChartGlobal = null;
 var mfuChartApt = null;
@@ -200,7 +202,8 @@ function mfuBuildChartPayload(mode, duration) {
   ];
 
   if (isGlobal) {
-    mfuSelectedGlobal.forEach(function(key) {
+    if (typeof mfSyncColorMap === "function") mfSyncColorMap(mfuSelectedGlobal, mfuGlobalColorMap);
+    mfuSelectedGlobal.forEach(function(key, idx) {
       var item = MFU_GLOBAL_ITEMS.find(function(it) { return it.key === key; });
       if (!item) return;
       var arr = mfuFormatSeries(src[item.col + "_NOR"], duration, !!item.zeroToNull);
@@ -210,11 +213,12 @@ function mfuBuildChartPayload(mode, duration) {
         arr.push(null);
       }
       latestMap[item.key] = mfuGetLastNonNull(arr);
+      var color = mfuGlobalColorMap[item.key] || item.color || MFU_APT_PALETTE[idx % MFU_APT_PALETTE.length];
       datasets.push({
         label: item.key,
         data: arr,
-        borderColor: item.color,
-        backgroundColor: item.color,
+        borderColor: color,
+        backgroundColor: color,
         pointRadius: 0,
         borderWidth: 2,
         tension: 0.2,
@@ -222,6 +226,7 @@ function mfuBuildChartPayload(mode, duration) {
       });
     });
   } else {
+    if (typeof mfSyncColorMap === "function") mfSyncColorMap(mfuSelectedApt, mfuAptColorMap);
     mfuSelectedApt.forEach(function(region, idx) {
       var arr = mfuFormatSeries(src[region + "_NOR"], duration, true);
       arr.push(null);
@@ -253,9 +258,13 @@ function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
   var totalDuration = 260;
   var delayBetweenPoints = payload.labels.length > 0 ? (totalDuration / payload.labels.length) : 0;
 
+  var pluginsList = [ChartDataLabels];
+  if (typeof mfFocusShadowPlugin !== "undefined") pluginsList.push(mfFocusShadowPlugin);
+  if (typeof mfEndLabelPlugin !== "undefined") pluginsList.push(mfEndLabelPlugin);
+
   return new Chart(ctx, {
     type: "line",
-    plugins: [ChartDataLabels],
+    plugins: pluginsList,
     data: {
       labels: payload.labels,
       datasets: payload.datasets
@@ -270,7 +279,7 @@ function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
       layout: {
         padding: {
           left: isMobileChart ? 4 : 0,
-          right: isMobileChart ? 26 : 30,
+          right: isMobileChart ? 78 : 132,
           top: 10,
           bottom: 6
         }
@@ -314,10 +323,24 @@ function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
         tooltip: {
           enabled: mfuTooltipEnabled
         },
+        mfEndLabels: {
+          enabled: true,
+          compact: !!isMobileChart
+        },
         legend: {
           display: showLegend,
           position: "left",
           align: "start",
+          onHover: function(e, legendItem, legend) {
+            if (typeof mfApplyFocus === "function") {
+              mfApplyFocus(legend.chart, legendItem.datasetIndex);
+            }
+          },
+          onLeave: function(e, legendItem, legend) {
+            if (typeof mfApplyFocus === "function") {
+              mfApplyFocus(legend.chart, null);
+            }
+          },
           labels: {
             boxWidth: 10,
             boxHeight: 10,
@@ -785,18 +808,36 @@ function mfuRenderSelectedTags(latestMap) {
     $tags.append("<span class='apt_pro_count'>" + msg + "</span>");
   } else {
     arr.forEach(function(key, idx) {
-      var color = "#1E90FF";
+      var color = "#0072B2";
       if (mfuMode === "global") {
-        var meta = MFU_GLOBAL_ITEMS.find(function(it) { return it.key === key; });
-        if (meta) color = meta.color;
+        color = mfuGlobalColorMap[key] || "#0072B2";
       } else {
         color = mfuGetAptColor(key, idx);
       }
-      var $tag = $("<span class='apt_tag'></span>");
+      var $tag = $("<span class='apt_tag' style='cursor:pointer;'></span>");
       $tag.append("<span class='apt_tag_dot' style='background:" + color + ";'></span>");
       $tag.append($("<span></span>").text(key));
+      $tag.on("mouseenter", function() {
+        if (!mfuIsMobileUI && typeof mfFocusByLabel === "function") {
+          mfFocusByLabel(mfuChartGlobal, key);
+        }
+      }).on("mouseleave", function() {
+        if (!mfuIsMobileUI && typeof mfFocusByLabel === "function") {
+          mfFocusByLabel(mfuChartGlobal, null);
+        }
+      }).on("click", function(e) {
+        if ($(e.target).hasClass("apt_tag_remove")) return;
+        if (mfuIsMobileUI && typeof mfFocusByLabel === "function") {
+          mfuFocusedLabel = (mfuFocusedLabel === key) ? null : key;
+          mfFocusByLabel(mfuChartGlobal, mfuFocusedLabel);
+        }
+      });
       var $rm = $("<span class='apt_tag_remove' title='제거'>&times;</span>");
-      $rm.on("click", function() { mfuToggleItem(key); });
+      $rm.on("click", function(e) {
+        e.stopPropagation();
+        if (mfuFocusedLabel === key) mfuFocusedLabel = null;
+        mfuToggleItem(key);
+      });
       $tag.append($rm);
       $tags.append($tag);
     });
@@ -1042,9 +1083,11 @@ function mfuDownloadChartImage(btnEl, event) {
   });
 
   var offCanvas = stage.querySelector("#MFU_Offscreen_Capture_Canvas");
+  var offPlugins = [ChartDataLabels];
+  if (typeof mfEndLabelPlugin !== "undefined") offPlugins.push(mfEndLabelPlugin);
   var offChart = new Chart(offCanvas.getContext("2d"), {
     type: "line",
-    plugins: [ChartDataLabels],
+    plugins: offPlugins,
     data: { labels: payload.labels, datasets: webDatasets },
     options: {
       responsive: false,
@@ -1053,7 +1096,7 @@ function mfuDownloadChartImage(btnEl, event) {
       animation: false,
       animations: false,
       transitions: false,
-      layout: { padding: { left: 0, right: 30, top: 12, bottom: 10 } },
+      layout: { padding: { left: 0, right: 132, top: 12, bottom: 10 } },
       scales: {
         y: { display: false },
         x: {
@@ -1062,6 +1105,7 @@ function mfuDownloadChartImage(btnEl, event) {
       },
       plugins: {
         tooltip: { enabled: false },
+        mfEndLabels: { enabled: true, compact: false },
         legend: {
           display: true,
           position: "left",
