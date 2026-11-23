@@ -1133,33 +1133,37 @@ function goScroll(dest_id){
   return false;
 }
 
-var menu_all = ['KO_Stock', 'US_Stock', 'Currency', 'Coin', 'Material', 'Oil', 'Bond_Rate', 'Interest', 'External_Money', 'Bond', 'Trade', 'Income', 'Real_Estate', 'Mind']
+var menu_all = ['Money_Flow', 'KO_Stock', 'US_Stock', 'Currency', 'Coin', 'Material', 'Oil', 'Bond_Rate', 'Interest', 'External_Money', 'Bond', 'Trade', 'Income', 'Real_Estate', 'Mind']
 var menu_position = []
 var menu_current_position = []
 
 function show_daily_info(){
   shortcut_html = ""  
-  shortcut_html += "<div id='shortcut_menu'>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_KO_Stock' onClick='goScroll(0)' checked><label class='btn btn-outline-danger' id='label_KO_Stock' for='shortcut_KO_Stock'>#국내 증시</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_US_Stock' onClick='goScroll(1)'><label class='btn btn-outline-danger' id='label_US_Stock' for='shortcut_US_Stock'>#미국 증시</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Currency' onClick='goScroll(2)'><label class='btn btn-outline-danger' id='label_Currency' for='shortcut_Currency'>#환율</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Coin' onClick='goScroll(3)'><label class='btn btn-outline-danger' id='label_Coin' for='shortcut_Coin'>#코인</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Material' onClick='goScroll(4)'><label class='btn btn-outline-danger' id='label_Material' for='shortcut_Material'>#금 / 원자재</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Oil' onClick='goScroll(5)'><label class='btn btn-outline-danger' id='label_Oil' for='shortcut_Oil'>#국제 유가</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Bond_Rate' onClick='goScroll(6)'><label class='btn btn-outline-danger' id='label_Bond_Rate' for='shortcut_Bond_Rate'>#채권 수익률</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Interest' onClick='goScroll(7)'><label class='btn btn-outline-danger' id='label_Interest' for='shortcut_Interest'>#금리</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_External_Money' onClick='goScroll(8)'><label class='btn btn-outline-danger' id='label_External_Money' for='shortcut_External_Money'>#통화량(M0) / 외환보유고</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Bond' onClick='goScroll(9)'><label class='btn btn-outline-danger' id='label_Bond' for='shortcut_Bond'>#채권</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Trade' onClick='goScroll(10)'><label class='btn btn-outline-danger' id='label_Trade' for='shortcut_Trade'>#무역</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Income' onClick='goScroll(11)'><label class='btn btn-outline-danger' id='label_Income' for='shortcut_Income'>#소득</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Real_Estate' onClick='goScroll(12)'><label class='btn btn-outline-danger' id='label_Real_Estate' for='shortcut_Real_Estate'>#부동산</label></div>"
-    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Mind' onClick='goScroll(13)'><label class='btn btn-outline-danger' id='label_Mind' for='shortcut_Mind'>#심리지표</label></div>"
+  shortcut_html += "<div id='shortcut_menu_pro'>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Money_Flow' onClick='goScroll(0)' checked><label class='btn btn-outline-danger' id='label_Money_Flow' for='shortcut_Money_Flow'>#MoneyFlow</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_KO_Stock' onClick='goScroll(1)'><label class='btn btn-outline-danger' id='label_KO_Stock' for='shortcut_KO_Stock'>#국내 증시</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_US_Stock' onClick='goScroll(2)'><label class='btn btn-outline-danger' id='label_US_Stock' for='shortcut_US_Stock'>#미국 증시</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Currency' onClick='goScroll(3)'><label class='btn btn-outline-danger' id='label_Currency' for='shortcut_Currency'>#환율</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Coin' onClick='goScroll(4)'><label class='btn btn-outline-danger' id='label_Coin' for='shortcut_Coin'>#코인</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Material' onClick='goScroll(5)'><label class='btn btn-outline-danger' id='label_Material' for='shortcut_Material'>#금 / 원자재</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Oil' onClick='goScroll(6)'><label class='btn btn-outline-danger' id='label_Oil' for='shortcut_Oil'>#국제 유가</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Bond_Rate' onClick='goScroll(7)'><label class='btn btn-outline-danger' id='label_Bond_Rate' for='shortcut_Bond_Rate'>#채권 수익률</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Interest' onClick='goScroll(8)'><label class='btn btn-outline-danger' id='label_Interest' for='shortcut_Interest'>#금리</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_External_Money' onClick='goScroll(9)'><label class='btn btn-outline-danger' id='label_External_Money' for='shortcut_External_Money'>#통화량(M0) / 외환보유고</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Bond' onClick='goScroll(10)'><label class='btn btn-outline-danger' id='label_Bond' for='shortcut_Bond'>#채권</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Trade' onClick='goScroll(11)'><label class='btn btn-outline-danger' id='label_Trade' for='shortcut_Trade'>#무역</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Income' onClick='goScroll(12)'><label class='btn btn-outline-danger' id='label_Income' for='shortcut_Income'>#소득</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Real_Estate' onClick='goScroll(13)'><label class='btn btn-outline-danger' id='label_Real_Estate' for='shortcut_Real_Estate'>#부동산</label></div>"
+    shortcut_html +="<div><input type='radio' class='btnRadioMenu' name='shortcut_menu_list' autocomplete='off' id='shortcut_Mind' onClick='goScroll(14)'><label class='btn btn-outline-danger' id='label_Mind' for='shortcut_Mind'>#심리지표</label></div>"
   shortcut_html +="</div>"  
   
   $('#shortcut').append(shortcut_html);
 
   
-  addon_html = ""  
+  addon_html = ""
+  if (typeof buildMoneyFlowHtmlPC === 'function') {
+    addon_html += buildMoneyFlowHtmlPC();
+  }
   //국내 증시 
 
     addon_html += "<div class='daily_header' id='KO_Stock'>"
@@ -2474,6 +2478,10 @@ addon_html += "</div>"
 addon_html += "</div>"
 
   $('#graph_area').append(addon_html);
+
+  if (typeof initMoneyFlowUnified === 'function') {
+    initMoneyFlowUnified(false);
+  }
 
   drawKOSPIChart(KOR_KOSPI_time_arr, KOR_KOSPI_val_arr, "KOSPI_Chart")
   drawKOSDAQChart(KOR_KOSDAQ_time_arr, KOR_KOSDAQ_val_arr, "KOSDAQ_Chart")

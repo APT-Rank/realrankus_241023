@@ -56,7 +56,7 @@ function goScroll_m(dest_id) {
     return false;
   }
   var targetId = menu_all[dest_id];
-  var yoffset = (targetId === "KO_Stock") ? 0 : 12;
+  var yoffset = (targetId === "Money_Flow" || targetId === "KO_Stock") ? 0 : 12;
   var $target = $('#' + targetId);
   if ($target.length === 0) return false;
 
@@ -113,7 +113,7 @@ function show_daily_info_m(){
   shortcut_html = ""  
   shortcut_html += "<div id='shortcut_menu'>"
   var menu_labels_m = [
-    '#국내 증시', '#미국 증시', '#환율', '#코인',
+    '#MoneyFlow', '#국내 증시', '#미국 증시', '#환율', '#코인',
     '#금/원자재', '#국제유가', '#채권수익률', '#금리',
     '#통화/외환', '#채권', '#무역', '#소득',
     '#부동산', '#심리지표'
@@ -129,7 +129,10 @@ function show_daily_info_m(){
   initMoneyflowScrollSpy_m();
 
   
-  addon_html = ""  
+  addon_html = ""
+  if (typeof buildMoneyFlowHtmlMobile === 'function') {
+    addon_html += buildMoneyFlowHtmlMobile();
+  }
   //국내 증시 
     addon_html += "<div class='daily_header'>"
 
@@ -1491,6 +1494,10 @@ addon_html += "</div>"
 addon_html += "<div style='height:135px'></div>"
 
   $('#graph_area').append(addon_html);
+
+  if (typeof initMoneyFlowUnified === 'function') {
+    initMoneyFlowUnified(true);
+  }
 
   drawKOSPIChart(KOR_KOSPI_time_arr, KOR_KOSPI_val_arr, "KOSPI_Chart")
   drawKOSDAQChart(KOR_KOSDAQ_time_arr, KOR_KOSDAQ_val_arr, "KOSDAQ_Chart")
