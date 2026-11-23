@@ -76,14 +76,14 @@ function mfSyncColorMap(selectedKeys, colorMap) {
   return colorMap;
 }
 
-// 1) 포커스 하이라이트 적용 (강조된 선만 굵게 + 그림자, 나머지는 연하게)
+// 1) 포커스 하이라이트 적용 (ds.order는 건드리지 않아 범례 떨림 원천 방지)
 function mfApplyFocus(chart, focusedIndex) {
   if (!chart || !chart.data || !chart.data.datasets) return;
   var nextFocus = (focusedIndex === null || focusedIndex === undefined || focusedIndex < 0) ? null : focusedIndex;
   if (chart.$mfFocusedIndex === nextFocus) return;
   chart.$mfFocusedIndex = nextFocus;
 
-  chart.data.datasets.forEach(function(ds, idx) {
+  chart.data.datasets.forEach(function(ds) {
     if (!ds._mfOrigColor) {
       ds._mfOrigColor = ds.borderColor;
       ds._mfOrigWidth = ds.borderWidth || 2;
@@ -92,17 +92,14 @@ function mfApplyFocus(chart, focusedIndex) {
       ds.borderColor = ds._mfOrigColor;
       ds.backgroundColor = ds._mfOrigColor;
       ds.borderWidth = ds._mfOrigWidth;
-      ds.order = idx;
-    } else if (idx === nextFocus) {
+    } else if (chart.data.datasets.indexOf(ds) === nextFocus) {
       ds.borderColor = ds._mfOrigColor;
       ds.backgroundColor = ds._mfOrigColor;
       ds.borderWidth = Math.max(ds._mfOrigWidth + 1.5, 4);
-      ds.order = -10; // 최상단으로 끌어올림
     } else {
       ds.borderColor = mfHexToRgba(ds._mfOrigColor, 0.16);
       ds.backgroundColor = mfHexToRgba(ds._mfOrigColor, 0.16);
       ds.borderWidth = Math.max(1.2, ds._mfOrigWidth * 0.7);
-      ds.order = idx + 1;
     }
   });
 
@@ -112,6 +109,7 @@ function mfApplyFocus(chart, focusedIndex) {
 function mfFocusByLabel(chart, label) {
   if (!chart || !chart.data || !chart.data.datasets) return;
   if (!label) {
+    chart.$mfPinnedIndex = null;
     mfApplyFocus(chart, null);
     return;
   }
@@ -125,27 +123,96 @@ function mfFocusByLabel(chart, label) {
   mfApplyFocus(chart, idx >= 0 ? idx : null);
 }
 
-// 1-B) 포커스된 선 전용 글로우/그림자 플러그인
+// 1-B) 포커스 선 최상단 재드로잉 + 글로우 그림자 + 그래프 직접 호버/터치 포커스 플러그인
 var mfFocusShadowPlugin = {
   id: "mfFocusShadow",
-  beforeDatasetDraw: function(chart, args) {
+  afterInit: function(chart) {
+    chart.$mfFocusedIndex = null;
+    chart.$mfPinnedIndex = null;
+    if (chart.canvas) {
+      chart.canvas.addEventListener("mouseleave", function() {
+        if (chart.$mfPinnedIndex === null) {
+          mfApplyFocus(chart, null);
+        }
+      });
+    }
+  },
+  afterEvent: function(chart, args) {
+    var ev = args && args.event;
+    if (!ev || !chart.chartArea) return;
+
+    var area = chart.chartArea;
+    var inArea = (ev.x >= area.left && ev.x <= area.right && ev.y >= area.top && ev.y <= area.bottom);
+
+    if (ev.type === "mouseout") {
+      if (chart.$mfPinnedIndex === null) {
+        mfApplyFocus(chart, null);
+      }
+      return;
+    }
+
+    if (!inArea) {
+      // 범례 영역(area.left 왼쪽)은 legend.onHover/onLeave가 담당하므로 건드리지 않음
+      if (ev.type === "mousemove" && ev.x > area.right && chart.$mfPinnedIndex === null) {
+        mfApplyFocus(chart, null);
+      }
+      return;
+    }
+
+    if (ev.type !== "mousemove" && ev.type !== "click") return;
+
+    var nearest = chart.getElementsAtEventForMode(ev, "nearest", { intersect: false }, false);
+    var hitIndex = null;
+    if (nearest && nearest.length > 0) {
+      var el = nearest[0];
+      var pt = el.element;
+      if (pt && !isNaN(pt.x) && !isNaN(pt.y)) {
+        var dist = Math.hypot(ev.x - pt.x, ev.y - pt.y);
+        var maxDist = (ev.type === "click") ? 42 : 30;
+        if (dist <= maxDist) {
+          hitIndex = el.datasetIndex;
+        }
+      }
+    }
+
+    if (ev.type === "click") {
+      if (hitIndex === null || chart.$mfPinnedIndex === hitIndex) {
+        chart.$mfPinnedIndex = null;
+        mfApplyFocus(chart, null);
+      } else {
+        chart.$mfPinnedIndex = hitIndex;
+        mfApplyFocus(chart, hitIndex);
+      }
+      return;
+    }
+
+    // mousemove (PC): 핀 고정 중이 아닐 때만 실시간 호버 포커스
+    if (ev.type === "mousemove" && chart.$mfPinnedIndex === null) {
+      mfApplyFocus(chart, hitIndex);
+    }
+  },
+  afterDatasetsDraw: function(chart) {
     var fIdx = chart.$mfFocusedIndex;
-    if (fIdx === null || fIdx === undefined || args.index !== fIdx) return;
-    var ds = chart.data.datasets[args.index];
-    if (!ds) return;
+    if (fIdx === null || fIdx === undefined) return;
+    var meta = chart.getDatasetMeta(fIdx);
+    var ds = chart.data.datasets[fIdx];
+    if (!meta || meta.hidden || !meta.dataset || !ds) return;
+
     var baseColor = ds._mfOrigColor || ds.borderColor;
     var ctx = chart.ctx;
+    var area = chart.chartArea;
     ctx.save();
+    if (area) {
+      ctx.beginPath();
+      ctx.rect(area.left - 4, area.top - 4, (area.right - area.left) + 8, (area.bottom - area.top) + 8);
+      ctx.clip();
+    }
     ctx.shadowColor = mfHexToRgba(baseColor, 0.48);
     ctx.shadowBlur = 10;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 2;
-    chart.$mfShadowActive = true;
-  },
-  afterDatasetDraw: function(chart) {
-    if (!chart.$mfShadowActive) return;
-    chart.ctx.restore();
-    chart.$mfShadowActive = false;
+    meta.dataset.draw(ctx);
+    ctx.restore();
   }
 };
 
