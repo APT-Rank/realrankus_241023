@@ -86,6 +86,9 @@ function drawMoneyFlowAptChart(chartDate, datasets, id_name) {
         }
       },
       plugins: {
+        tooltip: {
+          enabled: (typeof mfTooltipEnabled !== 'undefined' ? mfTooltipEnabled : true)
+        },
         legend: {
           display: true,
           position: 'left',

@@ -1323,18 +1323,27 @@ function show_daily_info(){
 
   addon_html += "<div class='daily_header_mf' id='Money_Flow'>"
   addon_html += "<div class='daily_title_mf'>"
-    addon_html += "<div><svg viewBox='0 0 388 102' width='50' height='15' style='vertical-align: middle; margin-right: 0;'><path fill='none' stroke='#1355ac' stroke-width='4' stroke-miterlimit='10' d='M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43'></path><path fill='none' stroke='#1355ac' stroke-width='8' stroke-miterlimit='10' d='M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43'></path></svg> MoneyFlow <span style='font-size: 0.7em'> (2019년 6월 = 1.00)</span></div>"    
+    addon_html += "<div class='mf_title_left'>"
+      addon_html += "<svg viewBox='0 0 388 102' width='50' height='15' style='vertical-align: middle; margin-right: 0;'><path fill='none' stroke='#1355ac' stroke-width='4' stroke-miterlimit='10' d='M0,4C26,4,26,98.43,51.93,98.43S77.9,4,103.87,4s26,94.43,51.93,94.43S181.76,4,207.73,4s26,94.43,51.94,94.43S285.63,4,311.6,4s26,94.43,51.94,94.43'></path><path fill='none' stroke='#1355ac' stroke-width='8' stroke-miterlimit='10' d='M25.41,4c26,0,26,94.43,51.93,94.43S103.31,4,129.28,4s26,94.43,51.93,94.43S207.17,4,233.14,4s26,94.43,51.94,94.43S311,4,337,4,363,98.43,389,98.43'></path></svg>"
+      addon_html += "<span>MoneyFlow</span>"
+      addon_html += "<div class='mf_mode_switch' id='mf_mode_switch' data-mode='global'>"
+        addon_html += "<div class='mf_mode_slider'></div>"
+        addon_html += "<button type='button' class='mf_mode_btn active' data-mode='global' onClick='switchMoneyFlowMode(\"global\")'>Global</button>"
+        addon_html += "<button type='button' class='mf_mode_btn' data-mode='realestate' onClick='switchMoneyFlowMode(\"realestate\")'>Real Estate</button>"
+      addon_html += "</div>"
+      addon_html += "<span class='mf_base_note'>(2019년 6월 = 1.00)</span>"
+    addon_html += "</div>"
     addon_html += "<div class='subSelection'>"              
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_1Y_MONEY_FLOW' onClick='redraw_graph(this, \"1Y\")'><label class='btn btn-outline-danger' id='label_1Y' for='redraw_1Y_MONEY_FLOW'>1Y</label></div>"
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_3Y_MONEY_FLOW' onClick='redraw_graph(this, \"3Y\")'><label class='btn btn-outline-danger' id='label_3Y' for='redraw_3Y_MONEY_FLOW'>3Y</label></div>"
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_5Y_MONEY_FLOW' onClick='redraw_graph(this, \"5Y\")' checked><label class='btn btn-outline-danger' id='label_5Y' for='redraw_5Y_MONEY_FLOW'>5Y</label></div>"
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_10Y_MONEY_FLOW' onClick='redraw_graph(this, \"10Y\")'><label class='btn btn-outline-danger' id='label_10Y' for='redraw_10Y_MONEY_FLOW'>10Y</label></div>"
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_15Y_MONEY_FLOW' onClick='redraw_graph(this, \"15Y\")'><label class='btn btn-outline-danger' id='label_15Y' for='redraw_15Y_MONEY_FLOW'>15Y</label></div>"
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_20Y_MONEY_FLOW' onClick='redraw_graph(this, \"20Y\")'><label class='btn btn-outline-danger' id='label_20Y' for='redraw_20Y_MONEY_FLOW'>20Y</label></div>"
-      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_30Y_MONEY_FLOW' onClick='redraw_graph(this, \"30Y\")'><label class='btn btn-outline-danger' id='label_30Y' for='redraw_30Y_MONEY_FLOW'>30Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_1Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"1Y\")'><label class='btn btn-outline-danger' id='label_1Y' for='redraw_1Y_MONEY_FLOW'>1Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_3Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"3Y\")'><label class='btn btn-outline-danger' id='label_3Y' for='redraw_3Y_MONEY_FLOW'>3Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_5Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"5Y\")' checked><label class='btn btn-outline-danger' id='label_5Y' for='redraw_5Y_MONEY_FLOW'>5Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_10Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"10Y\")'><label class='btn btn-outline-danger' id='label_10Y' for='redraw_10Y_MONEY_FLOW'>10Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_15Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"15Y\")'><label class='btn btn-outline-danger' id='label_15Y' for='redraw_15Y_MONEY_FLOW'>15Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_20Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"20Y\")'><label class='btn btn-outline-danger' id='label_20Y' for='redraw_20Y_MONEY_FLOW'>20Y</label></div>"
+      addon_html += "<div><input type='radio' class='btnRadio' name='MONEY_FLOW' autocomplete='off' id='redraw_30Y_MONEY_FLOW' onClick='handleUnifiedMoneyFlowDuration(this, \"30Y\")'><label class='btn btn-outline-danger' id='label_30Y' for='redraw_30Y_MONEY_FLOW'>30Y</label></div>"
     addon_html += "</div>"
     addon_html += "<div class='daily_sub_mf'>"
-    addon_html += "<span>" + moneyflow_updated + "</span>"
+    addon_html += "<span id='moneyflow_updated_label'>" + moneyflow_updated + "</span>"
     addon_html += "<div class='card_download_wrapper' data-html2canvas-ignore='true'>"
     addon_html += "<button type='button' class='btn_card_download' title='MoneyFlow 이미지 다운로드' onClick='downloadMoneyFlowImage(this, event)' onpointerdown='event.stopPropagation()' ontouchstart='event.stopPropagation()' onmousedown='event.stopPropagation()' onpointerup='event.stopPropagation()' ontouchend='event.stopPropagation()'>"
     addon_html += "<i class='fa-solid fa-camera'></i>"
@@ -1343,8 +1352,69 @@ function show_daily_info(){
     addon_html += "</div>"
   addon_html += "</div>"
 
-  addon_html += "<div class='graph_item_mf'>"
-      addon_html += "<div class='graph_mf'> <canvas id='MoneyFlow_Chart'></canvas></div>"  
+  // Global 패널
+  addon_html += "<div id='mf_panel_global'>"
+    addon_html += "<div class='apt_pro_toolbar' data-html2canvas-ignore='true'>"
+      addon_html += "<div class='apt_pro_toolbar_top'>"
+        addon_html += "<div class='apt_pro_presets'>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyMfPreset(\"us_stock\")'>미국 증시</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyMfPreset(\"ko_stock\")'>한국 증시</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyMfPreset(\"gold_btc_fx\")'>금·코인·환율</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyMfPreset(\"oil_gold\")'>유가·원자재</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyMfPreset(\"apt\")'>주요 아파트</button>"
+          addon_html += "<button type='button' class='apt_pro_btn apt_pro_btn_reset' onClick='clearMfAssets()'>초기화</button>"
+          addon_html += "<button type='button' class='apt_pro_btn apt_pro_btn_toggle' id='mf_grid_toggle_btn' onClick='toggleMfAssetPanel()'>지표 선택 펼치기 ▾</button>"
+        addon_html += "</div>"
+        addon_html += "<div class='apt_pro_right_meta'>"
+          addon_html += "<div class='apt_pro_count' id='mf_asset_count'>로딩 중...</div>"
+          addon_html += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mf_tooltip_toggle_global' checked onChange='toggleMoneyFlowTooltip(this.checked)'><span>상세 수치 표시</span></label>"
+        addon_html += "</div>"
+      addon_html += "</div>"
+      addon_html += "<div class='apt_pro_tags' id='mf_selected_tags'></div>"
+      addon_html += "<div class='apt_pro_picker' id='mf_asset_picker_box' style='display:none;'>"
+        addon_html += "<div class='apt_pro_filter_row'>"
+          addon_html += "<select class='form-select form-select-sm' id='mf_cat_filter' onChange='renderMfAssetGrid()'><option value='ALL'>전체 카테고리</option></select>"
+          addon_html += "<input type='text' class='form-control form-control-sm' id='mf_asset_search' placeholder='지표명 검색 (예: NASDAQ, 코스피, 금, 비트코인...)' onInput='renderMfAssetGrid()'>"
+        addon_html += "</div>"
+        addon_html += "<div class='apt_pro_grid' id='mf_asset_grid'></div>"
+      addon_html += "</div>"
+    addon_html += "</div>"
+
+    addon_html += "<div class='graph_item_mf'>"
+      addon_html += "<div class='graph_mf'><canvas id='MoneyFlow_Chart'></canvas></div>"
+    addon_html += "</div>"
+  addon_html += "</div>"
+
+  // Real Estate 패널 (전국 235개 지역 아파트 + 한·미 통화량)
+  addon_html += "<div id='mf_panel_realestate' style='display:none;'>"
+    addon_html += "<div class='apt_pro_toolbar' data-html2canvas-ignore='true'>"
+      addon_html += "<div class='apt_pro_toolbar_top'>"
+        addon_html += "<div class='apt_pro_presets'>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyAptPreset(\"major\")'>주요 권역</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyAptPreset(\"seoul_core\")'>서울 핵심구</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyAptPreset(\"gyeonggi_core\")'>경기 핵심지</button>"
+          addon_html += "<button type='button' class='apt_pro_btn' onClick='applyAptPreset(\"metro6\")'>광역시/세종</button>"
+          addon_html += "<button type='button' class='apt_pro_btn apt_pro_btn_reset' onClick='clearSelectedRegions()'>초기화</button>"
+          addon_html += "<button type='button' class='apt_pro_btn apt_pro_btn_toggle' id='apt_grid_toggle_btn' onClick='toggleAptRegionPanel()'>지역 선택 펼치기 ▾</button>"
+        addon_html += "</div>"
+        addon_html += "<div class='apt_pro_right_meta'>"
+          addon_html += "<div class='apt_pro_count' id='apt_region_count'>로딩 중...</div>"
+          addon_html += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mf_tooltip_toggle_apt' checked onChange='toggleMoneyFlowTooltip(this.checked)'><span>상세 수치 표시</span></label>"
+        addon_html += "</div>"
+      addon_html += "</div>"
+      addon_html += "<div class='apt_pro_tags' id='apt_selected_tags'></div>"
+      addon_html += "<div class='apt_pro_picker' id='apt_region_picker_box' style='display:none;'>"
+        addon_html += "<div class='apt_pro_filter_row'>"
+          addon_html += "<select class='form-select form-select-sm' id='apt_sido_filter' onChange='renderRegionGrid()'><option value='ALL'>전체 시/도</option></select>"
+          addon_html += "<input type='text' class='form-control form-control-sm' id='apt_region_search' placeholder='지역명 검색 (예: 강남구, 분당구, 해운대구...)' onInput='renderRegionGrid()'>"
+        addon_html += "</div>"
+        addon_html += "<div class='apt_pro_grid' id='apt_region_grid'></div>"
+      addon_html += "</div>"
+    addon_html += "</div>"
+
+    addon_html += "<div class='graph_item_mf'>"
+      addon_html += "<div class='graph_mf'><canvas id='MoneyFlow_APT_Chart'></canvas></div>"
+    addon_html += "</div>"
   addon_html += "</div>"
 addon_html += "</div>"  
 
@@ -2715,7 +2785,7 @@ addon_html += "</div>"
   drawMindConsumerChart(Mind_Consumer_time_arr, Mind_Consumer_val_arr, "Mind_Consumer_Chart")
   drawMindEconomyChart(Mind_Economy_time_arr, Mind_Economy_val_arr, "Mind_Economy_Chart")  
 
-  drawMoneyFlowChart(mf_time_arr, moneyflow_dataset, "MoneyFlow_Chart")
+  initMoneyFlowControls(mf_time_arr, moneyflow_dataset)
 
   for(var k = 0 ; k < menu_all.length ; k++){
     menu_position[k] = $('#' + menu_all[k]).offset().top
@@ -4026,9 +4096,301 @@ function redraw_graph(obj, duration){
 
     //console.log(mf_time_arr)
     //console.log(moneyflow_dataset)
-    myMoneyFlow_Chart.destroy()
-    drawMoneyFlowChart(mf_time_arr, moneyflow_dataset, "MoneyFlow_Chart")
+    mf_latest_time_arr = mf_time_arr;
+    mf_latest_dataset = moneyflow_dataset;
+    renderMoneyFlowChartFromState();
   }
+}
+
+// ==========================================
+// MoneyFlow 지표 선택 UI 컨트롤 (MoneyFlow APT 동일 컨셉)
+// ==========================================
+var MF_ASSET_ITEMS = [
+  { key: "미국 NASDAQ", group: "미국 증시", idx: 8, color: "#2f631e" },
+  { key: "미국 DOW", group: "미국 증시", idx: 9, color: "#3b991c" },
+  { key: "미국 S&P", group: "미국 증시", idx: 10, color: "#13d43d" },
+  { key: "한국 코스피", group: "한국 증시", idx: 11, color: "#9c2557" },
+  { key: "한국 코스닥", group: "한국 증시", idx: 12, color: "#9c2570" },
+  { key: "코스피+코스닥", group: "한국 증시", idx: 13, color: "#e02bbc" },
+  { key: "금", group: "원자재/유가", idx: 4, color: "#FFD700" },
+  { key: "서부텍사스유", group: "원자재/유가", idx: 2, color: "#87867c" },
+  { key: "두바이유", group: "원자재/유가", idx: 3, color: "#616057" },
+  { key: "원-달러", group: "환율/코인", idx: 14, color: "#8B4513" },
+  { key: "원-100엔", group: "환율/코인", idx: 15, color: "#CD853F" },
+  { key: "비트코인", group: "환율/코인", idx: 16, color: "#E1AD01" },
+  { key: "전국 아파트", group: "부동산", idx: 7, color: "#1E90FF" },
+  { key: "수도권 아파트", group: "부동산", idx: 17, color: "#4682B4" },
+  { key: "지방권 아파트", group: "부동산", idx: 18, color: "#00BFFF" },
+  { key: "서울시 아파트", group: "부동산", idx: 19, color: "#5F9EA0" },
+  { key: "경기도 아파트", group: "부동산", idx: 20, color: "#4169E1" },
+  { key: "6대광역시 아파트", group: "부동산", idx: 21, color: "#87CEFA" }
+];
+
+var MF_PRESETS = {
+  us_stock: ["미국 NASDAQ", "미국 S&P", "미국 DOW"],
+  ko_stock: ["한국 코스피", "한국 코스닥", "코스피+코스닥"],
+  gold_btc_fx: ["금", "비트코인", "원-달러"],
+  oil_gold: ["서부텍사스유", "두바이유", "금"],
+  apt: ["전국 아파트", "수도권 아파트", "서울시 아파트", "경기도 아파트"]
+};
+
+var selectedMfAssets = ["미국 S&P", "한국 코스피", "금"];
+var mf_latest_time_arr = [];
+var mf_latest_dataset = [];
+var currentMoneyFlowMode = "global";
+var currentUnifiedMfDuration = "5Y";
+var isRealEstateChartRendered = false;
+var mfTooltipEnabled = true;
+
+function toggleMoneyFlowTooltip(enabled) {
+  mfTooltipEnabled = !!enabled;
+  $("#mf_tooltip_toggle_global, #mf_tooltip_toggle_apt").prop("checked", mfTooltipEnabled);
+
+  if (typeof myMoneyFlow_Chart !== "undefined" && myMoneyFlow_Chart) {
+    if (!myMoneyFlow_Chart.options.plugins.tooltip) {
+      myMoneyFlow_Chart.options.plugins.tooltip = {};
+    }
+    myMoneyFlow_Chart.options.plugins.tooltip.enabled = mfTooltipEnabled;
+    if (!mfTooltipEnabled && typeof myMoneyFlow_Chart.setActiveElements === "function") {
+      myMoneyFlow_Chart.setActiveElements([]);
+    }
+    myMoneyFlow_Chart.update("none");
+  }
+
+  if (typeof myMoneyFlowApt_Chart !== "undefined" && myMoneyFlowApt_Chart) {
+    if (!myMoneyFlowApt_Chart.options.plugins.tooltip) {
+      myMoneyFlowApt_Chart.options.plugins.tooltip = {};
+    }
+    myMoneyFlowApt_Chart.options.plugins.tooltip.enabled = mfTooltipEnabled;
+    if (!mfTooltipEnabled && typeof myMoneyFlowApt_Chart.setActiveElements === "function") {
+      myMoneyFlowApt_Chart.setActiveElements([]);
+    }
+    myMoneyFlowApt_Chart.update("none");
+  }
+}
+
+function switchMoneyFlowMode(mode) {
+  if (mode !== "global" && mode !== "realestate") return;
+  currentMoneyFlowMode = mode;
+
+  var $sw = $("#mf_mode_switch");
+  $sw.attr("data-mode", mode);
+  $sw.find(".mf_mode_btn").removeClass("active");
+  $sw.find('.mf_mode_btn[data-mode="' + mode + '"]').addClass("active");
+
+  if (mode === "global") {
+    $("#mf_panel_realestate").hide();
+    $("#mf_panel_global").show();
+    if (typeof moneyflow_updated !== "undefined") {
+      $("#moneyflow_updated_label").text(moneyflow_updated);
+    }
+    if (typeof myMoneyFlow_Chart !== "undefined" && myMoneyFlow_Chart) {
+      myMoneyFlow_Chart.resize();
+    }
+  } else {
+    $("#mf_panel_global").hide();
+    $("#mf_panel_realestate").show();
+    if (typeof moneyflow_apt_updated !== "undefined" && moneyflow_apt_updated) {
+      $("#moneyflow_updated_label").text(moneyflow_apt_updated);
+    }
+    if (typeof changeAptDuration === "function") {
+      currentAptDuration = currentUnifiedMfDuration;
+    }
+    if (!isRealEstateChartRendered && typeof initMoneyFlowAptInPro === "function") {
+      isRealEstateChartRendered = true;
+      initMoneyFlowAptInPro();
+    } else if (typeof renderAptChart === "function") {
+      renderAptChart();
+    }
+  }
+}
+
+function handleUnifiedMoneyFlowDuration(el, duration) {
+  currentUnifiedMfDuration = duration;
+  redraw_graph(el, duration);
+  if (typeof changeAptDuration === "function") {
+    if (currentMoneyFlowMode === "realestate") {
+      changeAptDuration(duration);
+    } else {
+      currentAptDuration = duration;
+    }
+  }
+}
+
+function getMfAssetMeta(key) {
+  for (var i = 0; i < MF_ASSET_ITEMS.length; i++) {
+    if (MF_ASSET_ITEMS[i].key === key) return MF_ASSET_ITEMS[i];
+  }
+  return null;
+}
+
+function initMoneyFlowControls(timeArr, rawDataset) {
+  mf_latest_time_arr = timeArr;
+  mf_latest_dataset = rawDataset;
+
+  var groups = [];
+  var seen = {};
+  MF_ASSET_ITEMS.forEach(function(item) {
+    if (!seen[item.group]) {
+      seen[item.group] = true;
+      groups.push(item.group);
+    }
+  });
+
+  var $select = $("#mf_cat_filter");
+  if ($select.length > 0) {
+    $select.empty();
+    $select.append('<option value="ALL">전체 카테고리 (' + MF_ASSET_ITEMS.length + ')</option>');
+    groups.forEach(function(g) {
+      var cnt = MF_ASSET_ITEMS.filter(function(it) { return it.group === g; }).length;
+      $select.append('<option value="' + g + '">' + g + ' (' + cnt + ')</option>');
+    });
+  }
+
+  renderMfSelectedTags();
+  renderMfAssetGrid();
+  renderMoneyFlowChartFromState();
+}
+
+function renderMfSelectedTags() {
+  var $tags = $("#mf_selected_tags");
+  if ($tags.length === 0) return;
+  $tags.empty();
+
+  if (selectedMfAssets.length === 0) {
+    $tags.append('<span class="apt_pro_count">선택된 비교 지표가 없습니다. (현재 미국·한국 통화량만 표시 중)</span>');
+  } else {
+    selectedMfAssets.forEach(function(key) {
+      var meta = getMfAssetMeta(key);
+      if (!meta) return;
+      var $tag = $('<span class="apt_tag"></span>');
+      $tag.append('<span class="apt_tag_dot" style="background:' + meta.color + ';"></span>');
+      $tag.append($('<span></span>').text(meta.key));
+      var $remove = $('<span class="apt_tag_remove" title="제거">&times;</span>');
+      $remove.on("click", function() {
+        toggleMfAsset(key);
+      });
+      $tag.append($remove);
+      $tags.append($tag);
+    });
+  }
+
+  $("#mf_asset_count").text("전체 " + MF_ASSET_ITEMS.length + "개 지표 중 " + selectedMfAssets.length + "개 선택됨");
+}
+
+function renderMfAssetGrid() {
+  var $grid = $("#mf_asset_grid");
+  if ($grid.length === 0) return;
+
+  var cat = $("#mf_cat_filter").val() || "ALL";
+  var keyword = ($("#mf_asset_search").val() || "").trim().toLowerCase();
+
+  var filtered = MF_ASSET_ITEMS.filter(function(item) {
+    if (cat !== "ALL" && item.group !== cat) return false;
+    if (keyword && item.key.toLowerCase().indexOf(keyword) === -1 && item.group.toLowerCase().indexOf(keyword) === -1) return false;
+    return true;
+  });
+
+  $grid.empty();
+  if (filtered.length === 0) {
+    $grid.append('<div class="apt_pro_count" style="grid-column:1/-1; padding:6px;">검색 결과가 없습니다.</div>');
+    return;
+  }
+
+  filtered.forEach(function(item) {
+    var isSelected = selectedMfAssets.indexOf(item.key) !== -1;
+    var $el = $('<label class="apt_region_item' + (isSelected ? ' selected' : '') + '"></label>');
+    var $cb = $('<input type="checkbox">').prop("checked", isSelected);
+    $cb.on("change", function() {
+      toggleMfAsset(item.key);
+    });
+    $el.append($cb);
+    $el.append($('<span></span>').text(item.key));
+    $grid.append($el);
+  });
+}
+
+function toggleMfAsset(key) {
+  var idx = selectedMfAssets.indexOf(key);
+  if (idx === -1) {
+    selectedMfAssets.push(key);
+  } else {
+    selectedMfAssets.splice(idx, 1);
+  }
+  renderMfSelectedTags();
+  renderMfAssetGrid();
+  renderMoneyFlowChartFromState();
+}
+
+function applyMfPreset(presetKey) {
+  selectedMfAssets = (MF_PRESETS[presetKey] || []).slice();
+  renderMfSelectedTags();
+  renderMfAssetGrid();
+  renderMoneyFlowChartFromState();
+}
+
+function clearMfAssets() {
+  selectedMfAssets = [];
+  renderMfSelectedTags();
+  renderMfAssetGrid();
+  renderMoneyFlowChartFromState();
+}
+
+function toggleMfAssetPanel() {
+  var $box = $("#mf_asset_picker_box");
+  var $btn = $("#mf_grid_toggle_btn");
+  if ($box.length === 0) return;
+  if ($box.is(":visible")) {
+    $box.slideUp(150);
+    $btn.text("지표 선택 펼치기 ▾");
+  } else {
+    $box.slideDown(150);
+    $btn.text("지표 선택 접기 ▴");
+  }
+}
+
+function renderMoneyFlowChartFromState() {
+  if (!mf_latest_dataset || mf_latest_dataset.length < 2) return;
+
+  var datasets = [
+    {
+      label: "미국 통화량",
+      data: mf_latest_dataset[0],
+      borderColor: "#d12145",
+      backgroundColor: "#d12145",
+      pointRadius: 0,
+      borderWidth: 4,
+      tension: 0.2,
+      hidden: false
+    },
+    {
+      label: "한국 통화량",
+      data: mf_latest_dataset[1],
+      borderColor: "#571091",
+      backgroundColor: "#571091",
+      pointRadius: 0,
+      borderWidth: 4,
+      tension: 0.2,
+      hidden: false
+    }
+  ];
+
+  selectedMfAssets.forEach(function(key) {
+    var meta = getMfAssetMeta(key);
+    if (!meta || !mf_latest_dataset[meta.idx]) return;
+    datasets.push({
+      label: meta.key,
+      data: mf_latest_dataset[meta.idx],
+      borderColor: meta.color,
+      backgroundColor: meta.color,
+      pointRadius: 0,
+      borderWidth: 2,
+      tension: 0.2,
+      hidden: false
+    });
+  });
+
+  drawMoneyFlowChart(mf_latest_time_arr, datasets, "MoneyFlow_Chart");
 }
 // MoneyFlow 영역 고해상도 캡처 및 이미지 다운로드 함수 (GLIChartRenderer 해상도 부스팅 패턴 적용)
 function downloadMoneyFlowImage(btnEl, event) {
@@ -4061,7 +4423,8 @@ function downloadMoneyFlowImage(btnEl, event) {
   var ss = String(now.getSeconds()).padStart(2, '0');
   var timestamp = YYYY + MM + DD + "_" + hh + mm + ss;
   var captureDateTimeStr = YYYY + "-" + MM + "-" + DD + " " + hh + ":" + mm + ":" + ss;
-  var filename = "MoneyFlow_" + timestamp + ".png";
+  var isRealEstate = (typeof currentMoneyFlowMode !== 'undefined' && currentMoneyFlowMode === 'realestate');
+  var filename = (isRealEstate ? "MoneyFlow_RealEstate_" : "MoneyFlow_Global_") + timestamp + ".png";
 
   var originalBtnHtml = $btn.html();
   // 포커스 및 터치 하이라이트 잔상 해제
@@ -4087,10 +4450,13 @@ function downloadMoneyFlowImage(btnEl, event) {
   targetDom.style.margin = '0px';
   targetDom.style.boxShadow = 'none';
 
-  var canvasEl = document.getElementById('MoneyFlow_Chart');
+  var activeCanvasId = isRealEstate ? 'MoneyFlow_APT_Chart' : 'MoneyFlow_Chart';
+  var canvasEl = document.getElementById(activeCanvasId);
   var chart = (canvasEl && window.Chart && typeof window.Chart.getChart === 'function')
     ? window.Chart.getChart(canvasEl)
-    : (typeof myMoneyFlow_Chart !== 'undefined' ? myMoneyFlow_Chart : null);
+    : (isRealEstate
+        ? (typeof myMoneyFlowApt_Chart !== 'undefined' ? myMoneyFlowApt_Chart : null)
+        : (typeof myMoneyFlow_Chart !== 'undefined' ? myMoneyFlow_Chart : null));
 
   var originalDPR = chart ? (chart.options.devicePixelRatio || window.devicePixelRatio || 1) : 1;
   var origAnimation = null;
@@ -4169,7 +4535,7 @@ function downloadMoneyFlowImage(btnEl, event) {
         backgroundColor: '#ffffff',
         logging: false,
         ignoreElements: function (el) {
-          if (el && el.classList && (el.classList.contains('card_download_wrapper') || el.classList.contains('btn_card_download'))) {
+          if (el && el.classList && (el.classList.contains('card_download_wrapper') || el.classList.contains('btn_card_download') || el.classList.contains('apt_pro_toolbar'))) {
             return true;
           }
           return false;
@@ -4197,8 +4563,8 @@ function downloadMoneyFlowImage(btnEl, event) {
             });
 
             // 2026-11-08: 고해상도로 리사이즈 및 100% 확정된 원본 캔버스의 비트맵 픽셀을 복제본 캔버스에 1:1 완벽 복제
-            var origCanvas = targetDom.querySelector('#MoneyFlow_Chart');
-            var clonedCanvas = clonedDoc.getElementById('MoneyFlow_Chart');
+            var origCanvas = targetDom.querySelector('#' + activeCanvasId);
+            var clonedCanvas = clonedDoc.getElementById(activeCanvasId);
             if (origCanvas && clonedCanvas) {
               clonedCanvas.width = origCanvas.width;
               clonedCanvas.height = origCanvas.height;

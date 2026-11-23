@@ -105,7 +105,7 @@ function renderSelectedTags() {
   $tags.empty();
 
   if (selectedAptRegions.length === 0) {
-    $tags.append('<span class="apt_status_note">선택된 부동산 지역이 없습니다. 아래에서 지역을 선택하거나 빠른 선택 버튼을 눌러주세요.</span>');
+    $tags.append('<span class="apt_pro_count">선택된 부동산 지역이 없습니다. (현재 미국·한국 통화량만 표시 중)</span>');
   } else {
     selectedAptRegions.forEach(function(region, idx) {
       var color = regionColorMap[region] || getAptRegionColor(idx);
@@ -138,7 +138,7 @@ function renderRegionGrid() {
   $grid.empty();
 
   if (filtered.length === 0) {
-    $grid.append('<div class="apt_status_note" style="grid-column: 1 / -1; padding: 8px;">검색 결과가 없습니다.</div>');
+    $grid.append('<div class="apt_pro_count" style="grid-column: 1 / -1; padding: 8px;">검색 결과가 없습니다.</div>');
     return;
   }
 
@@ -280,6 +280,19 @@ function renderAptChart() {
   drawMoneyFlowAptChart(mf_time_arr, datasets, "MoneyFlow_APT_Chart");
 }
 
+function toggleAptRegionPanel() {
+  var $box = $("#apt_region_picker_box");
+  var $btn = $("#apt_grid_toggle_btn");
+  if ($box.length === 0) return;
+  if ($box.is(":visible")) {
+    $box.slideUp(150);
+    $btn.text("지역 선택 펼치기 ▾");
+  } else {
+    $box.slideDown(150);
+    $btn.text("지역 선택 접기 ▴");
+  }
+}
+
 function downloadMoneyFlowAptImage(btnEl, event) {
   if (event) {
     event.stopPropagation();
@@ -287,7 +300,8 @@ function downloadMoneyFlowAptImage(btnEl, event) {
   }
 
   var $btn = $(btnEl);
-  var targetDom = document.getElementById("Money_Flow");
+  var targetId = document.getElementById("Money_Flow_APT") ? "Money_Flow_APT" : "Money_Flow";
+  var targetDom = document.getElementById(targetId);
   if (!targetDom || typeof html2canvas === "undefined") {
     alert("이미지 캡처를 준비하지 못했습니다.");
     return;
@@ -347,10 +361,14 @@ function downloadMoneyFlowAptImage(btnEl, event) {
         backgroundColor: "#ffffff",
         logging: false,
         ignoreElements: function(el) {
-          return el && el.classList && (el.classList.contains("card_download_wrapper") || el.classList.contains("btn_card_download"));
+          return el && el.classList && (
+            el.classList.contains("card_download_wrapper") ||
+            el.classList.contains("btn_card_download") ||
+            el.classList.contains("apt_pro_toolbar")
+          );
         },
         onclone: function(clonedDoc) {
-          var clonedTarget = clonedDoc.getElementById("Money_Flow");
+          var clonedTarget = clonedDoc.getElementById(targetId);
           if (clonedTarget) {
             clonedTarget.style.backgroundColor = "#ffffff";
             clonedTarget.style.boxShadow = "none";
@@ -414,7 +432,40 @@ function initMoneyFlowApt(data) {
   renderAptChart();
 }
 
+function initMoneyFlowAptInPro() {
+  if (typeof daily_market !== "undefined" && daily_market) {
+    daily_market_apt = daily_market;
+  }
+  if (typeof monthly_market !== "undefined" && monthly_market) {
+    monthly_market_apt = monthly_market;
+  }
+  if (moneyflow_apt_market) {
+    initMoneyFlowApt(moneyflow_apt_market);
+    return;
+  }
+  var r2Url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_moneyflow_apt.json";
+  var localUrl = "./market_moneyflow_apt.json";
+  $.getJSON(r2Url)
+    .done(function(json) {
+      initMoneyFlowApt(json);
+    })
+    .fail(function() {
+      $.getJSON(localUrl)
+        .done(function(json) {
+          initMoneyFlowApt(json);
+        })
+        .fail(function() {
+          $("#apt_region_count").text("데이터 로드 실패 (market_moneyflow_apt.json 확인 필요)");
+        });
+    });
+}
+
 $(document).ready(function() {
+  // index_pro.html 내장 모드에서는 show_daily_info() -> initMoneyFlowAptInPro()가 초기화 담당
+  if (typeof show_daily_info === "function") {
+    return;
+  }
+
   var localUrl = "./market_moneyflow_apt.json";
   var r2Url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_moneyflow_apt.json";
   var dailyUrl = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_daily_info.json";

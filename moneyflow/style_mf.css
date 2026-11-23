@@ -225,13 +225,75 @@
     gap: 8px;
     min-height: 2.6em;
   }  
-  #Money_Flow > div.daily_title_mf > div:first-child {
+  .mf_title_left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    line-height: 2.6em;
+  }
+  .mf_base_note {
+    font-size: 0.7em;
+    font-weight: 500;
+    color: #64748b;
+  }
+  .mf_mode_switch {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    background: #e2e8f0;
+    border-radius: 999px;
+    padding: 2px;
+    width: 176px;
+    height: 26px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    user-select: none;
+  }
+  .mf_mode_slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+    background: #1355ac;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(19, 85, 172, 0.35);
+    transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+  }
+  .mf_mode_switch[data-mode="realestate"] .mf_mode_slider {
+    transform: translateX(100%);
+  }
+  .mf_mode_btn {
+    position: relative;
+    z-index: 1;
+    border: none;
+    background: transparent;
+    color: #475569;
+    font-size: 0.72rem;
+    font-weight: 700;
+    height: 100%;
+    padding: 0 6px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .mf_mode_btn.active {
+    color: #ffffff;
+  }
+  #Money_Flow > div.daily_title_mf > div:first-child,
+  #Money_Flow_APT > div.daily_title_mf > div:first-child {
     /* display: flex; */
     /* align-items: center; */
     gap: 4px;
     line-height: 2.6em;
   }
-  #Money_Flow > div.daily_title_mf > div.subSelection {
+  #Money_Flow > div.daily_title_mf > div.subSelection,
+  #Money_Flow_APT > div.daily_title_mf > div.subSelection {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     align-items: center;
@@ -240,7 +302,8 @@
     padding: 0 5px;
     height: 2.7em;
   }
-  #Money_Flow > div.daily_title_mf > div.subSelection > div {
+  #Money_Flow > div.daily_title_mf > div.subSelection > div,
+  #Money_Flow_APT > div.daily_title_mf > div.subSelection > div {
     /* display: flex; */
     /* align-items: center; */
     /* justify-content: center; */
@@ -250,13 +313,180 @@
     margin: 0;
     padding: 0;
   }
-  #Money_Flow > div.daily_title_mf > div.subSelection > div > label {
+  #Money_Flow > div.daily_title_mf > div.subSelection > div > label,
+  #Money_Flow_APT > div.daily_title_mf > div.subSelection > div > label {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin: 0;
     line-height: 1.4em;
     vertical-align: middle;
+  }
+  .apt_pro_toolbar {
+    padding: 8px 12px 6px 12px;
+    background: #fafafa;
+    border-bottom: 1px solid #e5e7eb;
+    line-height: 1.4;
+    font-weight: 400;
+    color: #334155;
+  }
+  .apt_pro_toolbar_top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .apt_pro_presets {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+  .apt_pro_btn {
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 14px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .apt_pro_btn:hover {
+    background: #1355ac;
+    border-color: #1355ac;
+    color: #ffffff;
+  }
+  .apt_pro_btn_reset:hover {
+    background: #d12145;
+    border-color: #d12145;
+    color: #ffffff;
+  }
+  .apt_pro_btn_toggle {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1355ac;
+  }
+  .apt_pro_right_meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+  .apt_pro_count {
+    font-size: 0.74rem;
+    color: #64748b;
+  }
+  .mf_tooltip_toggle_label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: #475569;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+  }
+  .mf_tooltip_toggle_label input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+  }
+  .apt_pro_tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    min-height: 22px;
+  }
+  .apt_pro_tags .apt_tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+  }
+  .apt_pro_tags .apt_tag_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .apt_pro_tags .apt_tag_remove {
+    cursor: pointer;
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+  .apt_pro_tags .apt_tag_remove:hover {
+    color: #d12145;
+  }
+  .apt_pro_picker {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #cbd5e1;
+  }
+  .apt_pro_filter_row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .apt_pro_filter_row select {
+    width: 175px;
+    font-size: 0.8rem;
+  }
+  .apt_pro_filter_row input {
+    flex: 1;
+    min-width: 200px;
+    max-width: 340px;
+    font-size: 0.8rem;
+  }
+  .apt_pro_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    gap: 5px;
+    max-height: 210px;
+    overflow-y: auto;
+    padding: 6px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    background: #ffffff;
+  }
+  .apt_pro_grid .apt_region_item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 7px;
+    border-radius: 4px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 0.74rem;
+    color: #334155;
+    cursor: pointer;
+    user-select: none;
+  }
+  .apt_pro_grid .apt_region_item:hover {
+    border-color: #1355ac;
+    background: #eff6ff;
+  }
+  .apt_pro_grid .apt_region_item.selected {
+    background: #1355ac;
+    border-color: #1355ac;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .apt_pro_grid .apt_region_item input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
   }  
   .daily_sub{
     text-align: right;

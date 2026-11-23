@@ -70,15 +70,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
   <script src="./draw_chart_mf.js" type="text/javascript"></script>
-  <script src="./draw_chart_mf_pro.js?v=20261108_01" type="text/javascript"></script>
-  <script src="./moneyflow_pro.js?v=20261108_01" type="text/javascript"></script>
+  <script src="./draw_chart_mf_pro.js?v=20261123_07" type="text/javascript"></script>
+  <script src="./draw_chart_mf_apt.js?v=20261123_07" type="text/javascript"></script>
+  <script src="./moneyflow_pro.js?v=20261123_08" type="text/javascript"></script>
+  <script src="./moneyflow_apt.js?v=20261123_06" type="text/javascript"></script>
   <script src="../js/sort.js" type="text/javascript"></script>
   <script src="../js/search.js" type="text/javascript"></script>  
   <script src="../js/share.js?v=20261010_1" type="text/javascript"></script>
   <script src="../js/distance.js" type="text/javascript"></script>    
 
   <link href="../css/style_common.css" rel="stylesheet"/>
-  <link href="./style_mf.css?v=20261106_4" rel="stylesheet"/>
+  <link href="./style_mf.css?v=20261123_07" rel="stylesheet"/>
 
   <script type="text/javascript">
     var UserAgent = navigator.userAgent;    
@@ -282,6 +284,17 @@
     $.getJSON(moneyflow_url, function(json) {
         moneyflow_market = json;
         moneyflow_updated = (moneyflow_market["GENERATE"][0]).substr(0, 19)
+    })
+
+    moneyflow_apt_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_moneyflow_apt.json"
+    $.getJSON(moneyflow_apt_url, function(json) {
+        moneyflow_apt_market = json;
+        moneyflow_apt_updated = (moneyflow_apt_market["GENERATE"][0]).substr(0, 19)
+    }).fail(function() {
+        $.getJSON("./market_moneyflow_apt.json", function(json) {
+            moneyflow_apt_market = json;
+            moneyflow_apt_updated = (moneyflow_apt_market["GENERATE"][0]).substr(0, 19)
+        })
     })    
     
     hourly_url = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json"
