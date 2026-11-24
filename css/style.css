@@ -1334,6 +1334,12 @@
     margin-bottom: 0.5em
   }
 
+  .advanced_feature_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
   #rankSimul,
   #btn_complex_compare,
   #btn_realplanner_start {

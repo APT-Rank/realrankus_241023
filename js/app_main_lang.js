@@ -2871,15 +2871,15 @@ function showDetail(index, forceMapCenter) {
     if (selectedMonth == thisMonth) {
       detailHtml += `
             <div id='advanced_feature'>
-            <div class='popupSubtitle' style='text-align: center; margin-top: 10px'>${tSafe('ui.report.simul_guide', '↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓')}</div>
+            <div class='advanced_feature_row'>
             <div id='rankSimul' onclick='openSimulation(aptData.data,${index})'>${tSafe('ui.report.simul_button', '랭크 시뮬레이션')}</div>
             <div id='btn_complex_compare' onclick='openCompare(aptData.data[${index}])'>${tSafe('ui.report.compare_button', '단지 비교하기')}</div>
+            </div>
             <div id='btn_realplanner_start' onclick='openRealPlannerFromComplex(aptData.data[${index}])'>현재 단지부터 답사 코스 만들기 <span id='newFeature'>NEW!!</span></div>
             </div>
           `;
     } else {
       detailHtml += `
-            <div class='popupSubtitle' style='text-align: center; margin-top: 10px'>${tSafe('ui.report.simul_guide', '↓↓ 내 생각과 다르다면, 데이터를 바꿔 보세요! ↓↓')}</div>
             <div id='rankSimul' onclick='openSimulation(aptData.data,${index})'>${tSafe('ui.report.simul_button', '랭크 시뮬레이션')}</div>
             <div id='btn_realplanner_start' onclick='openRealPlannerFromComplex(aptData.data[${index}])'>현재 단지부터 답사 코스 만들기 <span id='newFeature'>NEW!!</span></div>
           `;
