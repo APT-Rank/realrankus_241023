@@ -6467,7 +6467,21 @@ function openFloorplan3dModal(qsList) {
   var params = ["embedded=1"].concat(Array.isArray(qsList) ? qsList : []);
   var iframeUrl = "./floorplan3d/index.html?" + params.join("&");
 
-  var $modal = $("#floorplan3dModal");
+  // 캐시된 index.html이나 다른 페이지에서 진입해도 #floorplan3dModal이 없으면 동적으로 즉시 생성!
+  var modalEl = document.getElementById("floorplan3dModal");
+  if (!modalEl) {
+    modalEl = document.createElement("div");
+    modalEl.id = "floorplan3dModal";
+    modalEl.style.cssText = "display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background-color:#10141c;z-index:100002;overscroll-behavior:none;-webkit-overflow-scrolling:touch;";
+    modalEl.innerHTML =
+      '<button type="button" onclick="closeFloorplan3dModal()" style="position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;z-index:10;background:rgba(15,23,42,0.88);color:#f8fafc;border:1px solid rgba(255,255,255,0.28);border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;">← 닫기</button>' +
+      '<div id="floorplan3d_modal_loader" style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#261a24 0%,#10141c 85%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;color:#fff;pointer-events:none;">' +
+      '<div style="font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:4px;">3D 평면도 준비 중</div>' +
+      '<div style="font-size:12px;color:#94a3b8;">실내 3D 평면도 엔진을 불러오고 있습니다...</div></div>';
+    document.body.appendChild(modalEl);
+  }
+
+  var $modal = $(modalEl);
   var oldIframe = document.getElementById("floorplan3d_iframe");
   if (oldIframe) oldIframe.remove();
 

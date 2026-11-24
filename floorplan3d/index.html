@@ -531,8 +531,9 @@
     // =========================================================================
     // 1. High-Resolution Procedural PBR Texture Generators (1024x1024)
     // =========================================================================
+    const IS_MOBILE_GL = window.innerWidth <= 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     function makeWoodPBR(baseHex, grainHex, plankRows = 8, plankCols = 4) {
-      const size = 1024;
+      const size = IS_MOBILE_GL ? 512 : 1024;
       const diffC = document.createElement("canvas");
       const bumpC = document.createElement("canvas");
       const roughC = document.createElement("canvas");
@@ -620,7 +621,7 @@
     }
 
     function makeTilePBR(baseHex, groutHex, tiles = 4, veining = true, roughBase = 75) {
-      const size = 1024;
+      const size = IS_MOBILE_GL ? 512 : 1024;
       const diffC = document.createElement("canvas");
       const bumpC = document.createElement("canvas");
       const roughC = document.createElement("canvas");
@@ -781,7 +782,7 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, IS_MOBILE_GL ? 1.5 : 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -833,7 +834,7 @@
     const sunLight = new THREE.DirectionalLight(0xfff4e0, 2.2);
     sunLight.position.set(10, 16, 18);
     sunLight.castShadow = true;
-    sunLight.shadow.mapSize.set(4096, 4096);
+    sunLight.shadow.mapSize.set(IS_MOBILE_GL ? 1024 : 4096, IS_MOBILE_GL ? 1024 : 4096);
     sunLight.shadow.camera.near = 2;
     sunLight.shadow.camera.far = 65;
     sunLight.shadow.camera.left = -16;
