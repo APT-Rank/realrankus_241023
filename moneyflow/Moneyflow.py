@@ -280,5 +280,5 @@ csv_path = os.path.join(path, "market_MoneyFlow.csv")
 json_path = os.path.join(path, "market_moneyflow.json")
 
 df_MoneyFlow.to_csv(csv_path, encoding='cp949', index=False)
-df_MoneyFlow.to_json(json_path, force_ascii=False, indent=4)
+df_MoneyFlow.to_json(json_path, force_ascii=False)
 print(f"Successfully saved 30-year data to {json_path}")

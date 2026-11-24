@@ -132,7 +132,7 @@ def main():
     json_path = os.path.join(path, "market_moneyflow_apt.json")
 
     df_MoneyFlow.to_csv(csv_path, encoding='cp949', index=False)
-    df_MoneyFlow.to_json(json_path, force_ascii=False, indent=4)
+    df_MoneyFlow.to_json(json_path, force_ascii=False)
 
     print(
         f"Saved {len(df_MoneyFlow)} rows ({df_MoneyFlow['TIME'].iloc[0]} ~ {df_MoneyFlow['TIME'].iloc[-1]}), "

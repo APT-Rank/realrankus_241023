@@ -72,10 +72,10 @@ def main():
             content_type = 'image/png'
 
         try:
-            # Upload with no-cache so latest data is immediately served
+            # Upload with ETag revalidation so unchanged files reuse browser cache (304) while updates serve immediately
             extra_args = {
                 'ContentType': content_type,
-                'CacheControl': 'no-cache, no-store, must-revalidate'
+                'CacheControl': 'no-cache, must-revalidate'
             }
             s3.upload_file(norm_path, bucket_name, norm_path, ExtraArgs=extra_args)
             print(f"[SUCCESS] Uploaded: {norm_path} -> s3://{bucket_name}/{norm_path}")

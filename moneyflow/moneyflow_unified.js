@@ -591,6 +591,36 @@ function mfuSwitchMode(mode) {
     $sw.find('.mf_mode_btn[data-mode="' + mode + '"]').addClass("active");
   });
   $("#mfu_search_input, #mf_land_search_input").val("");
+
+  // Real Estate(APT) 데이터가 아직 지연 로드 전이면 즉시 로드 후 UI 갱신
+  if (mode === "realestate" && (typeof moneyflow_apt_market === "undefined" || !moneyflow_apt_market || !moneyflow_apt_market["TIME"])) {
+    if (typeof window.loadMoneyFlowAptData === "function") {
+      $("#mfu_count_label").text("부동산 데이터 불러오는 중...");
+      $("#mfu_selected_tags").html("<span class='apt_pro_count'>전국 부동산 데이터를 불러오는 중입니다...</span>");
+      window.loadMoneyFlowAptData().then(function(data) {
+        if (data && data["TIME"]) {
+          mfuAllAptRegions = mfuExtractAptRegions(data);
+          var defaultRegions = ["전국", "수도권", "서울시"];
+          if (!mfuSelectedApt || mfuSelectedApt.length === 0) {
+            mfuSelectedApt = defaultRegions.filter(function(r) { return mfuAllAptRegions.indexOf(r) !== -1; });
+          } else {
+            mfuSelectedApt = mfuSelectedApt.filter(function(r) { return mfuAllAptRegions.indexOf(r) !== -1; });
+          }
+        }
+        if (mfuMode === "realestate") {
+          mfuRefreshAllUI();
+          if ($("#mfLandscapeOverlay").is(":visible")) {
+            mfuSyncLandscapeUI();
+          }
+        }
+      });
+      return;
+    }
+  } else if (mode === "realestate" && mfuAllAptRegions.length === 0 && typeof moneyflow_apt_market !== "undefined" && moneyflow_apt_market) {
+    mfuAllAptRegions = mfuExtractAptRegions(moneyflow_apt_market);
+    mfuSelectedApt = mfuSelectedApt.filter(function(r) { return mfuAllAptRegions.indexOf(r) !== -1; });
+  }
+
   mfuRefreshAllUI();
   if ($("#mfLandscapeOverlay").is(":visible")) {
     mfuSyncLandscapeUI();
