@@ -38,11 +38,11 @@ var MFU_GLOBAL_ITEMS = [
   { key: "서울시 아파트", group: "부동산", col: "KOR_APT_PRICE_SEOUL", zeroToNull: true, color: "#5F9EA0" },
   { key: "경기도 아파트", group: "부동산", col: "KOR_APT_PRICE_KYUNGKIDO", zeroToNull: true, color: "#4169E1" },
   { key: "6대광역시 아파트", group: "부동산", col: "KOR_APT_PRICE_LARGECITY6", zeroToNull: true, color: "#87CEFA" },
-  { key: "미국 M2(FRED)", group: "통화/유동성", col: "FRED_M2", color: "#E53935" },
-  { key: "한국 M2(광의통화)", group: "통화/유동성", col: "BOK_M2", color: "#AB47BC" },
-  { key: "한국 L(광의유동성)", group: "통화/유동성", col: "BOK_L", color: "#7B1FA2" },
-  { key: "한국은행 총자산(103Y002)", group: "통화/유동성", col: "BOK_BS_Asset", color: "#4A148C" },
-  { key: "중앙은행 개관표(161Y016)", group: "통화/유동성", col: "BOK_CB_Survey", color: "#00897B" }
+  { key: "미국 M2", group: "통화/유동성", col: "FRED_M2", color: "#E53935" },
+  { key: "한국 M2", group: "통화/유동성", col: "BOK_M2", color: "#AB47BC" },
+  { key: "한국 L", group: "통화/유동성", col: "BOK_L", color: "#7B1FA2" },
+  { key: "한국은행 총자산", group: "통화/유동성", col: "BOK_BS_Asset", color: "#4A148C" },
+  { key: "중앙은행 개관표", group: "통화/유동성", col: "BOK_CB_Survey", color: "#00897B" }
 ];
 
 var MFU_GLOBAL_PRESETS = {
@@ -51,7 +51,7 @@ var MFU_GLOBAL_PRESETS = {
   gold_btc_fx: ["금", "비트코인", "원-달러"],
   oil_gold: ["서부텍사스유", "두바이유", "금"],
   apt: ["전국 아파트", "수도권 아파트", "서울시 아파트", "경기도 아파트"],
-  liquidity: ["미국 M2(FRED)", "한국 M2(광의통화)", "한국 L(광의유동성)", "한국은행 총자산(103Y002)", "중앙은행 개관표(161Y016)"]
+  liquidity: ["미국 M2", "한국 M2", "한국 L", "한국은행 총자산", "중앙은행 개관표"]
 };
 
 var MFU_APT_PRESETS = {
