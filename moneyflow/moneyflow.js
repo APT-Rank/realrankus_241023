@@ -307,7 +307,7 @@ function show_hourly_info(){
   addon_html += "<div class='hourly_table3'>"
   addon_html += "<div class = 'item_name'>금</div>"
   val_direction = get_direction(Number(hourly_market['YF_Gold']['diff']))
-  Gold_hourly_val = (hourly_market['YF_Gold']['value']).replaceAll(",", "")
+  Gold_hourly_val = String(hourly_market['YF_Gold']['value']).replaceAll(",", "")
   addon_html += "<div class = 'current_val'>" + set_color_tag2(Number(Gold_hourly_val).toFixed(2), val_direction) + "</span><span class='unit'> 달러/T온스</span></div>"
   addon_html += "<div class = 'gap_val'>" + set_color_tag(Number(hourly_market['YF_Gold']['diff']).toFixed(2))[0] + "</span></div>"
   addon_html += "<div class = 'rate_val'>" + set_color_tag_plusminus(Number(hourly_market['YF_Gold']['rate']).toFixed(2))[0] + "%</span></div>"
@@ -1589,7 +1589,7 @@ addon_html += "<div class='daily_sub'>" + daily_updated + "</div>"
 Gold_arr = return_1month_arr(daily_market['yf_Gold'], daily_market['TIME'])
 Gold_time_arr = Gold_arr[0]
 Gold_val_arr = Gold_arr[1]
-Gold_hourly_val = (hourly_market['YF_Gold']['value']).replaceAll(",", "")
+Gold_hourly_val = String(hourly_market['YF_Gold']['value']).replaceAll(",", "")
 
 Gold_time_arr.push('현재')
 Gold_val_arr.push(Number(Gold_hourly_val))
@@ -2987,7 +2987,7 @@ function redraw_graph(obj, duration){
     Gold_val_arr = Gold_arr[1]
 
     Gold_time_arr.push('현재')
-    Gold_hourly_val = (hourly_market['YF_Gold']['value']).replaceAll(",", "")
+    Gold_hourly_val = String(hourly_market['YF_Gold']['value']).replaceAll(",", "")
     Gold_val_arr.push(Number(Gold_hourly_val))    
 
     myGold_Chart.destroy()
@@ -3756,6 +3756,7 @@ function redraw_graph(obj, duration){
 // ==========================================
 // 실시간 시장지표 (Live Market) 갱신 및 폴링 로직
 // ==========================================
+var LIVE_MARKET_API = "https://realrankus-market-live.anitooni.workers.dev";
 var isRefreshingMarket = false;
 var lastMarketRefreshTime = 0;
 var marketRefreshTimer = null;
@@ -3778,17 +3779,22 @@ function refreshLiveMarket(btnEl, isSilent) {
     ? LIVE_MARKET_API
     : ((typeof hourly_url !== 'undefined' && hourly_url) ? hourly_url : "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/moneyflow/market_hourly_info.json");
   
-  var fetchUrl = liveApiUrl + (liveApiUrl.indexOf('?') >= 0 ? '&' : '?') + 't=' + now;
+  var fetchUrl = liveApiUrl + (liveApiUrl.indexOf('?') >= 0 ? '&' : '?') + 't=' + now + (!isSilent ? '&force=true' : '');
 
   $.getJSON(fetchUrl)
     .done(function(json) {
       if (json && json["GENERATE"]) {
         hourly_market = json;
 
-        // A안: 라이브 수신 시점의 타임스탬프를 초 단위까지 최신 반영
-        var clientNow = new Date();
-        var pad = function(n) { return String(n).padStart(2, '0'); };
-        hourly_updated = clientNow.getFullYear() + '-' + pad(clientNow.getMonth() + 1) + '-' + pad(clientNow.getDate()) + ' ' + pad(clientNow.getHours()) + ':' + pad(clientNow.getMinutes()) + ':' + pad(clientNow.getSeconds());
+        // 서버(Worker) 기준 갱신 시각을 우선 반영하고, 없으면 클라이언트 시각 폴백
+        var genVal = json["GENERATE"]["value"];
+        if (genVal && String(genVal).length >= 19) {
+          hourly_updated = String(genVal).substr(0, 19);
+        } else {
+          var clientNow = new Date();
+          var pad = function(n) { return String(n).padStart(2, '0'); };
+          hourly_updated = clientNow.getFullYear() + '-' + pad(clientNow.getMonth() + 1) + '-' + pad(clientNow.getDate()) + ' ' + pad(clientNow.getHours()) + ':' + pad(clientNow.getMinutes()) + ':' + pad(clientNow.getSeconds());
+        }
         hourly_year = hourly_updated.substr(2, 2);
         hourly_month = Number(hourly_updated.substr(5, 2));
         hourly_day = Number(hourly_updated.substr(8, 2));

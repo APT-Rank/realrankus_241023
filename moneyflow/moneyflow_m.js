@@ -578,7 +578,7 @@ addon_html += "</div>"
 Gold_arr = return_1month_arr(daily_market['yf_Gold'], daily_market['TIME'])
 Gold_time_arr = Gold_arr[0]
 Gold_val_arr = Gold_arr[1]
-Gold_hourly_val = (hourly_market['YF_Gold']['value']).replaceAll(",", "")
+Gold_hourly_val = String(hourly_market['YF_Gold']['value']).replaceAll(",", "")
 
 Gold_time_arr.push('현재')
 Gold_val_arr.push(Number(Gold_hourly_val))
