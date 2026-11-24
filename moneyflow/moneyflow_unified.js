@@ -37,7 +37,12 @@ var MFU_GLOBAL_ITEMS = [
   { key: "지방권 아파트", group: "부동산", col: "KOR_APT_PRICE_URBAN", zeroToNull: true, color: "#00BFFF" },
   { key: "서울시 아파트", group: "부동산", col: "KOR_APT_PRICE_SEOUL", zeroToNull: true, color: "#5F9EA0" },
   { key: "경기도 아파트", group: "부동산", col: "KOR_APT_PRICE_KYUNGKIDO", zeroToNull: true, color: "#4169E1" },
-  { key: "6대광역시 아파트", group: "부동산", col: "KOR_APT_PRICE_LARGECITY6", zeroToNull: true, color: "#87CEFA" }
+  { key: "6대광역시 아파트", group: "부동산", col: "KOR_APT_PRICE_LARGECITY6", zeroToNull: true, color: "#87CEFA" },
+  { key: "미국 M2(FRED)", group: "통화/유동성", col: "FRED_M2", color: "#E53935" },
+  { key: "한국 M2(광의통화)", group: "통화/유동성", col: "BOK_M2", color: "#AB47BC" },
+  { key: "한국 L(광의유동성)", group: "통화/유동성", col: "BOK_L", color: "#7B1FA2" },
+  { key: "한국은행 총자산(103Y002)", group: "통화/유동성", col: "BOK_BS_Asset", color: "#4A148C" },
+  { key: "중앙은행 개관표(161Y016)", group: "통화/유동성", col: "BOK_CB_Survey", color: "#00897B" }
 ];
 
 var MFU_GLOBAL_PRESETS = {
@@ -45,7 +50,8 @@ var MFU_GLOBAL_PRESETS = {
   ko_stock: ["한국 코스피", "한국 코스닥", "코스피+코스닥"],
   gold_btc_fx: ["금", "비트코인", "원-달러"],
   oil_gold: ["서부텍사스유", "두바이유", "금"],
-  apt: ["전국 아파트", "수도권 아파트", "서울시 아파트", "경기도 아파트"]
+  apt: ["전국 아파트", "수도권 아파트", "서울시 아파트", "경기도 아파트"],
+  liquidity: ["미국 M2(FRED)", "한국 M2(광의통화)", "한국 L(광의유동성)", "한국은행 총자산(103Y002)", "중앙은행 개관표(161Y016)"]
 };
 
 var MFU_APT_PRESETS = {
@@ -633,6 +639,7 @@ function mfuRenderPresetsBar() {
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"gold_btc_fx\")'>금·코인·환율</button>";
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"oil_gold\")'>유가·원자재</button>";
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"apt\")'>주요 아파트</button>";
+    html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"liquidity\")'>통화·유동성</button>";
   } else {
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"major\")'>주요 권역</button>";
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"seoul_core\")'>서울 핵심구</button>";
@@ -889,6 +896,7 @@ function mfuSyncLandscapeUI() {
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"gold_btc_fx\")'>금·코인·환율</button>";
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"oil_gold\")'>유가·원자재</button>";
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"apt\")'>주요 아파트</button>";
+    html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"liquidity\")'>통화·유동성</button>";
   } else {
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"major\")'>주요 권역</button>";
     html += "<button type='button' class='apt_pro_btn' onClick='mfuApplyPreset(\"seoul_core\")'>서울 핵심구</button>";

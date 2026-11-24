@@ -84,6 +84,10 @@ end_y = now.strftime("%Y")
 bok_queries = {
     'BOK_Standard_Interest': ('722Y001', 'M', '199610', end_ym, '0101000'),
     'BOK_Total_Asset': ('102Y004', 'M', '199610', end_ym, 'ABA1'),
+    'BOK_M2': ('161Y005', 'M', '199610', end_ym, 'BBHS00'),
+    'BOK_L': ('172Y001', 'M', '199610', end_ym, 'XS00000'),
+    'BOK_BS_Asset': ('103Y002', 'M', '199610', end_ym, 'BCAA1'),
+    'BOK_CB_Survey': ('161Y016', 'M', '199610', end_ym, 'BBABAZ'),
     'BOK_External_Money': ('732Y001', 'M', '199610', end_ym, '99'),
     'BOK_Oil_WTI': ('902Y003', 'M', '199610', end_ym, '010101'),
     'BOK_Oil_Dubai': ('902Y003', 'M', '199610', end_ym, '010102'),
@@ -120,6 +124,7 @@ for col, args in bok_queries.items():
 print("Fetching FRED monthly series...")
 fred_queries = {
     'FRED_Total_Asset': ('WALCL', True),
+    'FRED_M2': ('M2SL', False),
     'FRED_Interest': ('FEDFUNDS', False),
     'FRED_WTI': ('POILWTIUSDM', False),
     'FRED_Brent': ('POILBREUSDM', False),
@@ -232,7 +237,8 @@ base_cols_order = [
     'BOK_BondYield03', 'BOK_BondYield05', 'BOK_BondYield10', 'BOK_BondYield30',
     'yf_KOSPI_KOSDAQ',
     'KOR_APT_PRICE', 'KOR_APT_PRICE_METROPOLITAN', 'KOR_APT_PRICE_URBAN',
-    'KOR_APT_PRICE_SEOUL', 'KOR_APT_PRICE_KYUNGKIDO', 'KOR_APT_PRICE_LARGECITY6'
+    'KOR_APT_PRICE_SEOUL', 'KOR_APT_PRICE_KYUNGKIDO', 'KOR_APT_PRICE_LARGECITY6',
+    'BOK_M2', 'BOK_L', 'BOK_BS_Asset', 'BOK_CB_Survey', 'FRED_M2'
 ]
 
 df_base = pd.DataFrame({col: series_dict.get(col, pd.Series(np.nan, index=target_index)) for col in base_cols_order}, index=target_index)
