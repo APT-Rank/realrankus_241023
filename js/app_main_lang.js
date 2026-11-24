@@ -5578,6 +5578,7 @@ window.addEventListener("popstate", function (e) {
   if (
     isFloorplan3dModalOpen &&
     floorplan3dModalHistoryToken &&
+    (Date.now() - floorplan3dOpenedAt > 600) &&
     (!e.state || e.state.floorplan3dModalToken !== floorplan3dModalHistoryToken)
   ) {
     closeFloorplan3dModal(true);
@@ -6427,10 +6428,15 @@ function closeRealPlannerModal(fromPopState) {
 var isFloorplan3dModalOpen = false;
 var floorplan3dModalHistoryToken = null;
 var floorplan3dModalHistorySequence = 0;
+var floorplan3dOpenedAt = 0;
 
 function openFloorplan3dTest(code, typeId) {
+  var hadNoticeOpen = false;
   try {
     var noticeEl = document.getElementById("noticeModal");
+    if (noticeEl && $(noticeEl).hasClass("show")) {
+      hadNoticeOpen = true;
+    }
     if (noticeEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
       var noticeInstance = bootstrap.Modal.getInstance(noticeEl);
       if (noticeInstance) noticeInstance.hide();
@@ -6445,7 +6451,10 @@ function openFloorplan3dTest(code, typeId) {
 
   var mobileFlag = (typeof isMobile !== "undefined" && isMobile) || (window.innerWidth <= 768);
   if (mobileFlag) {
-    openFloorplan3dModal(qs);
+    // noticeModal이 닫히며 발생시키는 history.back() / popstate와 충돌하지 않도록 닫힌 뒤 열기!
+    setTimeout(function () {
+      openFloorplan3dModal(qs);
+    }, hadNoticeOpen ? 320 : 0);
   } else {
     var url = "./floorplan3d/index.html" + (qs.length ? "?" + qs.join("&") : "");
     window.open(url, "_blank");
@@ -6463,6 +6472,7 @@ window.addEventListener("message", function (event) {
 function openFloorplan3dModal(qsList) {
   if (isFloorplan3dModalOpen) return;
   isFloorplan3dModalOpen = true;
+  floorplan3dOpenedAt = Date.now();
 
   var params = ["embedded=1"].concat(Array.isArray(qsList) ? qsList : []);
   var iframeUrl = "./floorplan3d/index.html?" + params.join("&");
