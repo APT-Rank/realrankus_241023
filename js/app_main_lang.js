@@ -5308,6 +5308,11 @@ function showNotice() {
         <li><div class='notice'>${t('ui.notice.bullet_11', '문의사항, 오류수정, 개선제안은 이메일 또는 카카오톡을 통해 문의해 주세요.')}</div></li>
         <li><div class='notice'>${connectionStatus}</div></li>
         </ul>
+        <div style='margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; text-align: center;'>
+          <button type='button' onClick='openFloorplan3dTest()' style='width: 100%; padding: 10px 14px; border: none; border-radius: 8px; background: linear-gradient(135deg, #E43B46, #f97316); color: #ffffff; font-size: 13px; font-weight: 700; box-shadow: 0 4px 12px rgba(228, 59, 70, 0.28); cursor: pointer;'>
+            <i class='fa-solid fa-cubes' style='margin-right: 6px;'></i>3D 평면도(Floorplan 3D) 테스트 열기
+          </button>
+        </div>
       `;
 
   footerHtml += `
@@ -5569,6 +5574,13 @@ window.addEventListener("popstate", function (e) {
     (!e.state || e.state.realplannerModalToken !== realplannerModalHistoryToken)
   ) {
     closeRealPlannerModal(true);
+  }
+  if (
+    isFloorplan3dModalOpen &&
+    floorplan3dModalHistoryToken &&
+    (!e.state || e.state.floorplan3dModalToken !== floorplan3dModalHistoryToken)
+  ) {
+    closeFloorplan3dModal(true);
   }
 });
 
@@ -6402,6 +6414,111 @@ function closeRealPlannerModal(fromPopState) {
     closingHistoryToken &&
     history.state &&
     history.state.realplannerModalToken === closingHistoryToken
+  ) {
+    history.back();
+  }
+}
+
+/**
+ * ==========================================================================
+ * 3D 평면도(Floorplan 3D) 연동 모듈 (웹 새창 / 모바일 iframe 풀스크린 모달)
+ * ==========================================================================
+ */
+var isFloorplan3dModalOpen = false;
+var floorplan3dModalHistoryToken = null;
+var floorplan3dModalHistorySequence = 0;
+
+function openFloorplan3dTest(code, typeId) {
+  try {
+    var noticeEl = document.getElementById("noticeModal");
+    if (noticeEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+      var noticeInstance = bootstrap.Modal.getInstance(noticeEl);
+      if (noticeInstance) noticeInstance.hide();
+    } else if (typeof $ !== "undefined") {
+      $("#noticeModal").modal("hide");
+    }
+  } catch (e) {}
+
+  var qs = [];
+  if (code) qs.push("code=" + encodeURIComponent(code));
+  if (typeId) qs.push("type=" + encodeURIComponent(typeId));
+
+  var mobileFlag = (typeof isMobile !== "undefined" && isMobile) || (window.innerWidth <= 768);
+  if (mobileFlag) {
+    openFloorplan3dModal(qs);
+  } else {
+    var url = "./floorplan3d/index.html" + (qs.length ? "?" + qs.join("&") : "");
+    window.open(url, "_blank");
+  }
+}
+
+window.addEventListener("message", function (event) {
+  var iframe = document.getElementById("floorplan3d_iframe");
+  if (!iframe || event.source !== iframe.contentWindow || !event.data) return;
+  if (event.data.type === "closeFloorplan3dModal") {
+    closeFloorplan3dModal();
+  }
+});
+
+function openFloorplan3dModal(qsList) {
+  if (isFloorplan3dModalOpen) return;
+  isFloorplan3dModalOpen = true;
+
+  var params = ["embedded=1"].concat(Array.isArray(qsList) ? qsList : []);
+  var iframeUrl = "./floorplan3d/index.html?" + params.join("&");
+
+  var $modal = $("#floorplan3dModal");
+  var oldIframe = document.getElementById("floorplan3d_iframe");
+  if (oldIframe) oldIframe.remove();
+
+  var iframe = document.createElement("iframe");
+  iframe.id = "floorplan3d_iframe";
+  iframe.src = iframeUrl;
+  iframe.allow = "fullscreen";
+  iframe.style.cssText = "position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; display: block;";
+
+  var loader = document.getElementById("floorplan3d_modal_loader");
+  if (loader) loader.style.display = "flex";
+  iframe.addEventListener("load", function () {
+    setTimeout(function () {
+      var ld = document.getElementById("floorplan3d_modal_loader");
+      if (ld) ld.style.display = "none";
+    }, 250);
+  });
+
+  $modal.append(iframe);
+  $modal.stop(true, false).fadeIn(220);
+
+  floorplan3dModalHistorySequence += 1;
+  floorplan3dModalHistoryToken = Date.now().toString(36) + "-" + floorplan3dModalHistorySequence;
+  var currentHistoryState = history.state && typeof history.state === "object" ? history.state : {};
+  history.pushState(
+    Object.assign({}, currentHistoryState, {
+      floorplan3dModalOpen: true,
+      floorplan3dModalToken: floorplan3dModalHistoryToken
+    }),
+    "",
+    ""
+  );
+}
+
+function closeFloorplan3dModal(fromPopState) {
+  if (!isFloorplan3dModalOpen) return;
+  var closingHistoryToken = floorplan3dModalHistoryToken;
+  isFloorplan3dModalOpen = false;
+  floorplan3dModalHistoryToken = null;
+
+  var $modal = $("#floorplan3dModal");
+  var iframe = document.getElementById("floorplan3d_iframe");
+  if (iframe) iframe.remove();
+
+  $modal.stop(true, false).fadeOut(180);
+
+  if (
+    !fromPopState &&
+    closingHistoryToken &&
+    history.state &&
+    history.state.floorplan3dModalToken === closingHistoryToken
   ) {
     history.back();
   }
