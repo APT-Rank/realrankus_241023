@@ -6574,6 +6574,18 @@ window.addEventListener("message", function (event) {
   if (!iframe || event.source !== iframe.contentWindow || !event.data) return;
   if (event.data.type === "closeFloorplan3dModal") {
     closeFloorplan3dModal();
+  } else if (event.data.type === "downloadFloorplanImage" && event.data.base64Data) {
+    var fn = event.data.fileName || "리얼랭커스_평면도.png";
+    if (window.Android && typeof window.Android.downloadImage === "function") {
+      window.Android.downloadImage(event.data.base64Data, fn);
+    } else {
+      var link = document.createElement("a");
+      link.download = fn;
+      link.href = event.data.base64Data;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 });
 
