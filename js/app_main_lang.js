@@ -5571,6 +5571,7 @@ window.addEventListener("popstate", function (e) {
   if (
     isRealPlannerModalOpen &&
     realplannerModalHistoryToken &&
+    (Date.now() - realplannerOpenedAt > 650) &&
     (!e.state || e.state.realplannerModalToken !== realplannerModalHistoryToken)
   ) {
     closeRealPlannerModal(true);
@@ -6237,15 +6238,21 @@ function closeComplex3dModal(fromPopState) {
 var isRealPlannerModalOpen = false;
 var realplannerModalHistoryToken = null;
 var realplannerModalHistorySequence = 0;
+var realplannerOpenedAt = 0;
 
 // 2026-11-22: 단지 상세 모달에서 현재 단지부터 답사 코스 만들기 진입 + 비로그인 시 로그인 모달 표시
+// 2026-11-26: 모바일에서 baseModal 닫힘 시 발생하는 hidden.bs.modal / history.back()과 충돌하지 않도록 닫힌 뒤 리얼플래너 모달 오픈
 function openRealPlannerFromComplex(complexData) {
   if (!complexData) {
     openRealPlanner();
     return;
   }
+  var hadBaseOpen = false;
   try {
     var baseModalEl = document.getElementById("baseModal");
+    if (baseModalEl && baseModalEl.classList.contains("show")) {
+      hadBaseOpen = true;
+    }
     if (baseModalEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
       var bmInstance = bootstrap.Modal.getInstance(baseModalEl);
       if (bmInstance) bmInstance.hide();
@@ -6263,10 +6270,10 @@ function openRealPlannerFromComplex(complexData) {
     lng: isFinite(lngNum) ? lngNum : null,
     gungu: typeof selectedSubRegion !== "undefined" ? selectedSubRegion : ""
   };
-  openRealPlanner(startComplex);
+  openRealPlanner(startComplex, hadBaseOpen);
 }
 
-function openRealPlanner(startComplex) {
+function openRealPlanner(startComplex, hadModalOpen) {
   if (typeof login_status === "undefined" || !login_status) {
     try {
       if (typeof showLogin === "function") showLogin();
@@ -6282,8 +6289,12 @@ function openRealPlanner(startComplex) {
     return;
   }
 
+  var hadNoticeOpen = false;
   try {
     var noticeEl = document.getElementById("noticeModal");
+    if (noticeEl && noticeEl.classList.contains("show")) {
+      hadNoticeOpen = true;
+    }
     if (noticeEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
       var noticeInstance = bootstrap.Modal.getInstance(noticeEl);
       if (noticeInstance) noticeInstance.hide();
@@ -6340,7 +6351,10 @@ function openRealPlanner(startComplex) {
 
   var startCodeParam = (startComplex && startComplex.code) ? encodeURIComponent(startComplex.code) : "";
   if (typeof isMobile !== "undefined" && isMobile) {
-    openRealPlannerModal(startCodeParam);
+    // baseModal / noticeModal 닫힘 애니메이션 및 popstate 처리가 완료된 뒤 모달 오픈
+    setTimeout(function () {
+      openRealPlannerModal(startCodeParam);
+    }, (hadModalOpen || hadNoticeOpen) ? 360 : 0);
   } else {
     var targetUrl = "./realplanner/index.html" + (startCodeParam ? "?startCode=" + startCodeParam : "");
     window.open(targetUrl, "_blank");
@@ -6361,6 +6375,7 @@ window.addEventListener("message", function (event) {
 function openRealPlannerModal(startCodeParam) {
   if (isRealPlannerModalOpen) return;
   isRealPlannerModalOpen = true;
+  realplannerOpenedAt = Date.now();
 
   var iframeUrl = "./realplanner/index.html?embedded=1" + (startCodeParam ? "&startCode=" + startCodeParam : "");
   var $modal = $("#realplannerModal");

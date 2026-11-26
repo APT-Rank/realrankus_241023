@@ -201,11 +201,24 @@
       RealCrewMap.visibleMarkers[i].setMap(null);
     }
     RealCrewMap.visibleMarkers = [];
+    RealCrewMap.complexMarkerMap = Object.create(null);
+    RealCrewMap.regionMarkerMap = Object.create(null);
+  }
+
+  function clearRegionMarkersOnly() {
+    if (!RealCrewMap.regionMarkerMap) return;
+    for (var k in RealCrewMap.regionMarkerMap) {
+      if (Object.prototype.hasOwnProperty.call(RealCrewMap.regionMarkerMap, k)) {
+        RealCrewMap.regionMarkerMap[k].setMap(null);
+      }
+    }
+    RealCrewMap.regionMarkerMap = Object.create(null);
   }
 
   function renderMarkers() {
     if (!RealCrewMap.map) return;
-    clearVisibleMarkers();
+    if (!RealCrewMap.complexMarkerMap) RealCrewMap.complexMarkerMap = Object.create(null);
+    if (!RealCrewMap.regionMarkerMap) RealCrewMap.regionMarkerMap = Object.create(null);
 
     var map = RealCrewMap.map;
     var zoom = map.getZoom();
@@ -218,10 +231,17 @@
     var largeZoomMin = isMobile ? 15 : 16;
     var smallZoomMin = isMobile ? 14 : 15;
 
-    var renderedCodes = Object.create(null);
+    var baseScale = RealCrewMap.captureMarkerScale || 1;
+    var mobileZoomScale = (!RealCrewMap.isCapturing && isMobile && zoom === 15) ? (35 / 45) : 1;
+    var effectiveScale = baseScale * mobileZoomScale;
+    var isCapFlag = RealCrewMap.isCapturing ? "C" : "N";
 
-    // 1) 단지 마커 렌더링 (줌 레벨 충분 시)
+    var desiredComplexes = Object.create(null);
+    var desiredRegions = Object.create(null);
+
+    // 1) 단지 마커 대상 수집 (줌 레벨 충분 시)
     if (zoom >= smallZoomMin) {
+      clearRegionMarkersOnly();
       var inView = global.RealCrewData.getComplexesInBounds(sw.lat(), sw.lng(), ne.lat(), ne.lng());
       // 마커 과다 렌더링 방지 (점수 상위 260개 + 선택 단지 우선)
       if (inView.length > 260) {
@@ -238,11 +258,14 @@
       for (var i = 0; i < inView.length; i++) {
         var cpx = inView[i];
         var orderNum = RealCrewMap.selectedOrderMap[cpx.code] || 0;
-        addComplexMarker(cpx, useLarge || orderNum > 0, orderNum);
-        renderedCodes[cpx.code] = true;
+        desiredComplexes[cpx.code] = {
+          cpx: cpx,
+          useLarge: useLarge || orderNum > 0,
+          orderNum: orderNum
+        };
       }
     } else {
-      // 줌 아웃 시 지역(Level2 / Level1 / Level0) 마커 표시
+      // 줌 아웃 시 지역(Level2 / Level1 / Level0) 마커 대상 수집
       var regionPool = zoom >= 12
         ? global.RealCrewData.regions.level2
         : (zoom >= 10 ? global.RealCrewData.regions.level1 : global.RealCrewData.regions.level0);
@@ -255,45 +278,106 @@
         if (!isFinite(rLat) || !isFinite(rLng)) continue;
         if (rLat < sw.lat() || rLat > ne.lat() || rLng < sw.lng() || rLng > ne.lng()) continue;
 
-        (function (regionItem, nextZoom) {
-          var label = regionItem["법정동명"] || regionItem["지역명"] || regionItem["시군구"] || "";
-          if (!label) return;
-          var shortLabel = label.split(" ").pop();
+        var label = reg["법정동명"] || reg["지역명"] || reg["시군구"] || "";
+        if (!label) continue;
+        var shortLabel = label.split(" ").pop();
+        var regKey = targetZoom + "|" + shortLabel + "|" + rLat.toFixed(4) + "|" + rLng.toFixed(4);
+        desiredRegions[regKey] = {
+          lat: rLat,
+          lng: rLng,
+          shortLabel: shortLabel,
+          nextZoom: targetZoom
+        };
+      }
+
+      // 화면에서 벗어난 지역 마커만 제거
+      for (var rk in RealCrewMap.regionMarkerMap) {
+        if (Object.prototype.hasOwnProperty.call(RealCrewMap.regionMarkerMap, rk) && !desiredRegions[rk]) {
+          RealCrewMap.regionMarkerMap[rk].setMap(null);
+          delete RealCrewMap.regionMarkerMap[rk];
+        }
+      }
+      // 새로 진입한 지역 마커만 추가 (기존 지역 마커 유지 → 이동 시 깜빡임 방지)
+      for (var drk in desiredRegions) {
+        if (!Object.prototype.hasOwnProperty.call(desiredRegions, drk)) continue;
+        if (RealCrewMap.regionMarkerMap[drk]) continue;
+        (function (info, key) {
           var m = new naver.maps.Marker({
-            position: new naver.maps.LatLng(Number(regionItem.lat), Number(regionItem.lng)),
+            position: new naver.maps.LatLng(info.lat, info.lng),
             map: map,
             zIndex: 80,
             icon: {
-              content: '<div class="rc-region-marker">' + escapeHtml(shortLabel) + '</div>',
+              content: '<div class="rc-region-marker">' + escapeHtml(info.shortLabel) + '</div>',
               anchor: new naver.maps.Point(30, 14)
             }
           });
           naver.maps.Event.addListener(m, "click", function () {
-            map.morph(new naver.maps.LatLng(Number(regionItem.lat), Number(regionItem.lng)), nextZoom);
+            map.morph(new naver.maps.LatLng(info.lat, info.lng), info.nextZoom);
           });
-          RealCrewMap.visibleMarkers.push(m);
-        })(reg, targetZoom);
+          RealCrewMap.regionMarkerMap[key] = m;
+        })(desiredRegions[drk], drk);
       }
     }
 
     // 2) 선택된 코스 단지는 줌 레벨과 무관하게 항상 표시 (좌측 상단 (1), (2)... 보장)
     for (var s = 0; s < RealCrewMap.courseListRef.length; s++) {
       var selectedCpx = RealCrewMap.courseListRef[s];
-      if (!renderedCodes[selectedCpx.code]) {
-        addComplexMarker(selectedCpx, true, s + 1);
-        renderedCodes[selectedCpx.code] = true;
+      if (!desiredComplexes[selectedCpx.code]) {
+        desiredComplexes[selectedCpx.code] = {
+          cpx: selectedCpx,
+          useLarge: true,
+          orderNum: s + 1
+        };
       }
     }
+
+    // 3) 2026-11-26: Diff 기반 단지 마커 갱신 (지도 이동 시 기존 마커를 파괴하지 않아 모바일 깜빡임 제거)
+    for (var existingCode in RealCrewMap.complexMarkerMap) {
+      if (Object.prototype.hasOwnProperty.call(RealCrewMap.complexMarkerMap, existingCode) && !desiredComplexes[existingCode]) {
+        RealCrewMap.complexMarkerMap[existingCode].marker.setMap(null);
+        delete RealCrewMap.complexMarkerMap[existingCode];
+      }
+    }
+
+    for (var code in desiredComplexes) {
+      if (!Object.prototype.hasOwnProperty.call(desiredComplexes, code)) continue;
+      var item = desiredComplexes[code];
+      var sig = (item.useLarge ? "L" : "S") + "|" + item.orderNum + "|" + effectiveScale.toFixed(3) + "|" + isCapFlag;
+      var existing = RealCrewMap.complexMarkerMap[code];
+
+      if (existing) {
+        if (existing.signature !== sig) {
+          var upd = buildComplexMarkerIconAndZ(item.cpx, item.useLarge, item.orderNum, effectiveScale);
+          existing.marker.setIcon(upd.icon);
+          existing.marker.setZIndex(upd.zIndex);
+          existing.signature = sig;
+        }
+      } else {
+        var created = addComplexMarker(item.cpx, item.useLarge, item.orderNum, effectiveScale);
+        RealCrewMap.complexMarkerMap[code] = {
+          marker: created,
+          signature: sig
+        };
+      }
+    }
+
+    // visibleMarkers 배열 동기화
+    var synced = [];
+    for (var ck in RealCrewMap.complexMarkerMap) {
+      if (Object.prototype.hasOwnProperty.call(RealCrewMap.complexMarkerMap, ck)) {
+        synced.push(RealCrewMap.complexMarkerMap[ck].marker);
+      }
+    }
+    for (var rgk in RealCrewMap.regionMarkerMap) {
+      if (Object.prototype.hasOwnProperty.call(RealCrewMap.regionMarkerMap, rgk)) {
+        synced.push(RealCrewMap.regionMarkerMap[rgk]);
+      }
+    }
+    RealCrewMap.visibleMarkers = synced;
   }
 
-  function addComplexMarker(cpx, useLarge, orderNum) {
-    var baseScale = RealCrewMap.captureMarkerScale || 1;
-    // 2026-11-23: 메인 지도(js/map_control.js) 모바일 규칙 동일 적용 — 모바일 zoom 15에서 중간 축소 크기(35/45 ≈ 0.78배)로 표시
-    var isMobileView = window.innerWidth <= 820;
-    var curZoom = RealCrewMap.map ? RealCrewMap.map.getZoom() : 16;
-    var mobileZoomScale = (!RealCrewMap.isCapturing && isMobileView && curZoom === 15) ? (35 / 45) : 1;
-    var s = baseScale * mobileZoomScale;
-
+  function buildComplexMarkerIconAndZ(cpx, useLarge, orderNum, scaleVal) {
+    var s = scaleVal || 1;
     var html = useLarge ? buildLargeMarkerHtml(cpx, orderNum, s) : buildSmallMarkerHtml(cpx, orderNum);
     var size = useLarge
       ? new naver.maps.Size(Math.round(68 * s), Math.round(60 * s))
@@ -303,16 +387,19 @@
       ? new naver.maps.Point(Math.round(14 * s), Math.round(57 * s))
       : new naver.maps.Point(6, 29);
     var zIndex = orderNum > 0 ? (1500 + orderNum) : (useLarge ? 500 : 200);
+    return {
+      icon: { content: html, size: size, anchor: anchor },
+      zIndex: zIndex
+    };
+  }
 
+  function addComplexMarker(cpx, useLarge, orderNum, scaleVal) {
+    var spec = buildComplexMarkerIconAndZ(cpx, useLarge, orderNum, scaleVal);
     var marker = new naver.maps.Marker({
       position: new naver.maps.LatLng(cpx.lat, cpx.lng),
       map: RealCrewMap.map,
-      zIndex: zIndex,
-      icon: {
-        content: html,
-        size: size,
-        anchor: anchor
-      }
+      zIndex: spec.zIndex,
+      icon: spec.icon
     });
 
     naver.maps.Event.addListener(marker, "click", function () {
@@ -321,7 +408,7 @@
       }
     });
 
-    RealCrewMap.visibleMarkers.push(marker);
+    return marker;
   }
 
   function clearRouteOverlays() {
@@ -856,8 +943,32 @@
 
   function panToComplex(cpx) {
     if (!RealCrewMap.map || !cpx) return;
-    var target = new naver.maps.LatLng(cpx.lat, cpx.lng);
-    if (RealCrewMap.map.getZoom() < 15) {
+    var curZoom = RealCrewMap.map.getZoom();
+    var targetZoom = curZoom < 15 ? 16 : curZoom;
+    var targetLat = cpx.lat;
+
+    // 2026-11-26: 모바일에서 바텀시트에 가리지 않도록 상단 가시 영역 중앙으로 오프셋 이동
+    if (window.innerWidth <= 900) {
+      var mapEl = document.getElementById("realcrewMap");
+      var sidebarEl = document.getElementById("rcSidebar");
+      var topBarEl = document.getElementById("rcMobileTopBar");
+      if (mapEl && sidebarEl) {
+        var mapRect = mapEl.getBoundingClientRect();
+        var mapH = mapRect.height || window.innerHeight;
+        var visTop = topBarEl ? Math.max(0, topBarEl.getBoundingClientRect().bottom - mapRect.top) : 64;
+        var visBottom = Math.max(visTop + 80, sidebarEl.getBoundingClientRect().top - mapRect.top);
+        // 마커 본체가 핀 위쪽에 위치하므로 시각적 중심을 위해 +18px 보정
+        var desiredY = (visTop + visBottom) / 2 + 18;
+        var deltaY = (mapH / 2) - desiredY;
+        if (deltaY > 10) {
+          var metersPerPx = getMetersPerPixel(cpx.lat, targetZoom);
+          targetLat = cpx.lat - (deltaY * metersPerPx) / 111320;
+        }
+      }
+    }
+
+    var target = new naver.maps.LatLng(targetLat, cpx.lng);
+    if (curZoom < 15) {
       RealCrewMap.map.morph(target, 16);
     } else {
       RealCrewMap.map.panTo(target);
@@ -877,7 +988,17 @@
     for (var i = 1; i < courseList.length; i++) {
       bounds.extend(new naver.maps.LatLng(courseList[i].lat, courseList[i].lng));
     }
-    var pad = customPadding || { top: 90, right: 80, bottom: 70, left: 80 };
+    var pad = customPadding;
+    if (!pad) {
+      var bottomPad = 70;
+      if (window.innerWidth <= 900) {
+        var sidebarEl = document.getElementById("rcSidebar");
+        if (sidebarEl && !sidebarEl.classList.contains("is-collapsed")) {
+          bottomPad = Math.max(70, Math.round(sidebarEl.getBoundingClientRect().height) + 28);
+        }
+      }
+      pad = { top: 90, right: 60, bottom: bottomPad, left: 60 };
+    }
     RealCrewMap.map.fitBounds(bounds, pad);
   }
 

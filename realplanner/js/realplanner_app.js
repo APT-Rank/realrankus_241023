@@ -720,9 +720,110 @@
 
         if (card) {
           card.addEventListener("click", function () {
+            if (state.suppressCardClickUntil && Date.now() < state.suppressCardClickUntil) return;
             var nextFocus = state.activeStopCode === code ? null : code;
             setFocusedStop(nextFocus, !!nextFocus);
           });
+        }
+
+        // 2026-11-26: 모바일 터치 드래그 앤 드롭으로 리스트 순서 변경 지원
+        var handle = row.querySelector(".rc-drag-handle");
+        if (handle && !state.viewerMode && state.course.length > 1) {
+          (function (dragHandle, dragRow, sourceIdx) {
+            var touchActive = false;
+            var ghostEl = null;
+            var targetIdx = sourceIdx;
+            var offsetY = 0;
+            var startX = 0;
+
+            function clearTouchDragState() {
+              touchActive = false;
+              if (ghostEl && ghostEl.parentNode) ghostEl.parentNode.removeChild(ghostEl);
+              ghostEl = null;
+              dragRow.classList.remove("is-dragging");
+              var overs = listEl.querySelectorAll(".rc-stop-row.is-drag-over");
+              for (var m = 0; m < overs.length; m++) overs[m].classList.remove("is-drag-over");
+            }
+
+            dragHandle.addEventListener("touchstart", function (e) {
+              if (!e.touches || e.touches.length !== 1) return;
+              e.preventDefault();
+              e.stopPropagation();
+
+              var touch = e.touches[0];
+              var rect = dragRow.getBoundingClientRect();
+              touchActive = true;
+              targetIdx = sourceIdx;
+              offsetY = touch.clientY - rect.top;
+              startX = rect.left;
+
+              dragRow.classList.add("is-dragging");
+
+              ghostEl = dragRow.cloneNode(true);
+              ghostEl.classList.remove("is-dragging");
+              ghostEl.classList.add("rc-touch-drag-ghost");
+              ghostEl.style.width = rect.width + "px";
+              ghostEl.style.height = rect.height + "px";
+              ghostEl.style.left = startX + "px";
+              ghostEl.style.top = rect.top + "px";
+              document.body.appendChild(ghostEl);
+            }, { passive: false });
+
+            dragHandle.addEventListener("touchmove", function (e) {
+              if (!touchActive || !e.touches || e.touches.length !== 1) return;
+              e.preventDefault();
+              e.stopPropagation();
+
+              var touch = e.touches[0];
+              var clientY = touch.clientY;
+              if (ghostEl) {
+                ghostEl.style.top = (clientY - offsetY) + "px";
+              }
+
+              // 리스트 영역 상/하단 근접 시 자동 스크롤
+              var listRect = listEl.getBoundingClientRect();
+              if (clientY < listRect.top + 44) {
+                listEl.scrollTop -= 10;
+              } else if (clientY > listRect.bottom - 44) {
+                listEl.scrollTop += 10;
+              }
+
+              // 현재 손가락 위치에 해당하는 타깃 행 판별
+              var allRows = listEl.querySelectorAll(".rc-stop-row");
+              var nextTarget = sourceIdx;
+              for (var r = 0; r < allRows.length; r++) {
+                allRows[r].classList.remove("is-drag-over");
+                var rr = allRows[r].getBoundingClientRect();
+                if (clientY >= rr.top - 14 && clientY <= rr.bottom + 14) {
+                  nextTarget = Number(allRows[r].getAttribute("data-index"));
+                }
+              }
+              if (nextTarget !== sourceIdx && allRows[nextTarget]) {
+                allRows[nextTarget].classList.add("is-drag-over");
+              }
+              targetIdx = nextTarget;
+            }, { passive: false });
+
+            function finishTouchDrag(e) {
+              if (!touchActive) return;
+              if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+              var finalTarget = targetIdx;
+              clearTouchDragState();
+              state.suppressCardClickUntil = Date.now() + 320;
+              if (finalTarget !== null && finalTarget !== sourceIdx) {
+                moveStop(sourceIdx, finalTarget);
+              }
+            }
+
+            dragHandle.addEventListener("touchend", finishTouchDrag, { passive: false });
+            dragHandle.addEventListener("touchcancel", function () {
+              if (!touchActive) return;
+              clearTouchDragState();
+            });
+          })(handle, row, idx);
         }
 
         row.addEventListener("dragstart", function (e) {

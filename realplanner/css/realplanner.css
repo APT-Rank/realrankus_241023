@@ -599,13 +599,27 @@ body.is-embedded .rc-back-btn {
   color: #9ca3af;
   font-size: 12px;
   cursor: grab;
-  padding: 3px 1px;
-  margin-top: 2px;
+  padding: 6px 5px;
+  margin: -3px 0 -3px -4px;
   flex-shrink: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .rc-drag-handle:hover {
   color: #475569;
+}
+
+.rc-touch-drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.94;
+  transform: scale(1.02);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.24);
+  border-radius: 10px;
+  background: #ffffff;
 }
 
 .rc-stop-info {
