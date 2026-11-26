@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>리얼랭커스 3D 평면도 — Floorplan 3D</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>리얼랭커스 3D 평면도</title>
   <script type="importmap">
     {
       "imports": {
@@ -369,48 +370,212 @@
       z-index: 10;
     }
 
-    .mobile-toggle-btn {
-      display: none;
+    /* Desktop Panel Collapse Toggle */
+    .panel {
+      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+    }
+    .panel.desktop-collapsed {
+      transform: translateX(calc(-100% - 24px));
+      opacity: 0;
+      pointer-events: none;
+    }
+    .desktop-collapse-btn {
       position: fixed;
-      bottom: calc(18px + env(safe-area-inset-bottom));
-      left: 16px;
-      z-index: 35;
-      background: linear-gradient(135deg, #E43B46, #f97316);
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 11px 18px;
+      top: 16px;
+      left: 344px;
+      z-index: 25;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #f8fafc;
       font-size: 13px;
       font-weight: 800;
-      box-shadow: 0 10px 28px rgba(228, 59, 70, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      transition: left 0.26s cubic-bezier(0.22, 1, 0.36, 1), background 0.15s;
     }
+    .desktop-collapse-btn:hover { background: #E43B46; border-color: #E43B46; }
+    .desktop-collapse-btn.collapsed { left: 16px; }
+
+    /* Top Compact Info Pill (Always visible on mobile & when desktop panel is collapsed) */
+    .top-info-pill {
+      position: fixed;
+      top: calc(14px + env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 22;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 7px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: calc(100vw - 140px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+    .top-info-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .top-info-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: #cbd5e1;
+      background: rgba(228, 59, 70, 0.22);
+      border: 1px solid rgba(228, 59, 70, 0.45);
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Mini Loading Toast */
+    .loading-toast {
+      position: fixed;
+      top: calc(62px + env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(228, 59, 70, 0.55);
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .loading-toast.show { display: flex; }
+    .loading-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #E43B46;
+      animation: pulseDot 0.9s infinite ease-in-out;
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(0.75); opacity: 0.45; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* Mobile Bottom Quick Action Bar & Sheet Backdrop */
+    .sheet-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.48);
+      z-index: 28;
+      backdrop-filter: blur(2px);
+    }
+    .sheet-backdrop.show { display: block; }
+    .sheet-handle {
+      display: none;
+      width: 40px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.45);
+      margin: 0 auto 10px auto;
+    }
+    .mobile-quickbar {
+      display: none;
+      position: fixed;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      left: 12px;
+      right: 12px;
+      z-index: 26;
+      background: rgba(15, 23, 42, 0.86);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 16px;
+      padding: 7px 8px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .mq-btn {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.85);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 10px;
+      padding: 9px 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .mq-btn.active {
+      background: rgba(228, 59, 70, 0.24);
+      border-color: #E43B46;
+      color: #fff;
+    }
+    .mq-btn-primary {
+      flex: 1.35;
+      background: linear-gradient(135deg, #E43B46, #f97316);
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(228, 59, 70, 0.4);
+    }
+
     @media (max-width: 768px) {
-      .mobile-toggle-btn { display: inline-flex; align-items: center; gap: 6px; }
+      .desktop-collapse-btn { display: none !important; }
+      .mobile-quickbar { display: flex; }
+      .sheet-handle { display: block; }
+      .top-info-pill {
+        top: calc(12px + env(safe-area-inset-top));
+        left: 88px;
+        right: 92px;
+        transform: none;
+        max-width: none;
+        padding: 6px 11px;
+        gap: 6px;
+        justify-content: center;
+      }
+      .top-info-name { font-size: 12px; }
+      .top-info-sub { font-size: 10px; padding: 1.5px 6px; }
       .panel {
         top: auto;
         bottom: 0;
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 68vh;
-        border-radius: 18px 18px 0 0;
+        max-height: 74vh;
+        border-radius: 20px 20px 0 0;
         transform: translateY(105%);
         transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-        padding-bottom: calc(68px + env(safe-area-inset-bottom));
+        padding: 10px 16px calc(22px + env(safe-area-inset-bottom)) 16px;
+        z-index: 32;
       }
       .panel.mobile-open {
         transform: translateY(0);
       }
-      .status-bar {
-        display: none;
-      }
-      .compass-wrap {
-        top: 12px;
-        right: 12px;
-        transform: scale(0.86);
+      .status-bar { display: none; }
+      .compass-box {
+        top: calc(10px + env(safe-area-inset-top));
+        right: 10px;
+        transform: scale(0.82);
         transform-origin: top right;
       }
+      .catalog-list { max-height: 135px; }
+      .type-grid { max-height: 86px; }
     }
   </style>
 </head>
@@ -418,7 +583,6 @@
   <div id="canvas-wrap"></div>
   <div id="label-layer" class="label-layer"></div>
   <div id="dim-badge" class="dim-badge"></div>
-  <div id="drop-hint" class="drop-hint">여기에 floorplan_3d JSON 파일을 드롭하세요</div>
 
   <!-- Top-Right N/S/W/E Compass -->
   <div class="compass-box" title="동서남북 방향 전환">
@@ -434,16 +598,31 @@
     </div>
   </div>
 
-  <button class="mobile-toggle-btn" id="mobile-toggle-btn">단지 / 평형 선택</button>
+  <div class="top-info-pill" id="top-info-pill">
+    <span class="top-info-name" id="top-info-name">3D 평면도</span>
+    <span class="top-info-sub" id="top-info-sub">로딩 중</span>
+  </div>
+  <div class="loading-toast" id="loading-toast"><span class="loading-dot"></span><span id="loading-toast-text">평면도 불러오는 중...</span></div>
+  <button class="desktop-collapse-btn" id="desktop-collapse-btn" title="패널 접기/펼치기">◀</button>
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="mobile-quickbar" id="mobile-quickbar">
+    <button class="mq-btn" id="mq-variant" style="display:none;">확장형</button>
+    <button class="mq-btn active" id="mq-cam">3D 뷰</button>
+    <button class="mq-btn" id="mq-labels">라벨</button>
+    <button class="mq-btn mq-btn-primary" id="mq-open-sheet">단지 · 평형</button>
+  </div>
   <div class="panel" id="main-panel">
-    <h1>3D 평면도 ArchViz <span class="badge">ULTRA PBR</span></h1>
+    <div class="sheet-handle"></div>
+    <h1>리얼랭커스 3D 평면도</h1>
 
+    <div id="search-section">
     <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
       <span>단지 검색</span>
       <span id="catalog-count" style="color:#cbd5e1;font-weight:600;text-transform:none;">로딩 중...</span>
     </div>
     <input type="text" id="complex-search" class="search-input" placeholder="단지명, 주소, 코드 검색 (예: 헬리오, 반포, 잠실)" />
     <div id="catalog-list" class="catalog-list"></div>
+    </div>
 
     <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
       <span id="selected-complex-title">평형 타입 선택</span>
@@ -454,10 +633,6 @@
       <button id="btn-var-base">일반형 (기본)</button>
     </div>
 
-    <label class="file-btn">
-      📂 로컬 JSON 열기 (또는 화면 드롭)
-      <input type="file" id="file-input" accept=".json,application/json" style="display:none;" />
-    </label>
 
     <div class="section">
       <div class="section-title">채광 / 시간대 무드</div>
@@ -493,10 +668,7 @@
         <span>공간 라벨 표시</span>
         <input type="checkbox" id="chk-labels" />
       </label>
-      <label class="toggle-row">
-        <span>시네마틱 블룸 (Bloom)</span>
-        <input type="checkbox" id="chk-bloom" />
-      </label>
+      <input type="checkbox" id="chk-bloom" style="display:none;" />
     </div>
 
     <div class="section">
@@ -506,9 +678,7 @@
     </div>
   </div>
 
-  <div class="status-bar" id="status-bar">
-    4K Soft Shadows · Procedural PBR Wood/Tile · True Wall Cutouts · Interior Lighting
-  </div>
+  <div class="status-bar" id="status-bar">마우스 좌클릭: 회전 · 우클릭: 이동 · 휠: 줌</div>
 
   <script type="module">
     import * as THREE from "three";
@@ -1943,7 +2113,11 @@
         chip.textContent = `${room.label} ${area.toFixed(1)}㎡`;
         chip.addEventListener("mouseenter", () => setHighlight(true));
         chip.addEventListener("mouseleave", () => setHighlight(false));
-        chip.addEventListener("click", () => setHighlight(!(hoveredRoomInfo && hoveredRoomInfo.label === room.label)));
+        chip.addEventListener("click", () => {
+          const willOn = !(hoveredRoomInfo && hoveredRoomInfo.label === room.label);
+          setHighlight(willOn);
+          if (willOn && window.innerWidth <= 768 && typeof closeMobileSheet === "function") closeMobileSheet();
+        });
         roomListEl.appendChild(chip);
       });
 
@@ -2004,13 +2178,16 @@
           : tierNum === 1
             ? `Tier 1 (기본형 2D)`
             : (data.metadata?.source_type || "standard");
+      const varBadge = variant === "BASE" ? "일반형" : (variant === "EXPN" ? "확장형" : "");
+      const topNameEl = document.getElementById("top-info-name");
+      const topSubEl = document.getElementById("top-info-sub");
+      if (topNameEl) topNameEl.textContent = `${data.complex_name || data.complex_code} ${data.type_id}${varBadge ? " · " + varBadge : ""}`;
+      if (topSubEl) topSubEl.textContent = `전용 ${data.area?.exclusive_m2 || "-"}㎡ · ${data.area?.rooms_count || "-"}룸/${data.area?.bathrooms_count || "-"}욕`;
       const meta = [
-        ["단지 / 타입", `${data.complex_name || data.complex_code} (${data.type_id})`],
-        ["품질 등급", tierLabel],
         ["전용면적", `${data.area?.exclusive_m2 || "-"}㎡ (${data.area?.pyeong || "-"}평)`],
         ["방 / 욕실", `${data.area?.rooms_count || "-"}룸 / ${data.area?.bathrooms_count || "-"}욕실`],
         ["외곽 크기", `${width.toFixed(1)}m × ${depth.toFixed(1)}m`],
-        ["구조 유형", data.layout_style || "-"]
+        ["평면 유형", varBadge || "표준형"]
       ];
       document.getElementById("meta-grid").innerHTML = meta.map(([k, v]) =>
         `<div class="meta-box"><div class="meta-label">${k}</div><div class="meta-val">${v}</div></div>`
@@ -2091,7 +2268,15 @@
     let selectedComplexCode = "";
     let selectedTypeFile = "";
 
+    function setLoading(show, text = "평면도 불러오는 중...") {
+      const el = document.getElementById("loading-toast");
+      const tx = document.getElementById("loading-toast-text");
+      if (tx) tx.textContent = text;
+      if (el) el.classList.toggle("show", !!show);
+    }
+
     async function loadFloorplanUrl(url, labelText = "", preserveCamera = false) {
+      setLoading(true, "평면도 불러오는 중...");
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(res.statusText);
@@ -2105,6 +2290,8 @@
         }
       } catch (err) {
         console.error("Load failed:", err);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -2177,15 +2364,22 @@
           b.classList.toggle("active", b.dataset.id === t.id);
         });
 
-        // 확장형과 일반형이 모두 있는 경우에만 토글 버튼 표시! (전환 시 현재 카메라 각도/줌 유지)
+        const mqVar = document.getElementById("mq-variant");
         if (t.expn && t.base) {
           variantBar.style.display = "grid";
           btnVarExpn.classList.toggle("active", activeVar === "EXPN");
           btnVarBase.classList.toggle("active", activeVar === "BASE");
           btnVarExpn.onclick = () => pickType(t.expn, "EXPN", true);
           btnVarBase.onclick = () => pickType(t.base, "BASE", true);
+          if (mqVar) {
+            mqVar.style.display = "block";
+            mqVar.textContent = activeVar === "EXPN" ? "확장형 ⇄" : "일반형 ⇄";
+            mqVar.classList.toggle("active", activeVar === "EXPN");
+            mqVar.onclick = () => pickType(activeVar === "EXPN" ? t.base : t.expn, activeVar === "EXPN" ? "BASE" : "EXPN", true);
+          }
         } else {
           variantBar.style.display = "none";
+          if (mqVar) mqVar.style.display = "none";
         }
 
         const varText = activeVar === "EXPN" ? "확장형" : (activeVar === "BASE" ? "일반형" : "");
@@ -2194,7 +2388,7 @@
       };
 
       typeGrid.querySelectorAll(".type-btn").forEach(btn => {
-        btn.onclick = () => pickType(btn.dataset.file);
+        btn.onclick = () => { pickType(btn.dataset.file); if (typeof closeMobileSheet === "function") closeMobileSheet(); };
       });
 
       const firstFile = targetFile || (cpx.types[0] && cpx.types[0].file);
@@ -2248,17 +2442,6 @@
       reader.readAsText(file, "utf-8");
     }
 
-
-    // Mobile drawer toggle
-    const mobileBtn = document.getElementById("mobile-toggle-btn");
-    const mainPanel = document.getElementById("main-panel");
-    if (mobileBtn && mainPanel) {
-      mobileBtn.onclick = () => {
-        const opened = mainPanel.classList.toggle("mobile-open");
-        mobileBtn.textContent = opened ? "닫기 (3D 보기)" : "단지 / 평형 선택";
-      };
-    }
-
     // Bind UI events
     document.getElementById("complex-search").oninput = (e) => renderCatalogList(e.target.value);
 
@@ -2276,18 +2459,48 @@
     document.getElementById("chk-labels").onchange = (e) => {
       labelLayer.style.display = e.target.checked ? "block" : "none";
     };
-    document.getElementById("file-input").onchange = (e) => {
-      if (e.target.files[0]) handleFile(e.target.files[0]);
-    };
-
-    const dropHint = document.getElementById("drop-hint");
-    window.addEventListener("dragover", (e) => { e.preventDefault(); dropHint.classList.add("show"); });
-    window.addEventListener("dragleave", (e) => { if (e.target === document.documentElement) dropHint.classList.remove("show"); });
-    window.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropHint.classList.remove("show");
-      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-    });
+    // Desktop panel collapse + Mobile bottom sheet & quickbar bindings
+    const mainPanel = document.getElementById("main-panel");
+    const desktopBtn = document.getElementById("desktop-collapse-btn");
+    const sheetBackdrop = document.getElementById("sheet-backdrop");
+    const mqOpenBtn = document.getElementById("mq-open-sheet");
+    const mqCamBtn = document.getElementById("mq-cam");
+    const mqLabelsBtn = document.getElementById("mq-labels");
+    function openMobileSheet() {
+      if (!mainPanel) return;
+      mainPanel.classList.add("mobile-open");
+      if (sheetBackdrop) sheetBackdrop.classList.add("show");
+    }
+    function closeMobileSheet() {
+      if (!mainPanel) return;
+      mainPanel.classList.remove("mobile-open");
+      if (sheetBackdrop) sheetBackdrop.classList.remove("show");
+    }
+    if (desktopBtn && mainPanel) {
+      desktopBtn.onclick = () => {
+        const c = mainPanel.classList.toggle("desktop-collapsed");
+        desktopBtn.classList.toggle("collapsed", c);
+        desktopBtn.textContent = c ? "▶" : "◀";
+      };
+    }
+    if (mqOpenBtn) mqOpenBtn.onclick = () => mainPanel.classList.contains("mobile-open") ? closeMobileSheet() : openMobileSheet();
+    if (sheetBackdrop) sheetBackdrop.onclick = closeMobileSheet;
+    if (mqCamBtn) {
+      mqCamBtn.onclick = () => {
+        const next = currentCamMode === "top" ? "iso" : "top";
+        setCamera(next);
+        mqCamBtn.textContent = next === "top" ? "평면 Top" : "3D 뷰";
+      };
+    }
+    if (mqLabelsBtn) {
+      mqLabelsBtn.onclick = () => {
+        const chk = document.getElementById("chk-labels");
+        if (!chk) return;
+        chk.checked = !chk.checked;
+        labelLayer.style.display = chk.checked ? "block" : "none";
+        mqLabelsBtn.classList.toggle("active", chk.checked);
+      };
+    }
 
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
