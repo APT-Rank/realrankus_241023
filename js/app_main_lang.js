@@ -3048,8 +3048,11 @@ function showDetail(index, forceMapCenter) {
   //주거 (2026-11-07: #baseModal 이미지 캡처 평가 카드 식별자 추가)
   detailHtml += `
         <div class='card' data-capture-card='eval'>
-        <div class='card-header'>
+        <div class='card-header' style='display:flex; align-items:center; justify-content:space-between; gap:8px;'>
         <div class='popTitle'><i class='fas fa-home'></i>&nbsp&nbsp${tSafe('ui.report.living', '주거')}</div>
+        <button type='button' id='btn_floorplan_header' data-code='${searchCode}' onclick='openFloorplan3d("${searchCode}")' style='display:none; align-items:center; gap:5px; padding:4px 11px; border-radius:999px; border:1px solid #334155; background:#1e293b; color:#ffffff; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; box-shadow:0 2px 6px rgba(15,23,42,0.22); transition:all 0.15s ease;' onmouseover='this.style.background="#0f172a";this.style.boxShadow="0 4px 10px rgba(15,23,42,0.32)";this.style.transform="translateY(-1px)";' onmouseout='this.style.background="#1e293b";this.style.boxShadow="0 2px 6px rgba(15,23,42,0.22)";this.style.transform="none";'>
+          <i class='fa-regular fa-map' style='color:#e2e8f0;'></i> ${isEn ? 'Floorplan' : '평면도 보기'}
+        </button>
         </div>
         <div class='card-body'>
         <div id='popLiving'>
@@ -3115,6 +3118,7 @@ function showDetail(index, forceMapCenter) {
           <th scope='col'>${tSafe("ui.report.area_label", "평형")}</th>
           <th scope='col'>${tSafe("ui.report.rooms_baths_label", "방수/욕실수")}</th>
           <th scope='col'>${tSafe("ui.report.maintenance_label", "평균 관리비")}</th>
+          <th scope='col' class='fp-col' style='display:none; text-align:center; white-space:nowrap;'>${isEn ? "Plan" : "평면도"}</th>
           </tr>
           </thead>
         `;
@@ -3135,6 +3139,7 @@ function showDetail(index, forceMapCenter) {
       } else {
         detailHtml += `<td>${Number(maintainance_array[k]).toLocaleString()}${tSafe("ui.report.won_unit", "원")}</td>`;
       }
+      detailHtml += `<td class='fp-col' data-area='${String(area_array[k]).replace(/'/g, "")}' style='display:none; text-align:center; white-space:nowrap;'><button type='button' class='btn-fp-row' style='padding:2px 10px; border-radius:999px; border:1px solid #334155; background:#1e293b; color:#ffffff; font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap; box-shadow:0 1px 4px rgba(15,23,42,0.22); transition:all 0.15s ease;' onmouseover='this.style.background="#0f172a";this.style.boxShadow="0 3px 8px rgba(15,23,42,0.32)";this.style.transform="translateY(-1px)";' onmouseout='this.style.background="#1e293b";this.style.boxShadow="0 1px 4px rgba(15,23,42,0.22)";this.style.transform="none";'>${isEn ? "View" : "보기"}</button></td>`;
       detailHtml += `</tr>`;
     }
     detailHtml += `
@@ -3727,6 +3732,7 @@ function showDetail(index, forceMapCenter) {
   $("#baseModalLabel").html(titleHtml);
   $("#aptDetail").html(detailHtml);
   checkComplex3dAvailability(searchCode);
+  checkFloorplan3dAvailability(searchCode);
   $("#footer").html(footerHtml);
 
   let randomIndex = Math.floor(Math.random() * default_comment.length);
@@ -6444,8 +6450,92 @@ var isFloorplan3dModalOpen = false;
 var floorplan3dModalHistoryToken = null;
 var floorplan3dModalHistorySequence = 0;
 var floorplan3dOpenedAt = 0;
+var FLOORPLAN_R2_INDEX_URL = "https://pub-94f5de39bb1c41df96475dfd371c08b2.r2.dev/data/floorplan_3d/index.json?v=6";
+var floorplan3dIndexPromise = null;
+var floorplan3dCatalogMap = null;
 
-function openFloorplan3dTest(code, typeId) {
+function loadFloorplan3dCatalog() {
+  if (floorplan3dCatalogMap) return Promise.resolve(floorplan3dCatalogMap);
+  if (floorplan3dIndexPromise) return floorplan3dIndexPromise;
+  floorplan3dIndexPromise = fetch(FLOORPLAN_R2_INDEX_URL)
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      var map = Object.create(null);
+      var list = (data && Array.isArray(data.complexes)) ? data.complexes : [];
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] && list[i].code) map[String(list[i].code)] = list[i];
+      }
+      floorplan3dCatalogMap = map;
+      return map;
+    })
+    .catch(function () {
+      floorplan3dIndexPromise = null;
+      return null;
+    });
+  return floorplan3dIndexPromise;
+}
+
+function matchFloorplanTypeForArea(types, areaText) {
+  if (!Array.isArray(types) || !types.length) return "";
+  var raw = String(areaText || "").trim();
+  // 1) Exact type ID token inside areaText (e.g. "84A")
+  for (var i = 0; i < types.length; i++) {
+    var tid = String(types[i].id || "");
+    if (tid && raw.toUpperCase().indexOf(tid.toUpperCase()) !== -1) return tid;
+  }
+  // 2) Match by pyeong (supply area in pyeong -> supply m2 ≈ py * 3.3058) or m2
+  var pyMatch = raw.match(/(\d+(?:\.\d+)?)\s*(?:평|py)/i);
+  var m2Match = raw.match(/(\d+(?:\.\d+)?)\s*(?:㎡|m2|m²)/i);
+  var targetSupplyM2 = pyMatch ? parseFloat(pyMatch[1]) * 3.3058 : (m2Match ? parseFloat(m2Match[1]) : NaN);
+  if (!isNaN(targetSupplyM2)) {
+    var bestId = types[0].id || "";
+    var bestDiff = Infinity;
+    for (var j = 0; j < types.length; j++) {
+      var t = types[j];
+      var num = parseFloat(String(t.id || ""));
+      if (isNaN(num)) continue;
+      var diff = Math.abs(num - targetSupplyM2);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        bestId = t.id;
+      }
+    }
+    return bestId;
+  }
+  return types[0].id || "";
+}
+
+function checkFloorplan3dAvailability(searchCode) {
+  var code = String(searchCode || "").trim();
+  if (!code) return;
+  loadFloorplan3dCatalog().then(function (map) {
+    if (!map || !map[code]) return;
+    var cpx = map[code];
+    var hdrBtn = document.getElementById("btn_floorplan_header");
+    if (hdrBtn && String(hdrBtn.getAttribute("data-code")) === code) {
+      hdrBtn.style.display = "inline-flex";
+    }
+    var fpCols = document.querySelectorAll("#popLiving .fp-col");
+    if (!fpCols || !fpCols.length) return;
+    for (var i = 0; i < fpCols.length; i++) {
+      var cell = fpCols[i];
+      cell.style.display = "table-cell";
+      var btn = cell.querySelector(".btn-fp-row");
+      if (btn) {
+        var areaText = cell.getAttribute("data-area") || "";
+        var matchedType = matchFloorplanTypeForArea(cpx.types, areaText);
+        (function (c, tid) {
+          btn.onclick = function (ev) {
+            if (ev) ev.stopPropagation();
+            openFloorplan3d(c, tid);
+          };
+        })(code, matchedType);
+      }
+    }
+  });
+}
+
+function openFloorplan3d(code, typeId) {
   var hadNoticeOpen = false;
   try {
     var noticeEl = document.getElementById("noticeModal");
@@ -6466,7 +6556,6 @@ function openFloorplan3dTest(code, typeId) {
 
   var mobileFlag = (typeof isMobile !== "undefined" && isMobile) || (window.innerWidth <= 768);
   if (mobileFlag) {
-    // noticeModal이 닫히며 발생시키는 history.back() / popstate와 충돌하지 않도록 닫힌 뒤 열기!
     setTimeout(function () {
       openFloorplan3dModal(qs);
     }, hadNoticeOpen ? 320 : 0);
@@ -6474,6 +6563,10 @@ function openFloorplan3dTest(code, typeId) {
     var url = "./floorplan3d/index.html" + (qs.length ? "?" + qs.join("&") : "");
     window.open(url, "_blank");
   }
+}
+
+function openFloorplan3dTest(code, typeId) {
+  openFloorplan3d(code, typeId);
 }
 
 window.addEventListener("message", function (event) {
@@ -6499,10 +6592,9 @@ function openFloorplan3dModal(qsList) {
     modalEl.id = "floorplan3dModal";
     modalEl.style.cssText = "display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background-color:#10141c;z-index:100002;overscroll-behavior:none;-webkit-overflow-scrolling:touch;";
     modalEl.innerHTML =
-      '<button type="button" onclick="closeFloorplan3dModal()" style="position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;z-index:10;background:rgba(15,23,42,0.88);color:#f8fafc;border:1px solid rgba(255,255,255,0.28);border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;">← 닫기</button>' +
       '<div id="floorplan3d_modal_loader" style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#261a24 0%,#10141c 85%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;color:#fff;pointer-events:none;">' +
-      '<div style="font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:4px;">3D 평면도 준비 중</div>' +
-      '<div style="font-size:12px;color:#94a3b8;">실내 3D 평면도 엔진을 불러오고 있습니다...</div></div>';
+      '<div style="font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:4px;">평면도 준비 중</div>' +
+      '<div style="font-size:12px;color:#94a3b8;">입체 평면도를 불러오고 있습니다...</div></div>';
     document.body.appendChild(modalEl);
   }
 
