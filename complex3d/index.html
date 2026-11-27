@@ -11,6 +11,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/css/SpoqaHanSansNeo.min.css" rel="stylesheet" />
   <!-- Naver Maps API v3 -->
   <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=kgh4ynr4a1"></script>
+  <!-- html2canvas for full-view screenshot capture -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -632,6 +634,46 @@
       background: #E43B46;
       border-color: #E43B46;
     }
+    .pov-capture-btn {
+      position: absolute;
+      top: -1px;
+      right: calc(100% + 64px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      color: #1e293b;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 50%;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .pov-capture-btn:hover {
+        color: #ffffff;
+        background: #E43B46;
+        border-color: #E43B46;
+      }
+    }
+    .pov-capture-btn.is-capturing {
+      color: #ffffff !important;
+      background: #E43B46 !important;
+      border-color: #E43B46 !important;
+      box-shadow: 0 4px 12px rgba(228, 59, 70, 0.35) !important;
+    }
+    .pov-capture-btn:disabled {
+      cursor: wait;
+    }
+    .pov-mobile-capture-btn {
+      display: none;
+    }
     .pov-close-btn {
       display: inline-flex;
       align-items: center;
@@ -1196,6 +1238,15 @@
         align-items: center !important;
         justify-content: center !important;
       }
+      .capture-floating-btn {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 0 !important;
+        font-size: 14px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.78) !important;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.10) !important;
+      }
       .nav-toolbar .mobile-neighbor-toggle {
         display: flex;
         align-items: center;
@@ -1628,6 +1679,46 @@
       .pov-back-btn:active {
         background: rgba(228, 59, 70, 0.10);
         color: #E43B46;
+      }
+      .pov-capture-btn {
+        display: none !important;
+      }
+      .pov-mobile-capture-btn {
+        position: fixed;
+        left: 30px;
+        bottom: 136px;
+        z-index: 81;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.10);
+        color: #1e293b;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.24s ease, visibility 0s linear;
+      }
+      .pov-mobile-capture-btn.sheet-stage-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.24s ease, visibility 0s linear 0.24s;
+      }
+      .pov-mobile-capture-btn.is-capturing {
+        background: #E43B46 !important;
+        color: #ffffff !important;
+        border-color: #E43B46 !important;
+        box-shadow: 0 4px 12px rgba(228, 59, 70, 0.35) !important;
+      }
+      .pov-mobile-capture-btn:disabled {
+        cursor: wait;
       }
       .pov-close-btn {
         display: none !important;
@@ -2082,6 +2173,42 @@
       border-color: #E43B46;
       box-shadow: 0 2px 8px rgba(228, 59, 70, 0.35);
     }
+    .capture-floating-btn {
+      width: 44px;
+      height: 44px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+      color: #1e293b;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .capture-floating-btn:hover {
+        background: #E43B46;
+        color: #ffffff;
+        border-color: #E43B46;
+        box-shadow: 0 4px 12px rgba(228, 59, 70, 0.35);
+      }
+    }
+    .capture-floating-btn.is-capturing {
+      background: #E43B46 !important;
+      color: #ffffff !important;
+      border-color: #E43B46 !important;
+      box-shadow: 0 4px 12px rgba(228, 59, 70, 0.35) !important;
+    }
+    .capture-floating-btn:disabled {
+      cursor: wait;
+    }
 
     /* Sun Metric Box */
     .sun-metric-box {
@@ -2253,7 +2380,7 @@
   <script src="./js/three.min.js"></script>
   <script src="./js/OrbitControls.js"></script>
   <script src="./js/regions_map.js?v=20261111_0835"></script>
-  <script src="./js/complex_3d_view.js?v=20261117_1100"></script>
+  <script src="./js/complex_3d_view.js?v=20261127_2300"></script>
 </head>
 <body>
 
@@ -2333,6 +2460,9 @@
       <input type="checkbox" id="mobile-layer-neighbors" checked>
       <span>주변건물</span>
     </label>
+    <button type="button" class="capture-floating-btn" id="btn-capture-screenshot" title="스크린캡쳐 (PNG 저장)" aria-label="스크린캡쳐">
+      <i class="fa-solid fa-camera"></i>
+    </button>
   </div>
 
   <!-- Controls -->
@@ -2606,42 +2736,45 @@
       </defs>
 
       <!-- 1. 고투명 발코니 틴트 유리창 레이어 (좌/우 창) -->
-      <rect x="18" y="18" width="476" height="564" fill="rgba(224, 242, 254, 0.03)" />
-      <rect x="18" y="18" width="476" height="564" fill="url(#glassSheen)" />
-      <rect x="506" y="18" width="476" height="564" fill="rgba(224, 242, 254, 0.03)" />
-      <rect x="506" y="18" width="476" height="564" fill="url(#glassSheen)" />
+      <rect x="10" y="10" width="487" height="577" fill="rgba(224, 242, 254, 0.03)" />
+      <rect x="10" y="10" width="487" height="577" fill="url(#glassSheen)" />
+      <rect x="503" y="10" width="487" height="577" fill="rgba(224, 242, 254, 0.03)" />
+      <rect x="503" y="10" width="487" height="577" fill="url(#glassSheen)" />
 
-      <!-- 2. 외곽 알루미늄 섀시 프레임 (상/하/좌/우) -->
-      <rect x="0" y="0" width="1000" height="20" fill="url(#chassisGradH)"/>
-      <line x1="0" y1="20" x2="1000" y2="20" stroke="#475569" stroke-width="1"/>
-      <rect x="0" y="0" width="20" height="600" fill="url(#chassisGradV)"/>
-      <line x1="20" y1="0" x2="20" y2="600" stroke="#475569" stroke-width="1"/>
-      <rect x="980" y="0" width="20" height="600" fill="url(#chassisGradV)"/>
-      <line x1="980" y1="0" x2="980" y2="600" stroke="#475569" stroke-width="1"/>
+      <!-- 2. 외곽 알루미늄 섀시 프레임 (상/하/좌/우 - 1/2 슬림 두께) -->
+      <rect x="0" y="0" width="1000" height="10" fill="url(#chassisGradH)"/>
+      <line x1="0" y1="10" x2="1000" y2="10" stroke="#475569" stroke-width="1"/>
+      <rect x="0" y="0" width="10" height="600" fill="url(#chassisGradV)"/>
+      <line x1="10" y1="0" x2="10" y2="600" stroke="#475569" stroke-width="1"/>
+      <rect x="990" y="0" width="10" height="600" fill="url(#chassisGradV)"/>
+      <line x1="990" y1="0" x2="990" y2="600" stroke="#475569" stroke-width="1"/>
       <!-- 하단 발코니 창틀/턱 (Sill) -->
-      <rect x="0" y="574" width="1000" height="26" fill="url(#chassisGradH)"/>
-      <line x1="0" y1="574" x2="1000" y2="574" stroke="#64748b" stroke-width="1.5"/>
+      <rect x="0" y="587" width="1000" height="13" fill="url(#chassisGradH)"/>
+      <line x1="0" y1="587" x2="1000" y2="587" stroke="#64748b" stroke-width="1"/>
 
       <!-- 3. 중앙 수직 멀리언 (Center Mullion Post) -->
-      <rect x="494" y="0" width="12" height="600" fill="url(#chassisGradV)"/>
-      <line x1="494" y1="0" x2="494" y2="600" stroke="#475569" stroke-width="0.8"/>
-      <line x1="506" y1="0" x2="506" y2="600" stroke="#475569" stroke-width="0.8"/>
+      <rect x="497" y="0" width="6" height="600" fill="url(#chassisGradV)"/>
+      <line x1="497" y1="0" x2="497" y2="600" stroke="#475569" stroke-width="0.8"/>
+      <line x1="503" y1="0" x2="503" y2="600" stroke="#475569" stroke-width="0.8"/>
 
-      <!-- 4. 하단 안전 강화유리 난간 트랜섬 바 (Safety Railing Bar - 눈높이 기준 하단 38%) -->
-      <rect x="20" y="440" width="960" height="10" rx="2" fill="url(#railGrad)"/>
-      <line x1="20" y1="440" x2="980" y2="440" stroke="#94a3b8" stroke-width="1"/>
+      <!-- 4. 하단 안전 강화유리 난간 트랜섬 바 (Safety Railing Bar) -->
+      <rect x="10" y="440" width="980" height="5" rx="1" fill="url(#railGrad)"/>
+      <line x1="10" y1="440" x2="990" y2="440" stroke="#94a3b8" stroke-width="0.8"/>
       <!-- 난간 지지 포스트 2개 -->
-      <rect x="250" y="450" width="6" height="124" fill="#334155"/>
-      <rect x="744" y="450" width="6" height="124" fill="#334155"/>
+      <rect x="250" y="445" width="3" height="142" fill="#334155"/>
+      <rect x="747" y="445" width="3" height="142" fill="#334155"/>
       <!-- 하단 안전유리 패널 미세 틴트 -->
-      <rect x="20" y="450" width="474" height="124" fill="rgba(224, 242, 254, 0.05)"/>
-      <rect x="506" y="450" width="474" height="124" fill="rgba(224, 242, 254, 0.05)"/>
+      <rect x="10" y="445" width="487" height="142" fill="rgba(224, 242, 254, 0.05)"/>
+      <rect x="503" y="445" width="487" height="142" fill="rgba(224, 242, 254, 0.05)"/>
     </svg>
   </div>
 
   <!-- Floor POV HUD Banner -->
   <div id="pov-top-hud" class="pov-top-hud" style="display: none;">
   <div id="floor-pov-banner" class="floor-pov-banner" style="display: none;">
+    <button id="btn-pov-capture-screenshot" class="pov-capture-btn" type="button" title="스크린캡쳐 (PNG 저장)" aria-label="스크린캡쳐">
+      <i class="fa-solid fa-camera"></i>
+    </button>
     <button id="pov-back-btn" class="pov-back-btn" type="button" title="세대뷰 종료" aria-label="세대뷰 종료">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
@@ -2739,6 +2872,10 @@
       <i class="fa-solid fa-border-all"></i> 발코니 창틀 <span id="frame-status-text" class="frame-status-badge">ON</span>
     </button>
   </div>
+
+  <button id="btn-pov-mobile-capture" class="pov-mobile-capture-btn sheet-stage-hidden" type="button" title="스크린캡쳐 (PNG 저장)" aria-label="스크린캡쳐">
+    <i class="fa-solid fa-camera"></i>
+  </button>
 
   <label id="pov-mobile-neighbor-toggle" class="pov-mobile-neighbor-toggle sheet-stage-hidden" for="pov-mobile-layer-neighbors" aria-label="주변건물 표시">
     <input type="checkbox" id="pov-mobile-layer-neighbors" checked>
@@ -2950,7 +3087,7 @@
       // 로딩 매니저 시작
       LoadingManager.start(aptData ? aptData["아파트명"] : "");
 
-      if (!code) code = "111515"; // Default fallback to Heliocity
+      if (!code) code = "121971"; // Default fallback to DH Xi Gaepo (디에이치자이개포)
 
       // Fetch 3D data from Cloudflare R2 CDN (or local in dev environment) with cache-busting
       var cacheBuster = "v=" + Date.now();
@@ -3357,6 +3494,342 @@
             });
           }
 
+          // 스크린캡쳐 (PNG 저장 - 웹 기준 전체 화면, 지정 UI 제외)
+          async function captureScreenAsPng(triggerBtn) {
+            if (!window.html2canvas) {
+              alert('스크린캡쳐 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+              return;
+            }
+            var isMobileViewport = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+            var capW = 1920;
+            var capH = 1080;
+            var captureScale = 1.5;
+            var iconEl = triggerBtn ? triggerBtn.querySelector('i') : null;
+            if (triggerBtn) {
+              triggerBtn.classList.add('is-capturing');
+              triggerBtn.disabled = true;
+            }
+            if (iconEl) iconEl.className = 'fa-solid fa-spinner fa-spin';
+
+            try {
+              await new Promise(function (resolve) {
+                window.requestAnimationFrame(function () {
+                  window.requestAnimationFrame(resolve);
+                });
+              });
+              var webglFrameUrl = (viewInstance && typeof viewInstance.captureWebGLFrame === 'function')
+                ? viewInstance.captureWebGLFrame(capW, capH, captureScale)
+                : null;
+              var decodedFrameImg = null;
+              if (webglFrameUrl) {
+                decodedFrameImg = new Image();
+                decodedFrameImg.src = webglFrameUrl;
+                if (typeof decodedFrameImg.decode === 'function') {
+                  try { await decodedFrameImg.decode(); } catch (e) {}
+                }
+              }
+
+              var canvas = await window.html2canvas(document.body, {
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#0b111e',
+                logging: false,
+                width: capW,
+                height: capH,
+                windowWidth: capW,
+                windowHeight: capH,
+                scale: captureScale,
+                onclone: function (clonedDoc) {
+                  if (isMobileViewport) {
+                    clonedDoc.querySelectorAll('style').forEach(function (st) {
+                      if (st.textContent && st.textContent.indexOf('(max-width: 768px), (pointer: coarse)') !== -1) {
+                        st.textContent = st.textContent.replace(
+                          /@media\s*\(max-width:\s*768px\)\s*,\s*\(pointer:\s*coarse\)/g,
+                          '@media (max-width: 1px)'
+                        );
+                      }
+                    });
+                    clonedDoc.body.classList.remove('is-sheet-busy');
+                    var cp = clonedDoc.getElementById('control-panel');
+                    if (cp) {
+                      cp.classList.remove('stage-1', 'stage-2', 'stage-3', 'is-stage-preparing');
+                      cp.removeAttribute('style');
+                    }
+                    var cpExp = clonedDoc.getElementById('control-panel-expandable');
+                    if (cpExp) {
+                      cpExp.removeAttribute('style');
+                    }
+                    var povTitleClone = clonedDoc.getElementById('pov-title-text');
+                    var cpxNameEl = document.getElementById('complex_name_display');
+                    var cpxNameTxt = cpxNameEl ? String(cpxNameEl.textContent || '').trim() : '';
+                    if (povTitleClone && cpxNameTxt && String(povTitleClone.textContent || '').indexOf(cpxNameTxt) !== 0) {
+                      povTitleClone.textContent = cpxNameTxt + ' ' + String(povTitleClone.textContent || '').trim();
+                    }
+                  }
+
+                  ['#pov-top-hud', '#floor-pov-banner', '#pov-direction-hud'].forEach(function (animSel) {
+                    var animEl = clonedDoc.querySelector(animSel);
+                    if (animEl) {
+                      animEl.style.setProperty('animation', 'none', 'important');
+                      animEl.style.setProperty('transition', 'none', 'important');
+                      if (animEl.style.display !== 'none') {
+                        animEl.style.setProperty('opacity', '1', 'important');
+                      }
+                    }
+                  });
+
+                  clonedDoc.documentElement.style.width = capW + 'px';
+                  clonedDoc.documentElement.style.height = capH + 'px';
+                  clonedDoc.body.style.width = capW + 'px';
+                  clonedDoc.body.style.height = capH + 'px';
+                  var clonedCanvas = clonedDoc.querySelector('#complex3d_container canvas');
+                  if (clonedCanvas) {
+                    if (decodedFrameImg && clonedCanvas.parentNode) {
+                      var frameCanvas = clonedDoc.createElement('canvas');
+                      frameCanvas.width = Math.round(capW * captureScale);
+                      frameCanvas.height = Math.round(capH * captureScale);
+                      frameCanvas.style.cssText = 'width:' + capW + 'px;height:' + capH + 'px;display:block;';
+                      var fCtx = frameCanvas.getContext('2d');
+                      if (fCtx) fCtx.drawImage(decodedFrameImg, 0, 0, frameCanvas.width, frameCanvas.height);
+                      clonedCanvas.parentNode.replaceChild(frameCanvas, clonedCanvas);
+                    } else if (webglFrameUrl && clonedCanvas.parentNode) {
+                      var frameImg = clonedDoc.createElement('img');
+                      frameImg.src = webglFrameUrl;
+                      frameImg.style.cssText = 'width:' + capW + 'px;height:' + capH + 'px;display:block;';
+                      clonedCanvas.parentNode.replaceChild(frameImg, clonedCanvas);
+                    } else {
+                      clonedCanvas.style.width = capW + 'px';
+                      clonedCanvas.style.height = capH + 'px';
+                    }
+                  }
+
+                  // 창밖조망 2D 발코니 창틀 SVG 전체 화면 폭으로 보정
+                  var clonedBalcony = clonedDoc.getElementById('balcony-2d-frame-overlay');
+                  if (clonedBalcony) {
+                    clonedBalcony.style.width = capW + 'px';
+                    clonedBalcony.style.height = capH + 'px';
+                    var clonedSvg = clonedBalcony.querySelector('svg');
+                    if (clonedSvg) {
+                      clonedSvg.setAttribute('width', String(capW));
+                      clonedSvg.setAttribute('height', String(capH));
+                      clonedSvg.style.width = capW + 'px';
+                      clonedSvg.style.height = capH + 'px';
+                    }
+                  }
+
+                  // 창밖조망 레이더 HUD를 웹과 동일하게 우측 하단으로 복원
+                  var clonedRadar = clonedDoc.getElementById('pov-direction-hud');
+                  if (clonedRadar && clonedRadar.style.display !== 'none') {
+                    clonedRadar.classList.remove('sheet-stage-hidden');
+                    clonedRadar.style.removeProperty('bottom');
+                    clonedRadar.style.removeProperty('top');
+                    clonedRadar.style.removeProperty('left');
+                    clonedRadar.style.removeProperty('right');
+                    clonedRadar.style.removeProperty('transform');
+                  }
+
+                  // html2canvas는 display: contents를 지원하지 않아 세대뷰 배너 폭이 어긋나므로 래퍼를 언래핑
+                  ['.pov-banner-content', '.pov-title-row', '.pov-controls-row'].forEach(function (wrapSel) {
+                    clonedDoc.querySelectorAll(wrapSel).forEach(function (wrap) {
+                      var parent = wrap.parentNode;
+                      if (!parent) return;
+                      while (wrap.firstChild) {
+                        parent.insertBefore(wrap.firstChild, wrap);
+                      }
+                      parent.removeChild(wrap);
+                    });
+                  });
+
+                  // html2canvas에서 네이티브 <select> 텍스트가 아래로 치우치는 문제 보정
+                  clonedDoc.querySelectorAll('.pov-selection-field select').forEach(function (sel) {
+                    var origSel = document.getElementById(sel.id);
+                    var rectW = origSel ? Math.round(origSel.getBoundingClientRect().width) : 0;
+                    var selectedOpt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+                    var labelText = selectedOpt ? selectedOpt.textContent.trim() : '';
+                    var proxy = clonedDoc.createElement('div');
+                    proxy.style.cssText = [
+                      'display: inline-flex',
+                      'align-items: center',
+                      'justify-content: space-between',
+                      'gap: 6px',
+                      'height: 28px',
+                      rectW > 0 ? ('width: ' + rectW + 'px') : 'min-width: 64px',
+                      'box-sizing: border-box',
+                      'padding: 0 7px',
+                      'color: #1e293b',
+                      'background: #ffffff',
+                      'border: 1px solid #cbd5e1',
+                      'border-radius: 5px',
+                      'font-family: inherit',
+                      'font-size: 11px',
+                      'font-weight: 700',
+                      'line-height: 1',
+                      'white-space: nowrap'
+                    ].join(';');
+                    var txtSpan = clonedDoc.createElement('span');
+                    txtSpan.textContent = labelText;
+                    txtSpan.style.cssText = 'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1;';
+                    var arrow = clonedDoc.createElement('i');
+                    arrow.className = 'fa-solid fa-chevron-down';
+                    arrow.style.cssText = 'font-size: 9px; color: #64748b; flex-shrink: 0;';
+                    proxy.appendChild(txtSpan);
+                    proxy.appendChild(arrow);
+                    if (sel.parentNode) {
+                      sel.parentNode.replaceChild(proxy, sel);
+                    }
+                  });
+
+                  var povCloseClone = clonedDoc.getElementById('pov-close-btn');
+                  if (povCloseClone) {
+                    povCloseClone.style.flexShrink = '0';
+                    povCloseClone.style.position = 'relative';
+                    povCloseClone.style.zIndex = '2';
+                  }
+
+                  [
+                    '.zoom-box',
+                    '#camera-preset-panel',
+                    '#control-panel-expandable > div:nth-child(3)',
+                    '#dong-selection-panel',
+                    '#btn-capture-screenshot',
+                    '#btn-pov-capture-screenshot',
+                    '#btn-pov-mobile-capture',
+                    '.mobile-neighbor-toggle',
+                    '#pov-mobile-neighbor-toggle',
+                    '.bottom-hint'
+                  ].forEach(function (sel) {
+                    clonedDoc.querySelectorAll(sel).forEach(function (el) {
+                      el.style.setProperty('display', 'none', 'important');
+                    });
+                  });
+                }
+              });
+
+              var titleEl = document.getElementById('complex_name_display');
+              var rawName = String((titleEl && titleEl.textContent) || '리얼Fly맵').trim();
+              var safeName = rawName.replace(/[\\/:*?"<>|]/g, '_');
+              var now = new Date();
+              var pad = function (n) { return String(n).padStart(2, '0'); };
+              var yyyy = now.getFullYear();
+              var mm = pad(now.getMonth() + 1);
+              var dd = pad(now.getDate());
+              var hh = pad(now.getHours());
+              var mi = pad(now.getMinutes());
+              var ss = pad(now.getSeconds());
+              var ts = yyyy + mm + dd + '_' + hh + mi + ss;
+              var captureDateTimeStr = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + mi + ':' + ss;
+
+              // 상·하단 리얼랭커스 워터마크 합성 (검정 배경)
+              var realScale = (canvas.width / capW) || 1;
+              var headerHeight = Math.round(32 * realScale);
+              var footerHeight = Math.round(36 * realScale);
+              var finalCanvas = document.createElement('canvas');
+              finalCanvas.width = canvas.width;
+              finalCanvas.height = canvas.height + headerHeight + footerHeight;
+              var ctx = finalCanvas.getContext('2d');
+              ctx.setTransform(1, 0, 0, 1, 0, 0);
+              ctx.fillStyle = '#000000';
+              ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+              var padX = 10 * realScale;
+              var fontStack = '"Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+              ctx.font = '600 ' + (11.5 * realScale) + 'px ' + fontStack;
+              ctx.fillStyle = '#f1f5f9';
+              ctx.textBaseline = 'top';
+              ctx.textAlign = 'left';
+              ctx.fillText('리얼Fly맵', padX, 10 * realScale);
+
+              ctx.beginPath();
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+              ctx.lineWidth = 1 * realScale;
+              ctx.moveTo(0, headerHeight - 0.5 * realScale);
+              ctx.lineTo(finalCanvas.width, headerHeight - 0.5 * realScale);
+              ctx.stroke();
+
+              ctx.drawImage(canvas, 0, headerHeight);
+
+              var lineY = headerHeight + canvas.height + 2 * realScale;
+              ctx.beginPath();
+              ctx.setLineDash([4 * realScale, 3 * realScale]);
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+              ctx.lineWidth = 1 * realScale;
+              ctx.moveTo(padX, lineY);
+              ctx.lineTo(finalCanvas.width - padX, lineY);
+              ctx.stroke();
+              ctx.setLineDash([]);
+
+              ctx.font = (8 * realScale) + 'px ' + fontStack;
+              ctx.fillStyle = '#94a3b8';
+              ctx.textBaseline = 'top';
+              ctx.fillText('Captured at', padX, lineY + 7 * realScale);
+              ctx.fillText(captureDateTimeStr, padX, lineY + 17 * realScale);
+
+              var fontBrand = 'bold ' + (11 * realScale) + 'px ' + fontStack;
+              var fontSep = (10 * realScale) + 'px ' + fontStack;
+              var fontDomain = (11 * realScale) + 'px ' + fontStack;
+              ctx.font = fontDomain;
+              var domainWidth = ctx.measureText('realrankus.com').width;
+              ctx.font = fontSep;
+              var sepWidth = ctx.measureText('|').width;
+              ctx.font = fontBrand;
+              var brandWidth = ctx.measureText('리얼랭커스').width;
+
+              var totalRightWidth = brandWidth + (4 * realScale) + sepWidth + (4 * realScale) + domainWidth;
+              var rightStartX = finalCanvas.width - padX - totalRightWidth;
+              var textY = lineY + 11 * realScale;
+
+              ctx.font = fontBrand;
+              ctx.fillStyle = '#E43B46';
+              ctx.fillText('리얼랭커스', rightStartX, textY);
+
+              ctx.font = fontSep;
+              ctx.fillStyle = '#475569';
+              ctx.fillText('|', rightStartX + brandWidth + 4 * realScale, textY);
+
+              ctx.font = fontDomain;
+              ctx.fillStyle = '#cbd5e1';
+              ctx.fillText('realrankus.com', rightStartX + brandWidth + 4 * realScale + sepWidth + 4 * realScale, textY);
+
+              var link = document.createElement('a');
+              link.download = safeName + '_리얼Fly맵_' + ts + '.png';
+              link.href = finalCanvas.toDataURL('image/png');
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            } catch (err) {
+              console.error('[Screenshot] 캡쳐 실패:', err);
+              alert('스크린캡쳐 저장에 실패했습니다.\n' + (err && err.message ? err.message : String(err)));
+            } finally {
+              if (iconEl) iconEl.className = 'fa-solid fa-camera';
+              if (triggerBtn) {
+                triggerBtn.classList.remove('is-capturing');
+                triggerBtn.disabled = false;
+                if (typeof triggerBtn.blur === 'function') triggerBtn.blur();
+              }
+            }
+          }
+
+          var btnCaptureScreenshot = document.getElementById('btn-capture-screenshot');
+          if (btnCaptureScreenshot) {
+            btnCaptureScreenshot.addEventListener('click', function () {
+              captureScreenAsPng(btnCaptureScreenshot);
+            });
+          }
+
+          var btnPovCaptureScreenshot = document.getElementById('btn-pov-capture-screenshot');
+          if (btnPovCaptureScreenshot) {
+            btnPovCaptureScreenshot.addEventListener('click', function () {
+              captureScreenAsPng(btnPovCaptureScreenshot);
+            });
+          }
+
+          var btnPovMobileCapture = document.getElementById('btn-pov-mobile-capture');
+          if (btnPovMobileCapture) {
+            btnPovMobileCapture.addEventListener('click', function () {
+              captureScreenAsPng(btnPovMobileCapture);
+            });
+          }
+
           // 1. Compass Cardinal direction buttons binding (동서남북 카메라 전환)
           document.querySelectorAll('[data-dir]').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
@@ -3628,6 +4101,7 @@
             var radarHud = document.getElementById('pov-direction-hud');
             var bottomSheet = document.getElementById('control-panel');
             var povNeighborToggle = document.getElementById('pov-mobile-neighbor-toggle');
+            var povMobileCaptureBtn = document.getElementById('btn-pov-mobile-capture');
             var isMobilePOVVisible = currentPOVInfo && banner && banner.style.display !== 'none';
 
             if (disclaimer && isMobile && isMobilePOVVisible && disclaimer.style.display !== 'none') {
@@ -3640,16 +4114,27 @@
               if (isMobilePOVVisible && isMobile) {
                 if (bottomSheet && bottomSheet.classList.contains('stage-3')) {
                   povNeighborToggle.classList.add('sheet-stage-hidden');
+                  if (povMobileCaptureBtn) povMobileCaptureBtn.classList.add('sheet-stage-hidden');
                 } else {
                   povNeighborToggle.classList.remove('sheet-stage-hidden');
+                  if (povMobileCaptureBtn) povMobileCaptureBtn.classList.remove('sheet-stage-hidden');
                   if (bottomSheet) {
                     var neighborSheetTop = bottomSheet.getBoundingClientRect().top;
-                    povNeighborToggle.style.bottom = Math.ceil(window.innerHeight - neighborSheetTop + 12) + 'px';
+                    var neighborBottomPx = Math.ceil(window.innerHeight - neighborSheetTop + 12);
+                    povNeighborToggle.style.bottom = neighborBottomPx + 'px';
+                    if (povMobileCaptureBtn) {
+                      var toggleH = povNeighborToggle.getBoundingClientRect().height || 27;
+                      povMobileCaptureBtn.style.bottom = Math.ceil(neighborBottomPx + toggleH + 8) + 'px';
+                    }
                   }
                 }
               } else {
                 povNeighborToggle.classList.add('sheet-stage-hidden');
                 povNeighborToggle.style.removeProperty('bottom');
+                if (povMobileCaptureBtn) {
+                  povMobileCaptureBtn.classList.add('sheet-stage-hidden');
+                  povMobileCaptureBtn.style.removeProperty('bottom');
+                }
               }
             }
 
@@ -4092,6 +4577,8 @@
 
                 var navDock = document.querySelector('.nav-toolbar');
                 if (navDock) navDock.style.display = isMobilePOVViewport() ? 'none' : '';
+                var capFloatBtn = document.getElementById('btn-capture-screenshot');
+                if (capFloatBtn) capFloatBtn.style.display = 'none';
 
                 if (layerNb && viewInstance && typeof viewInstance.getNeighborsVisible === 'function') {
                   layerNb.checked = viewInstance.getNeighborsVisible();
@@ -4154,6 +4641,8 @@
             // 숨김 버튼들 원복
             var dongGroup = document.getElementById('dong_btn_group');
             if (dongGroup) dongGroup.style.display = '';
+            var capFloatBtn = document.getElementById('btn-capture-screenshot');
+            if (capFloatBtn) capFloatBtn.style.display = '';
 
             var cpReset = document.getElementById('cp-btn-reset');
             var cpTop = document.getElementById('cp-btn-top');

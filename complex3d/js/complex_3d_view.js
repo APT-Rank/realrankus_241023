@@ -6025,6 +6025,72 @@ function renderComplex3dView(containerId, data3d, aptRankInfo) {
     getTerrainEnabled: function () {
       return terrainEnabled;
     },
+    renderOnce: function () {
+      renderer.render(scene, camera);
+    },
+    prepareCaptureViewport: function (targetW, targetH) {
+      var curW = container.clientWidth || window.innerWidth;
+      var curH = container.clientHeight || window.innerHeight;
+      var w = Number(targetW) || curW;
+      var h = Number(targetH) || curH;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+      renderer.render(scene, camera);
+      return { width: curW, height: curH };
+    },
+    captureWebGLFrame: function (targetW, targetH, targetScale) {
+      var curW = container.clientWidth || window.innerWidth;
+      var curH = container.clientHeight || window.innerHeight;
+      var curDpr = renderer.getPixelRatio();
+      var w = Number(targetW) || curW;
+      var h = Number(targetH) || curH;
+      var s = Number(targetScale) || 1.5;
+      try {
+        renderer.setPixelRatio(s);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h, false);
+        renderer.render(scene, camera);
+        return renderer.domElement.toDataURL('image/png');
+      } finally {
+        renderer.setPixelRatio(curDpr);
+        camera.aspect = curW / curH;
+        camera.updateProjectionMatrix();
+        renderer.setSize(curW, curH, true);
+        renderer.render(scene, camera);
+      }
+    },
+    restoreCaptureViewport: function () {
+      var curW = container.clientWidth || window.innerWidth;
+      var curH = container.clientHeight || window.innerHeight;
+      camera.aspect = curW / curH;
+      camera.updateProjectionMatrix();
+      renderer.setSize(curW, curH, true);
+      renderer.render(scene, camera);
+    },
+    captureScreenshot: function () {
+      try {
+        renderer.render(scene, camera);
+        var dataUrl = renderer.domElement.toDataURL('image/png');
+        var rawName = String((data3d && (data3d.complexName || data3d.name)) || '리얼Fly맵').trim();
+        var safeName = rawName.replace(/[\\/:*?"<>|]/g, '_');
+        var now = new Date();
+        var pad = function (n) { return String(n).padStart(2, '0'); };
+        var ts = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + '_' + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+        var filename = safeName + '_리얼Fly맵_' + ts + '.png';
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return { ok: true, filename: filename };
+      } catch (err) {
+        console.error('[Complex3DView] 스크린캡쳐 실패:', err);
+        return { ok: false, error: err && err.message ? err.message : String(err) };
+      }
+    },
     getInfraStats: function () {
       return {
         elementary: infraGroups.elementary ? infraGroups.elementary.children.length : 0,
