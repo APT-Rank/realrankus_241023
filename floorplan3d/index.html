@@ -5042,7 +5042,7 @@
         btnVarBase.onclick = () => { if (t.base) pickType(t.base, "BASE", true); };
 
         const varText = activeVar === "EXPN" ? "확장형" : (activeVar === "BASE" ? "일반형" : "");
-        const url = `${R2_BASE_URL}/${cpx.code}/${targetFileName}?v=6`;
+        const url = `${R2_BASE_URL}/${cpx.code}/${targetFileName}?v=7`;
         loadFloorplanUrl(url, `${cpx.name} · ${t.id} ${varText} (전용 ${t.excl || "-"}㎡)`, preserveCamera);
       };
 
@@ -5057,7 +5057,7 @@
 
     async function initCatalog() {
       try {
-        const res = await fetch(`${R2_BASE_URL}/index.json?v=6`);
+        const res = await fetch(`${R2_BASE_URL}/index.json?v=7`);
         if (!res.ok) throw new Error(res.statusText);
         const cat = await res.json();
         catalogComplexes = cat.complexes || [];
