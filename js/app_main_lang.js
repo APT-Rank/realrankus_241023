@@ -6392,7 +6392,7 @@ function openRealPlannerModal(startCodeParam) {
   iframe.id = "realplanner_iframe";
   iframe.src = iframeUrl;
   iframe.allow = "geolocation; fullscreen";
-  iframe.style.cssText = "position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: transparent; display: block;";
+  iframe.style.cssText = "position: relative; z-index: 2; width: 100%; height: 100%; border: none; background: #ffffff; display: block; -webkit-transform: translateZ(0); transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden;";
 
   var loader = document.getElementById("realplanner_modal_loader");
   if (loader) loader.style.display = "flex";

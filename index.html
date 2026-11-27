@@ -725,8 +725,11 @@
   </div>
 
   <!-- 2026-11-22: 리얼플래너(RealPlanner) 현장답사 풀스크린 모달 (#realplannerModal) -->
+  <!-- 2026-11-27: 모바일 지도 드래그 깜빡임 방지용 불투명 흰색 백킹 및 GPU 가속 레이어 격리 (#radarModal 동일 적용) -->
   <div id="realplannerModal"
-    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 100001; overscroll-behavior: none; -webkit-overflow-scrolling: touch;">
+    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 100001; overscroll-behavior: none; -webkit-overflow-scrolling: touch; -webkit-transform: translateZ(0); transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden; isolation: isolate; contain: paint;">
+    <!-- 지도 하단 100% 불투명 흰색 백킹 레이어 (하위 메인 지도와의 그래픽 합성 간섭 차단) -->
+    <div id="realplannerModalBg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 0; pointer-events: none;"></div>
     <div id="realplanner_modal_loader" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; color: #1e293b; pointer-events: none;">
       <div style="font-size: 34px; color: #E43B46; margin-bottom: 14px;"><i class="fa-solid fa-route fa-beat-fade"></i></div>
       <div style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 4px;" id="realplanner_modal_loader_title">리얼플래너 준비 중</div>
@@ -770,7 +773,7 @@
   <script defer src="./js/gli_chart_renderer.js?v=20260614"></script>
   <!-- 2026-11-08: #complex_visit_info 방문자 집계 복원 및 #baseModal 단지 입지분석 이미지 캡처 기능 반영 (모바일/웹 딥클론 동결 캡처 완벽 보장) -->
   <script defer src="./js/radar_modal_view.js?v=20261122_01"></script>
-  <script defer src="./js/app_main_lang.js?v=20261126_01"></script>
+  <script defer src="./js/app_main_lang.js?v=20261127_01"></script>
 </body>
 
 </html>
