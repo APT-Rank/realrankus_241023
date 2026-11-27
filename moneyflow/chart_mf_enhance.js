@@ -234,13 +234,24 @@ var mfEndLabelPlugin = {
       var meta = chart.getDatasetMeta(dsIndex);
       if (!meta || meta.hidden || !meta.data || meta.data.length === 0) return;
 
-      // 마지막 유효 포인트 탐색
+      // 현재 화면(줌 범위) 내 가장 우측의 유효 포인트 탐색 (없으면 전체 마지막 유효 포인트)
       var lastIdx = -1;
       for (var i = ds.data.length - 1; i >= 0; i--) {
         var v = ds.data[i];
         if (v !== null && v !== undefined && !isNaN(v) && meta.data[i] && !isNaN(meta.data[i].y)) {
-          lastIdx = i;
-          break;
+          if (meta.data[i].x <= area.right + 2 && meta.data[i].x >= area.left - 2) {
+            lastIdx = i;
+            break;
+          }
+        }
+      }
+      if (lastIdx < 0) {
+        for (var j = ds.data.length - 1; j >= 0; j--) {
+          var v2 = ds.data[j];
+          if (v2 !== null && v2 !== undefined && !isNaN(v2) && meta.data[j] && !isNaN(meta.data[j].y)) {
+            lastIdx = j;
+            break;
+          }
         }
       }
       if (lastIdx < 0) return;

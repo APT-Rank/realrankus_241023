@@ -254,6 +254,25 @@ function mfuBuildChartPayload(mode, duration) {
   return { labels: labels, datasets: datasets, latestMap: latestMap };
 }
 
+function mfuSyncZoomResetBtn(chart) {
+  var isZoomed = !!(chart && typeof chart.isZoomedOrPanned === "function" && chart.isZoomedOrPanned());
+  var isLand = (chart && chart.canvas && chart.canvas.id === "MFU_Landscape_Chart");
+  var btnSel = isLand ? "#mf_land_zoom_reset_btn" : "#mfu_zoom_reset_btn";
+  var $btn = $(btnSel);
+  if ($btn.length > 0) {
+    if (isZoomed) $btn.show();
+    else $btn.hide();
+  }
+}
+
+function mfuResetZoom(isLandscape) {
+  var ch = isLandscape ? mfuChartLandscape : mfuChartGlobal;
+  if (ch && typeof ch.resetZoom === "function") {
+    ch.resetZoom();
+    mfuSyncZoomResetBtn(ch);
+  }
+}
+
 function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
   var canvas = document.getElementById(canvasId);
   if (!canvas) return null;
@@ -268,7 +287,7 @@ function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
   if (typeof mfFocusShadowPlugin !== "undefined") pluginsList.push(mfFocusShadowPlugin);
   if (typeof mfEndLabelPlugin !== "undefined") pluginsList.push(mfEndLabelPlugin);
 
-  return new Chart(ctx, {
+  var chartInstance = new Chart(ctx, {
     type: "line",
     plugins: pluginsList,
     data: {
@@ -326,6 +345,28 @@ function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
         }
       },
       plugins: {
+        zoom: {
+          limits: {
+            x: { min: "original", max: "original", minRange: 4 }
+          },
+          pan: {
+            enabled: true,
+            mode: "x",
+            threshold: 6,
+            onPanComplete: function(c) { mfuSyncZoomResetBtn(c.chart); }
+          },
+          zoom: {
+            wheel: {
+              enabled: true,
+              speed: 0.1
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: "x",
+            onZoomComplete: function(c) { mfuSyncZoomResetBtn(c.chart); }
+          }
+        },
         tooltip: {
           enabled: mfuTooltipEnabled
         },
@@ -370,6 +411,14 @@ function mfuDrawChartInstance(canvasId, payload, optionsOverride) {
       }
     }
   });
+
+  // 차트 더블클릭 시 줌 즉시 초기화
+  canvas.ondblclick = function() {
+    mfuResetZoom(canvasId === "MFU_Landscape_Chart");
+  };
+  mfuSyncZoomResetBtn(chartInstance);
+
+  return chartInstance;
 }
 
 // ============================================================
@@ -412,6 +461,7 @@ function buildMoneyFlowHtmlPC() {
     h += "<div class='apt_pro_toolbar_top'>";
       h += "<div class='apt_pro_presets' id='mfu_presets_bar'></div>";
       h += "<div class='apt_pro_right_meta'>";
+        h += "<button type='button' class='apt_pro_btn' id='mfu_zoom_reset_btn' style='display:none;' onClick='mfuResetZoom(false)' title='확대/이동 초기화'><i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>";
         h += "<div class='apt_pro_count' id='mfu_count_label'>로딩 중...</div>";
         h += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mfu_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>";
       h += "</div>";
@@ -469,7 +519,10 @@ function buildMoneyFlowHtmlMobile() {
       // 선택 수 + 상세 수치 표시 체크박스
       h += "<div class='mf_m_meta_row' data-html2canvas-ignore='true'>";
         h += "<span class='mf_m_count' id='mfu_count_label'>로딩 중...</span>";
-        h += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mfu_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>";
+        h += "<div style='display:inline-flex;align-items:center;gap:8px;'>";
+          h += "<button type='button' class='apt_pro_btn' id='mfu_zoom_reset_btn' style='display:none;padding:2px 7px;font-size:11px;' onClick='mfuResetZoom(false)'><i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>";
+          h += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mfu_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>";
+        h += "</div>";
       h += "</div>";
 
       // 가로 100% 풀폭 차트
@@ -534,6 +587,7 @@ function buildMoneyFlowHtmlMobile() {
           + "<div class='mf_land_subbar' data-html2canvas-ignore='true'>"
             + "<div class='mf_land_presets' id='mf_land_presets'></div>"
             + "<div class='mf_land_sub_right'>"
+              + "<button type='button' class='apt_pro_btn' id='mf_land_zoom_reset_btn' style='display:none;padding:2px 7px;font-size:11px;' onClick='mfuResetZoom(true)'><i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>"
               + "<span class='mf_m_count' id='mf_land_count'></span>"
               + "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mf_land_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>"
             + "</div>"
