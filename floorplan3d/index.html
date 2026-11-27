@@ -3736,6 +3736,156 @@
         roomListEl.appendChild(chip);
       });
 
+      // Fill any unassigned dark-gray INTERIOR void spaces inside the home:
+      // Rule: if adjacent primarily to living/bedrooms -> wood flooring (마루), otherwise -> tile (타일)
+      (function fillInteriorVoids() {
+        if (sortedRooms.length === 0) return;
+        const WOOD_TYPES = new Set([
+          "living", "kitchen", "hallway", "bedroom", "bedroom_master",
+          "dress_room", "pantry", "alpha_room"
+        ]);
+        const cellSz = 0.20;
+        const pad = 0.40;
+        const minX = -width / 2 - pad, maxX = width / 2 + pad;
+        const minZ = -depth / 2 - pad, maxZ = depth / 2 + pad;
+        const nx = Math.max(10, Math.min(180, Math.ceil((maxX - minX) / cellSz)));
+        const nz = Math.max(10, Math.min(180, Math.ceil((maxZ - minZ) / cellSz)));
+        // 0 = empty, 1 = wood room, 2 = tile/wet room, 3 = pillar
+        const grid = new Uint8Array(nx * nz);
+
+        const roomRecs = sortedRooms.map((r, i) => ({
+          pts: sortedRoomPts[i],
+          bb: polyBBox(sortedRoomPts[i]),
+          cls: WOOD_TYPES.has(r.type) ? 1 : 2
+        }));
+        const pilRecs = (data.pillars || []).map(p => {
+          const c = transformPt([p.x, p.z], width, depth, mirror);
+          const hw = (p.width_m || 0.4) / 2 + 0.05;
+          const hd = (p.depth_m || 0.4) / 2 + 0.05;
+          return { minX: c[0] - hw, maxX: c[0] + hw, minZ: c[1] - hd, maxZ: c[1] + hd };
+        });
+
+        for (let iz = 0; iz < nz; iz++) {
+          const cz = minZ + (iz + 0.5) * cellSz;
+          for (let ix = 0; ix < nx; ix++) {
+            const cx = minX + (ix + 0.5) * cellSz;
+            let val = 0;
+            for (let k = 0; k < roomRecs.length; k++) {
+              const rr = roomRecs[k];
+              if (cx < rr.bb.minX || cx > rr.bb.maxX || cz < rr.bb.minZ || cz > rr.bb.maxZ) continue;
+              if (pointInPoly(cx, cz, rr.pts)) { val = rr.cls; break; }
+            }
+            if (val === 0) {
+              for (let k = 0; k < pilRecs.length; k++) {
+                const pr = pilRecs[k];
+                if (cx >= pr.minX && cx <= pr.maxX && cz >= pr.minZ && cz <= pr.maxZ) { val = 3; break; }
+              }
+            }
+            grid[iz * nx + ix] = val;
+          }
+        }
+
+        // 1-cell bridge closes <= 0.25m wall gaps between adjacent rooms
+        const closed = new Uint8Array(nx * nz);
+        for (let iz = 0; iz < nz; iz++) {
+          for (let ix = 0; ix < nx; ix++) {
+            if (grid[iz * nx + ix] !== 0) { closed[iz * nx + ix] = 1; continue; }
+            let adjOcc = 0;
+            if (ix > 0 && grid[iz * nx + ix - 1] !== 0 && ix + 1 < nx && grid[iz * nx + ix + 1] !== 0) adjOcc = 1;
+            if (iz > 0 && grid[(iz - 1) * nx + ix] !== 0 && iz + 1 < nz && grid[(iz + 1) * nx + ix] !== 0) adjOcc = 1;
+            closed[iz * nx + ix] = adjOcc;
+          }
+        }
+
+        // Flood-fill outside from border on `closed === 0`
+        const outside = new Uint8Array(nx * nz);
+        const queue = new Int32Array(nx * nz);
+        let qh = 0, qt = 0;
+        const pushOut = (idx) => {
+          if (closed[idx] === 0 && outside[idx] === 0) {
+            outside[idx] = 1;
+            queue[qt++] = idx;
+          }
+        };
+        for (let ix = 0; ix < nx; ix++) { pushOut(ix); pushOut((nz - 1) * nx + ix); }
+        for (let iz = 0; iz < nz; iz++) { pushOut(iz * nx); pushOut(iz * nx + nx - 1); }
+        while (qh < qt) {
+          const cur = queue[qh++];
+          const ix = cur % nx, iz = (cur - ix) / nx;
+          if (ix > 0) pushOut(cur - 1);
+          if (ix + 1 < nx) pushOut(cur + 1);
+          if (iz > 0) pushOut(cur - nx);
+          if (iz + 1 < nz) pushOut(cur + nx);
+        }
+
+        // Connected components of true INTERIOR voids (grid === 0 && outside === 0)
+        const vis = new Uint8Array(nx * nz);
+        const woodVoidMat = new THREE.MeshStandardMaterial({
+          ...oakWarm, bumpScale: 0.012, roughness: 0.56, metalness: 0.04
+        });
+        const tileVoidMat = new THREE.MeshStandardMaterial({
+          ...tileBath, bumpScale: 0.014, roughness: 0.48, metalness: 0.05
+        });
+
+        for (let i = 0; i < nx * nz; i++) {
+          if (grid[i] !== 0 || outside[i] !== 0 || vis[i] !== 0) continue;
+          const comp = [];
+          let ch = 0;
+          vis[i] = 1;
+          comp.push(i);
+          let woodAdj = 0, tileAdj = 0;
+          while (ch < comp.length) {
+            const cur = comp[ch++];
+            const ix = cur % nx, iz = (cur - ix) / nx;
+            const nbs = [];
+            if (ix > 0) nbs.push(cur - 1);
+            if (ix + 1 < nx) nbs.push(cur + 1);
+            if (iz > 0) nbs.push(cur - nx);
+            if (iz + 1 < nz) nbs.push(cur + nx);
+            for (const nb of nbs) {
+              const gv = grid[nb];
+              if (gv === 1) woodAdj++;
+              else if (gv === 2) tileAdj++;
+              else if (gv === 0 && outside[nb] === 0 && vis[nb] === 0) {
+                vis[nb] = 1;
+                comp.push(nb);
+              }
+            }
+          }
+          if (comp.length < 3) continue;
+          const useWood = woodAdj >= tileAdj && woodAdj > 0;
+          const vMat = useWood ? woodVoidMat : tileVoidMat;
+          const vY = useWood ? -0.012 : -0.058;
+          const rowsMap = new Map();
+          for (const idx of comp) {
+            const ix = idx % nx, iz = (idx - ix) / nx;
+            if (!rowsMap.has(iz)) rowsMap.set(iz, []);
+            rowsMap.get(iz).push(ix);
+          }
+          for (const [iz, xs] of rowsMap.entries()) {
+            xs.sort((a, b) => a - b);
+            let rs = xs[0], re = xs[0];
+            const emitRun = (s, e) => {
+              const rw = (e - s + 1) * cellSz + 0.06;
+              const rd = cellSz + 0.06;
+              const rx = minX + ((s + e + 1) * 0.5) * cellSz;
+              const rz = minZ + (iz + 0.5) * cellSz;
+              const g = new THREE.PlaneGeometry(rw, rd);
+              g.rotateX(-Math.PI / 2);
+              const m = new THREE.Mesh(g, vMat);
+              m.position.set(rx, vY, rz);
+              m.receiveShadow = true;
+              rootGroup.add(m);
+            };
+            for (let k = 1; k < xs.length; k++) {
+              if (xs[k] === re + 1) re = xs[k];
+              else { emitRun(rs, re); rs = re = xs[k]; }
+            }
+            emitRun(rs, re);
+          }
+        }
+      })();
+
       // =========================================================================
       // Stage 1: Manhattan Orthogonalization & Near-Parallel Double-Wall Healing
       // =========================================================================
