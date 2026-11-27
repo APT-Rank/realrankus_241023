@@ -461,7 +461,6 @@ function buildMoneyFlowHtmlPC() {
     h += "<div class='apt_pro_toolbar_top'>";
       h += "<div class='apt_pro_presets' id='mfu_presets_bar'></div>";
       h += "<div class='apt_pro_right_meta'>";
-        h += "<button type='button' class='apt_pro_btn' id='mfu_zoom_reset_btn' style='display:none;' onClick='mfuResetZoom(false)' title='확대/이동 초기화'><i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>";
         h += "<div class='apt_pro_count' id='mfu_count_label'>로딩 중...</div>";
         h += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mfu_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>";
       h += "</div>";
@@ -476,7 +475,11 @@ function buildMoneyFlowHtmlPC() {
     h += "</div>";
   h += "</div>";
 
-  h += "<div class='graph_item_mf'><div class='graph_mf'><canvas id='MFU_Main_Chart'></canvas></div></div>";
+  h += "<div class='graph_item_mf'><div class='graph_mf' style='position:relative;'>"
+    + "<button type='button' id='mfu_zoom_reset_btn' data-html2canvas-ignore='true' onClick='mfuResetZoom(false)' title='확대/이동 초기화' "
+    + "style='display:none;position:absolute;top:8px;right:138px;z-index:20;padding:3px 10px;font-size:11px;font-weight:600;color:#1355ac;background:rgba(255,255,255,0.92);border:1px solid #cbd5e1;border-radius:999px;box-shadow:0 2px 6px rgba(15,23,42,0.12);cursor:pointer;'>"
+    + "<i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>"
+    + "<canvas id='MFU_Main_Chart'></canvas></div></div>";
   h += "</div>";
   return h;
 }
@@ -519,14 +522,15 @@ function buildMoneyFlowHtmlMobile() {
       // 선택 수 + 상세 수치 표시 체크박스
       h += "<div class='mf_m_meta_row' data-html2canvas-ignore='true'>";
         h += "<span class='mf_m_count' id='mfu_count_label'>로딩 중...</span>";
-        h += "<div style='display:inline-flex;align-items:center;gap:8px;'>";
-          h += "<button type='button' class='apt_pro_btn' id='mfu_zoom_reset_btn' style='display:none;padding:2px 7px;font-size:11px;' onClick='mfuResetZoom(false)'><i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>";
-          h += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mfu_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>";
-        h += "</div>";
+        h += "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mfu_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>";
       h += "</div>";
 
       // 가로 100% 풀폭 차트
-      h += "<div class='mf_m_chart_wrap'><canvas id='MFU_Main_Chart'></canvas></div>";
+      h += "<div class='mf_m_chart_wrap'>"
+        + "<button type='button' id='mfu_zoom_reset_btn' data-html2canvas-ignore='true' onClick='mfuResetZoom(false)' title='확대/이동 초기화' "
+        + "style='display:none;position:absolute;top:6px;right:84px;z-index:20;padding:2px 8px;font-size:10px;font-weight:600;color:#1355ac;background:rgba(255,255,255,0.92);border:1px solid #cbd5e1;border-radius:999px;box-shadow:0 2px 6px rgba(15,23,42,0.12);cursor:pointer;'>"
+        + "<i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>"
+        + "<canvas id='MFU_Main_Chart'></canvas></div>";
 
       // 다른 그래프 카드(.subSelection)와 동일한 하단 기간 선택 바
       h += "<div class='subSelection mf_m_subSelection'>";
@@ -587,7 +591,6 @@ function buildMoneyFlowHtmlMobile() {
           + "<div class='mf_land_subbar' data-html2canvas-ignore='true'>"
             + "<div class='mf_land_presets' id='mf_land_presets'></div>"
             + "<div class='mf_land_sub_right'>"
-              + "<button type='button' class='apt_pro_btn' id='mf_land_zoom_reset_btn' style='display:none;padding:2px 7px;font-size:11px;' onClick='mfuResetZoom(true)'><i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>"
               + "<span class='mf_m_count' id='mf_land_count'></span>"
               + "<label class='mf_tooltip_toggle_label'><input type='checkbox' id='mf_land_tooltip_cb' checked onChange='mfuToggleTooltip(this.checked)'><span>상세팝업표시</span></label>"
             + "</div>"
@@ -600,7 +603,11 @@ function buildMoneyFlowHtmlMobile() {
             + "</div>"
             + "<div class='mf_land_picker_grid' id='mf_land_picker_grid'></div>"
           + "</div>"
-          + "<div class='mf_land_chart_box'><canvas id='MFU_Landscape_Chart'></canvas></div>"
+          + "<div class='mf_land_chart_box'>"
+            + "<button type='button' id='mf_land_zoom_reset_btn' data-html2canvas-ignore='true' onClick='mfuResetZoom(true)' title='확대/이동 초기화' "
+            + "style='display:none;position:absolute;top:10px;right:142px;z-index:20;padding:3px 10px;font-size:11px;font-weight:600;color:#1355ac;background:rgba(255,255,255,0.92);border:1px solid #cbd5e1;border-radius:999px;box-shadow:0 2px 6px rgba(15,23,42,0.12);cursor:pointer;'>"
+            + "<i class='fa-solid fa-magnifying-glass-minus'></i> 줌 초기화</button>"
+            + "<canvas id='MFU_Landscape_Chart'></canvas></div>"
         + "</div>"
       + "</div>";
     $("body").append(overlay);
