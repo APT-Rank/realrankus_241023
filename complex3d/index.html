@@ -3790,12 +3790,114 @@
               ctx.fillStyle = '#cbd5e1';
               ctx.fillText('realrankus.com', rightStartX + brandWidth + 4 * realScale + sepWidth + 4 * realScale, textY);
 
-              var link = document.createElement('a');
-              link.download = safeName + '_리얼Fly맵_' + ts + '.png';
-              link.href = finalCanvas.toDataURL('image/png');
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
+              var fileName = safeName + '_리얼Fly맵_' + ts + '.png';
+              var base64Data = finalCanvas.toDataURL('image/png');
+              if (!base64Data || base64Data.length < 200 || base64Data === 'data:,') {
+                throw new Error('빈 이미지 데이터 생성');
+              }
+
+              var handledNative = false;
+              try {
+                if (window.Android && typeof window.Android.downloadImage === 'function') {
+                  window.Android.downloadImage(base64Data, fileName);
+                  handledNative = true;
+                } else if (window.parent && window.parent !== window) {
+                  if (window.parent.Android && typeof window.parent.Android.downloadImage === 'function') {
+                    window.parent.Android.downloadImage(base64Data, fileName);
+                    handledNative = true;
+                  } else {
+                    window.parent.postMessage({ type: 'downloadFloorplanImage', base64Data: base64Data, fileName: fileName }, '*');
+                    handledNative = true;
+                  }
+                }
+              } catch (_) {}
+
+              if (!handledNative) {
+                var blob = await new Promise(function (resolve) {
+                  if (typeof finalCanvas.toBlob === 'function') {
+                    finalCanvas.toBlob(function (b) { resolve(b); }, 'image/png');
+                  } else {
+                    resolve(null);
+                  }
+                });
+                var downloadUrl = blob ? URL.createObjectURL(blob) : base64Data;
+                var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+                if (isIOS) {
+                  var oldModal = document.getElementById('ios-capture-save-modal');
+                  if (oldModal && oldModal.parentNode) oldModal.parentNode.removeChild(oldModal);
+
+                  var modal = document.createElement('div');
+                  modal.id = 'ios-capture-save-modal';
+                  modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+
+                  var card = document.createElement('div');
+                  card.style.cssText = 'width:100%;max-width:420px;background:#ffffff;border-radius:14px;padding:14px;box-shadow:0 20px 40px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:10px;';
+
+                  var tip = document.createElement('div');
+                  tip.textContent = '이미지를 길게 눌러 사진에 저장하거나 아래 공유 버튼을 누르세요.';
+                  tip.style.cssText = 'font-size:12.5px;font-weight:700;color:#1e293b;text-align:center;line-height:1.4;';
+
+                  var previewImg = document.createElement('img');
+                  previewImg.src = downloadUrl;
+                  previewImg.alt = fileName;
+                  previewImg.style.cssText = 'width:100%;max-height:60vh;object-fit:contain;border-radius:8px;border:1px solid #e2e8f0;background:#000000;';
+
+                  var btnRow = document.createElement('div');
+                  btnRow.style.cssText = 'display:flex;gap:8px;';
+
+                  var shareBtn = document.createElement('button');
+                  shareBtn.type = 'button';
+                  shareBtn.textContent = '저장 / 공유';
+                  shareBtn.style.cssText = 'flex:1;height:40px;border:none;border-radius:8px;background:#E43B46;color:#ffffff;font-size:13px;font-weight:700;cursor:pointer;';
+                  shareBtn.onclick = async function () {
+                    try {
+                      if (blob && navigator.share) {
+                        var shareFile = new File([blob], fileName, { type: 'image/png' });
+                        if (!navigator.canShare || navigator.canShare({ files: [shareFile] })) {
+                          await navigator.share({ files: [shareFile], title: fileName });
+                          return;
+                        }
+                      }
+                    } catch (shareErr) {
+                      if (shareErr && shareErr.name === 'AbortError') return;
+                    }
+                    var a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                  };
+
+                  var closeBtn = document.createElement('button');
+                  closeBtn.type = 'button';
+                  closeBtn.textContent = '닫기';
+                  closeBtn.style.cssText = 'width:84px;height:40px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#334155;font-size:13px;font-weight:700;cursor:pointer;';
+                  closeBtn.onclick = function () {
+                    if (blob && downloadUrl) URL.revokeObjectURL(downloadUrl);
+                    if (modal.parentNode) modal.parentNode.removeChild(modal);
+                  };
+
+                  btnRow.appendChild(shareBtn);
+                  btnRow.appendChild(closeBtn);
+                  card.appendChild(tip);
+                  card.appendChild(previewImg);
+                  card.appendChild(btnRow);
+                  modal.appendChild(card);
+                  document.body.appendChild(modal);
+                } else {
+                  var link = document.createElement('a');
+                  link.download = fileName;
+                  link.href = downloadUrl;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  if (blob) {
+                    setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 5000);
+                  }
+                }
+              }
             } catch (err) {
               console.error('[Screenshot] 캡쳐 실패:', err);
               alert('스크린캡쳐 저장에 실패했습니다.\n' + (err && err.message ? err.message : String(err)));
